@@ -1,5 +1,5 @@
 /// @file
-/// Cottage rooms B (MapId_CottageRoomsB), a sheet of rooms drawn as cottages:
+/// Cottage rooms B (SceneId_CottageRoomsB), a sheet of rooms drawn as cottages:
 /// the game packs rooms of several places that share a tile style onto one map,
 /// each room a camera box of its own that the warp destination the party comes
 /// in by chooses. This sheet's rooms are in Vale but for one in Babi's Palace,
@@ -85,7 +85,7 @@
 ///   up for that visit (FLAG_VALE_DORA_OUT_OF_BED), and the setup otherwise
 ///   puts her back in bed, where she dreams of Kyle.
 /// - Babi's Palace (COTTAGE_ROOMS_B_FROM_BABI_PALACE, from Babi's Palace's
-///   BABI_PALACE_TO_COTTAGE_ROOMS_B, MapId_BabiPalace), in Tolbi, whose lord
+///   BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneId_BabiPalace), in Tolbi, whose lord
 ///   is Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
@@ -157,7 +157,7 @@ static void CottageRoomsB_DemonstrateCatch(void);
 /// she is well.
 /// ★ Named from the game: "Are you telling me you were surprised to see me in
 /// bed?" (MsgValeWhoToldIll)
-#define FLAG_VALE_DORA_OUT_OF_BED FLAG_MAP_TEMP_03
+#define FLAG_VALE_DORA_OUT_OF_BED FLAG_SCENE_TEMP_03
 
 /// Vale's placed object events, numbered by the rows of
 /// gCottageRoomsB_ObjectEventTemplates. The tables after the party leaves
@@ -342,7 +342,7 @@ const struct ObjectEventTemplate *CottageRoomsB_GetObjectEventTemplates(void) {
     table = gCottageRoomsB_ObjectEventTemplatesAfterLeaving;
   else
     table = gCottageRoomsB_ObjectEventTemplates;
-  Map_AssignViewFlags(table);
+  Scene_AssignViewFlags(table);
   return table;
 }
 
@@ -535,11 +535,11 @@ static void EventScript_WarpToValeStormyNightEast(void) {
 /// Sets up these rooms for the stormy night or the story's villagers. It also
 /// plays the events of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by Map_Run
-/// once the object events are placed. COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST
-/// sets FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay,
-/// Dora is put back in her sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she
-/// got up.
+/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by
+/// SceneManager_Run once the object events are placed.
+/// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST sets FLAG_VALE_STORM before
+/// EventScript_DoraWakesIsaac; back from Kalay, Dora is put back in her sickbed
+/// unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 CottageRoomsB_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
@@ -1442,7 +1442,7 @@ s32 gCottageRoomsB_FlameRisesScript[] = {
 };
 
 s32 gCottageRoomsB_DoraFacesIsaacScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
     SC_SYNC,

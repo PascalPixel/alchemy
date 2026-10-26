@@ -66,6 +66,6 @@
 	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_OffsetPositionAndReset, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

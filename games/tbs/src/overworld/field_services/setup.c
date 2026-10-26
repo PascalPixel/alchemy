@@ -46,9 +46,9 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   effectWork->savedShakeX = grid->shakeX;
   effectWork->savedShakeY = grid->shakeY;
   effectWork->savedShakeDecay = grid->shakeDecay;
-  if (gSaveBlock.layoutId == (s32)&MapId_MercuryLighthouseEntrance)
+  if (gSaveBlock.layoutId == (s32)&SceneId_MercuryLighthouseEntrance)
     effectWork->lit = 1;
-  if (gSaveBlock.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
+  if (gSaveBlock.layoutId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
   FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
@@ -188,7 +188,7 @@ void FieldEffect_End(void) {
     grid->shakeDecay = effectWork->savedShakeDecay;
     if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
       runtime->effectTimerRunning = 1;
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
   }
 }

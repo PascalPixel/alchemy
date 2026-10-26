@@ -8,22 +8,24 @@
 /// lead back out. Each is a puzzle with four chests, and all five take the area
 /// name Crossbone Isle Cave. In the order the party meets them:
 ///
-/// - MapId_CrossboneIsleSteppingStones, off the first floor: stepping stones
+/// - SceneId_CrossboneIsleSteppingStones, off the first floor: stepping stones
 ///   over a pit; walking into a pillar jumps two cells across it where the
 ///   cells allow, and otherwise pushes it (EventScript_JumpOrPushPillar).
-/// - MapId_CrossboneIsleIcePillars, off the second floor: pillars of ice to
+/// - SceneId_CrossboneIsleIcePillars, off the second floor: pillars of ice to
 ///   push, standing and lying across a floor of spikes.
-/// - MapId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
+/// - SceneId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
 ///   and a floodgate across it, and seven logs to roll. The switch beside the
 ///   floodgate (EventScript_FlipWaterSwitch) closes it, so the water backs up
 ///   and floats the logs higher, or opens it to drain them back down; the water
 ///   level lasts only while the party stays
 ///   (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
-/// - MapId_CrossboneIsleStackedPillars, off the seventh floor, a cave of cliffs
+/// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
+/// cliffs
 ///   and ladders: four pillars that Move and Carry shift, and that settle and
 ///   redraw their footprints after every push (EventScript_MovePillar), a
 ///   ladder, and pillars to jump across.
-/// - MapId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon statue:
+/// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
+/// statue:
 ///   three puddles that Frost freezes into pillars of ice. Frost on the third
 ///   makes the pillar in it rise and thaws a frozen second puddle, and the
 ///   third freezes only if the leader was not standing on it; a boulder moved
@@ -35,7 +37,7 @@
 #include "action_script.h"
 #include "save_block.h"
 #include "map_grid_scroll.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/crossbone_isle_stepping_stones.h"
 #include "unit/map/common/effect_spawn.h"
@@ -74,7 +76,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "heap.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "object_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -87,7 +89,7 @@
   (BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | (facing))
 
 /// The placed object events, numbered in the order of each room's object event
-/// templates (Map_GetObjectEventTemplates).
+/// templates (Scene_GetObjectEventTemplates).
 enum CrossboneIsleSteppingStonesLocalId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
@@ -134,30 +136,30 @@ enum CrossboneIsleSteppingStonesLocalId {
 /// CrossboneIsleFloodgate: the water has been raised.
 /// ★ Named from what the player sees: the stream's water risen behind the
 /// closed floodgate, floating the logs higher (its render)
-#define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_SCENE_TEMP_00
 /// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
 /// it, so Move and Carry leave it be; the four pillars' flags follow from this
 /// one.
 /// ★ Named from what the player sees: two stacks of two grey stone pillars
 /// among the ladders and cliffs (its render)
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
-  FLAG_MAP_TEMP_00
+  FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the first puddle is frozen; the second's and
 /// third's flags follow from this one.
 /// ★ Named from what the player sees: three small blue puddles on the cave
 /// floor (its render)
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the leader stood on the third puddle when Frost
 /// began, so it stays unfrozen.
 /// ★ Named from what the player sees: the third puddle, by the dragon statue,
 /// with a narrow dark pillar standing in it (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
-  FLAG_MAP_TEMP_03
+  FLAG_SCENE_TEMP_03
 /// CrossboneIsleDragonStatue: the boulder Move pushes has sunk into place at
 /// column 16.
 /// ★ Named from what the player sees: a round grey boulder below the two logs
 /// (its render)
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_MAP_TEMP_04
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_SCENE_TEMP_04
 
 /// A copied map cell, also read in the two flag pairs the pillar redraw keeps.
 union CrossboneIslePillarCell {
@@ -645,45 +647,45 @@ CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleIcePillars) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
     return gCrossboneIsleIcePillarsWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloodgate) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIsleFloodgateWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
     return gCrossboneIsleStackedPillarsWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
     return gCrossboneIsleDragonStatueWarpDests;
   }
   return gCrossboneIsleSteppingStonesWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
 
 /// Returns the warps the five rooms share.
-const u32 *Map_GetWarps(void) { return gCrossboneIsleSteppingStonesWarps; }
+const u32 *Scene_GetWarps(void) { return gCrossboneIsleSteppingStonesWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleIcePillars) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
     return gCrossboneIsleIcePillarsObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloodgate) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIsleFloodgateObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
     return gCrossboneIsleDragonStatueObjectEventTemplates;
   }
   return gCrossboneIsleSteppingStonesObjectEventTemplatesOther;
@@ -1518,22 +1520,22 @@ static void EventScript_PushSinkingPillar(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleIcePillars) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
     return gCrossboneIsleIcePillarsEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloodgate) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIsleFloodgateEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
     return gCrossboneIsleStackedPillarsEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
     return gCrossboneIsleDragonStatueEvents;
   }
   return gCrossboneIsleSteppingStonesEventsOther;
@@ -1615,7 +1617,7 @@ static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
 
 /// Restores each room's pillar footprints, water state, and persistent puzzle
 /// state.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
   u32 i;
   u32 id;
@@ -1623,24 +1625,24 @@ s32 Map_Initialize(void) {
   s32 z;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleIcePillars) {
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 2);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 3);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 4);
-  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleFloodgate) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 2);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 3);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 4);
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     // Rebuild the flooded room and float the logs again when the water stayed
     // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 3);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 4);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 5);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 6);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 7);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 3);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 4);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 5);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 6);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 7);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
         GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
@@ -1649,7 +1651,7 @@ s32 Map_Initialize(void) {
       CrossboneIsleSteppingStones_DrawFloatingLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
     ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200),
                                        SPRITE_CRATE);
@@ -1696,14 +1698,14 @@ s32 Map_Initialize(void) {
         }
       }
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     Import_ObjectEventSetAnimation(LOCALID_SINKING_BOULDER, 2);
     ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER,
                                      SPRITE_COLOR_GREY);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1
     ObjectEvent_GetById(LOCALID_FIRST_LOG)->motionFlags = 0;
     ObjectEvent_GetById(LOCALID_FIRST_LOG + 1)->motionFlags = 0;

@@ -1,5 +1,5 @@
 /// @file Lalivero, the town by Babi Lighthouse, one map with the area name
-/// Lalivero: MapId_Lalivero. Its buildings are lalivero_interiors.c. The
+/// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetObjectEventTemplates and
 /// Lalivero_GetEvents choose the town's people and map events for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
@@ -22,8 +22,8 @@
 ///
 /// On both visits Torch, a Mars Djinni, waits until it joins;
 /// EventScript_EnterDoor opens the door or the Sanctum's gate before the leader
-/// leaves by the touched coord event's warp into MapId_TimberRoomsB or
-/// MapId_TimberRoomsC; the world map lies east and west; and a jar, a
+/// leaves by the touched coord event's warp into SceneId_TimberRoomsB or
+/// SceneId_TimberRoomsC; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
 

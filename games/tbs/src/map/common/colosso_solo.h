@@ -315,16 +315,16 @@ void Colosso_ClearCheeringSpots(void) {
 /// ColossoGuideReply; the yes or no answer to the description's question is
 /// COLOSSO_GUIDE_DESCRIBE or COLOSSO_GUIDE_OFFER_CHEERING.
 s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
-  s32 mapId;
+  s32 sceneId;
   s32 message;
   s32 choice;
 
   Field_EndBusyAndReveal();
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_ColosseumAzartMatch) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
-  } else if (mapId == (s32)&MapId_ColosseumSatrageMatch) {
+  } else if (sceneId == (s32)&SceneId_ColosseumSatrageMatch) {
     message = MsgColossoStageSecondFinalsMatch;
   } else {
     message = MsgColossoStageThirdFinalsMatch;
@@ -354,14 +354,14 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 /// that line after it in the text. "This is stage N of the first finals
 /// match." (or the second or third)
 void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
-  s32 mapId;
+  s32 sceneId;
   s32 message;
 
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_ColosseumAzartMatch) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
-  } else if (mapId == (s32)&MapId_ColosseumSatrageMatch) {
+  } else if (sceneId == (s32)&SceneId_ColosseumSatrageMatch) {
     message = MsgColossoStageSecondFinalsMatch;
   } else {
     message = MsgColossoStageThirdFinalsMatch;

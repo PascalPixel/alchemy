@@ -22,7 +22,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.Party_LearnAbility, 1
 	.set import.ObjectEvent_GetById, 1
@@ -69,8 +69,8 @@
 	.set import.FieldEffect_SetupObjectPair, 1
 	.set import.FieldEffect_StopCasterHook, 1
 	.set import.FieldEffect_StartCast, 1
-	.set import.Map_QueueMusic, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_QueueMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sanctum_Run, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

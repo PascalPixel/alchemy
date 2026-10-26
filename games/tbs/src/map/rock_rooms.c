@@ -1,8 +1,8 @@
 /// @file
-/// Rock rooms (MapId_RockRooms), a sheet of rooms cut into rock: the game packs
-/// rooms that share a tile style onto one map, and this one holds the buildings
-/// of Lunpa and the house at Suhalla Gate. Its rooms are told apart by the warp
-/// destination the party comes in by, and the area name follows it:
+/// Rock rooms (SceneId_RockRooms), a sheet of rooms cut into rock: the game
+/// packs rooms that share a tile style onto one map, and this one holds the
+/// buildings of Lunpa and the house at Suhalla Gate. Its rooms are told apart
+/// by the warp destination the party comes in by, and the area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
@@ -16,9 +16,9 @@
 ///
 /// A room's warp destination number is also its warp kind and the coord event
 /// of its door (ROOM_DOOR), so each door leads back out the way the party came
-/// in. Map_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
-/// rooms the sealed town's (gInteriorSealedEvents) until Donpa's judgment
-/// sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
+/// in. Scene_GetEvents gives the house at Suhalla Gate its own table, and
+/// Lunpa's rooms the sealed town's (gInteriorSealedEvents) until Donpa's
+/// judgment sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
 /// (gInteriorReopenedEvents). While the town is sealed the merchants neither
 /// buy nor sell and the innkeeper offers only his home; talking to the inn's
 /// chef or reading his mind tells of the prisoner he takes meals to
@@ -38,7 +38,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
 #include "rock_rooms.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "text/msg_ids.h"
 
 static void EventScript_TalkToInnkeeper(void);
@@ -275,20 +275,22 @@ const struct MapEvent gGateToSuhallaEvents[] = {
     {MAP_EVENTS_END},
 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) { return gInteriorWarpDests; }
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  return gInteriorWarpDests;
+}
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gInteriorWarps; }
+const u32 *Scene_GetWarps(void) { return gInteriorWarps; }
 
 /// The townsfolk, shopkeepers and counters of all three map sections.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gInteriorObjectEventTemplates;
 }
 
 /// The map events of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   if (gSaveBlock.warpDest == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
@@ -478,7 +480,7 @@ static void EventScript_TalkToArmorMerchant(void) {
 
 /// Sets the buildings up: entered by Gate to Suhalla, the house is where a
 /// defeated party wakes, and the counters are drawn behind their keepers.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 warpDest;
 
   gFieldWork->transition =
@@ -486,7 +488,7 @@ s32 Map_Initialize(void) {
   warpDest = gSaveBlock.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    gSaveBlock.restartMap = (s32)&MapId_RockRooms;
+    gSaveBlock.restartScene = (s32)&SceneId_RockRooms;
     gSaveBlock.restartWarpDest = warpDest;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER), 0);

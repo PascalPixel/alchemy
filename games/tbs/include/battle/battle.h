@@ -163,7 +163,7 @@ extern struct BattleBackgroundWork *gBattleBackgroundWork;
 extern const u8 gObjectMotion_LinkedActionScript[];
 /// Where the party returns after a defeat: {map, warp destination (-1 any),
 /// return map, return warp destination} rows, ended by map -1
-/// (Map_SetDefeatReturnPoint).
+/// (Scene_SetDefeatReturnPoint).
 extern const s16 gDefeatReturnPoints[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];

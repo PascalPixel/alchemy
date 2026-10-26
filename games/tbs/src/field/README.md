@@ -48,7 +48,7 @@ stopped while a request is handled, an event is one script that plays from
 start to end while the party waits; whatever must keep moving meanwhile moves
 on its own, as an object script ([below](#everything-that-moves-runs-a-script)).
 
-`Map_Run` runs the loop and `Field_ProcessStep` checks the
+`SceneManager_Run` runs the loop and `Field_ProcessStep` checks the
 ground under the leader once a frame; [Running a
 map](../overworld/README.md#the-map-loop-handles-requests-not-scripts) has
 the requests themselves.

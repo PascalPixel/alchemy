@@ -128,7 +128,7 @@ void FieldEffect_EndCloak(void) {
   gSaveBlock.cloaked = 0;
 }
 
-/// Starts the Cloak cell check if the leader is hidden. Map_Run calls
+/// Starts the Cloak cell check if the leader is hidden. SceneManager_Run calls
 /// it as a map loads, since gSaveBlock.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gSaveBlock.cloaked != 0) {

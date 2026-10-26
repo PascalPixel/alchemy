@@ -1,7 +1,7 @@
 /// @file
-/// Kolima Forest (MapId_KolimaForestGlade), the second of the forest's
-/// five maps, on the party's way to Tret between MapId_KolimaForestEntrance
-/// and MapId_KolimaForestCliff. Three logs lie in the grass to be rolled by
+/// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's
+/// five maps, on the party's way to Tret between SceneId_KolimaForestEntrance
+/// and SceneId_KolimaForestCliff. Three logs lie in the grass to be rolled by
 /// walking into them, and a Nut floats out of reach until Catch pulls it in
 /// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
@@ -57,16 +57,16 @@ enum KolimaForestGladeLocalId {
 
 #include "common/object_staged_object_event.h"
 
-/// Where the party enters, from MapId_KolimaForestEntrance and
-/// MapId_KolimaForestCliff.
+/// Where the party enters, from SceneId_KolimaForestEntrance and
+/// SceneId_KolimaForestCliff.
 const struct MapWarpDest *KolimaForestGlade_GetWarpDests(void) {
   return gKolimaForestGlade_WarpDests;
 }
 
 const struct MapWarpRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 
-/// The ways on into the forest (MapId_KolimaForestCliff) and back
-/// (MapId_KolimaForestEntrance).
+/// The ways on into the forest (SceneId_KolimaForestCliff) and back
+/// (SceneId_KolimaForestEntrance).
 const u32 *KolimaForestGlade_GetWarps(void) { return gKolimaForestGlade_Warps; }
 
 /// The three logs and the Nut.
@@ -75,7 +75,7 @@ KolimaForestGlade_GetObjectEventTemplates(void) {
   return gKolimaForestGlade_ObjectEventTemplates;
 }
 
-/// Kolima Forest (MapId_KolimaForestGlade), walking into a log: it rolls
+/// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct PushedObjectProbe result;
@@ -85,7 +85,7 @@ static void KolimaForestGlade_PushLog(void) {
   FieldScript_End();
 }
 
-/// Kolima Forest (MapId_KolimaForestGlade), Catch on the floating Nut (until
+/// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   FieldScript_Start();
@@ -109,11 +109,11 @@ s32 KolimaForestGlade_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
-    Map_FloatNut(LOCALID_NUT);
+    Scene_FloatNut(LOCALID_NUT);
   }
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }

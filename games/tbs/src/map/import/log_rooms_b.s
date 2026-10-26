@@ -14,7 +14,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.PartyInventory_GiveItem, 1
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1

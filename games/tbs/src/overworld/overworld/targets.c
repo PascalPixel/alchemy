@@ -30,8 +30,8 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// pixels, within 0x2fff (about 67 degrees) of the direction it faces. Object
 /// events with collision flag 8 are skipped, and those with flag 4 count as
 /// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
-/// leader by Map_Run for the A button, and by the item code (items.c) to
-/// find whom an item is used on.
+/// leader by SceneManager_Run for the A button, and by the item code (items.c)
+/// to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Object *source;
   struct Object *candidate;
@@ -262,7 +262,7 @@ void Anim_ApplyChildPalette(struct Object *object, s32 palette) {
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events. Called by FieldScript_Start
-/// when a script starts while the field is busy, by Map_Run before the
+/// when a script starts while the field is busy, by SceneManager_Run before the
 /// pause menu, and by 30 map overlays.
 void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = gFieldWork;

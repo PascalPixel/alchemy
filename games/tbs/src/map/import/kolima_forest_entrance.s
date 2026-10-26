@@ -50,7 +50,7 @@
 	.set import.PaletteFade_StartInterpolation, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.Map_PlayMusic, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_PlayMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -17,16 +17,16 @@ struct ObjectEventTemplate;
 struct Window;
 union ObjectEventOrEffect;
 
-/// The warp request whose destination is already in gSaveBlock.mapId and
-/// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
+/// The warp request whose destination is already in gSaveBlock.sceneId and
+/// .warpDest, so that Scene_TakeWarp leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
-/// (FieldScript_SetDestination) raise it, and Map_Run returns it when the
-/// whole party falls; Map_TakeWarp also uses it for "no warp found" (map.c,
-/// run_map.c).
+/// (FieldScript_SetDestination) raise it, and SceneManager_Run returns it when
+/// the whole party falls; Scene_TakeWarp also uses it for "no warp found"
+/// (map.c, run_map.c).
 #define WARP_NONE 999
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
-/// the player (Map_Run).
+/// the player (SceneManager_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the world map or a layered map.
   LEADER_MOVEMENT_WALK = 0,
@@ -36,10 +36,10 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// Game_MainLoop's mode: where the game starts.
+/// SequenceManager_Run's mode: where the game starts.
 enum GameStart {
   GAME_START_TITLE = 0,          ///< the title screen, with a fresh save block
-  GAME_START_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValePlaza
+  GAME_START_DEBUG_VALE = 1,     ///< in debug mode, SceneId_ValePlaza
   GAME_START_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
@@ -102,13 +102,13 @@ enum EncounterZoneId {
   ENCOUNTER_ZONE_JUPITER_DJINN = 103
 };
 
-void Map_TakeWarp(s32 warpId);
-void Map_ReturnFromRun(s32 result);
-s32 Map_GetMapSec(s32 mapId);
-void Game_MainLoop(s32 mode);
-void Map_LoadOverlay(s32 unused);
-void Map_ResetFlagsOnEnter(s32 unused, s32 keep);
-void Map_PlayMusic(void);
+void Scene_TakeWarp(s32 warpId);
+void Scene_ReturnFromSequence(s32 result);
+s32 Scene_GetMapSec(s32 sceneId);
+void SequenceManager_Run(s32 mode);
+void Scene_LoadOverlay(s32 unused);
+void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
+void Scene_PlayMusic(void);
 void Encounter_SelectMapZones(s32 useRules);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos);
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps);
@@ -116,9 +116,9 @@ s32 Encounter_RollLayoutStep(u32 terrain, s32 steps);
 s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnFormation(s32 djinni);
-void Map_ChooseMusic(void);
-s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest);
-void Map_SetDefeatReturnPoint(void);
+void Scene_ChooseMusic(void);
+s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest);
+void Scene_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);
@@ -163,7 +163,7 @@ void ObjectEvent_DestroyAtIndex(s32 objectEventIndex);
 void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table);
 s32 ObjectEvent_FindLastActiveId(void);
 void *ObjectEvent_GetSlotAddress(u32 objectEventIndex);
-void Map_AssignViewFlags(struct ObjectEventTemplate *entry);
+void Scene_AssignViewFlags(struct ObjectEventTemplate *entry);
 void ObjectEvent_ClearOutOfBounds(void);
 void ObjectEvent_Respawn(void);
 void ObjectEvent_ClearAll(void);
@@ -181,20 +181,20 @@ void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_StartScript(void);
 void WorldMap_EndScript(void);
-s32 Map_Run(s32 warpDest);
+s32 SceneManager_Run(s32 warpDest);
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void);
-void Map_ApplyWarpDest(void);
+void Scene_ApplyWarpDest(void);
 void PaletteEditor_Run(void);
 
-struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id);
+struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
-u32 Map_BgEventIgnoresCondition(s32 flags, s32 result);
-struct MapEventView *Map_FindEvent(s32 kind, s32 target);
+u32 Scene_BgEventIgnoresCondition(s32 flags, s32 result);
+struct MapEventView *Scene_FindEvent(s32 kind, s32 target);
 void Overlay_CallInitialize(void);
-s32 Map_FindObjectEventTalkEvent(s32 id);
-s32 Map_TalkToObjectEvent(s32 id);
-s32 Map_RunRaisedEvent(s32 value);
-s32 Map_RunCoordEventOrWarp(s32 value);
+s32 Scene_FindObjectEventTalkEvent(s32 id);
+s32 Scene_TalkToObjectEvent(s32 id);
+s32 Scene_RunRaisedEvent(s32 value);
+s32 Scene_RunCoordEventOrWarp(s32 value);
 s32 Field_RunPushCellEvent(s32 behavior);
 s32 Field_SearchCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
@@ -206,11 +206,11 @@ void Anim_ApplyChildPalette(struct Object *object, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemEvent(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
-void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target);
+void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 Map_HasFieldPsynergyEvent(s32 group);
-u32 Map_HasPsynergyEvent(u16 item);
+s32 Scene_HasFieldPsynergyEvent(s32 group);
+u32 Scene_HasPsynergyEvent(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
 void Field_PlaceTreasureSpots(void);

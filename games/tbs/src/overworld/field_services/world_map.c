@@ -248,8 +248,9 @@ void RegionMap_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // Map_Run creates the selected object event before event -888 opens this
-  // screen. No object event task removes it while the marker callback runs.
+  // SceneManager_Run creates the selected object event before event -888 opens
+  // this screen. No object event task removes it while the marker callback
+  // runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current map section.
     mapSecObjectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
@@ -437,7 +438,7 @@ void RegionMap_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// Map_Run reaches this for event -888 in world-map mode. The marker
+/// SceneManager_Run reaches this for event -888 in world-map mode. The marker
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
 void RegionMap_Show(s32 picture) {
@@ -553,7 +554,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
 
 /// On the world map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
-/// times as far (FieldEffect_ScheduleRatioTransition). Map_Run runs it
+/// times as far (FieldEffect_ScheduleRatioTransition). SceneManager_Run runs it
 /// for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =

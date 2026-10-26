@@ -460,10 +460,10 @@
 // plays beside; the sequence alone can't tell wind from water, so a recording
 // of one of the three maps would settle it.
 /// The ambient sound a map queues in Lama Temple, Xian and the Manticore's part
-/// of Lamakan Desert (Map_QueueMusic). It sounds like a steady quiet hiss, a
+/// of Lamakan Desert (Scene_QueueMusic). It sounds like a steady quiet hiss, a
 /// little darker and softer than SE_AMBIENT_WATER on the same noise voice.
 #define SE_AMBIENT_WIND 169
-/// The ambient sound a map queues (Map_QueueMusic) with the rain's ground
+/// The ambient sound a map queues (Scene_QueueMusic) with the rain's ground
 /// particles (Weather_StartRain) and Altin's water-spitting beasts, and in
 /// Fuchin Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the
 /// Goma Cave entrance.
@@ -741,7 +741,7 @@
 /// (SolSanctumEruption_SpawnEffectPair).
 #define SE_ERUPTION_COLUMNS 292
 /// A song with no tracks on player 5, which stops what plays there; played
-/// before each queued map sound (Map_QueueMusic).
+/// before each queued map sound (Scene_QueueMusic).
 #define SE_STOP_MUSIC_PLAYER_5 298
 /// Tolbi Spring: a coin or medal on its way, 50 frames into the toss
 /// (TolbiSpring_RunToss).

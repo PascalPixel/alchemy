@@ -4,12 +4,12 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void);
-const struct MapWarpRegion *Map_GetWarpRegions(void);
-const u32 *Map_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
-s32 Map_Initialize(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
+const struct MapWarpRegion *Scene_GetWarpRegions(void);
+const u32 *Scene_GetWarps(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
 extern s32 gVaultRevisit_ShortEffectScript[];
 extern s32 gVaultRevisit_MediumEffectScript[];
 extern s32 gVaultRevisit_LongEffectScript[];

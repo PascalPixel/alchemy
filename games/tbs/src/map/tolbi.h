@@ -8,7 +8,7 @@
 #include "field_effect.h"
 #include "tbs_edition.h"
 #include "window.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "heap.h"
 
 #define NULL ((void *)0)
@@ -19,11 +19,11 @@
 /// Growth has raised the sprout into a vine the leader can climb.
 /// ★ Named from what the player sees: a small green sprout at the foot of a
 /// cliff (its render)
-#define FLAG_TOLBI_SPROUT_GROWN FLAG_MAP_TEMP_00
+#define FLAG_TOLBI_SPROUT_GROWN FLAG_SCENE_TEMP_00
 /// Frost has frozen the puddle into an ice pillar.
 /// ★ Named from what the player sees: a small puddle of water just north of the
 /// sprout (its render)
-#define FLAG_TOLBI_PUDDLE_FROZEN FLAG_MAP_TEMP_01
+#define FLAG_TOLBI_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
 
 // Map flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the sprout,
 // FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset when

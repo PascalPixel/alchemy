@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 const struct MapWarpDest *KolimaForestTree_GetWarpDests(void);
 const struct MapWarpRegion *KolimaForestTree_GetRegions(void);

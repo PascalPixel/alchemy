@@ -1,6 +1,6 @@
 /// @file
-/// The World Map (MapId_WorldMap), the one perspective map (layout/world) that
-/// joins the map sections, and the only map of this overlay. Its code does
+/// The World Map (SceneId_WorldMap), the one perspective map (layout/world)
+/// that joins the map sections, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///
 /// It lets the party into the map sections. Each map section stands on the map
@@ -109,7 +109,7 @@
 #include "world_map_render_work.h"
 #include "field_service.h"
 #include "iwram_call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "edition.h"
@@ -135,30 +135,30 @@
 /// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
 /// (MsgWorldMapWeCantStayAnotherMinute)
-#define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_MAP_TEMP_00
+#define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_SCENE_TEMP_00
 /// Iodem has handed Isaac the Black Orb and waits for it to be used on the
 /// wreck off Gateway Cave.
 /// ★ Named from the game: "Black Orb" (MsgItemName)
-#define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_MAP_TEMP_34
+#define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_SCENE_TEMP_34
 /// The map's ordinary object event templates (gWorldMapObjectEventTemplates)
 /// are in use rather than a scripted moment's.
 /// ★ Named from its area name: World Map
-#define FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS FLAG_MAP_TEMP_35
+#define FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS FLAG_SCENE_TEMP_35
 /// The storm holds the party up in the air, where Douse can bring it down.
 /// ★ Named from what the player sees: a white whirlwind spinning on the map
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
-#define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_MAP_TEMP_F0
+#define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_SCENE_TEMP_F0
 /// The storm is done with, or put away while the Tolbi-bound Ship lies off the
 /// island, and catches no one.
 /// ★ Named from what the player sees: a white whirlwind spinning on the map
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
-#define FLAG_WORLD_MAP_STORM_GONE FLAG_MAP_TEMP_F1
+#define FLAG_WORLD_MAP_STORM_GONE FLAG_SCENE_TEMP_F1
 /// The first flag of a byte (read and written with FieldGameFlag_GetByte and
 /// FieldGameFlag_SetByte) counting the frames the storm keeps the party in the
 /// air.
 /// ★ Named from what the player sees: a white whirlwind spinning on the map
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
-#define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_MAP_TEMP_F8
+#define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
 
 static s32 WorldMap_AlignToMap(struct Object *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
@@ -209,7 +209,7 @@ enum WorldMapLocalId {
   /// The Mercury Djinni Hail.
   /// ★ Named from the game: "Hail" (MsgDjinnName)
   LOCALID_HAIL,
-  /// Vale, whose warp leads to the town gate (MapId_ValePlaza).
+  /// Vale, whose warp leads to the town gate (SceneId_ValePlaza).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
   LOCALID_TO_VALE_PLAZA,
@@ -255,7 +255,7 @@ enum WorldMapLocalId {
   /// ★ Named from its area name: Goma Cave Entrance
   LOCALID_TO_GOMA_CAVE_ENTRANCE,
   /// Goma Cave's way out, where a wooden bridge crosses the river
-  /// (MapId_GomaCaveBridge).
+  /// (SceneId_GomaCaveBridge).
   /// ★ Named from its area name: Goma Cave
   LOCALID_TO_GOMA_CAVE_BRIDGE,
   /// ★ Named from its area name: Altmiller Cave
@@ -265,7 +265,7 @@ enum WorldMapLocalId {
   /// ★ Named from its area name: Gondowan Cave
   LOCALID_TO_GONDOWAN_CAVE_SOUTH,
   /// The way into Mogall Forest where the Killer Ape waits
-  /// (MapId_MogallForestKillerApe).
+  /// (SceneId_MogallForestKillerApe).
   /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   LOCALID_TO_MOGALL_FOREST_KILLER_APE,
   /// ★ Named from its area name: Gateway Cave
@@ -282,7 +282,7 @@ enum WorldMapLocalId {
   LOCALID_TO_LAMAKAN_DESERT_CAVE,
   /// ★ Named from its area name: Kolima Forest
   LOCALID_TO_KOLIMA_FOREST,
-  /// The way into Mogall Forest by its broken sign (MapId_MogallForestSign).
+  /// The way into Mogall Forest by its broken sign (SceneId_MogallForestSign).
   /// ★ Named from the game: "The broken sign reads:"
   /// (MsgMogallForestBrokenSign)
   LOCALID_TO_MOGALL_FOREST_SIGN,
@@ -884,11 +884,11 @@ s32 WorldMap_Initialize(void) {
   }
   if (*warpDest == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
-    FieldScript_SetDestination((s32)&MapId_MercuryLighthouseAerie,
+    FieldScript_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                                MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (*warpDest == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
-    FieldScript_SetDestination((s32)&MapId_VenusLighthouseAerie,
+    FieldScript_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                                VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     FieldScript_Start();
@@ -1998,7 +1998,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   FieldScript_WaitFrames(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gSaveBlock.restartMap = (s32)&MapId_WorldMap;
+  gSaveBlock.restartScene = (s32)&SceneId_WorldMap;
   gSaveBlock.restartWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
 }
@@ -2379,7 +2379,7 @@ static void WorldMap_ShowEndingEvent(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
-  FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_WORLD_MAP);
+  FieldScript_SetDestination((s32)&SceneId_Title, TITLE_FROM_WORLD_MAP);
 }
 
 /// The look back before Sheba's fall: the view settles on Venus Lighthouse,
@@ -2749,7 +2749,7 @@ static void EventScript_StormDropsParty(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_SUHALLA);
+  FieldScript_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
 }
 
 /// Run each frame of the lighthouse transition: it blends BG0, where the

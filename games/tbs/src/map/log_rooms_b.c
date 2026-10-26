@@ -1,8 +1,8 @@
 /// @file
-/// Log rooms B (MapId_LogRoomsB), a sheet of rooms drawn in logs, all of them
+/// Log rooms B (SceneId_LogRoomsB), a sheet of rooms drawn in logs, all of them
 /// Vault's: the town's houses, shops and inn once the party has reached Kalay.
 /// They replace the first visit's interiors (log_rooms_a.c) as
-/// MapId_VaultRevisit (vault_revisit.c) replaces the town: each of its six
+/// SceneId_VaultRevisit (vault_revisit.c) replaces the town: each of its six
 /// house doors leads to the warp destination here named for the same door, and
 /// each room leads back out through it.
 ///
@@ -151,21 +151,21 @@ enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00 };
 // Shared map routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gLogRoomsB_WarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gLogRoomsB_Warps; }
+const u32 *Scene_GetWarps(void) { return gLogRoomsB_Warps; }
 
 /// Gives the object event templates' condition 0 whether each lies inside the
-/// view bounds of the room entered (Map_AssignViewFlags), so only that
+/// view bounds of the room entered (Scene_AssignViewFlags), so only that
 /// room's people appear.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates = gLogRoomsB_ObjectEventTemplates;
 
-  Map_AssignViewFlags(templates);
+  Scene_AssignViewFlags(templates);
   return templates;
 }
 
@@ -243,7 +243,7 @@ static void EventScript_WarnOfThievesRevenge(void) {
 /// She would have said `I did some cooking, so now I've got all these useless
 /// bones.` and asked `...You want some?`. His earlier talk row,
 /// MsgVaultWeDontGetALotOf with no condition, always answers first
-/// (Map_FindEvent takes the first match), so the player only ever hears that
+/// (Scene_FindEvent takes the first match), so the player only ever hears that
 /// travelers are few in winter.
 static void EventScript_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(LOCALID_COOK, MsgVaultDidSomeCookingNowIve);
@@ -403,7 +403,7 @@ static void EventScript_ReadBoneGiverMind(void) {
 }
 
 /// Returns the talk, Psynergy, bg event and warp table.
-const struct MapEvent *Map_GetEvents(void) { return gLogRoomsB_Events; }
+const struct MapEvent *Scene_GetEvents(void) { return gLogRoomsB_Events; }
 
 /// Opens the room through a window transition. Entering the house at
 /// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
@@ -412,7 +412,7 @@ const struct MapEvent *Map_GetEvents(void) { return gLogRoomsB_Events; }
 /// LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS)
 /// places the floor Bone beside the girl and starts
 /// Vault_UpdateBoneProximityFlag.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 warpDest;
   s32 clearedState;
 

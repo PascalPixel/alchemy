@@ -133,7 +133,7 @@ s32 FieldEffect_CopyLinkedObjectPosition(
     objectEvent->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Map_FindObjectEventTemplate(*(s16 *)&objectEvent->work)
+             (s16)Scene_FindObjectEventTemplate(*(s16 *)&objectEvent->work)
                  ->sprite)
              ->boxX
          << 16) +

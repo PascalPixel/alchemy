@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave Entrance (MapId_GomaCaveEntrance), the mouth of the cave in
+/// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
 /// the Goma Range between Vault and Bilibin, where Ivan rejoins the party.
 ///
 /// A stump caught in ivy (LOCALID_STUMP, held by LOCALID_STUMP_IVY) blocks the
@@ -24,11 +24,11 @@
 /// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
 /// its object event template row is then skipped, though it keeps its local id.
 ///
-/// Map_Initialize blocks Retreat and puts everything back as these flags say:
+/// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map grid
 /// cells that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into
-/// Goma Cave (MapId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to
-/// the world map.
+/// Goma Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out
+/// to the world map.
 #include "unit/map/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/map/common/effect_spawn.h"
@@ -119,15 +119,15 @@ static void GomaCaveEntrance_SayThenWait(s32 localId, s32 frames) {
   FieldScript_WaitFrames(frames);
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gGomaCaveEntranceWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gGomaCaveEntranceWarps; }
+const u32 *Scene_GetWarps(void) { return gGomaCaveEntranceWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCaveEntranceObjectEventTemplates;
 }
 
@@ -195,7 +195,7 @@ static void EventScript_PushWestPillar(void) {
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   EventScript_MoveWestPillar();
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -213,17 +213,17 @@ static void EventScript_BlowAwayIvy(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) { return gGomaCaveEntranceEvents; }
+const struct MapEvent *Scene_GetEvents(void) { return gGomaCaveEntranceEvents; }
 
 /// Sets up Goma Cave Entrance: Retreat is blocked, and the stump and pillars
 /// stand where the party left them, the stump's ivy gone once Ivan has blown
 /// it off.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *movedObject;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   FieldScript_WaitFrames(10);
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   Import_ObjectEventSetAnimation(LOCALID_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   ObjectEvent_GetById(LOCALID_SUNKEN_STUMP)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -281,7 +281,7 @@ static void EventScript_IvanRejoins(void) {
   struct ObjectEvent *leader;
 
 #if TBS_PATCH_1
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
 #endif
   FieldScript_Start();
   FieldScript_WaitFrames(30);
@@ -377,7 +377,7 @@ static void EventScript_IvanRejoins(void) {
     Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
     FieldScript_WaitFrames(20);
 #if TBS_PATCH_1
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
 #endif
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

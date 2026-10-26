@@ -59,7 +59,7 @@
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.FieldEffect_FinishWaveAndReleaseHeapBlock, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_OffsetPositionAndReset, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1

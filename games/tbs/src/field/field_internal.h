@@ -47,7 +47,7 @@
 #include "object_event.h"
 #include "fixed_math.h"
 #include "keystate.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "save_block.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"

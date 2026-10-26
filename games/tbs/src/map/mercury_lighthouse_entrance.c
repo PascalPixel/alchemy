@@ -1,5 +1,5 @@
 /// @file
-/// Mercury Lighthouse (MapId_MercuryLighthouseEntrance), the lighthouse's
+/// Mercury Lighthouse (SceneId_MercuryLighthouseEntrance), the lighthouse's
 /// ground floor inside its door, which leads up to its floors
 /// (mercury_lighthouse.c). Mia, Imil's healer and the last of the Mercury Clan
 /// who guard the lighthouse, has sensed someone inside, where none but she and
@@ -55,14 +55,14 @@
 ///   and the rise from the channels
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE, then
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE) lead up to
-///   MapId_MercuryLighthouseLower, and
+///   SceneId_MercuryLighthouseLower, and
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR back out
 ///   through the door to the ground before it, Mercury Lighthouse's
-///   MapId_MercuryLighthouseExterior (mercury_lighthouse.c). Two chests hold
+///   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c). Two chests hold
 ///   Psynergy Armor and a mimic.
 ///
 /// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
-/// regain PP faster, and makes MapId_MercuryLighthouseExterior's
+/// regain PP faster, and makes SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP the Retreat point. The shimmering
 /// colours (MercuryLighthouse_CyclePalette) run once Ply has worked, and always
 /// in the goddess's room (MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES
@@ -115,7 +115,7 @@
 #include "map_grid_copy.h"
 #include "call.h"
 #include "engine_call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "field_effect.h"
 #include "io_reg.h"
 #include "script_layer.h"
@@ -148,12 +148,12 @@ enum MercuryLighthouseEntranceLocalId {
 /// Map flags, kept while the party stays here.
 enum {
   /// ★ Named from the game: "Mia" (MsgCharacterName)
-  FLAG_MIA_GOES_IN_SEEN = FLAG_MAP_TEMP_50,
+  FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
   /// ★ Named from its area name: Mercury Lighthouse
-  FLAG_DROP_FROM_ABOVE_SEEN = FLAG_MAP_TEMP_51,
+  FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_51,
   /// The Lizard Man has stepped into the leader's column.
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
-  FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_MAP_TEMP_05
+  FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
 };
 
 // Forward declarations.
@@ -402,7 +402,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination(
-      (s32)&MapId_MercuryLighthouseEntrance,
+      (s32)&SceneId_MercuryLighthouseEntrance,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // The second slot of the encounter zone of Tret Tree's and Mercury
@@ -438,7 +438,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       (struct MercuryLighthouseLights *)gMapLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gSaveBlock.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
+  gSaveBlock.retreatMap = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -554,7 +554,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // All four arrivals play the same sound.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS:
-    Map_QueueMusic(SE_AMBIENT_WATER);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);

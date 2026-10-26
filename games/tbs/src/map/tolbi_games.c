@@ -2,24 +2,25 @@
 /// Two maps of Tolbi where the party plays for prizes whenever it is in town;
 /// neither has a story script.
 ///
-/// - Stucco rooms C (MapId_StuccoRoomsC), a sheet of rooms drawn in stucco,
+/// - Stucco rooms C (SceneId_StuccoRoomsC), a sheet of rooms drawn in stucco,
 ///   both of them Tolbi's, whose area name is Tolbi: the rooms of Lucky Dice
 ///   and Lucky Wheels; STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
-///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi. The Lucky
-///   Dice attendant asks ten coins for each level of the party's average level:
-///   the coin total is saved in the save block and the party goes to the Lucky
-///   Dice game, which returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, where
-///   the setup has the attendant announce the coins won or lost, with a fanfare
-///   by the size of the win. The Lucky Wheels attendant takes Game Tickets and
-///   warns when the bag has six free slots or fewer; the game returns to
-///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize categories won, and
-///   the setup has the attendant hand over an item for each, a different one of
-///   the category's three than last time (Moons choose any category), or offers
-///   another game when nothing was won. Signs give both games' rules and the
-///   Lucky Wheels prizes. A soldier talks of Lucky Dice until Babi is saved
-///   (FLAG_BABI_SAVED, the finals day), then of the scalpers at the Colosso
-///   finals, and is gone once they have been fought (FLAG_COLOSSO_OVER).
-/// - Tolbi Spring (MapId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads back into
+///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into SceneId_Tolbi. The
+///   Lucky Dice attendant asks ten coins for each level of the party's average
+///   level: the coin total is saved in the save block and the party goes to the
+///   Lucky Dice game, which returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE,
+///   where the setup has the attendant announce the coins won or lost, with a
+///   fanfare by the size of the win. The Lucky Wheels attendant takes Game
+///   Tickets and warns when the bag has six free slots or fewer; the game
+///   returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize
+///   categories won, and the setup has the attendant hand over an item for
+///   each, a different one of the category's three than last time (Moons choose
+///   any category), or offers another game when nothing was won. Signs give
+///   both games' rules and the Lucky Wheels prizes. A soldier talks of Lucky
+///   Dice until Babi is saved (FLAG_BABI_SAVED, the finals day), then of the
+///   scalpers at the Colosso finals, and is gone once they have been fought
+///   (FLAG_COLOSSO_OVER).
+/// - Tolbi Spring (SceneId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads back into
 ///   Tolbi (TOLBI_FROM_TOLBI_SPRING). Searching the spring raises it and blends
 ///   it into view the first time in each visit (FLAG_TOLBI_SPRING_RISEN),
 ///   stands the leader with their back to it, and offers a coin or a Lucky
@@ -57,7 +58,7 @@
 #include "script_layer.h"
 #include "map_tables.h"
 #include "call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
 #include "heap_slots.h"
@@ -79,7 +80,7 @@
 
 /// The spring has risen and faded into view this visit.
 /// ★ Named from its area name: Tolbi Spring
-#define FLAG_TOLBI_SPRING_RISEN FLAG_MAP_TEMP_00
+#define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
 
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
@@ -273,7 +274,7 @@ const u32 *TolbiSpring_GetWarps(void) { return gTolbiSpring_Warps; }
 /// Selects the object events of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
 const struct ObjectEventTemplate *TolbiSpring_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_TolbiSpring) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringObjectEventTemplates;
   }
   return gTolbiSpringObjectEventTemplatesOther;
@@ -348,7 +349,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 /// Selects the map events of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct MapEvent *TolbiSpring_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_TolbiSpring) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringEvents;
   }
   return gTolbiSpringEventsOther;
@@ -367,7 +368,7 @@ s32 TolbiSpring_Initialize(void) {
   s32 prizeIndex;
   s32 item;
 
-  if (gSaveBlock.mapId == (s32)&MapId_TolbiSpring) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TolbiSpring) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
@@ -614,8 +615,8 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   }
   FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
   FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  FieldScript_RequestDestination(RUN_LUCKY_WHEELS, 0);
-  FieldScript_SetNextDestination((s32)&MapId_StuccoRoomsC,
+  FieldScript_RequestDestination(SEQUENCE_LUCKY_WHEELS, 0);
+  FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
                                  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
@@ -645,8 +646,8 @@ static void TolbiSpring_OfferLuckyDice(void) {
     ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 152);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     FieldScript_WaitFrames(20);
-    FieldScript_RequestDestination(RUN_LUCKY_DICE, 0);
-    FieldScript_SetNextDestination((s32)&MapId_StuccoRoomsC,
+    FieldScript_RequestDestination(SEQUENCE_LUCKY_DICE, 0);
+    FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
                                    STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;

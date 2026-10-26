@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "static_assert.h"
 
 struct MapEvent;
@@ -27,12 +27,12 @@ struct LogRoomsAStop {
 STATIC_ASSERT(sizeof(struct LogRoomsAStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
 
-const struct MapWarpDest *Map_GetWarpDests(void);
-const struct MapWarpRegion *Map_GetWarpRegions(void);
-const u32 *Map_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
-s32 Map_Initialize(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
+const struct MapWarpRegion *Scene_GetWarpRegions(void);
+const u32 *Scene_GetWarps(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
 extern struct LogRoomsAStop gLogRoomsA_Stops[];
 extern s32 gLogRoomsA_ActionTable[];
 extern s32 gLogRoomsA_FirstThiefEntryScript[];

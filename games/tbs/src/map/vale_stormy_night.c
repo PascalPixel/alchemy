@@ -1,8 +1,8 @@
 /// @file
-/// Vale on the stormy night (MapId_ValeStormyNight), the prologue, when Isaac
-/// and Garet are children: a map of its own that stands in for MapId_Vale while
-/// FLAG_VALE_STORM is set, so that the doors that lead to Vale by day lead
-/// here. ValeStormyNight_Initialize sets the flag on every arrival, and
+/// Vale on the stormy night (SceneId_ValeStormyNight), the prologue, when Isaac
+/// and Garet are children: a map of its own that stands in for SceneId_Vale
+/// while FLAG_VALE_STORM is set, so that the doors that lead to Vale by day
+/// lead here. ValeStormyNight_Initialize sets the flag on every arrival, and
 /// vale_plaza.c clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
@@ -309,22 +309,22 @@ ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
 /// storm, stands open.
 /// ★ Named from the game: "This old house will fall apart if you stay much
 /// longer." (MsgValeAsStubbornAsYourFather)
-#define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_MAP_TEMP_05
+#define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_SCENE_TEMP_05
 /// The stout man has run out of his door and shoved Isaac, leaving the door
 /// open.
 /// ★ Named from the game: "Oh... Sorry to shove you like that." (MsgValeHuh)
-#define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_MAP_TEMP_06
+#define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_SCENE_TEMP_06
 /// The leader is on the rope bridge over the river. While it is set, the
 /// bridge's cells take the deck's shapes and metatile behaviors: its two middle
 /// rows walkable at the deck's height and its rails walls; stepping off puts
 /// back the river's, walled water between open banks.
 /// ★ Named from what the player sees: a wooden bridge with rope rails over the
 /// river, above the waterfall (its render)
-#define FLAG_VALE_ON_BRIDGE FLAG_MAP_TEMP_10
+#define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears;
 /// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA is where Dora and Isaac
-/// come out of the door of their house, from MapId_CottageRoomsB's
+/// come out of the door of their house, from SceneId_CottageRoomsB's
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA.
 const struct MapWarpDest *ValeStormyNight_GetWarpDests(void) {
   return gValeStormyNight_WarpDests;
@@ -366,7 +366,7 @@ static void EventScript_StepOffBridge(void) {
 /// into a house of Vale.
 ///
 /// It takes VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR
-/// (MapId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the
+/// (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the
 /// house VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST and its second door lead to
 /// as well). No map event names it, and nothing
 /// else takes that warp.
@@ -381,8 +381,8 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
 
 /// Leaves through a warp the warp table doesn't list. In Vale on the stormy
 /// night, stepping on metatile behavior 2 requests warp 1, the one number the
-/// warp table leaves out; Map_TakeWarp therefore falls back to the first warp's
-/// map, Vale's MapId_ValePlaza, at WARP_DEST_DEFAULT.
+/// warp table leaves out; Scene_TakeWarp therefore falls back to the first
+/// warp's map, Vale's SceneId_ValePlaza, at WARP_DEST_DEFAULT.
 static void EventScript_LeaveNorthwestToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(1);
@@ -407,7 +407,7 @@ static void EventScript_LeaveToValeKradensCottageSouth(void) {
 }
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
-/// gathered (MapId_ValePlaza).
+/// gathered (SceneId_ValePlaza).
 /// Reached by stepping on metatile behavior 5; arrives at VALE_PLAZA_FROM_VALE.
 /// After the Boulder swept them away, Garet first resolves to go after Isaac
 /// (ValeStormyNight_GaretFollowsIsaac).
@@ -438,7 +438,7 @@ static void EventScript_LeaveToCottageRoomsAEast(void) {
 /// shove plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
 /// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets
 /// FLAG_VALE_SHOVING_MANS_DOOR_OPEN; otherwise goes into a house of Vale
-/// (MapId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_SOUTH).
+/// (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_SOUTH).
 static void EventScript_LeaveToCottageRoomsA(void) {
   if (Script_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
@@ -459,7 +459,7 @@ static void EventScript_LeaveToCottageRoomsA(void) {
 /// came out of in Vale, and it opens unless they left it open.
 /// Reached by walking north into metatile behavior 8; takes
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE, to
-/// COTTAGE_ROOMS_B_FROM_VALE in MapId_CottageRoomsB, where Vale's
+/// COTTAGE_ROOMS_B_FROM_VALE in SceneId_CottageRoomsB, where Vale's
 /// VALE_TO_COTTAGE_ROOMS_B leads by day.
 static void EventScript_LeaveToIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
@@ -486,7 +486,7 @@ static void EventScript_LeaveToCottageRoomsANorth(void) {
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into metatile behavior 10; takes
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST, to
-/// COTTAGE_ROOMS_A_FROM_VALE_WEST in MapId_CottageRoomsA, where
+/// COTTAGE_ROOMS_A_FROM_VALE_WEST in SceneId_CottageRoomsA, where
 /// Vale's VALE_TO_COTTAGE_ROOMS_A_WEST leads by day.
 static void EventScript_LeaveToCottageRoomsAWest(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
@@ -537,12 +537,12 @@ static void EventScript_LeaveToCottageRoomsBEast(void) {
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
 /// event and the Boulder from their flags, starts the storm, and plays the
 /// event with Dora and Kyle on the first arrival by
-/// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by Map_Run once
-/// the object events are placed. Sets FLAG_VALE_STORM; after a battle
+/// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by SceneManager_Run
+/// once the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
 s32 ValeStormyNight_Initialize(void) {
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_VALE_ISAACS_DOOR_OPEN);
@@ -805,7 +805,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   ObjectEvent_SetSpeed(LOCALID_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(342), PIXELS(890));
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 342, 905);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   ObjectEvent_WalkTo(LOCALID_DORA, 296, 905);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(342), PIXELS(890));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 342, 890);
@@ -926,7 +926,7 @@ static void EventScript_FirstRockFalls(void) {
       Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      Map_PlayQueuedMusic();
+      Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     // The rock now blocks the path.
@@ -1001,7 +1001,7 @@ static void EventScript_SecondRockFalls(void) {
       Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      Map_PlayQueuedMusic();
+      Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
     ValeStormyNight_ApplySecondRockCollision();
@@ -1076,7 +1076,7 @@ static void EventScript_ThirdRockFalls(void) {
       Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      Map_PlayQueuedMusic();
+      Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
       ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, priority);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
@@ -1149,7 +1149,7 @@ static void EventScript_FourthRockFalls(void) {
       Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      Map_PlayQueuedMusic();
+      Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
     ValeStormyNight_ApplyFourthRockCollision();
@@ -1204,7 +1204,7 @@ static void ValeStormyNight_BumpIntoShovingMan(void) {
   Import_ObjectEventSetAnimation(LOCALID_SHOVING_MAN, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_SHOVING_MAN, 0);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_ShowEmote(LOCALID_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1490,7 +1490,7 @@ static void EventScript_WatchBoulderFall(void) {
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     FieldScript_Start();
     FieldScript_CallWithLastActiveObjectId(gValeStormyNight_BoulderWatchers);
-    Map_StartEventPsynergy();
+    Scene_StartEventPsynergy();
     WaitFrames(1);
     Script_PlaySong(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1643,7 +1643,7 @@ static void EventScript_WatchBoulderFall(void) {
     FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
     FieldCamera_WaitForArrival();
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     ObjectEvent_FaceObjectEvent(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
     ObjectEvent_SetAttachedEffect(
@@ -1654,7 +1654,7 @@ static void EventScript_WatchBoulderFall(void) {
     Script_ShowMessage(LOCALID_GARET_CHILD, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(20);
-    Map_EndEventPsynergy();
+    Scene_EndEventPsynergy();
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
     FieldScript_WaitFrames(20);
@@ -1829,7 +1829,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_WaitFrames(10);
   Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   FieldScript_WaitFrames(60);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
   {
     struct ObjectEvent *objectEvent;
@@ -1885,7 +1885,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_WaitFrames(6);
   Import_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
   FieldScript_WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), -1, PIXELS(1232), 1);
@@ -2033,7 +2033,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 149, 1175);
   ObjectEvent_SetPosition(LOCALID_DORA, 0, 0);
   ObjectEvent_WalkToAndWait(LOCALID_JENNAS_MOTHER, 250, 1214);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
@@ -2060,12 +2060,12 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Script_PlaySong(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorCloses, 38, 72);
   FieldScript_WaitFrames(30);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   FieldScript_WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   ObjectEvent_SetActionScript(LOCALID_DORA,
                               gValeStormyNight_DoraComesOutOfRiversideHouse);
   FieldScript_WaitFrames(20);
@@ -2075,7 +2075,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Script_PlaySong(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorCloses, 35, 73);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_WaitFrames(40);
   northMessage = MsgValeGoLookNorth;
   FieldScript_SetMessageId(northMessage);
@@ -2706,7 +2706,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
   Script_Wait(60);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   Script_Wait(60);
   Party_RemoveMemberRestored(1);
   Weather_ResumeLightning();
@@ -3348,11 +3348,11 @@ s32 gValeStormyNight_LookAroundScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// A squash and stretch every 60 to 149 frames (Map_SquashAndStretch), for
+/// A squash and stretch every 60 to 149 frames (Scene_SquashAndStretch), for
 /// the people straining at the river and, after the Boulder, those on the
 /// bank.
 s32 gValeStormyNight_SquashAndStretchScript[] = {
-    SC_CALL(Map_SquashAndStretch),
+    SC_CALL(Scene_SquashAndStretch),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

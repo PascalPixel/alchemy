@@ -1,7 +1,7 @@
 	.macro map_header name, code:req, mapsec:req, maptype:req, layout_index:req
 	.ifnb \name
-	.global MapId_\name
-	.equiv MapId_\name, (. - gMapHeaders) / 8
+	.global SceneId_\name
+	.equiv SceneId_\name, (. - gSceneHeaders) / 8
 	.endif
 	.2byte \code
 	.byte \mapsec, \maptype
@@ -10,8 +10,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gMapHeaders
-gMapHeaders:
+	.global gSceneHeaders
+gSceneHeaders:
 	map_header Title, 0x36f, 0x00, 1, 0x00
 	map_header MainMenu, 0x370, 0x01, 1, 0x00
 	map_header WorldMap, 0x371, 0x02, 1, 0x01

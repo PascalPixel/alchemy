@@ -185,8 +185,8 @@ void FieldEffect_RunFrost(void) {
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;
-    event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                  FIELD_PSYNERGY_FROST, &eventTarget);
+    event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                    FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
       Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
     }

@@ -1,5 +1,5 @@
 /// @file
-/// West Lunpa Cave (MapId_WestLunpaCave, area name West Lunpa Cave), the cave
+/// West Lunpa Cave (SceneId_WestLunpaCave, area name West Lunpa Cave), the cave
 /// between Lunpa and the world map, with a gate across it, where the party
 /// meets Bunza on the way out of Lunpa with Hammet.
 ///
@@ -9,7 +9,7 @@
 /// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no warp names,
 /// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
-/// The gate puzzle runs on map flags, which Map_Initialize redraws: the
+/// The gate puzzle runs on map flags, which Scene_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
 /// doing nothing while the gate already stands where it would put it or while
 /// the gate's puddle, frozen by Frost into a pillar, props it open. Freezing
@@ -41,7 +41,7 @@
 /// camera bounds, so Frost can never reach it (EventScript_UnusedFreezePuddle).
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "script_layer.h"
 #include "unit/map/west_lunpa_cave.h"
 #include "unit/overworld/overworld.h"
@@ -53,23 +53,23 @@
 /// The gate's puddle is frozen into a pillar, propping the gate open.
 /// ★ Named from what the player sees: a small blue puddle beneath the green
 /// metal gate across the cave (its render)
-#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The lowering switch has lowered the gate.
 /// ★ Named from the game: "The gate in the cave can only be opened from the
 /// inside." (MsgLunpaEastGuardTrustsCaveGate)
-#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_MAP_TEMP_01
+#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_SCENE_TEMP_01
 /// The gate is raised.
 /// ★ Named from the game: "The gate in the cave can only be opened from the
 /// inside." (MsgLunpaEastGuardTrustsCaveGate)
-#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_MAP_TEMP_02
+#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_SCENE_TEMP_02
 /// The north puddle is frozen into a pillar.
 /// ★ Named from what the player sees: a small blue puddle in the cave's
 /// northern passage, past the gate (its render)
-#define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_MAP_TEMP_03
+#define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 /// The south puddle is frozen into a pillar that can be climbed.
 /// ★ Named from what the player sees: a small blue puddle at the foot of the
 /// cave's southern passage (its render)
-#define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_MAP_TEMP_04
+#define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
@@ -93,16 +93,16 @@ static void Party_RidesWagon(void);
 // pillar. FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen
 // into a pillar.
 
-const struct MapWarpDest *Map_GetWarpDests(void) { return gCaveWarpDests; }
+const struct MapWarpDest *Scene_GetWarpDests(void) { return gCaveWarpDests; }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
 /// Both passages and the wagon departure return through this warp table.
-const u32 *Map_GetWarps(void) { return gCaveWarps; }
+const u32 *Scene_GetWarps(void) { return gCaveWarps; }
 
 /// Only the cave map places puddles, Hammet, Bunza and the party members.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_WestLunpaCave) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
     return gCaveObjectEventTemplates;
   }
   return gCaveNoObjectEventTemplates;
@@ -110,7 +110,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// Routes switches, Frost targets and the reunion coord event to their
 /// handlers.
-const struct MapEvent *Map_GetEvents(void) { return gCaveEvents; }
+const struct MapEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
 /// Unused: Frost can never target the puddle placed at (0, 0, 0), outside the
 /// cave's camera bounds. It would freeze, and no flag would remember it.
@@ -1049,10 +1049,10 @@ static void Party_RidesWagon(void) {
 }
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_WestLunpaCave) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTH_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);

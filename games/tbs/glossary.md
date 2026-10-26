@@ -30,7 +30,7 @@ The story starts in Vale, under Mt. Aleph, and follows the thieves of the
 Elemental Stars through Vault, Bilibin, Kolima, Imil, Mercury Lighthouse,
 Xian, Altin, Kalay and Tolbi to Lalivero and Venus Lighthouse, where the game
 ends. The story is the order the [game flags](#game-flag) are set in, so pages
-list places in that order; [Places](src/field/map_headers.s) lists every map.
+list places in that order; [Places](src/field/scene_headers.s) lists every map.
 
 ### Psynergy and PP
 

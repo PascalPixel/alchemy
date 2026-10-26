@@ -1,7 +1,7 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
-/// places in one map (MapId_Sanctum): the warp destination the party arrives at
-/// decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
+/// places in one map (SceneId_Sanctum): the warp destination the party arrives
+/// at decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
 /// healer talks. Each place's door leads back out to its own town.
@@ -23,7 +23,7 @@
 ///   (Sanctum_UpdateHealerAfterimage) while effects circle him
 ///   (Sanctum_SpawnOrbitingEffect). Accepting plays
 ///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
-///   SANCTUM_TO_VALE_PLAZA takes the two to MapId_ValePlaza (vale_plaza.c).
+///   SANCTUM_TO_VALE_PLAZA takes the two to SceneId_ValePlaza (vale_plaza.c).
 ///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
 ///   again when spoken to (EventScript_ReconsiderQuest), the door draws a
 ///   warning (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the
@@ -32,9 +32,9 @@
 ///   from the Great Healer, by SANCTUM_TO_QUEST_RESTART to
 ///   SANCTUM_FROM_QUEST_RESTART, which skips the account
 ///   (FLAG_SANCTUM_QUEST_RESTARTED), or leave by SANCTUM_TO_MAIN_MENU to
-///   MapId_MainMenu. After the party has left Vale (FLAG_VALE_PARTY_LEFT), and
-///   again after it has reached Kalay (FLAG_KALAY_REACHED), the three talk of
-///   what the eruption and the Wise One changed.
+///   SceneId_MainMenu. After the party has left Vale (FLAG_VALE_PARTY_LEFT),
+///   and again after it has reached Kalay (FLAG_KALAY_REACHED), the three talk
+///   of what the eruption and the Wise One changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_LOG_ROOMS_A). Its
 ///   healer and the other person there (LOCALID_SANCTUM_MEMBER) miss a gold
 ///   statue stolen during the eruption, until the party has the thieves jailed
@@ -102,10 +102,10 @@
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.
-#define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_MAP_TEMP_00
+#define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_SCENE_TEMP_00
 /// The party is starting again from the Great Healer after refusing the quest,
 /// so the account of Sol Sanctum is skipped.
-#define FLAG_SANCTUM_QUEST_RESTARTED FLAG_MAP_TEMP_01
+#define FLAG_SANCTUM_QUEST_RESTARTED FLAG_SCENE_TEMP_01
 
 // Map flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
@@ -516,7 +516,7 @@ static void EventScript_WarnBeforeLeaving(void) {
 /// the game. The room turns sepia: `And so the world began drifting toward its
 /// fated destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
-/// choices take SANCTUM_TO_MAIN_MENU, to MapId_MainMenu.
+/// choices take SANCTUM_TO_MAIN_MENU, to SceneId_MainMenu.
 static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 

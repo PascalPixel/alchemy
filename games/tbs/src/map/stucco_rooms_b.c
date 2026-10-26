@@ -1,5 +1,5 @@
 /// @file
-/// Stucco rooms B (MapId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
+/// Stucco rooms B (SceneId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
 /// of them Tolbi's: its houses, inns and shops, which the area names call
 /// Tolbi, and Tolbi Sanctum, as the same map is named at STUCCO_ROOMS_B_SANCTUM
 /// and STUCCO_ROOMS_B_SANCTUM_NORTH.
@@ -62,7 +62,7 @@
 #include "objcmd.h"
 #include "songs.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
 /// The stranded passengers' argument has played.

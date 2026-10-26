@@ -1,7 +1,7 @@
 /// @file
-/// Kolima Forest (MapId_KolimaForestFloodgate), the fourth of the forest's
-/// five maps, between MapId_KolimaForestCliff and the map where Tret stands
-/// (MapId_KolimaForestTree). A Floodgate Switch
+/// Kolima Forest (SceneId_KolimaForestFloodgate), the fourth of the forest's
+/// five maps, between SceneId_KolimaForestCliff and the map where Tret stands
+/// (SceneId_KolimaForestTree). A Floodgate Switch
 /// (MB_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a sign that reads "Do not touch
 /// Floodgate Switch!", raises and lowers the river: with the water high the
 /// logs float (26 pixels up) and can be rolled along it; with it low they lie
@@ -88,16 +88,16 @@ static void KolimaForestFloodgate_MarkShortLogCells(void);
 static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *log);
 static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
-/// Where the party enters, from MapId_KolimaForestCliff and from
-/// MapId_KolimaForestTree.
+/// Where the party enters, from SceneId_KolimaForestCliff and from
+/// SceneId_KolimaForestTree.
 const struct MapWarpDest *KolimaForestFloodgate_GetWarpDests(void) {
   return gKolimaForestFloodgateWarpDests;
 }
 
 const struct MapWarpRegion *KolimaForestFloodgate_GetRegions(void) { return 0; }
 
-/// The ways back (MapId_KolimaForestCliff) and on to Tret
-/// (MapId_KolimaForestTree).
+/// The ways back (SceneId_KolimaForestCliff) and on to Tret
+/// (SceneId_KolimaForestTree).
 const u32 *KolimaForestFloodgate_GetWarps(void) {
   return gKolimaForestFloodgateWarps;
 }
@@ -113,7 +113,7 @@ const struct MapEvent *KolimaForestFloodgate_GetEvents(void) {
   return gKolimaForestFloodgateEvents;
 }
 
-/// Kolima Forest (MapId_KolimaForestFloodgate), walking into a log: it rolls
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking into a log: it rolls
 /// ahead, and the cells of the logs are marked again where they now lie.
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
@@ -122,7 +122,7 @@ static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_MarkShortLogCells();
 }
 
-/// Kolima Forest (MapId_KolimaForestFloodgate), walking south into the gap
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking south into the gap
 /// (coord event 10): the leader jumps across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
@@ -241,7 +241,7 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
   scroll[5] += 0xb0;
 }
 
-/// Kolima Forest (MapId_KolimaForestFloodgate), searching the Floodgate
+/// Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
 /// Switch flips it. "Isaac flipped the switch." The camera turns to the
 /// floodgate, which opens or closes; the ground rumbles and the top of the
 /// screen shakes harder for 100 frames, and the river rises or falls.
@@ -345,7 +345,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldScript_End();
 }
 
-/// Kolima Forest (MapId_KolimaForestFloodgate), walking west into the short
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the short
 /// log: the leader shoves it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
@@ -372,7 +372,7 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   FieldScript_End();
 }
 
-/// Kolima Forest (MapId_KolimaForestFloodgate), walking east into the short
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the short
 /// log: the leader shoves it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 

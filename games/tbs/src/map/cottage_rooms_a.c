@@ -1,17 +1,18 @@
 /// @file
-/// Cottage rooms A (MapId_CottageRoomsA), a sheet of rooms drawn as cottages:
+/// Cottage rooms A (SceneId_CottageRoomsA), a sheet of rooms drawn as cottages:
 /// the game packs rooms that share a tile style onto one map, and every room on
 /// this one is Vale's. Each room is a warp destination with a camera box of its
 /// own, named for the door it is entered by, and its door takes the warp of the
 /// same number back out. In story order, by the warps that lead in:
 ///
-/// - From the village (MapId_Vale, and on the stormy night
-///   MapId_ValeStormyNight): the house of Garet's family
+/// - From the village (SceneId_Vale, and on the stormy night
+///   SceneId_ValeStormyNight): the house of Garet's family
 ///   (COTTAGE_ROOMS_A_FROM_VALE_EAST), his grandfather the mayor, his
 ///   grandmother and his parents; the house of Jenna's grandparents
 ///   (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
 ///   (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
-/// - From the part of Vale with the Psynergy Stone (MapId_ValePlaza): the shops
+/// - From the part of Vale with the Psynergy Stone (SceneId_ValePlaza): the
+/// shops
 ///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST), where the item, weapon and armor
 ///   shops each open across a counter, and three houses
 ///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST,
@@ -25,9 +26,9 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (MapId_ValeStormyNight) instead (CottageRoomsA_GetWarps). The
-///   jars and the barrel are empty, and six more bookcases than by day can be
-///   read, a notebook called "Study of Alchemy" among them.
+///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetWarps).
+///   The jars and the barrel are empty, and six more bookcases than by day can
+///   be read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
 ///   Kraden's visitors and of Vale's law that keeps Psynergy secret from
 ///   outsiders, and the jars and the barrel hold coins, an Antidote and a
@@ -221,7 +222,7 @@ const struct ObjectEventTemplate *CottageRoomsA_GetObjectEventTemplates(void) {
   } else {
     table = gCottageRoomsA_ObjectEventTemplates;
   }
-  Map_AssignViewFlags(table);
+  Scene_AssignViewFlags(table);
   return table;
 }
 
@@ -346,7 +347,7 @@ static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
 
 // The rooms' doors: stepping on a door's cell, whose metatile behavior is its
 // warp's number, takes that warp back out, in every table. On the stormy night
-// the warps to MapId_Vale lead to the storm's map (MapId_ValeStormyNight)
+// the warps to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
@@ -982,7 +983,7 @@ static void CottageRoomsA_SpawnSleepZ(void) {
 }
 
 s32 gCottageRoomsA_FaceTargetScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

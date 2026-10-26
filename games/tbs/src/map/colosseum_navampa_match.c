@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 3 (MapId_ColosseumNavampaMatch), the site of the last
+/// Colosseum Final 3 (SceneId_ColosseumNavampaMatch), the site of the last
 /// finals match, where Isaac, having won the first two, races Navampa of
 /// Gondowan, the sixth-ranked warrior, through six stages to the arena and
 /// fights him there.
@@ -51,7 +51,7 @@
 #include "save_block.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/colosseum_navampa_match.h"
@@ -97,7 +97,7 @@
 #include "objcmd.h"
 #include "object_event.h"
 #include "heap.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "colosso_gauge.h"
@@ -111,14 +111,15 @@
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION ObjectMotion_ArmCallback
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
   ColosseumNavampaMatch_StartLetteringAnimation
-#define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES Map_GiveAndEquipItem
+#define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
+  Scene_GiveAndEquipItem
 #else
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION                                 \
   ((s32 (*)())ObjectMotion_ArmCallback)
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
   ((s32 (*)())ColosseumNavampaMatch_StartLetteringAnimation)
 #define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
-  ((s32 (*)())Map_GiveAndEquipItem)
+  ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
@@ -283,11 +284,11 @@ enum {
   /// (ColosseumNavampaMatch_CollectFinishEquipment).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
-  FLAG_ARENA_REACHED = FLAG_MAP_TEMP_11,
+  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// LOCALID_LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
   /// ★ Named from the game: "You can get through quickly by moving the logs and
   /// stones." (MsgColossoAnotherLogRollingArea)
-  FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_MAP_TEMP_14
+  FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
 enum { PISTON_COUNT = 5 };
@@ -984,9 +985,9 @@ static void EventScript_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_ColosseumNavampaMatch,
+  FieldScript_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch,
                                  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
-  FieldScript_SetDefeatDestination((s32)&MapId_ColosseumNavampaMatch,
+  FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
                                    COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
@@ -2084,7 +2085,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Sound_PlaySong(SE_COLOSSO_GO);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
   GameFlag_Set(FLAG_IN_TOWN);
 }
@@ -2370,7 +2371,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 /// Closes the arena's coord event; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
-#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6A

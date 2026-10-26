@@ -3,20 +3,21 @@
 /// from the Suhalla Desert to Babi Lighthouse. Three maps share this overlay,
 /// in the order the pass is crossed:
 ///
-/// - SuhallaGateCheckpoint (MapId_SuhallaGateCheckpoint, area name Suhalla
+/// - SuhallaGateCheckpoint (SceneId_SuhallaGateCheckpoint, area name Suhalla
 ///   Gate): the gate itself, entered from the world map from the south and from
 ///   the east, each into its own part of the map, with the house beside it
 ///   (Gate to Suhalla, rock_rooms.c). Two soldiers keep the passage north.
-/// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond the
+/// - SuhallaGateDew (SceneId_SuhallaGateDew, area name Suhalla Gate): beyond
+/// the
 ///   passage, in a west part and an east part, with Dew, a Mercury Djinni, and
 ///   a chest.
-/// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves out
+/// - Gateway Cave (SceneId_GatewayCave, area name Gateway Cave): two caves out
 ///   onto the world map, with a Psynergy Stone.
 ///
 /// One warp table serves the three maps; the other getters choose by
-/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also by
-/// FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not otherwise
-/// named.
+/// gSaveBlock.sceneId, and SuhallaGateCheckpoint's object event templates also
+/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
+/// otherwise named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
 /// of travel papers, and metatile behavior 10 before the passage brings them
@@ -29,7 +30,7 @@
 /// vanishes for good (EventScript_SoldierVanishes,
 /// FLAG_SUHALLA_GATE_SOLDIER_VANISHED).
 ///
-/// Map_Initialize remembers which side of the gate the party came in by
+/// Scene_Initialize remembers which side of the gate the party came in by
 /// (FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH, FLAG_SUHALLA_GATE_ENTERED_FROM_EAST),
 /// so that Retreat from the house leads back out that way, and leaving for the
 /// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
@@ -57,7 +58,7 @@
 #include "djinn_ids.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
@@ -72,7 +73,8 @@
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 #if TBS_PATCH_3
-#define SUHALLA_GATE_RETREAT_MAP(currentMap) ((s32)&MapId_SuhallaGateCheckpoint)
+#define SUHALLA_GATE_RETREAT_MAP(currentMap)                                   \
+  ((s32)&SceneId_SuhallaGateCheckpoint)
 #else
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) (currentMap)
 #endif
@@ -105,7 +107,7 @@ enum SuhallaGateCheckpointLocalId {
 /// of gSuhallaGateDewObjectEventTemplates.
 enum SuhallaGateDewLocalId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
-  /// drawn in the frame Map_Initialize gives it.
+  /// drawn in the frame Scene_Initialize gives it.
   /// ★ Named from what the player sees: small green sprouts on the grassy
   /// ledges (its render)
   LOCALID_FIRST_SPROUT = LOCALID_FIRST_PLACED,
@@ -118,37 +120,37 @@ enum SuhallaGateDewLocalId {
 /// grown (spr_238's frames 3 and 6).
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
-/// Suhalla Gate's second map (MapId_SuhallaGateDew): talking to Dew, a
+/// Suhalla Gate's second map (SceneId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
 static void EventScript_FightDew(void) {
   Field_RequestDjinnBattle(LOCALID_DEW, DJINNI_DEW);
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_SuhallaGateDew) {
+  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewWarpDests;
   }
-  if (mapId == (s32)&MapId_GatewayCave) {
+  if (sceneId == (s32)&SceneId_GatewayCave) {
     return gGatewayCaveWarpDests;
   }
   return gSuhallaGateWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gSuhallaGateWarps; }
+const u32 *Scene_GetWarps(void) { return gSuhallaGateWarps; }
 
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
 /// beside the vanishing soldier and Iodem; Dew and the second map's sprouts.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_SuhallaGateDew) {
+  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
+  if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGateCheckpointObjectEventTemplatesAfterAudience;
     }
@@ -157,16 +159,16 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gSuhallaGateObjectEventTemplatesOther;
 }
 
-/// The events of Suhalla Gate's second map (MapId_SuhallaGateDew), of
-/// Gateway Cave (MapId_GatewayCave), or of the gate itself
-/// (MapId_SuhallaGateCheckpoint) for any other map.
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+/// The events of Suhalla Gate's second map (SceneId_SuhallaGateDew), of
+/// Gateway Cave (SceneId_GatewayCave), or of the gate itself
+/// (SceneId_SuhallaGateCheckpoint) for any other map.
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_SuhallaGateDew) {
+  if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateDewEvents;
   }
-  if (mapId == (s32)&MapId_GatewayCave) {
+  if (sceneId == (s32)&SceneId_GatewayCave) {
     return gGatewayCaveEvents;
   }
   return gSuhallaGateEventsOther;
@@ -174,22 +176,22 @@ const struct MapEvent *Map_GetEvents(void) {
 
 /// Sets up whichever of the pass's maps is entered. Once Iodem has
 /// questioned the guards, a defeat returns the party to the house beside the
-/// gate. In Suhalla Gate (MapId_SuhallaGateCheckpoint) the vanished soldier
+/// gate. In Suhalla Gate (SceneId_SuhallaGateCheckpoint) the vanished soldier
 /// stays hidden, the side the party came in by is remembered for Retreat, and
 /// arriving from the south before Babi's audience changes cells by the passage;
 /// the Spanish, French and Italian editions also change cells around the
-/// wounded guards. In the second map (MapId_SuhallaGateDew) the five sprouts
+/// wounded guards. In the second map (SceneId_SuhallaGateDew) the five sprouts
 /// take their frames and one cell changes; its stretch of object event 15 does
 /// nothing, as the comment at it says.
-s32 Map_Initialize(void) {
-  s32 mapId;
+s32 Scene_Initialize(void) {
+  s32 sceneId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gSaveBlock.restartMap = (s32)&MapId_RockRooms;
+    gSaveBlock.restartScene = (s32)&SceneId_RockRooms;
     gSaveBlock.restartWarpDest = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Import_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
@@ -204,12 +206,12 @@ s32 Map_Initialize(void) {
     // and the map section's name is not shown again.
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
-        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
+        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(sceneId);
         gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
-        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
+        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(sceneId);
         gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
@@ -222,7 +224,7 @@ s32 Map_Initialize(void) {
     }
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
-  } else if (mapId == (s32)&MapId_SuhallaGateDew) {
+  } else if (sceneId == (s32)&SceneId_SuhallaGateDew) {
     Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
                                    SPROUT_ANIMATION_GROWN);
     Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 1,
@@ -245,7 +247,7 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-/// In Suhalla Gate (MapId_SuhallaGateCheckpoint), walking north into the door
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), walking north into the door
 /// of the house beside it: the door opens in two frames and the leader steps
 /// into Gate to Suhalla.
 static void EventScript_EnterHouse(void) {
@@ -277,7 +279,7 @@ static void EventScript_LeaveForWorldMap(void) {
   Import_ScriptRequestWarp(warpTrigger);
 }
 
-/// In Suhalla Gate (MapId_SuhallaGateCheckpoint) before Babi's audience, each
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) before Babi's audience, each
 /// time the party nears the passage north (metatile behavior 10): the two
 /// guards step together in front of it, and the map cells around them change.
 static void EventScript_GuardsBlockPassage(void) {
@@ -299,7 +301,7 @@ static void EventScript_GuardsBlockPassage(void) {
   FieldScript_End();
 }
 
-/// In Suhalla Gate (MapId_SuhallaGateCheckpoint) after Babi's audience, on
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, on
 /// reaching the passage (metatile behavior 10), once: Iodem steps out of the
 /// party and demands to know what happened. "What is the meaning of this!?" The
 /// wounded guards tell of a strange group without papers whose strange powers
@@ -421,7 +423,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   FieldScript_End();
 }
 
-/// In Suhalla Gate (MapId_SuhallaGateCheckpoint), talking to the east guard.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), talking to the east guard.
 /// Until Iodem has questioned the guards he asks whether the party is bound for
 /// Babi Lighthouse, `Do you want to go to Babi Lighthouse?`: yes, and the party
 /// must show travel papers it does not have; no, and he calls them strange.
@@ -456,7 +458,7 @@ static void EventScript_TalkToEastGuard(void) {
 }
 
 /// The soldier east of the gate gasps out a warning and vanishes. In Suhalla
-/// Gate (MapId_SuhallaGateCheckpoint) after Babi's audience, this plays on
+/// Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, this plays on
 /// talking to him or reading his mind, until he has vanished: he gasps that
 /// Venus Lighthouse was attacked by strange wanderers, then flickers, slowly
 /// and then fast, and vanishes. Sets FLAG_SUHALLA_GATE_SOLDIER_VANISHED.

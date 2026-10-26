@@ -40,6 +40,6 @@
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Import_ScriptRequestWarp, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

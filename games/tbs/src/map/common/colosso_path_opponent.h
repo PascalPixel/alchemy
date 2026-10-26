@@ -38,7 +38,7 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 /// asked), turning by at most a sixteenth of a turn, and stands once still for
 /// three frames. At the path's end the opponent walks to the finish, beside the
 /// first finisher's item object event or the second's, and sets
-/// FLAG_MAP_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
+/// FLAG_SCENE_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
 /// object event's own path instead, up to 0x383e halfwords, then plays it back
 /// with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
@@ -64,7 +64,7 @@ static void Colosso_UpdatePathOpponent(void) {
       } else {
         x = work->gauge.finishX - 0xc0000;
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_11)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
         itemLocalId = &work->gauge.finishItemLocalIdB;
       } else {
@@ -75,7 +75,7 @@ static void Colosso_UpdatePathOpponent(void) {
       objectEvent->acceleration = 0x4000;
       objectEvent->speed = 0x10000;
       Object_SetPosition(objectEvent, x, 0, fz);
-      GameFlag_Set(FLAG_MAP_TEMP_11);
+      GameFlag_Set(FLAG_SCENE_TEMP_11);
       ObjectEvent_SetScript(objectEvent, gColosso_OpponentFinishScript);
       return;
     }

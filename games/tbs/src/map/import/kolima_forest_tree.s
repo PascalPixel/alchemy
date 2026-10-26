@@ -53,7 +53,7 @@
 	.set import.PaletteFade_StartInterpolation, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Sprite_ShareVramCacheEntry, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -3,17 +3,17 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 struct MapWarpDest;
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
 const struct MapWarpRegion *BabiPalace_GetRegions(void);
 const u32 *BabiPalace_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];

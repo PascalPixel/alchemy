@@ -93,7 +93,7 @@ writes down what was chosen and closes, and the map decides what Move does to
 that pillar.
 
 The screen writes its choice into the field work (`gFieldWork`), and
-`Map_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
+`SceneManager_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
 
 ## The pause menu and saving
 

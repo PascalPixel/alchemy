@@ -91,7 +91,7 @@
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.ObjectEvent_GetByLocalId, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.FieldScript_ClearInvalidPackedValues, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.MemberChooser_Open, 1

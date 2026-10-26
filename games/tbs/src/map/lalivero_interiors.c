@@ -8,7 +8,7 @@
 /// Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's
 /// are (lalivero.c).
 ///
-/// Timber rooms B (MapId_TimberRoomsB) holds, by the warps that lead in, a
+/// Timber rooms B (SceneId_TimberRoomsB) holds, by the warps that lead in, a
 /// house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room upstairs
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper floor
@@ -21,7 +21,7 @@
 /// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the place
 /// a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
-/// Timber rooms C (MapId_TimberRoomsC) holds, by the warps that lead in,
+/// Timber rooms C (SceneId_TimberRoomsC) holds, by the warps that lead in,
 /// Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
 /// TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and two
 /// guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the
@@ -38,7 +38,7 @@
 
 #include "action_script.h"
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/lalivero_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -223,7 +223,7 @@ const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void) {
 }
 
 const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsB) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -234,7 +234,7 @@ const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
 /// The people of each map; Faran's house fills up after Venus Lighthouse.
 const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ObjectEventTemplatesAfterLighthouse;
@@ -420,7 +420,7 @@ static void EventScript_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each map, before and
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_EventsAfterLighthouse;
     }
@@ -841,8 +841,8 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
 /// behind their counters, the Sanctum as the place to wake after a defeat,
 /// the inn worker back at her chores, and the report to Faran on coming back
 /// from Venus Lighthouse.
-s32 Map_Initialize(void) {
-  s32 mapId;
+s32 Scene_Initialize(void) {
+  s32 sceneId;
   s16 warpDest;
   struct ObjectEvent *objectEvent;
 
@@ -851,8 +851,8 @@ s32 Map_Initialize(void) {
   }
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_TimberRoomsB) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (OBJ_EVENT_NEAR_TALK) so that the leader reaches it across the
     // counter.
@@ -872,11 +872,11 @@ s32 Map_Initialize(void) {
                                    ANIM_WORKER_LIE_ASLEEP);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == TIMBER_ROOMS_B_SANCTUM) {
-      gSaveBlock.restartMap = mapId;
+      gSaveBlock.restartScene = sceneId;
       gSaveBlock.restartWarpDest = warpDest;
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
     objectEvent = ObjectEvent_GetById(LOCALID_INNKEEPER);
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;

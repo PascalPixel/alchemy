@@ -1,5 +1,5 @@
 /// @file
-/// Timber rooms A (MapId_TimberRoomsA), a sheet of rooms drawn in timber, all
+/// Timber rooms A (SceneId_TimberRoomsA), a sheet of rooms drawn in timber, all
 /// of them inside Suhalla's buildings, whose rooms are told apart by the warp
 /// destination the party arrives at, and whose area name follows it:
 ///
@@ -47,7 +47,7 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 /// The object events, numbering the rows of
 /// gTimberRoomsAObjectEventTemplates and of
@@ -128,19 +128,19 @@ enum TimberRoomsALocalId {
 
 enum { SHOP_SUHALLA = 31, INN_SUHALLA = 10 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gTimberRoomsAWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) {
+const struct MapWarpRegion *Scene_GetWarpRegions(void) {
   return gTimberRoomsARegions;
 }
 
-const u32 *Map_GetWarps(void) { return gTimberRoomsAWarps; }
+const u32 *Scene_GetWarps(void) { return gTimberRoomsAWarps; }
 
 /// Suhalla's people, joined after Babi's audience by Iodem, the wounded
 /// soldiers and the travelers the sandstorms brought.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gTimberRoomsAObjectEventTemplatesAfterAudience;
   }
@@ -519,14 +519,14 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
     Script_Wait(10);
     // Back to the map section's own music.
-    Map_PlayMusic();
+    Scene_PlayMusic();
     Script_End();
   }
 }
 
 /// The doors and inner warps, people and ovens of Suhalla's buildings and
 /// Suhalla Sanctum, before or after Babi's audience.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gTimberRoomsAEventsAfterAudience;
   }
@@ -537,7 +537,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// innkeeper behind their counters, and the two wounded soldiers lying in their
 /// beds. TIMBER_ROOMS_A_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
   if (gSaveBlock.warpDest == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);

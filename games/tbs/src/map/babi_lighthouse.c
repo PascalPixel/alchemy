@@ -1,9 +1,9 @@
 /// @file Babi Lighthouse and the road up to it: four maps in one overlay, in
-/// three of the game's areas. MapId_RoadToBabiLighthouse is the Road to Babi
-/// Lighthouse, entered from the world map; MapId_BabiLighthouseEntry is the
-/// Babi Lighthouse Entry; MapId_BabiLighthouseLuff and
-/// MapId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// warp table, the other getters choose by gSaveBlock.mapId with the road as
+/// three of the game's areas. SceneId_RoadToBabiLighthouse is the Road to Babi
+/// Lighthouse, entered from the world map; SceneId_BabiLighthouseEntry is the
+/// Babi Lighthouse Entry; SceneId_BabiLighthouseLuff and
+/// SceneId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
+/// warp table, the other getters choose by gSaveBlock.sceneId with the road as
 /// the fallback, and BabiLighthouse_SetupMap restores the map being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
@@ -49,7 +49,7 @@
 #include "save_block.h"
 #include "version.h"
 #include "heap_slots.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/babi_lighthouse.h"
 #include "unit/map/common/effect_spawn.h"
@@ -312,16 +312,16 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   FieldScript_End();
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BabiLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryWarpDests;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseLuff) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
     return gBabiLighthouse_LuffWarpDests;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseStoneDoor) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
     return gBabiLighthouse_StoneDoorWarpDests;
   }
   return gBabiLighthouse_RoadWarpDests;
@@ -329,8 +329,8 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
-const struct MapWarpRegion *Map_GetWarpRegions(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_BabiLighthouseEntry) {
+const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -339,16 +339,16 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
 /// The four maps share one warp table.
 const u32 *BabiLighthouse_GetWarps(void) { return gBabiLighthouse_Warps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BabiLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseLuff) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
     return gBabiLighthouse_LuffObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseStoneDoor) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
     return gBabiLighthouse_StoneDoorObjectEventTemplates;
   }
   return gBabiLighthouse_RoadObjectEventTemplates;
@@ -1243,16 +1243,16 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   }
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BabiLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryEvents;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseLuff) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
     return gBabiLighthouse_LuffEvents;
   }
-  if (mapId == (s32)&MapId_BabiLighthouseStoneDoor) {
+  if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
     return gBabiLighthouse_StoneDoorEvents;
   }
   return gBabiLighthouse_RoadEvents;
@@ -1334,7 +1334,7 @@ BabiLighthouse_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 s32 BabiLighthouse_SetupMap(void) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *placedObjectEvent;
-  s32 mapId;
+  s32 sceneId;
   s32 mapCopy;
   struct SaveBlock *state;
   s32 x;
@@ -1345,14 +1345,14 @@ s32 BabiLighthouse_SetupMap(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gSaveBlock;
-  mapId = state->mapId;
-  if (mapId != (s32)&MapId_RoadToBabiLighthouse) {
+  sceneId = state->sceneId;
+  if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
     state->retreatWarpDest = 1;
-    state->retreatMap = (s32)&MapId_BabiLighthouseEntry;
-    mapCopy = state->mapId;
+    state->retreatMap = (s32)&SceneId_BabiLighthouseEntry;
+    mapCopy = state->sceneId;
   }
   // The road: the moved pillar's metatile behavior where it stands.
-  if (mapId == (s32)&MapId_RoadToBabiLighthouse) {
+  if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
     placedObjectEvent = ObjectEvent_GetById(LOCALID_ROAD_PILLAR);
     x = placedObjectEvent->x.fixed >> 20;
     if (x == 20) {
@@ -1361,7 +1361,7 @@ s32 BabiLighthouse_SetupMap(void) {
         MapGrid_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
     }
-  } else if (mapCopy == (s32)&MapId_BabiLighthouseEntry) {
+  } else if (mapCopy == (s32)&SceneId_BabiLighthouseEntry) {
     // Set up the movable ledge pillars and the staggered object event
     // animations.
     ObjectEvent_SetSpriteColorById(LOCALID_LEFT_PILLAR, SPRITE_COLOR_GREY);
@@ -1423,7 +1423,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->flags = zero;
     placedObjectEvent->sprite->rotation = 0x8000;
     Import_ObjectEventSetAnimation(LOCALID_FALLEN_MAN_SCORCHED_GROUND, 0);
-  } else if (mapCopy == (s32)&MapId_BabiLighthouseLuff) {
+  } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
     // Match the arrival effect and fall to the warp destination used in this
     // room.
     switch (state->warpDest) {
@@ -1463,7 +1463,7 @@ s32 BabiLighthouse_SetupMap(void) {
       }
       break;
     }
-  } else if (mapId == (s32)&MapId_BabiLighthouseStoneDoor) {
+  } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
     // Restore the truth door and the onlookers' positions after each
     // discussion.
     ObjectEvent_GetById(LOCALID_LEFT_DOOR)->steeringFlags &=

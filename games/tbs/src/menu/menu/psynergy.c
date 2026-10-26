@@ -38,7 +38,7 @@
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a member takes effect here. When the player picks Psynergy to use on the
 /// field, it is recorded as the field's Psynergy request (FieldWork's
-/// psynergy, member << 10 | Psynergy), which Map_Run hands to
+/// psynergy, member << 10 | Psynergy), which SceneManager_Run hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
@@ -321,7 +321,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   action = Ability_Get(PSYNERGY_ABILITY_MASK &
                        ((struct PsynergyMenuWork *)gMenuWork)->sideAction[0]);
-  if (Map_HasFieldPsynergyEventFar(action->fieldPsynergy) != 0) {
+  if (Scene_HasFieldPsynergyEventFar(action->fieldPsynergy) != 0) {
     return 0;
   }
   classification = 2;
@@ -962,12 +962,12 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
       MENU_DRAW_DESCRIPTION(description, menu->infoWindow, 0, 0);
     }
   } else {
-    // BUG: clears FLAG_MAP_TEMP_FF instead of FLAG_MENU_INFO_KEPT, so a kept
+    // BUG: clears FLAG_SCENE_TEMP_FF instead of FLAG_MENU_INFO_KEPT, so a kept
     // message keeps the descriptions away until another screen clears it.
 #ifdef BUGFIX
     GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
 #else
-    GameFlag_ClearFar(FLAG_MAP_TEMP_FF);
+    GameFlag_ClearFar(FLAG_SCENE_TEMP_FF);
 #endif
   }
 

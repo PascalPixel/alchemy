@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave (MapId_GomaCavePillar), the room of two pillars and a stump,
+/// Goma Cave (SceneId_GomaCavePillar), the room of two pillars and a stump,
 /// in the cave in the Goma Range that the mayor of Vault tells the party to
 /// pass through on the way to Bilibin.
 ///
@@ -79,9 +79,9 @@
 #include "flags.h"
 #include "songs.h"
 
-// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
-// their own.
+// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// the party enters another map section, and other map sections use the numbers
+// for their own.
 /// The stump has been pushed over into the room below.
 /// ★ Named from what the player sees: a tree stump standing on a ledge (its
 /// render)
@@ -228,15 +228,15 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   }
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gGomaCavePillar_WarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gGomaCavePillar_Warps; }
+const u32 *Scene_GetWarps(void) { return gGomaCavePillar_Warps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCavePillar_ObjectEventTemplates;
 }
 
@@ -536,7 +536,7 @@ static void EventScript_JumpGapWest(void) {
 #endif
 }
 
-const struct MapEvent *Map_GetEvents(void) { return gGomaCavePillar_Events; }
+const struct MapEvent *Scene_GetEvents(void) { return gGomaCavePillar_Events; }
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
 /// Djinni joins the party; once the Djinni's script is over, it raises
@@ -597,7 +597,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
 /// Sets up the room as the party enters: the pillars and the stump where the
 /// party left them. WARP_DEST_STUMP_FALL plays the stump's fall; after a won
 /// battle with Forge, the man's reaction starts.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
   struct FieldWork *work;
 

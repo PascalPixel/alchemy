@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi-bound Ship (MapId_TolbiShipMast), the top of its mast, where the
+/// Tolbi-bound Ship (SceneId_TolbiShipMast), the top of its mast, where the
 /// ship's lookout (LOCALID_LOOKOUT) keeps watch: one of the ship's three maps
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
@@ -7,7 +7,7 @@
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// events here, each leading on into the next; during the attacks the
-/// map a defeat returns to (gSaveBlock.restartMap) is set to
+/// map a defeat returns to (gSaveBlock.restartScene) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -48,7 +48,7 @@
 
 #include "action_script.h"
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/tolbi_ship_mast.h"
 #include "unit/overworld/overworld.h"
@@ -382,17 +382,17 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
     gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
     gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
     gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunLandingSequence();
     break;
@@ -876,7 +876,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+  gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
   gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);

@@ -1,8 +1,8 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three maps that share one overlay: MapId_KalayDocks,
-/// MapId_TolbiDocks and MapId_CottageRoomsE, the sheet that holds a room at
-/// each. The getters pick each map's tables by gSaveBlock.mapId, and three
+/// Karagol Sea, in three maps that share one overlay: SceneId_KalayDocks,
+/// SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet that holds a room at
+/// each. The getters pick each map's tables by gSaveBlock.sceneId, and three
 /// story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the
 /// ship has made its crossing (set on the world map,
 /// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
@@ -31,7 +31,7 @@
 /// lead to the world map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
 /// KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
 /// (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
-/// MapId_TolbiShipDeck) and through a door (coord event 10) into the building
+/// SceneId_TolbiShipDeck) and through a door (coord event 10) into the building
 /// beside them, whose room is on CottageRoomsE.
 ///
 /// Cottage rooms E (CottageRoomsE) is a sheet of rooms drawn as cottages: the
@@ -85,7 +85,7 @@
 #include "tbs_edition.h"
 #include "kalay_tolbi_docks.h"
 #include "text/msg_ids.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "types.h"
 #include "script_layer.h"
 #include "call.h"
@@ -279,15 +279,15 @@ static void KalayTolbiDocks_GroundJoins(void) {
 /// Selects the warp destinations of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
 const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_KalayDocks) {
+  if (sceneId == (s32)&SceneId_KalayDocks) {
     return gKalayTolbiDocks_KalayWarpDests;
   }
-  if (mapId == (s32)&MapId_TolbiDocks) {
+  if (sceneId == (s32)&SceneId_TolbiDocks) {
     return gKalayTolbiDocks_TolbiWarpDests;
   }
-  if (mapId == (s32)&MapId_CottageRoomsE) {
+  if (sceneId == (s32)&SceneId_CottageRoomsE) {
     return gKalayTolbiDocks_InteriorWarpDests;
   }
   return gKalayTolbiDocks_NoWarpDests;
@@ -297,8 +297,8 @@ const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The warps of the three maps, each map's after its header word (a warp of
 /// kind 0): both docks lead to the world map, onto the ship
-/// (MapId_TolbiShipDeck) and into their rooms
-/// (MapId_CottageRoomsE), which lead back to their docks.
+/// (SceneId_TolbiShipDeck) and into their rooms
+/// (SceneId_CottageRoomsE), which lead back to their docks.
 const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
 
 /// Each map's people before the crossing, once the ship has crossed and not
@@ -306,23 +306,23 @@ const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ObjectEventTemplate *
 KalayTolbiDocks_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_KalayDocks) {
+  if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayObjectEventTemplatesShipGone;
     }
     return gKalayTolbiDocks_KalayObjectEventTemplates;
   }
 
-  if (mapId == (s32)&MapId_TolbiDocks) {
+  if (sceneId == (s32)&SceneId_TolbiDocks) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiObjectEventTemplatesStranded;
     }
     return gKalayTolbiDocks_TolbiObjectEventTemplates;
   }
 
-  if (mapId == (s32)&MapId_CottageRoomsE) {
+  if (sceneId == (s32)&SceneId_CottageRoomsE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorObjectEventTemplatesStranded;
     }
@@ -353,23 +353,23 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 
 /// Selects each map's events for the same three times as its people.
 const struct MapEvent *KalayTolbiDocks_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_KalayDocks) {
+  if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayEventsShipGone;
     }
     return gKalayTolbiDocks_KalayEvents;
   }
 
-  if (mapId == (s32)&MapId_TolbiDocks) {
+  if (sceneId == (s32)&SceneId_TolbiDocks) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiEventsStranded;
     }
     return gKalayTolbiDocks_TolbiEvents;
   }
 
-  if (mapId == (s32)&MapId_CottageRoomsE) {
+  if (sceneId == (s32)&SceneId_CottageRoomsE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorEventsStranded;
     }
@@ -674,11 +674,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
-  if (gSaveBlock.mapId == (s32)&MapId_KalayDocks) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_KalayDocks) {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gSaveBlock.mapId == (s32)&MapId_TolbiDocks) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_TolbiDocks) {
       ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -699,11 +699,11 @@ s32 KalayTolbiDocks_Initialize(void) {
   if (gSaveBlock.warpDest == KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gSaveBlock.mapId == (s32)&MapId_KalayDocks) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gSaveBlock.mapId == (s32)&MapId_TolbiDocks) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gSaveBlock.mapId == (s32)&MapId_CottageRoomsE) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_CottageRoomsE) {
     KalayTolbiDocks_PrepareInterior();
   }
   return 0;

@@ -1,13 +1,13 @@
 /// @file
 /// Altin Peak, the mine below Altin that its villagers and the Alpine
 /// Crossing's signpost call Altin Mine: eleven maps,
-/// MapId_AltinPeakFirstWaterBeast to MapId_AltinPeakWestExit, whose area
+/// SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit, whose area
 /// name is Altin Peak, except that the international editions call
 /// AltinPeakSouthEntrance the Alpine Crossing when the party comes in from
 /// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
 /// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each map is a room
-/// of the mine, and the getters pick each room's tables by gSaveBlock.mapId,
-/// all the rooms share one warp table, and Map_Initialize calls the setup of
+/// of the mine, and the getters pick each room's tables by gSaveBlock.sceneId,
+/// all the rooms share one warp table, and Scene_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there.
 ///
@@ -71,7 +71,7 @@
 #include "version.h"
 #include "macros.h"
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/altin_peak.h"
 #include "unit/overworld/overworld.h"
@@ -113,7 +113,7 @@
 #include "objcmd.h"
 #include "irq.h"
 #include "fixed_math.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "map_grid_scroll.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -282,20 +282,20 @@ enum {
   /// Frost has frozen the room's first puddle.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_ALTIN_PEAK_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_ALTIN_PEAK_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// Frost has frozen AltinPeakFirstWaterBeast's second puddle or
   /// AltinPeakSpritz's second.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
+  FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltinPeakSpritz's third puddle.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
   /// floor (its render)
-  FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN = FLAG_MAP_TEMP_04,
+  FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
   /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
   /// ★ Named from the game: "Watch for falling rocks!"
   /// (MsgAltinWatchFallingRocks)
-  FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_MAP_TEMP_05
+  FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 
 /// A chest searched while facing the given way.
@@ -360,89 +360,89 @@ static s32 AltinPeak_FlyDebris(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_FirstWaterBeastWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakRailTunnel) {
+  if (sceneId == (s32)&SceneId_AltinPeakRailTunnel) {
     return gAltinPeak_RailTunnelWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakSecondWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     return gAltinPeak_SecondWaterBeastWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakSouthEntrance) {
+  if (sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
     return gAltinPeak_SouthEntranceWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakThirdWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     return gAltinPeak_ThirdWaterBeastWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakPool) {
+  if (sceneId == (s32)&SceneId_AltinPeakPool) {
     return gAltinPeak_PoolWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakSpritz) {
+  if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
     return gAltinPeak_SpritzWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakJunction) {
+  if (sceneId == (s32)&SceneId_AltinPeakJunction) {
     return gAltinPeak_JunctionWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakFallingRocks) {
+  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_FallingRocksWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakHydrosStatue) {
+  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_HydrosStatueWarpDests;
   }
-  if (mapId == (s32)&MapId_AltinPeakWestExit) {
+  if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
     return gAltinPeak_WestExitWarpDests;
   }
   return gAltinPeak_WarpDestsOther;
 }
 
 /// AltinPeakFallingRocks and AltinPeakHydrosStatue have regions.
-const struct MapWarpRegion *Map_GetWarpRegions(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_AltinPeakFallingRocks) {
+  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_FallingRocksRegions;
   }
-  if (mapId == (s32)&MapId_AltinPeakHydrosStatue) {
+  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_HydrosStatueRegions;
   }
   return 0;
 }
 
 /// All the rooms share one warp table.
-const u32 *Map_GetWarps(void) { return gAltinPeak_Warps; }
+const u32 *Scene_GetWarps(void) { return gAltinPeak_Warps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_FirstWaterBeastObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakSecondWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     return gAltinPeak_SecondWaterBeastObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakThirdWaterBeast) {
+  if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     return gAltinPeak_ThirdWaterBeastObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakPool) {
+  if (sceneId == (s32)&SceneId_AltinPeakPool) {
     return gAltinPeak_PoolObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakSpritz) {
+  if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
     return gAltinPeak_SpritzObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakJunction) {
+  if (sceneId == (s32)&SceneId_AltinPeakJunction) {
     return gAltinPeak_JunctionObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakFallingRocks) {
+  if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_FallingRocksObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakHydrosStatue) {
+  if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_HydrosStatueObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltinPeakWestExit) {
+  if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
     return gAltinPeak_WestExitObjectEventTemplates;
   }
   return gAltinPeak_ObjectEventTemplatesOther;
@@ -485,7 +485,7 @@ static void AltinPeak_RideCart(s32 log) {
   Sound_PlaySong(SE_DOOR_CLOSE);
   AltinPeak_RollCart(log, 0);
   WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
 }
 
 /// The party fights the first water beast. Talking to (or reading the mind of)
@@ -493,7 +493,7 @@ static void AltinPeak_RideCart(s32 log) {
 /// room's warp destination after battle.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_AltinPeakFirstWaterBeast,
+  FieldScript_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -503,7 +503,7 @@ static void AltinPeak_FightFirstWaterBeast(void) {
 /// one's does, from its own room.
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_AltinPeakSecondWaterBeast,
+  FieldScript_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -513,7 +513,7 @@ static void AltinPeak_FightSecondWaterBeast(void) {
 /// one's does, from its own room.
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_AltinPeakThirdWaterBeast,
+  FieldScript_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
@@ -804,7 +804,7 @@ static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Sound_PlaySong(SE_CHEST_CLOSE);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -828,7 +828,7 @@ static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Sound_PlaySong(SE_CHEST_CLOSE);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -847,7 +847,7 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   }
   WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -866,7 +866,7 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   }
   WaitFrames(20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -1128,7 +1128,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
     ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   }
-  Map_PlayMusic();
+  Scene_PlayMusic();
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
@@ -1226,34 +1226,34 @@ static void AltinPeak_ReadFallingRockSign(void) {
 
 /// AltinPeakFirstWaterBeast has its own map events once the first drain has
 /// lowered its water.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   const struct MapEvent *table;
 
-  if (gSaveBlock.mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastEventsDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastEvents;
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakRailTunnel) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakRailTunnel) {
     table = gAltinPeak_RailTunnelEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSecondWaterBeast) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     table = gAltinPeak_SecondWaterBeastEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSouthEntrance) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
     table = gAltinPeak_SouthEntranceEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakThirdWaterBeast) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     table = gAltinPeak_ThirdWaterBeastEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakPool) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakPool) {
     table = gAltinPeak_PoolEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSpritz) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSpritz) {
     table = gAltinPeak_SpritzEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakJunction) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakJunction) {
     table = gAltinPeak_JunctionEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakFallingRocks) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     table = gAltinPeak_FallingRocksEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakHydrosStatue) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
     table = gAltinPeak_HydrosStatueEvents;
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakWestExit) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakWestExit) {
     table = gAltinPeak_WestExitEvents;
   } else {
     table = gAltinPeak_EventsOther;
@@ -1550,26 +1550,26 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 
 /// Sets up the room being entered: puzzles already solved and the water
 /// levels already lowered. Returns 0.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     AltinPeak_RestoreFirstWaterBeastRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSecondWaterBeast) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     AltinPeak_RestoreSecondWaterBeastRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSouthEntrance) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
     AltinPeak_RestoreSouthEntranceRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakThirdWaterBeast) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     AltinPeak_RestoreThirdWaterBeastRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakPool) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakPool) {
     AltinPeak_RestorePoolRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakSpritz) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSpritz) {
     AltinPeak_RestoreSpritzRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakFallingRocks) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
     AltinPeak_RestoreFallingRocksRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakHydrosStatue) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
     AltinPeak_RestoreHydrosStatueRoom();
-  } else if (gSaveBlock.mapId == (s32)&MapId_AltinPeakWestExit) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakWestExit) {
     AltinPeak_RestoreWestExitRoom();
   }
   return 0;
@@ -2037,7 +2037,7 @@ static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
 
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_MAP);
 }
 
@@ -2212,7 +2212,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STATUE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_AltinPeakHydrosStatue,
+  FieldScript_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
@@ -2691,7 +2691,7 @@ s8 gAltinPeak_PaletteScript[] = {
 
 /// AltinPeakFirstWaterBeast's beast keeps turning to face the party leader.
 s32 gAltinPeak_FaceLeaderScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

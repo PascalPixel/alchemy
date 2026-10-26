@@ -12,10 +12,10 @@
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
 ///
-/// - Imil (MapId_Imil), the village. A young man shivers and sneezes in the
+/// - Imil (SceneId_Imil), the village. A young man shivers and sneezes in the
 ///   snow, waiting for Mia, and a strongman counts out his exercises against
 ///   the cold. Six doors (coord events 51 to 56) open into the houses, the
-///   shops, the inn and the Sanctum (MapId_IceRooms),
+///   shops, the inn and the Sanctum (SceneId_IceRooms),
 ///   IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH lead out to the world
 ///   map, and the way north (coord event 4) leads into Imil Falls Cave; coming
 ///   back out of it (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the
@@ -30,7 +30,7 @@
 ///   or the raised ground, and once it lands at cell (15, 7) it stays there for
 ///   the rest of the visit (a temporary flag). Searching finds 9 coins, a Vial
 ///   and a Lucky Medal.
-/// - Ice rooms (MapId_IceRooms), a sheet of rooms drawn in ice, all of them
+/// - Ice rooms (SceneId_IceRooms), a sheet of rooms drawn in ice, all of them
 ///   Imil's: inside the houses, the shops and the inn, whose area name is Imil;
 ///   by ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil Sanctum.
 ///   While the epidemic lasts the weapon and armor sellers are sick: searching
@@ -69,7 +69,7 @@
 #include "version.h"
 #include "save_block.h"
 #include "keystate.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/imil.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -201,13 +201,13 @@ enum ImilTownFlag {
   /// Whether the leader leaves footprints in the snow, from where he stands
   /// (Imil_UpdateFootprints); the one set says which he last did.
   /// ★ Named from its area name: Imil
-  FLAG_IMIL_NO_FOOTPRINTS = FLAG_MAP_TEMP_00,
+  FLAG_IMIL_NO_FOOTPRINTS = FLAG_SCENE_TEMP_00,
   /// ★ Named from its area name: Imil
-  FLAG_IMIL_FOOTPRINTS = FLAG_MAP_TEMP_01,
+  FLAG_IMIL_FOOTPRINTS = FLAG_SCENE_TEMP_01,
   /// Move has pushed the snowman to its place, for the rest of the visit.
   /// ★ Named from what the player sees: a snowman in a red hat and green scarf
   /// (its render)
-  FLAG_IMIL_SNOWMAN_MOVED = FLAG_MAP_TEMP_03
+  FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
 /// Imil's shops, by their numbers in the shop table.
@@ -304,7 +304,7 @@ static s32 Imil_UpdateShiver(struct Object *interpreter) {
 
 /// Imil is two maps: the village, and its houses and Sanctum.
 const struct MapWarpDest *Imil_GetWarpDests(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
     return gImil_InteriorWarpDests;
   }
   return gImil_TownWarpDests;
@@ -320,9 +320,9 @@ const u32 *Imil_GetWarps(void) { return gImil_Warps; }
 const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *script;
 
-  if (gSaveBlock.mapId == ((s32)&MapId_IceRooms)) {
+  if (gSaveBlock.sceneId == ((s32)&SceneId_IceRooms)) {
     script = gImil_InteriorObjectEventTemplates;
-    Map_AssignViewFlags(script);
+    Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       // A byte view: written as script[row].talkFacing, the row's address is
       // formed first.
@@ -350,7 +350,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct MapEvent *Imil_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
     return gImil_InteriorEvents;
   }
   return gImil_TownEvents;
@@ -840,7 +840,7 @@ s32 Imil_Initialize(void) {
   struct ObjectEvent *leader;
   s32 warpDest;
 
-  if (gSaveBlock.mapId == (s32)&MapId_Imil) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_Imil) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
@@ -861,7 +861,7 @@ s32 Imil_Initialize(void) {
         gSaveBlock.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
     // Restore each interior's occupants before running its arrival script.
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1815,7 +1815,7 @@ s32 gImil_MiaRunOutScript[] = {
 };
 
 s32 gImil_FaceTargetScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

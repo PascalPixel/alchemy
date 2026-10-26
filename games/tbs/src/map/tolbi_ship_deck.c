@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi-bound Ship (MapId_TolbiShipDeck), its deck: the ship that carries
+/// Tolbi-bound Ship (SceneId_TolbiShipDeck), its deck: the ship that carries
 /// the party and a tour group bound for Colosso across the Karagol Sea from
 /// Kalay to Tolbi. The ship's other maps are its mast (tolbi_ship_mast.c)
 /// and below decks (ship_rooms.c). The voyage's stage, read from
@@ -51,7 +51,7 @@
 ///   ship sails on to Tolbi.
 /// - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
 ///   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
-///   leads ashore to Tolbi Docks (MapId_TolbiDocks).
+///   leads ashore to Tolbi Docks (SceneId_TolbiDocks).
 
 #include "action_script.h"
 #include "flags.h"
@@ -80,7 +80,7 @@
 #include "field_service.h"
 #include "heap_slots.h"
 #include "edition.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
@@ -88,9 +88,9 @@
 #include "heap.h"
 #include "fixed_math.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another map section, and other map sections use the numbers for their
-// own.
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 
 /// "There's a huge sea monster on the ship!": the deck shakes until the
 /// Kraken is defeated (set in ship_rooms.c).
@@ -340,11 +340,11 @@ enum TolbiShipDeckMetatileBehavior {
 /// The door to the passengers' hold has been drawn open this visit.
 /// ★ Named from the game: "I saw some warriors in among the passengers
 /// belowdecks." (MsgTolbiTolbiShipThenTheyAreDangerous)
-#define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_MAP_TEMP_71
+#define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_SCENE_TEMP_71
 /// The door to the captain's quarters has been drawn open this visit.
 /// ★ Named from the game: "Where else? To the captain's quarters, of course."
 /// (MsgTolbiShipIfWeArentGoingSet)
-#define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_MAP_TEMP_72
+#define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_SCENE_TEMP_72
 
 /// An action-script call: shows the object event's sprite. Returns 0 to end the
 /// call.
@@ -2163,10 +2163,10 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(LOCALID_IVAN, 248, 564);
   ObjectEvent_WalkTo(LOCALID_MIA, 248, 564);
   FieldScript_WaitFrames(20);
-  gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+  gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
   gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
+  FieldScript_SetNextDestination((s32)&SceneId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
   FieldScript_End();
@@ -3192,7 +3192,7 @@ const s32 gTolbiShipDeck_CaptainStepsAsideActions[] = {
 /// The crew member's and the tour guide's impatience at Kalay: they squash
 /// and stretch on the spot, the wait between in their timer.
 const s32 gTolbiShipDeck_SquashAndStretchActions[] = {
-    SC_CALL(Map_SquashAndStretch),
+    SC_CALL(Scene_SquashAndStretch),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -11,7 +11,7 @@
 /// the finals day. FLAG_COLOSSO_OVER, set after the third finals match, closes
 /// the colosseum until next year.
 ///
-/// - Colosseum Entrance (MapId_ColosseumEntrance), before the gates,
+/// - Colosseum Entrance (SceneId_ColosseumEntrance), before the gates,
 ///   reached from Tolbi. During the trials the crowd cannot get in: its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
@@ -28,12 +28,12 @@
 ///   ColosseumEntrance_UpdateEntranceCells changes the layout's cells before
 ///   the gates, and two people linger to say the colosseum is closed until next
 ///   year. COLOSSEUM_ENTRANCE_TO_TOLBI leads back to Tolbi.
-/// - Colosseum Tunnel (MapId_ColosseumTunnel), the passage from Babi's
+/// - Colosseum Tunnel (SceneId_ColosseumTunnel), the passage from Babi's
 ///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
 ///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
 ///   two warps.
-/// - Colosseum (MapId_Colosseum), one map that holds the stands, the trial
+/// - Colosseum (SceneId_Colosseum), one map that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
 ///   each a warp destination's camera box on it.
 ///   Every arrival is a warp destination of its own, and
@@ -58,7 +58,7 @@
 /// the finals stages.
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/colosseum_entrance.h"
 #include "unit/overworld/overworld.h"
@@ -339,20 +339,20 @@ enum {
   /// it asks whether Isaac is ready.
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
-  FLAG_FINALS_LINE_ARMED = FLAG_MAP_TEMP_34,
+  FLAG_FINALS_LINE_ARMED = FLAG_SCENE_TEMP_34,
   /// The leader has stepped onto the line since; its coord event is off.
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
-  FLAG_FINALS_LINE_REACHED = FLAG_MAP_TEMP_35
+  FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 
 const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Colosseum) {
+  if (sceneId == (s32)&SceneId_Colosseum) {
     return gColosseumWarpDests;
   }
-  if (mapId == (s32)&MapId_ColosseumEntrance) {
+  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
     return gColosseumEntranceWarpDests;
   }
   return gColosseumEntranceWarpDestsOther;
@@ -371,7 +371,7 @@ const struct ObjectEventTemplate *
 ColosseumEntrance_GetObjectEventTemplates(void) {
   const struct ObjectEventTemplate *table;
 
-  if (gSaveBlock.mapId == (s32)&MapId_Colosseum) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_Colosseum) {
     switch (gSaveBlock.warpDest) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
@@ -403,7 +403,7 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
       table = gColosseumObjectEventTemplates;
       break;
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_ColosseumEntrance) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_ColosseumEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceObjectEventTemplatesAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -418,18 +418,18 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
 }
 
 const struct MapEvent *ColosseumEntrance_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_ColosseumTunnel) {
+  if (sceneId == (s32)&SceneId_ColosseumTunnel) {
     return gColosseumTunnelEvents;
   }
-  if (mapId == (s32)&MapId_Colosseum) {
+  if (sceneId == (s32)&SceneId_Colosseum) {
     if (gSaveBlock.warpDest == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumEventsFromColosseumAzartMatchWest;
     }
     return gColosseumEvents;
   }
-  if (mapId == (s32)&MapId_ColosseumEntrance) {
+  if (sceneId == (s32)&SceneId_ColosseumEntrance) {
     return gColosseumEntranceEvents;
   }
   return gColosseumEntranceEventsOther;
@@ -1421,11 +1421,11 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 /// set up by the warp destination the party arrives at, and the Colosseum
 /// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Colosseum) {
+  if (sceneId == (s32)&SceneId_Colosseum) {
     ColosseumEntrance_ApplyArrivalState();
-  } else if (mapId == (s32)&MapId_ColosseumEntrance) {
+  } else if (sceneId == (s32)&SceneId_ColosseumEntrance) {
     ColosseumEntrance_UpdateEntranceCells();
   }
   return 0;

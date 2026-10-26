@@ -43,7 +43,7 @@ own setup run, which may send the party on at once. Then the map fades in, and
 the area's name is shown if the party has come into a new
 [map section](../../glossary.md#map-section).
 
-`Map_Run` runs one map, and its state, the requests among it, is
+`SceneManager_Run` runs one map, and its state, the requests among it, is
 `struct FieldWork`, reached through `gFieldWork`. `ObjectEvent_Snapshot`
 remembers where everyone stood before a battle and `ObjectEvent_Restore` puts
 them back. The requests, in the order the loop takes them:
@@ -189,9 +189,9 @@ matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-`Game_MainLoop` is the game's main loop; [the front
+`SequenceManager_Run` is the game's main loop; [the front
 page](../../README.md#the-main-loop) describes it. For a map it clears the
-map's flags, loads the overlay and runs `Map_Run`; for a battle or minigame it
+map's flags, loads the overlay and runs `SceneManager_Run`; for a battle or minigame it
 runs that and then loads the map again. The overlay supplies the map's tables
 and setup, and calls back into this folder through its
 [import table](../../glossary.md#entry-table-and-import-table) for the
@@ -255,7 +255,7 @@ the sum non-zero, by which time a later cell's behavior may have replaced the
 action. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and
 `BUGFIX` tests each request instead.
 
-`Map_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary entry
+`Scene_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary entry
 to a map, even within a map section: the Djinn's hiding flags
 (`FLAG_DJINN_HIDING_FIRST` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them

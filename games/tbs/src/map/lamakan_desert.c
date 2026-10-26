@@ -1,5 +1,5 @@
 /// @file
-/// Lamakan Desert (MapId_LamakanDesertEast to MapId_LamakanDesertCave):
+/// Lamakan Desert (SceneId_LamakanDesertEast to SceneId_LamakanDesertCave):
 /// four maps that are all Lamakan Desert in the game's area names and share one
 /// map event table, built around a heat gauge and the secrets Reveal uncovers.
 ///
@@ -59,7 +59,7 @@
 #include "script_layer.h"
 #include "map_tables.h"
 #include "fixed_point_position.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -70,7 +70,7 @@
 #include "sound.h"
 #include "system.h"
 #include "text/msg_ids.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "iwram_call.h"
 #include "field_service.h"
 #include "field_effect.h"
@@ -112,12 +112,12 @@ enum LamakanDesertMetatileBehavior {
 };
 
 enum {
-  /// FLAG_MAP_TEMP_00: a bath, a pit or the Manticore is under way.
+  /// FLAG_SCENE_TEMP_00: a bath, a pit or the Manticore is under way.
   /// ★ Named from its area name: Lamakan Desert
-  FLAG_DESERT_EVENT_RUNNING = FLAG_MAP_TEMP_00,
-  /// FLAG_MAP_TEMP_01: Reveal shows the pits.
+  FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
+  /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
   /// ★ Named from the game: "Reveal" (MsgAbilityName)
-  FLAG_SECRETS_REVEALED = FLAG_MAP_TEMP_01,
+  FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
   /// The heat gauge has passed a quarter, where the first complaints come.
   /// ★ Named from the game: "This desert is much hotter than I ever imagined"
   /// (MsgMountainNorthAltinMineWestLama)
@@ -227,18 +227,18 @@ LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
 
 /// Where the party can enter each of the four maps.
 const struct MapWarpDest *LamakanDesert_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_LamakanDesertEast) {
+  if (sceneId == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertEastWarpDests;
   }
-  if (mapId == (s32)&MapId_LamakanDesertSmog) {
+  if (sceneId == (s32)&SceneId_LamakanDesertSmog) {
     return gLamakanDesertSmogWarpDests;
   }
-  if (mapId == (s32)&MapId_LamakanDesertManticore) {
+  if (sceneId == (s32)&SceneId_LamakanDesertManticore) {
     return gLamakanDesertManticoreWarpDests;
   }
-  if (mapId == (s32)&MapId_LamakanDesertCave) {
+  if (sceneId == (s32)&SceneId_LamakanDesertCave) {
     return gLamakanDesertCaveWarpDests;
   }
   return gLamakanDesertWarpDestsOther;
@@ -254,7 +254,7 @@ const u32 *LamakanDesert_GetWarps(void) { return gLamakanDesertWarps; }
 /// way back from the Manticore's battle, marks it beaten; in the patched
 /// editions it also sets FLAG_KALAY_REACHED.
 const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     if (gSaveBlock.warpDest == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
       // XXX (no evidence): what this patch fixed; only Camelot's notes for
@@ -264,13 +264,13 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
 #endif
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertEast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertEastObjectEventTemplates;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertSmog) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     return gLamakanDesertSmogObjectEventTemplates;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     return gLamakanDesertManticoreObjectEventTemplates;
   }
   return gLamakanDesertObjectEventTemplatesOther;
@@ -314,7 +314,7 @@ static s32 Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertEast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
     MapGrid_CopyCells(70, 68, 4, 2, 22, 7);
     MapGrid_CopyCells(70, 68, 4, 2, 8, 10);
     MapGrid_CopyCells(70, 68, 4, 2, 23, 21);
@@ -322,7 +322,7 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 16, 42);
     MapGrid_CopyCells(70, 68, 4, 2, 36, 44);
     MapGrid_CopyCells(70, 68, 4, 2, 14, 55);
-  } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertSmog) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     MapGrid_CopyCells(70, 68, 4, 2, 42, 5);
     MapGrid_CopyCells(70, 68, 4, 2, 20, 11);
     MapGrid_CopyCellAttributes(70, 68, 4, 1, 20, 13);
@@ -341,7 +341,7 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 6, 46);
     MapGrid_CopyCells(70, 68, 4, 2, 27, 55);
     MapGrid_CopyCells(70, 68, 4, 2, 43, 56);
-  } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 8, 16);
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 6, 20);
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 10, 23);
@@ -367,7 +367,7 @@ static s32 Reveal_HideSecrets(void) {
     TreasureSpot_SetObjectEventPosition(markerId, 0, 0);
     markerId = markerId + 1;
   } while (markerId <= 107);
-  if (gSaveBlock.mapId != (s32)&MapId_LamakanDesertCave) {
+  if (gSaveBlock.sceneId != (s32)&SceneId_LamakanDesertCave) {
     ScanlineEffect_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
                              0x4000);
   }
@@ -389,7 +389,7 @@ static s32 Reveal_ShowSecrets(void) {
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertEast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
     MapGrid_CopyCells(64, 126, 4, 2, 22, 7);
     MapGrid_CopyCells(68, 126, 4, 2, 8, 10);
     MapGrid_CopyCells(72, 126, 4, 2, 23, 21);
@@ -398,7 +398,7 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(80, 126, 4, 2, 36, 44);
     MapGrid_CopyCells(84, 126, 4, 2, 14, 55);
     ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(400), PIXELS(364));
-  } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertSmog) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     MapGrid_CopyCells(64, 126, 4, 2, 42, 5);
     MapGrid_CopyCells(68, 126, 4, 2, 20, 11);
     MapGrid_CopyCellAttributes(68, 126, 4, 2, 20, 12);
@@ -422,7 +422,7 @@ static s32 Reveal_ShowSecrets(void) {
     ObjectEvent_SetPosition(LOCALID_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
     ObjectEvent_SetPosition(LOCALID_LAST_PIT, PIXELS(576), PIXELS(716));
     ObjectEvent_SetPosition(LOCALID_SMOG, PIXELS(648), PIXELS(408));
-  } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
     MapGrid_CopyCellAttributes(68, 124, 4, 1, 6, 20);
@@ -442,7 +442,7 @@ static s32 Reveal_ShowSecrets(void) {
     TreasureSpot_SetPosition(i, -1, -1);
   }
   TreasureSpot_MoveLeaderAway();
-  if (gSaveBlock.mapId != (s32)&MapId_LamakanDesertCave) {
+  if (gSaveBlock.sceneId != (s32)&SceneId_LamakanDesertCave) {
     ScanlineEffect_Stop();
   }
 }
@@ -453,7 +453,7 @@ static s32 Reveal_ShowSecrets(void) {
 static void LamakanDesert_FightManticore(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
   FieldScript_SetNextDestination(
-      (s32)&MapId_LamakanDesertManticore,
+      (s32)&SceneId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
@@ -585,10 +585,10 @@ static void LamakanDesert_BatheInOasis(void) {
   best = 0xf00000;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertEast) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
     points = gLamakanDesertEast_Oases;
-  } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertSmog) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     count = 5;
     points = gLamakanDesertSmog_Oases;
   } else {
@@ -982,20 +982,20 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   gSaveBlock.hazardLimit = 600;
   gSaveBlock.hazardMode = HAZARD_COUNT_ON_CELLS;
   gSaveBlock.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
-  if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertCave) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertCave) {
   } else {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
                                TASK_PRIORITY_MAP);
-    if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertEast) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
       MapGrid_CopyCells(22, 7, 4, 2, 64, 126);
       MapGrid_CopyCells(8, 10, 4, 2, 68, 126);
       MapGrid_CopyCells(23, 21, 4, 2, 72, 126);
       MapGrid_CopyCells(16, 42, 4, 2, 76, 126);
       MapGrid_CopyCells(36, 44, 4, 2, 80, 126);
       MapGrid_CopyCells(14, 55, 4, 2, 84, 126);
-    } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertSmog) {
+    } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
       MapGrid_CopyCells(42, 5, 4, 2, 64, 126);
       MapGrid_CopyCells(20, 11, 4, 2, 68, 126);
       MapGrid_CopyCells(14, 12, 4, 2, 72, 126);
@@ -1010,9 +1010,9 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       MapGrid_CopyCells(6, 46, 4, 2, 108, 126);
       MapGrid_CopyCells(27, 55, 4, 2, 112, 126);
       MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
-    } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
+    } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
-      Map_QueueMusic(SE_AMBIENT_WIND);
+      Scene_QueueMusic(SE_AMBIENT_WIND);
       MapGrid_CopyCells(8, 14, 4, 4, 64, v5);
       MapGrid_CopyCells(6, 18, 4, 4, 68, v5);
       MapGrid_CopyCells(10, 21, 4, 4, 72, v5);

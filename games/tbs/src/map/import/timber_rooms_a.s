@@ -26,7 +26,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Import_ScriptRequestWarp, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.Shop_Run, 1

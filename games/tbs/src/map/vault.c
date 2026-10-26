@@ -1,12 +1,12 @@
 /// @file
-/// Vault (MapId_Vault), "the town at the heart of Angara", as the party first
+/// Vault (SceneId_Vault), "the town at the heart of Angara", as the party first
 /// finds it after Mt. Aleph's eruption: its streets, with the townspeople,
 /// Ivan, the bell and the dog. The houses, the inn and its loft, where the
 /// search for Hammet's stolen Shaman's Rod plays out, are log_rooms_a.c.
-/// Map_GetObjectEventTemplates and Map_GetEvents choose their tables by
+/// Scene_GetObjectEventTemplates and Scene_GetEvents choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
-/// (FLAG_KALAY_REACHED) Map_Initialize sends it straight on to the town's
-/// later map (VAULT_TO_VAULT_REVISIT, MapId_VaultRevisit,
+/// (FLAG_KALAY_REACHED) Scene_Initialize sends it straight on to the town's
+/// later map (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
 /// vault_revisit.c).
 ///
 /// The story flags change the streets in order:
@@ -19,7 +19,7 @@
 ///   and a woman walks about looking for him.
 /// - While Ivan is helping the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
 ///   leaving by either gate has him stay behind (EventScript_IvanStaysBehind),
-///   and Map_Initialize has him rejoin when the party comes back in by a gate
+///   and Scene_Initialize has him rejoin when the party comes back in by a gate
 ///   or out of the Vault Sanctum.
 /// - Once the thieves are jailed, the townspeople thank the party, and the
 ///   dog, given a Bone (EventScript_GiveBoneToDog,
@@ -31,7 +31,7 @@
 /// beside the bell; it joins only in the later map. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
-/// (MapId_LogRoomsA), the jail (MapId_StoneRooms) and the Vault Sanctum
+/// (SceneId_LogRoomsA), the jail (SceneId_StoneRooms) and the Vault Sanctum
 /// (VAULT_TO_SANCTUM); the metatile behaviors the events answer are enum
 /// VaultMetatileBehavior (vault.h).
 ///
@@ -196,13 +196,13 @@ Vault_UpdateRoofComplainerProximity(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) { return gVault_WarpDests; }
+const struct MapWarpDest *Scene_GetWarpDests(void) { return gVault_WarpDests; }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gVault_Warps; }
+const u32 *Scene_GetWarps(void) { return gVault_Warps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_ObjectEventTemplatesAfterThieves;
   return gVault_ObjectEventTemplates;
@@ -276,7 +276,7 @@ static void EventScript_PeerIntoWell(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
@@ -867,14 +867,14 @@ static void EventScript_GiveBoneToDog(void) {
 /// children and the woman wanting the roof fixed stopping near the leader,
 /// and, while Ivan waits in Vault for the party, has him greet the two and
 /// rejoin.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct ObjectEvent *objectEvent;
   s32 lowBit;
   s32 zero;
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
-  // later map, MapId_VaultRevisit (vault_revisit.c).
+  // later map, SceneId_VaultRevisit (vault_revisit.c).
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Import_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
   }

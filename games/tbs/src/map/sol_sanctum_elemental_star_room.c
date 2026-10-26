@@ -1,6 +1,6 @@
 /// @file
-/// Elemental Star Room (MapId_SolSanctumElementalStarRoom), the chamber above
-/// the Luna and Sol rooms (MapId_SolSanctumLunaSolRooms) where the four
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom), the chamber above
+/// the Luna and Sol rooms (SceneId_SolSanctumLunaSolRooms) where the four
 /// Elemental Stars lie on their pedestals.
 ///
 /// The room follows the story flags in order:
@@ -20,7 +20,7 @@
 ///   captors stand round Jenna and Kraden, each with a word about the last
 ///   star.
 /// - Bagging the Mars Star sets the room quaking and takes the party to the
-///   eruption (EventScript_TakeMarsStar, MapId_SolSanctumEruption,
+///   eruption (EventScript_TakeMarsStar, SceneId_SolSanctumEruption,
 ///   sol_sanctum_eruption.c).
 ///
 /// Each pedestal's bg event row holds only until its flag is set, so a star is
@@ -1254,7 +1254,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set. Isaac bags the last star, and
 /// the room quakes until the event cuts away by
 /// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to the chamber's
-/// collapse (MapId_SolSanctumEruption).
+/// collapse (SceneId_SolSanctumEruption).
 static void EventScript_TakeMarsStar(void) {
   u8 pass;
   s32 member;
@@ -2324,7 +2324,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSolSanctumElementalStarRoom_AngleScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -1,4 +1,4 @@
-/// @file The grounds of McCoy's Palace in Bilibin: MapId_McCoyPalaceGrounds,
+/// @file The grounds of McCoy's Palace in Bilibin: SceneId_McCoyPalaceGrounds,
 /// with the area name McCoy's Palace, which the palace itself shares
 /// (mccoy_palace.c). Workers build Lady McCoy a new palace here, and two
 /// guards keep the gate of McCoy's own. Its people and talk follow two story
@@ -28,7 +28,7 @@
 /// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/mccoy_palace_grounds.h"
 #include "unit/map/common/object_orbit.h"
 #include "unit/overworld/overworld.h"
@@ -104,10 +104,10 @@ enum {
   /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the map
   /// is left.
   /// ★ Named from its area name: McCoy's Palace
-  FLAG_GATE_OPEN = FLAG_MAP_TEMP_00,
+  FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
-  FLAG_GUARD_SCOLDED = FLAG_MAP_TEMP_01,
+  FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
   /// has not yet entered the palace. The grounds are in another map section
   /// than Bilibin, so entering them clears it before the guard can read it.
@@ -122,19 +122,19 @@ static void McCoyPalaceGrounds_OpenGate(void);
 
 #include "common/object_facing.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gMcCoyPalaceGroundsWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
+const u32 *Scene_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
 
 /// The people outside McCoy's Palace. Once McCoy has turned the party away,
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_EAST_GUARD -
                                               LOCALID_FIRST_PLACED]
@@ -168,8 +168,8 @@ static void EventScript_SearchWell(void) {
 }
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     return gMcCoyPalaceGroundsEvents;
   }
   return gMcCoyPalaceGroundsNoEvents;
@@ -323,7 +323,7 @@ static void EventScript_EnterPalace(void) {
 
 /// Sets up the grounds outside McCoy's Palace: the west worker drawn in
 /// front, and the guards, Lady McCoy and the arrest as the story stands.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   struct ObjectEvent *objectEvent;
 
@@ -333,7 +333,7 @@ s32 Map_Initialize(void) {
   objectEvent->priorityFlags = 0;
   objectEvent->sprite->image.priority = 1;
 
-  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
   }
 
@@ -348,7 +348,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     GameFlag_Clear(FLAG_GATE_OPEN);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
-    Map_FloatNut(LOCALID_FLOATING_NUT);
+    Scene_FloatNut(LOCALID_FLOATING_NUT);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     ObjectEvent_SetPosition(LOCALID_WEST_GUARD, PIXELS(308), PIXELS(263));
@@ -490,7 +490,7 @@ u16 gPalaceGateOpenSteps[] = {
 
 /// A guard turns to keep facing the party.
 s32 gGuardWatchesParty[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -508,7 +508,7 @@ u32 gMcCoyPalaceGroundsWarps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: the getters return it for any map but MapId_McCoyPalaceGrounds,
+/// Unused: the getters return it for any map but SceneId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
 struct ObjectEventTemplate gMcCoyPalaceGroundsNoObjectEventTemplates[] = {
     { MAP_TABLE_END },

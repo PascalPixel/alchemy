@@ -1,13 +1,13 @@
 /// @file
-/// Vale (MapId_ValePlaza): the part of the village with the Psynergy Stone and
-/// the town gate, Vale's way out to the world. The map sees the prologue end
-/// and the journey begin, and ValePlaza_GetObjectEventTemplates and
+/// Vale (SceneId_ValePlaza): the part of the village with the Psynergy Stone
+/// and the town gate, Vale's way out to the world. The map sees the prologue
+/// end and the journey begin, and ValePlaza_GetObjectEventTemplates and
 /// ValePlaza_GetEvents pick its people and events by the time of the story. In
 /// story order:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
-///   (Vale, MapId_ValeStormyNight, by VALE_STORMY_NIGHT_TO_VALE_PLAZA), where
+///   (Vale, SceneId_ValeStormyNight, by VALE_STORMY_NIGHT_TO_VALE_PLAZA), where
 ///   Felix has fallen in. Walking up to the villagers (metatile behavior 20)
 ///   plays EventScript_SentToAidElders: Garet's grandfather, the mayor, sends
 ///   two strongmen to aid the elders holding the Boulder, then sends Isaac and
@@ -51,11 +51,11 @@
 /// party's PP at every time but the farewell. The ivy in three places
 /// (LOCALID_FIRST_IVY to LOCALID_THIRD_IVY) can be blown away with Whirlwind,
 /// each one's flag keeping it gone. The doors lead into the houses
-/// (MapId_CottageRoomsA) and into the inn and the forge
-/// (MapId_CottageRoomsB), the path west to the village (MapId_Vale) or, on
-/// the stormy night, back to the storm's map (MapId_ValeStormyNight), and the
+/// (SceneId_CottageRoomsA) and into the inn and the forge
+/// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
+/// the stormy night, back to the storm's map (SceneId_ValeStormyNight), and the
 /// warp row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM, which
-/// the warp table sends to Goma Cave (MapId_GomaCaveStream,
+/// the warp table sends to Goma Cave (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
 /// in every state of the map, the cell north of where the party arrives from
 /// Goma Cave (VALE_PLAZA_FROM_GOMA_CAVE_STREAM, at (186, 474)), so that way
@@ -65,7 +65,7 @@
 /// leads to them: VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE replays the
 /// strangers' departure, VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and
 /// takes VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST into Isaac's house
-/// (MapId_CottageRoomsB), and VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of
+/// (SceneId_CottageRoomsB), and VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of
 /// story flags and takes VALE_PLAZA_TO_BILIBIN
 /// (ValePlaza_SetProgressFlagsAndExit).
 ///
@@ -83,7 +83,7 @@
 #include "flags.h"
 #include "character_ids.h"
 #include "version.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/map/vale_plaza.h"
 #include "unit/map/common/effect_psynergy.h"
@@ -598,7 +598,7 @@ static void EventScript_DemonstratePsynergy(void) {
     ObjectMotion_SetVariantCallback(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 2);
     FieldScript_WaitFrames(15);
     // Flash the caster before starting the palette cycle and camera shake.
-    Map_StartEventPsynergy();
+    Scene_StartEventPsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
       ValePlaza_FlashPsynergyPalette(
@@ -623,7 +623,7 @@ static void EventScript_DemonstratePsynergy(void) {
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     WaitFrames(1);
-    Map_EndEventPsynergy();
+    Scene_EndEventPsynergy();
     ObjectEvent_ConfigureSpriteColor(LOCALID_STRONGMAN_SHOWING_PSYNERGY,
                                      SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(40);
@@ -716,7 +716,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
                                     ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
   // Charge the caster's display, then start both palette updates.
-  Map_StartEventPsynergy();
+  Scene_StartEventPsynergy();
   for (i = 0; i < 40; i++) {
     ValePlaza_FlashPsynergyPalette(
         ObjectEvent_GetById(LOCALID_STORM_ROCK_LIFTING_BOY));
@@ -744,7 +744,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
                                  SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
-  Map_EndEventPsynergy();
+  Scene_EndEventPsynergy();
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_STORM_ROCK_LIFTING_BOY,
                        30);
   Script_ShowMessage(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
@@ -835,9 +835,9 @@ static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
 
 // Vale's doors here: walking north into metatile behavior n opens door n and
 // takes warp n (Vale_RequestBackdropWarp), into the houses
-// (MapId_CottageRoomsA) or the inn and the forge (MapId_CottageRoomsB).
+// (SceneId_CottageRoomsA) or the inn and the forge (SceneId_CottageRoomsB).
 
-/// In Vale, opens the northwest door, into a house (MapId_CottageRoomsA,
+/// In Vale, opens the northwest door, into a house (SceneId_CottageRoomsA,
 /// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
 static void EventScript_OpenNorthwestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(44, 7, 248, 279);
@@ -845,7 +845,7 @@ static void EventScript_OpenNorthwestDoor(void) {
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and walks
-/// into the second forge room (MapId_CottageRoomsB,
+/// into the second forge room (SceneId_CottageRoomsB,
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
 ///
 /// Reached by walking north into metatile behavior 2 after Kalay; the other
@@ -863,35 +863,35 @@ static void EventScript_OpenNortheastDoor(void) {
 }
 
 /// In Vale, enters through the western door of the middle row of houses
-/// (MapId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
+/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
 static void EventScript_OpenCentralWestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
-/// (MapId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
+/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
 static void EventScript_OpenCentralEastDoor(void) {
   EventScript_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
 /// In Vale, opens the southwest door, into Vale's shops
-/// (MapId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST).
+/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST).
 static void EventScript_OpenSouthwestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST);
 }
 
 /// In Vale, opens the door at the west edge, into the forge
-/// (MapId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
+/// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
 static void EventScript_OpenWestEdgeDoor(void) {
   EventScript_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST);
 }
 
 /// In Vale, opens the southeast door, into the inn
-/// (MapId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST).
+/// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST).
 static void EventScript_OpenSoutheastDoor(void) {
   EventScript_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH);
@@ -1467,7 +1467,7 @@ static void ValePlaza_FightTravelers(void) {
   // The confrontation continues in battle; both outcomes return here.
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   {
-    const void *message = &MapId_ValePlaza;
+    const void *message = &SceneId_ValePlaza;
 
     FieldScript_SetNextDestination((s32)message,
                                    VALE_PLAZA_AFTER_TRAVELERS_BATTLE);
@@ -1483,7 +1483,7 @@ static void ValePlaza_FightTravelers(void) {
 ///
 /// Called by ValePlaza_Initialize from VALE_PLAZA_AFTER_TRAVELERS_BATTLE, after
 /// the battle, or VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE. Clears
-/// FLAG_VALE_STORM and takes VALE_PLAZA_TO_TITLE, to the title (MapId_Title,
+/// FLAG_VALE_STORM and takes VALE_PLAZA_TO_TITLE, to the title (SceneId_Title,
 /// TITLE_FROM_VALE_PLAZA), which then opens on Vale three years later
 /// (menu/title.c).
 static void EventScript_TravelersLeaveAfterBattle(void) {
@@ -2330,7 +2330,7 @@ s32 gValePlaza_SecondTravelerBounceActions[] = {
 };
 
 s32 gValePlaza_FaceTargetActions[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

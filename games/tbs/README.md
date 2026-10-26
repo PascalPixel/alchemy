@@ -82,9 +82,9 @@ At power-on the loop starts with the title screen, and the main menu comes
 next. Both are rows of the map table, run like maps though the party never
 walks there.
 
-The loop is `Game_MainLoop`; one pass through a field map is
-`Map_ResetFlagsOnEnter`, `Map_LoadOverlay`, `Map_Run` and `Map_TakeWarp`, and
-a battle's return is `Map_ReturnFromRun`. [Running a map](src/overworld/README.md)
+The loop is `SequenceManager_Run`; one pass through a field map is
+`Scene_ResetFlagsOnEnter`, `Scene_LoadOverlay`, `SceneManager_Run` and `Scene_TakeWarp`, and
+a battle's return is `Scene_ReturnFromSequence`. [Running a map](src/overworld/README.md)
 follows a field map from its arrival to its warp.
 
 The main loop is unlike most games'. In most games, the Pokémon games among
@@ -141,8 +141,8 @@ kind of map: there the party regains no
 takes the party back to where it entered the map section) doesn't work, and
 Avoid doesn't wear off.
 
-The table is `gMapHeaders`, one `struct MapHeader` a row; code names each map
-by its row's symbol, `MapId_<Place>`.
+The table is `gSceneHeaders`, one `struct SceneHeader` a row; code names each map
+by its row's symbol, `SceneId_<Place>`.
 
 | What                                                  | Count |
 | ----------------------------------------------------- | ----- |
@@ -242,7 +242,7 @@ the dependence takes, in [story order](glossary.md#the-places-in-story-order).
   sending the party to the title screen
   ([lemurian_ship.c](src/map/lemurian_ship.c)).
 
-[Places](src/field/map_headers.s) lists every map in story order with what
+[Places](src/field/scene_headers.s) lists every map in story order with what
 happens there.
 
 ## The world map
@@ -298,7 +298,7 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
   the windows text is drawn in.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far calls,
   overlays and songs.
-- [Places](src/field/map_headers.s): every map in story order, with its object
+- [Places](src/field/scene_headers.s): every map in story order, with its object
   event templates and map events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.

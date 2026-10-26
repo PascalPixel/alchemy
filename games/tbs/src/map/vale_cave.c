@@ -6,10 +6,10 @@
 /// Kraden's cottage, a run of Psynergy puzzles whose progress lives in map and
 /// map section flags.
 ///
-/// - Vale (MapId_ValeCaveMouth), the way in, a map section of its own (29).
+/// - Vale (SceneId_ValeCaveMouth), the way in, a map section of its own (29).
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
-///   Vale (MapId_ValeKradensCottage), whose
+///   Vale (SceneId_ValeKradensCottage), whose
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here;
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
@@ -17,7 +17,8 @@
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
 ///   FLAG_SHOW_LOCATION_NAME: entering a new map section sets that flag, but
 ///   this is still Vale.
-/// - Vale Cave (MapId_ValeCaveKite), one map in three parts, each with its own
+/// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each with its
+/// own
 ///   warp destinations and camera box; walking south into a ledge's cells hops
 ///   the leader down it (EventScript_HopDownLedge). In the first part
 ///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
@@ -43,7 +44,7 @@
 ///   walked into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST).
 ///   Its warps lead back to the first room, on to the third, and between its
 ///   own parts.
-/// - Vale Cave (MapId_ValeCaveLogs), the inner room, with three logs to push:
+/// - Vale Cave (SceneId_ValeCaveLogs), the inner room, with three logs to push:
 ///   one off a ledge (EventScript_PushLogOffLedge), one along the ledge until
 ///   it drops at its edge (EventScript_PushLogOverEdge) and one north
 ///   (EventScript_PushLogNorth), each clearing the cells it held. Its warps
@@ -85,7 +86,7 @@
 #include "system.h"
 #include "edition.h"
 #include "field_effect.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -178,18 +179,18 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 /// The holes' part: the western crates have sunk into their hole.
 /// ★ Named from what the player sees: stacks of wooden crates at the edge of
 /// the cave's water (its render)
-#define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_MAP_TEMP_00
+#define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_SCENE_TEMP_00
 /// The holes' part: the eastern crates have sunk into their hole.
 /// ★ Named from what the player sees: stacks of wooden crates at the edge of
 /// the cave's water (its render)
-#define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_MAP_TEMP_01
+#define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_SCENE_TEMP_01
 /// Kite's part: Kite has run off once (EventScript_KiteRunsOff).
 /// ★ Named from the game: "Kite" (MsgDjinnName)
-#define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_MAP_TEMP_00
+#define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_SCENE_TEMP_00
 /// Kite's part: Kite has run behind the ledge
 /// (EventScript_KiteRunsBehindLedge).
 /// ★ Named from the game: "Kite" (MsgDjinnName)
-#define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_MAP_TEMP_01
+#define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_SCENE_TEMP_01
 
 // The cave's map section flags. The second and third rooms are one map section,
 // so these last while the party goes between them; the first room is another.
@@ -212,32 +213,32 @@ static void ValeCave_ApplyEntryState(void);
 /// ★ Named from what the player sees: two logs standing north to south on the
 /// ledges either side of the water, and a third lying west to east south of it
 /// (its render)
-#define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_MAP_TEMP_02
+#define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
 /// In the third room, the eastern log has been pushed along the ledge and over
 /// its edge.
 /// ★ Named from what the player sees: two logs standing north to south on the
 /// ledges either side of the water, and a third lying west to east south of it
 /// (its render)
-#define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_MAP_TEMP_03
+#define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_SCENE_TEMP_03
 /// In the third room, the southern log has been pushed north and stopped on the
 /// northern row.
 /// ★ Named from what the player sees: two logs standing north to south on the
 /// ledges either side of the water, and a third lying west to east south of it
 /// (its render)
-#define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_MAP_TEMP_04
+#define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_SCENE_TEMP_04
 /// In the third room, the southern log has been pushed north and stopped on the
 /// southern row (row 20).
 /// ★ Named from what the player sees: two logs standing north to south on the
 /// ledges either side of the water, and a third lying west to east south of it
 /// (its render)
-#define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_MAP_TEMP_05
+#define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
 /// a Jupiter Djinni, joins the party.
 ///
-/// Map_TalkToObjectEvent selects this MAP_EVENT_TALK_HALTED event while Kite is
-/// the paused object event. Djinn_JoinParty gives the Jupiter Djinni Kite and
-/// sets FLAG_KITE, so neither room places Kite again.
+/// Scene_TalkToObjectEvent selects this MAP_EVENT_TALK_HALTED event while Kite
+/// is the paused object event. Djinn_JoinParty gives the Jupiter Djinni Kite
+/// and sets FLAG_KITE, so neither room places Kite again.
 static void EventScript_TalkToKite(void) {
   Djinn_JoinParty(LOCALID_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
@@ -292,15 +293,15 @@ ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
 /// Selects warp destination positions and camera bounds for the current cave
 /// room.
 const struct MapWarpDest *ValeCave_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_ValeCaveMouth) {
+  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthWarpDests;
   }
-  if (mapId == (s32)&MapId_ValeCaveKite) {
+  if (sceneId == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_KiteWarpDests;
   }
-  if (mapId == (s32)&MapId_ValeCaveLogs) {
+  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_LogsWarpDests;
   }
   return gValeCave_WarpDestsOther;
@@ -314,15 +315,15 @@ const u32 *ValeCave_GetWarps(void) { return gValeCave_Warps; }
 /// Selects the current room's object event templates: Kite, and the crates and
 /// logs.
 const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_ValeCaveMouth) {
+  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_ValeCaveKite) {
+  if (sceneId == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_KiteObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_ValeCaveLogs) {
+  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_LogsObjectEventTemplates;
   }
   return gValeCave_MouthObjectEventTemplates;
@@ -786,15 +787,15 @@ static void EventScript_PushLogNorth(void) {
 
 /// Selects the current room's coord, Psynergy and bg events.
 const struct MapEvent *ValeCave_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_ValeCaveMouth) {
+  if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthEvents;
   }
-  if (mapId == (s32)&MapId_ValeCaveKite) {
+  if (sceneId == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_KiteEvents;
   }
-  if (mapId == (s32)&MapId_ValeCaveLogs) {
+  if (sceneId == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_LogsEvents;
   }
   return gValeCave_EventsOther;
@@ -811,7 +812,7 @@ s32 ValeCave_Initialize(void) {
 
   *request =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_ValeCaveMouth) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveMouth) {
     *request = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     WaitFrames(1);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -822,7 +823,7 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-/// In Vale, the cave's way in (MapId_ValeCaveMouth), each warp plays the warp
+/// In Vale, the cave's way in (SceneId_ValeCaveMouth), each warp plays the warp
 /// sound before leaving.
 ///
 /// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
@@ -908,7 +909,7 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gSaveBlock.mapId == (s32)&MapId_ValeCaveKite) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveKite) {
     switch (gSaveBlock.warpDest) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
@@ -962,7 +963,7 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_ValeCaveLogs) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveLogs) {
     switch (gSaveBlock.warpDest) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
@@ -973,13 +974,13 @@ static void ValeCave_ApplyEntryState(void) {
         PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
         PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
       } else {
-        Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
         PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
         PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
       } else {
-        Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
@@ -991,7 +992,7 @@ static void ValeCave_ApplyEntryState(void) {
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
-        Map_RedrawObjectEventFootprint(LOCALID_SOUTH_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_SOUTH_LOG);
         ObjectMotion_SetActionVariant(LOCALID_SOUTH_LOG, 3);
       }
       break;

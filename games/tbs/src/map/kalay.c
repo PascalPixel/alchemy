@@ -2,7 +2,8 @@
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace, and
 /// the tunnel beneath them: four map sections in six maps.
 ///
-/// - Kalay (MapId_Kalay), the town. Eight doors (coord events 1 to 8) open into
+/// - Kalay (SceneId_Kalay), the town. Eight doors (coord events 1 to 8) open
+/// into
 ///   the houses, the weapon and armor shops, the inn and the Kalay Sanctum
 ///   (kalay_interiors.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
 ///   KALAY_TO_ARMOR_SHOP_COUNTER into the same two shops from behind their
@@ -22,9 +23,10 @@
 /// find a man missing and lead it off without him, and he runs after it. The
 /// second guide is the head guide's sprite with its green and blue swapped
 /// (SPRITE_COLOR_RBG), here and in kalay_interiors.c and kalay_tolbi_docks.c.
-/// - Hammet Palace (MapId_HammetPalaceGrounds), before the door of the palace,
+/// - Hammet Palace (SceneId_HammetPalaceGrounds), before the door of the
+/// palace,
 ///   where two soldiers of Kalay stand guard; the palace's rooms are
-///   MapId_HammetPalace (hammet_palace.c). The first time the party comes,
+///   SceneId_HammetPalace (hammet_palace.c). The first time the party comes,
 ///   before Ivan has reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the
 ///   guards recognize Ivan and take everyone in to Lady Layana
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
@@ -32,7 +34,7 @@
 ///   have other lines. Walking into the door (coord event 2) opens it into the
 ///   palace (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
 ///   HAMMET_PALACE_GROUNDS_TO_KALAY leads back to town.
-/// - Kalay Tunnel Entrance (MapId_KalayTunnelEntrance), outside the town (the
+/// - Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), outside the town (the
 ///   world map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
 ///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH). A guard
 ///   (LOCALID_TUNNEL_GUARD) bars `the cave up ahead` by Hammet and Layana's
@@ -46,7 +48,8 @@
 ///   is set the guard stands turned east.
 ///   KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE leads into the Kalay Tunnel's
 ///   cave (KalayTunnelCave).
-/// - Kalay Tunnel (MapId_KalayTunnelCave to MapId_KalayTunnelTreasureRoom), the
+/// - Kalay Tunnel (SceneId_KalayTunnelCave to SceneId_KalayTunnelTreasureRoom),
+/// the
 ///   passage to Hammet Palace and his treasure, which Layana opens to the party
 ///   in thanks once Hammet is home (FLAG_KALAY_TUNNEL_OPEN). The cave
 ///   (KalayTunnelCave) joins the Kalay Tunnel Entrance to the passage
@@ -87,7 +90,7 @@
 #include "save_block.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/kalay.h"
 #include "unit/map/common/object_orbit.h"
@@ -122,7 +125,7 @@
 #include "object_effect.h"
 #include "orbit.h"
 #include "fixed_math.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "heap.h"
 
 #include "flags.h"
@@ -300,14 +303,14 @@ enum { PUDDLE_ANIMATION_FROZEN = 5 };
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_MAP_TEMP_00,
+  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
+  FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each statue's particles have started their sound.
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_MAP_TEMP_02,
+  FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_MAP_TEMP_03,
+  FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_MAPSEC_TEMP_02,
   /// ★ Named from its area name: Kalay Tunnel
@@ -383,24 +386,24 @@ static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_MAPSEC_TEMP_21
 
 const struct MapWarpDest *Kalay_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Kalay) {
+  if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownWarpDests;
   }
-  if (mapId == (s32)&MapId_HammetPalaceGrounds) {
+  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
     return gKalay_HammetPalaceWarpDests;
   }
-  if (mapId == (s32)&MapId_KalayTunnelEntrance) {
+  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntranceWarpDests;
   }
-  if (mapId == (s32)&MapId_KalayTunnelCave) {
+  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
     return gKalay_TunnelCaveWarpDests;
   }
-  if (mapId == (s32)&MapId_KalayTunnelPassage) {
+  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
     return gKalay_TunnelPassageWarpDests;
   }
-  if (mapId == (s32)&MapId_KalayTunnelTreasureRoom) {
+  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
     return gKalay_TunnelWarpDests;
   }
   return gKalay_NoWarpDests;
@@ -414,18 +417,18 @@ const u32 *Kalay_GetWarps(void) { return gKalay_Warps; }
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
 const struct ObjectEventTemplate *Kalay_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Kalay) {
+  if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_HammetPalaceGrounds) {
+  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
     return gKalay_HammetPalaceObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_KalayTunnelEntrance) {
+  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntranceObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_KalayTunnelTreasureRoom) {
+  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
     return gKalay_TunnelObjectEventTemplates;
   }
   return gKalay_NoObjectEventTemplates;
@@ -452,24 +455,24 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 
 /// The conversations, warps and Psynergy targets of each map.
 const struct MapEvent *Kalay_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Kalay) {
+  if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownEvents;
   }
-  if (mapId == (s32)&MapId_HammetPalaceGrounds) {
+  if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
     return gKalay_HammetPalaceEvents;
   }
-  if (mapId == (s32)&MapId_KalayTunnelEntrance) {
+  if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntranceEvents;
   }
-  if (mapId == (s32)&MapId_KalayTunnelCave) {
+  if (sceneId == (s32)&SceneId_KalayTunnelCave) {
     return gKalay_TunnelCaveEvents;
   }
-  if (mapId == (s32)&MapId_KalayTunnelPassage) {
+  if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
     return gKalay_TunnelPassageEvents;
   }
-  if (mapId == (s32)&MapId_KalayTunnelTreasureRoom) {
+  if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
     return gKalay_TunnelEvents;
   }
   return gKalay_NoEvents;
@@ -1181,7 +1184,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       leader->facing = FACING_SOUTH;
     }
-    Map_PlayMusic();
+    Scene_PlayMusic();
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Script_PlaySong(SE_MAP_EXIT);
@@ -1250,19 +1253,19 @@ static void Kalay_CatchTownNut(void) {
 /// Every map of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
 s32 Kalay_Initialize(void) {
-  s32 mapId;
+  s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_Kalay) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_Kalay) {
     Kalay_PrepareTown();
-  } else if (mapId == (s32)&MapId_HammetPalaceGrounds) {
+  } else if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
     Kalay_PrepareHammetPalace();
-  } else if (mapId == (s32)&MapId_KalayTunnelEntrance) {
+  } else if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
     Kalay_PrepareTunnelEntrance();
-  } else if (mapId == (s32)&MapId_KalayTunnelPassage) {
+  } else if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
     Kalay_StartWindowTransition();
-  } else if (mapId == (s32)&MapId_KalayTunnelTreasureRoom) {
+  } else if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
     Kalay_PrepareTunnel();
   }
   return 0;
@@ -1350,7 +1353,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
   struct ObjectEvent *guard;
 
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT) == 0) {
-    Map_FloatNut(LOCALID_TUNNEL_ENTRANCE_NUT);
+    Scene_FloatNut(LOCALID_TUNNEL_ENTRANCE_NUT);
   }
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     guard = ObjectEvent_GetById(LOCALID_TUNNEL_GUARD);
@@ -1383,7 +1386,7 @@ static void Kalay_StartWindowTransition(void) {
   }
   if (gSaveBlock.warpDest <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
-    Map_QueueMusic(SE_AMBIENT_WATER);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
   }
 }
 
@@ -1533,7 +1536,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   }
@@ -1564,7 +1567,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   }
@@ -2191,7 +2194,7 @@ static void Kalay_PushTunnelStatue(void) {
       leader->acceleration = pushSpeed;
       Object_SetPosition(leader, target->x, target->y, target->z);
       Object_WaitForMove(statue);
-      Map_PlayQueuedMusic();
+      Scene_PlayQueuedMusic();
       statue->x.fixed = target->x;
       statue->z.fixed = target->z;
       statue->velocityX = stoppedVelocity;
@@ -2384,7 +2387,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!Script_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
-      Map_QueueMusic(-1);
+      Scene_QueueMusic(-1);
       Script_PlaySong(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
@@ -2394,7 +2397,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!Script_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
-      Map_QueueMusic(-1);
+      Scene_QueueMusic(-1);
       Script_PlaySong(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
@@ -2636,7 +2639,7 @@ s32 gKalay_SecondGuideReturnScript[] = {
 };
 
 s32 gKalay_PartyFidgetScript[] = {
-    SC_CALL(Map_LookAboutRandomly),
+    SC_CALL(Scene_LookAboutRandomly),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

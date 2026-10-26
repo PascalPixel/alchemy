@@ -77,18 +77,18 @@ void Party_LearnAbility(s32 unit, s32 ability);
 void FieldScript_StartScreenTransition(void);
 void FieldScript_FinishScreenTransition(void);
 void FieldScript_WaitTransitionFrames(void);
-void FieldScript_SetDestination(s32 mapId, s32 warpDest);
-void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest);
+void FieldScript_SetDestination(s32 sceneId, s32 warpDest);
+void FieldScript_SetSavedDestination(u16 sceneId, u16 warpDest);
 void FieldScript_SetWarpRequest(u16 request);
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
 /// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
 void Field_RequestDjinnBattle(s32 flag, s32 no);
-void FieldScript_SetNextDestination(s32 mapId, s32 warpDest);
-void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest);
-void FieldScript_RequestDestination(u16 mapId, u16 warpDest);
-void Map_QueueMusic(s32 soundId);
-void Map_PlayQueuedMusic(void);
+void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest);
+void FieldScript_SetDefeatDestination(s32 sceneId, s32 warpDest);
+void FieldScript_RequestDestination(u16 sceneId, u16 warpDest);
+void Scene_QueueMusic(s32 soundId);
+void Scene_PlayQueuedMusic(void);
 
 struct Object;
 struct ObjectEvent;
@@ -278,7 +278,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void ObjectEvent_PlaceMapObjectEvents(void);
-// Declared without a prototype, as Map_Run (overworld.c) calls it with
+// Declared without a prototype, as SceneManager_Run (overworld.c) calls it with
 // one argument and with two. overworld.c comes before this unit in ROM order,
 // so in one file the calls would still come before the definition.
 void Djinn_ResolvePendingEvent();

@@ -1,13 +1,13 @@
 #include "orbit.h"
 #include "flags.h"
 
-// Crossbone Isle, Kalay, Kolima Forest (MapId_KolimaForestGlade), Lunpa,
+// Crossbone Isle, Kalay, Kolima Forest (SceneId_KolimaForestGlade), Lunpa,
 // McCoy's palace garden, Mogall Forest and Vale: a Nut floating where it lies,
 // until it is taken.
 
 /// The Nut's callback, each frame: it sways up to two pixels either side of its
 /// spot and dips up to two pixels below it, at a random pace.
-static s32 Map_UpdateFloatingNut(s32 *p) {
+static s32 Scene_UpdateFloatingNut(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
   s32 d = Trig_Sin(p[12]) * 2;
@@ -24,7 +24,7 @@ static s32 Map_UpdateFloatingNut(s32 *p) {
 
 /// Draws object event id as the Nut's icon and starts it floating, 32 pixels up
 /// unless the party returns to where it was.
-void Map_FloatNut(s32 id) {
+void Scene_FloatNut(s32 id) {
   OrbitingMapObject *objectEvent;
   OrbitingMapObjectSprite *sprite;
   u8 *transfer;
@@ -58,6 +58,6 @@ void Map_FloatNut(s32 id) {
   objectEvent->orbitAngle = zero;
   objectEvent->orbitCenterY = objectEvent->y;
   objectEvent->active = 1;
-  objectEvent->callback = (u32)Map_UpdateFloatingNut;
+  objectEvent->callback = (u32)Scene_UpdateFloatingNut;
   objectEvent->state = zero;
 }

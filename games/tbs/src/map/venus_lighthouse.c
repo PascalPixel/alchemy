@@ -8,13 +8,15 @@
 /// puzzles as their flags left them, case by warp destination. Inside, only the
 /// object events of the room entered are placed (CONDITION_IN_VIEW).
 ///
-/// - Venus Lighthouse Entry (MapId_VenusLighthouseEntry), outside. The scholars
+/// - Venus Lighthouse Entry (SceneId_VenusLighthouseEntry), outside. The
+/// scholars
 ///   and Babi's soldiers the wanderers attacked lie hurt and say what they saw;
 ///   a soldier who tells of the attack flickers and vanishes
 ///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the metatile behavior of his spot
 ///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
 ///   door, leads in.
-/// - Venus Lighthouse (MapId_VenusLighthouseGroundFloor, named by a map section
+/// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by a map
+/// section
 ///   rule of its own), the floor behind the front door, with three scholars.
 ///   The great statue (MB_VENUS_LIGHTHOUSE_GREAT_STATUE) opens one of two paths
 ///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first time by the
@@ -30,27 +32,27 @@
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED). A floor switch is pressed while
 ///   the leader stands on it and held by a statue Moved onto it; until then the
 ///   ledge (MB_VENUS_LIGHTHOUSE_LEDGE) drops the leader to the floor below.
-/// - Venus Lighthouse (MapId_VenusLighthouseFirstFloor), where the Tunnel
+/// - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), where the Tunnel
 ///   Ruins come up
 ///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A floor
 ///   carries the party south, a hole drops the leader into the room below,
 ///   three capped pillars are Moved or pushed, and two pillars by a gap are
 ///   carried across it, or dropped through the floor. A chest holds the Thunder
 ///   Crown, and a Psynergy Stone lies here.
-/// - Venus Lighthouse (MapId_VenusLighthouseSecondFloor). A sparkling
+/// - Venus Lighthouse (SceneId_VenusLighthouseSecondFloor). A sparkling
 ///   passage takes the leader through in a trail of sparks; a floor switch
 ///   slides a wall aside in a cloud of dust the first time
 ///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); and a pillar Moved or pushed into its
 ///   socket sinks, and a light runs from the lady statue along the gold track
 ///   over it to open the gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
-/// - Venus Lighthouse (MapId_VenusLighthouseThirdFloor). Three more
+/// - Venus Lighthouse (SceneId_VenusLighthouseThirdFloor). Three more
 ///   sparkling passages, a drifting floor, and three pillars carrying pieces
 ///   of track that sink into four sockets; with all three sunk two lights run
 ///   from the statue, and when the track leads one to the gate it opens
 ///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
 ///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). A
 ///   chest holds Dragon Scales.
-/// - Venus Lighthouse (MapId_VenusLighthouseFourthFloor). Floors carry the
+/// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). Floors carry the
 ///   party each way, a west and an east floor switch slide their walls aside
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 ///   VenusLighthouseThirdFloor also redraws), and Carry sets down four floating
@@ -66,8 +68,8 @@
 /// (MB_VENUS_LIGHTHOUSE_LOCKED_DOOR). The wall and gate flags
 /// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)
 /// and the Psynergy Stones' flags are map section flags: they last while the
-/// party stays in the maps of the climb (MapId_VenusLighthouseFirstFloor to
-/// MapId_VenusLighthouseAerie, one map section), so the floors stay solved
+/// party stays in the maps of the climb (SceneId_VenusLighthouseFirstFloor to
+/// SceneId_VenusLighthouseAerie, one map section), so the floors stay solved
 /// between them. The FLAG_MAP_TEMP_ states last only until the next change of
 /// map other than a return from battle. Every arrival sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
@@ -108,16 +110,16 @@
 #include "text/msg_ids.h"
 #include "field_service.h"
 #include "io_reg.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "flags.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
 
@@ -249,11 +251,11 @@ static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
-// The lighthouse's map flags: FLAG_MAP_TEMP_00: in the room with the floor
+// The lighthouse's map flags: FLAG_SCENE_TEMP_00: in the room with the floor
 // switch, the pillar holds the switch down; in the room of floating pillars,
-// FLAG_MAP_TEMP_00 plus a pillar's number (0 to 3): that pillar is set down in
-// its place. FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH: the leader stands on
-// the floor switch.
+// FLAG_SCENE_TEMP_00 plus a pillar's number (0 to 3): that pillar is set down
+// in its place. FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH: the leader stands
+// on the floor switch.
 
 // Each map numbers its object events by the rows of its own object event
 // template table, so each has an enum of its own; a row drawn as one of the
@@ -608,7 +610,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Object_SetPosition(leader, targetPosition.x, targetPosition.y,
                      targetPosition.z);
   Object_WaitForMove(pillar);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   pillar->x.fixed = targetPosition.x;
   pillar->z.fixed = targetPosition.z;
   pillar->velocityX = transitionBusy;
@@ -854,7 +856,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
     leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     leader->update = 0;
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     FieldScript_End();
   }
 }
@@ -928,7 +930,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   MapGrid_WaitForShakeToSettle();
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   leader->gravity = PIXELS(1);
   leader->bounce = PIXELS(1) / 4;
   FieldScript_End();
@@ -939,7 +941,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.
 /// ★ Named from its area name: Venus Lighthouse
-#define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_MAP_TEMP_01
+#define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
 
 // A light's update hook: every four frames a shrinking particle around it,
 // and now and then a sound while it moves.
@@ -1103,21 +1105,21 @@ static s32 EventScript_JumpAcrossGap(void) {
 /// Selects the map's warp destinations; VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct MapWarpDest *VenusLighthouse_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VenusLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryWarpDests;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFirstFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
     return gVenusLighthouseFirstFloorWarpDests;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
     return gVenusLighthouseSecondFloorWarpDests;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
     return gVenusLighthouseThirdFloorWarpDests;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
     return gVenusLighthouseFourthFloorWarpDests;
   }
   return gVenusLighthouseWarpDestsOther;
@@ -1130,40 +1132,40 @@ const struct MapWarpRegion *VenusLighthouse_GetRegions(void) { return 0; }
 const u32 *VenusLighthouse_GetWarps(void) { return gVenusLighthouseWarps; }
 
 /// Selects the map's object event templates. Inside the lighthouse,
-/// Map_AssignViewFlags first gives each row with condition 0 whether it
+/// Scene_AssignViewFlags first gives each row with condition 0 whether it
 /// lies inside the view bounds, so only the room entered is populated.
 const struct ObjectEventTemplate *
 VenusLighthouse_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
-  s16 mapId;
+  s16 sceneId;
 
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_VenusLighthouseEntry) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseGroundFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
     templates = gVenusLighthouseGroundFloorObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
     return templates;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFirstFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
     templates = gVenusLighthouseFirstFloorObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
     return templates;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
     templates = gVenusLighthouseSecondFloorObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
     return templates;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
     templates = gVenusLighthouseThirdFloorObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
     return templates;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
     templates = gVenusLighthouseFourthFloorObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
     return templates;
   }
   return gVenusLighthouseObjectEventTemplatesOther;
@@ -1515,7 +1517,7 @@ static void EventScript_PushPillarTowardWall(void) {
 }
 
 /// In VenusLighthouseGroundFloor, Move on the pillar by the floor switch: on
-/// the switch it sinks in and holds it down (FLAG_MAP_TEMP_00).
+/// the switch it sinks in and holds it down (FLAG_SCENE_TEMP_00).
 static void EventScript_MovePillarOntoSwitch(void) {
   struct ObjectEvent *pillar;
   s32 switchHeight;
@@ -1529,7 +1531,7 @@ static void EventScript_MovePillarOntoSwitch(void) {
     switchHeight = -PIXELS(2);
     pillar->groundHeight = switchHeight;
     pillar->y.fixed = switchHeight;
-    GameFlag_Set(FLAG_MAP_TEMP_00);
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
     MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
   }
   FieldScript_End();
@@ -2249,7 +2251,7 @@ static __inline__ void ObjectEvent_CopyPosition(struct ObjectEvent *destination,
 }
 
 /// In VenusLighthouseFourthFloor, Carry on one of the four floating pillars: it
-/// settles where it is set down (FLAG_MAP_TEMP_00 plus its number) and the
+/// settles where it is set down (FLAG_SCENE_TEMP_00 plus its number) and the
 /// platforms under the pillars rise or sink to their weight.
 static void EventScript_CarryFloatingPillar(void) {
   struct ObjectEvent savedPosition;
@@ -2270,9 +2272,9 @@ static void EventScript_CarryFloatingPillar(void) {
     pillar = ObjectEvent_GetById(pillarIndex + LOCALID_FIRST_FLOATING_PILLAR);
     column = pillar->x.fixed >> 20;
     if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
-        !GameFlag_Get(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       ObjectEvent_WaitUntilIdle(pillar);
-      GameFlag_Set(FLAG_MAP_TEMP_00 + pillarIndex);
+      GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
       pillar->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
       pillar->collisionFlags = 0;
       pillar->motionFlags = 0;
@@ -2280,7 +2282,7 @@ static void EventScript_CarryFloatingPillar(void) {
       break;
     }
     if (pillar->sprite->image.priority == 3 &&
-        !Script_GetFlag(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !Script_GetFlag(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       /* FAKEMATCH(temporary): the zero in the search counter, set before the
        * priority call; as block->bounce = 0 after the call, 2 of 272
        * instructions differ in tbs-en. */
@@ -2299,17 +2301,17 @@ static void EventScript_CarryFloatingPillar(void) {
                                     0, 0);
       ObjectEvent_Release(firstPassageEffect);
       ObjectEvent_Release(secondPassageEffect);
-      GameFlag_Set(FLAG_MAP_TEMP_00 + pillarIndex);
+      GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
       break;
     }
     if (pillar->z.fixed >> 20 == 19 &&
-        !GameFlag_Get(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       // Keep settled pillars at the front of the object event slots before
       // finding their support.
       FloatingPillar_Settle(pillar, 0);
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
-        if (!GameFlag_Get(FLAG_MAP_TEMP_00 + earlierIndex)) {
+        if (!GameFlag_Get(FLAG_SCENE_TEMP_00 + earlierIndex)) {
           other =
               ObjectEvent_GetById(earlierIndex + LOCALID_FIRST_FLOATING_PILLAR);
           ObjectEvent_CopyPosition(&savedPosition, pillar);
@@ -2350,7 +2352,7 @@ static void EventScript_CarryFloatingPillar(void) {
       VenusLighthouse_LowerFloatingPillars(40);
       ObjectEvent_GetById(settledIndex + LOCALID_FIRST_FLOATING_PILLAR)
           ->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-      GameFlag_Set(FLAG_MAP_TEMP_00 + settledIndex);
+      GameFlag_Set(FLAG_SCENE_TEMP_00 + settledIndex);
       break;
     }
   }
@@ -2711,24 +2713,24 @@ static void EventScript_EnterRisingPassage(void) {
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// map.
 const struct MapEvent *VenusLighthouse_GetEvents(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VenusLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryEvents;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseGroundFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
     return gVenusLighthouseGroundFloorEvents;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFirstFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
     return gVenusLighthouseFirstFloorEvents;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
     return gVenusLighthouseSecondFloorEvents;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
     return gVenusLighthouseThirdFloorEvents;
   }
-  if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
     return gVenusLighthouseFourthFloorEvents;
   }
   return gVenusLighthouseGroundFloorEvents;
@@ -2778,7 +2780,7 @@ static void VenusLighthouse_VisitPillarObjectEvents(void) {
 /// FLAG_SHOW_LOCATION_NAME.
 s32 VenusLighthouse_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  s32 mapId;
+  s32 sceneId;
   u32 pillarIndex;
   s32 column;
   s32 row;
@@ -2788,10 +2790,10 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_RestoreScriptedChildValues();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  mapId = gSaveBlock.mapId;
+  sceneId = gSaveBlock.sceneId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // warp destination.
-  if (mapId == (s32)&MapId_VenusLighthouseEntry) {
+  if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtObjectEvent(
@@ -2806,7 +2808,7 @@ s32 VenusLighthouse_Initialize(void) {
     ObjectMotion_SetActionVariant(LOCALID_SOLDIER_OPENED_DOOR, 2);
     VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SOLDIER_COLOSSO_VICTORS);
-  } else if (mapId == (s32)&MapId_VenusLighthouseGroundFloor) {
+  } else if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
     switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
@@ -2839,7 +2841,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-      if (GameFlag_Get(FLAG_MAP_TEMP_00))
+      if (GameFlag_Get(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_RELIEFS:
@@ -2855,7 +2857,7 @@ s32 VenusLighthouse_Initialize(void) {
       }
       break;
     }
-  } else if (mapId == (s32)&MapId_VenusLighthouseFirstFloor) {
+  } else if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
     // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
     switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
@@ -2865,7 +2867,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2903,7 +2905,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       FieldEffect_StartFadeOverlay(0);
       WaitFrames(2);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
@@ -2920,15 +2922,15 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
+  } else if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
     // Restore the first sliding wall and its sunken-pillar gate.
     switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
@@ -2975,7 +2977,7 @@ s32 VenusLighthouse_Initialize(void) {
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       BlendScript_Suspend();
       {
         s32 zero = 0;
@@ -3002,10 +3004,10 @@ s32 VenusLighthouse_Initialize(void) {
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+  } else if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
     // Restore the two tile waves and the three-pillar socket puzzle.
     switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
@@ -3018,7 +3020,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -3047,7 +3049,7 @@ s32 VenusLighthouse_Initialize(void) {
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
@@ -3108,10 +3110,10 @@ s32 VenusLighthouse_Initialize(void) {
       EventScript_MoveSwitchPillar();
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
-  } else if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
+  } else if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
     // Restore floating supports, opposing walls and the four-pillar pillar
     // puzzle.
     switch (gSaveBlock.warpDest) {
@@ -3126,7 +3128,7 @@ s32 VenusLighthouse_Initialize(void) {
           column = objectEvent->x.fixed >> 20;
           if (column == 13) {
             row = objectEvent->z.fixed >> 20;
-            if (row == 7 && GameFlag_Get(pillarIndex + FLAG_MAP_TEMP_00)) {
+            if (row == 7 && GameFlag_Get(pillarIndex + FLAG_SCENE_TEMP_00)) {
               objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
               objectEvent->collisionFlags = 0;
               objectEvent->motionFlags = 0;
@@ -3174,7 +3176,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST:
-      Map_QueueMusic(SE_AMBIENT_WATER);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
@@ -3201,7 +3203,7 @@ s32 VenusLighthouse_Initialize(void) {
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-        Map_QueueMusic(SE_AMBIENT_WATER);
+        Scene_QueueMusic(SE_AMBIENT_WATER);
         MapGrid_CopyCellsTo(36, 81, 32, 81, 3, 2);
         MapGrid_CopyCellsTo(36, 83, 36, 81, 3, 2);
         MapGrid_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -3451,7 +3453,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -3545,7 +3547,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -3611,7 +3613,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -3841,7 +3843,7 @@ static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
       ObjectEvent_SetScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gSaveBlock.mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
       for (socket = 0;
            socket <= 3 &&
            !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&
@@ -4823,7 +4825,7 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
-    { MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_LEDGE, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_JumpDown) },
+    { MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_LEDGE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(EventScript_JumpDown) },
     { MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_FLOOR_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnFloorSwitch) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarTowardWall) },
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
@@ -4846,7 +4848,7 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP, FIND_ITEM(ITEM_LUCKY_CAP) },
     { BG_EVENT(BG_EVENT_CHEST), MB_VENUS_LIGHTHOUSE_SECOND_CHEST, FLAG_VENUS_LIGHTHOUSE_CARRY_STONE, FIND_ITEM(ITEM_CARRY_STONE) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarTowardWall) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FLOOR_SWITCH_STATUE, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_MovePillarOntoSwitch) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FLOOR_SWITCH_STATUE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(EventScript_MovePillarOntoSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CarryPillarPastWall) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePath) },

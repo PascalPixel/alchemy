@@ -106,7 +106,7 @@ it drifts by itself and where it wraps, as well as how far the camera may go.
 
 A layer that follows the camera at the camera's own pace looks as far away as
 the ground; one that moves faster looks nearer. The north of Suhalla Desert
-(`MapId_SuhallaDesertNorth`, whose row in the map table names the layout in
+(`SceneId_SuhallaDesertNorth`, whose row in the map table names the layout in
 `layout_147`) moves its ground and middle layers with the camera and its
 overhead haze a quarter faster, drifts the haze about 7.6 pixels right and 2.2
 up the screen every [frame](../../glossary.md#frame), and wraps it every 256 pixels.
@@ -193,8 +193,8 @@ battle, after which the map's layout is loaded again; the Battle Arena, which
 leaves the partner's party there for the link battle that follows; the world
 map's still picture; and the debug sprite viewer.
 
-Each map's row of `gMapHeaders`
-([`field/map_headers.s`](../field/map_headers.s)) gives a layout number,
+Each map's row of `gSceneHeaders`
+([`field/scene_headers.s`](../field/scene_headers.s)) gives a layout number,
 which picks a row of `gLayouts` ([`field/layouts.c`](../field/layouts.c)):
 the layout's header, palette and tiles. `MapGrid_LoadLayout` unpacks each
 part, and `Tile_ConvertMapGrid` puts the three planes together into the cell
@@ -373,7 +373,7 @@ One grid serves all three layers, so every layout takes the same 64 KB of
 cells, and a layer's window can sit anywhere in the grid.
 
 The layout numbers are the order of the directories, not numbers the game
-gives its layouts: a map's row in `gMapHeaders` names a row of `gLayouts`,
+gives its layouts: a map's row in `gSceneHeaders` names a row of `gLayouts`,
 and that row names the layout's resources.
 
 ## Limits
@@ -403,8 +403,8 @@ code does with it: the 16-pixel pictures become BG map entries, so they are
 called the treasure spot list because that function is the only code that reads the
 pointer the loader stores to it (`MapGridScrollWork.markers`).
 
-The haze's layout is found from the map table: `MapId_SuhallaDesertNorth`'s
-row of `gMapHeaders` gives layout 151, whose row of `gLayouts` names the
+The haze's layout is found from the map table: `SceneId_SuhallaDesertNorth`'s
+row of `gSceneHeaders` gives layout 151, whose row of `gLayouts` names the
 resource the directory's `area` line gives to `Field_Layout147`; the south's
 row leads the same way to `Field_Layout148`, and the Tolbi ship deck's to
 `Field_Layout103`. These three are the only layouts whose headers drift a

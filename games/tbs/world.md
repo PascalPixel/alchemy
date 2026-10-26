@@ -28,7 +28,7 @@ A random battle is a way out of the map too: the game remembers where
 everyone stood, loads the battle as if it were the next map, and afterwards
 loads the map again with everyone put back where they were.
 
-`Map_Run` runs one map and `struct FieldWork` holds the
+`SceneManager_Run` runs one map and `struct FieldWork` holds the
 requests. [Running a
 map](src/overworld/README.md#the-map-loop-handles-requests-not-scripts) lists
 all twelve requests in the order they are handled.
@@ -62,7 +62,7 @@ overlay, and the rows are `struct MapEvent`. [Maps](src/map/README.md#the-entry-
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
 page describes [how maps depend on the story](README.md#how-maps-depend-on-the-story),
-and [Places](src/field/map_headers.s) lists every map in
+and [Places](src/field/scene_headers.s) lists every map in
 [story order](glossary.md#the-places-in-story-order).
 
 ## Map and map section flags

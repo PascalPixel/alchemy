@@ -1,15 +1,15 @@
 /// @file
-/// Sol Sanctum (MapId_SolSanctumMaze), the room that holds the second Small
+/// Sol Sanctum (SceneId_SolSanctumMaze), the room that holds the second Small
 /// Jewel.
 ///
-/// It is reached from two rooms of MapId_SolSanctumReliefs
+/// It is reached from two rooms of SceneId_SolSanctumReliefs
 /// (sol_sanctum_entrance.c) and leads back to them:
 /// SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH to the room of steps off the
 /// first relief room, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to the
 /// second relief room. It places nobody; its one event besides the warps is
 /// the chest (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the
 /// second minotaur relief. Its setup, SolSanctumRooms_Initialize
-/// (common/sol_sanctum_init_zoom.h), is the one MapId_SolSanctumCorridor
+/// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
 /// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
 ///
 /// The south warp leaves down stairs (WARP_STYLE_STAIRS_DOWN): walking
@@ -38,20 +38,20 @@
 #include "flags.h"
 #include "item_ids.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gSolSanctumMazeWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gSolSanctumMazeWarps; }
+const u32 *Scene_GetWarps(void) { return gSolSanctumMazeWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gSolSanctumMazeObjectEventTemplates;
 }
 
 /// The warps, and the Small Jewel's chest.
-const struct MapEvent *Map_GetEvents(void) { return gSolSanctumMazeEvents; }
+const struct MapEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 
 #include "common/sol_sanctum_init_zoom.h"
 

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "map_tables.h"
 #include "field_coordinate.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 struct MapWarpDest;
 struct MapWarpRegion;

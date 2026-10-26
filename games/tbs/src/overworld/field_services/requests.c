@@ -67,37 +67,37 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 /// Sets the map and warp destination that the field goes to next
 /// (gSaveBlock.nextMap and nextWarpDest). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
-void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
-  gSaveBlock.nextMap = mapId;
+void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest) {
+  gSaveBlock.nextMap = sceneId;
   gSaveBlock.nextWarpDest = warpDest;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gSaveBlock.defeatMap and defeatWarpDest). The maps before scripted
+/// (gSaveBlock.defeatScene and defeatWarpDest). The maps before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
-void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
-  gSaveBlock.defeatMap = mapId;
+void FieldScript_SetDefeatDestination(s32 sceneId, s32 warpDest) {
+  gSaveBlock.defeatScene = sceneId;
   gSaveBlock.defeatWarpDest = warpDest;
 }
 
-/// Makes the script leave for warp destination warpDest of map mapId: sets
-/// gSaveBlock.mapId and warpDest and raises the warp request WARP_NONE (999),
+/// Makes the script leave for warp destination warpDest of map sceneId: sets
+/// gSaveBlock.sceneId and warpDest and raises the warp request WARP_NONE (999),
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
-void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
+void FieldScript_RequestDestination(u16 sceneId, u16 warpDest) {
   struct FieldWork *work = gFieldWork;
-  gSaveBlock.mapId = mapId;
+  gSaveBlock.sceneId = sceneId;
   gSaveBlock.warpDest = warpDest;
   work->warp = WARP_NONE;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),
-/// and remembers soundId for Map_PlayQueuedMusic in the field work's
+/// and remembers soundId for Scene_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
 /// now and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_AMBIENT_WATER with it.
-void Map_QueueMusic(s32 soundId) {
+void Scene_QueueMusic(s32 soundId) {
   gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {
     soundId = SONG_FADE_OUT_ACTION_SE;
@@ -106,10 +106,10 @@ void Map_QueueMusic(s32 soundId) {
   Sound_PlaySongFar(soundId);
 }
 
-/// Plays the sound Map_QueueMusic remembered, if any. Called
+/// Plays the sound Scene_QueueMusic remembered, if any. Called
 /// by maps, by the event runner (overworld/events.c), by setup.c and by an
 /// object event's landing (object_event_commands.c).
-void Map_PlayQueuedMusic(void) {
+void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;
 
   if (soundId != -1)

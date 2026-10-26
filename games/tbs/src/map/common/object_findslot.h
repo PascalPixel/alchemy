@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_event.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 // Colosseum Final 1, 2 and 3, and Venus Lighthouse.
 

@@ -34,7 +34,7 @@
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "task.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "save_block.h"
 #include "battle_party.h"
 #include "irqlock.h"
@@ -49,31 +49,31 @@
 /// The attendant has asked the player to take part; every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
 /// ★ Named from the game: "Would you like to apply?" (MsgLobbyPleaseSpeakWhen)
-#define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_MAP_TEMP_00
+#define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
 /// The linked partner has asked for a battle: its signature matches and it
 /// stands asked or in the circle.
 /// ★ Named from the game: "Your opponent has asked for a battle. Do you
 /// accept?" (MsgLobbyPleaseSpeakWhen)
-#define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_MAP_TEMP_01
+#define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_SCENE_TEMP_01
 /// The player has agreed to a battle.
 /// ★ Named from the game: "When you finish your preparations, please step into
 /// the circle!" (MsgLobbyPleaseSpeakWhen)
-#define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_MAP_TEMP_02
+#define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
 /// ★ Named from the game: "Good luck!" (MsgLobbyGoodLuck)
-#define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_MAP_TEMP_03
+#define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// LOCALID_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
 /// ★ Named from the game: "You can change the order of your party in the status
 /// screen." (MsgLobbyChangeOrderParty)
-#define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_MAP_TEMP_04
+#define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_SCENE_TEMP_04
 /// The link was lost and the attendant has yet to say so.
 /// ★ Named from the game: "The link was disconnected."
 /// (MsgLobbyLinkDisconnected)
-#define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_MAP_TEMP_05
+#define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (BattleArena_RunRoundResult).
-#define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_MAP_TEMP_F0
+#define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once; talking to her again
 /// offers to apply.
 /// ★ Named from the game: "Please speak to me when you want to fight in a
@@ -296,12 +296,12 @@ static s32 sBattleArenaWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The Battle Arena's warp destinations, which Map_Run reads through
+/// The Battle Arena's warp destinations, which SceneManager_Run reads through
 /// entry/battle_arena.s.
 u8 *BattleArena_GetWarpDests(void) { return (u8 *)gBattleArenaWarpDests; }
 
 /// The warp regions entry: the Battle Arena has no warp boxes.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
 /// handlers, then runs Serial_Initialize. Called when no partner
@@ -1031,14 +1031,14 @@ static s32 BattleArena_EnterBattle(void) {
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      FieldScript_SetNextDestination((s32)&MapId_BattleArena,
+      FieldScript_SetNextDestination((s32)&SceneId_BattleArena,
                                      BATTLE_ARENA_AFTER_MONSTER_WIN);
-      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena,
+      FieldScript_SetDefeatDestination((s32)&SceneId_BattleArena,
                                        BATTLE_ARENA_AFTER_MONSTER_LOSS);
     } else {
-      FieldScript_SetNextDestination((s32)&MapId_BattleArena,
+      FieldScript_SetNextDestination((s32)&SceneId_BattleArena,
                                      BATTLE_ARENA_AFTER_LINK_WIN);
-      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena,
+      FieldScript_SetDefeatDestination((s32)&SceneId_BattleArena,
                                        BATTLE_ARENA_AFTER_LINK_LOSS);
     }
     // Publish EXEC only after the battle and return destinations are ready.
@@ -1372,7 +1372,7 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
+  FieldScript_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif

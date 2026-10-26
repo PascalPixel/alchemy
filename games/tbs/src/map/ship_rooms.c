@@ -1,6 +1,6 @@
 /// @file
-/// Ship rooms (MapId_ShipRooms), a sheet of rooms drawn as a ship's cabins, all
-/// of them below the decks of the Tolbi-bound Ship: one of the ship's three
+/// Ship rooms (SceneId_ShipRooms), a sheet of rooms drawn as a ship's cabins,
+/// all of them below the decks of the Tolbi-bound Ship: one of the ship's three
 /// maps on its voyage from Kalay to Tolbi, told in tolbi_ship_deck.c. The map
 /// is four rooms, each a camera box of the warp destination table, whose warp
 /// destinations are named by room: the passengers' hold
@@ -120,21 +120,21 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "task.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "inventory.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 /// The visible anchor charm has been created this visit.
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
-#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_MAP_TEMP_00
+#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another map section, and other map sections use the numbers for their
-// own.
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// A passenger chosen to row follows the party to the rowing deck.
 /// ★ Named from the game: "Looks like you've been chosen to help row"
 /// (MsgTolbiShipLooksLikeYouveBeenChosen)
@@ -708,7 +708,7 @@ static s32 ShipRooms_LayFlat(struct Object *interpreter) {
 }
 
 const struct MapWarpDest *ShipRooms_SelectWarpDests(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_ShipRooms) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_ShipRooms) {
     return gShipRooms_WarpDests;
   }
   return gShipRooms_WarpDestsOther;
@@ -1557,19 +1557,19 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     FieldScript_SetNextDestination(
-        (s32)&MapId_ShipRooms,
+        (s32)&SceneId_ShipRooms,
         SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) == 0) {
       FieldScript_SetNextDestination(
-          (s32)&MapId_ShipRooms,
+          (s32)&SceneId_ShipRooms,
           SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 1);
     } else {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) == 0) {
         FieldScript_SetNextDestination(
-            (s32)&MapId_ShipRooms,
+            (s32)&SceneId_ShipRooms,
             SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 2);
       }
@@ -2098,7 +2098,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_SECOND_GUIDE, 1);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_SECOND_GUIDE,
                             FACING_NORTH + FACING_STEP, 0);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 

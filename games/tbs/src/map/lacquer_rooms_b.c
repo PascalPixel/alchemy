@@ -1,5 +1,5 @@
 /// @file
-/// Lacquer rooms B (MapId_LacquerRoomsB), a sheet of rooms drawn in red
+/// Lacquer rooms B (SceneId_LacquerRoomsB), a sheet of rooms drawn in red
 /// lacquer, all of them Xian's: its houses, shops and inn, which the area names
 /// call Xian, and the room behind Master Feh's school.
 ///
@@ -141,14 +141,14 @@ const struct MapWarpRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
 const u32 *LacquerRoomsB_GetWarps(void) { return gLacquerRoomsB_Warps; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu. Every
-/// other room shares one table, whose condition 0 Map_AssignViewFlags
+/// other room shares one table, whose condition 0 Scene_AssignViewFlags
 /// replaces with whether each object event stands inside the view bounds of the
 /// room entered.
 const struct ObjectEventTemplate *LacquerRoomsB_GetObjectEventTemplates(void) {
   if (gSaveBlock.warpDest == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomObjectEventTemplates;
   }
-  Map_AssignViewFlags(gLacquerRoomsB_ObjectEventTemplates);
+  Scene_AssignViewFlags(gLacquerRoomsB_ObjectEventTemplates);
   return gLacquerRoomsB_ObjectEventTemplates;
 }
 

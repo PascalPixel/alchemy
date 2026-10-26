@@ -1,6 +1,6 @@
 /// @file
-/// Vale (MapId_ValeEruption) while Mt. Aleph erupts: the ground before the
-/// sanctum's door, on the village's own layout (MapId_Vale's), where the
+/// Vale (SceneId_ValeEruption) while Mt. Aleph erupts: the ground before the
+/// sanctum's door, on the village's own layout (SceneId_Vale's), where the
 /// villagers wait for Isaac and Garet.
 ///
 /// The map falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
@@ -120,7 +120,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// Map_Run once the object events are placed;
+/// SceneManager_Run once the object events are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {

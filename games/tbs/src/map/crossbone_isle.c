@@ -6,7 +6,8 @@
 /// No one on the island speaks: it is a run of Psynergy puzzles and battles
 /// that ends with Deadbeard on the Pirate Ship. Its maps are met in this order:
 ///
-/// - Crossbone Isle (MapId_CrossboneIsle), the island itself, reached from the
+/// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached from
+/// the
 ///   world map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP leads
 ///   back to it). Whirlwind blows two ivies away for good (flags from
 ///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell;
@@ -16,11 +17,11 @@
 ///   unused), two logs can be pushed, and a Nut circles until Catch takes it
 ///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
-/// - Crossbone Isle Cave (MapId_CrossboneIsleCaveEntrance), the cave's mouth,
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's mouth,
 ///   with only its two warps.
-/// - Crossbone Isle Cave (MapId_CrossboneIsleFirstFloor to
-///   MapId_CrossboneIsleNinthFloor), the nine floors the cave descends through,
-///   all on one layout, each entered from the east
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleFirstFloor to
+///   SceneId_CrossboneIsleNinthFloor), the nine floors the cave descends
+///   through, all on one layout, each entered from the east
 ///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
 ///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
 ///   map_warps.h names them room by room
@@ -40,22 +41,22 @@
 ///   floor a chest is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN
 ///   once beaten). The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
-/// - Crossbone Isle Cave (MapId_CrossboneIsleFloatingLogs), the ninth floor's
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth floor's
 ///   side room: twelve logs floating on green water, which drift with the
 ///   leader standing on them until another log or the shore stops them, and
 ///   hops from log to log, lead to its four chests.
-/// - Crossbone Isle Cave (MapId_CrossboneIslePier), the ledge past the ninth
+/// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the ninth
 ///   floor where a wooden pier leads out to the Pirate Ship.
-/// - Pirate Ship (MapId_PirateShip), at the end. Stepping on coord event 10
+/// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on coord event 10
 ///   (EventScript_FightDeadbeard) sets off the battle with Deadbeard, the sixth
 ///   group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party comes
 ///   back (WARP_DEST_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is
 ///   set and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
-/// Map_Initialize restores each map as its flags say: the ivy and plants on the
-/// island, the sliding logs' footprints, the corridor's sunk pillars and the
-/// chests the mimics leave.
+/// Scene_Initialize restores each map as its flags say: the ivy and plants on
+/// the island, the sliding logs' footprints, the corridor's sunk pillars and
+/// the chests the mimics leave.
 
 #include "save_block.h"
 #include "version.h"
@@ -85,7 +86,7 @@
 #include "edition.h"
 #include "field_service.h"
 #include "call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -133,10 +134,10 @@ enum CrossboneIsleLocalId {
 /// island's map: four map temp flags from this one, one a plant.
 /// ★ Named from what the player sees: small sprouts on the cliff ledges (its
 /// render)
-enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40 };
+enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
 /// The twelve floating logs of the ninth floor's side room
-/// (MapId_CrossboneIsleFloatingLogs), numbered in the order of
+/// (SceneId_CrossboneIsleFloatingLogs), numbered in the order of
 /// gCrossboneIsle_FloatingLogsObjectEventTemplates, from the first to the
 /// twelfth, with their shapes: a log three cells wide slides north and south,
 /// and one three cells tall slides east and west.
@@ -232,42 +233,42 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 /// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsle) {
+  if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleCaveEntrance) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleCaveEntrance) {
     return gCrossboneIsle_CaveEntranceWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloatingLogs) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIsle_FloatingLogsWarpDests;
   }
-  if (mapId == (s32)&MapId_CrossboneIslePier) {
+  if (sceneId == (s32)&SceneId_CrossboneIslePier) {
     return gCrossboneIsle_PierWarpDests;
   }
-  if (mapId == (s32)&MapId_PirateShip) {
+  if (sceneId == (s32)&SceneId_PirateShip) {
     return gCrossboneIsle_PirateShipWarpDests;
   }
   return &gCrossboneIsle_PirateShipWarpDests[2];
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gCrossboneIsleWarps; }
+const u32 *Scene_GetWarps(void) { return gCrossboneIsleWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsle) {
+  if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloatingLogs) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIsle_FloatingLogsObjectEventTemplates;
   }
-  if (mapId <= (s32)&MapId_CrossboneIsleNinthFloor &&
-      mapId >= (s32)&MapId_CrossboneIsleFirstFloor) {
+  if (sceneId <= (s32)&SceneId_CrossboneIsleNinthFloor &&
+      sceneId >= (s32)&SceneId_CrossboneIsleFirstFloor) {
     return gCrossboneIsle_CorridorObjectEventTemplates;
   }
   return gCrossboneIsle_NoObjectEventTemplates;
@@ -308,29 +309,29 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 static void EventScript_FightDeadbeard(void) {
 
   FieldScript_Start();
-  FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
+  FieldScript_SetNextDestination(gSaveBlock.sceneId, WARP_DEST_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_CrossboneIsle) {
+  if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleCaveEntrance) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleCaveEntrance) {
     return gCrossboneIsle_CaveEntranceEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIsleFloatingLogs) {
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIsle_FloatingLogsEvents;
   }
-  if (mapId == (s32)&MapId_CrossboneIslePier) {
+  if (sceneId == (s32)&SceneId_CrossboneIslePier) {
     return gCrossboneIsle_PierEvents;
   }
-  if (mapId == (s32)&MapId_PirateShip) {
+  if (sceneId == (s32)&SceneId_PirateShip) {
     return gCrossboneIsle_PirateShipEvents;
   }
   return gCrossboneIsle_CorridorEvents;
@@ -352,9 +353,9 @@ static void EventScript_CatchNut(void) {
 /// chest and, after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy,
 /// plants and Nut; in the corridor rooms the mimic's chest, the sunk pillars
 /// and the door opened after a battle.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  s32 mapId;
+  s32 sceneId;
   s32 current;
   s32 first;
 
@@ -362,18 +363,18 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_CrossboneIsleFloatingLogs) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     CrossboneIsle_DrawLogPuzzleFootprints();
     return 0;
   }
-  if (mapId == (s32)&MapId_PirateShip) {
+  if (sceneId == (s32)&SceneId_PirateShip) {
     if (GameFlag_Get(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
-    if (gSaveBlock.mapId == mapId) {
+    if (gSaveBlock.sceneId == sceneId) {
       if (gSaveBlock.warpDest != WARP_DEST_AFTER_BATTLE) {
         if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
@@ -385,12 +386,12 @@ s32 Map_Initialize(void) {
       return 0;
     }
   }
-  current = gSaveBlock.mapId;
-  if (current == (s32)&MapId_CrossboneIsle) {
+  current = gSaveBlock.sceneId;
+  if (current == (s32)&SceneId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
     ObjectEvent_Get(LOCALID_ISLE_NUT)->targetX = PIXELS(129);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG);
-    Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG + 1);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG);
+    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG + 1);
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT);
       if (objectEvent != 0) {
@@ -431,22 +432,22 @@ s32 Map_Initialize(void) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;
     }
-    Map_FloatNut(LOCALID_ISLE_NUT);
+    Scene_FloatNut(LOCALID_ISLE_NUT);
     return 0;
   }
   // The nine corridor rooms (CrossboneIsleFirstFloor to
   // CrossboneIsleNinthFloor) share their door battle, sunk pillar and return
   // warp destination.
-  first = (s32)&MapId_CrossboneIsleFirstFloor;
+  first = (s32)&SceneId_CrossboneIsleFirstFloor;
   if (current == first) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 10);
       TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
   }
-  current = gSaveBlock.mapId;
+  current = gSaveBlock.sceneId;
   if (current >= first) {
-    if (current <= (s32)&MapId_CrossboneIsleNinthFloor) {
+    if (current <= (s32)&SceneId_CrossboneIsleNinthFloor) {
       CrossboneIsle_RestoreSunkPillar();
       if (gSaveBlock.warpDest == WARP_DEST_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
@@ -464,8 +465,8 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 
   objectEvent = ObjectEvent_Get(LOCALID_SINKING_PILLAR);
   cleared = GameFlag_Get(
-      (gSaveBlock.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                           (s32)&MapId_CrossboneIsleFirstFloor)));
+      (gSaveBlock.sceneId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                             (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     ObjectEvent_SetPosition(LOCALID_SINKING_PILLAR, PIXELS(650), PIXELS(168));
     objectEvent->y.fixed = -PIXELS(32);
@@ -497,12 +498,12 @@ static void EventScript_MovePillar(void) {
 
 #if TBS_PATCH_1
   // Through state, the map's address is built as the save block's plus an
-  // offset, as the bytes have it; &gSaveBlock.mapId folds into one literal
+  // offset, as the bytes have it; &gSaveBlock.sceneId folds into one literal
   // (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
   state = &gSaveBlock;
-  mapNumber = &state->mapId;
+  mapNumber = &state->sceneId;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                 (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
+                                 (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
     return;
   }
 #endif
@@ -526,10 +527,10 @@ static void EventScript_MovePillar(void) {
 
 #if !TBS_PATCH_1
   state = &gSaveBlock;
-  mapNumber = &state->mapId;
+  mapNumber = &state->sceneId;
 #endif
   GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                             (s32)&MapId_CrossboneIsleFirstFloor));
+                             (s32)&SceneId_CrossboneIsleFirstFloor));
 }
 
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (coord event
@@ -554,15 +555,15 @@ static void EventScript_OpenWestDoor(void) {
 /// back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens onto
 /// the side room.
 static void EventScript_OpenEastDoor(void) {
-  if (GameFlag_Get(gSaveBlock.mapId +
+  if (GameFlag_Get(gSaveBlock.sceneId +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
-                    (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
+                    (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     FieldScript_Start();
-    FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
+    FieldScript_SetNextDestination(gSaveBlock.sceneId, WARP_DEST_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
-    switch (gSaveBlock.mapId - (s32)&MapId_CrossboneIsleFirstFloor) {
+    switch (gSaveBlock.sceneId - (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
       Field_RequestBattleFromEncounterTable(
           ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
@@ -615,9 +616,9 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  GameFlag_Set((gSaveBlock.mapId +
+  GameFlag_Set((gSaveBlock.sceneId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
-                 (s32)&MapId_CrossboneIsleFirstFloor)));
+                 (s32)&SceneId_CrossboneIsleFirstFloor)));
   FieldScript_WaitFrames(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);

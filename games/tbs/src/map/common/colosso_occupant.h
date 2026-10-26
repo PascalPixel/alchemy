@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_event.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "save_block.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).

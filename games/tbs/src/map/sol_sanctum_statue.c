@@ -1,8 +1,8 @@
 /// @file
-/// Sol Sanctum (MapId_SolSanctumStatue), the room of what Kraden calls the
-/// statue puzzle, off the Luna and Sol rooms (MapId_SolSanctumLunaSolRooms)
+/// Sol Sanctum (SceneId_SolSanctumStatue), the room of what Kraden calls the
+/// statue puzzle, off the Luna and Sol rooms (SceneId_SolSanctumLunaSolRooms)
 /// and leading on to a room with a Psynergy Stone
-/// (MapId_SolSanctumPsynergyStone).
+/// (SceneId_SolSanctumPsynergyStone).
 ///
 /// Eight winged statues stand around a ninth, the centre statue, which bears a
 /// sun disc. Four can be pushed, or moved with Move, onto seals in the floor;
@@ -89,11 +89,11 @@
 /// ★ Named from what the player sees: the statue holding a bowl at the head of
 /// the hall, where the beams from the statues beside it meet on the floor
 /// before it (its render)
-#define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_MAP_TEMP_07
+#define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another map section, and other map sections use the numbers for their
-// own.
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// Set once Kraden has found the hole and explained the disarmed trap.
 /// ★ Named from the game: "So the statue puzzle was the trap..."
 /// (MsgSolSanctumKradenYouFoundIt)
@@ -853,8 +853,8 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 }
 
 /// Restores the room's statues, beams and seals from their flags and plays
-/// Kraden's two visits. Called by Map_Run once the object events exist.
-/// Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
+/// Kraden's two visits. Called by SceneManager_Run once the object events
+/// exist. Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
 /// SolSanctumStatue_ExplainTrapDisarmed and at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED
@@ -971,7 +971,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    Map_QueueMusic(SE_RUMBLE);
+    Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     FieldEffect_InitializeSparkles();
   }

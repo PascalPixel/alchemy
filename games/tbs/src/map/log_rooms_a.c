@@ -1,5 +1,5 @@
 /// @file
-/// Log rooms A (MapId_LogRoomsA), a sheet of rooms drawn in logs, all of them
+/// Log rooms A (SceneId_LogRoomsA), a sheet of rooms drawn in logs, all of them
 /// Vault's: the insides of the town's houses, shops and inn, and the inn's
 /// loft, while Hammet's Shaman's Rod is missing and just after it is found.
 /// Every room is on one map, each a warp destination with a camera box of its
@@ -62,7 +62,7 @@
 #include "flags.h"
 #include "animspr.h"
 #include "version.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/log_rooms_a.h"
 #include "log_rooms_a.h"
@@ -214,7 +214,7 @@ enum {
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
 /// ★ Named from the game: "Uh-oh! I'm surrounded!" (MsgVaultImSurrounded)
-#define FLAG_VAULT_CORNERING_SUSPECTS FLAG_MAP_TEMP_50
+#define FLAG_VAULT_CORNERING_SUSPECTS FLAG_SCENE_TEMP_50
 
 /// The inn's loft (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the
 /// battle), where the thieves hid the stolen goods, numbering
@@ -288,23 +288,23 @@ static void LogRoomsA_EndMindRead(void);
 static void LogRoomsA_UpdateObjectEventStops(void);
 static void LogRoomsA_StartObjectEventStops(void);
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gLogRoomsA_WarpDests;
 }
 
 /// Returns the one warp region: the box around (648, 416) in the room with the
 /// crate, which takes LOG_ROOMS_A_TO_VAULT_WEST back out to Vault.
-const struct MapWarpRegion *Map_GetWarpRegions(void) {
+const struct MapWarpRegion *Scene_GetWarpRegions(void) {
   return gLogRoomsA_Regions;
 }
 
-const u32 *Map_GetWarps(void) { return gLogRoomsA_Warps; }
+const u32 *Scene_GetWarps(void) { return gLogRoomsA_Warps; }
 
 /// Places the townspeople, or, for the inn's loft
 /// (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the battle), the
 /// tied-up villager, the mayor, the thieves, their chests and the found
 /// treasures.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
   switch (gSaveBlock.warpDest) {
@@ -317,7 +317,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     table = gLogRoomsA_ObjectEventTemplates;
     break;
   }
-  Map_AssignViewFlags(table);
+  Scene_AssignViewFlags(table);
   return table;
 }
 
@@ -537,7 +537,7 @@ static void EventScript_SearchEmptyChest(void) {
 
 /// Returns the loft's events for the loft's three warp destinations, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   switch (gSaveBlock.warpDest) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
@@ -1116,7 +1116,7 @@ static void EventScript_MeetIvan(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -1534,7 +1534,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  base = (s32)&MapId_LogRoomsA;
+  base = (s32)&SceneId_LogRoomsA;
   FieldScript_SetNextDestination(base, LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
   FieldScript_SetDefeatDestination(base,
                                    LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
@@ -1941,7 +1941,7 @@ static void LogRoomsA_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
   // Move the party outside the room and the suspects back to their table.
-  Map_PlayMusic();
+  Scene_PlayMusic();
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -2154,7 +2154,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 localId, s32 expected, s32 next,
 /// LOG_ROOMS_A_TO_SANCTUM; after a won one (17) sets
 /// FLAG_VAULT_THIEVES_JAILED through LogRoomsA_ReturnStolenGoods, which
 /// also removes Ivan from the party.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gSaveBlock.warpDest) {
@@ -2323,9 +2323,9 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
 /// Shows the thieves' reaction after the party loses their battle: the party
 /// lies beaten, and the thieves hold it and the tied-up villager as hostages.
 ///
-/// Called by Map_Initialize at LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES,
+/// Called by Scene_Initialize at LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES,
 /// the battle's defeat destination; the event then takes
-/// LOG_ROOMS_A_TO_SANCTUM to the Vault Sanctum (MapId_Sanctum,
+/// LOG_ROOMS_A_TO_SANCTUM to the Vault Sanctum (SceneId_Sanctum,
 /// SANCTUM_FROM_LOG_ROOMS_A).
 static void LogRoomsA_LoseToThieves(void) {
   struct ObjectEvent *objectEvent;
@@ -2393,7 +2393,7 @@ static void LogRoomsA_LoseToThieves(void) {
 /// Arranges the loft confrontation and restarts the thieves' battle. "They
 /// won't go away, will they? They're back!"
 ///
-/// Called by Map_Initialize at LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM once
+/// Called by Scene_Initialize at LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM once
 /// FLAG_VAULT_THIEVES_ATTACKED is set. Starts the same battle as
 /// EventScript_FreeRooferAndConfrontThieves.
 static void LogRoomsA_ConfrontThievesAgain(void) {
@@ -2451,9 +2451,9 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  FieldScript_SetNextDestination((s32)&MapId_LogRoomsA,
+  FieldScript_SetNextDestination((s32)&SceneId_LogRoomsA,
                                  LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
-  FieldScript_SetDefeatDestination((s32)&MapId_LogRoomsA,
+  FieldScript_SetDefeatDestination((s32)&SceneId_LogRoomsA,
                                    LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
@@ -2469,7 +2469,7 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
 
 /// Stages the defeated thieves and gathers the townspeople in the loft.
 ///
-/// Called by Map_Initialize at LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED,
+/// Called by Scene_Initialize at LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED,
 /// the battle's victory destination, unless the party is only coming back to
 /// where it was; then LogRoomsA_ReturnStolenGoods follows.
 static void LogRoomsA_DefeatThieves(void) {
@@ -2717,7 +2717,7 @@ static void LogRoomsA_DefeatThieves(void) {
 
 /// Returns the stolen goods and rod, thanks the party, and clears the loft.
 ///
-/// Called by Map_Initialize after LogRoomsA_DefeatThieves. Sets
+/// Called by Scene_Initialize after LogRoomsA_DefeatThieves. Sets
 /// FLAG_VAULT_THIEVES_JAILED; the thieves are led away, the mayor's urn and
 /// the Sanctum's gold statue come out of the chests, Ivan takes the Shaman's
 /// Rod, gives back any Venus Djinn and leaves the party, and every object event

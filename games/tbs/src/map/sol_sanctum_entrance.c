@@ -1,38 +1,39 @@
 /// @file
 /// Sol Entrance and the first rooms of Sol Sanctum, two maps one overlay
-/// serves, chosen by gSaveBlock.mapId in every entry point.
+/// serves, chosen by gSaveBlock.sceneId in every entry point.
 ///
-/// - Sol Entrance (MapId_SolEntrance), the mountainside before the
+/// - Sol Entrance (SceneId_SolEntrance), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
 ///   into the door opens it and takes the leader in
 ///   (EventScript_OpenDoorAndEnter); searching the other door finds it "tightly
-///   locked". Retreat does not work here. The way down leads to MapId_Vale,
+///   locked". Retreat does not work here. The way down leads to SceneId_Vale,
 ///   except between the eruption (FLAG_SOL_SANCTUM_ERUPTED) and the party
-///   leaving Vale (FLAG_VALE_PARTY_LEFT), when it leads to MapId_ValeEruption.
-///   After the eruption the ground rumbles now and then; once the party has
-///   left Vale a man stands in the path and warns everyone away.
-/// - Sol Sanctum (MapId_SolSanctumReliefs), the rooms inside the door, which
+///   leaving Vale (FLAG_VALE_PARTY_LEFT), when it leads to
+///   SceneId_ValeEruption. After the eruption the ground rumbles now and then;
+///   once the party has left Vale a man stands in the path and warns everyone
+///   away.
+/// - Sol Sanctum (SceneId_SolSanctumReliefs), the rooms inside the door, which
 ///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
 ///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET), the
-///   second from the chest in MapId_SolSanctumMaze
+///   second from the chest in SceneId_SolSanctumMaze
 ///   (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden has an event on the
 ///   first entry at the door (SolSanctumEntrance_IntroduceSanctum), in the
 ///   first relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in
 ///   the second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues
 ///   in the first relief room and the row of six in the second can be pushed,
 ///   or moved with Move, a cell east or west. Its warps lead to
-///   MapId_SolSanctumCorridor, MapId_SolSanctumMaze, Sol Entrance and
-///   MapId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
+///   SceneId_SolSanctumCorridor, SceneId_SolSanctumMaze, Sol Entrance and
+///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
-/// MapId_SolSanctumReliefs is one map, but each relief room has object event
+/// SceneId_SolSanctumReliefs is one map, but each relief room has object event
 /// template and event tables of its own:
 /// SolSanctumEntrance_GetObjectEventTemplates and _GetEvents choose them by
 /// the warp destination the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each pushable statue's column
 /// is kept in two map section flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
-/// Map_ResetFlagsOnEnter clears them when the party enters another map
+/// Scene_ResetFlagsOnEnter clears them when the party enters another map
 /// section, so the statues are back at their starts on the next visit.
 /// Searching a relief while its Small Jewel is held asks for the field menu as
 /// the search ends, so that the jewel can be used on it at once.
@@ -64,7 +65,7 @@
 #include "map_tables.h"
 #include "field_service.h"
 #include "sol_sanctum_entrance.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "object_event.h"
@@ -73,7 +74,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
 
@@ -191,15 +192,15 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void FieldEffect_InitializeSparkles();
 
-/// Returns Sol Entrance's warp destinations (MapId_SolEntrance) or Sol
-/// Sanctum's (MapId_SolSanctumReliefs).
+/// Returns Sol Entrance's warp destinations (SceneId_SolEntrance) or Sol
+/// Sanctum's (SceneId_SolSanctumReliefs).
 const struct MapWarpDest *SolSanctumEntrance_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_SolEntrance) {
+  if (sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_WarpDests;
   }
-  if (mapId == (s32)&MapId_SolSanctumReliefs) {
+  if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
     return gSolSanctumReliefs_WarpDests;
   }
   return gSolSanctumEntrance_FallbackWarpDests;
@@ -222,7 +223,7 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
   s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gSaveBlock.mapId == (s32)&MapId_SolSanctumReliefs) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_SolSanctumReliefs) {
     if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
       if (gSaveBlock.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -235,10 +236,10 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
       }
     }
     table = gSolSanctumReliefs_ObjectEventTemplates;
-    Map_AssignViewFlags(table);
+    Scene_AssignViewFlags(table);
     return table;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_SolEntrance) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_ObjectEventTemplates;
   }
   return gSolSanctumEntrance_FallbackObjectEventTemplates;
@@ -250,10 +251,10 @@ const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gSaveBlock.mapId == (s32)&MapId_SolEntrance) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_Events;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_SolSanctumReliefs) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_SolSanctumReliefs) {
     if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
       if (gSaveBlock.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
@@ -587,7 +588,7 @@ static void EventScript_RowStatue6Moved(void) {
 /// first relief room's statues.
 /// ★ Named from the game: "It's a relief of a minotaur."
 /// (MsgSolSanctumMinotaurReliefOneEye)
-#define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_MAP_TEMP_34
+#define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_SCENE_TEMP_34
 
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell
 /// pushes it one cell, the leader behind it, if nothing is in the way, and its
@@ -656,20 +657,20 @@ static void EventScript_PushStatue(void) {
   }
 }
 
-/// Sets up Sol Entrance or Sol Sanctum. Called by Map_Run once the
+/// Sets up Sol Entrance or Sol Sanctum. Called by SceneManager_Run once the
 /// object events exist.
 s32 SolSanctumEntrance_Initialize(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_SolEntrance) {
+  if (sceneId == (s32)&SceneId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
-  } else if (mapId == (s32)&MapId_SolSanctumReliefs) {
+  } else if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
     SolSanctumEntrance_RestoreInteriorState();
   }
   return 0;
 }
 
-/// Sets up Sol Entrance (MapId_SolEntrance): Retreat is blocked
+/// Sets up Sol Entrance (SceneId_SolEntrance): Retreat is blocked
 /// (FLAG_RETREAT_BLOCKED), and after the eruption
 /// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
@@ -701,9 +702,9 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   }
 }
 
-/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its rooms
-/// rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST and
-/// SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
+/// Sets up Sol Sanctum (SceneId_SolSanctumReliefs): after the eruption its
+/// rooms rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST
+/// and SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
 /// relief's passage once it is open; SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the
 /// way in, makes itself the Retreat point and plays Kraden's welcome until
 /// FLAG_SOL_SANCTUM_ENTERED is set. In the first relief room Kraden's talk of
@@ -718,7 +719,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    Map_QueueMusic(SE_RUMBLE);
+    Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     FieldEffect_InitializeSparkles();
   }
@@ -741,7 +742,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gSaveBlock.retreatMap = (s32)&MapId_SolSanctumReliefs;
+    gSaveBlock.retreatMap = (s32)&SceneId_SolSanctumReliefs;
     gSaveBlock.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
@@ -1376,10 +1377,10 @@ struct MapWarpDest gSolSanctumReliefs_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-// Sol Entrance (MapId_SolEntrance), then Sol Sanctum
-// (MapId_SolSanctumReliefs). Sol Entrance's way
-// down leads to MapId_Vale until the eruption, then to Vale during the
-// eruption (MapId_ValeEruption) until the party has left Vale.
+// Sol Entrance (SceneId_SolEntrance), then Sol Sanctum
+// (SceneId_SolSanctumReliefs). Sol Entrance's way
+// down leads to SceneId_Vale until the eruption, then to Vale during the
+// eruption (SceneId_ValeEruption) until the party has left Vale.
 u32 gSolSanctumEntrance_Warps[] = {
     MAP_WARPS(SolEntrance),
     MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,

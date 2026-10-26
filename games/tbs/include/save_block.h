@@ -9,7 +9,7 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (MapHeader.mapType, copied to SaveBlock.mapType).
+/// A map's type (SceneHeader.mapType, copied to SaveBlock.mapType).
 enum MapType {
   MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -83,24 +83,25 @@ struct SaveBlock {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The map being played: its index in gMapHeaders (a MapId_
-  /// symbol), or RUN_BATTLE or another number above the field maps.
-  s16 mapId;
-  s16 warpDest;   ///< the warp destination taken; in RUN_BATTLE, the formation
-  s16 restartMap; ///< where the party restarts: the last Sanctum, usually
+  /// The map being played: its index in gSceneHeaders (a SceneId_
+  /// symbol), or SEQUENCE_BATTLE or another number above the field maps.
+  s16 sceneId;
+  s16 warpDest;        ///< the warp destination taken; in SEQUENCE_BATTLE, the
+                       ///< formation
+  s16 restartScene;    ///< where the party restarts: the last Sanctum, usually
   s16 restartWarpDest; ///< the restart point's warp destination
   s16 defaultMap;      ///< the map being run, kept as it starts
   s16 defaultWarpDest; ///< the warp destination it was entered by
   s16 mapSec;  ///< the current map's map section; a new one resets its flags
   s16 nextMap; ///< where the script sends the party next; -1 for none
   s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
-  s16 defeatMap;      ///< where a defeat returns to; -1 for none
+  s16 defeatScene;    ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
   s16 special;        ///< the battle background chosen for the map or
                       ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
   /// The map header's layout (layoutIndex); the world map's is 1, which the
-  /// code compares as (s32)&MapId_MainMenu.
+  /// code compares as (s32)&SceneId_MainMenu.
   s16 layoutId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
@@ -151,7 +152,7 @@ struct SaveBlock {
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a map, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (Map_Run, LamakanDesert_Initialize).
+  /// (SceneManager_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode

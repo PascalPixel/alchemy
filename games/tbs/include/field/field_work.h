@@ -30,7 +30,7 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
 /// The values of FieldWork.raisedEvent that the field loop handles itself,
-/// rather than passing them to the map (Map_RunRaisedEvent).
+/// rather than passing them to the map (Scene_RunRaisedEvent).
 enum FieldRaisedEvent {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_EVENT_PARTY_FELL = -1,
@@ -41,10 +41,11 @@ enum FieldRaisedEvent {
   FIELD_RAISED_EVENT_WORLD_MAP_ZOOM = -889
 };
 
-/// A field map's work: Map_Run allocates it in heap slot HEAP_SLOT_FIELD,
-/// zeroes it and frees it on the way out, and the field loop, the field
-/// services and the map overlays all reach it through gFieldWork. The twelve
-/// requests from coordEvent to raisedEvent are handled by the field loop.
+/// A field map's work: SceneManager_Run allocates it in heap slot
+/// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field loop,
+/// the field services and the map overlays all reach it through gFieldWork. The
+/// twelve requests from coordEvent to raisedEvent are handled by the field
+/// loop.
 struct FieldWork {
   /// The object event template tables placed so far, recorded by
   /// FieldScript_SpawnObjectEventTemplates.
@@ -58,7 +59,7 @@ struct FieldWork {
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 coordEvent; ///< a step event (1 to 239) for Map_RunCoordEventOrWarp
+  s16 coordEvent; ///< a step event (1 to 239) for Scene_RunCoordEventOrWarp
   s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
   s16 warp;     ///< the warp taken, which ends the map
   s16 menu;     ///< open the field menu
@@ -69,7 +70,7 @@ struct FieldWork {
   s16 battle;     ///< the formation of a random encounter
   s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
   s16 item;       ///< an item to use, packed as Field_UseItem reads it
-  /// A raised event for Map_RunRaisedEvent, or an enum FieldRaisedEvent.
+  /// A raised event for Scene_RunRaisedEvent, or an enum FieldRaisedEvent.
   s16 raisedEvent;
   ///@}
   s16 fallenCount;     ///< the characters who fell this step
@@ -128,7 +129,7 @@ struct FieldWork {
   s16 choiceWidth;   ///< the choice window's width, 0 for the default
   s8 psynergyActing; ///< set while Psynergy takes effect
   s8 castStarted;    ///< set once a cast has been announced
-  s16 queuedSound;   ///< a sound Map_PlayQueuedMusic plays; -1 for none
+  s16 queuedSound;   ///< a sound Scene_PlayQueuedMusic plays; -1 for none
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
@@ -172,8 +173,8 @@ STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 0xcc6);
 STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
 STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
-/// The running field map's work, heap slot HEAP_SLOT_FIELD; Map_Run takes it
-/// and frees it.
+/// The running field map's work, heap slot HEAP_SLOT_FIELD; SceneManager_Run
+/// takes it and frees it.
 extern struct FieldWork *gFieldWork;
 
 #endif

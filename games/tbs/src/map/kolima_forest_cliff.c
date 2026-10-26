@@ -1,7 +1,7 @@
 /// @file
-/// Kolima Forest (MapId_KolimaForestCliff), the third of the forest's five
-/// maps, between MapId_KolimaForestGlade and MapId_KolimaForestFloodgate. Of
-/// its three logs, rolled by walking into them, the one pushed west to the
+/// Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
+/// maps, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
+/// Of its three logs, rolled by walking into them, the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
 /// to the far side, and from the bank the leader can hop east (coord event 11,
 /// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
@@ -59,7 +59,7 @@ enum {
 /// can cross.
 /// ★ Named from what the player sees: a log lying north to south beside the
 /// river that winds through the clearing (its render)
-#define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_MAP_TEMP_01
+#define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
 const struct MapWarpDest *KolimaForestCliff_GetWarpDests(void) {
   return gKolimaForestCliffWarpDests;
@@ -75,10 +75,11 @@ KolimaForestCliff_GetObjectEventTemplates(void) {
   return gKolimaForestCliffObjectEventTemplates;
 }
 
-/// Kolima Forest (MapId_KolimaForestCliff), walking into a log: it rolls ahead
-/// until something stops it. The river log, stopped at the bank (cell column
-/// 12), tips over with a splash and floats in the water; its cells become
-/// ground the party can cross (sets FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
+/// Kolima Forest (SceneId_KolimaForestCliff), walking into a log: it rolls
+/// ahead until something stops it. The river log, stopped at the bank (cell
+/// column 12), tips over with a splash and floats in the water; its cells
+/// become ground the party can cross (sets
+/// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {
   struct PushedObjectProbe result;
   FieldScript_Start();
@@ -120,7 +121,7 @@ s32 KolimaForestCliff_Initialize(void) {
 
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
+  Scene_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
@@ -130,8 +131,8 @@ s32 KolimaForestCliff_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
 
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(6);
@@ -174,8 +175,8 @@ struct MapWarpDest gKolimaForestCliffWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-/// On into the forest (MapId_KolimaForestFloodgate) and back
-/// (MapId_KolimaForestGlade).
+/// On into the forest (SceneId_KolimaForestFloodgate) and back
+/// (SceneId_KolimaForestGlade).
 u32 gKolimaForestCliffWarps[] = {
     MAP_WARPS(KolimaForestCliff),
     MAP_WARP(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),

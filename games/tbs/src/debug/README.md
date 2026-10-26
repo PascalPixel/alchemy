@@ -77,7 +77,7 @@ talks to Flint, always, run Flint's script.
 The room answers the field's six questions with `TestRoom_Initialize`,
 `TestRoom_GetWarpDests`, `TestRoom_GetWarps`,
 `TestRoom_GetObjectEventTemplates`, `TestRoom_GetEvents` and
-`Map_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
+`Scene_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
 script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
@@ -144,7 +144,7 @@ the set-up and warp region entries, which take the map overlays' names.
 ## How it fits with the rest of the game
 
 The rooms are maps like any other: the map table names their overlays,
-`Map_Run` runs them, and their [scripts](../../glossary.md#script) call the
+`SceneManager_Run` runs them, and their [scripts](../../glossary.md#script) call the
 same main-image code the real maps call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the

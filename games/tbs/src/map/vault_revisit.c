@@ -1,5 +1,5 @@
 /// @file
-/// Vault (MapId_VaultRevisit), the town once the party has reached Kalay, on
+/// Vault (SceneId_VaultRevisit), the town once the party has reached Kalay, on
 /// the same layout as Vault's first map (vault.c). The world map still leads
 /// into the first map, but once FLAG_KALAY_REACHED is set its setup sends the
 /// party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
@@ -27,7 +27,7 @@
 /// STONE_ROOMS_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
 /// place.
 ///
-/// The inn's roof is mended: the 3-by-3 block of cells Map_Initialize copies
+/// The inn's roof is mended: the 3-by-3 block of cells Scene_Initialize copies
 /// from (45, 41) to (8, 45) lies under map grid layer 2's window, on the inn's
 /// roof, and draws the thatch whole where vault.c's town shows the hole the
 /// fiery rock burnt in it (render probe vault-revisit, the town before and
@@ -154,16 +154,16 @@ enum {
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gVaultRevisit_WarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gVaultRevisit_Warps; }
+const u32 *Scene_GetWarps(void) { return gVaultRevisit_Warps; }
 
 /// Returns the villagers, dog, and Djinni object event templates.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gVaultRevisit_ObjectEventTemplates;
 }
 
@@ -634,7 +634,7 @@ static void EventScript_PeerIntoWell(void) {
 }
 
 /// Returns the town's talk, bg, Psynergy, and doorway events.
-const struct MapEvent *Map_GetEvents(void) { return gVaultRevisit_Events; }
+const struct MapEvent *Scene_GetEvents(void) { return gVaultRevisit_Events; }
 
 /// Patched editions keep Sap by the bell when the party keeps its position,
 /// as on a return from battle.
@@ -660,7 +660,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
 /// FLAG_WARP_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
 /// play.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
 
   struct ObjectEvent *objectEvent;
   s32 mode;

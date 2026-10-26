@@ -5,7 +5,7 @@
 	.set import.GameFlag_Get, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Import_ObjectEventSetPosition, 1
 	.set import.FieldScript_SetMessageId, 1

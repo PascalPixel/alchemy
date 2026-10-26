@@ -1,5 +1,5 @@
 /// @file
-/// Vale (MapId_ValeKradensCottage): the part of the village around Kraden's
+/// Vale (SceneId_ValeKradensCottage): the part of the village around Kraden's
 /// cottage, by the fence that closes off the lands beyond. Kraden, "a trained
 /// Alchemy sage" in his own words, came to Vale to study Mt. Aleph and Alchemy.
 /// One object event template table serves every visit:
@@ -7,7 +7,7 @@
 /// ValeKradensCottage_GetEvents picks the events for the time of the story.
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's map (Vale,
-///   MapId_ValeStormyNight) leads here by
+///   SceneId_ValeStormyNight) leads here by
 ///   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH and
 ///   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH, arriving by
 ///   VALE_KRADENS_COTTAGE_FROM_VALE_NORTH and
@@ -40,7 +40,7 @@
 ///   up Saturos and Menardi, and Kraden talks the three into a secret look at
 ///   Sol Sanctum on the forbidden mountain, then goes in to prepare, and
 ///   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG takes the party into
-///   the cottage (MapId_CottageRoomsB,
+///   the cottage (SceneId_CottageRoomsB,
 ///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG). Coming back out by
 ///   VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden joins them for Mt.
 ///   Aleph (EventScript_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then
@@ -51,13 +51,13 @@
 ///   fair hair visits the empty cottage, missing Kraden.
 ///
 /// By day the cottage's door (EventScript_EnterCottage) leads into the cottage
-/// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to MapId_CottageRoomsB's
+/// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to SceneId_CottageRoomsB's
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
 /// VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH go
-/// down into the village (MapId_Vale) and
+/// down into the village (SceneId_Vale) and
 /// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
 /// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST into Vale Cave's way in
-/// (MapId_ValeCaveMouth). Coming back from it by
+/// (SceneId_ValeCaveMouth). Coming back from it by
 /// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears
 /// FLAG_SHOW_LOCATION_NAME, so the area name is not shown again. The jar's row
 /// finds nothing on the stormy night, and after Kalay it is there only from the
@@ -144,7 +144,7 @@ enum ValeKradensCottageLocalId {
 /// opening.
 /// ★ Named from what the player sees: the arched wooden door of Kraden's
 /// thatched cottage (its render)
-#define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_MAP_TEMP_42
+#define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
 const struct MapWarpDest *ValeKradensCottage_GetWarpDests(void) {
   return gValeKradensCottage_WarpDests;
@@ -242,7 +242,7 @@ static void EventScript_TalkToBoyByTheFence(void) {
 /// Reached by talking to Kraden in the day's events, until
 /// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
 /// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG into the cottage
-/// (MapId_CottageRoomsB,
+/// (SceneId_CottageRoomsB,
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG); the party comes back
 /// by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, where
 /// EventScript_KradenSetsOff goes on.
@@ -837,7 +837,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   Object_SetTargetAndCallback(LOCALID_MENARDI,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
                               gValeKradensCottage_FaceTargetActions);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -1229,7 +1229,7 @@ s32 gValeKradensCottage_RockslideSurvivorSquashes[] = {
 
 /// Keeps a linked object event facing its current target.
 s32 gValeKradensCottage_FaceTargetActions[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

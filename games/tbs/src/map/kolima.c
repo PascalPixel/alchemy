@@ -3,7 +3,7 @@
 /// village's houses and shops are another overlay (log_rooms_c.c), and so
 /// is each map of Kolima Forest.
 ///
-/// - Kolima (MapId_Kolima), the village of lumberjacks, to which Lord
+/// - Kolima (SceneId_Kolima), the village of lumberjacks, to which Lord
 ///   McCoy has barricaded the road from Bilibin since the trouble began. The
 ///   party's first entry from the world map (KOLIMA_FROM_WORLD_MAP) plays
 ///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
@@ -24,10 +24,10 @@
 ///   Sanctum's services across his counter. Granite, a Venus Djinni
 ///   (LOCALID_GRANITE), waits in the village and joins when spoken to. Five
 ///   doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the houses and
-///   shops (MapId_LogRoomsC), KOLIMA_TO_WORLD_MAP and
+///   shops (SceneId_LogRoomsC), KOLIMA_TO_WORLD_MAP and
 ///   KOLIMA_TO_WORLD_MAP_EAST to the world map and KOLIMA_TO_KOLIMA_TUNNEL
 ///   into Kolima Tunnel.
-/// - Kolima Tunnel (MapId_KolimaTunnel), a passage with no one in it from
+/// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from
 ///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
 ///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
 ///   warps KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
@@ -36,7 +36,7 @@
 ///   (bg events 100 and 101), are in the village: only Kolima's layout
 ///   (layout_037's treasure_spots.tsv) places them, at cells (23, 8) and (13,
 ///   23).
-/// - Kolima Bridge (MapId_KolimaBridge), "the grand bridge across the
+/// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
 ///   world map at both ends. It is a drawbridge, standing raised between its
 ///   posts. A villager stands beside it, a tree while the curse lasts
@@ -56,7 +56,7 @@
 #include "character_ids.h"
 #include "save_block.h"
 #include "heap_slots.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/kolima.h"
 #include "unit/map/common/kolima_forest_bridge_falling_effect.h"
 #include "unit/overworld/overworld.h"
@@ -84,7 +84,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "palbuf.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "songs.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
@@ -272,12 +272,12 @@ static s32 Kolima_UpdateFallingDebris(struct Object *interpreter) {
 
 /// Selects the warp destinations of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct MapWarpDest *Kolima_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_KolimaBridge) {
+  if (sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeWarpDests;
   }
-  if (mapId == (s32)&MapId_KolimaTunnel) {
+  if (sceneId == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelWarpDests;
   }
   return gKolimaWarpDests;
@@ -286,14 +286,14 @@ const struct MapWarpDest *Kolima_GetWarpDests(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct MapWarpRegion *Kolima_GetRegions(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_KolimaTunnel) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
 }
 
 /// The warps of all three maps, each map's after its header word (a warp
-/// of kind 0): Kolima's to the world map, the houses (MapId_LogRoomsC)
+/// of kind 0): Kolima's to the world map, the houses (SceneId_LogRoomsC)
 /// and Kolima
 /// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
 /// and the village.
@@ -302,15 +302,15 @@ const u32 *Kolima_GetWarps(void) { return gKolimaWarps; }
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ObjectEventTemplate *Kolima_GetObjectEventTemplates(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Kolima) {
+  if (sceneId == (s32)&SceneId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaObjectEventTemplates);
     }
     return gKolimaObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_KolimaBridge) {
+  if (sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeObjectEventTemplates;
   }
   return gKolimaTunnelObjectEventTemplates;
@@ -341,7 +341,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's map events, or the table Kolima and Kolima Tunnel
 /// share.
 const struct MapEvent *Kolima_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_KolimaBridge) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeEvents;
   }
   return gKolimaEvents;
@@ -508,18 +508,18 @@ static void Kolima_LowerBridge(void) {
 /// here or in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes
 /// are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
-  s16 mapId;
+  s16 sceneId;
   u32 localId;
   const s32 *table;
 
-  mapId = gSaveBlock.mapId;
+  sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_KolimaBridge) {
+  if (sceneId == (s32)&SceneId_KolimaBridge) {
     Kolima_RestoreBridgeState();
     return 0;
   }
 
-  if (mapId == (s32)&MapId_KolimaTunnel) {
+  if (sceneId == (s32)&SceneId_KolimaTunnel) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
@@ -1584,7 +1584,7 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
   }
   GameFlag_Set(FLAG_KOLIMA_CURSE_WITNESSED);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -1802,7 +1802,7 @@ s32 gKolima_DebrisScript[] = {
 };
 
 s32 gKolima_FaceLeaderScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1860,8 +1860,8 @@ struct MapWarpRegion gKolimaTunnelRegions[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-/// Kolima's warps, then Kolima Bridge's (from the header word for MapId_KolimaBridge)
-/// and Kolima Tunnel's (from the one for MapId_KolimaTunnel).
+/// Kolima's warps, then Kolima Bridge's (from the header word for SceneId_KolimaBridge)
+/// and Kolima Tunnel's (from the one for SceneId_KolimaTunnel).
 u32 gKolimaWarps[] = {
     MAP_WARPS(Kolima),
     MAP_WARP(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),

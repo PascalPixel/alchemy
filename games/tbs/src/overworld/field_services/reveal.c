@@ -103,8 +103,8 @@ void FieldEffect_RunReveal(void) {
   work->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                FIELD_PSYNERGY_REVEAL, &eventTarget);
+  event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                  FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
@@ -165,8 +165,8 @@ void FieldEffect_EndReveal(void) {
     PaletteFade_StartInterpolation(30);
     WaitFrames(1);
 
-    event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ENDS),
-                                  FIELD_PSYNERGY_REVEAL, &eventTarget);
+    event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ENDS),
+                                    FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
       Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
 

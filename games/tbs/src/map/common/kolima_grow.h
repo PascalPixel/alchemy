@@ -1,6 +1,6 @@
 /// @file
-/// Kolima and Kolima Forest (MapId_Kolima, MapId_KolimaForestEntrance and
-/// MapId_KolimaForestTree): an effect that
+/// Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
+/// SceneId_KolimaForestTree): an effect that
 /// stretches as it travels.
 #include "action_script.h"
 #include "types.h"

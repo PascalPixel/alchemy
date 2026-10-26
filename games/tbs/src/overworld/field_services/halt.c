@@ -202,7 +202,7 @@ void FieldEffect_PauseObject(s32 localId) {
 /// Resumes object id with the update and param kept by
 /// FieldEffect_PauseObject. Called for gSaveBlock.pausedObject by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind before Halt stops
-/// another object, and by Map_TalkToObjectEvent after talking to the paused
+/// another object, and by Scene_TalkToObjectEvent after talking to the paused
 /// object event. Clears gSaveBlock.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
 void FieldEffect_ResumeObject(s32 localId) {

@@ -6,7 +6,7 @@
 /// map events, and the macros that write them.
 
 #include "static_assert.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "map_warps.h"
 #include "character_ids.h"
 #include "sprite_ids.h"
@@ -40,7 +40,7 @@ enum { MAP_TABLE_END = -1 };
 /// (GameFlag_IsConditionActive).
 enum {
   CONDITION_ALWAYS = -1,
-  /// An object event template's condition that Map_AssignViewFlags replaces
+  /// An object event template's condition that Scene_AssignViewFlags replaces
   /// with whether the object event lies within the map's view bounds, in the
   /// maps that call it, so only the room entered is populated.
   CONDITION_IN_VIEW = 0,
@@ -54,7 +54,7 @@ enum {
 /// maps then place their later object events and lines, the Sanctum takes
 /// another map event table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes metatile behaviors and stops sending its way down to
-/// MapId_ValeEruption.
+/// SceneId_ValeEruption.
 /// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
@@ -79,17 +79,17 @@ STATIC_ASSERT(sizeof(struct MapWarpDest) == 24);
 STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 
 /// A warp table's header word: the map whose warps follow, named by its
-/// name (`MAP_WARPS(Bilibin)`). The table is read by Map_TakeWarp as the
+/// name (`MAP_WARPS(Bilibin)`). The table is read by Scene_TakeWarp as the
 /// map ends, with the warp kind it ended on.
-#define MAP_WARPS(map) ((u32)&MapId_##map)
+#define MAP_WARPS(map) ((u32)&SceneId_##map)
 /// One warp: warp kind `warp` leads to `warpDest` of the map `map`, both
 /// named in map_warps.h. Kind 0xff matches any warp; kind 0 or the next
 /// header sends the party to the first warp's map. The fields are added
-/// rather than ORed so the map can be its MapId_ symbol, which the linker
+/// rather than ORed so the map can be its SceneId_ symbol, which the linker
 /// fills in; they never overlap. bits: 27..20 warp kind | 19..12 warp
 /// destination | 11..0 map
 #define MAP_WARP(warp, map, warpDest)                                          \
-  (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&MapId_##map)
+  (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&SceneId_##map)
 /// A warp with a flag word after it (bit 28). Despite the name, the warp is
 /// taken only while `flag` is clear; when it is set, the search goes on to
 /// the next warp.
@@ -99,22 +99,22 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 #define MAP_WARPS_END 0x1ff
 
 /// Map numbers above the field maps: what runs instead of a map
-/// (Map_Run). They have no row in gMapHeaders.
+/// (SceneManager_Run). They have no row in gSceneHeaders.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  RUN_NONE = 0x1fb,
-  RUN_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
-                            ///< MapId_StuccoRoomsC (lucky_wheels.c)
-  RUN_LUCKY_DICE = 0x1fd,   ///< Lucky Dice in Tolbi's game room,
-                            ///< MapId_StuccoRoomsC (lucky_dice.c)
+  SEQUENCE_NONE = 0x1fb,
+  SEQUENCE_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
+                                 ///< SceneId_StuccoRoomsC (lucky_wheels.c)
+  SEQUENCE_LUCKY_DICE = 0x1fd,   ///< Lucky Dice in Tolbi's game room,
+                                 ///< SceneId_StuccoRoomsC (lucky_dice.c)
   /// A battle; the warp destination is the formation, and the result -1 a
   /// defeat.
-  RUN_BATTLE = 0x1fe
+  SEQUENCE_BATTLE = 0x1fe
 };
 
 /// A warp into a battle: warp kind `warp` fights formation `group`.
 #define WARP_TO_BATTLE(warp, group)                                            \
-  (((u32)(warp) << 20) + ((u32)(group) << 12) + RUN_BATTLE)
+  (((u32)(warp) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
 
 /// An object event a map places: its sprite, the condition for placing it, how
 /// it behaves, where it stands and which way it faces, and how it turns to
@@ -157,8 +157,8 @@ enum MovementType {
 };
 
 /// How a placed object event turns when the leader talks to it
-/// (Map_TalkToObjectEvent). With all but TALK_FACING_KEEP the leader stops and
-/// the two are linked.
+/// (Scene_TalkToObjectEvent). With all but TALK_FACING_KEEP the leader stops
+/// and the two are linked.
 enum ObjectEventTalkFacing {
   TALK_FACING_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
@@ -201,7 +201,7 @@ enum LocalId {
 /// A map event: its kind and detail, the trigger it answers, its condition
 /// and its value (a message or a script).
 struct MapEvent {
-  /// The kind and its detail, read by Map_FindEvent and the item, Psynergy
+  /// The kind and its detail, read by Scene_FindEvent and the item, Psynergy
   /// and bg event lookups; -1 ends the table. The detail bits depend on the
   /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
@@ -238,14 +238,14 @@ enum MapEventKind {
   MAP_EVENT_PSYNERGY = 5,
   MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
   /// Talking to an object event Halt has stopped
-  /// (Map_FindObjectEventTalkEvent).
+  /// (Scene_FindObjectEventTalkEvent).
   MAP_EVENT_TALK_HALTED = 7
 };
 
 // XXX: what leaving animations 26 and 25 and arrivals 24 and 23 show;
 // recordings of a warp of each style would settle it.
 /// A warp event's control bits 5..4: how the leader leaves
-/// (Map_RunCoordEventOrWarp).
+/// (Scene_RunCoordEventOrWarp).
 enum WarpStyle {
   WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   WARP_STYLE_SILENT = 0x10,
@@ -269,7 +269,7 @@ enum WarpStyle {
 /// With COORD_EVENT_FLAG_WALKING, 2 frames of pushing are enough.
 #define COORD_EVENT_FLAG_QUICK 0x800
 /// An event that needs the leader to face within an eighth of a turn of the
-/// heading in control bits 15..12 (Map_FindEvent).
+/// heading in control bits 15..12 (Scene_FindEvent).
 #define MAP_EVENT_FLAG_FACING 0x400
 #define COORD_EVENT_WALKING (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING)
 /// facing is an enum Facing; only its top four bits are compared.
@@ -298,11 +298,11 @@ enum PsynergyPhase {
   /// this phase also makes Field_UsePsynergy aim the effect at the object event
   /// ahead.
   PSYNERGY_PHASE_EFFECT_ACTS = 5,
-  PSYNERGY_PHASE_ANY = 7 ///< Map_FindPsynergyEvent matches every phase
+  PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyEvent matches every phase
 };
 
 /// The control word of a Psynergy event (MAP_EVENT_PSYNERGY) in the given
-/// phase, as Map_FindPsynergyEvent compares it (bits 30..28 phase
+/// phase, as Scene_FindPsynergyEvent compares it (bits 30..28 phase
 /// | 3..0 kind).
 #define PSYNERGY_EVENT(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EVENT(PSYNERGY_PHASE_ANY)

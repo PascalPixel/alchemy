@@ -15,7 +15,7 @@
 #include "fixed_point_position.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "script_layer.h"
@@ -24,8 +24,8 @@
 
 // Seventeen maps with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
-// Cave, Kolima Forest (MapId_KolimaForestEntrance to
-// MapId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
+// Cave, Kolima Forest (SceneId_KolimaForestEntrance to
+// SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
 // entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things
 // pushed a cell at a time, such as stone pillars, and logs and other large
 // things that roll until they meet something, redrawn into the map grid where
@@ -133,7 +133,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   lead->acceleration = rate;
   Object_SetPosition(lead, dst.x, dst.y, dst.z);
   Object_WaitForMove(next);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   next->x.fixed = dst.x;
   next->z.fixed = dst.z;
   next->velocityX = 0;
@@ -243,8 +243,8 @@ static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 /// Returns the large thing whose footprint covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
 /// leader's direction, its local id and its footprint; or NULL.
-static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
-                                                     s32 *footprint) {
+static struct ObjectEvent *
+Scene_FindObjectEventRegion(s32 *direction, s32 *slot, s32 *footprint) {
   struct FieldWork *work = gFieldWork;
   struct ObjectEvent *player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct ObjectEvent **list;
@@ -322,8 +322,8 @@ PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
   s32 offset;
 
   probe->callback = 0;
-  objectEvent = Map_FindObjectEventRegion(&direction, &probe->objectEventSlot,
-                                          &probe->footprintIndex);
+  objectEvent = Scene_FindObjectEventRegion(&direction, &probe->objectEventSlot,
+                                            &probe->footprintIndex);
   if (objectEvent == 0) {
     return 0;
   }
@@ -569,13 +569,13 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
         2, originalPosition.x, originalPosition.z, horizontalExtent,
         verticalExtent, MB_NORMAL);
   }
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
 }
 
 /// Block large thing id's cells (metatile behavior 255) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
-UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
+UNUSED static s32 Scene_RedrawObjectEventFootprint(s32 id) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   struct PushedObjectProbe probe;

@@ -185,10 +185,10 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the map's object event placed
 /// for that Djinni (condition = its flag) goes back to its template's position,
 /// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
-/// set, and stands (animation 1). Map_Run calls it as it rebuilds the map,
-/// only while an event is still pending after Djinn_ResolvePendingEvent's first
-/// call, that is after a won battle; the second call then makes this object
-/// event join the party.
+/// set, and stands (animation 1). SceneManager_Run calls it as it rebuilds the
+/// map, only while an event is still pending after Djinn_ResolvePendingEvent's
+/// first call, that is after a won battle; the second call then makes this
+/// object event join the party.
 void ObjectEvent_PlaceMapObjectEvents(void) {
   s32 flags = gSaveBlock.pendingDjinnEvent & 0xf000;
   u32 event = gSaveBlock.pendingDjinnEvent & 0xfff;
@@ -202,7 +202,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
     // test too.
     if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gSaveBlock.runResult > 0) {
       for (id = 8; id <= 65; id++) {
-        struct ObjectEventTemplate *desc = Map_FindObjectEventTemplate(id);
+        struct ObjectEventTemplate *desc = Scene_FindObjectEventTemplate(id);
         struct Object *object;
 
         if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
@@ -234,7 +234,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
 
 /// Settles a pending Djinni battle as a map loads, from the battle's result
 /// in runResult (the enemies defeated, 999 when the party fled, -1
-/// when it lost). Map_Run calls it with shown 0 while it builds the
+/// when it lost). SceneManager_Run calls it with shown 0 while it builds the
 /// map and, while the event is still pending, with shown nonzero once the
 /// map is on screen.
 ///
@@ -283,7 +283,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 
         for (localId = 8; localId <= 65; localId++) {
           struct ObjectEventTemplate *found =
-              Map_FindObjectEventTemplate(localId);
+              Scene_FindObjectEventTemplate(localId);
           if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
                                 flag - DJINNI_BATTLE_EVENT_FIRST) {
             WaitFrames(40);

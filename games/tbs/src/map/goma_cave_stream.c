@@ -1,11 +1,11 @@
 /// @file
 /// The first and last rooms of Goma Cave, the cave in the Goma Range between
-/// Vault and Bilibin: MapId_GomaCaveStream and MapId_GomaCaveBridge, both
-/// under the area name Goma Cave. The getters give MapId_GomaCaveBridge its
-/// own tables and any other map MapId_GomaCaveStream's; the two share one
+/// Vault and Bilibin: SceneId_GomaCaveStream and SceneId_GomaCaveBridge, both
+/// under the area name Goma Cave. The getters give SceneId_GomaCaveBridge its
+/// own tables and any other map SceneId_GomaCaveStream's; the two share one
 /// warp table.
 ///
-/// - MapId_GomaCaveStream, the room a stream runs the length of. The party
+/// - SceneId_GomaCaveStream, the room a stream runs the length of. The party
 ///   walks in from the Goma Cave Entrance
 ///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at its bottom. A stump answers
 ///   Move: once it stands on column 24 it spins in place, leaps, lands with a
@@ -15,7 +15,7 @@
 ///   good). A chest holds Power Bread. Warps lead back to the Goma Cave
 ///   Entrance, into the room of two pillars (goma_cave_pillar.c;
 ///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and _EAST) and north into
-///   MapId_GomaCaveBridge. Vale's VALE_PLAZA_TO_GOMA_CAVE_STREAM leads in at
+///   SceneId_GomaCaveBridge. Vale's VALE_PLAZA_TO_GOMA_CAVE_STREAM leads in at
 ///   GOMA_CAVE_STREAM_FROM_VALE_PLAZA, which arrives without the area name in
 ///   a passage walled off from the rest of the room, its own camera box with
 ///   a chest at its north end (its render,
@@ -23,9 +23,9 @@
 ///   behavior 1 cell at its south tip, cell (38, 55) in layout_023's
 ///   map.txt, two cells south of the arrival, which leads back to
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_PLAZA).
-/// - MapId_GomaCaveBridge, the way out, where a wooden bridge crosses the
+/// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no object events and only its two warps: back south into
-///   MapId_GomaCaveStream and out onto the world map toward Bilibin
+///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "save_block.h"
 #include "unit/map/goma_cave_stream.h"
@@ -47,7 +47,7 @@
 #include "system.h"
 #include "map_grid_copy.h"
 #include "map_tables.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "call.h"
 #include "fixed_math.h"
 #include "objcmd.h"
@@ -57,7 +57,7 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-/// MapId_GomaCaveStream's object events, numbering its object event template
+/// SceneId_GomaCaveStream's object events, numbering its object event template
 /// rows from LOCALID_FIRST_PLACED.
 enum GomaCaveStreamLocalId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
@@ -66,7 +66,7 @@ enum GomaCaveStreamLocalId {
   LOCALID_STUMP = LOCALID_FIRST_PLACED
 };
 
-/// MapId_GomaCaveStream's warp destination that no warp names, standing the
+/// SceneId_GomaCaveStream's warp destination that no warp names, standing the
 /// leader just east of the stump, facing it. Only the debug map selector, which
 /// warps to any warp destination by number, reaches it.
 enum { WARP_DEST_BESIDE_STUMP = 99 };
@@ -76,25 +76,25 @@ static void GomaCaveStream_LeapStump(s32 stumpId);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeWarpDests;
   }
   return gGomaCaveStreamWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
 
-const u32 *Map_GetWarps(void) { return gGomaCaveStreamAndBridgeWarps; }
+const u32 *Scene_GetWarps(void) { return gGomaCaveStreamAndBridgeWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeObjectEventTemplates;
   }
   return gGomaCaveStreamObjectEventTemplates;
 }
 
-/// Move on the stump in Goma Cave (MapId_GomaCaveStream), until it has leapt
+/// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED): from column 24 it spins, leaps away
 /// and lies where it lands.
 static void EventScript_MoveStump(void) {
@@ -115,23 +115,23 @@ static void EventScript_MoveStump(void) {
   }
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveBridge) {
     return gGomaCaveBridgeEvents;
   }
   return gGomaCaveStreamEvents;
 }
 
-/// Sets up MapId_GomaCaveStream as the party enters (MapId_GomaCaveBridge
+/// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
 /// needs nothing).
 /// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_PLAZA) shows no area
 /// name; otherwise the stump lies where the party moved it.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *stump;
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveStream) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveStream) {
     if (gSaveBlock.warpDest == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else {

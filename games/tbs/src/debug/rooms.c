@@ -36,7 +36,7 @@ enum TestRoomsLocalId {
 u8 *TestRoom_GetWarpDests(void) { return (u8 *)gTestRoom_WarpDests; }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 u8 *TestRoom_GetWarps(void) { return (u8 *)gTestRoom_Warps; }
 
@@ -77,7 +77,7 @@ static void TestRoom_ReceiveGust(void) {
 /// Djinni.
 u8 *TestRoom_GetEvents(void) { return (u8 *)gTestRoom_Events; }
 
-/// The room's initialize entry, which Map_Run runs on entry: nothing
+/// The room's initialize entry, which SceneManager_Run runs on entry: nothing
 /// to set up.
 s32 TestRoom_Initialize(void) { return 0; }
 

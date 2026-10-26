@@ -3,16 +3,16 @@
 /// he holds Hammet for ransom in Lunpa Fortress. Two map sections share this
 /// overlay, each a map of its own:
 ///
-/// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the road
+/// - Lunpa (SceneId_Lunpa, area name Lunpa): the town. Two guards keep the road
 ///   in from the world map; doors lead into the homes, shops, inn and temple
 ///   (RockRooms, rock_rooms.c), roads to West Lunpa Cave and up to
 ///   the Lunpa Fortress Gates, and a hidden passage to Lunpa's hidden room
 ///   (LUNPA_TO_STONE_ROOMS, in StoneRooms, whose area name there is Lunpa).
-/// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa Fortress
+/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates, area name Lunpa Fortress
 ///   Gates): the steps up to the fortress door, kept by two guards whom the
 ///   party gets past under Cloak.
 ///
-/// The getters choose by gSaveBlock.mapId, and the town's map events also by
+/// The getters choose by gSaveBlock.sceneId, and the town's map events also by
 /// FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets: before
 /// it the townspeople live under Dodonpa's men (gLunpaSealedEvents), after it
 /// they talk of the intruders (gLunpaReopenedEvents). Both tables share the
@@ -54,7 +54,7 @@
 
 #include "save_block.h"
 #include "version.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/lunpa.h"
 #include "unit/map/common/object_orbit.h"
 #include "unit/map/common/effect_spawn.h"
@@ -65,7 +65,7 @@
 #include "script_layer.h"
 #include "engine_call.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "edition.h"
 #include "lunpa.h"
 #include "text/msg_ids.h"
@@ -83,34 +83,34 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
 /// ★ Named from what the player sees: a small blue puddle that only Reveal
 /// shows (its render)
-#define FLAG_LUNPA_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+#define FLAG_LUNPA_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The town's secrets are hidden: Reveal is not shining.
 /// ★ Named from the game: "Reveal" (MsgAbilityName)
-#define FLAG_LUNPA_SECRETS_HIDDEN FLAG_MAP_TEMP_01
+#define FLAG_LUNPA_SECRETS_HIDDEN FLAG_SCENE_TEMP_01
 /// The hidden switch has opened the passage to the hidden room.
 /// ★ Named from the game: "At least those punks won't find the switch that
 /// opens the door. Heh heh! It's hidden too well in the wall!"
 /// (MsgLunpaHiddenDoorSwitch)
-#define FLAG_LUNPA_HIDDEN_PASSAGE_OPEN FLAG_MAP_TEMP_02
+#define FLAG_LUNPA_HIDDEN_PASSAGE_OPEN FLAG_SCENE_TEMP_02
 /// The guards have stepped in front of the fortress door.
 /// ★ Named from the game: "Don't come any closer to the fortress!"
 /// (MsgLunpaGuardsWarnPartyAway)
-#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR FLAG_MAP_TEMP_40
+#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR FLAG_SCENE_TEMP_40
 /// Cloak has been cast at the gates and has not yet faded.
 /// ★ Named from the game: "Cloak" (MsgAbilityName)
-#define FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST FLAG_MAP_TEMP_41
+#define FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST FLAG_SCENE_TEMP_41
 /// The leader is going through the fortress door.
 /// ★ Named from what the player sees: the golden door set in the cliff at the
 /// top of the steps, past the two guards (its render)
-#define FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS FLAG_MAP_TEMP_42
+#define FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS FLAG_SCENE_TEMP_42
 /// Garet's warning against going back up to the fortress is under way.
 /// ★ Named from the game: "Don't be stupid! We can't go in there, remember?"
 /// (MsgLunpaGaretRefusesToReturn)
-#define FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING FLAG_MAP_TEMP_43
+#define FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING FLAG_SCENE_TEMP_43
 /// The guards have caught the party and are marching it down the steps.
 /// ★ Named from the game: "That's strange. I've been on watch this whole time,
 /// so how did you get here?" (MsgLunpaGuardsCatchParty)
-#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_MAP_TEMP_44
+#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
 /// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is freed.
@@ -138,40 +138,40 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s32 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Lunpa) {
+  if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaWarpDests;
   }
-  if (mapId == (s32)&MapId_LunpaFortressGates) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     return gGateWarpDests;
   }
   return gLunpaWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) {
-  s32 mapId = gSaveBlock.mapId;
+const u32 *Scene_GetWarps(void) {
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Lunpa) {
+  if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaWarps;
   }
-  if (mapId == (s32)&MapId_LunpaFortressGates) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     return gGateWarps;
   }
   return gLunpaWarps;
 }
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s32 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Lunpa) {
+  if (sceneId == (s32)&SceneId_Lunpa) {
     return gLunpaObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_LunpaFortressGates) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     return gGateObjectEventTemplates;
   }
   return gLunpaObjectEventTemplates;
@@ -310,14 +310,15 @@ static void EventScript_SearchWell(void) {
 
 /// The map events of the Lunpa Fortress Gates, or the town's before and after
 /// Donpa's judgment.
-const struct MapEvent *Map_GetEvents(void) {
-  s32 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_LunpaFortressGates) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGates) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
     return gGateEvents;
   }
-  if (mapId == (s32)&MapId_Lunpa && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (sceneId == (s32)&SceneId_Lunpa &&
+      GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedEvents;
   }
   return gLunpaSealedEvents;
@@ -941,14 +942,14 @@ static void EventScript_LeaderSneaksOut(void) {
 /// Sets Lunpa or the Lunpa Fortress Gates up: in the town, Reveal's secrets
 /// hidden and the floating Nut; at the gates, the thrown-out or sneaking-out
 /// event, the watchers, and the fortress's puzzle and guard flags cleared.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *puddle;
 
-  if (gSaveBlock.mapId == (s32)&MapId_Lunpa) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_Lunpa) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
-      Map_FloatNut(LOCALID_FLOATING_NUT);
+      Scene_FloatNut(LOCALID_FLOATING_NUT);
     }
     puddle = ObjectEvent_GetById(LOCALID_HIDDEN_PUDDLE);
     if (puddle != NULL) {
@@ -957,7 +958,7 @@ s32 Map_Initialize(void) {
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
   // Restore the gate's arrival event and active detection tasks separately.
-  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGates) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gSaveBlock.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&

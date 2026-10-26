@@ -174,8 +174,8 @@ void FieldEffect_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                FIELD_PSYNERGY_FORCE, &eventTarget);
+  event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                  FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
   WaitFrames(10);

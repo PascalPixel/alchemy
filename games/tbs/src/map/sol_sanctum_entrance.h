@@ -6,14 +6,14 @@
 #include "map_tables.h"
 #include "flags.h"
 
-/// In Sol Sanctum (MapId_SolSanctumReliefs), Kraden follows the party; Garet
+/// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
 /// and Jenna, placed before him, take their own party slots.
 enum {
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   LOCALID_KRADEN = LOCALID_FIRST_PLACED
 };
 
-/// At Sol Entrance (MapId_SolEntrance), the one placed object event is a man
+/// At Sol Entrance (SceneId_SolEntrance), the one placed object event is a man
 /// with long brown hair and a beard in a long robe, who stands in the path once
 /// the party has left Vale and warns everyone away while Mt. Aleph is active;
 /// read with Mind Read, he is all alone in this dangerous place and asks how

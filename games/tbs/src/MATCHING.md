@@ -258,8 +258,8 @@ load moves.
   counts letters in its `s32` value rather than in `i` or `j`.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches: Crossbone Isle's
-  `EventScript_MovePillar` takes `&state->mapId` with `state = &gSaveBlock`,
-  because `&gSaveBlock.mapId` folds into one literal.
+  `EventScript_MovePillar` takes `&state->sceneId` with `state = &gSaveBlock`,
+  because `&gSaveBlock.sceneId` folds into one literal.
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move constants and addresses out of the loop,
   strength-reduce its counters and delete it when it is empty, and they let
@@ -289,7 +289,7 @@ load moves.
   `EventScript_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in
-  another order. Helpers in Colosso and in `MapId_KolimaForestFloodgate` are
+  another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
   unit headers under `UBFIX`, and `script_layer.h` gathers the engine routines
   the maps call that way (`Import_GameFlagSet`).

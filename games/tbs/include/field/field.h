@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 #include "object.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "map_tables.h"
 #include "menu_list.h"
 #include "farcall.h"
@@ -136,7 +136,7 @@ extern u32 gKolimaForestFloodgate_ShakeChance;
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
 /// buffer, kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
-/// MapId_KolimaForestGlade and MapId_KolimaForestCliff each define one.
+/// SceneId_KolimaForestGlade and SceneId_KolimaForestCliff each define one.
 extern u8 gKolimaPalette_Healthy[];
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 extern u8 gKolimaPalette_Cursed[];

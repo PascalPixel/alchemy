@@ -1,11 +1,11 @@
 /// @file
-/// Mogall Forest (MapId_MogallForestSign to MapId_MogallForestSidePaths),
+/// Mogall Forest (SceneId_MogallForestSign to SceneId_MogallForestSidePaths),
 /// the woods between Fuchin Temple and Xian, which the party finds its way
 /// through by using Force, learned from Nyunpa, on the stumps the apes hide in.
 ///
-/// The way runs from the first area (MapId_MogallForestSign), entered from
-/// the world map, through the second (MapId_MogallForestQuartz) to the third
-/// (MapId_MogallForestKillerApe), which leaves for the world map by
+/// The way runs from the first area (SceneId_MogallForestSign), entered from
+/// the world map, through the second (SceneId_MogallForestQuartz) to the third
+/// (SceneId_MogallForestKillerApe), which leaves for the world map by
 /// MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in hollow purple stumps,
 /// each stump holding a blank object event on its spot, and Force on a stump
 /// brings its ape out. Most turn to the leader, point the way on and leave; two
@@ -15,16 +15,16 @@
 /// once out, and logs pushed into the river stay there, for as long as the
 /// party is in the forest (map section flags from FLAG_MAPSEC_TEMP_00).
 ///
-/// - First area (MapId_MogallForestSign). Arriving the first time, an ape
+/// - First area (SceneId_MogallForestSign). Arriving the first time, an ape
 ///   peeks out at the leader and hides (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A
 ///   broken sign reads `North: Fuchin Temple South: Mogall Prairie...`, a log
 ///   pushed to the river rolls in and can be crossed, and a Nut floats over the
 ///   river for Catch.
-/// - Second area (MapId_MogallForestQuartz). Quartz, a Venus Djinni, waits
+/// - Second area (SceneId_MogallForestQuartz). Quartz, a Venus Djinni, waits
 ///   to be fought; one log changes the ground beside it and another rolls into
 ///   the river; a rock moved with Move settles into place; a chest holds an
 ///   Apple.
-/// - Third area (MapId_MogallForestKillerApe). Two logs roll into the river,
+/// - Third area (SceneId_MogallForestKillerApe). Two logs roll into the river,
 ///   two rocks settle with Move, and a chest holds an Elven Shirt. Touching
 ///   metatile behavior 22 the first time, the east ape leads the party south to
 ///   a hiding place (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (metatile
@@ -36,7 +36,7 @@
 ///   MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the
 ///   Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED: back at Fuchin Temple the
 ///   monks say that Nyunpa has reached enlightenment and passed away.
-/// - MapId_MogallForestSidePaths, also named Mogall Forest: side paths that
+/// - SceneId_MogallForestSidePaths, also named Mogall Forest: side paths that
 ///   the three areas' warps lead into and back out of, some of them leading
 ///   back into the map itself; a Psynergy Stone lies there.
 ///
@@ -86,11 +86,11 @@
 #include "system.h"
 #include "edition.h"
 #include "call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "fixed_math.h"
 #include "vector3.h"
 #include "flags.h"
@@ -98,7 +98,7 @@
 #include "songs.h"
 #include "heap.h"
 
-/// Object events of the first area (MapId_MogallForestSign), numbered in the
+/// Object events of the first area (SceneId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ObjectEventTemplates.
 enum MogallForestSignLocalId {
   /// A log lying north to south at (488, 464), pushed as the river log is but
@@ -129,8 +129,8 @@ enum MogallForestSignLocalId {
   LOCALID_NUT
 };
 
-/// Object events of the second area (MapId_MogallForestQuartz), numbered in the
-/// order of gMogallForestQuartz_ObjectEventTemplates.
+/// Object events of the second area (SceneId_MogallForestQuartz), numbered in
+/// the order of gMogallForestQuartz_ObjectEventTemplates.
 enum MogallForestQuartzLocalId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
   /// grass (its render)
@@ -169,7 +169,7 @@ enum MogallForestQuartzLocalId {
   LOCALID_SECOND_AREA_QUARTZ
 };
 
-/// Object events of the third area (MapId_MogallForestKillerApe), numbered in
+/// Object events of the third area (SceneId_MogallForestKillerApe), numbered in
 /// the order of gMogallForestKillerApe_ObjectEventTemplates.
 enum MogallForestKillerApeLocalId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
@@ -279,7 +279,7 @@ enum {
 enum {
   /// ★ Named from what the player sees: the rock beside the log, moved with
   /// Move (its render)
-  FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_MAP_TEMP_14
+  FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14
 };
 
 // The third area's east ape: in the first patch it is placed only until it
@@ -438,15 +438,15 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct MapWarpDest *MogallForest_GetWarpDests(void) {
-  s16 selector = gSaveBlock.mapId;
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_MogallForestSign) {
+  if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_WarpDests;
   }
-  if (selector == (s32)&MapId_MogallForestQuartz) {
+  if (selector == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_WarpDests;
   }
-  if (selector == (s32)&MapId_MogallForestKillerApe) {
+  if (selector == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_WarpDests;
   }
   return gMogallForestSidePaths_WarpDests;
@@ -458,15 +458,15 @@ const struct MapWarpRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetWarps(void) { return gMogallForest_Warps; }
 
 const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void) {
-  s16 selector = gSaveBlock.mapId;
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_MogallForestSign) {
+  if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ObjectEventTemplates;
   }
-  if (selector == (s32)&MapId_MogallForestQuartz) {
+  if (selector == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_ObjectEventTemplates;
   }
-  if (selector == (s32)&MapId_MogallForestKillerApe) {
+  if (selector == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_ObjectEventTemplates;
   }
   return gMogallForestSidePaths_ObjectEventTemplates;
@@ -1444,7 +1444,7 @@ static void MogallForest_KillerApeAttacks(void) {
   FieldScript_WaitFrames(10);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination(
-      (s32)&MapId_MogallForestKillerApe,
+      (s32)&SceneId_MogallForestKillerApe,
       MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
@@ -1452,15 +1452,15 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct MapEvent *MogallForest_GetEvents(void) {
-  s16 selector = gSaveBlock.mapId;
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_MogallForestSign) {
+  if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Events;
   }
-  if (selector == (s32)&MapId_MogallForestQuartz) {
+  if (selector == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_Events;
   }
-  if (selector == (s32)&MapId_MogallForestKillerApe) {
+  if (selector == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_Events;
   }
   return gMogallForestSidePaths_Events;
@@ -1475,15 +1475,15 @@ const struct MapEvent *MogallForest_GetEvents(void) {
 /// Ape beaten sets FLAG_NYUNPA_ENLIGHTENED.
 s32 MogallForest_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  s32 mapId;
+  s32 sceneId;
   s32 warpDest;
   s32 column;
   s32 fixedZ;
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_MogallForestSign) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
     // crossing.
     warpDest = gSaveBlock.warpDest;
@@ -1552,7 +1552,7 @@ s32 MogallForest_Initialize(void) {
       WaitFrames(1);
       Import_ObjectEventSetPosition(LOCALID_NUT, PIXELS(632), PIXELS(440));
       if (GameFlag_Get(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0) {
-        Map_FloatNut(LOCALID_NUT);
+        Scene_FloatNut(LOCALID_NUT);
       }
       ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_ATTACKING_APE,
                                        SPRITE_COLOR_HIDDEN);
@@ -1562,9 +1562,9 @@ s32 MogallForest_Initialize(void) {
           ObjectEvent_GetById(LOCALID_FIRST_AREA_ATTACKING_APE), 0);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_FIRST_AREA_EAST_APE), 0);
-      Map_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
-        Map_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_RIVER_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_FIRST_AREA_RIVER_LOG);
         break;
       }
       WaitFrames(1);
@@ -1577,7 +1577,7 @@ s32 MogallForest_Initialize(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       break;
     }
-  } else if (mapId == (s32)&MapId_MogallForestQuartz) {
+  } else if (sceneId == (s32)&SceneId_MogallForestQuartz) {
     // Restore revealed guides, moved rocks and the second crossing.
     warpDest = gSaveBlock.warpDest;
     switch (warpDest) {
@@ -1604,7 +1604,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0) {
-        Map_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_RIVER_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_RIVER_LOG);
       } else {
 #if TBS_PATCH_1
         s32 attr = 0;
@@ -1622,8 +1622,8 @@ s32 MogallForest_Initialize(void) {
         PushedObject_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
 #endif
       }
-      Map_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_LOG);
-      Map_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_SOUTH_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_SECOND_AREA_SOUTH_LOG);
       column = ObjectEvent_GetById(LOCALID_SECOND_AREA_ROCK)->x.fixed;
       fixedZ = ObjectEvent_GetById(LOCALID_SECOND_AREA_ROCK)->z.fixed;
       column >>= 20;
@@ -1650,7 +1650,7 @@ s32 MogallForest_Initialize(void) {
                               PIXELS(480));
       break;
     }
-  } else if (mapId == (s32)&MapId_MogallForestKillerApe) {
+  } else if (sceneId == (s32)&SceneId_MogallForestKillerApe) {
     // Restore both crossing logs and the creatures leading to the final
     // encounter.
     warpDest = gSaveBlock.warpDest;
@@ -1698,7 +1698,7 @@ s32 MogallForest_Initialize(void) {
       WaitFrames(1);
       ObjectEvent_GetById(LOCALID_THIRD_AREA_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
-      Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_LOG);
       break;
 
     case MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS:
@@ -1711,10 +1711,10 @@ s32 MogallForest_Initialize(void) {
                                          SPRITE_CRATE);
       ObjectEvent_CreateConfiguredObject(PIXELS(754), 0, PIXELS(370),
                                          SPRITE_CRATE);
-      Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_WEST_LOG);
-      Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTHWEST_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_WEST_LOG);
+      Scene_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTHWEST_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {
-        Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_NORTH_RIVER_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_NORTH_RIVER_LOG);
       } else {
         WaitFrames(1);
         Import_ObjectEventSetAnimation(LOCALID_THIRD_AREA_NORTH_RIVER_LOG,
@@ -1731,7 +1731,7 @@ s32 MogallForest_Initialize(void) {
             ObjectEvent_GetById(LOCALID_THIRD_AREA_SOUTH_ROCK), 0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
-        Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG);
+        Scene_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG);
       } else {
         WaitFrames(1);
         Import_ObjectEventSetAnimation(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,

@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 2 (MapId_ColosseumSatrageMatch), the site of the second
+/// Colosseum Final 2 (SceneId_ColosseumSatrageMatch), the site of the second
 /// finals match, where Isaac, having won the first, races Satrage, the
 /// fourth-ranked warrior, through five stages to the arena and fights him
 /// there.
@@ -52,7 +52,7 @@
 #include "action_script.h"
 #include "save_block.h"
 #include "io_write_queue.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/colosseum_satrage_match.h"
@@ -99,7 +99,7 @@
 #include "object_event.h"
 #include "heap_slots.h"
 #include "heap.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "colosso_gauge.h"
 #include "flags.h"
 #include "songs.h"
@@ -153,7 +153,7 @@
   ColosseumSatrageMatch_MovePusherAndLog
 #define COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK                                \
   ColosseumSatrageMatch_StartLetteringAnimation
-#define COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE Map_GiveAndEquipItem
+#define COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE Scene_GiveAndEquipItem
 #else
 #define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE                                   \
   ((s32 (*)())FieldScript_ShowMessageAndWait)
@@ -162,7 +162,7 @@
 #define COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK                                \
   ((s32 (*)())ColosseumSatrageMatch_StartLetteringAnimation)
 #define COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE                      \
-  ((s32 (*)())Map_GiveAndEquipItem)
+  ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
 // Forward declarations.
@@ -327,7 +327,7 @@ enum {
   /// (ColosseumSatrageMatch_ApproachFinishAndTakeItem).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
-  FLAG_ARENA_REACHED = FLAG_MAP_TEMP_11
+  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
 /// Sets the party leader's walking speed and acceleration.
@@ -341,17 +341,17 @@ static inline void InitializeSelectedObjectEvent(s32 localId) {
   ObjectMotion_SetSpeedParameters(localId, PIXELS(1), PIXELS(1) / 2);
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gColosseumSatrageMatchWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
 
 /// Returns the packed stage and battle-result warps.
-const u32 *Map_GetWarps(void) { return gColosseumSatrageMatchWarps; }
+const u32 *Scene_GetWarps(void) { return gColosseumSatrageMatchWarps; }
 
 /// Returns Colosseum Final 2's warriors, obstacles and attendants.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gColosseumSatrageMatchObjectEventTemplates;
 }
 
@@ -941,15 +941,15 @@ static void EventScript_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - opponentFinishedFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_ColosseumSatrageMatch,
+  FieldScript_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch,
                                  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
-  FieldScript_SetDefeatDestination((s32)&MapId_ColosseumSatrageMatch,
+  FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
                                    COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
 /// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   return gColosseumSatrageMatchEvents;
 }
 
@@ -1131,9 +1131,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gSaveBlock.warpDest) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
-    Map_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 5,
-                                      PIXELS(104), PIXELS(256), LOCALID_PRIZE_A,
-                                      LOCALID_PRIZE_B);
+    Scene_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, LOCALID_OPPONENT,
+                                        5, PIXELS(104), PIXELS(256),
+                                        LOCALID_PRIZE_A, LOCALID_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 79, 6);
     ObjectEvent_DestroyById(LOCALID_GUIDE);
     ObjectEvent_DestroyById(LOCALID_MINI_MAZE_ATTENDANT);
@@ -1651,7 +1651,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Sound_PlaySong(SE_COLOSSO_GO);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
   GameFlag_Set(FLAG_IN_TOWN);
 }
@@ -1855,9 +1855,9 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 
 /// Allocates the race work, records both warriors and installs the gauge
 /// task.
-void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
-                                       s32 segments, s32 finishX, s32 finishZ,
-                                       s32 firstItem, s32 secondItem) {
+void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
+                                         s32 segments, s32 finishX, s32 finishZ,
+                                         s32 firstItem, s32 secondItem) {
   struct ColossoRaceWork *work;
   struct ObjectEvent *leader;
   struct ObjectEvent *opponent;
@@ -2014,7 +2014,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 /// Closes the arena's coord event; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
-#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_39

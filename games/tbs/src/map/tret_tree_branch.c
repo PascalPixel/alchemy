@@ -1,12 +1,12 @@
 /// @file
-/// Tret Tree (MapId_TretTreeBranch), the second of Tret Tree's two maps:
+/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two maps:
 /// out on Tret's branches, under open sky
 /// (places/tret-tree-branch/map-0.png), between the rooms of
-/// MapId_TreeRooms (tree_rooms.c), where the story is told.
+/// SceneId_TreeRooms (tree_rooms.c), where the story is told.
 /// This map has no story event and tests no story flag.
 ///
 /// Its eight warps (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
-/// the seven after it) lead back into MapId_TreeRooms; walking into
+/// the seven after it) lead back into SceneId_TreeRooms; walking into
 /// one for two frames (COORD_EVENT_FLAG_QUICK) plays the warp sound and leaves
 /// at once, the cells' metatile behaviors being the warps' own numbers.
 /// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
@@ -170,7 +170,7 @@ static void EventScript_GoUpSoutheastVine(void) {
 /// Walking into one of the eight warps in Tret Tree, whose cells' metatile
 /// behaviors are the warps' own numbers: the warp sound plays and the party
 /// leaves by the warp touched, into Tret Tree's other map
-/// (MapId_TreeRooms).
+/// (SceneId_TreeRooms).
 static void EventScript_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedWarp;

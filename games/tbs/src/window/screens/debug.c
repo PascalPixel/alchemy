@@ -20,9 +20,9 @@ UNUSED void DebugMapSelect_Schedule(void) {
 /// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
 /// beside it, the area its warp destination leads to (MsgDebugEntryName +
 /// area); the numbers, three digits each, go under them.
-void DebugMapSelect_DrawRow(struct Window *window, s32 mapId,
+void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
                             const s16 *warpDest) {
-  s16 mapIndex = mapId;
+  s16 mapIndex = sceneId;
   s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(mapIndex, 3, window, 0, 14);
@@ -50,16 +50,16 @@ s16 DebugMapSelect_Run(void) {
   s16 selectedField;
   s16 warpDest;
   struct MenuSprite cursor;
-  s16 mapId;
+  s16 sceneId;
   struct Window *window;
   s16 result;
 
   window = 0;
   selectedField = 0;
-  mapId = gSaveBlock.defaultMap;
+  sceneId = gSaveBlock.defaultMap;
   warpDest = gSaveBlock.defaultWarpDest;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
-  DebugMapSelect_DrawRow(window, mapId, &warpDest);
+  DebugMapSelect_DrawRow(window, sceneId, &warpDest);
   MenuArrow_Create(&cursor, &cursorSlot);
 
   // Wait for the keys that opened it to be let go.
@@ -67,12 +67,12 @@ s16 DebugMapSelect_Run(void) {
     WaitFrames(1);
 
   for (;;) {
-    result =
-        DebugMapSelect_HandleRowInput(window, mapId, &warpDest, &selectedField);
+    result = DebugMapSelect_HandleRowInput(window, sceneId, &warpDest,
+                                           &selectedField);
     if (result == -1) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
-      FieldScript_SetDestinationFar(mapId, warpDest);
+      FieldScript_SetDestinationFar(sceneId, warpDest);
 #ifdef UBFIX
       return;
 #else
@@ -91,7 +91,7 @@ s16 DebugMapSelect_Run(void) {
 
     MenuArrow_SetPosition(&cursor, MENU_TEXT_X,
                           selectedField * 14 + MENU_TEXT_Y);
-    mapId = result;
+    sceneId = result;
     WaitFrames(1);
   }
 }
@@ -104,7 +104,7 @@ s16 DebugMapSelect_Run(void) {
 /// R and L step a map by ten, setting the warp destination to 0, and past
 /// either end go to the other (195 + 10 gives 0); they step a warp destination
 /// by ten, wrapping by 99 (95 + 10 gives 6).
-s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 mapId,
+s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                   s16 *warpDest, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
     return -1;
@@ -116,52 +116,52 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 mapId,
     *selectedField ^= 1;
   } else if (gKeysRepeat & KEY_RIGHT) {
     if (*selectedField == 0) {
-      mapId++;
+      sceneId++;
     } else {
       (*warpDest)++;
       if (*warpDest > 99)
         *warpDest = 0;
     }
-    if (mapId > 200)
-      mapId = 0;
-    DebugMapSelect_DrawRow(window, mapId, warpDest);
+    if (sceneId > 200)
+      sceneId = 0;
+    DebugMapSelect_DrawRow(window, sceneId, warpDest);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*selectedField == 0) {
-      mapId--;
+      sceneId--;
     } else {
       (*warpDest)--;
       if (*warpDest < 0)
         *warpDest = 99;
     }
-    if (mapId < 0)
-      mapId = 200;
-    DebugMapSelect_DrawRow(window, mapId, warpDest);
+    if (sceneId < 0)
+      sceneId = 200;
+    DebugMapSelect_DrawRow(window, sceneId, warpDest);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
       *warpDest = 0;
-      mapId += 10;
+      sceneId += 10;
     } else {
       *warpDest += 10;
       if (*warpDest > 99)
         *warpDest -= 99;
     }
-    if (mapId > 200)
-      mapId = 0;
-    DebugMapSelect_DrawRow(window, mapId, warpDest);
+    if (sceneId > 200)
+      sceneId = 0;
+    DebugMapSelect_DrawRow(window, sceneId, warpDest);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
       *warpDest = 0;
-      mapId -= 10;
+      sceneId -= 10;
     } else {
       *warpDest -= 10;
       if (*warpDest < 0)
         *warpDest += 99;
     }
-    if (mapId < 0)
-      mapId = 200;
-    DebugMapSelect_DrawRow(window, mapId, warpDest);
+    if (sceneId < 0)
+      sceneId = 200;
+    DebugMapSelect_DrawRow(window, sceneId, warpDest);
   }
-  return mapId;
+  return sceneId;
 }
 
 /// Shows a 16x16 flag grid per page and processes input until closed.

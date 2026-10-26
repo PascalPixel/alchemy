@@ -56,8 +56,9 @@ UNUSED void Warp_ReservedNoOp941DC(void) {}
 // changes.
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by Map_Run when it handles
-/// work->battle; clears work->transitionActive once the screen is closed.
+/// fading it to black over 16 frames. Called by SceneManager_Run when it
+/// handles work->battle; clears work->transitionActive once the screen is
+/// closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
 #else
@@ -188,7 +189,7 @@ void Warp_EndArrivalAnimation(s32 animation) {
 /// ANIM_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
 /// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by Map_Run as the
+/// Returns 0 when there is nothing to play. Called by SceneManager_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 Warp_PlayArrival(void) {

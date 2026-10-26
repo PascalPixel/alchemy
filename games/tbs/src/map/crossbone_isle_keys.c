@@ -5,14 +5,16 @@
 /// with four chests each. All three take the area name Crossbone Isle Cave. In
 /// the order the party meets them:
 ///
-/// - MapId_CrossboneIsleKeys, off the third floor, a room of locked doors. Four
+/// - SceneId_CrossboneIsleKeys, off the third floor, a room of locked doors.
+/// Four
 ///   Blue Keys lie about it until Catch takes them, and a Red Key shows only
 ///   while Reveal lasts. Walking into one of the four blue doors in a row with
 ///   a Blue Key opens it and uses the key up (four flags from
 ///   FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key opens the red
 ///   door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The keys taken and
 ///   the doors opened are restored on entry.
-/// - MapId_CrossboneIsleStatues, off the fourth, where five statues of a robed
+/// - SceneId_CrossboneIsleStatues, off the fourth, where five statues of a
+/// robed
 ///   woman wait, lit in circles by braziers in the dark. As the leader crosses
 ///   each one's stretch of the room it steps out after him unless he is hidden
 ///   by Cloak, and goes back home once he is past
@@ -21,7 +23,8 @@
 ///   the room while it lasts. The first, second and fifth statues start from
 ///   per-frame checks of the leader's cell, the third and fourth from coord
 ///   events in the three cells around their homes and the three south of them.
-/// - MapId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni, hides.
+/// - SceneId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
+/// hides.
 ///   Five pillars to push or move with Move, a ladder and a puddle that Frost
 ///   freezes into a pillar of ice make a way across the room. The first three
 ///   times the party comes near, Bane flees, the third time to the room's last
@@ -33,7 +36,7 @@
 #include "djinn_ids.h"
 #include "version.h"
 #include "heap_slots.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/crossbone_isle_keys.h"
 #include "unit/overworld/overworld.h"
@@ -75,9 +78,9 @@
 #include "songs.h"
 #include "heap.h"
 
-// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
-// their own.
+// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// the party enters another map section, and other map sections use the numbers
+// for their own.
 /// CrossboneIsleBane's third stone pillar has come down to two cells high or
 /// less.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
@@ -188,20 +191,20 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 /// CrossboneIsleBane: the puddle is frozen.
 /// ★ Named from what the player sees: a small blue puddle on the floor of the
 /// lowest hall (its render)
-#define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
 /// ★ Named from what the player sees: a chest on top of a pillar between two
 /// rows of spikes, below a ladder (its render)
-#define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_MAP_TEMP_06
+#define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_SCENE_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
 /// the ladder cell its other metatile behaviors.
 /// ★ Named from what the player sees: the ladder up the ledge beside the second
 /// pillar, from which the leader can face east and jump across (its render)
-#define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_MAP_TEMP_07
-// The Move events of CrossboneIsleBane's pillars also test FLAG_MAP_TEMP_01
+#define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_SCENE_TEMP_07
+// The Move events of CrossboneIsleBane's pillars also test FLAG_SCENE_TEMP_01
 // and 03 to 05, which nothing sets.
 /// CrossboneIsleStatues: a statue is after the leader.
-#define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_MAP_TEMP_20
+#define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_SCENE_TEMP_20
 
 /// Publishes the next raised-event trigger.
 static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
@@ -229,35 +232,35 @@ static void EventScript_BaneJoins(void) {
 /// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 selector = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_CrossboneIsleKeys) {
+  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomWarpDests;
   }
-  if (selector == (s32)&MapId_CrossboneIsleStatues) {
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
     return gCrossboneIsleStatuesWarpDests;
   }
-  if (selector == (s32)&MapId_CrossboneIsleBane) {
+  if (selector == (s32)&SceneId_CrossboneIsleBane) {
     return gCrossboneIsleBaneWarpDests;
   }
   return gCrossboneIsleKeysWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gCrossboneIsleKeysWarps; }
+const u32 *Scene_GetWarps(void) { return gCrossboneIsleKeysWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 selector = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_CrossboneIsleKeys) {
+  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomObjectEventTemplates;
   }
-  if (selector == (s32)&MapId_CrossboneIsleStatues) {
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
     return gCrossboneIsleStatuesObjectEventTemplates;
   }
-  if (selector == (s32)&MapId_CrossboneIsleBane) {
+  if (selector == (s32)&SceneId_CrossboneIsleBane) {
     return gCrossboneIsleBaneObjectEventTemplates;
   }
   return gCrossboneIsleKeysObjectEventTemplatesOther;
@@ -470,16 +473,16 @@ static void EventScript_HaltBane(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  s16 selector = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 selector = gSaveBlock.sceneId;
 
-  if (selector == (s32)&MapId_CrossboneIsleKeys) {
+  if (selector == (s32)&SceneId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomEvents;
   }
-  if (selector == (s32)&MapId_CrossboneIsleStatues) {
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
     return gCrossboneIsleStatuesEvents;
   }
-  if (selector == (s32)&MapId_CrossboneIsleBane) {
+  if (selector == (s32)&SceneId_CrossboneIsleBane) {
     return gCrossboneIsleBaneEvents;
   }
   return gCrossboneIsleKeysEventsOther;
@@ -490,7 +493,7 @@ const struct MapEvent *Map_GetEvents(void) {
 ///
 /// Both rows that name it follow a plain coord event row for the same door
 /// (EventScript_OpenThirdBlueDoor, EventScript_OpenFourthBlueDoor), which
-/// Map_FindEvent always finds first; those scripts jump forward themselves
+/// Scene_FindEvent always finds first; those scripts jump forward themselves
 /// after a dozen steps pressed south against the door, so the player sees the
 /// same thing.
 static void EventScript_UnusedJumpPastBlueDoor(void) { Field_TryJumpForward(); }
@@ -1299,16 +1302,16 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// Sets up whichever of the three rooms the party enters: the keys and doors
 /// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
 /// or the pillars and Bane of CrossboneIsleBane.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleKeys) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStatues) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleStatues) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleBane) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleBane) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;
@@ -1747,16 +1750,16 @@ struct MapEvent gCrossboneIsleBaneEvents[] = {
      FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN,
      EVENT_SCRIPT(EventScript_FreezePuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR,
-     FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_MoveFirstPillar)},
+     FLAG_SCENE_TEMP_01, EVENT_SCRIPT(EventScript_MoveFirstPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SECOND_PILLAR,
      FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER,
      EVENT_SCRIPT(EventScript_MoveSecondPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_PILLAR,
-     FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_MoveThirdPillar)},
+     FLAG_SCENE_TEMP_03, EVENT_SCRIPT(EventScript_MoveThirdPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FOURTH_PILLAR,
-     FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveFourthPillar)},
+     FLAG_SCENE_TEMP_04, EVENT_SCRIPT(EventScript_MoveFourthPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIFTH_PILLAR,
-     FLAG_MAP_TEMP_05, EVENT_SCRIPT(EventScript_MoveFifthPillar)},
+     FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MoveFifthPillar)},
     {BG_EVENT(BG_EVENT_CHEST), 104, FLAG_CROSSBONE_ISLE_BANE_666_COINS,
      FIND_COINS(666)},
     {BG_EVENT(BG_EVENT_CHEST), 105, FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE,

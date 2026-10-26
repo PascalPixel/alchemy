@@ -10,7 +10,7 @@
 /// keep their characters' ids.
 enum SolSanctumLunaSolRoomsLocalId {
   /// Eight statues, four in each room, with the sprite of
-  /// MapId_SolSanctumStatue's statues (sol_sanctum_statue.c).
+  /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
   /// ★ Named from what the player sees: winged stone statues standing at the
   /// corners of each room's floor (its render)
   LOCALID_FIRST_STATUE = LOCALID_FIRST_PLACED,

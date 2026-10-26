@@ -1,5 +1,5 @@
 /// @file
-/// Kolima Forest (MapId_KolimaForestEntrance), the first of the forest's five
+/// Kolima Forest (SceneId_KolimaForestEntrance), the first of the forest's five
 /// maps, entered from the world map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP). If
 /// the party comes here before it has been to Kolima, the curse's event
 /// plays here instead of in the village
@@ -19,7 +19,7 @@
 /// water's edge tips into the river and floats there, cells the party can
 /// cross, and from the bank the leader can hop east (coord event 11,
 /// KolimaForest_HopEast). KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads
-/// on into the forest (MapId_KolimaForestGlade),
+/// on into the forest (SceneId_KolimaForestGlade),
 /// KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to the world map.
 ///
 /// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER: the log is in the river. Like
@@ -119,7 +119,7 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 /// can cross.
 /// ★ Named from what the player sees: a log lying north to south beside the
 /// river (its render)
-#define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_MAP_TEMP_00
+#define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_SCENE_TEMP_00
 
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
@@ -154,14 +154,14 @@ KolimaForestEntrance_TwinkleGroundSparkle(struct Object *interpreter) {
 }
 
 /// Where the party enters, from the next map of the forest
-/// (MapId_KolimaForestGlade) and from the world map.
+/// (SceneId_KolimaForestGlade) and from the world map.
 const struct MapWarpDest *KolimaForestEntrance_GetWarpDests(void) {
   return gKolimaForestEntrance_WarpDests;
 }
 
 const struct MapWarpRegion *KolimaForestEntrance_GetRegions(void) { return 0; }
 
-/// The ways on into the forest (MapId_KolimaForestGlade) and back to the
+/// The ways on into the forest (SceneId_KolimaForestGlade) and back to the
 /// world map.
 const u32 *KolimaForestEntrance_GetWarps(void) {
   return gKolimaForestEntrance_Warps;
@@ -174,7 +174,7 @@ KolimaForestEntrance_GetObjectEventTemplates(void) {
   return gKolimaForestEntrance_ObjectEventTemplates;
 }
 
-/// Kolima Forest (MapId_KolimaForestEntrance), walking into a log: it rolls
+/// Kolima Forest (SceneId_KolimaForestEntrance), walking into a log: it rolls
 /// ahead until something stops it. The river log, stopped at the bank (cell
 /// column 20), tips over with a splash and floats in the water; its cells
 /// become ground the party can cross (sets
@@ -220,7 +220,7 @@ const struct MapEvent *KolimaForestEntrance_GetEvents(void) {
 /// the party sees it fall; once the curse is lifted the ground sparkles are
 /// gone.
 s32 KolimaForestEntrance_Initialize(void) {
-  Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
+  Scene_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -228,8 +228,8 @@ s32 KolimaForestEntrance_Initialize(void) {
     PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
   if (gSaveBlock.warpDest == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
@@ -1152,7 +1152,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   GameFlag_Set(FLAG_KOLIMA_CURSE_WITNESSED);
   ObjectEvent_SetPosition(LOCALID_TRET, 0, 0);
   ObjectEvent_SetPosition(LOCALID_LAUREL, 0, 0);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -1406,8 +1406,8 @@ struct MapWarpDest gKolimaForestEntrance_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// On into the forest (MapId_KolimaForestGlade) and out to the world map
-/// (MapId_WorldMap), with two warps no map event uses back into this map.
+/// On into the forest (SceneId_KolimaForestGlade) and out to the world map
+/// (SceneId_WorldMap), with two warps no map event uses back into this map.
 u32 gKolimaForestEntrance_Warps[] = {
     MAP_WARPS(KolimaForestEntrance),
     MAP_WARP(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,

@@ -192,7 +192,8 @@ u32 Save_BuildFileSummary(void) {
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gSaveBlock.playTime;
-  summary->area = MapSec_GetNameIndexFar(gSaveBlock.mapId, gSaveBlock.warpDest);
+  summary->area =
+      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest);
   summary->classId = leader->classId;
   summary->coins = gSaveBlock.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -968,7 +969,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at SaveBlock.restartMap, not where it was saved
+      // file resumes at SaveBlock.restartScene, not where it was saved
       // (menu/main_menu.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {

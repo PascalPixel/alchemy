@@ -32,7 +32,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.FieldScript_PrepareObjectAndApplyValue, 1
 	.set import.Party_RemoveMemberRestored, 1
 	.set import.PartyInventory_GiveItem, 1
@@ -90,7 +90,7 @@
 	.set import.FieldEffect_End, 1
 	.set import.FieldEffect_StartCast, 1
 	.set import.FieldEffect_RestoreMindReadPalette, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
 	.set import.DjinnRecovery_TickTwenty, 1

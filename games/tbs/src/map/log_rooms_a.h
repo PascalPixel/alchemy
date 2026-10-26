@@ -3,7 +3,7 @@
 
 /// @file
 /// The metatile behaviors of the layout of Vault's houses, shops and inn, which
-/// MapId_LogRoomsA (log_rooms_a.c) and MapId_LogRoomsB
+/// SceneId_LogRoomsA (log_rooms_a.c) and SceneId_LogRoomsB
 /// (log_rooms_b.c) both answer.
 
 /// The cells the interiors' coord events and bg events answer; the warps have

@@ -1,5 +1,5 @@
 /// @file
-/// Hammet Palace (MapId_HammetPalace), the rooms of Lord Hammet's palace in
+/// Hammet Palace (SceneId_HammetPalace), the rooms of Lord Hammet's palace in
 /// Kalay. The map before its door, also Hammet Palace in the game's area names,
 /// is kalay.c's HammetPalaceGrounds.
 ///
@@ -37,7 +37,7 @@
 /// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
 /// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/hammet_palace.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -139,34 +139,34 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 
 /// Selects Hammet Palace's warp destinations, or the fallback table for any
 /// other map number.
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_HammetPalace) {
+  if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceWarpDests;
   }
   return gHammetPalaceWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gHammetPalaceWarps; }
+const u32 *Scene_GetWarps(void) { return gHammetPalaceWarps; }
 
 /// Applies object event template clipping before returning Hammet Palace's
 /// object event rows.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_HammetPalace) {
-    Map_AssignViewFlags(gHammetPalaceObjectEventTemplates);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_HammetPalace) {
+    Scene_AssignViewFlags(gHammetPalaceObjectEventTemplates);
     return gHammetPalaceObjectEventTemplates;
   }
   return gHammetPalaceObjectEventTemplatesOther;
 }
 
 /// Selects Hammet Palace's dialogue and doorway handlers.
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_HammetPalace) {
+  if (sceneId == (s32)&SceneId_HammetPalace) {
     return gHammetPalaceEvents;
   }
   return gHammetPalaceEventsOther;
@@ -248,10 +248,10 @@ static void EventScript_LeaveThroughDoor(void) {
 
 /// Opens Hammet Palace with its window transition and runs
 /// warp-destination-specific setup.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gSaveBlock.mapId == (u32)&MapId_HammetPalace) {
+  if (gSaveBlock.sceneId == (u32)&SceneId_HammetPalace) {
     HammetPalace_SetUpWarpDest();
   }
   return 0;

@@ -1,12 +1,12 @@
 /// @file
-/// Sol Sanctum (MapId_SolSanctumPsynergyStone), a room off the statue room
-/// (MapId_SolSanctumStatue) that holds a Psynergy Stone.
+/// Sol Sanctum (SceneId_SolSanctumPsynergyStone), a room off the statue room
+/// (SceneId_SolSanctumStatue) that holds a Psynergy Stone.
 ///
 /// Its one warp, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
 /// to the statue room, and it places nobody. Searching in it finds the
 /// Psynergy Stone, which restores all PP. The stone is kept by a map section
 /// flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
-/// Map_ResetFlagsOnEnter puts it back whenever the party enters another
+/// Scene_ResetFlagsOnEnter puts it back whenever the party enters another
 /// map section. Retreat does not work here, and once Mt. Aleph has erupted the
 /// room rumbles and shakes, as the rest of the sanctum does.
 
@@ -30,33 +30,33 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another map section, and other map sections use the numbers for their
-// own.
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gSolSanctumPsynergyStoneWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gSolSanctumPsynergyStoneWarps; }
+const u32 *Scene_GetWarps(void) { return gSolSanctumPsynergyStoneWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gSolSanctumPsynergyStoneObjectEventTemplates;
 }
 
 /// The warp and the Psynergy Stone.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
 
 /// Opens the map with the window transition and blocks Retreat. Once Mt.
 /// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_RUMBLE)
 /// and shakes gently, as the rest of the sanctum does.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 shakeX = PIXELS(1);
   s32 shakeY = PIXELS(1);
   s32 decay = Q16_ONE;
@@ -66,7 +66,7 @@ s32 Map_Initialize(void) {
 
   Import_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    Map_QueueMusic(SE_RUMBLE);
+    Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetScreenShake(shakeX, shakeY, decay);
     FieldEffect_InitializeSparkles();
   }

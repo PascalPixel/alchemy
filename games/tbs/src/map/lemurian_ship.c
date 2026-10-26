@@ -1,5 +1,5 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
-/// game's last map: MapId_LemurianShip, with the area name Lemurian ship.
+/// game's last map: SceneId_LemurianShip, with the area name Lemurian ship.
 /// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
 /// the party the Black Orb, and stepping back on metatile behavior 1
 /// (EventScript_LeaveTheShip) returns there.
@@ -49,7 +49,7 @@
 #include "iwram_call.h"
 #include "fixed_point_position.h"
 #include "tbs_edition.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "object_event.h"
 #include "iowrite.h"
 #include "map_grid_scroll.h"
@@ -334,7 +334,7 @@ static s32 Ivan_StepOnDeck(struct Object *interpreter) {
 /// while three questions shape their replies, everyone boards, and the ship
 /// sails east as the curtains close and the game goes to the clear screen.
 /// Called by EventScript_RaiseTheShip once the ship has risen. Sets
-/// FLAG_KEEP_MUSIC and sends the party to the clear screen (MapId_Title,
+/// FLAG_KEEP_MUSIC and sends the party to the clear screen (SceneId_Title,
 /// TITLE_FROM_LEMURIAN_SHIP).
 static void LemurianShip_SetSail(void) {
   struct MapGridScrollWork *grid;
@@ -574,7 +574,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_KEEP_MUSIC);
-  FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
+  FieldScript_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
 /// The water's ripple, this map's view of the scanline effect's work

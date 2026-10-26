@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 1 (MapId_ColosseumAzartMatch), the site of the first
+/// Colosseum Final 1 (SceneId_ColosseumAzartMatch), the site of the first
 /// finals match, where Isaac races Azart, the second-best of the warriors who
 /// cleared the trials, through four stages to the arena and fights him there.
 ///
@@ -59,7 +59,7 @@
 #include "version.h"
 #include "save_block.h"
 #include "io_write_queue.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/colosseum_azart_match.h"
@@ -105,7 +105,7 @@
 #include "objcmd.h"
 #include "object_event.h"
 #include "heap.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "fixed_math.h"
 #include "colosso_gauge.h"
 #include "macros.h"
@@ -121,7 +121,7 @@
   ColosseumAzartMatch_MoveObjectEventPairByOffset
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
   ColosseumAzartMatch_SelectPresentationScript
-#define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES Map_GiveAndEquipItem
+#define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
 #else
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION                                   \
   ((s32 (*)())ObjectMotion_ArmCallback)
@@ -130,7 +130,7 @@
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
   ((s32 (*)())ColosseumAzartMatch_SelectPresentationScript)
 #define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES                       \
-  ((s32 (*)(s32, s32))Map_GiveAndEquipItem)
+  ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide);
@@ -238,7 +238,7 @@ enum {
   /// Someone has reached the arena (ColosseumAzartMatch_CollectFinishItem).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
-  FLAG_ARENA_REACHED = FLAG_MAP_TEMP_11
+  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
 const struct MapWarpDest *ColosseumAzartMatch_GetWarpDests(void) {
@@ -653,9 +653,9 @@ static void EventScript_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         base - approach + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_ColosseumAzartMatch,
+  FieldScript_SetNextDestination((s32)&SceneId_ColosseumAzartMatch,
                                  COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON);
-  FieldScript_SetDefeatDestination((s32)&MapId_ColosseumAzartMatch,
+  FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch,
                                    COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
@@ -1335,7 +1335,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
     Sound_PlaySong(SE_COLOSSO_GO);
-    Map_PlayMusic();
+    Scene_PlayMusic();
     FieldScript_End();
     GameFlag_Set(FLAG_IN_TOWN);
   }
@@ -1632,7 +1632,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 /// Closes the arena's coord event; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
-#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
 /// ★ Named from the game: "Oil Drop" (MsgItemName)
 #define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09

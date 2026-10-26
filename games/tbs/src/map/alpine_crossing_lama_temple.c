@@ -1,8 +1,8 @@
 /// @file
-/// The Alpine Crossing (MapId_AlpineCrossing) and Lama Temple
-/// (MapId_LamaTemple), two maps on Silk Road west of Xian that share this
-/// overlay. The getters pick each map's tables by gSaveBlock.mapId, both
-/// maps share one warp table, and Map_Initialize sets up the map being
+/// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
+/// (SceneId_LamaTemple), two maps on Silk Road west of Xian that share this
+/// overlay. The getters pick each map's tables by gSaveBlock.sceneId, both
+/// maps share one warp table, and Scene_Initialize sets up the map being
 /// entered from the story flags of Hsu's rescue, which runs through both.
 ///
 /// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
@@ -41,12 +41,12 @@
 /// (FLAG_HAMA_REACHED_HSU). Lift on the boulder (AlpineCrossing_LiftBoulder)
 /// raises it while Hama and Feizhi pull him free; the event sets
 /// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
-/// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Map_Initialize plays Hama's
+/// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
 /// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the world
 /// map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has been freed
 /// without the party (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c
 /// can set too), and Hama and Feizhi are gone. Once he is free, two workers
-/// from Xian stand by the road they have cleared, and Map_Initialize copies
+/// from Xian stand by the road they have cleared, and Scene_Initialize copies
 /// the cleared cells over the rocks. The Crossing's other puzzles are kept
 /// only within one visit (map temp flags): Reveal shows a hidden path, Frost
 /// freezes a puddle into a pillar the party can climb, and Growth grows a
@@ -70,7 +70,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -85,8 +85,8 @@
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
-#define MAP_ALPINE_CROSSING ((s32)&MapId_AlpineCrossing)
-#define MAP_LAMA_TEMPLE ((s32)&MapId_LamaTemple)
+#define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
+#define MAP_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
 
 /// Lama Temple's object events. Garet, Ivan and Mia are placed in their own
 /// party slots for Hama's farewell; the others count from LOCALID_FIRST_PLACED.
@@ -154,11 +154,11 @@ enum {
   /// Frost has frozen the puddle into an ice pillar.
   /// ★ Named from what the player sees: a small puddle of water on the path
   /// below the cliffs (its render)
-  FLAG_ALPINE_CROSSING_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_ALPINE_CROSSING_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// Growth has grown the sprout into a vine the party can climb.
   /// ★ Named from what the player sees: a small sprout at the foot of a cliff
   /// (its render)
-  FLAG_ALPINE_CROSSING_SPROUT_GROWN = FLAG_MAP_TEMP_01
+  FLAG_ALPINE_CROSSING_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 
 /// Animations of these maps' own sprites beyond enum ObjectEventAnimation,
@@ -237,20 +237,20 @@ AlpineCrossing_LeaderFaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_WarpDests;
   }
   return gLamaTemple_WarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
 
 /// Both maps share one warp table.
-const u32 *Map_GetWarps(void) { return gAlpineCrossingLamaTemple_Warps; }
+const u32 *Scene_GetWarps(void) { return gAlpineCrossingLamaTemple_Warps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_ObjectEventTemplates;
   }
   return gLamaTemple_ObjectEventTemplates;
@@ -430,7 +430,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   FieldScript_WaitFrames(60);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
 
   // Garet asks whether the leader means to leave Hama's words unasked.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
@@ -918,23 +918,23 @@ static void AlpineCrossing_GrowSprout(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Events;
   }
   return gLamaTemple_Events;
 }
 
 /// Sets up whichever map is being entered and runs its arrival scripts.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 warpDest;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gSaveBlock.mapId == MAP_LAMA_TEMPLE) {
+  if (gSaveBlock.sceneId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_AMBIENT_WIND) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
-    Map_QueueMusic(SE_AMBIENT_WIND);
+    Scene_QueueMusic(SE_AMBIENT_WIND);
     Import_ObjectEventSetAnimation(LOCALID_MEDITATING_MONK, ANIM_MONK_MEDITATE);
     Import_ObjectEventSetAnimation(LOCALID_MONK_SENSING_ANXIETY,
                                    ANIM_MONK_MEDITATE);
@@ -953,7 +953,7 @@ s32 Map_Initialize(void) {
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
-  } else if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
+  } else if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WATER_FOR_FROST), 0);
     ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->priorityFlags |=

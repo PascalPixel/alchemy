@@ -72,7 +72,7 @@ extern const struct ObjectEventTemplate gField_DefaultObjectEventTemplates[2];
 /// the last. An object event template whose condition does not hold is skipped,
 /// as is a Djinni hidden after a lost battle outside the world map, but it
 /// still uses up its slot: object event slot + n is always row n, counted from
-/// 0, of the table's rows of sprite 8 or more, as Map_FindObjectEventTemplate
+/// 0, of the table's rows of sprite 8 or more, as Scene_FindObjectEventTemplate
 /// counts them. An existing object event is moved back to its place unless the
 /// party keeps its position. The table is kept by address, so it must last as
 /// long as the map (the overlay's own tables do).
@@ -118,7 +118,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
     if (!GameFlag_IsConditionActive(condition))
       continue;
     // Djinn_ResolvePendingEvent hides a Djinni after the party loses or flees.
-    // Map_ResetFlagsOnEnter clears these temporary flags on a normal entry.
+    // Scene_ResetFlagsOnEnter clears these temporary flags on a normal entry.
     if ((u32)(condition - FLAG_DJINN_FIRST) <=
             OBJ_EVENT_DJINNI_FLAG_COUNT - 1 &&
         work->mode != OBJECT_SYSTEM_WORLD_MAP &&
@@ -237,7 +237,7 @@ void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by Map_Run on entering a map, and by
+/// Called by SceneManager_Run on entering a map, and by
 /// FieldScript_RunObjectHookAndWait.
 /// Empties every object event slot and table first, without destroying the
 /// object events in them; sets work->camera, the map's origin and
@@ -272,9 +272,9 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   FieldScript_SpawnObjectEventTemplates(table, LOCALID_FIRST_PLACED);
 
   object = (struct Object *)work->objectEvents[leader];
-  // gSaveBlock.turn keeps the leader's map grid layer (Map_Run saves its
-  // layer there). Its cell: 16 pixels square, 128 to a row, so above is
-  // the cell north of it.
+  // gSaveBlock.turn keeps the leader's map grid layer (SceneManager_Run saves
+  // its layer there). Its cell: 16 pixels square, 128 to a row, so above is the
+  // cell north of it.
   object->layer = gSaveBlock.turn;
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
@@ -354,10 +354,10 @@ UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
 /// Gives each object event template with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 ///
-/// Called by map overlays through Map_AssignViewFlagsFar. Writes the
+/// Called by map overlays through Scene_AssignViewFlagsFar. Writes the
 /// object event templates' condition, and clears FLAG_IN_VIEW and sets
 /// FLAG_OUT_OF_VIEW.
-void Map_AssignViewFlags(struct ObjectEventTemplate *entry) {
+void Scene_AssignViewFlags(struct ObjectEventTemplate *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
 
   GameFlag_ClearFar(FLAG_IN_VIEW);
@@ -526,8 +526,8 @@ void *ObjectEvent_GetByLocalId(u32 objectEventIndex) {
 /// gObjectEventSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that ObjectEvent_Restore can put them back.
 ///
-/// Called by Map_Run before a random battle, by saving the game through
-/// Save_CaptureObjectEventsFar, and by two maps (Tolbi's spring and the
+/// Called by SceneManager_Run before a random battle, by saving the game
+/// through Save_CaptureObjectEventsFar, and by two maps (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void ObjectEvent_Snapshot(void) {
   struct FieldWork *work;
@@ -585,7 +585,7 @@ void ObjectEvent_Snapshot(void) {
 /// Puts back the object events ObjectEvent_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by Map_Run when the party keeps its position
+/// Called by SceneManager_Run when the party keeps its position
 /// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie map through
 /// ObjectEvent_RestoreFar. Only object events whose slots are filled again are
 /// restored; the leader is set idle.

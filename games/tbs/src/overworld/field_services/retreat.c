@@ -175,7 +175,7 @@ void FieldEffect_RunRetreat(void) {
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
-/// the ground (4 on the world map, whose map is MapId_MainMenu).
+/// the ground (4 on the world map, whose map is SceneId_MainMenu).
 void FieldEffect_UpdateDescendingParticlePositiveArc(
     union ObjectEventOrEffect *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
@@ -188,7 +188,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&MapId_MainMenu)
+  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -219,7 +219,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&MapId_MainMenu)
+  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;

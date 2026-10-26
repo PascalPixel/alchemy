@@ -1,12 +1,12 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
-/// share one overlay: MapId_Bilibin, MapId_BilibinTreasury and
-/// MapId_BilibinBarricade. The getters pick each map's tables by
-/// gSaveBlock.mapId, Bilibin_Initialize sets up the map being entered, and
+/// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
+/// SceneId_BilibinBarricade. The getters pick each map's tables by
+/// gSaveBlock.sceneId, Bilibin_Initialize sets up the map being entered, and
 /// EventScript_PushStatueOrCrates serves all three.
 ///
-/// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord McCoy,
-/// has closed the road to Kolima. Almost everything here turns on
+/// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
+/// McCoy, has closed the road to Kolima. Almost everything here turns on
 /// FLAG_KOLIMA_CURSE_LIFTED, which the party sets in Kolima Forest when it
 /// heals Tret. Until then a man turned into a tree (LOCALID_TREE_MAN) stands at
 /// the entrance: a first look says it almost looks like a man, a second that it
@@ -23,7 +23,7 @@
 ///
 /// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
 /// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
-/// Bilibin's buildings (MapId_CottageRoomsC) and the seventh into the
+/// Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
 /// shown again. The other warps lead to the world map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
@@ -40,12 +40,13 @@
 /// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
 /// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
 /// party for keeping McCoy waiting. The garden is another map section
-/// (map_headers.s gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter
-/// clears the flag on the way in and the guard never sees it set.
+/// (scene_headers.s gives Bilibin 8 and the garden 9), so
+/// Scene_ResetFlagsOnEnter clears the flag on the way in and the guard never
+/// sees it set.
 ///
-/// The Bilibin Treasury (MapId_BilibinTreasury) is what its sign calls `McCoy's
-/// Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he joins
-/// the party when spoken to (EventScript_GustJoins). A second statue
+/// The Bilibin Treasury (SceneId_BilibinTreasury) is what its sign calls
+/// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
+/// joins the party when spoken to (EventScript_GustJoins). A second statue
 /// (LOCALID_TREASURY_STATUE) slides along one column, and
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
@@ -53,7 +54,7 @@
 /// floor; two warp regions (Bilibin_GetRegions) lead down its west ladder to
 /// the lower room and back to Bilibin by the statue.
 ///
-/// The Bilibin Barricade (MapId_BilibinBarricade) is the road east to Kolima
+/// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
 /// where McCoy's barricade stands, reached from the world map at either end.
 /// Its sign reads `This area is off-limits to all those without a permit. —Lord
 /// McCoy`, and a door there stays locked. A stack of crates
@@ -87,7 +88,7 @@
 #include "save_block.h"
 #include "djinn_ids.h"
 #include "flags.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/bilibin.h"
 #include "unit/overworld/overworld.h"
@@ -273,15 +274,15 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_MAPSEC_TEMP_04
 
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Bilibin) {
+  if (sceneId == (s32)&SceneId_Bilibin) {
     return gBilibinWarpDests;
   }
-  if (mapId == (s32)&MapId_BilibinBarricade) {
+  if (sceneId == (s32)&SceneId_BilibinBarricade) {
     return gBilibinBarricadeWarpDests;
   }
-  if (mapId == (s32)&MapId_BilibinTreasury) {
+  if (sceneId == (s32)&SceneId_BilibinTreasury) {
     return gBilibinTreasuryWarpDests;
   }
   return (const struct MapWarpDest *)gBilibinWarpDestsOther;
@@ -289,7 +290,7 @@ const struct MapWarpDest *Bilibin_GetWarpDests(void) {
 
 /// Only the Bilibin Treasury has warp regions.
 const struct MapWarpRegion *Bilibin_GetRegions(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_BilibinTreasury) {
     return (const struct MapWarpRegion *)gBilibinTreasuryRegions;
   }
   return 0;
@@ -307,15 +308,15 @@ static void EventScript_GustJoins(void) {
 /// Selects the object events of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
 const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Bilibin) {
+  if (sceneId == (s32)&SceneId_Bilibin) {
     return gBilibinObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BilibinBarricade) {
+  if (sceneId == (s32)&SceneId_BilibinBarricade) {
     return gBilibinBarricadeObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BilibinTreasury) {
+  if (sceneId == (s32)&SceneId_BilibinTreasury) {
     return gBilibinTreasuryObjectEventTemplates;
   }
   return gBilibinObjectEventTemplatesOther;
@@ -331,15 +332,15 @@ static void EventScript_InspectWell(void) {
 }
 
 const struct MapEvent *Bilibin_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_Bilibin) {
+  if (sceneId == (s32)&SceneId_Bilibin) {
     return gBilibinEvents;
   }
-  if (mapId == (s32)&MapId_BilibinBarricade) {
+  if (sceneId == (s32)&SceneId_BilibinBarricade) {
     return gBilibinBarricadeEvents;
   }
-  if (mapId == (s32)&MapId_BilibinTreasury) {
+  if (sceneId == (s32)&SceneId_BilibinTreasury) {
     return gBilibinTreasuryEvents;
   }
   return gBilibinEventsOther;
@@ -679,12 +680,12 @@ static void EventScript_JillGivesHardNut(void) {
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gSaveBlock.mapId == (s32)&MapId_Bilibin) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_Bilibin) {
     Bilibin_RestoreVillageObjectEvents();
-  } else if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade) {
     Bilibin_RestoreRiverObjectEvents();
     FieldScheduler_AddCallback(Bilibin_UpdateWadingRipples, TASK_PRIORITY_MAP);
-  } else if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury) {
+  } else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinTreasury) {
     Bilibin_SetUpTreasury();
   }
   return 0;
@@ -946,11 +947,11 @@ static void EventScript_PushStatueOrCrates(void) {
       Object_SelectAnimation(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
-      if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade)
+      if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade)
         Bilibin_UpdateCratesCells();
-      else if (gSaveBlock.mapId == (s32)&MapId_Bilibin)
+      else if (gSaveBlock.sceneId == (s32)&SceneId_Bilibin)
         Bilibin_UpdateVillageStatueCells();
-      else if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury)
+      else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinTreasury)
         Bilibin_UpdateTreasuryStatueCells();
     }
   }
@@ -1021,7 +1022,7 @@ static void Bilibin_UpdateTreasuryStatueCells(void) {
 }
 
 s32 gBilibin_FaceLeaderScript[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

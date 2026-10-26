@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi (MapId_Tolbi), the town Babi rules, where Colosso, a festival of
+/// Tolbi (SceneId_Tolbi), the town Babi rules, where Colosso, a festival of
 /// warriors, is held each year in the colosseum. The party comes to Tolbi
 /// across the Karagol Sea from Kalay while the festival is on, and the town's
 /// talk follows the Colosso story in three stages. Tolbi_SelectEvents gives
@@ -41,9 +41,9 @@
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
 /// their warps' numbers, lead into Tolbi's houses, inns and shops and into
-/// Tolbi Sanctum (all MapId_StuccoRoomsB), but for TOLBI_TO_LUCKY_WHEELS,
+/// Tolbi Sanctum (all SceneId_StuccoRoomsB), but for TOLBI_TO_LUCKY_WHEELS,
 /// which with TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels
-/// rooms (MapId_StuccoRoomsC, whose area name is also Tolbi).
+/// rooms (SceneId_StuccoRoomsC, whose area name is also Tolbi).
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the world map.

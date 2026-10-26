@@ -16,7 +16,7 @@ struct ObjectSystemSuspendView {
 };
 
 /// Runs the current map, which the party entered by warpDest, until it
-/// leaves; returns the warp kind it left by, for Map_TakeWarp, or WARP_NONE
+/// leaves; returns the warp kind it left by, for Scene_TakeWarp, or WARP_NONE
 /// when the next map is already in gSaveBlock: a random battle, a
 /// party that fell outside battle, Retreat or a script's destination. Sets the
 /// map up (layout, object events, encounters, return points), runs its
@@ -24,13 +24,13 @@ struct ObjectSystemSuspendView {
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
-/// Called from Game_MainLoop's main loop for every map, which
-/// passes the result to Map_TakeWarp. Allocates the field work in
+/// Called from SequenceManager_Run's main loop for every map, which
+/// passes the result to Scene_TakeWarp. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the map took after it from the same pool; sets gSaveBlock's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the map
 /// has started, FLAG_KEEP_PARTY_POSITION.
-s32 Map_Run(s32 warpDest) {
+s32 SceneManager_Run(s32 warpDest) {
   struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s32 mode;
@@ -41,15 +41,15 @@ s32 Map_Run(s32 warpDest) {
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gSaveBlock.defaultMap = gSaveBlock.mapId;
+  gSaveBlock.defaultMap = gSaveBlock.sceneId;
   gSaveBlock.defaultWarpDest = gSaveBlock.warpDest;
   gSaveBlock.nextMap = -1;
   gSaveBlock.nextWarpDest = -1;
-  gSaveBlock.defeatMap = -1;
+  gSaveBlock.defeatScene = -1;
   gSaveBlock.defeatWarpDest = -1;
   Task_ResetAll();
   Djinn_ResolvePendingEvent(0);
-  if (gSaveBlock.layoutId == (s32)&MapId_MainMenu) {
+  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu) {
     WorldMap_InitializePerspectiveFar();
     gSaveBlock.perspectiveMap = 1;
     mode = OBJECT_SYSTEM_WORLD_MAP;
@@ -64,7 +64,7 @@ s32 Map_Run(s32 warpDest) {
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
   work->events = gOverlayArea.events();
-  Map_ApplyWarpDest();
+  Scene_ApplyWarpDest();
   ObjectEvent_ResetForObject(
       (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -99,7 +99,7 @@ s32 Map_Run(s32 warpDest) {
   // A fresh entry (not a return from battle) resets the hazard count to its
   // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Map_SetDefeatReturnPoint();
+    Scene_SetDefeatReturnPoint();
     gSaveBlock.hazardLimit = 16;
     gSaveBlock.hazardMode = HAZARD_COUNT_ON_CELLS;
     gSaveBlock.hazardDamage = 1;
@@ -131,7 +131,7 @@ s32 Map_Run(s32 warpDest) {
       }
       if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
-        MapNamePopup_ShowFar(gSaveBlock.mapId);
+        MapNamePopup_ShowFar(gSaveBlock.sceneId);
       }
       if (gSaveBlock.pendingDjinnEvent != 0) {
         Djinn_ResolvePendingEvent(gSaveBlock.pendingDjinnEvent, 1);
@@ -199,7 +199,7 @@ s32 Map_Run(s32 warpDest) {
               vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gSaveBlock.mapId = gSaveBlock.restartMap;
+              gSaveBlock.sceneId = gSaveBlock.restartScene;
               gSaveBlock.warpDest = gSaveBlock.restartWarpDest;
               WorldMap_EndScript();
               result = WARP_NONE;
@@ -213,7 +213,7 @@ s32 Map_Run(s32 warpDest) {
             Leader_StopMoving();
             FieldEffect_RunVisibilityTransition();
           } else {
-            Map_RunRaisedEvent(work->raisedEvent);
+            Scene_RunRaisedEvent(work->raisedEvent);
           }
           work->busy = 0;
           work->raisedEvent = 0;
@@ -224,7 +224,7 @@ s32 Map_Run(s32 warpDest) {
           Leader_StopMoving();
           ObjectEvent_Snapshot();
           gSaveBlock.returnMusic = -1;
-          gSaveBlock.mapId = RUN_BATTLE;
+          gSaveBlock.sceneId = SEQUENCE_BATTLE;
           gSaveBlock.warpDest = work->battle;
           work->warp = WARP_NONE;
           Field_StartEncounterTransition(work->battle);
@@ -233,7 +233,7 @@ s32 Map_Run(s32 warpDest) {
           gSaveBlock.encounterSteps = 0;
         } else if (work->coordEvent != 0) {
           work->busy = 1;
-          Map_RunCoordEventOrWarp(work->coordEvent);
+          Scene_RunCoordEventOrWarp(work->coordEvent);
           work->busy = 0;
           work->coordEvent = 0;
         } else if (work->pushCell != 0) {
@@ -248,7 +248,7 @@ s32 Map_Run(s32 warpDest) {
           object = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
           mode = 0;
           if (object != -1) {
-            mode = Map_FindObjectEventTalkEvent(object) != 0;
+            mode = Scene_FindObjectEventTalkEvent(object) != 0;
           }
           if (mode != 0) {
             // 0x1000 keeps object event 0's request non-zero; the handler
@@ -288,7 +288,7 @@ s32 Map_Run(s32 warpDest) {
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
           WorldMap_StartScript();
-          Map_TalkToObjectEvent(work->talk & 0xfff);
+          Scene_TalkToObjectEvent(work->talk & 0xfff);
           WorldMap_EndScript();
           work->talk = 0;
         } else if (work->searchCell != 0) {
@@ -403,7 +403,7 @@ done:
 /// to 64 pixels above it, or a behavior the map has a bg event for. Returns 0
 /// otherwise.
 ///
-/// Called by Map_Run for the A button (a non-zero result becomes
+/// Called by SceneManager_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
 /// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
@@ -448,7 +448,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
       if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
         result = behavior;
       }
-    } else if (Map_FindEvent(MAP_EVENT_BG, behavior) != 0) {
+    } else if (Scene_FindEvent(MAP_EVENT_BG, behavior) != 0) {
       result = behavior;
     }
   }
@@ -459,9 +459,9 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
 /// entry, or the map's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by Map_Run once the map's events are set. Writes
+/// Called by SceneManager_Run once the map's events are set. Writes
 /// gSaveBlock's position, heading and turn, and the map's minX to maxY.
-void Map_ApplyWarpDest(void) {
+void Scene_ApplyWarpDest(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 warpDest = gSaveBlock.warpDest;
   const struct MapWarpDest *warpDestEntry = gOverlayArea.warpDests();

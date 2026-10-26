@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave (MapId_GomaCavePond), the room below the room of two pillars
+/// Goma Cave (SceneId_GomaCavePond), the room below the room of two pillars
 /// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
 /// party to pass through on the way to Bilibin.
 ///
@@ -37,9 +37,9 @@
 #include "script_layer.h"
 #include "flags.h"
 
-// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
-// their own.
+// Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
+// the party enters another map section, and other map sections use the numbers
+// for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
 /// ★ Named from what the player sees: a tree stump standing on a ledge in the
@@ -54,23 +54,23 @@ enum GomaCavePondLocalId {
   LOCALID_FALLEN_STUMP = LOCALID_FIRST_PLACED
 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gGomaCavePondWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gGomaCavePondWarps; }
+const u32 *Scene_GetWarps(void) { return gGomaCavePondWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCavePondObjectEventTemplates;
 }
 
-const struct MapEvent *Map_GetEvents(void) { return gGomaCavePondEvents; }
+const struct MapEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
 
 /// Sets up the room as the party enters. Once the stump in the room above has
 /// been pushed over, it lies here underfoot, and the cells it covers change.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   work = gFieldWork;

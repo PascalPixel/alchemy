@@ -1,12 +1,12 @@
 /// @file
-/// Sol Sanctum (MapId_SolSanctumCorridor), a passage that joins two rooms of
-/// MapId_SolSanctumReliefs (sol_sanctum_entrance.c).
+/// Sol Sanctum (SceneId_SolSanctumCorridor), a passage that joins two rooms of
+/// SceneId_SolSanctumReliefs (sol_sanctum_entrance.c).
 ///
 /// It places nobody and has no events but its two warps, one at each end:
 /// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST leads into the room
 /// with the chest and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into
 /// the room with the stepping stones. Its setup, SolSanctumRooms_Initialize
-/// (common/sol_sanctum_init_zoom.h), is the one MapId_SolSanctumMaze shares:
+/// (common/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumMaze shares:
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles
 /// and shakes.
 
@@ -29,20 +29,22 @@
 
 #include "script_layer.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gSolSanctumCorridorWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gSolSanctumCorridorWarps; }
+const u32 *Scene_GetWarps(void) { return gSolSanctumCorridorWarps; }
 
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gSolSanctumCorridorObjectEventTemplates;
 }
 
 /// Returns the passage's two warps, its only events.
-const struct MapEvent *Map_GetEvents(void) { return gSolSanctumCorridorEvents; }
+const struct MapEvent *Scene_GetEvents(void) {
+  return gSolSanctumCorridorEvents;
+}
 
 #include "common/sol_sanctum_init_zoom.h"
 

@@ -1,5 +1,5 @@
 /// @file
-/// Kolima and Kolima Forest (MapId_Kolima and MapId_KolimaForestEntrance):
+/// Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 /// the sparkling dust that falls when Tret's curse strikes. "That sparkly stuff
 /// on the ground... What is it?"
 #include "action_script.h"

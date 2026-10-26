@@ -1,5 +1,5 @@
 /// @file
-/// Cottage rooms C (MapId_CottageRoomsC), a sheet of rooms drawn as cottages,
+/// Cottage rooms C (SceneId_CottageRoomsC), a sheet of rooms drawn as cottages,
 /// all of them inside Bilibin's buildings, whose area name is Bilibin. Six of
 /// Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in
 /// bilibin.c) lead into its rooms, and each room's door leads back out to the
@@ -181,7 +181,7 @@ const u32 *CottageRoomsC_GetWarps(void) { return gCottageRoomsCWarps; }
 /// Marks object event templates outside the current room's view before object
 /// events are spawned.
 const struct ObjectEventTemplate *CottageRoomsC_GetObjectEventTemplates(void) {
-  Map_AssignViewFlags(gCottageRoomsCObjectEventTemplates);
+  Scene_AssignViewFlags(gCottageRoomsCObjectEventTemplates);
   return gCottageRoomsCObjectEventTemplates;
 }
 

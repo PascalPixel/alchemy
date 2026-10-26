@@ -3,18 +3,18 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 struct MapWarpDest;
 struct MapEvent;
 struct ObjectEventTemplate;
 struct MapWarpRegion;
 
-const struct MapWarpDest *Map_GetWarpDests(void);
-const struct MapWarpRegion *Map_GetWarpRegions(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
+const struct MapWarpRegion *Scene_GetWarpRegions(void);
 const u32 *BabiLighthouse_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
 s32 BabiLighthouse_SetupMap(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];

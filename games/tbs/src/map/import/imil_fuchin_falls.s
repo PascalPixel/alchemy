@@ -53,7 +53,7 @@
 	.set import.ObjectEvent_GetByLocalId, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

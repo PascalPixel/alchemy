@@ -47,7 +47,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 10);
     objectEvent->motionFlags = 3;
     objectEvent->update = NULL;
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     FieldScript_End();
   }
 }

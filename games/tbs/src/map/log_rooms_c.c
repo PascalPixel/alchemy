@@ -1,9 +1,9 @@
 /// @file
-/// Log rooms C (MapId_LogRoomsC), a sheet of rooms drawn in logs, all of them
+/// Log rooms C (SceneId_LogRoomsC), a sheet of rooms drawn in logs, all of them
 /// Kolima's: the village's houses, shops and inn. Some of its warps join its
 /// own rooms by the stairs up the inn and the weapon and armor shop, five lead
-/// back out to the village (MapId_Kolima) and one into Kolima Tunnel
-/// (MapId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
+/// back out to the village (SceneId_Kolima) and one into Kolima Tunnel
+/// (SceneId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
 ///
 /// Like the people outside, the fifteen residents (LOCALID_FIRST_VILLAGER to
 /// LOCALID_LAST_VILLAGER) were turned into trees when the curse fell, and until
@@ -182,7 +182,7 @@ const struct ObjectEventTemplate *LogRoomsC_GetObjectEventTemplates(void) {
     LogRoomsC_TurnVillagersIntoTrees(gLogRoomsC_ObjectEventTemplates);
   }
   templates = gLogRoomsC_ObjectEventTemplates;
-  Map_AssignViewFlags(templates);
+  Scene_AssignViewFlags(templates);
   return templates;
 }
 

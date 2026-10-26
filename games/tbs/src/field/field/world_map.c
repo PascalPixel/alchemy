@@ -586,8 +586,9 @@ void WorldMap_UpdateView(void) {
   // Rebuild the projection and look at the followed position from the
   // current pitch and yaw, the eye one pixel beyond the zoomed distance.
   // followedPosition is read here without the NULL test above, which never
-  // fails on the world map: Map_Run's ObjectEvent_ResetForObject points it at
-  // the camera object before any frame passes, and nothing clears it.
+  // fails on the world map: SceneManager_Run's ObjectEvent_ResetForObject
+  // points it at the camera object before any frame passes, and nothing clears
+  // it.
   gProjection.centerX = 120;
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);

@@ -1,8 +1,8 @@
 /// @file
-/// Elemental Star Room (MapId_SolSanctumEruption), the chamber of
-/// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
-/// collapses once the Mars Star is taken: one event, with no map events
-/// of its own.
+/// Elemental Star Room (SceneId_SolSanctumEruption), the chamber of
+/// SceneId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
+/// it collapses once the Mars Star is taken: one event, with no map events of
+/// its own.
 ///
 /// SolSanctumEruption_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
@@ -14,7 +14,7 @@
 ///   FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from then
 ///   on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes
 ///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
-///   rooms (MapId_SolSanctumLunaSolRooms).
+///   rooms (SceneId_SolSanctumLunaSolRooms).
 ///
 /// The effects are the event's own. Sixteen blue crystals thrown out in a ring
 /// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
@@ -80,7 +80,7 @@
 /// sound.
 /// ★ Named from the game: "Please...can we go now?"
 /// (MsgSolSanctumKradenCouldThatBeThe)
-#define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_MAP_TEMP_46
+#define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_SCENE_TEMP_46
 
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
@@ -174,7 +174,7 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// as hostages, and the Wise One then rescues Isaac and Garet. Called by
 /// SolSanctumEruption_Initialize at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
-/// MapId_SolSanctumElementalStarRoom. Sets
+/// SceneId_SolSanctumElementalStarRoom. Sets
 /// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageEvent(void) {
@@ -637,8 +637,8 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
 /// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
-/// Elemental Star Room (MapId_SolSanctumElementalStarRoom). Called by
-/// Map_Run once the object events exist.
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
+/// SceneManager_Run once the object events exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
@@ -1241,7 +1241,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
-  Map_StartEventPsynergy();
+  Scene_StartEventPsynergy();
   ObjectMotion_SetAnimationAndWait(LOCALID_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingObjectEvent(wiseOne);
@@ -1537,7 +1537,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Map_EndEventPsynergy();
+  Scene_EndEventPsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Import_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);

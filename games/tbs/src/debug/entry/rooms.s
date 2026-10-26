@@ -5,4 +5,4 @@
 	overlay_veneer TestRoom_GetWarps
 	overlay_veneer TestRoom_GetObjectEventTemplates
 	overlay_veneer TestRoom_GetEvents
-	overlay_veneer Map_GetWarpRegions
+	overlay_veneer Scene_GetWarpRegions

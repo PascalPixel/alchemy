@@ -1,5 +1,5 @@
 /// @file
-/// MapId_Xian, the village of Xian. Its houses, shops and inn are
+/// SceneId_Xian, the village of Xian. Its houses, shops and inn are
 /// lacquer_rooms_b.c; Master Feh's school is a room of the Fuchin Temple
 /// overlay (LacquerRoomsA, which XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL leads
 /// into; fuchin_temple.c).
@@ -32,7 +32,7 @@
 /// when spoken to.
 ///
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
-/// (MapId_LacquerRoomsB, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
+/// (SceneId_LacquerRoomsB, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
 /// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_THUMP,
 /// XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
@@ -214,19 +214,19 @@ static void Xian_SpawnTrainingParticles(void) {
 /// The water carrier has spilled her water.
 /// ★ Named from the game: "You made me spill my water!"
 /// (MsgXianDoingMadeMeSpillMy)
-#define FLAG_XIAN_WATER_SPILLED FLAG_MAP_TEMP_00
+#define FLAG_XIAN_WATER_SPILLED FLAG_SCENE_TEMP_00
 /// Frost has frozen the spilled water into ice that can be stood on.
 /// ★ Named from the game: "You made me spill my water!"
 /// (MsgXianDoingMadeMeSpillMy)
-#define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_MAP_TEMP_01
+#define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_SCENE_TEMP_01
 /// The kung fu student has shown her strike on the tree.
 /// ★ Named from the game: "Hoo-whaaa... Hachaaa!" (MsgXianHooWhaaaHachaaa)
-#define FLAG_XIAN_STRIKE_SHOWN FLAG_MAP_TEMP_02
+#define FLAG_XIAN_STRIKE_SHOWN FLAG_SCENE_TEMP_02
 /// Force has made the kung fu student's tree jump once, which picks her second
 /// line.
 /// ★ Named from the game: "What happened? The tree jumped on its own!"
 /// (MsgXianWhaWhaHappened)
-#define FLAG_XIAN_TREE_JUMPED FLAG_MAP_TEMP_03
+#define FLAG_XIAN_TREE_JUMPED FLAG_SCENE_TEMP_03
 
 /// Tracks a nearby target only within the object event's current facing sector.
 static s32 Xian_UpdateCarrierTracking(struct ObjectEvent *objectEvent,
@@ -468,7 +468,7 @@ static void Xian_TalkToWaterCarrier(void) {
   FieldScript_WaitFrames(70);
   FieldScript_SetMessageId(MsgXianDoingMadeMeSpillMy);
   Script_ShowMessageAndWait(LOCALID_WOMAN_CARRYING_WATER, 0, 20);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   if ((ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20) > 13) {
     leaderMustStepAside = 1;
@@ -626,7 +626,7 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageThenWait(LOCALID_KUNG_FU_STUDENT, 0, 20);
     GameFlag_Set(FLAG_XIAN_STRIKE_SHOWN);
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     FieldScript_End();
   }
 }
@@ -774,7 +774,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   }
   FieldScript_ShowMessageAndWait(LOCALID_KUNG_FU_STUDENT, 0);
   GameFlag_Set(FLAG_XIAN_TREE_JUMPED);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   FieldScript_End();
 }
 
@@ -833,7 +833,7 @@ s32 Xian_Initialize(void) {
   u32 crateIndex;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Map_QueueMusic(SE_AMBIENT_WIND);
+  Scene_QueueMusic(SE_AMBIENT_WIND);
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
   // is not shown.

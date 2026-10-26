@@ -1,5 +1,5 @@
 /// @file
-/// Lighthouse Aerie (MapId_MercuryLighthouseAerie), the top of
+/// Lighthouse Aerie (SceneId_MercuryLighthouseAerie), the top of
 /// Mercury Lighthouse, where its beacon burns. Isaac and Garet, with Ivan and
 /// Mia, have climbed the lighthouse after Saturos and Menardi, who hold Jenna
 /// and Kraden and carry the Elemental Stars; they come too late to stop the
@@ -33,7 +33,7 @@
 ///   from one to the next (metatile behaviors 10 and 11;
 ///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif);
 ///   the lift leads down to
-///   Mercury Lighthouse's MapId_MercuryLighthouseExterior
+///   Mercury Lighthouse's SceneId_MercuryLighthouseExterior
 ///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
 ///   of Healing: metatile behavior 6 calls it up, metatile behavior 12 rides it
@@ -51,14 +51,14 @@
 /// every other warp destination sets FLAG_HOSTAGES_GONE before the object event
 /// templates are read.
 ///
-/// Unused: MapId_UnusedMercuryLighthouseAerieCopy, which the area
+/// Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area
 /// names call Mercury Lighthouse and the debug map list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
 /// warp, table or code leads there; only the debug map selector, which
 /// reaches every map, can.
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/mercury_lighthouse_aerie.h"
 #include "unit/map/common/effect_spawn.h"
@@ -86,7 +86,7 @@
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "object_event.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
@@ -143,15 +143,15 @@ enum {
   /// The leader stands on a platform, which has dipped under the weight.
   /// ★ Named from what the player sees: the round platforms floating in the
   /// sky beside the aerie, which bob under the leader (its render)
-  FLAG_ON_PLATFORM = FLAG_MAP_TEMP_50,
+  FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
   /// ★ Named from what the player sees: the lift rising to the aerie with a
   /// statue on it (its render)
-  FLAG_LIFT_UP = FLAG_MAP_TEMP_51,
+  FLAG_LIFT_UP = FLAG_SCENE_TEMP_51,
   /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
   /// are placed only before it.
   /// ★ Named from the game: "leave our hostages"
   /// (MsgMercuryLighthouseAlreadyLit)
-  FLAG_HOSTAGES_GONE = FLAG_MAP_TEMP_53
+  FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_53
 };
 
 enum {
@@ -183,7 +183,7 @@ const struct MapWarpRegion *MercuryLighthouseAerie_GetRegions(void) {
   return 0;
 }
 
-/// Returns the one warp: the lift down to MapId_MercuryLighthouseExterior's
+/// Returns the one warp: the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
 const u32 *MercuryLighthouseAerie_GetWarps(void) {
@@ -221,7 +221,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseAerie) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
                                TASK_PRIORITY_MAP);
@@ -929,7 +929,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 216);
-  FieldScript_SetNextDestination((s32)&MapId_MercuryLighthouseAerie, 2);
+  FieldScript_SetNextDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
@@ -1355,7 +1355,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_WaitForArrival();
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 22);
@@ -1523,7 +1523,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 }
 
 /// Lighthouse Aerie: touching metatile behavior 12. The leader steps onto the
-/// lift and rides it down to MapId_MercuryLighthouseExterior, arriving at
+/// lift and rides it down to SceneId_MercuryLighthouseExterior, arriving at
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {

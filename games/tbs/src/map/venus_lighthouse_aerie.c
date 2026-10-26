@@ -1,5 +1,5 @@
 /// @file
-/// Lighthouse Aerie (MapId_VenusLighthouseAerie), the top of Venus Lighthouse
+/// Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus Lighthouse
 /// and the only map of this overlay: one scripted sequence cut by two battles
 /// and two trips to the world map. Each part starts in
 /// VenusLighthouseAerie_Initialize from the warp destination the part before
@@ -98,7 +98,7 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "heap_slots.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "pushed_object.h"
 #include "map_grid_scroll.h"
 #include "tbs_edition.h"
@@ -112,7 +112,7 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
 
@@ -314,22 +314,22 @@ VenusLighthouseAerie_GetObjectEventTemplates(void) {
 
 /// Saturos and Menardi slide together as they fuse.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
-#define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_MAP_TEMP_34
+#define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34
 /// Saturos and Menardi grow as they fuse.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
-#define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_MAP_TEMP_35
+#define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_SCENE_TEMP_35
 /// The beacon has erupted, and its particles rise higher.
 /// ★ Named from the game: "At long last, the time has come to light Venus
 /// Lighthouse's beacon." (MsgVenusLongLastTime)
-#define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_MAP_TEMP_36
+#define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_SCENE_TEMP_36
 /// The beacon's light has lifted the party and flashed white.
 /// ★ Named from the game: "At long last, the time has come to light Venus
 /// Lighthouse's beacon." (MsgVenusLongLastTime)
-#define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_MAP_TEMP_37
+#define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_SCENE_TEMP_37
 /// The leader stands on one of the floating platforms.
 /// ★ Named from what the player sees: round pale blue platforms floating in the
 /// air between the lighthouse and the towers beside it (its render)
-#define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_MAP_TEMP_50
+#define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
 
 /// Walking off the edge of a platform: if the ground two cells ahead is clear,
 /// the leader jumps across to it.
@@ -982,7 +982,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  Map_StartEventPsynergy();
+  Scene_StartEventPsynergy();
   WaitFrames(1);
   frame = 0;
   do {
@@ -1013,7 +1013,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   WaitFrames(1);
   ObjectEvent_SetSpriteColorById(LOCALID_SHEBA, SPRITE_COLOR_NORMAL);
   WaitFrames(10);
-  Map_EndEventPsynergy();
+  Scene_EndEventPsynergy();
   ObjectMotion_Launch(LOCALID_SHEBA, 2, 40);
   VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
@@ -1285,7 +1285,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                                      gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   {
-    s32 localId = (s32)&MapId_VenusLighthouseAerie;
+    s32 localId = (s32)&SceneId_VenusLighthouseAerie;
 
     FieldScript_SetNextDestination(localId,
                                    VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
@@ -1973,9 +1973,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FlashScreen();
   Script_Wait(20);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&MapId_VenusLighthouseAerie,
+  FieldScript_SetNextDestination((s32)&SceneId_VenusLighthouseAerie,
                                  VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE);
-  FieldScript_SetDefeatDestination((s32)&MapId_VenusLighthouseAerie,
+  FieldScript_SetDefeatDestination((s32)&SceneId_VenusLighthouseAerie,
                                    VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
   Party_RestorePpOfLitElements();
@@ -2682,7 +2682,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_Snapshot();
-  FieldScript_SetDestination((s32)&MapId_WorldMap,
+  FieldScript_SetDestination((s32)&SceneId_WorldMap,
                              WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   {
     u16 white = 0x7fff;
@@ -3510,7 +3510,7 @@ s32 gVenusLighthouseAerie_PartyExitAction[] = {
 };
 
 s32 gVenusLighthouseAerie_PartyHeadingAction[] = {
-    SC_CALL(Map_LookAboutRandomly),
+    SC_CALL(Scene_LookAboutRandomly),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

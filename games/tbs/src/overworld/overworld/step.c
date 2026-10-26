@@ -17,7 +17,7 @@ struct UnitHpPoisonView {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by Map_Run while it sets a map up.
+/// Called by SceneManager_Run while it sets a map up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -40,7 +40,7 @@ void Field_ClearRequests(void) {
 /// Returns the sum of the field's twelve pending requests (counting the talk
 /// request twice): non-zero while any request is pending.
 ///
-/// Map_Run tests it to stop walking and to leave its request loop.
+/// SceneManager_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -65,7 +65,7 @@ s32 Field_CountRequests(void) {
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader (a world map metatile on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and Map_FindPsynergyEvent (items.c),
+/// Called by Field_FindItemEvent and Scene_FindPsynergyEvent (items.c),
 /// which match an item or Psynergy event to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -129,7 +129,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
 /// Takes the warp of the first of the map's warp regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's warp value for Map_Run, plays the warp sound and starts
+/// region's warp value for SceneManager_Run, plays the warp sound and starts
 /// leaving the map. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no warps.
 ///
@@ -188,7 +188,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// poison and hazardous ground, and wears Avoid off. When this hurts the party,
 /// the leader flinches and characters who fall are listed in the field work.
 ///
-/// Called by Map_Run each frame while the party walks (in debug mode,
+/// Called by SceneManager_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
@@ -343,7 +343,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // step is listed, loses its poison and raises event -1, which
-  // Map_Run handles.
+  // SceneManager_Run handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -478,7 +478,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by Map_Run around the handling of most requests, by the
+/// Called by SceneManager_Run around the handling of most requests, by the
 /// Djinni effect and by the world map's overlay; each call is paired with
 /// WorldMap_EndScript. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return

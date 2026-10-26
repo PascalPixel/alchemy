@@ -15,7 +15,7 @@
 
 /// The cells under Vault's rope bridge have the deck's ground, so the leader is
 /// on the bridge; kept through a battle.
-#define FLAG_VAULT_ON_BRIDGE FLAG_MAP_TEMP_00
+#define FLAG_VAULT_ON_BRIDGE FLAG_SCENE_TEMP_00
 
 /// Gives the cells under the bridge the deck's ground, from a copy kept
 /// elsewhere in the map. MB_VAULT_BRIDGE_END reaches it; it sets

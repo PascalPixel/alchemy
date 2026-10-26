@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 u8 *MenuTest_GetWarpDests(void);
-s32 Map_GetWarpRegions(void);
+s32 Scene_GetWarpRegions(void);
 u8 *MenuTest_GetWarps(void);
 u8 *MenuTest_GetObjectEventTemplates(void);
 s32 MenuTest_GetEvents(void);

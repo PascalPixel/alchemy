@@ -1,10 +1,10 @@
 /// @file
-/// Kolima Forest (MapId_KolimaForestEntrance and MapId_KolimaForestCliff):
+/// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
 /// the hop east onto the map's third placed object event.
 #include "types.h"
 #include "engine_call.h"
 #include "object_event.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "save_block.h"
 #include "songs.h"
 

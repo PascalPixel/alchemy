@@ -35,7 +35,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
@@ -85,7 +85,7 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
-	.set import.Map_QueueMusic, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_QueueMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

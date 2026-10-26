@@ -9,17 +9,17 @@ struct MapEvent;
 struct ObjectEventTemplate;
 struct MapWarpRegion;
 
-const struct MapWarpDest *Map_GetWarpDests(void);
-const struct MapWarpRegion *Map_GetWarpRegions(void);
-const u32 *Map_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
+const struct MapWarpRegion *Scene_GetWarpRegions(void);
+const u32 *Scene_GetWarps(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
 s32 ColosseumSatrageMatch_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
 #ifdef UBFIX
-void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
-                                       s32 segments, s32 finishX, s32 finishZ,
-                                       s32 firstItem, s32 secondItem);
+void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
+                                         s32 segments, s32 finishX, s32 finishZ,
+                                         s32 firstItem, s32 secondItem);
 #endif
 extern const u8 gColosseumSatrageMatch_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];

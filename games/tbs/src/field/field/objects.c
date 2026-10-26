@@ -159,7 +159,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Object *object,
 /// Object_UpdateAllMotion, which runs no scripts; OBJECT_SYSTEM_WORLD_MAP and
 /// OBJECT_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
 /// later call gets the same ones back. No code releases HEAP_SLOT_OBJECTS or
-/// HEAP_SLOT_OBJECT_SYSTEM by name, but Map_Run takes HEAP_SLOT_FIELD
+/// HEAP_SLOT_OBJECT_SYSTEM by name, but SceneManager_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; InitHeap clears the slots at the next
 /// map change.

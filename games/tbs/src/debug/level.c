@@ -93,7 +93,7 @@ u8 *IncreaseItemAndLevel_GetWarpDests(void) {
 }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 u8 *IncreaseItemAndLevel_GetWarps(void) {
   return (u8 *)gIncreaseItemAndLevel_Warps;
@@ -482,8 +482,8 @@ UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
 
 /// Starts the window transition and edition-specific object event
 /// scale/animation setup. Returns zero through the exported map entry. The
-/// room's initialize entry, which Map_Run runs on entry and whose result
-/// it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
+/// room's initialize entry, which SceneManager_Run runs on entry and whose
+/// result it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
 s32 IncreaseItemAndLevel_Initialize(void) {

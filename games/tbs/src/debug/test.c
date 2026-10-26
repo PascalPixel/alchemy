@@ -103,7 +103,7 @@ static __inline__ void MenuTest_RecalculateParty(void) {
 u8 *MenuTest_GetWarpDests(void) { return (u8 *)gMenuTest_WarpDests; }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 u8 *MenuTest_GetWarps(void) { return (u8 *)gMenuTest_Warps; }
 
@@ -793,7 +793,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero. The room's
-/// initialize entry, which Map_Run runs on every entry and whose
+/// initialize entry, which SceneManager_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
 /// member is below 30 (Isaac 50 outside Japanese).
@@ -849,7 +849,7 @@ static s32 MenuTest_SelectCharacter(void) { return MemberChooser_Open(); }
 #if !TBS_PATCH_3
 /// Forwards the selected member and shop confirmation status. Talking to
 /// LOCALID_SECOND_DORA in Japanese, English and German: the sanctum's service
-/// menu, with LOCALID_SECOND_DORA as its keeper, since Map_TalkToObjectEvent
+/// menu, with LOCALID_SECOND_DORA as its keeper, since Scene_TalkToObjectEvent
 /// passes the object event's id.
 static s32 MenuTest_ConfirmShopAction(s32 unitId) {
   return Sanctum_Run(unitId);

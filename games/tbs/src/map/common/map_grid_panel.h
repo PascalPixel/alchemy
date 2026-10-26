@@ -3,9 +3,9 @@
 #include "map_grid.h"
 #include "io_reg.h"
 
-// Crossbone Isle Cave (MapId_CrossboneIsleSteppingStones to
-// MapId_CrossboneIsleDragonStatue) and Kolima Forest
-// (MapId_KolimaForestFloodgate): drawing a stretch of
+// Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
+// SceneId_CrossboneIsleDragonStatue) and Kolima Forest
+// (SceneId_KolimaForestFloodgate): drawing a stretch of
 // the layout, in one of the states kept elsewhere in it (such as the water
 // raised or not), straight into the background's tile map.
 

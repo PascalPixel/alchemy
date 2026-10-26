@@ -21,7 +21,7 @@ loading, scrolling and drawing the map grid. [Running a map](overworld/README.md
 the `overworld` folder, runs
 one map on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
-use; `Game_MainLoop`, the loop that runs one map after another, is there too.
+use; `SequenceManager_Run`, the loop that runs one map after another, is there too.
 [Maps](map/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
 templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Layouts](layout/README.md)
 holds the [layouts](../glossary.md#layout) as data.
@@ -126,10 +126,10 @@ Each map's people, scripts and events are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,
-`gMapHeaders` in [field/map_headers.s](field/map_headers.s), has 201 maps, and the
-rooms of one dungeon often share one overlay. `Map_LoadOverlay`
+`gSceneHeaders` in [field/scene_headers.s](field/scene_headers.s), has 201 maps, and the
+rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
 ([overworld/overworld/map.c](overworld/overworld/map.c)) unpacks the overlay a map's row
-names before `Map_Run` runs it; a battle or a minigame is main-image
+names before `SceneManager_Run` runs it; a battle or a minigame is main-image
 code and loads none.
 
 In the source an overlay is three files in its folder:
@@ -230,7 +230,7 @@ a table from its `.tsv`, or a layout, under the name the code uses.
 ## Where to start reading
 
 `System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
-is the first C to run; it ends by calling `Game_MainLoop`, which is short enough
+is the first C to run; it ends by calling `SequenceManager_Run`, which is short enough
 to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.

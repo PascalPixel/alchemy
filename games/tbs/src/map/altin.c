@@ -1,18 +1,18 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two maps that
-/// share this overlay and the area name Altin: MapId_Altin, the village
-/// outdoors, and MapId_CottageRoomsD, a sheet of rooms drawn as cottages, all
+/// share this overlay and the area name Altin: SceneId_Altin, the village
+/// outdoors, and SceneId_CottageRoomsD, a sheet of rooms drawn as cottages, all
 /// of them Altin's: its houses, shops and inn, entered by the village's doors
 /// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
 /// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each map's tables by
-/// gSaveBlock.mapId, both share one warp table, and a third, empty set of
+/// gSaveBlock.sceneId, both share one warp table, and a third, empty set of
 /// tables serves any other map.
 ///
 /// The village is flooded by the water beasts of its mine, whose maps the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
 /// follow the party's work down there. The water drops in three stages with the
 /// three drains it opens by beating the mine's water beasts
-/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Map_Initialize turns them
+/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
 /// into three map temp flags, the water dropped once, twice, or drained (the
 /// second and third drains both), and Altin_ApplyWaterLevel copies the layout
 /// area for that level over the village, with its metatile behaviors, and
@@ -49,7 +49,7 @@
 
 #include "save_block.h"
 #include "version.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/altin.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -80,8 +80,8 @@
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
-#define MAP_ALTIN_VILLAGE ((s32)&MapId_Altin)
-#define MAP_ALTIN_HOUSES ((s32)&MapId_CottageRoomsD)
+#define MAP_ALTIN_VILLAGE ((s32)&SceneId_Altin)
+#define MAP_ALTIN_HOUSES ((s32)&SceneId_CottageRoomsD)
 
 /// The village's object events, numbering the rows of
 /// gAltin_ObjectEventTemplates. The people without an event of their own
@@ -237,13 +237,13 @@ enum AltinHouseLocalId {
 enum {
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
-  FLAG_ALTIN_WATER_DROPPED_ONCE = FLAG_MAP_TEMP_40,
+  FLAG_ALTIN_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
-  FLAG_ALTIN_WATER_DROPPED_TWICE = FLAG_MAP_TEMP_41,
+  FLAG_ALTIN_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
   /// ★ Named from the game: "Thank goodness the water has receded."
   /// (MsgAltinThankGoodnessWaterHasReceded)
-  FLAG_ALTIN_WATER_DRAINED = FLAG_MAP_TEMP_42
+  FLAG_ALTIN_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 
 enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
@@ -292,28 +292,28 @@ static void Altin_ApplyWaterLevel(void);
 static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpawnSpray(void);
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == MAP_ALTIN_VILLAGE) {
+  if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_WarpDests;
   }
-  if (mapId == MAP_ALTIN_HOUSES) {
+  if (sceneId == MAP_ALTIN_HOUSES) {
     return gCottageRoomsD_WarpDests;
   }
   return gAltin_NoWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
 
 /// Both maps share one warp table.
-const u32 *Map_GetWarps(void) { return gAltin_Warps; }
+const u32 *Scene_GetWarps(void) { return gAltin_Warps; }
 
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s32 mapId = gSaveBlock.mapId;
-  if (mapId == MAP_ALTIN_VILLAGE) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s32 sceneId = gSaveBlock.sceneId;
+  if (sceneId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
                                   LOCALID_FIRST_PLACED]
@@ -324,7 +324,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     }
     return gAltin_ObjectEventTemplates;
   }
-  if (mapId == MAP_ALTIN_HOUSES) {
+  if (sceneId == MAP_ALTIN_HOUSES) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN))
       gCottageRoomsD_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
                                           LOCALID_FIRST_PLACED]
@@ -334,19 +334,19 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
       gCottageRoomsD_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
                                           LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    Map_AssignViewFlags(gCottageRoomsD_ObjectEventTemplates);
+    Scene_AssignViewFlags(gCottageRoomsD_ObjectEventTemplates);
     return gCottageRoomsD_ObjectEventTemplates;
   }
   return gAltin_NoObjectEventTemplates;
 }
 
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == MAP_ALTIN_VILLAGE) {
+  if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Events;
   }
-  if (mapId == MAP_ALTIN_HOUSES) {
+  if (sceneId == MAP_ALTIN_HOUSES) {
     return gCottageRoomsD_Events;
   }
   return gAltin_NoEvents;
@@ -762,8 +762,8 @@ static void Altin_CheckPillarMoved(void) {
 
 /// Sets up the map being entered, at the village's water level. It works out
 /// the water level from the mine's drain flags first. Returns 0.
-s32 Map_Initialize(void) {
-  s16 mapId;
+s32 Scene_Initialize(void) {
+  s16 sceneId;
 
   if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
     GameFlag_Set(FLAG_ALTIN_WATER_DROPPED_ONCE);
@@ -779,10 +779,10 @@ s32 Map_Initialize(void) {
     GameFlag_Set(FLAG_ALTIN_WATER_DRAINED);
   }
 
-  mapId = gSaveBlock.mapId;
-  if (mapId == MAP_ALTIN_VILLAGE) {
+  sceneId = gSaveBlock.sceneId;
+  if (sceneId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
-  } else if (mapId == MAP_ALTIN_HOUSES) {
+  } else if (sceneId == MAP_ALTIN_HOUSES) {
     CottageRoomsD_PlaceSheltering();
   }
 
@@ -827,7 +827,7 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
-    Map_QueueMusic(SE_AMBIENT_WATER);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     ObjectEvent_SetSpriteColorById(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
     Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
@@ -976,7 +976,7 @@ static void Altin_ScareOffBeast(void) {
   FieldScript_WaitFrames(30);
   Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
-  Map_QueueMusic(-1);
+  Scene_QueueMusic(-1);
   Task_Remove(Altin_BeastSpawnSpray);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);

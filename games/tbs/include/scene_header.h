@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_HEADER_H
-#define ALCHEMY_MAP_HEADER_H
+#ifndef ALCHEMY_SCENE_HEADER_H
+#define ALCHEMY_SCENE_HEADER_H
 
 /// @file
 /// Map headers, warp regions and map entry tables, with the field work they
@@ -14,14 +14,14 @@
 struct MapGridCell;
 struct ObjectEvent;
 
-/// A map's row in gMapHeaders: its overlay's resource, its map section,
-/// its map type and its layout. One row per map number; field/map_headers.s
-/// writes them, and its MapId_ symbols are the row numbers.
-struct MapHeader {
+/// A map's row in gSceneHeaders: its overlay's resource, its map section,
+/// its map type and its layout. One row per map number; field/scene_headers.s
+/// writes them, and its SceneId_ symbols are the row numbers.
+struct SceneHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_xx flags
   /// and the step counters and moves Retreat's destination;
-  /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Map_ResetFlagsOnEnter).
+  /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Scene_ResetFlagsOnEnter).
   s8 mapSec;
   /// An enum MapType, copied to gSaveBlock.mapType:
   /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
@@ -31,7 +31,7 @@ struct MapHeader {
   u16 reserved;    ///< 0 in every row; not read
 };
 
-STATIC_ASSERT(sizeof(struct MapHeader) == 8);
+STATIC_ASSERT(sizeof(struct SceneHeader) == 8);
 
 /// A map's warp region: the box that, while its condition holds, takes the
 /// party leader out through its warp.
@@ -76,8 +76,8 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every map's header, by map number (field/map_headers.s).
-extern const struct MapHeader gMapHeaders[];
+/// Every map's header, by map number (field/scene_headers.s).
+extern const struct SceneHeader gSceneHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each map change; its code opens with its 48-byte entry table. Every overlay
 /// is linked to run at this one fixed address (0x02008000).

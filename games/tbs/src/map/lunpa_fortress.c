@@ -3,24 +3,26 @@
 /// ransom, and the cave below it. Four maps share this overlay and the area
 /// name Lunpa Fortress:
 ///
-/// - LunpaFortressGroundFloor (MapId_LunpaFortressGroundFloor): inside the door
+/// - LunpaFortressGroundFloor (SceneId_LunpaFortressGroundFloor): inside the
+/// door
 ///   from the Lunpa Fortress Gates. An entrance guard, two sentries, the upper
 ///   hall's guard and a patrolling guard keep watch; Dodonpa's men and the
 ///   people of the fortress talk, and chests and a barrel hold an Elixir, a
 ///   Lucky Medal, a Mythril Circlet, coins and a Vial.
-/// - LunpaFortressUpperFloor (MapId_LunpaFortressUpperFloor): where Donpa
+/// - LunpaFortressUpperFloor (SceneId_LunpaFortressUpperFloor): where Donpa
 ///   sleeps. A patrolling pair and a hall patrol keep watch, three guards and
 ///   then three more together fight the party as Brigands, the Cell Key hangs
 ///   here, and Dodonpa's family and the women he brought here talk. After the
 ///   rescue Donpa gives the party Tonic, a Mercury Djinni.
-/// - LunpaFortressCave (MapId_LunpaFortressCave): the cave whose switches and
+/// - LunpaFortressCave (SceneId_LunpaFortressCave): the cave whose switches and
 ///   passage ivy hides, with a stack of crates to push into its hole.
-/// - LunpaFortressToadonpa (MapId_LunpaFortressToadonpa): Hammet's cell, where
+/// - LunpaFortressToadonpa (SceneId_LunpaFortressToadonpa): Hammet's cell,
+/// where
 ///   Dodonpa frees Toadonpa on the party (EventScript_FindHammet) and Donpa
 ///   judges him after the battle (EventScript_DonpaJudgesDodonpa), which sets
 ///   FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// The getters choose by gSaveBlock.mapId; LunpaFortressCave and
+/// The getters choose by gSaveBlock.sceneId; LunpaFortressCave and
 /// LunpaFortressToadonpa share one warp table. Every return through the Lunpa
 /// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
 /// flags, so the fortress starts over.
@@ -59,7 +61,7 @@
 ///
 /// Map temp flags:
 /// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party;
-///   FLAG_MAP_TEMP_15 is set beside it and never read.
+///   FLAG_SCENE_TEMP_15 is set beside it and never read.
 /// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
 ///   FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY: LunpaFortressCave's first and
 ///   second switches are still hidden by their ivy.
@@ -101,7 +103,7 @@
 #include "heap_slots.h"
 #include "edition.h"
 #include "lunpa_fortress_staging.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "tbs_edition.h"
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
@@ -280,7 +282,7 @@ enum {
   /// the jar, chest and jar the layout draws in those cells stop the leader.
   /// The layout's metatile behaviors let him walk onto the two jars; the
   /// chest's own cells already stop him, so the middle object event changes
-  /// nothing. Map_Initialize turns off the shadows their blank sprites would
+  /// nothing. Scene_Initialize turns off the shadows their blank sprites would
   /// draw and lays them underfoot.
   LOCALID_INVISIBLE_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
   LOCALID_INVISIBLE_TOADONPA_CHEST,
@@ -398,99 +400,99 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_MAPSEC_TEMP_14
 /// A guard has spotted the party.
 /// ★ Named from the game: "How did you get in here?" (MsgLunpaWho2)
-#define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_MAP_TEMP_14
+#define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
 /// LunpaFortressCave's first switch is still hidden by its ivy.
 /// ★ Named from what the player sees: a leafy green plant against the cave
 /// wall, which Whirlwind blows away (its render)
-#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_MAP_TEMP_17
+#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_17
 /// LunpaFortressCave's second switch is still hidden by its ivy.
 /// ★ Named from what the player sees: a leafy green plant against the cave
 /// wall, which Whirlwind blows away (its render)
-#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY FLAG_MAP_TEMP_18
+#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_18
 /// The entrance guard has thrown the party out.
 /// ★ Named from the game: "No matter! You're on your way out now!"
 /// (MsgLunpaWho2)
-#define FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY FLAG_MAP_TEMP_24
+#define FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY FLAG_SCENE_TEMP_24
 /// The sentries have spotted the party and thrown it out.
 /// ★ Named from the game: "No matter! You're on your way out now!"
 /// (MsgLunpaWho2)
-#define FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY FLAG_MAP_TEMP_25
+#define FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY FLAG_SCENE_TEMP_25
 /// The startled old man has promised to keep quiet.
 /// ★ Named from the game: "I won't tell anyone, but you should leave before the
 /// guards find you." (MsgLunpaWontTellAnyone)
-#define FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE FLAG_MAP_TEMP_26
+#define FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE FLAG_SCENE_TEMP_26
 /// The startled old man has been startled once.
 /// ★ Named from the game: "Who goes there!" (MsgLunpaWhWhWho)
-#define FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED FLAG_MAP_TEMP_27
+#define FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED FLAG_SCENE_TEMP_27
 /// EventScript_FindHammet is under way.
 /// ★ Named from the game: "I am a little late, but I have come to save you."
 /// (MsgLunpaTimeEat)
-#define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_MAP_TEMP_70
+#define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_SCENE_TEMP_70
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_LunpaFortressGroundFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorWarpDests;
   }
-  if (mapId == (s32)&MapId_LunpaFortressUpperFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorWarpDests;
   }
-  if (mapId == (s32)&MapId_LunpaFortressCave) {
+  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
     return gLunpaFortressCaveWarpDests;
   }
   return gLunpaFortressWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) {
-  s16 mapId = gSaveBlock.mapId;
+const u32 *Scene_GetWarps(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_LunpaFortressUpperFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorWarps;
   }
-  if (mapId == (s32)&MapId_LunpaFortressCave ||
-      mapId == (s32)&MapId_LunpaFortressToadonpa) {
+  if (sceneId == (s32)&SceneId_LunpaFortressCave ||
+      sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
     return gLunpaFortressCaveAndToadonpaWarps;
   }
   return gLunpaFortressWarpsOther;
 }
 
 /// The guards, the other people and the objects of each map.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
   // Unused: this overlay never runs for West Lunpa Cave, which has its own.
-  if (mapId == (s32)&MapId_WestLunpaCave) {
+  if (sceneId == (s32)&SceneId_WestLunpaCave) {
     return gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_LunpaFortressCave) {
+  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
     return gLunpaFortressCaveObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_LunpaFortressUpperFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_LunpaFortressGroundFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_LunpaFortressToadonpa) {
+  if (sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
     return gLunpaFortressToadonpaObjectEventTemplates;
   }
   return gLunpaFortressObjectEventTemplatesOther;
 }
 
 /// What the party can talk to, search and use Psynergy on, by map.
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_LunpaFortressGroundFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorEvents;
   }
-  if (mapId == (s32)&MapId_LunpaFortressUpperFloor) {
+  if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorEvents;
   }
-  if (mapId == (s32)&MapId_LunpaFortressCave) {
+  if (sceneId == (s32)&SceneId_LunpaFortressCave) {
     return gLunpaFortressCaveEvents;
   }
   return gLunpaFortressEventsOther;
@@ -882,12 +884,12 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       }
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_FIRST_PATROL)) {
-          GameFlag_Set(FLAG_MAP_TEMP_15);
+          GameFlag_Set(FLAG_SCENE_TEMP_15);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_UPPER_FLOOR_SECOND_PATROL)) {
-          GameFlag_Set(FLAG_MAP_TEMP_15);
+          GameFlag_Set(FLAG_SCENE_TEMP_15);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -993,7 +995,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       }
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_HALL_PATROL)) {
-          GameFlag_Set(FLAG_MAP_TEMP_15);
+          GameFlag_Set(FLAG_SCENE_TEMP_15);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -1073,7 +1075,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_PATROL_GUARD)) {
-          GameFlag_Set(FLAG_MAP_TEMP_15);
+          GameFlag_Set(FLAG_SCENE_TEMP_15);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -1117,7 +1119,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD) != 0) {
-          GameFlag_Set(FLAG_MAP_TEMP_15);
+          GameFlag_Set(FLAG_SCENE_TEMP_15);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -1595,7 +1597,7 @@ static void EventScript_FightThreeGuards(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination(
-      (s32)&MapId_LunpaFortressUpperFloor,
+      (s32)&SceneId_LunpaFortressUpperFloor,
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 3);
@@ -1964,7 +1966,7 @@ static void EventScript_FindHammet(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     FieldScript_WaitFrames(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
-    FieldScript_SetNextDestination((s32)&MapId_LunpaFortressToadonpa,
+    FieldScript_SetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
                                    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
@@ -2184,7 +2186,7 @@ static void EventScript_FindHammet(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     FieldScript_WaitFrames(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
-    FieldScript_SetNextDestination((s32)&MapId_LunpaFortressToadonpa,
+    FieldScript_SetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
                                    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
   }
@@ -3300,19 +3302,19 @@ static void EventScript_ReadJailedDodonpasThoughts(void) {
 /// Sets each map up: a random pick for the guards' lines, the doors already
 /// opened, the watching guards and, in LunpaFortressToadonpa, the room after
 /// the battle with Toadonpa or Dodonpa jailed.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *mapObjectEvent;
 
   gLunpaFortressRandomPick = (u32)Import_RandomNext() * 7 >> 16;
-  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGroundFloor) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
-  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressUpperFloor)
+  if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressUpperFloor)
     LunpaFortress_InitializeUpperFloor();
-  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressCave)
+  if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressCave)
     LunpaFortress_InitializeCave();
-  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressToadonpa) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_TOADONPA_HAMMET), 0);

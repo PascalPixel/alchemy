@@ -8,9 +8,9 @@
 
 /// Prepares the effect work and spark tiles of Move (ability 140) for the
 /// event's Psynergy.
-void Map_StartEventPsynergy(void) {
+void Scene_StartEventPsynergy(void) {
   FieldEffect_LoadActionEffectResources(ABILITY_MOVE, 0);
 }
 
 /// Ends the event's Psynergy and releases its effect work.
-void Map_EndEventPsynergy(void) { FieldEffect_End(); }
+void Scene_EndEventPsynergy(void) { FieldEffect_End(); }

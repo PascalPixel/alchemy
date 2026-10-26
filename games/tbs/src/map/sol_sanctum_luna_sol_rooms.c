@@ -1,8 +1,8 @@
 /// @file
-/// Sol Sanctum (MapId_SolSanctumLunaSolRooms), the room of Sol and the room
-/// of Luna at the heart of the sanctum, between MapId_SolSanctumReliefs
-/// (sol_sanctum_entrance.c), the statue room (MapId_SolSanctumStatue,
-/// sol_sanctum_statue.c) and the way up to MapId_SolSanctumElementalStarRoom.
+/// Sol Sanctum (SceneId_SolSanctumLunaSolRooms), the room of Sol and the room
+/// of Luna at the heart of the sanctum, between SceneId_SolSanctumReliefs
+/// (sol_sanctum_entrance.c), the statue room (SceneId_SolSanctumStatue,
+/// sol_sanctum_statue.c) and the way up to SceneId_SolSanctumElementalStarRoom.
 ///
 /// Kraden's events here follow the story flags in order:
 /// - EventScript_KradenFindsHeartOfSanctum, on the first step onto the symbol
@@ -32,7 +32,7 @@
 ///   (EventScript_RiseToElementalStarRoom,
 ///   FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN).
 /// - After the eruption, the Wise One sends Isaac and Garet here from the
-///   collapsing Elemental Star Room (MapId_SolSanctumEruption,
+///   collapsing Elemental Star Room (SceneId_SolSanctumEruption,
 ///   sol_sanctum_eruption.c), and they set off for the way out
 ///   (SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue,
 ///   FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on the rooms rumble.
@@ -84,19 +84,19 @@
 /// return after a battle keeps them.
 /// ★ Named from the game: "But a room for Luna and one for Sol?"
 /// (MsgSolSanctumRoomLunaOne)
-#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_MAP_TEMP_00
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_SCENE_TEMP_00
 /// The rooms of Sol and Luna show SOL_SANCTUM_BLUE_TINT, so a return after a
 /// battle keeps it.
 /// ★ Named from the game: "But a room for Luna and one for Sol?"
 /// (MsgSolSanctumRoomLunaOne)
-#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_MAP_TEMP_01
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_SCENE_TEMP_01
 /// The rooms of Sol and Luna show SOL_SANCTUM_WARM_TINT, so a return after a
 /// battle keeps it.
 /// ★ Named from the game: "But a room for Luna and one for Sol?"
 /// (MsgSolSanctumRoomLunaOne)
-#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_MAP_TEMP_02
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_SCENE_TEMP_02
 
-// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
 // their own.
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
@@ -114,7 +114,7 @@
 enum SolSanctumLunaSolRoomsMetatileBehavior {
   /// Before Kraden in the Luna room.
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
-  /// The way back out to MapId_SolSanctumReliefs.
+  /// The way back out to SceneId_SolSanctumReliefs.
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
   /// The symbol of the sun on the floor, first stepped on.
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM = 11,
@@ -860,7 +860,7 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
 
 /// Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash
 /// crosses it. Shared by the three events that play on arriving from
-/// MapId_SolSanctumStatue's statue puzzle. Sets
+/// SceneId_SolSanctumStatue's statue puzzle. Sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
 /// flags.
 static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
@@ -892,7 +892,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   PaletteFade_StartInterpolation(24);
 }
 
-/// Sol Sanctum, the first statue placed in MapId_SolSanctumStatue after the
+/// Sol Sanctum, the first statue placed in SceneId_SolSanctumStatue after the
 /// centre statue has dropped into the floor, disarming the trap: the quarter's
 /// light flashes ever faster around Kraden in the Luna room. "What's
 /// happening?" "Isaac must have found something!" He runs off to see. Called by
@@ -901,7 +901,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
 /// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set, which it sets; the flag
 /// marks this event, not the trap. Takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED back to
-/// MapId_SolSanctumStatue.
+/// SceneId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   s32 twelveFrameFlashes;
   s32 eightFrameFlashes;
@@ -953,7 +953,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
       SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED);
 }
 
-/// Sol Sanctum, the first statue placed in MapId_SolSanctumStatue before the
+/// Sol Sanctum, the first statue placed in SceneId_SolSanctumStatue before the
 /// trap is disarmed: the quarter's light flashes and lights fall through the
 /// Luna room while Kraden cries "Stop!!! You're about to make a big mistake!"
 /// Called by SolSanctumLunaSolRooms_Initialize at
@@ -961,7 +961,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set; the caller then sets it and
 /// darkens all four quarters. Takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED back to
-/// MapId_SolSanctumStatue, where Kraden explains the trap.
+/// SceneId_SolSanctumStatue, where Kraden explains the trap.
 static void SolSanctumLunaSolRooms_SpringTrap(void) {
   s32 flash;
   FieldScript_Start();
@@ -1047,7 +1047,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
 /// each lit quarter's FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; Kraden speaks until the
 /// caller sets FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT. Takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN back to
-/// MapId_SolSanctumStatue.
+/// SceneId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   s32 speaker;
   s32 twelveFrameFlashes;
@@ -1232,7 +1232,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set. Sets
 /// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN the first time and takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, to the
-/// Elemental Star Room (MapId_SolSanctumElementalStarRoom).
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom).
 static void EventScript_RiseToElementalStarRoom(void) {
   struct ObjectEvent *objectEvent;
   s32 frame;
@@ -1393,11 +1393,12 @@ static void EventScript_RiseToElementalStarRoom(void) {
 }
 
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this warp
-/// destination calls for. Called by Map_Run once the object events exist.
-/// Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up
-/// opens, before the eruption; sets FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at
-/// an ordinary warp destination; copies each lit quarter into its
-/// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the disarmed trap's flash at
+/// destination calls for. Called by SceneManager_Run once the object events
+/// exist. Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the
+/// way up opens, before the eruption; sets
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at an ordinary warp destination;
+/// copies each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the
+/// disarmed trap's flash at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED, the trap
 /// at SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED (then
 /// darkening the four quarters), the newly lit quarters at
@@ -1438,7 +1439,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     }
   }
   // Play the one-time event this warp destination comes back from
-  // MapId_SolSanctumStatue for.
+  // SceneId_SolSanctumStatue for.
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
@@ -1547,7 +1548,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-      Map_QueueMusic(SE_RUMBLE);
+      Scene_QueueMusic(SE_RUMBLE);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       FieldEffect_InitializeSparkles();
       MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
@@ -1662,7 +1663,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   // Recover from the tremor and bring Garet back into the party.
-  Map_QueueMusic(SE_RUMBLE);
+  Scene_QueueMusic(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);

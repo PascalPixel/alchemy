@@ -65,7 +65,7 @@
 	.set import.FieldEffect_StopCasterHook, 1
 	.set import.FieldEffect_StartCast, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Map_PlayMusic, 1
+	.set import.Scene_PlayMusic, 1
 	.set import.FieldEffectSprite_HasPendingTarget, 1
 	.set import.FieldEffectSprite_SetObjectMode, 1
 	.set import.FieldEffectSprite_SetCallback, 1
@@ -78,7 +78,7 @@
 	.set import.ObjectMotion_OffsetPositionAndReset, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
-	.set import.Map_PlayQueuedMusic, 1
+	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1
 	.set import.Sound_PlaySong, 1

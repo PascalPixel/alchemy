@@ -1,30 +1,30 @@
 /// @file
 /// Vault Cave's overlay, which holds three rooms, each a map of its own and all
-/// named Vault Cave (MapId_VaultCavePassage, MapId_VaultCaveVambrace and
-/// MapId_VaultCaveMouth, map section 31). The cave opens off Vault as the party
-/// finds it on its return (MapId_VaultRevisit), whose warps
+/// named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace and
+/// SceneId_VaultCaveMouth, map section 31). The cave opens off Vault as the
+/// party finds it on its return (SceneId_VaultRevisit), whose warps
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
 /// in the town's northeast cliff. No story flag is read here and no one speaks:
 /// the cave is a side trip of puzzles for Move, Frost and Whirlwind, and only
 /// "The door is tightly locked." and "Isaac flipped the switch." are shown.
 ///
-/// - Vault Cave (MapId_VaultCavePassage), the way in from the hidden passage.
+/// - Vault Cave (SceneId_VaultCavePassage), the way in from the hidden passage.
 ///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
 ///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
 ///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
-///   leads there (Map_Initialize). Searching the switch flips it
+///   leads there (Scene_Initialize). Searching the switch flips it
 ///   (EventScript_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
 ///   turns, the cave rumbles and shakes for eight seconds, and its map changes
 ///   as it fades (VaultCave_RunRumble). The change reaches
-///   MapId_VaultCaveVambrace too: arriving in its northern room
+///   SceneId_VaultCaveVambrace too: arriving in its northern room
 ///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
 ///   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH,
 ///   VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM and
-///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Map_Initialize draws it closed until
-///   the switch is flipped and opens its cells after. Arriving down the ladder
-///   clears the flag again, so the switch is reset each time the party comes in
-///   from Vault; arriving in the pool room
+///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Scene_Initialize draws it closed
+///   until the switch is flipped and opens its cells after. Arriving down the
+///   ladder clears the flag again, so the switch is reset each time the party
+///   comes in from Vault; arriving in the pool room
 ///   (VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST,
 ///   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST,
 ///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST,
@@ -32,7 +32,7 @@
 ///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST) redraws the flipped switch
 ///   and its changed cells. The room's chest is a mimic (FIND_MIMIC, slot 3 of
 ///   ENCOUNTER_ZONE_MIMIC).
-/// - Vault Cave (MapId_VaultCaveVambrace). In its southern room a pillar
+/// - Vault Cave (SceneId_VaultCaveVambrace). In its southern room a pillar
 ///   (LOCALID_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (EventScript_PushSouthernPillar) or Move (EventScript_MoveSouthernPillar);
 ///   once it rests there the puzzle chime plays and the switch opens the way
@@ -50,7 +50,7 @@
 ///   away ivy (LOCALID_IVY) for as long as the party stays in the cave
 ///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, a map section flag). A chest holds the
 ///   Vambrace.
-/// - Vault Cave (MapId_VaultCaveMouth). In its northern room four water drops
+/// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four water drops
 ///   (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
 ///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
 ///   pillar (LOCALID_NORTHERN_PILLAR) onto its switch
@@ -64,12 +64,12 @@
 /// (EventScript_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
 /// which moves the pillar the leader faces one cell unless another object event
 /// or the terrain is in the way, and the water drops run as map callbacks
-/// started by Map_Initialize.
+/// started by Scene_Initialize.
 
 #include "save_block.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/vault_cave.h"
 #include "unit/overworld/overworld.h"
@@ -97,7 +97,7 @@
 #include "songs.h"
 #include "objcmd.h"
 #include "map_grid_scroll.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "macros.h"
 #include "item_ids.h"
 
@@ -113,12 +113,12 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source);
 
 /// The metatile behaviors of the cells the events answer.
 enum VaultCaveMetatileBehavior {
-  /// The switch MapId_VaultCavePassage flips.
+  /// The switch SceneId_VaultCavePassage flips.
   /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   MB_VAULT_CAVE_SWITCH = 20,
-  /// The cells of MapId_VaultCaveMouth's northern pillar, pushed.
+  /// The cells of SceneId_VaultCaveMouth's northern pillar, pushed.
   MB_VAULT_CAVE_NORTHERN_PILLAR = 50,
-  /// The cells of MapId_VaultCaveVambrace's southern pillar, pushed.
+  /// The cells of SceneId_VaultCaveVambrace's southern pillar, pushed.
   MB_VAULT_CAVE_SOUTHERN_PILLAR = 60,
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
@@ -128,38 +128,38 @@ enum VaultCaveMetatileBehavior {
 };
 
 /// Map flags, and one map section flag. The six puddles of
-/// MapId_VaultCaveVambrace keep their frozen state in six flags in a row,
+/// SceneId_VaultCaveVambrace keep their frozen state in six flags in a row,
 /// read by index as well.
 enum {
   /// The upper western puddle, the first of the six.
   /// ★ Named from what the player sees: six puddles of water in the floor of
   /// the puddle room, under the falling drops (its render)
-  FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN = FLAG_MAP_TEMP_00,
+  FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// ★ Named from what the player sees: the western puddle of the lower row
   /// (its render)
-  FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_01,
+  FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// ★ Named from what the player sees: the lower row's puddle just east of
   /// the western one (its render)
-  FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_02,
+  FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_02,
   /// ★ Named from what the player sees: the eastern puddle of the upper row
   /// (its render)
-  FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_MAP_TEMP_03,
+  FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_03,
   /// ★ Named from what the player sees: the eastern puddle of the lower row
   /// (its render)
-  FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_MAP_TEMP_04,
+  FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
-  FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_MAP_TEMP_05,
+  FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
   /// A water drop struck the northern pillar before it reached its switch.
   /// ★ Named from what the player sees: the pillar the leader pushes toward
-  /// its switch in the northern room of MapId_VaultCaveMouth (its render)
-  FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_MAP_TEMP_07,
+  /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
+  FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
   /// Whirlwind has blown the ivy away.
   /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
   FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_MAPSEC_TEMP_00
 };
 
-/// The object events of MapId_VaultCaveVambrace, numbering the rows of
+/// The object events of SceneId_VaultCaveVambrace, numbering the rows of
 /// gVaultCaveVambrace_ObjectEventTemplates.
 enum VaultCaveVambraceLocalId {
   /// A pillar, drawn as LOCALID_SOUTHERN_PILLAR is, two cells east of the
@@ -209,7 +209,7 @@ enum VaultCaveVambraceLocalId {
   LOCALID_IVY
 };
 
-/// The object events of MapId_VaultCaveMouth, numbering the rows of
+/// The object events of SceneId_VaultCaveMouth, numbering the rows of
 /// gVaultCaveMouth_ObjectEventTemplates. The northern switch is map cell (16,
 /// 12).
 enum VaultCaveMouthLocalId {
@@ -233,52 +233,52 @@ enum VaultCaveMouthLocalId {
   LOCALID_FIRST_TIMED_WATER_DROP
 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VaultCavePassage) {
+  if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_WarpDests;
   }
-  if (mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveVambrace_WarpDests;
   }
-  if (mapId == (s32)&MapId_VaultCaveMouth) {
+  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveMouth_WarpDests;
   }
   return gVaultCave_FallbackWarpDests;
 }
 
 /// Returns the region boxes used by the cave's warps.
-const struct MapWarpRegion *Map_GetWarpRegions(void) {
+const struct MapWarpRegion *Scene_GetWarpRegions(void) {
   return gVaultCave_Regions;
 }
 
-const u32 *Map_GetWarps(void) {
-  s16 mapId = gSaveBlock.mapId;
+const u32 *Scene_GetWarps(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VaultCavePassage) {
+  if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Warps;
   }
-  if (mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveVambrace_Warps;
   }
-  if (mapId == (s32)&MapId_VaultCaveMouth) {
+  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveMouth_Warps;
   }
   return gVaultCave_FallbackWarps;
 }
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VaultCavePassage) {
+  if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_ObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveVambrace_ObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_VaultCaveMouth) {
+  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveMouth_ObjectEventTemplates;
   }
   return gVaultCave_FallbackObjectEventTemplates;
@@ -364,8 +364,8 @@ static void VaultCave_PushPillarAhead(void) {
 #endif
     return;
   }
-  // MapId_VaultCaveMouth's water drops are never pushed; in
-  // MapId_VaultCaveVambrace these slots hold water drops too.
+  // SceneId_VaultCaveMouth's water drops are never pushed; in
+  // SceneId_VaultCaveVambrace these slots hold water drops too.
   for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
     if (pillar ==
         ObjectEvent_GetById(fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP)) {
@@ -408,8 +408,9 @@ static void VaultCave_PushPillarAhead(void) {
 }
 
 /// Whirlwind blows the ivy away. It is cast on LOCALID_IVY in the puddle room
-/// of MapId_VaultCaveVambrace, and the ivy stays gone for as long as the party
-/// stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is a map section flag).
+/// of SceneId_VaultCaveVambrace, and the ivy stays gone for as long as the
+/// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is a map section
+/// flag).
 static void EventScript_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
@@ -421,16 +422,16 @@ static void EventScript_ShowLockedDoor(void) {
 }
 
 /// Selects the cave map's bg events, movement checks and Psynergy callbacks.
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_VaultCavePassage) {
+  if (sceneId == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePassage_Events;
   }
-  if (mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveVambrace_Events;
   }
-  if (mapId == (s32)&MapId_VaultCaveMouth) {
+  if (sceneId == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveMouth_Events;
   }
   return gVaultCave_FallbackEvents;
@@ -999,10 +1000,10 @@ static void VaultCave_StartTimedFalls(void) {
 /// Arriving in any room of Vault Cave: restores the room's puzzles and object
 /// events, then sets the Retreat destination, the foot of the ladder from
 /// Vault.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gSaveBlock.mapId == (s32)&MapId_VaultCavePassage) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_VaultCavePassage) {
     switch (gSaveBlock.warpDest) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
@@ -1026,7 +1027,7 @@ s32 Map_Initialize(void) {
       break;
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
       ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
     }
@@ -1091,7 +1092,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
     ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_VaultCaveMouth) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_VaultCaveMouth) {
     Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
       Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
@@ -1128,10 +1129,10 @@ s32 Map_Initialize(void) {
       break;
     }
   }
-  // Retreat always returns to the foot of MapId_VaultCavePassage's ladder
+  // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
   gSaveBlock.retreatWarpDest = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gSaveBlock.retreatMap = (s32)&MapId_VaultCavePassage;
+  gSaveBlock.retreatMap = (s32)&SceneId_VaultCavePassage;
   return 0;
 }
 

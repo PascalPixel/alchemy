@@ -85,7 +85,7 @@ void FieldEffect_Run(void) {
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
-    if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
+    if (Scene_FindObjectEventTalkEvent(nearestTargetId) != 0) {
       FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);

@@ -6,7 +6,7 @@
 /// Two maps hold four map sections, by their area names; in each, story flags
 /// pick where the people stand and which script plays on entry.
 ///
-/// - Fuchin Temple (MapId_FuchinTempleGrounds), outside the temple, reached
+/// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
 ///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
 ///   front of the traveling healer. The monk beneath the falls guards the
@@ -15,7 +15,7 @@
 ///   Fuchin Falls Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
 ///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 ///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
-/// - Lacquer rooms A (MapId_LacquerRoomsA), a sheet of rooms drawn in red
+/// - Lacquer rooms A (SceneId_LacquerRoomsA), a sheet of rooms drawn in red
 ///   lacquer, each a camera box of its own that the warp destination the party
 ///   comes in by chooses. In story order, by the warps that lead in:
 ///   - Fuchin Temple (by
@@ -23,7 +23,7 @@
 ///     destination), inside, where Nyunpa meditates. Mind Read on him offers
 ///     the test (EventScript_NyunpaOffersTest, again after
 ///     FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
-///     Map_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
+///     Scene_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
 ///     FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall Forest has set
 ///     FLAG_NYUNPA_ENLIGHTENED he sits withered (ANIM_NYUNPA_WITHERED) and Mind
 ///     Read hears his last wish.
@@ -31,7 +31,7 @@
 ///     LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN and
 ///     LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
 ///     school; the area-name rules give the name Xian only at
-///     LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN, and Map_Initialize hides
+///     LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN, and Scene_Initialize hides
 ///     the name at both. Force from the line fells the training tree
 ///     (EventScript_ForceTree): the first time, Feizhi and Feh come out and she
 ///     leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU), which unlocks
@@ -41,7 +41,7 @@
 ///     tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
 ///     with Move or by hand only sets
 ///     FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
-///     trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Map_GetObjectEventTemplates
+///     trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Scene_GetObjectEventTemplates
 ///     removes the tree and two students. LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN
 ///     leads out into Xian.
 ///   - Lama Temple (by
@@ -53,7 +53,7 @@
 ///     LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///     Temple.
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/fuchin_temple.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
@@ -261,23 +261,23 @@ static s32 FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 
 /// Chooses the outside warp destination table or the shared interior warp
 /// destinations.
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_FuchinTempleGrounds) {
+  if (sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsWarpDests;
   }
   return gFuchinTempleWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gFuchinTempleWarps; }
+const u32 *Scene_GetWarps(void) { return gFuchinTempleWarps; }
 
 /// Selects the room's object events and applies the post-lesson object event
 /// template changes.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_FuchinTempleGrounds) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsObjectEventTemplates;
   }
   if (gSaveBlock.warpDest == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
@@ -305,7 +305,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
                                       LOCALID_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
   }
-  Map_AssignViewFlags(gFuchinTempleObjectEventTemplates);
+  Scene_AssignViewFlags(gFuchinTempleObjectEventTemplates);
   return gFuchinTempleObjectEventTemplates;
 }
 
@@ -395,7 +395,7 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
                     -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
   FieldScript_WaitFrames(30);
-  Map_PlayQueuedMusic();
+  Scene_PlayQueuedMusic();
   MapGrid_CopyCellAttributes(10, 24, 1, 1, 10, 22);
   GameFlag_Set(FLAG_FUCHIN_FALLS_GROTTO_OPENED);
   FieldScript_End();
@@ -1601,8 +1601,8 @@ static void EventScript_ReadNyunpasLastWish(void) {
 }
 
 /// Selects the outdoor, school, or lesson map event table.
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_FuchinTempleGrounds) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEvents;
   }
   if (gSaveBlock.warpDest == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
@@ -2430,11 +2430,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
 /// them; in Lama Temple, Hama teaches Reveal on the first visit and is away
 /// until Hsu is rescued. At Fuchin Temple (FuchinTempleGrounds) the monk
 /// beneath the falls stands where the story left him.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gSaveBlock.mapId == (s32)&MapId_LacquerRoomsA) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_LacquerRoomsA) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gSaveBlock.warpDest == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
@@ -2510,7 +2510,7 @@ s32 Map_Initialize(void) {
       }
     }
   } else {
-    Map_QueueMusic(SE_AMBIENT_WATER);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     ObjectEvent_GetById(LOCALID_FALLS_MONK)->collisionFlags |=
         OBJ_EVENT_NEAR_PSYNERGY;
     if (gSaveBlock.warpDest ==

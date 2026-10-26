@@ -16,7 +16,7 @@
 #include "types.h"
 #include "battle_type.h"
 #include "save_block.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "battle_system.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -30,7 +30,7 @@
 #include "system.h"
 #include "mem.h"
 #include "dma.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "io_reg.h"
 #include "iowrite.h"
 #include "irq.h"
@@ -96,8 +96,8 @@
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// Map ids above the field maps, which Game_MainLoop runs without a
-/// layout; each returns a result to Map_ReturnFromRun instead of a warp.
+/// Map ids above the field maps, which SequenceManager_Run runs without a
+/// layout; each returns a result to Scene_ReturnFromSequence instead of a warp.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.

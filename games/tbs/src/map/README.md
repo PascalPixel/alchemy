@@ -11,7 +11,7 @@ area of RAM when the party arrives, and replaced when it leaves.
 to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of
 main-program functions it may call. Each overlay has a generated page of its
-own, listed in [Maps](../field/map_headers.s) in
+own, listed in [Maps](../field/scene_headers.s) in
 [story order](../../glossary.md#the-places-in-story-order), with its
 [layout](../../glossary.md#layout), its [map events](../../glossary.md#map-event)
 and a recording of each event.
@@ -43,9 +43,9 @@ after a battle.
 
 The six are `struct MapEntries`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
-[veneer](../../glossary.md#veneer). Vault names them `Map_Initialize`,
-`Map_GetWarpDests`, `Map_GetWarps`, `Map_GetObjectEventTemplates`,
-`Map_GetEvents` and `Map_GetWarpRegions`; some overlays give them names of
+[veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
+`Scene_GetWarpDests`, `Scene_GetWarps`, `Scene_GetObjectEventTemplates`,
+`Scene_GetEvents` and `Scene_GetWarpRegions`; some overlays give them names of
 their own (`BabiLighthouse_GetWarps`), since only the order is fixed.
 
 ## The tables
@@ -72,7 +72,7 @@ east, y up and z south, and a facing is one of eight headings
 These are `struct MapWarpDest`, the `MAP_WARP` rows of the warp
 table (named in `map_warps.h`), `struct ObjectEventTemplate`,
 `struct MapWarpRegion` and `struct MapEvent`, all in `map_tables.h` and
-`map_header.h`.
+`scene_header.h`.
 
 ### Conditions
 
@@ -188,7 +188,7 @@ Stepping on or walking into a cell runs the first coord event that answers
 its number and whose condition holds, or failing one the first such warp;
 pressing A facing it runs the first such bg event.
 
-`Map_RunCoordEventOrWarp` runs the stepping, and the numbers a
+`Scene_RunCoordEventOrWarp` runs the stepping, and the numbers a
 map owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
 the same on every map ([Layouts](../layout/README.md#cells)).
 
@@ -217,7 +217,7 @@ still answers. The game finds the row whatever its condition, shows the
 chest gives what it holds and is marked opened, and an opened one adds "but
 the chest was empty." A chest that hides a mimic starts its battle instead.
 
-`Map_FindEvent` finds the row and `Field_SearchCell` runs a
+`Scene_FindEvent` finds the row and `Field_SearchCell` runs a
 search. Rows these rules make unreachable keep a
 [`// Unused:`](../../glossary.md#unused) tag in their table, and
 [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every such
@@ -270,13 +270,13 @@ everywhere, each map names the ones it uses for what they hold there, in its
 own file (`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN` in Crossbone Isle,
 `FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK` in Vault's houses).
 
-`Map_ResetFlagsOnEnter` clears them ([the front
+`Scene_ResetFlagsOnEnter` clears them ([the front
 page](../../README.md#game-flags) explains the ranges), and the flags are in
 `games/tbs/include/flags.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_MAP_TEMP_00` to `FLAG_MAP_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary arrival on a map |
+| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary arrival on a map |
 | `FLAG_MAPSEC_TEMP_00` to `FLAG_MAPSEC_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another map section |
 
 ## Code shared between overlays
@@ -303,9 +303,9 @@ that includes the header; each header's opening comment says what it holds.
 ## Design
 
 Each overlay is three objects, linked in this order into the overlay area:
-`entry/<map>`, `<map>` and `import/<map>`. The map table, `gMapHeaders` in
-[`field/map_headers.s`](../field/map_headers.s), gives each map its overlay,
-map section, map type and layout, and names it `MapId_<Map>`; several maps may
+`entry/<map>`, `<map>` and `import/<map>`. The map table, `gSceneHeaders` in
+[`field/scene_headers.s`](../field/scene_headers.s), gives each map its overlay,
+map section, map type and layout, and names it `SceneId_<Map>`; several maps may
 share one overlay, and then share its file. A map overlay is never split into
 parts, because its code is laid out by kind (entry points, then handlers,
 then tables), not by map.
@@ -316,7 +316,7 @@ one tile style sit side by side on one layout, each with a camera box of its
 own, and the warp destination the party arrives at chooses the room by its
 box. The rooms of one sheet can belong to different places, so its area name
 follows the warp destination too; Vale's inn and the scholars' room in Babi's
-Palace share `MapId_CottageRoomsB`. A sheet is therefore named for the style
+Palace share `SceneId_CottageRoomsB`. A sheet is therefore named for the style
 its rooms are drawn in, never for a place, and its file lists its rooms and the
 places they belong to.
 
@@ -335,15 +335,15 @@ of an object event, update hooks returning `s32`) are in
 
 ## How it fits with the rest of the game
 
-`Game_MainLoop` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
-`Map_Run` calls its entries; [Engine](../../engine.md#overlays)
+`SequenceManager_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
+`SceneManager_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The map
 table and how maps depend on the story are on [the front
 page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
 built on are in [Layouts](../layout/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
-To find the code for a map, find its row in `field/map_headers.s`: the
+To find the code for a map, find its row in `field/scene_headers.s`: the
 overlay's resource number begins the rows of `objects.tsv` that name its
 files. To find what someone says, search `games/tbs/text/en.po` for the line;
 its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
@@ -365,7 +365,7 @@ its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 - **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
   through `FACING_SOUTH` to `FACING_NORTHEAST`.
 - **condition**: a table row's test ([Conditions](#conditions)).
-- **map temp flags** and **map-section temp flags**: `FLAG_MAP_TEMP_xx` and
+- **map temp flags** and **map-section temp flags**: `FLAG_SCENE_TEMP_xx` and
   `FLAG_MAPSEC_TEMP_xx`, the two ranges cleared for map code
   ([above](#state-that-cleans-itself-up)). A map-section temp flag with a
   proven meaning takes a name in the map's own file, never in `flags.h`.

@@ -1,7 +1,8 @@
 /// @file
 /// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
 ///
-/// - Stucco rooms A (MapId_StuccoRoomsA), a sheet of rooms drawn in stucco, all
+/// - Stucco rooms A (SceneId_StuccoRoomsA), a sheet of rooms drawn in stucco,
+/// all
 ///   of them Kalay's, whose area name is Kalay: every house and the inn, each
 ///   entered from its own door in the town (kalay.c) at a warp destination of
 ///   its own, and left by the matching warp. The inn's warp destinations,
@@ -23,12 +24,12 @@
 ///   named bg event ignores its condition, so it answers every time and the
 ///   eggplant line is unused. Barrels hold 11 coins and an Elixir. The inn's
 ///   table and the houses' both carry these bg events.
-/// - Kalay Sanctum (MapId_KalaySanctum), whose healer offers the
+/// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its warp leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/kalay_interiors.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -184,12 +185,12 @@ static void KalayInteriors_ApplyRoomState(void);
 /// Selects the warp destination table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct MapWarpDest *KalayInteriors_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_StuccoRoomsA) {
+  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     return gKalayInteriors_HouseWarpDests;
   }
-  if (mapId == (s32)&MapId_KalaySanctum) {
+  if (sceneId == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumWarpDests;
   }
   return gKalayInteriors_NoWarpDests;
@@ -202,9 +203,9 @@ const u32 *KalayInteriors_GetWarps(void) { return gKalayInteriors_Warps; }
 /// The inn's rooms share one object event template table and the houses
 /// another, chosen by warp destination and clipped to the current view.
 const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_StuccoRoomsA) {
+  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     s32 warpDest = gSaveBlock.warpDest;
     struct ObjectEventTemplate *table;
 
@@ -223,10 +224,10 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
       table = gKalayInteriors_HouseObjectEventTemplates;
       break;
     }
-    Map_AssignViewFlags(table);
+    Scene_AssignViewFlags(table);
     return table;
   }
-  if (mapId == (s32)&MapId_KalaySanctum) {
+  if (sceneId == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumObjectEventTemplates;
   }
   return gKalayInteriors_NoObjectEventTemplates;
@@ -235,9 +236,9 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
 /// Selects room dialogue with the same warp destination grouping as the object
 /// event templates.
 const struct MapEvent *KalayInteriors_GetEvents(void) {
-  s32 mapId = gSaveBlock.mapId;
+  s32 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_StuccoRoomsA) {
+  if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     s32 warpDest = gSaveBlock.warpDest;
 
     switch (warpDest) {
@@ -254,7 +255,7 @@ const struct MapEvent *KalayInteriors_GetEvents(void) {
       return gKalayInteriors_HouseEvents;
     }
   }
-  if (mapId == (s32)&MapId_KalaySanctum) {
+  if (sceneId == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumEvents;
   }
   return gKalayInteriors_NoEvents;
@@ -390,7 +391,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 s32 KalayInteriors_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gSaveBlock.mapId == (s32)&MapId_StuccoRoomsA) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_StuccoRoomsA) {
     KalayInteriors_ApplyRoomState();
   }
   return 0;

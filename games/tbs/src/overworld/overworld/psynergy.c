@@ -13,11 +13,12 @@
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the object event ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
-/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Map_Run
-/// for the Psynergy request (work->psynergy); sets work->psynergyActing while
-/// the effect plays. On the world map, placed object events far from the view
-/// are destroyed for the effect, and all placed object events are placed again
-/// afterwards. Returns 0 whatever happens; Map_Run ignores it.
+/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by
+/// SceneManager_Run for the Psynergy request (work->psynergy); sets
+/// work->psynergyActing while the effect plays. On the world map, placed object
+/// events far from the view are destroyed for the effect, and all placed object
+/// events are placed again afterwards. Returns 0 whatever happens;
+/// SceneManager_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = gFieldWork;
@@ -67,9 +68,9 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     {
       struct SaveBlock *state = &gSaveBlock;
-      s32 mapId, returnWarpDest;
-      mapId = (u16)state->retreatMap;
-      state->mapId = mapId;
+      s32 sceneId, returnWarpDest;
+      sceneId = (u16)state->retreatMap;
+      state->sceneId = sceneId;
       returnWarpDest = (u16)state->retreatWarpDest;
       state->warpDest = returnWarpDest;
     }
@@ -96,12 +97,12 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Find the map's events, and choose how the effect plays. The before
   // event runs before the two flags are read, so its script can change them.
-  before = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_CAST),
-                                 abilityGroup, &target);
-  after = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_CAST),
-                                abilityGroup, &target);
-  during = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                 abilityGroup, &target);
+  before = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_CAST),
+                                   abilityGroup, &target);
+  after = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_CAST),
+                                  abilityGroup, &target);
+  during = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                   abilityGroup, &target);
   target = -1;
   GameFlag_SetFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
@@ -147,18 +148,18 @@ s32 Field_UsePsynergy(u32 code) {
 /// Returns whether the map has a Psynergy event, in any phase, for
 /// Psynergy of group and what the leader faces. Called by the Psynergy menu
 /// (PsynergyMenu_ClassifySelectedPsynergy) through
-/// Map_HasFieldPsynergyEventFar.
-s32 Map_HasFieldPsynergyEvent(s32 group) {
+/// Scene_HasFieldPsynergyEventFar.
+s32 Scene_HasFieldPsynergyEvent(s32 group) {
   s32 target;
   s32 eventAddress =
-      (s32)Map_FindPsynergyEvent(PSYNERGY_EV_ANY, (u16)group, &target);
+      (s32)Scene_FindPsynergyEvent(PSYNERGY_EV_ANY, (u16)group, &target);
   return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
 /// Returns whether the map has an event for item and what the leader faces.
-/// Called by the item menu (menu/item.c) through Map_HasPsynergyEventFar:
+/// Called by the item menu (menu/item.c) through Scene_HasPsynergyEventFar:
 /// such an item closes the menu and is used on the field.
-u32 Map_HasPsynergyEvent(u16 item) {
+u32 Scene_HasPsynergyEvent(u16 item) {
   s32 eventAddress;
 
   eventAddress = Field_FindItemEvent(item);

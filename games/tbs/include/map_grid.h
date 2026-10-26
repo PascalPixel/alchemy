@@ -14,7 +14,7 @@
 enum MetatileBehavior {
   MB_NORMAL = 0, ///< open ground: nothing happens there
   /// 1 to 239: the map's own events, coord event or warp when stepped on
-  /// (Map_RunCoordEventOrWarp), bg event when the player presses A facing the
+  /// (Scene_RunCoordEventOrWarp), bg event when the player presses A facing the
   /// cell.
   MB_EVENT_FIRST = 1,
   MB_EVENT_LAST = 239,

@@ -2,10 +2,10 @@
 /// Babi's Palace in Tolbi, two maps under the area name Babi's Palace that
 /// share this overlay and one warp table:
 ///
-/// - MapId_BabiPalaceEntrance, the court between the town and the palace
+/// - SceneId_BabiPalaceEntrance, the court between the town and the palace
 ///   door, with two guards and a well. Its door opens by a cell animation
 ///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
-/// - MapId_BabiPalace, the palace's rooms on one map, joined by warps into
+/// - SceneId_BabiPalace, the palace's rooms on one map, joined by warps into
 ///   the same map and by doors that open by the map's tileset animations
 ///   (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One door
 ///   leads to Babi's scholars (BABI_PALACE_TO_COTTAGE_ROOMS_B, held by
@@ -13,9 +13,9 @@
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
 /// Each map has three object event template tables and three map event tables,
-/// and Map_GetObjectEventTemplates and Map_GetEvents choose between them by two
-/// story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED, set
-/// when the party saves him in Altmiller Cave) and after Colosso
+/// and Scene_GetObjectEventTemplates and Scene_GetEvents choose between them by
+/// two story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED,
+/// set when the party saves him in Altmiller Cave) and after Colosso
 /// (FLAG_COLOSSO_OVER). The people inside stand in all three under other local
 /// ids, so each table has its own local id enum.
 ///
@@ -51,7 +51,7 @@
 #include "heap.h"
 #include "version.h"
 #include "keystate.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/babi_palace.h"
 #include "unit/overworld/overworld.h"
@@ -249,7 +249,7 @@ enum {
 /// attendant back.
 /// ★ Named from the game: "We have just enough extra beds in this room for
 /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
-enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_MAP_TEMP_00 };
+enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// The palace map's tileset animations that open its doors, for
 /// TilesetAnim_Resume (play) and TilesetAnim_Pause (pause).
@@ -327,8 +327,8 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   InventorySnapshot_Restore();
 }
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideWarpDests;
   }
   return gBabiPalace_WarpDests;
@@ -344,8 +344,8 @@ const u32 *BabiPalace_GetWarps(void) { return gBabiPalace_Warps; }
 
 /// Returns the object event templates for the map and the story: before Babi's
 /// rescue, during the finals or after Colosso.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideObjectEventTemplates;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -2322,7 +2322,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   BabiPalace_WalkIntoLeader(LOCALID_IVAN);
   BabiPalace_WalkIntoLeader(LOCALID_MIA);
   Script_Wait(10);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   Script_End();
 }
 
@@ -2468,8 +2468,8 @@ static void BabiPalace_ExamineWell(void) {
 
 /// Returns the map events for the map and the story, as for the object event
 /// templates.
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideEventsAfterColosso;
     }
@@ -2507,7 +2507,7 @@ s32 BabiPalace_ApplyEntryState(void) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gSaveBlock.mapId != (s32)&MapId_BabiPalaceEntrance) {
+  if (gSaveBlock.sceneId != (s32)&SceneId_BabiPalaceEntrance) {
     if (gSaveBlock.warpDest == BABI_PALACE_FROM_COTTAGE_ROOMS_B) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }

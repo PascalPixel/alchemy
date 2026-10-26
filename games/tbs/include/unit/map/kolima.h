@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "map_header.h"
+#include "scene_header.h"
 
 struct MapWarpDest;
 struct MapEvent;

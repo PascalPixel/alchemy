@@ -1,4 +1,4 @@
-/// @file McCoy's Palace in Bilibin: MapId_McCoyPalace, with the area name
+/// @file McCoy's Palace in Bilibin: SceneId_McCoyPalace, with the area name
 /// McCoy's Palace, which its grounds share (mccoy_palace_grounds.c). The party
 /// comes in from the grounds by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST,
 /// or straight into McCoy's room by
@@ -6,7 +6,7 @@
 /// (coord event 9) also reaches. Its people follow three story flags,
 /// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
 /// FLAG_MCCOY_PALACE_REWARD_TAKEN, in what they say and how they turn when
-/// talked to (Map_GetObjectEventTemplates).
+/// talked to (Scene_GetObjectEventTemplates).
 ///
 /// Arriving in McCoy's room before the curse is lifted plays
 /// EventScript_AudienceWithMcCoy: McCoy asks whether the party can save Kolima.
@@ -33,7 +33,7 @@
 /// portrait (SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY).
 
 #include "save_block.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/map/mccoy_palace.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -155,20 +155,20 @@ enum {
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
   /// ★ Named from its area name: McCoy's Palace
-  FLAG_MCCOYS_DOOR_OPEN = FLAG_MAP_TEMP_00,
+  FLAG_MCCOYS_DOOR_OPEN = FLAG_SCENE_TEMP_00,
   /// The party is choosing its reward among the four chests.
   /// ★ Named from the game: "You may select a single item from among these
   /// four chests." (MsgBilibinYouMaySelectASingleItem)
-  FLAG_CHOOSING_REWARD = FLAG_MAP_TEMP_02,
+  FLAG_CHOOSING_REWARD = FLAG_SCENE_TEMP_02,
   /// The chest the reward was taken from, which then searches as empty.
   /// ★ Named from the game: "Vial" (MsgItemName)
-  FLAG_TOOK_VIAL = FLAG_MAP_TEMP_10,
+  FLAG_TOOK_VIAL = FLAG_SCENE_TEMP_10,
   /// ★ Named from the game: "Potion" (MsgItemName)
-  FLAG_TOOK_POTION = FLAG_MAP_TEMP_11,
+  FLAG_TOOK_POTION = FLAG_SCENE_TEMP_11,
   /// ★ Named from the game: "Psy Crystal" (MsgItemName)
-  FLAG_TOOK_PSY_CRYSTAL = FLAG_MAP_TEMP_12,
+  FLAG_TOOK_PSY_CRYSTAL = FLAG_SCENE_TEMP_12,
   /// ★ Named from the game: "Water of Life" (MsgItemName)
-  FLAG_TOOK_WATER_OF_LIFE = FLAG_MAP_TEMP_13,
+  FLAG_TOOK_WATER_OF_LIFE = FLAG_SCENE_TEMP_13,
   /// The old man has praised the party once; he then warns of the holy tree.
   /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
   FLAG_OLD_MAN_HAS_PRAISED = FLAG_MAPSEC_TEMP_02,
@@ -201,24 +201,24 @@ static void EventScript_PresentRewardChests(void);
 // The shared facing callback precedes the map's entry points.
 #include "common/object_facing.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
+const struct MapWarpDest *Scene_GetWarpDests(void) {
   return gMcCoyPalaceWarpDests;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gMcCoyPalaceWarps; }
+const u32 *Scene_GetWarps(void) { return gMcCoyPalaceWarps; }
 
 /// The people of McCoy's Palace. Once the reward is taken, the woman in
 /// Milady's nightgown, the old man who praises the warriors, the soldier who
 /// watched the party go to Kolima and the soldier who keeps the treasure turn
 /// differently when talked to.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
 
-  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalace) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalace) {
     templates = gMcCoyPalaceObjectEventTemplates;
-    Map_AssignViewFlags(templates);
+    Scene_AssignViewFlags(templates);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
       // Through the global, not templates: the local splits each address into
@@ -243,8 +243,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 /// What the party can talk to and search in the palace.
-const struct MapEvent *Map_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalace) {
+const struct MapEvent *Scene_GetEvents(void) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceEvents;
   }
   return gMcCoyPalaceNoEvents;
@@ -564,7 +564,7 @@ static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
 /// Sets McCoy's Palace up: McCoy's first audience, the captain outside McCoy's
 /// door after it, the reward audience once Kolima's curse is lifted, or the
 /// reward chests where the party left them.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
   struct ObjectEvent *chest;
@@ -1582,7 +1582,7 @@ static void EventScript_PresentRewardChests(void) {
 }
 
 s32 gPalace_FacingActions[] = {
-    SC_CALL(Map_TurnTowardTarget),
+    SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1727,7 +1727,7 @@ u32 gMcCoyPalaceWarps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: the getters return it for any map but MapId_McCoyPalace, and the
+/// Unused: the getters return it for any map but SceneId_McCoyPalace, and the
 /// overlay serves no other.
 struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[] = {
     {MAP_TABLE_END},

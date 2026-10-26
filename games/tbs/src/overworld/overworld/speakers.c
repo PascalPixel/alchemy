@@ -56,8 +56,8 @@ s32 Speaker_GetVoice(u32 id) {
 }
 
 /// Returns the definition flags of object event id's sprite, which choose its
-/// line when it has nothing to say: Map_TalkToObjectEvent picks a Halted object
-/// event's pair of lines with them, and Halt cast with no map event
+/// line when it has nothing to say: Scene_TalkToObjectEvent picks a Halted
+/// object event's pair of lines with them, and Halt cast with no map event
 /// (FieldEffect_Run) stops nothing when the nearest object event's flags are
 /// 0xff (FieldEffect_FilterObjectIdByFlags).
 s32 Speaker_GetIdleFlags(s32 id) {

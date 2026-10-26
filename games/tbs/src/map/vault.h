@@ -2,8 +2,8 @@
 #define ALCHEMY_MAP_VAULT_H
 
 /// @file
-/// The metatile behaviors of Vault's layout, which MapId_Vault (vault.c) and
-/// MapId_VaultRevisit (vault_revisit.c) both draw and answer.
+/// The metatile behaviors of Vault's layout, which SceneId_Vault (vault.c) and
+/// SceneId_VaultRevisit (vault_revisit.c) both draw and answer.
 
 /// The metatile behaviors Vault's coord and bg events answer; the warps have
 /// behaviors of their own.

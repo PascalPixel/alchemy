@@ -1,11 +1,12 @@
 /// @file
 /// The Bilibin Cave Entrance and Bilibin Cave, two map sections between Bilibin
 /// and Imil that share this overlay: the Bilibin Cave Entrance is
-/// MapId_BilibinCaveEntrance, and Bilibin Cave is MapId_BilibinCaveRapier and,
-/// beyond it, MapId_BilibinCaveIce, whose far end opens onto the world map
-/// farther north. No one speaks here: each map is a run of Psynergy puzzles,
-/// the getters pick its tables by gSaveBlock.mapId, and BilibinCave_Initialize
-/// restores what the party has already solved in the map being entered.
+/// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
+/// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the world
+/// map farther north. No one speaks here: each map is a run of Psynergy
+/// puzzles, the getters pick its tables by gSaveBlock.sceneId, and
+/// BilibinCave_Initialize restores what the party has already solved in the map
+/// being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a sprout
 /// (LOCALID_SPROUT) grows it into a vine and changes the metatile behavior of
@@ -21,14 +22,14 @@
 /// EventScript_WalkOffLedgeOverCaveMouth; its recording,
 /// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
 ///
-/// In MapId_BilibinCaveRapier a fire burns between two torches, the west one
+/// In SceneId_BilibinCaveRapier a fire burns between two torches, the west one
 /// cold and the east one lit (LOCALID_RAPIER_ROOM_FIRE), and Douse puts it out
 /// for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
 /// a strip of tiles and the cells under them, which
 /// EventScript_HideRevealedPath takes away again when Reveal wears off. A chest
 /// holds the Elven Rapier.
 ///
-/// MapId_BilibinCaveIce holds the cave's one puzzle of several steps, built
+/// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
 /// from fires, torches and puddles that Frost freezes into ice pillars and the
 /// heat of a fire or a torch melts back (PUDDLE_ANIMATION_MELT). While
 /// LOCALID_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts back;
@@ -46,7 +47,7 @@
 /// jump across. FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there
 /// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
-/// coming back from MapId_BilibinCaveRapier puts the torches and the pillar
+/// coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
 /// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
 /// there: five pillars from LOCALID_FIRST_ICE_PILLAR and four lower pieces from
 /// LOCALID_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
@@ -59,7 +60,7 @@
 #include "action_script.h"
 #include "save_block.h"
 #include "engine_call.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/bilibin_cave.h"
 #include "unit/overworld/overworld.h"
@@ -111,7 +112,7 @@ static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
 static void BilibinCave_EmptyObjectEventSetupHook(s32 localId);
 
-/// Object events of the Bilibin Cave Entrance (MapId_BilibinCaveEntrance).
+/// Object events of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance).
 enum {
   /// The sprout Growth grows into a vine.
   /// ★ Named from what the player sees: a green sprout, SPRITE_SPROUT (its
@@ -119,7 +120,7 @@ enum {
   LOCALID_SPROUT = 8
 };
 
-/// Object events of MapId_BilibinCaveRapier, numbered by the rows of
+/// Object events of SceneId_BilibinCaveRapier, numbered by the rows of
 /// gBilibinCaveRapierObjectEventTemplates.
 enum {
   /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
@@ -137,7 +138,7 @@ enum {
   LOCALID_RAPIER_ROOM_EAST_TORCH = 10
 };
 
-/// Object events of MapId_BilibinCaveIce, numbered by the rows of
+/// Object events of SceneId_BilibinCaveIce, numbered by the rows of
 /// gBilibinCaveIceObjectEventTemplates.
 enum {
   /// A fire beside the first puddle, which Douse puts out.
@@ -192,15 +193,15 @@ BilibinCave_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
 }
 
 const struct MapWarpDest *BilibinCave_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BilibinCaveEntrance) {
+  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceWarpDests;
   }
-  if (mapId == (s32)&MapId_BilibinCaveRapier) {
+  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
     return gBilibinCaveRapierWarpDests;
   }
-  if (mapId == (s32)&MapId_BilibinCaveIce) {
+  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
     return gBilibinCaveIceWarpDests;
   }
   return gBilibinCaveWarpDestsOther;
@@ -211,30 +212,30 @@ const struct MapWarpRegion *BilibinCave_GetRegions(void) { return NULL; }
 const u32 *BilibinCave_GetWarps(void) { return gBilibinCaveWarps; }
 
 const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BilibinCaveEntrance) {
+  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BilibinCaveRapier) {
+  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
     return gBilibinCaveRapierObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_BilibinCaveIce) {
+  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
     return gBilibinCaveIceObjectEventTemplates;
   }
   return gBilibinCaveObjectEventTemplatesOther;
 }
 
 const struct MapEvent *BilibinCave_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_BilibinCaveEntrance) {
+  if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceEvents;
   }
-  if (mapId == (s32)&MapId_BilibinCaveRapier) {
+  if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
     return gBilibinCaveRapierEvents;
   }
-  if (mapId == (s32)&MapId_BilibinCaveIce) {
+  if (sceneId == (s32)&SceneId_BilibinCaveIce) {
     return gBilibinCaveIceEvents;
   }
   return gBilibinCaveEventsOther;
@@ -254,7 +255,7 @@ static void EventScript_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
-/// Reveal in Bilibin Cave (MapId_BilibinCaveRapier) shows the hidden path: a
+/// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path: a
 /// strip of tiles and two rows of the cells under it.
 static void EventScript_RevealHiddenPath(void) {
   {
@@ -272,7 +273,7 @@ static void EventScript_RevealHiddenPath(void) {
   }
 }
 
-/// As Reveal wears off in Bilibin Cave (MapId_BilibinCaveRapier), the path is
+/// As Reveal wears off in Bilibin Cave (SceneId_BilibinCaveRapier), the path is
 /// hidden again: the strip's tiles and one row of its cells are restored.
 static void EventScript_HideRevealedPath(void) {
   {
@@ -290,7 +291,7 @@ static void EventScript_HideRevealedPath(void) {
   }
 }
 
-/// Douse on the fire in Bilibin Cave (MapId_BilibinCaveRapier), until it is
+/// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveRapier), until it is
 /// out: it goes out for good.
 static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_Start();
@@ -299,7 +300,7 @@ static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_End();
 }
 
-/// Douse on the fire in Bilibin Cave (MapId_BilibinCaveIce), until it is out:
+/// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out:
 /// it goes out, and the puddle beside it freezes into a pillar the party can
 /// walk over.
 static void EventScript_DouseIceRoomFire(void) {
@@ -318,7 +319,7 @@ static void EventScript_DouseIceRoomFire(void) {
   FieldScript_End();
 }
 
-/// Frost on a puddle in Bilibin Cave (MapId_BilibinCaveIce) that heat keeps
+/// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 localId) {
@@ -330,26 +331,26 @@ static inline void BilibinCave_MeltFrostBack(s32 localId) {
   FieldScript_End();
 }
 
-/// Frost on the first puddle in Bilibin Cave (MapId_BilibinCaveIce), while
+/// Frost on the first puddle in Bilibin Cave (SceneId_BilibinCaveIce), while
 /// the fire beside it burns.
 static void EventScript_FreezeFirstPuddle(void) {
   BilibinCave_MeltFrostBack(LOCALID_FIRST_PUDDLE);
 }
 
-/// Frost on the second puddle in Bilibin Cave (MapId_BilibinCaveIce), beside
+/// Frost on the second puddle in Bilibin Cave (SceneId_BilibinCaveIce), beside
 /// a torch that stays put.
 static void EventScript_FreezeSecondPuddle(void) {
   BilibinCave_MeltFrostBack(LOCALID_SECOND_PUDDLE);
 }
 
-/// Frost on the third puddle in Bilibin Cave (MapId_BilibinCaveIce), while a
+/// Frost on the third puddle in Bilibin Cave (SceneId_BilibinCaveIce), while a
 /// torch beside it keeps it melted (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED).
 static void EventScript_FreezeThirdPuddle(void) {
   BilibinCave_MeltFrostBack(LOCALID_THIRD_PUDDLE);
 }
 
 /// A movable torch melts the ice pillar beside it. This runs after a push or
-/// Move in Bilibin Cave (MapId_BilibinCaveIce): while either movable torch
+/// Move in Bilibin Cave (SceneId_BilibinCaveIce): while either movable torch
 /// stands on cell (35, 23) (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR), the ice pillar beside it melts
 /// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so; when both
@@ -414,14 +415,14 @@ static void EventScript_GrowPlant(void) {
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
 
-/// Stepping on coord event 20 in Bilibin Cave (MapId_BilibinCaveIce): from here
-/// on the leader leaves footprints.
+/// Stepping on coord event 20 in Bilibin Cave (SceneId_BilibinCaveIce): from
+/// here on the leader leaves footprints.
 static void EventScript_StartFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 1;
 }
 
-/// Stepping on coord event 21 in Bilibin Cave (MapId_BilibinCaveIce): the
+/// Stepping on coord event 21 in Bilibin Cave (SceneId_BilibinCaveIce): the
 /// leader leaves no more footprints.
 static void EventScript_StopFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -431,13 +432,13 @@ static void EventScript_StopFootprints(void) {
 /// Sets up the map being entered, with its puzzles already solved. The map
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
-  s16 variant = gSaveBlock.mapId;
+  s16 variant = gSaveBlock.sceneId;
 
-  if (variant == (s32)&MapId_BilibinCaveEntrance) {
+  if (variant == (s32)&SceneId_BilibinCaveEntrance) {
     BilibinCave_RestoreEntrance();
-  } else if (variant == (s32)&MapId_BilibinCaveRapier) {
+  } else if (variant == (s32)&SceneId_BilibinCaveRapier) {
     BilibinCave_RestoreRapierRoom();
-  } else if (variant == (s32)&MapId_BilibinCaveIce) {
+  } else if (variant == (s32)&SceneId_BilibinCaveIce) {
     BilibinCave_RestoreIceRoom();
   }
   return 0;
@@ -452,7 +453,7 @@ static void BilibinCave_RestoreEntrance(void) {
   }
 }
 
-/// Sets up Bilibin Cave's MapId_BilibinCaveRapier: its two torches, and its
+/// Sets up Bilibin Cave's SceneId_BilibinCaveRapier: its two torches, and its
 /// fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
@@ -478,7 +479,7 @@ static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 localId) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
 }
 
-/// Sets up Bilibin Cave's MapId_BilibinCaveIce: its torches, puddles and
+/// Sets up Bilibin Cave's SceneId_BilibinCaveIce: its torches, puddles and
 /// pillars, and the steps of its puzzle already solved.
 static void BilibinCave_RestoreIceRoom(void) {
   struct ObjectEvent *objectEvent;
@@ -584,7 +585,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 #include "common/object_findcell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave
-/// (MapId_BilibinCaveIce): it moves only when its next cell and movement
+/// (SceneId_BilibinCaveIce): it moves only when its next cell and movement
 /// probe are clear.
 static void EventScript_PushTorch(void) {
   struct ObjectEvent *leader;

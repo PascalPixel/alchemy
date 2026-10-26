@@ -3,19 +3,19 @@
 /// cave east of it, which the party crosses on the way from Tolbi to Babi
 /// Lighthouse. Three maps share this overlay:
 ///
-/// - Gondowan Passage (MapId_GondowanPassage, area name Gondowan Passage):
+/// - Gondowan Passage (SceneId_GondowanPassage, area name Gondowan Passage):
 ///   three soldiers guard the bridge, and Iodem waits there to go on to Babi
 ///   Lighthouse with the party once Babi has spoken to it after Colosso
 ///   (FLAG_BABI_SPOKE_AFTER_COLOSSO).
-/// - Gondowan Cave (MapId_GondowanCave, area name Gondowan Cave): both ways
+/// - Gondowan Cave (SceneId_GondowanCave, area name Gondowan Cave): both ways
 ///   in from the world map, a tree stump that Move sends leaping into the
 ///   water, a stone pillar to push or move in after it, and a boulder for
 ///   Lift.
-/// - GondowanCaveRiver (MapId_GondowanCaveRiver): the river between the
+/// - GondowanCaveRiver (SceneId_GondowanCaveRiver): the river between the
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One warp table serves every map; the other getters choose by
-/// gSaveBlock.mapId, Gondowan Passage's object event templates and map events
+/// gSaveBlock.sceneId, Gondowan Passage's object event templates and map events
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// map number. Every map's event table carries GondowanCaveRiver's two chests.
 ///
@@ -30,7 +30,7 @@
 ///
 /// GondowanCave's way across the water is two things that float in it, and
 /// coord events 10 and 11 jump the leader across them (EventScript_JumpAcross).
-/// Both are kept in story flags, so the cave stays solved and Map_Initialize
+/// Both are kept in story flags, so the cave stays solved and Scene_Initialize
 /// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
 /// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
 /// column 42, shown from then on by LOCALID_DROPPED_PILLAR.
@@ -48,7 +48,7 @@
 
 #include "save_block.h"
 #include "heap_slots.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/map/gondowan_cave.h"
 #include "unit/map/common/effect_spawn.h"
@@ -153,41 +153,41 @@ static void GondowanCave_RunSpinningLeap(s32 localId);
 #include "item_ids.h"
 #include "objcmd.h"
 
-const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapWarpDest *Scene_GetWarpDests(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_GondowanPassage) {
+  if (sceneId == (s32)&SceneId_GondowanPassage) {
     return gGondowanPassageWarpDests;
   }
-  if (mapId == (s32)&MapId_GondowanCaveRiver) {
+  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCaveRiverWarpDests;
   }
-  if (mapId == (s32)&MapId_GondowanCave) {
+  if (sceneId == (s32)&SceneId_GondowanCave) {
     return gGondowanCaveWarpDests;
   }
   return gGondowanCaveWarpDestsOther;
 }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
 /// Every map of the overlay shares one warp table.
-const u32 *Map_GetWarps(void) { return gGondowanCaveWarps; }
+const u32 *Scene_GetWarps(void) { return gGondowanCaveWarps; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_GondowanPassage) {
+  if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageObjectEventTemplatesWithIodem;
     }
     return gGondowanPassageObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_GondowanCaveRiver) {
+  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCaveRiverObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_GondowanCave) {
+  if (sceneId == (s32)&SceneId_GondowanCave) {
     return gGondowanCaveObjectEventTemplates;
   }
   return gGondowanCaveObjectEventTemplatesOther;
@@ -195,19 +195,19 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// The map events of each map, with Iodem's in Gondowan Passage when he is
 /// there.
-const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+const struct MapEvent *Scene_GetEvents(void) {
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_GondowanPassage) {
+  if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageEventsWithIodem;
     }
     return gGondowanPassageEvents;
   }
-  if (mapId == (s32)&MapId_GondowanCaveRiver) {
+  if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCaveRiverEvents;
   }
-  if (mapId == (s32)&MapId_GondowanCave) {
+  if (sceneId == (s32)&SceneId_GondowanCave) {
     return gGondowanCaveEvents;
   }
   return gGondowanCaveEventsOther;
@@ -244,7 +244,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
-      gSaveBlock.restartMap = (s32)&MapId_StuccoRoomsB;
+      gSaveBlock.restartScene = (s32)&SceneId_StuccoRoomsB;
       gSaveBlock.restartWarpDest = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
@@ -337,7 +337,7 @@ static void EventScript_ReadSoldierMind(void) {
 }
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (warp 1),
-/// out to the world map. With FLAG_MAP_TEMP_04 set, which nothing in the
+/// out to the world map. With FLAG_SCENE_TEMP_04 set, which nothing in the
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
 static void EventScript_LeaveToWorldMapEast(void) {
@@ -347,7 +347,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
   FieldScript_Start();
   // XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold; only this
   // block, which nothing reaches, touches them.
-  if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     Script_ClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     Script_ClearFlag(0x9a4);
@@ -506,16 +506,16 @@ static void EventScript_LiftBoulder(void) {
 /// Sets up the map as the party enters. Gondowan Passage blocks Retreat and
 /// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
 /// GondowanCave puts the stump and the pillar where the party left them.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.mapId == (s32)&MapId_GondowanPassage) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(0), PIXELS(0));
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_GondowanCave) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_GondowanCave) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
     if (gSaveBlock.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
@@ -729,7 +729,7 @@ struct MapEvent gGondowanCaveRiverEvents[] = {
     { MAP_EVENTS_END },
 };
 
-/// FLAG_MAP_TEMP_05 ends Move on the pillar.
+/// FLAG_SCENE_TEMP_05 ends Move on the pillar.
 struct MapEvent gGondowanCaveEvents[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToWorldMapEast) },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
@@ -739,7 +739,7 @@ struct MapEvent gGondowanCaveEvents[] = {
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LiftBoulder) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, FLAG_MAP_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },

@@ -120,7 +120,7 @@ void Weather_UpdateLightning(void) {
 /// loads their tiles and puts 32 of them under the leader with staggered
 /// timers, drawn semi-transparent. Their work is HEAP_SLOT_WEATHER,
 /// which the motes and sparkles also take. SE_AMBIENT_WATER is queued
-/// (Map_QueueMusic), so it plays again wherever the queued
+/// (Scene_QueueMusic), so it plays again wherever the queued
 /// sound is replayed, as after a Psynergy effect.
 void Weather_StartRain(void) {
   struct WeatherWork *work;
@@ -134,7 +134,7 @@ void Weather_StartRain(void) {
    * instructions differ in tbs-en. */
   work = AllocHeapSlotEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct WeatherWork));

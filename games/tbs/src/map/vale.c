@@ -1,11 +1,11 @@
 /// @file
-/// MapId_Vale, Isaac's village by day, outside the houses: the door of Isaac's
-/// house, the houses of Garet's family and of Jenna's grandparents, the Sanctum
-/// and the paths out to Mt. Aleph and Kraden's cottage. The object event
-/// templates and map events come in three sets, chosen by the story flags:
-/// before the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and
-/// back from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own.
-/// In story order:
+/// SceneId_Vale, Isaac's village by day, outside the houses: the door of
+/// Isaac's house, the houses of Garet's family and of Jenna's grandparents, the
+/// Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The object
+/// event templates and map events come in three sets, chosen by the story
+/// flags: before the party leaves Vale, after it has left
+/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
+/// VALE_FROM_TITLE has a set of its own. In story order:
 ///
 /// - The day the story begins, three years after the storm
 ///   (cottage_rooms_b.c), which took Jenna's family and Isaac's father,
@@ -52,15 +52,15 @@
 /// cells of the bridge over the river that change while the leader is on it
 /// (FLAG_VALE_ON_BRIDGE); after a battle (FLAG_KEEP_PARTY_POSITION) the
 /// setup restores both. Warps: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
-/// Entrance (MapId_SolEntrance), VALE_TO_VALE_PLAZA to MapId_ValePlaza,
+/// Entrance (SceneId_SolEntrance), VALE_TO_VALE_PLAZA to SceneId_ValePlaza,
 /// VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH to
-/// MapId_ValeKradensCottage, the doors VALE_TO_COTTAGE_ROOMS_A_EAST,
+/// SceneId_ValeKradensCottage, the doors VALE_TO_COTTAGE_ROOMS_A_EAST,
 /// VALE_TO_COTTAGE_ROOMS_A_SOUTH, VALE_TO_COTTAGE_ROOMS_A_NORTH,
 /// VALE_TO_COTTAGE_ROOMS_A_WEST and
 /// VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into the houses
-/// (MapId_CottageRoomsA, cottage_rooms_a.c),
-/// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (MapId_CottageRoomsB) and
-/// VALE_TO_SANCTUM into MapId_Sanctum. Two events no table reaches remain:
+/// (SceneId_CottageRoomsA, cottage_rooms_a.c),
+/// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (SceneId_CottageRoomsB) and
+/// VALE_TO_SANCTUM into SceneId_Sanctum. Two events no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
 /// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
@@ -374,23 +374,23 @@ enum ValeAnimation {
 
 /// The roof of Isaac's house has just been mended; for the rest of the visit
 /// Dora frets about the hole Garet left.
-#define FLAG_VALE_ROOF_JUST_MENDED FLAG_MAP_TEMP_02
+#define FLAG_VALE_ROOF_JUST_MENDED FLAG_SCENE_TEMP_02
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
 /// ★ Named from the game: "Haven't you finished mending the roof yet?"
 /// (MsgValeRepairCaption)
-#define FLAG_VALE_ON_ROOF FLAG_MAP_TEMP_04
+#define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
 /// The leader is on the rope bridge over the river. While it is set, the
 /// bridge's cells take the deck's shapes and metatile behaviors: its two middle
 /// rows walkable at the deck's height and its rails walls; stepping off puts
 /// back the river's, walled water between open banks.
 /// ★ Named from what the player sees: a wooden bridge with rope rails over the
 /// river, above the waterfall (its render)
-#define FLAG_VALE_ON_BRIDGE FLAG_MAP_TEMP_10
+#define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 /// The man guarding Mt. Aleph is paused while a menu is open.
 /// ★ Named from the game: "Mt. Aleph is a sacred peak."
 /// (MsgValeMtAlephIsASacredPeak)
-#define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_MAP_TEMP_41
+#define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
 #define FLAG_VALE_GARET_MET_SISTER FLAG_MAPSEC_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
@@ -628,20 +628,20 @@ static void EventScript_ApproachMtAleph(void) {
 }
 
 /// Metatile behavior 3 in Vale takes the northern way out to
-/// MapId_ValeKradensCottage.
+/// SceneId_ValeKradensCottage.
 static void EventScript_WarpToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
 /// Metatile behavior 4 in Vale takes the southern way out to
-/// MapId_ValeKradensCottage.
+/// SceneId_ValeKradensCottage.
 static void EventScript_WarpToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Metatile behavior 5 in Vale takes the way out to MapId_ValePlaza.
+/// Metatile behavior 5 in Vale takes the way out to SceneId_ValePlaza.
 static void EventScript_WarpToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_ScriptRequestWarp(VALE_TO_VALE_PLAZA);
@@ -1604,9 +1604,9 @@ s32 Vale_Initialize(void) {
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
       if (!GameFlag_Get(FLAG_KALAY_REACHED)) {
-        Map_FloatNut(LOCALID_NUT);
+        Scene_FloatNut(LOCALID_NUT);
       } else {
-        Map_FloatNut(LOCALID_NUT_AFTER_KALAY);
+        Scene_FloatNut(LOCALID_NUT_AFTER_KALAY);
       }
     }
     MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -1713,7 +1713,7 @@ s32 Vale_Initialize(void) {
       }
     }
 #endif
-    Map_QueueMusic(SE_AMBIENT_WATER);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   }
@@ -2125,7 +2125,7 @@ static void EventScript_MendingTheRoof(void) {
   WaitFrames(1);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
   ObjectEvent_WalkTo(LOCALID_JENNA, 420, 1068);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   gFieldWork->transitionFrames = 60;
   FieldScript_StartScreenTransition();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
@@ -2206,7 +2206,7 @@ static void EventScript_MendingTheRoof(void) {
 
   // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
   // sparkles.
-  Map_StartEventPsynergy();
+  Scene_StartEventPsynergy();
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_CAST_PSYNERGY);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARET, 0, 20);
   Script_PlaySong(SE_PSYNERGY_SPARKLE);
@@ -2249,7 +2249,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_VanishMoveHand(moveHand);
-  Map_EndEventPsynergy();
+  Scene_EndEventPsynergy();
 
   // Finish the reunion conversation after the repair effects settle.
   FieldScript_WaitFrames(10);
@@ -2476,7 +2476,7 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 40);
-  Map_StartEventPsynergy();
+  Scene_StartEventPsynergy();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
   for (i = 0; i < 40; i++) {
@@ -2602,7 +2602,7 @@ static void EventScript_RoofMended(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(120);
-  Map_EndEventPsynergy();
+  Scene_EndEventPsynergy();
   MapGrid_CopyCellsTo(5, 103, 82, 42, 1, 1);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;

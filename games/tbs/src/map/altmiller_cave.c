@@ -3,23 +3,25 @@
 /// during Colosso (babi_palace.c). Its six maps share this overlay and the area
 /// name Altmiller Cave:
 ///
-/// - AltmillerCaveEntrance (MapId_AltmillerCaveEntrance): the dark passage in
+/// - AltmillerCaveEntrance (SceneId_AltmillerCaveEntrance): the dark passage in
 ///   from the world map and the chamber beyond it.
-/// - AltmillerCaveBabi (MapId_AltmillerCaveBabi): the invisible Babi, who asks
+/// - AltmillerCaveBabi (SceneId_AltmillerCaveBabi): the invisible Babi, who
+/// asks
 ///   for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
 ///   (AltmillerCave_RestoreBabiAndInviteParty), and a chest that is a Mimic.
-/// - AltmillerCaveVialChest (MapId_AltmillerCaveVialChest) and
-///   AltmillerCaveCookieChest (MapId_AltmillerCaveCookieChest): a chest each.
-/// - AltmillerCaveSquall (MapId_AltmillerCaveSquall): Squall, a Jupiter Djinni,
+/// - AltmillerCaveVialChest (SceneId_AltmillerCaveVialChest) and
+///   AltmillerCaveCookieChest (SceneId_AltmillerCaveCookieChest): a chest each.
+/// - AltmillerCaveSquall (SceneId_AltmillerCaveSquall): Squall, a Jupiter
+/// Djinni,
 ///   three fallen columns to push, a stone pillar for Move and a puddle for
 ///   Frost.
-/// - AltmillerCaveDraught (MapId_AltmillerCaveDraught): three more fallen
+/// - AltmillerCaveDraught (SceneId_AltmillerCaveDraught): three more fallen
 ///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that holds
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
 /// The rooms share one warp destination table and one warp table, and the other
-/// getters choose by gSaveBlock.mapId. AltmillerCave_Initialize sends an entry
-/// from outside the cave (warp destination 0) to the room's first warp
+/// getters choose by gSaveBlock.sceneId. AltmillerCave_Initialize sends an
+/// entry from outside the cave (warp destination 0) to the room's first warp
 /// destination, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
 /// the overlay's own state is in map temp flags and gMapLocalState, so it
@@ -78,7 +80,7 @@
 #include "pushed_object.h"
 #include "edition.h"
 #include "object_dispatch.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "field_service.h"
@@ -91,7 +93,7 @@
 #include "objcmd.h"
 #include "frame.h"
 #include "fixed_math.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "fx_work.h"
 #include "flags.h"
 #include "songs.h"
@@ -195,17 +197,17 @@ enum {
   /// AltmillerCaveDraught.
   /// ★ Named from what the player sees: the cave dark but for a small circle of
   /// light around the party (its render)
-  FLAG_ALTMILLER_CAVE_DARK = FLAG_MAP_TEMP_00,
+  FLAG_ALTMILLER_CAVE_DARK = FLAG_SCENE_TEMP_00,
   /// AltmillerCaveEntrance darkens by steps as the party walks in.
   /// ★ Named from its area name: Altmiller Cave
-  FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS = FLAG_MAP_TEMP_01,
+  FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltmillerCaveSquall's puddle.
   /// ★ Named from what the player sees: a small puddle of water in the middle
   /// of the room (its render)
-  FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN = FLAG_MAP_TEMP_11,
+  FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN = FLAG_SCENE_TEMP_11,
   /// AltmillerCaveSquall's pillar stands where Move opens the passage.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-  FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE = FLAG_MAP_TEMP_12
+  FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
 };
 
 /// The darkness: BG1 blended over every layer, at the weights
@@ -308,15 +310,15 @@ const struct MapWarpRegion *AltmillerCave_GetRegions(void) { return NULL; }
 const u32 *AltmillerCave_GetWarps(void) { return gAltmillerCave_Warps; }
 
 const struct ObjectEventTemplate *AltmillerCave_GetObjectEventTemplates(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_AltmillerCaveBabi) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveSquall) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
     return gAltmillerCave_SquallObjectEventTemplates;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveDraught) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     return gAltmillerCave_DraughtObjectEventTemplates;
   }
   return gAltmillerCave_ObjectEventTemplatesOther;
@@ -464,12 +466,12 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// Reveal's light: AltmillerCaveEntrance is lit and AltmillerCaveDraught's
 /// rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveEntrance) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
     s32 alpha = BLEND_ALPHA(0, 16);
 
     REG_BLDALPHA = alpha;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_ROCK, COLOR_BLUE);
     ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_ROCK, COLOR_GREEN);
     ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_ROCK, COLOR_WHITE);
@@ -488,7 +490,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_ROCK, COLOR_NONE);
     ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_ROCK, COLOR_NONE);
     ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_ROCK, COLOR_NONE);
@@ -1697,7 +1699,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -1989,7 +1991,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  Map_PlayMusic();
+  Scene_PlayMusic();
   FieldScript_End();
 }
 
@@ -2041,21 +2043,21 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 }
 
 const struct MapEvent *AltmillerCave_GetEvents(void) {
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
 
-  if (mapId == (s32)&MapId_AltmillerCaveBabi) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiEvents;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveVialChest) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
     return gAltmillerCave_VialChestEvents;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveSquall) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
     return gAltmillerCave_SquallEvents;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveCookieChest) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
     return gAltmillerCave_CookieChestEvents;
   }
-  if (mapId == (s32)&MapId_AltmillerCaveDraught) {
+  if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     return gAltmillerCave_DraughtEvents;
   }
   return gAltmillerCave_EventsOther;
@@ -2075,9 +2077,9 @@ AltmillerCave_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 
 /// Redraws the three obstacles' cells where they stand.
 static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE + 1);
-  Map_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE + 2);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE + 1);
+  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_OBSTACLE + 2);
 }
 
 /// Sets up the room being entered: an entry from outside the cave takes the
@@ -2091,28 +2093,28 @@ s32 AltmillerCave_Initialize(void) {
   s32 i;
 
   if (gSaveBlock.warpDest == 0) {
-    if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveBabi) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
       gSaveBlock.warpDest = ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveVialChest) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
       gSaveBlock.warpDest = ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveSquall) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
       gSaveBlock.warpDest =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveCookieChest) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
       gSaveBlock.warpDest =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
+    if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
       gSaveBlock.warpDest =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Script_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveEntrance) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gMapLocalState + 4) = 0;
@@ -2126,7 +2128,7 @@ s32 AltmillerCave_Initialize(void) {
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveBabi) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Import_ObjectEventSetPosition(LOCALID_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2137,7 +2139,7 @@ s32 AltmillerCave_Initialize(void) {
     }
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveSquall) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2157,7 +2159,7 @@ s32 AltmillerCave_Initialize(void) {
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
-  if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
+  if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps

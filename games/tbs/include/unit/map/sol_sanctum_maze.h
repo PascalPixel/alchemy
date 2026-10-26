@@ -6,11 +6,11 @@
 
 struct MapWarpRegion;
 
-const struct MapWarpDest *Map_GetWarpDests(void);
-const struct MapWarpRegion *Map_GetWarpRegions(void);
-const u32 *Map_GetWarps(void);
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
-const struct MapEvent *Map_GetEvents(void);
+const struct MapWarpDest *Scene_GetWarpDests(void);
+const struct MapWarpRegion *Scene_GetWarpRegions(void);
+const u32 *Scene_GetWarps(void);
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct MapEvent *Scene_GetEvents(void);
 extern struct MapWarpDest gSolSanctumMazeWarpDests[];
 extern u32 gSolSanctumMazeWarps[];
 extern struct ObjectEventTemplate gSolSanctumMazeObjectEventTemplates[];

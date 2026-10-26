@@ -1,5 +1,5 @@
 /// @file
-/// Suhalla (MapId_Suhalla, area name Suhalla), the desert village of Gondowan
+/// Suhalla (SceneId_Suhalla, area name Suhalla), the desert village of Gondowan
 /// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
 /// Lalivero.
 ///
@@ -49,7 +49,7 @@
 /// it grown again.
 /// ★ Named from what the player sees: a small green sprout in the sand by the
 /// inn (its render)
-#define FLAG_SUHALLA_SPROUT_GROWN FLAG_MAP_TEMP_01
+#define FLAG_SUHALLA_SPROUT_GROWN FLAG_SCENE_TEMP_01
 
 /// The sprout's animation once Growth has grown it.
 enum { SPROUT_ANIMATION_GROWN = 4 };
@@ -112,14 +112,14 @@ enum SuhallaLocalId {
   LOCALID_SPROUT
 };
 
-const struct MapWarpDest *Map_GetWarpDests(void) { return gSuhallaWarpDests; }
+const struct MapWarpDest *Scene_GetWarpDests(void) { return gSuhallaWarpDests; }
 
-const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
+const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
-const u32 *Map_GetWarps(void) { return gSuhallaWarps; }
+const u32 *Scene_GetWarps(void) { return gSuhallaWarps; }
 
 /// Suhalla's people, who stand elsewhere after Babi's audience.
-const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaObjectEventTemplatesLater;
   }
@@ -205,7 +205,7 @@ static void EventScript_EnterWideDoor(void) {
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
 /// audience.
-const struct MapEvent *Map_GetEvents(void) {
+const struct MapEvent *Scene_GetEvents(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
   }
@@ -216,7 +216,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// fade, and the sprout is drawn grown if Growth was used on it before a
 /// return that keeps the party's position. SUHALLA_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
-s32 Map_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   if (gSaveBlock.warpDest == SUHALLA_AFTER_BABI_SPOKE) {

@@ -19,7 +19,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.Map_AssignViewFlags, 1
+	.set import.Scene_AssignViewFlags, 1
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectEvent_DestroyById, 1
@@ -49,7 +49,7 @@
 	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.Map_QueueMusic, 1
+	.set import.Scene_QueueMusic, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
 	.set import.Sound_PlaySong, 1

@@ -157,75 +157,27 @@ Func_02001534:
 	.global Func_0200153c
 	.thumb_func
 Func_0200153c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.endif
-	.endif
 	.global Func_02001544
 	.thumb_func
 Func_02001544:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.endif
-	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_02001564
 	.thumb_func
 Func_02001564:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87e8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87e8
-	.else
 	overlay_veneer Func_080c87f8
-	.endif
-	.endif
 	.global Field_StartPaletteTransition
 	.thumb_func
 Field_StartPaletteTransition:
@@ -241,51 +193,19 @@ Field_StartPaletteTransition:
 	.global Func_02001574
 	.thumb_func
 Func_02001574:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87f8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87f8
-	.else
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.endif
-	.endif
 	.global Func_0200157c
 	.thumb_func
 Func_0200157c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.endif
-	.endif
 	.global Func_02001584
 	.thumb_func
 Func_02001584:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.endif
-	.endif
 	.global Func_0200158c
 	.thumb_func
 Func_0200158c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
 	overlay_veneer BattleEffect_SetObjectTickModeFar
-	.endif
-	.endif
 	.global Func_02001594
 	.thumb_func
 Func_02001594:

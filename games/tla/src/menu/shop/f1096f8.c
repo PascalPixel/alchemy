@@ -1,10 +1,3 @@
-// Near miss, differ 6 of 192: The Broken Seal's Shop_SelectQuantity. Each
-// Shop_FillSelector call loads its arguments in another order: the native
-// finishes the count in r0 (and sets r0 before r1 for the constants) before
-// r1 and r2, where this draft loads r1 and r2 first (an inline wrapper leaves
-// the order unchanged). The quantity held in a temporary across the last
-// two fills gives the native's registers (the result in r5, the B-button
-// test, reused as the zero, in r6; 36 without it).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -22,10 +15,45 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "input.h"
+#include "edition.h"
+
+// The quantity window: outside the English edition the count sits further left
+// and the price and coins label move with their words; the Spanish, French and
+// Italian windows are wider.
+#if LANGUAGE == LANGUAGE_ENGLISH
+#define QUANTITY_WINDOW_X 7
+#define QUANTITY_WINDOW_WIDTH 23
+#define QUANTITY_COUNT_X 72
+#define QUANTITY_PRICE_X 88
+#define QUANTITY_COINS_X 136
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define QUANTITY_WINDOW_X 7
+#define QUANTITY_WINDOW_WIDTH 23
+#define QUANTITY_COUNT_X 64
+#define QUANTITY_PRICE_X 80
+#define QUANTITY_COINS_X 128
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define QUANTITY_WINDOW_X 5
+#define QUANTITY_WINDOW_WIDTH 25
+#define QUANTITY_COUNT_X 64
+#define QUANTITY_PRICE_X 104
+#define QUANTITY_COINS_X 160
+#else
+#define QUANTITY_WINDOW_X 5
+#define QUANTITY_WINDOW_WIDTH 25
+#define QUANTITY_COUNT_X 64
+#define QUANTITY_PRICE_X 88
+#define QUANTITY_COINS_X 144
+#endif
 
 extern volatile struct InputState gInput;
 extern const u8 gShop_QuantityTiles[];
 extern u8 MsgCoins[];
+
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Shop_FillSelector(s32 count, s32 selector, u8 *base);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiWork_FinalizeFar(s32 window, s32 style);
 
 struct UiSprite {
   u8 unk00[24];
@@ -33,6 +61,9 @@ struct UiSprite {
   u16 flags : 6;
 };
 
+/// Lets the player pick a quantity with left and right in a small window that
+/// shows it and its price in coins; returns it, or -1 when B cancels. The
+/// Broken Seal's Shop_SelectQuantity.
 s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   u8 *buffer;
   s32 window;
@@ -48,7 +79,8 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   maximum -= minimum;
   result = -1;
   count = 0;
-  window = UiWindow_CreateFar(7, 4, 23, 3, 2);
+  window =
+      UiWindow_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
   if (window != 0) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
@@ -81,25 +113,23 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
         }
         if (changed) {
           changed = 0;
-          count = __modsi3(count + maximum, maximum);
+          count = (count + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
           Shop_FillSelector(30, 14, buffer);
           Shop_FillSelector(minimum + maximum, 0, buffer);
-          /* FAKEMATCH(barrier): the third fill's count is built after the
-           * second call; as plain statements, 8 of 192 instructions differ in
-           * tla-en. */
-          __asm__ volatile("");
           Shop_FillSelector(minimum + count + 1, 10, buffer);
           /* FAKEMATCH(temporary): the quantity in its own local before the
-           * last fill; as result = count + 1 after VramCache_Load, 36 of 192
+           * last fill; as result = count + 1 after VramCache_Load, 28 of 192
            * instructions differ in tla-en. */
           selected = count + 1;
           Shop_FillSelector(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);
           result = selected;
-          UiText_DrawNumberInWindowFar(result, 2, window, 72, 0);
-          UiText_DrawNumberInWindowFar(price * result, 6, window, 88, 0);
-          UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, 136, 0);
+          UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_COUNT_X, 0);
+          UiText_DrawNumberInWindowFar(price * result, 6, window,
+                                       QUANTITY_PRICE_X, 0);
+          UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window,
+                                          QUANTITY_COINS_X, 0);
         }
         WaitFrames(1);
       }

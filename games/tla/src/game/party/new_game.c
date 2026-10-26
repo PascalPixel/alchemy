@@ -46,6 +46,10 @@ void Func_080addf0(void) {
   START_DMA(&zero, &gPartyState, 0x850000b8);
   zero = 0;
   START_DMA(&zero, gData_02001000, 0x850007c8);
+  // The Japanese release waits through a copy of the channel register the
+  // transfer above left in r3 where alchemy-gcc rebuilds the address (one
+  // instruction); no form tried reproduces it, so that edition keeps this
+  // function on its scaffold.
   WaitDma(DMA3);
   zero = 0;
   START_DMA(&zero, gGameFlagBytes, 0x85000080);

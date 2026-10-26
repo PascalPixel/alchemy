@@ -88,25 +88,13 @@ void Func_080237e8(u8 *object) {
 void Func_0802386c(void);
 void ObjectSystem_UpdateCameraFixed(void);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian builds use different names for these two far calls,
-// as in shop.c.
-void Func_080c8368(s32, s32);
-void BattleEffect_ApplyColorToSourceBufferFar(s32);
-#endif
-
 void Graphics_EnableObjLayerAndCallbacks(void) {
   u16 dispcnt;
 
   Scheduler_SuspendTasks(Func_0802386c);
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  Func_080c8368(0x10000, 1);
-  BattleEffect_ApplyColorToSourceBufferFar(1);
-#else
   BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
   BattleEffect_StartBufferInterpolationFar(1);
-#endif
   WaitFrames(1);
   dispcnt = REG_DISPCNT;
   /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain

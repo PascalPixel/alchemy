@@ -6,7 +6,6 @@
 #include "fx_scene.h"
 #include "party_state.h"
 #include "object_runtime.h"
-#include "edition.h"
 
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
 // The Broken Seal has 1-16; ⚓️ adds 17-30.
@@ -96,14 +95,6 @@ void Field_DispatchTypeHandler(s32 kind) {
     FieldEvent_RunTypeHandler();
 }
 
-// The Spanish and Italian scaffolds carry three of the handlers under other
-// names (Func_080dc978 as Func_080cdec8, the far-call slot that reaches it
-// there; their Func_080dd054 and Func_080decb8 label other functions), and
-// the French one has BattleEffect_CallEffect23 and Func_080e4a34 under the names of
-// BattleEffect_CallEffect24 and Func_080e9af4. Until those names are sorted out, the
-// three editions keep both dispatchers on their scaffold (S4).
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
-    (LANGUAGE != LANGUAGE_ITALIAN)
 /// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
 void BattleEffect_Run(void) {
@@ -297,4 +288,3 @@ void BattleEffect_DispatchRequestKind(void) {
     BattleEffect_MarkChildAndRunFallbackTransition(targetId);
   }
 }
-#endif

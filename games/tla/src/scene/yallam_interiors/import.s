@@ -117,63 +117,23 @@ ObjectMotion_SetActionVariant:
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
 	overlay_veneer Func_080c83e0
-	.endif
-	.endif
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global Func_02000a50
 	.thumb_func
 Func_02000a50:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02000a58
 	.thumb_func
 Func_02000a58:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02000a60
 	.thumb_func
 Func_02000a60:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87a0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87a0
-	.else
 	overlay_veneer Func_080c87b0
-	.endif
-	.endif
 	.global Func_02000a68
 	.thumb_func
 Func_02000a68:

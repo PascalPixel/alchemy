@@ -3,6 +3,7 @@
 #include "map.h"
 
 s32 GetWorldMapCollisionFar(s32 *position);
+
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {

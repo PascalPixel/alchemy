@@ -4,7 +4,7 @@
 // easing each figure's scale a quarter of the way to 1.0 per frame (a
 // negative scale is used negated and kept). Built as Func_080f89a4
 // (recon/tla/en/main/080f89a4.c), ☀️'s Menu_UpdateEntryObjectTransforms.
-// Differ 14 of 108, instruction order only: the native issues the menu load
+// Differ 12 of 108, instruction order only: the native issues the menu load
 // before the 0x50a offset, and builds the walking offsets 0x230 and 0x220
 // and the spill of the second (str r1, [sp, #4], reloaded at once) as one
 // chain ahead of the other setup, the load and store pattern AGENTS.md

@@ -32,8 +32,6 @@ struct FieldObject {
 
 void Event_WaitTransitionFramesFar(void);
 void Event_StartScreenTransitionFar(void);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#endif
 
 void Inn_PlaySleep(s32 roomPrice) {
   s16 objects[8];
@@ -58,29 +56,13 @@ void Inn_PlaySleep(s32 roomPrice) {
   state->effect = 0x209;
   state->delay = 60;
   WaitFrames(20);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  BattleEffect_SetPrimaryBufferValueFar();
-#else
   Event_FinishScreenTransitionFar();
-#endif
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  Event_DelayEffectFramesFar();
-#else
   Event_WaitTransitionFramesFar();
-#endif
   Audio_PlayCue(86);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  BattlePalette_StopBlendAndReleaseBufferFar();
-#else
   Event_StartScreenTransitionFar();
-#endif
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  Event_DelayEffectFramesFar();
-#else
   Event_WaitTransitionFramesFar();
-#endif
   WaitFrames(30);
   ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
 }

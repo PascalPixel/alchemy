@@ -1,4 +1,4 @@
-// Draft, differ 9 of 61: overlay 664's copy of overlay 671's Func_02005428
+// Draft, differ 7 of 61: overlay 664's copy of overlay 671's Func_02005428
 // (the same listing), whose draft holds its notes.
 #include "types.h"
 #include "ram_buffer.h"

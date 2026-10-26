@@ -2365,49 +2365,6 @@ Func_020022f8:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200a3c8,"ax",%progbits
-	.global Func_020023c8
-	.thumb_func
-Func_020023c8:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	movs r0, #9
-	bl Object_GetById
-	adds r1, r0, #0
-	adds r2, r1, #0
-	movs r3, #0
-	ldr r5, .L_0200a40c
-	adds r2, #100
-	ldr r6, .L_0200a408
-	mov r8, r3
-	movs r3, #1
-	strh r3, [r2]
-	adds r3, r1, #0
-	adds r3, #99
-	strb r6, [r3]
-	movs r0, #10
-	str r5, [r1, #108]
-	bl Object_GetById
-	adds r2, r0, #0
-	adds r3, r2, #0
-	adds r3, #100
-	mov r1, r8
-	strh r1, [r3]
-	subs r3, #1
-	strb r6, [r3]
-	str r5, [r2, #108]
-	b .L_0200a410
-	.2byte 0x0000
-.L_0200a408:
-	.4byte 0x00000000
-.L_0200a40c:
-	.4byte Func_0200014c
-.L_0200a410:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.balign 16
 	.global gData_02002fc0

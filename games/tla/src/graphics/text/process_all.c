@@ -29,10 +29,6 @@ s32 UiWork_IsComplete(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
 
-// Spanish and Italian reach the owner and its screen position through far-call
-// slots two entries earlier, unnamed in their scaffolds: their copies stay on
-// the scaffold (S4)
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowTiles;
   s32 release;
@@ -106,7 +102,6 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
   WaitFrames(3);
 }
-#endif
 
 void UiWork_ProcessAll(void) {
   UiWork_ProcessDirectWork();

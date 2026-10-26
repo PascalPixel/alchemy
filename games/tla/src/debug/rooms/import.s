@@ -9,12 +9,4 @@ GameFlag_ClearBit:
 	.global Func_020000bc
 	.thumb_func
 Func_020000bc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
 	overlay_veneer Func_080c8580
-	.endif
-	.endif

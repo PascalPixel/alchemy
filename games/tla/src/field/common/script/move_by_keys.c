@@ -21,8 +21,7 @@ s32 Func_080c8710(struct ObjectRuntime *object);
 s32 Func_080c8700(struct ObjectRuntime *object);
 s32 Func_0802da24(s32 *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
-                                            s32 argument);
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 /* FAKEMATCH: the held keys are read through a volatile pointer, again for each
@@ -87,13 +86,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    // Spanish and Italian builds name this far call differently, as in
-    // cell_collision.c.
-    sourceCell = &map->layers[object->terrainId].cells[Func_080c8700(object)];
-#else
     sourceCell = &map->layers[object->terrainId].cells[Func_080c8710(object)];
-#endif
     destinationCell =
         &map->layers[object->terrainId]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];

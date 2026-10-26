@@ -9,8 +9,7 @@ s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in UiRenderWork.entries. The window's position is read signed. Not in
-/// tla-ja, which keeps an older layout.
+/// in UiRenderWork.entries. The window's position is read signed.
 // As ☀️'s function of the same name, which passes the VRAM base where this
 // one passes offsetX & 7.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
@@ -67,21 +66,28 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
     text = work->entries;
     work->entries[work->count] = 0;
     {
-      /* FAKEMATCH: the mask pinned to the r2 it takes, so 0x1ff loads from the
-       * pool before the count is reread; as a plain temporary, 2 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
+       * the pool before the count is reread; as a plain constant, 2 of 97
+       * instructions differ in tla-en. */
       register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
 
-      /* FAKEMATCH: the barrier of the pin above: it holds r3 until the mask is
-       * loaded. */
-      asm("" : "+l"(mask) : : "r3");
-      work->count = (work->count + 1) & mask;
+      /* FAKEMATCH(one-pass): the count update in a one-pass block, which keeps
+       * the reread after the mask's load without the pool estimate an empty
+       * asm adds; as a plain statement, 2 of 97 instructions differ in tla-en.
+       */
+      do {
+        work->count = (work->count + 1) & mask;
+      } while (0);
     }
   }
   c = *text++;
   if (c != 0)
     do {
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+      if (c <= 30) {
+#else
       if (c <= 30 || c == 176) {
+#endif
         switch (c) {
         case 3:
           x = start;
@@ -98,13 +104,15 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
         case 11:
         case 12:
         case 17:
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         case 29:
+#endif
           text++;
           break;
         }
       } else {
         Func_0803c274(window, c, x, y, 0);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else

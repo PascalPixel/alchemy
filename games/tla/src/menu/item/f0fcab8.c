@@ -42,6 +42,10 @@ void WaitFrames(s32 frames);
 /// looks up the chosen item's action (unused) and records owner << 10 | item in
 /// the event work at 0x166. Returns the loop's result.
 s32 Func_080fcab8(void) {
+  // German, Spanish, French and Italian also keep the tiles at 0x06004000
+  // aside, filled with a pattern, while the picker is open, and stay on their
+  // scaffolds: written so, the tile address is kept in a register the native
+  // reloads from the pool at each call.
   struct InventoryMenuState *screen;
   s32 item;
   s32 target;

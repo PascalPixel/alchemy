@@ -1,6 +1,14 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// What Select picks: another value in the Japanese release.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DEBUG_VALUE_SELECT 411
+#else
+#define DEBUG_VALUE_SELECT 544
+#endif
 
 struct DebugBattleWork {
   u8 unk000[0x854];
@@ -11,7 +19,8 @@ void WaitFrames(s32 frames);
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
 /// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
-/// held picks 544 and R held 399; otherwise value comes back unchanged.
+/// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
+/// unchanged.
 s32 Func_081269f8(s32 value) {
   if (gInput.held & 8) {
     while (1) {
@@ -38,7 +47,7 @@ s32 Func_081269f8(s32 value) {
     }
   }
   if (gInput.held & 4)
-    value = 544;
+    value = DEBUG_VALUE_SELECT;
   /* FAKEMATCH(volatile): the held buttons read again for the R test; as
    * gInput.held, 11 of 114 instructions differ in tla-en. */
   if (*(volatile u32 *)&gInput.held & 0x100)

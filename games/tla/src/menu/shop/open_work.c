@@ -30,13 +30,7 @@ extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
 void ShopCursor_Advance(void *work);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach it through the slot they name
-// BattleEffect_InitializeSharedSceneFar.
-void BattleEffect_InitializeSharedSceneFar(void);
-#else
 void EventRuntime_ResolveAllPendingActionsFar(void);
-#endif
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
@@ -56,11 +50,7 @@ void Func_08108148(void) {
   s32 slot;
 
   work = Runtime_AllocateHeapBlock(220, 0xcec);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  BattleEffect_InitializeSharedSceneFar();
-#else
   EventRuntime_ResolveAllPendingActionsFar();
-#endif
   Dma_Fill32(0, work, 0xcec);
   work->mode = 12;
   work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);

@@ -3,6 +3,8 @@
 #include "map.h"
 #include "ram_buffer.h"
 
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+
 struct MoteParticle {
   u8 unk00[4];
   u16 y : 8;
@@ -33,7 +35,6 @@ struct MoteWork {
 
 u32 Random16(void);
 s32 GameFlag_Test(s32 flag);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_080140d8(void *entry, s32 priority);
 
 /// The Broken Seal's FieldMotes_Update with 64 motes in the heap slot 0x74

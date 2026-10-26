@@ -141,23 +141,7 @@ Animation_ApplyChildValues:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020320
-	.else
 	overlay_veneer Func_08020350
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
@@ -201,123 +185,43 @@ Func_02002054:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_02002074
 	.thumb_func
 Func_02002074:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Object_SetWideSpriteFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Object_SetWideSpriteFar
-	.else
 	overlay_veneer Func_080c8430
-	.endif
-	.endif
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Object_ReturnHomeFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Object_ReturnHomeFar
-	.else
 	overlay_veneer Func_080c8438
-	.endif
-	.endif
 	.global Func_02002084
 	.thumb_func
 Func_02002084:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_0200208c
 	.thumb_func
 Func_0200208c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectTable_SnapshotFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectTable_SnapshotFar
-	.else
 	overlay_veneer Func_080c8638
-	.endif
-	.endif
 	.global Func_02002094
 	.thumb_func
 Func_02002094:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86e0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86e0
-	.else
 	overlay_veneer Func_080c86f0
-	.endif
-	.endif
 	.global Func_0200209c
 	.thumb_func
 Func_0200209c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_020020a4
 	.thumb_func
 Func_020020a4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8958
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8958
-	.else
 	overlay_veneer SceneEvent_FindActiveRecordFar
-	.endif
-	.endif
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:

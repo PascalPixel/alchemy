@@ -90,8 +90,6 @@ s32 Menu_SelectTopEntry(s32 selection) {
   return ret;
 }
 
-// The Japanese function differs and remains scaffolded (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();
@@ -99,9 +97,12 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   Menu_AppendResourceEntry(0xF);
   Menu_AppendResourceEntry(2);
   Menu_AppendResourceEntry(7);
+  // Only Japanese centres the entries before selecting.
+#if LANGUAGE == LANGUAGE_JAPANESE
+  Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+#endif
   arg1 = Menu_SelectResource(arg0, arg1 - 1);
   Menu_EndResourceSelection();
   UiWork_CloseAndRelease();
   return arg1;
 }
-#endif

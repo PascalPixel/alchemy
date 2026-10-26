@@ -129,15 +129,7 @@ Func_02000724:
 	.global Func_0200072c
 	.thumb_func
 Func_0200072c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:

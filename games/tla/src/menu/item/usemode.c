@@ -81,11 +81,6 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
 
 struct ItemDefinition *Item_Get(s32);
 s32 BattleEffect_HasTriggerFar(s32);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian builds use a different name for this far call,
-// as in shop.c.
-s32 Func_080c8500(s32);
-#endif
 void *BattleAction_Get(s32);
 s32 Item_CanOwnerEquip(s32, s32);
 
@@ -97,11 +92,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   masked &= 0x1ff;
   itemData = Item_Get(masked);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  if (Func_080c8500(masked) != 0) {
-#else
   if (BattleEffect_HasTriggerFar(masked) != 0) {
-#endif
     return 0;
   }
 

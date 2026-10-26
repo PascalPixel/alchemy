@@ -1,4 +1,4 @@
-// Near miss, differ 14 of 110 (23 when the objects were stored through a
+// Near miss, differ 12 of 110 (23 when the objects were stored through a
 // pointer stepped beside the index), instruction order only: the native
 // spills first (str r0, [sp, #4]) before it builds the work address, builds
 // the objects pointer's spill after the loop's first index copies, and loads

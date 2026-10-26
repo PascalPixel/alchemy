@@ -3,6 +3,17 @@
 #include "fixed_math.h"
 #include "effect_step.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The title's letters and the left edge of the first: the Spanish title has
+// nine letters and starts further left.
+#if (LANGUAGE == LANGUAGE_SPANISH)
+#define REEL_TITLE_LETTERS 9
+#define REEL_TITLE_LEFT 8
+#else
+#define REEL_TITLE_LETTERS 8
+#define REEL_TITLE_LEFT 24
+#endif
 
 struct ReelWork {
   u8 unk000[0x8c];
@@ -16,8 +27,8 @@ struct ReelWork {
 };
 
 struct ReelEffectWork {
-  struct EffectStep particles[8];
-  u8 unk00e0[0x7780 - 0xe0];
+  struct EffectStep particles[REEL_TITLE_LETTERS];
+  u8 unkAfterParticles[0x7780 - REEL_TITLE_LETTERS * sizeof(struct EffectStep)];
   s32 transferMode;
   s32 transferValue;
 };
@@ -54,8 +65,8 @@ void Func_081b336c(void) {
   letter = work->particles;
   y = -0x200000;
   width = gReelGame_TitleLetterWidths;
-  for (i = 0; i != 8; i++) {
-    letter[i].x = (left + 24) << 16;
+  for (i = 0; i != REEL_TITLE_LETTERS; i++) {
+    letter[i].x = (left + REEL_TITLE_LEFT) << 16;
     step = *width;
     width++;
     left += step;

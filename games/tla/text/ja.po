@@ -565,7 +565,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "おそい"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "しない"
 
@@ -573,7 +573,7 @@ msgctxt "message"
 msgid "00130"
 msgstr "3ぷんご"
 
-msgctxt "MsgFieldOff"
+msgctxt "MsgCharacterName"
 msgid "00131"
 msgstr "ロビン"
 
@@ -16800,7 +16800,7 @@ msgctxt "MsgStatLabel"
 msgid "04134"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04135"
 msgstr "ぼうぎょ"
 
@@ -16888,7 +16888,7 @@ msgctxt "message"
 msgid "04156"
 msgstr "LR:ならびかえ"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "04157"
 msgstr "けいけんち"
 
@@ -17060,7 +17060,7 @@ msgctxt "message"
 msgid "04199"
 msgstr "そうびこうか"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04200"
 msgstr "こうかなし"
 
@@ -17220,7 +17220,7 @@ msgctxt "message"
 msgid "04239"
 msgstr "なんどでもつかえる"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04240"
 msgstr "つかうとなくなる"
 
@@ -17228,7 +17228,7 @@ msgctxt "message"
 msgid "04241"
 msgstr "つかうとこわれる"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04242"
 msgstr "エナジーしゅうとく"
 
@@ -17244,11 +17244,11 @@ msgctxt "message"
 msgid "04245"
 msgstr "はずせない"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04246"
 msgstr "めずらしいアイテムです"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04247"
 msgstr "たいせつなアイテムです"
 
@@ -17256,19 +17256,19 @@ msgctxt "message"
 msgid "04248"
 msgstr "30こまでもてる"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04249"
 msgstr "しょうさいはふめいです"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04250"
 msgstr "そうびこうか"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04251"
 msgstr "しようこうか"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04252"
 msgstr "しょじすう"
 
@@ -17276,7 +17276,7 @@ msgctxt "message"
 msgid "04253"
 msgstr "こ もっている"
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04254"
 msgstr "つかうとこわれる"
 
@@ -17284,7 +17284,7 @@ msgctxt "message"
 msgid "04255"
 msgstr "ばあいがある"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04256"
 msgstr "こわれていて"
 
@@ -17292,11 +17292,11 @@ msgctxt "message"
 msgid "04257"
 msgstr "つかえません"
 
-msgctxt "message"
+msgctxt "MsgTimesSuffix"
 msgid "04258"
 msgstr "ばい"
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04259"
 msgstr "のろわれている"
 
@@ -18184,7 +18184,7 @@ msgctxt "message"
 msgid "04470"
 msgstr "ひきつぐデータがへんかします"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04471"
 msgstr "レベル"
 
@@ -18896,11 +18896,11 @@ msgctxt "MsgPiece"
 msgid "04648"
 msgstr "コ"
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "04649"
 msgstr "しょじコイン"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "04650"
 msgstr "ねだん"
 
@@ -18928,11 +18928,11 @@ msgctxt "MsgNoItems"
 msgid "04656"
 msgstr "なにももってません"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "04657"
 msgstr "かいとれません"
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "04658"
 msgstr "こわれてません"
 
@@ -18968,7 +18968,7 @@ msgctxt "message"
 msgid "04666"
 msgstr "うんのよさ"
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "04667"
 msgstr "----------"
 
@@ -19970,41 +19970,41 @@ msgstr ""
 "なんでい ひやかしかよ・・・\n"
 "おととい きやがれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNoThatSNoGood"
 msgid "04850"
 msgstr ""
 "ダメだ そんなものじゃ\n"
 "たましいは こめられねえ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItSOkIfIWork"
 msgid "04851"
 msgstr ""
 "{argument_item_name:134}\n"
 "ざいりょうに していいんだな?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgYouWantItToShine"
 msgid "04852"
 msgstr ""
 "{argument_item_name:134}\n"
 "ピカピカに してほしいんだな?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHmThatSNotRight"
 msgid "04853"
 msgstr "む・・・ そいつじゃねえのかい{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWellHmIWonder"
 msgid "04854"
 msgstr ""
 "む・・・ それじゃ\n"
 "どれだっていうんだ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWellAllRightIM"
 msgid "04855"
 msgstr ""
 "まあ見てろ お前がおどろくぐらい\n"
 "すごいのを つくってやるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgALittleElbowGrease"
 msgid "04856"
 msgstr ""
 "まあ見てろ お前がおどろくほど\n"
@@ -20362,7 +20362,7 @@ msgctxt "message"
 msgid "04915"
 msgstr "あら いらないのね{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTestName"
 msgid "04916"
 msgstr "ピポイ{end_wait}"
 

@@ -25,43 +25,11 @@ Func_02000c9c:
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_SetField22Far
-	.else
 	overlay_veneer Func_080201a0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02000cac
 	.thumb_func
 Func_02000cac:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -181,99 +149,35 @@ Func_02000d94:
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
-	.else
 	overlay_veneer Func_080c83d8
-	.endif
-	.endif
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global Engine_EventResolvePendingActions
 	.thumb_func
 Engine_EventResolvePendingActions:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleParty_ApplyHealthDeltaFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleParty_ApplyHealthDeltaFar
-	.else
 	overlay_veneer Func_080c8558
-	.endif
-	.endif
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86e8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86e8
-	.else
 	overlay_veneer Func_080c86f8
-	.endif
-	.endif
 	.global Func_02000dcc
 	.thumb_func
 Func_02000dcc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86f8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86f8
-	.else
 	overlay_veneer Func_080c8708
-	.endif
-	.endif
 	.global Func_02000dd4
 	.thumb_func
 Func_02000dd4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02000ddc
 	.thumb_func
 Func_02000ddc:

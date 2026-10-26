@@ -1,5 +1,20 @@
 #include "battle_type.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The Japanese page draws its help line, page icons, heading and names at
+// other columns.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define HELP_X 16
+#define PAGE_X 120
+#define HEADING_X 72
+#define NAME_X 32
+#else
+#define HELP_X 0
+#define PAGE_X 112
+#define HEADING_X 96
+#define NAME_X 16
+#endif
 
 struct MenuResult {
   s32 ownerState;
@@ -55,8 +70,8 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
   if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
     UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window, 0,
-                                    88);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window,
+                                    HELP_X, 88);
   }
 
   firstEntry = state->page * 5;
@@ -65,10 +80,10 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
     visibleCount = 5;
   }
 
-  Menu_SetPageIcons(5, firstEntry, window, 0x70, 0x22);
+  Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
   Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
   UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
-                                  0x60, 0);
+                                  HEADING_X, 0);
 
   row = 0;
   if (visibleCount > row) {
@@ -89,7 +104,7 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
       UiText_DrawCharacterAtOffsetFar(
           (0x3fff & *(const u16 *)(cursor + (s32)menu)) +
               (s32)MsgAbilityNothing,
-          window, 16, row * 16 + 8);
+          window, NAME_X, row * 16 + 8);
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
       UiWork_SetParamNibbleFar(15);

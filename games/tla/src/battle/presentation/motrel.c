@@ -14,16 +14,9 @@ struct Record0811e7dc {
   u8 flags;
 };
 
-// Far call to Func_080219cc. Table order varies: English and Japanese use
-// the 0x08020370 slot; other editions use the slot named Func_08020340.
-// Both jump to Func_080219cc.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
+// Far call to Func_080219cc.
 void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370
-#else
-void Func_08020340(void *record);
-#define Func_080219ccFar Func_08020340
-#endif
 s32 WaitFrames(s32 frames);
 void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 

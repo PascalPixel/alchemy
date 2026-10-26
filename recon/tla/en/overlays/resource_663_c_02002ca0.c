@@ -1,4 +1,4 @@
-// Draft, differ 125 of 1266 (was 129): Air's Rock's outer map setup: sets the
+// Draft, differ 98 of 1266 (was 125): Air's Rock's outer map setup: sets the
 // screen effect and Retreat (Ov663Room1's entrance 1) and the leader's priority
 // bit 5, then by room: in Ov663Room1 the cells the Whirlwind has cleared
 // (flags 0x850 to 0x857) and the beam's opening (0x858), with the leader
@@ -10,6 +10,10 @@
 // the beam (the map work's at 0x178) unless flag 0x87a says it has gone,
 // the doors flag 0x87b opens, and entrance 99 runs the beam scene
 // Func_02001f7c. Returns 0.
+// The DMA wait reads channel 0's control through struct DmaRegisters, as the
+// native addresses it from 0x040000b0; the beam's two halfwords are stored
+// from an s32 through an s16 pointer, so they are built with moves (as
+// halfword constants they come from the pool).
 // Left: register numbering: the native builds gPartyState's 0x214 offset and
 // the leader's moves in r0 and r1 where the draft uses r1 and r2, loads the
 // Retreat scene's id earlier and keeps the 1 for the cell calls' stack
@@ -23,6 +27,7 @@
 #include "party_state.h"
 #include "call.h"
 #include "system/io_reg.h"
+#include "system/dma.h"
 
 extern char SceneId_Ov663Room1, SceneId_Ov663Room2, SceneId_Ov663Room3;
 extern const u8 gData_02003d94[], gData_02003e4c[];
@@ -271,14 +276,20 @@ s32 Func_02002ca0(void) {
         *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
-        while (*(volatile s32 *)0x040000b8 < 0)
+        while ((s32)((volatile struct DmaRegisters *)0x040000b0)->control < 0)
           ;
         Scheduler_AddOrUpdateCallback(Func_020024b0, 0xc80);
         beam = BEAM;
         beam[6] = 0x4000;
         beam[7] = 0xffff8000;
-        ((u16 *)beam)[20] = 3;
-        ((u16 *)beam)[21] = 0x180;
+        {
+          s16 *scale = (s16 *)beam;
+          s32 value = 3;
+
+          scale[20] = value;
+          value = 0x180;
+          scale[21] = value;
+        }
       } else {
         REG_BLDALPHA = 0x1000;
         REG_BLDCNT = 0x3f42;

@@ -1,7 +1,8 @@
-// Draft, differ 92 of 390 (ja 90 of 386): Yampi Desert Cave's map setup
-// for its three rooms: pillars, palette cycle, Retreat destination, BG
-// priorities and the chest follower. Left: register choice and the native
-// reloading gPartyState after room 1.
+// Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
+// map setup for its three rooms: pillars, palette cycle, Retreat destination,
+// BG priorities and the chest follower. Left: register choice and the native
+// reloading gPartyState after room 1. Func_020018c8(10) goes through Call1
+// (86 to 85).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "object_runtime.h"
 #include "event_work.h"
@@ -39,7 +40,7 @@ s32 Func_02001418(void) {
                   gData_02001a54);
     Func_020018c8(8);
     Func_020018c8(9);
-    Func_020018c8(10);
+    Call1((void (*)())Func_020018c8, 10);
     Func_02000038(8);
     Func_02000038(9);
     Func_02000038(10);

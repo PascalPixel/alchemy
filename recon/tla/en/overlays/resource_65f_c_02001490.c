@@ -1,6 +1,15 @@
-// Draft, differ 222 of 1485: Garoh's long scene with actors 4 to 9 after
-// MsgGaroh01, with two bird-path loops on Math_Sine. Left: the loops'
-// arithmetic and register choice, and some call orders.
+// Draft, differ 142 of 1485 (was 222): Garoh's long scene with actors 4 to 9
+// after MsgGaroh01, with two bird-path loops on Math_Sine. The paths step
+// through Garoh_PathStep, so the native's multiply-then-divide survives (a
+// plain expression folds it to one multiply); each Math_Sine result is taken
+// into a variable first, so the step is computed before the amplitude; the
+// second loop's targets are variables, as the native keeps 0x800000 and
+// 0xb80000 in r9 and sl. The message decrement goes through s16, which gives
+// the native's subs #1 (u16 builds 0xffff). Left: the position array's address
+// (and the second loop's target differences), which this compiler's PRE hoists
+// out of each loop and the native forms inside; register choice that follows
+// from it; and argument order at about 20 calls, where sched2 issues the last
+// argument first (a direct call and a CallN wrapper make no difference there).
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
 #include "party_state.h"
 #include "event_work.h"
@@ -48,11 +57,16 @@ void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 mode);
 
+static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
+  return from + ((to - from) * i) / 8;
+}
+
 void Func_02001490(void) {
   struct ObjectRuntime *bird;
   s32 i;
   s32 position[3];
   s32 x, z;
+  s32 toX, toZ;
 
   Call1((void (*)())GameFlag_SetBit, 0x91c);
   Func_020051ac();
@@ -105,9 +119,12 @@ void Func_02001490(void) {
 loop1:
   {
     s32 r;
+    s32 wave;
 
-    position[0] = (i * -0x100000) / 8 + 0x680000 - Math_Sine(i << 13) * 12;
-    position[2] = (i * 0x580000) / 8 + 0x200000 - Math_Sine(i << 13) * 7;
+    wave = Math_Sine(i << 13);
+    position[0] = Garoh_PathStep(0x680000, 0x580000, i) - wave * 12;
+    wave = Math_Sine(i << 13);
+    position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, r * 0x1999,
@@ -122,7 +139,7 @@ loop1:
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
   ObjectMotion_EnableActionAndSetCallback(8, gData_0200545c);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId--;
+  (*(s16 *)&((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)--;
   Call3((void (*)())Func_0200525c, 8, 0, 0);
   Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 8);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
@@ -132,13 +149,17 @@ loop1:
   Call2((void (*)())Object_SetModeById, 8, 2);
   x = bird->x;
   z = bird->z;
+  toX = 0x800000;
+  toZ = 0xb80000;
   i = 0;
 loop2:
   {
     s32 r;
+    s32 wave;
 
-    position[0] = x + ((0x800000 - x) * i) / 8 - Math_Sine(i << 13) * 4;
-    position[2] = z + ((0xb80000 - z) * i) / 8;
+    wave = Math_Sine(i << 13);
+    position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
+    position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, r * 0x1999,

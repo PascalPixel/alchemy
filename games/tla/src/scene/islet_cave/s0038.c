@@ -1,6 +1,6 @@
-// Draft, differ 48 of 80: overlay 675's copy of overlay 662's Func_020007dc
-// (the same listing), whose draft holds its notes.
-#include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
+#include "types.h"
+#include "party_state.h"
+#include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -12,6 +12,9 @@ extern u16 *gData_02001a18;
 void Func_020012ec(s32 a, s32 b);
 void Func_02000328(void);
 
+/// Records the four palette lists, writes each listed palette entry from its
+/// red, green and blue, then copies two palettes from block32 and starts the
+/// blend.
 void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->block32;
 
@@ -23,12 +26,19 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   next:
     {
       int red = *colours++;
-      int green = *colours++;
       int index = *slots++;
+      int green = *colours++;
       int blue = *colours++;
-      int value = (blue << 10) | (green << 5) | red;
+      int value;
 
-      ((u16 *)0x05000000)[index] = value;
+      /* FAKEMATCH(one-pass): the colour's build and store in a once-only
+       * block, so both lists are stepped right after their loads and the
+       * next entry's marker loads before 0xffff is built; as plain
+       * statements, 22 of 80 instructions differ in tla-en. */
+      do {
+        value = (blue << 10) | (green << 5) | red;
+        ((u16 *)0x05000000)[index] = value;
+      } while (0);
     }
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;

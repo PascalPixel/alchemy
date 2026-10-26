@@ -3,7 +3,7 @@
 	.global BattleAnim_TileAnimationMask
 BattleAnim_TileAnimationMask:
 	.incbin "games/tbs/src/graphics/battle_anims/tile_mask_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/tile_mask.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/tile_mask.bitmaps.lz"
 	.ifdef TBS_EDITION_EN
 	.byte 0x32, 0xb9, 0x81	@ PACKER: left in the buffer by LuckyDice_Sprites+0x845
 	.else
@@ -28,7 +28,7 @@ BattleAnim_TileAnimationMask:
 	.global BattleAnim_CyanSparkSheet
 BattleAnim_CyanSparkSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/cyan_spark_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/cyan_spark.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/cyan_spark.bitmaps.lz"
 	.global BattleAnim_VioletPaletteA
 BattleAnim_VioletPaletteA:
 	.incbin "games/tbs/src/graphics/battle_anims/violet_palette_a.gbapal"
@@ -129,7 +129,7 @@ BattleAnim_VioletLightningSheetA:
 	.global BattleAnim_YellowSparkSheet
 BattleAnim_YellowSparkSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/yellow_spark_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/yellow_spark.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/yellow_spark.bitmaps.lz"
 	.byte 0x17, 0x6e, 0xa0	@ PACKER: left in the buffer by BattleAnim_VioletLightningSheetA+0x2fd
 	.global BattleAnim_ProjectileVolleyImage
 BattleAnim_ProjectileVolleyImage:
@@ -142,7 +142,7 @@ BattleAnim_ShurikenSheet:
 	.global BattleAnim_FlareSheet
 BattleAnim_FlareSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/flare_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/flare.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/flare.bitmaps.lz"
 	.ifdef TBS_EDITION_ES
 	.byte 0x10, 0xb6	@ PACKER: left in the buffer by LuckyDice_Sprites+0x1d86
 	.else
@@ -175,7 +175,7 @@ BattleAnim_VioletPaletteB:
 	.global BattleAnim_FireSwirlSheet
 BattleAnim_FireSwirlSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/fire_swirl_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/fire_swirl.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/fire_swirl.bitmaps.lz"
 	.byte 0x12, 0x21	@ PACKER: left in the buffer by BattleAnim_FlareSheet+0x442
 	.global BattleAnim_VioletLightningSheetB
 BattleAnim_VioletLightningSheetB:
@@ -217,7 +217,7 @@ BattleAnim_MemberBurstImage:
 	.global BattleAnim_SlashSheet
 BattleAnim_SlashSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/slash_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/slash.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/slash.bitmaps.lz"
 	.byte 0xf1, 0x59	@ PACKER: left in the buffer by BattleAnim_FireBurstSheet+0xd12
 	.global BattleAnim_WaveSheet
 BattleAnim_WaveSheet:
@@ -235,11 +235,11 @@ BattleAnim_PinkStarSheet:
 	.global BattleAnim_WaterSpraySheet
 BattleAnim_WaterSpraySheet:
 	.incbin "games/tbs/src/graphics/battle_anims/water_spray_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/water_spray.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/water_spray.bitmaps.lz"
 	.global BattleAnim_BlueFlameSheet
 BattleAnim_BlueFlameSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/blue_flame_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/blue_flame.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/blue_flame.bitmaps.lz"
 	.byte 0xb7, 0x7c	@ PACKER: left in the buffer by BattleAnim_WaterSpraySheet+0xaee
 	.global BattleAnim_ExplosionSheet
 BattleAnim_ExplosionSheet:
@@ -265,7 +265,7 @@ BattleAnim_ParticleSpritesB:
 	.byte 0x94	@ PACKER: left in the buffer by BattleAnim_ParticleSpritesA+0x1bb
 	.global BattleAnim_ParticleSpritesC
 BattleAnim_ParticleSpritesC:
-	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_c.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_c.bitmaps.lz"
 	.global BattleAnim_ParticleSpritesD
 BattleAnim_ParticleSpritesD:
 	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_d.bitmaps.lz"
@@ -292,7 +292,7 @@ BattleAnim_FlameColumnSheet:
 	.global BattleAnim_EarthWallSheet
 BattleAnim_EarthWallSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/earth_wall_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/earth_wall.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/earth_wall.bitmaps.lz"
 	.global BattleAnim_OrangePaletteA
 BattleAnim_OrangePaletteA:
 	.incbin "games/tbs/src/graphics/battle_anims/orange_palette_a.gbapal"
@@ -305,7 +305,7 @@ BattleAnim_FlashBurstSheet:
 	.global BattleAnim_ThornSheet
 BattleAnim_ThornSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/thorn_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/thorn.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/thorn.bitmaps.lz"
 	.byte 0x78	@ PACKER: left in the buffer by BattleAnim_FlashBurstSheet+0xd9b
 	.global BattleAnim_CometSheetA
 BattleAnim_CometSheetA:
@@ -324,21 +324,21 @@ BattleAnim_CometSheetC:
 	.global BattleAnim_WhirlwindSheet
 BattleAnim_WhirlwindSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/whirlwind_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/whirlwind.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/whirlwind.bitmaps.lz"
 	.global BattleAnim_GreenPillarSheet
 BattleAnim_GreenPillarSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/green_pillar_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/green_pillar.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/green_pillar.bitmaps.lz"
 	.byte 0x21, 0xf0, 0x28	@ PACKER: left in the buffer by BattleAnim_WhirlwindSheet+0x75d
 	.global BattleAnim_VineSheet
 BattleAnim_VineSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/vine_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/vine.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/vine.bitmaps.lz"
 	.byte 0xbe	@ PACKER: left in the buffer by BattleAnim_WhirlwindSheet+0xdcb
 	.global BattleAnim_FirePillarSheetA
 BattleAnim_FirePillarSheetA:
 	.incbin "games/tbs/src/graphics/battle_anims/fire_pillar_a_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/fire_pillar_a.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/fire_pillar_a.bitmaps.lz"
 	.global BattleAnim_RedPaletteB
 BattleAnim_RedPaletteB:
 	.incbin "games/tbs/src/graphics/battle_anims/red_palette_b.gbapal"
@@ -350,7 +350,7 @@ BattleAnim_OrangePaletteB:
 	.global BattleAnim_VioletCometSheet
 BattleAnim_VioletCometSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/violet_comet_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/violet_comet.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/violet_comet.bitmaps.lz"
 	.byte 0x5e, 0xda, 0x33	@ PACKER: left in the buffer by BattleAnim_FirePillarSheetA+0x3e5
 	.global BattleAnim_FlameballSheet
 BattleAnim_FlameballSheet:
@@ -360,7 +360,7 @@ BattleAnim_FlameballSheet:
 	.global BattleAnim_BoulderSheet
 BattleAnim_BoulderSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/boulder_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/boulder.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/boulder.bitmaps.lz"
 	.global BattleAnim_RockWallSheet
 BattleAnim_RockWallSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/rock_wall.gbapal"
@@ -422,7 +422,7 @@ BattleAnim_FireStreakSheet:
 	.global BattleAnim_LavaOrbSheet
 BattleAnim_LavaOrbSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/lava_orb_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/lava_orb.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/lava_orb.bitmaps.lz"
 	.global BattleAnim_YellowRingSheet
 BattleAnim_YellowRingSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/yellow_ring.gbapal"
@@ -513,7 +513,7 @@ BattleAnim_HeartSheet:
 	.global BattleAnim_CounterRevealSheet
 BattleAnim_CounterRevealSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/counter_reveal_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/counter_reveal.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/counter_reveal.bitmaps.lz"
 	.global BattleAnim_RedCrescentSheetA
 BattleAnim_RedCrescentSheetA:
 	.incbin "games/tbs/src/graphics/battle_anims/red_crescent_a_00.gbapal"
@@ -522,7 +522,7 @@ BattleAnim_RedCrescentSheetA:
 	.global BattleAnim_BlueBeastSheet
 BattleAnim_BlueBeastSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/blue_beast_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/blue_beast.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/blue_beast.bitmaps.lz"
 	.global BattleAnim_RedCrescentSheetB
 BattleAnim_RedCrescentSheetB:
 	.incbin "games/tbs/src/graphics/battle_anims/red_crescent_b.gbapal"
@@ -555,7 +555,7 @@ BattleAnim_IceShardSheet:
 	.global BattleAnim_EmberStreakSheet
 BattleAnim_EmberStreakSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/ember_streak_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/ember_streak.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/ember_streak.bitmaps.lz"
 	.global BattleAnim_BlueArcSheetA
 BattleAnim_BlueArcSheetA:
 	.incbin "games/tbs/src/graphics/battle_anims/blue_arc_a.gbapal"
@@ -614,7 +614,7 @@ BattleAnim_GoldShellSheet:
 	.global BattleAnim_BlastSheet
 BattleAnim_BlastSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/blast_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/blast.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/blast.bitmaps.lz"
 	.global BattleAnim_FlameSheetB
 BattleAnim_FlameSheetB:
 	.incbin "games/tbs/src/graphics/battle_anims/flame_b.gbapal"
@@ -644,7 +644,7 @@ BattleAnim_TwelveModeImage:
 	.global BattleAnim_WindStreakSheet
 BattleAnim_WindStreakSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/wind_streak_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/wind_streak.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/wind_streak.bitmaps.lz"
 	.global BattleAnim_YellowPaletteB
 BattleAnim_YellowPaletteB:
 	.incbin "games/tbs/src/graphics/battle_anims/yellow_palette_b.gbapal"
@@ -652,7 +652,7 @@ BattleAnim_YellowPaletteB:
 	.global BattleAnim_BlueRingSheet
 BattleAnim_BlueRingSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/blue_ring_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/blue_ring.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/blue_ring.bitmaps.lz"
 	.global BattleAnim_RedPaletteC
 BattleAnim_RedPaletteC:
 	.incbin "games/tbs/src/graphics/battle_anims/red_palette_c.gbapal"

@@ -2703,12 +2703,6 @@ Func_0810b7b4:
 	.thumb_func
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010fe08, 0x00000048
-	.section .rom.0010fed0, "ax"
-	.global Func_0810bebc
-	.type Func_0810bebc, %function
-	.thumb_func
-Func_0810bebc:
-	.incbin "baserom.gba", 0x0010fed0, 0x000000dc
 	.section .rom.00118058, "ax"
 	.global Summon_IsEntrySecondaryFlaggedFar
 	.type Summon_IsEntrySecondaryFlaggedFar, %function

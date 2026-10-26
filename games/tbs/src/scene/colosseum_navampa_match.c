@@ -2273,7 +2273,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   }
   MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  Object_WaitForValue16(objectEvent);
+  Object_WaitForScriptEnd(objectEvent);
   return opponentFinishedFirst;
 }
 

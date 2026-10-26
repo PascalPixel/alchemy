@@ -45,7 +45,7 @@ FarCall_FieldTable:
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export Object_StartIdleFar, Object_StartIdle
-	export Object_WaitForValue16Far, Object_WaitForValue16
+	export Object_WaitForScriptEndFar, Object_WaitForScriptEnd
 	export Object_SetMoveTargetFar, Object_SetMoveTarget
 	export Object_WaitForMoveFar, Object_WaitForMove
 	overlay_veneer MapGrid_GetScreenRelativePosition

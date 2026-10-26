@@ -511,13 +511,13 @@ void Object_StartCamera(struct Object *object, s32 linkedObjectHandle) {
   }
 }
 
-/// Waits until the object's script reaches SC_END (0x10), at most 300 frames
+/// Waits until the object's script reaches SC_END, at most 300 frames
 /// (five seconds); it returns as soon as the script idles, and after the
 /// limit whether or not it has.
-/// Called through Object_WaitForValue16Far by the Psynergy object event
+/// Called through Object_WaitForScriptEndFar by the Psynergy object event
 /// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
-void Object_WaitForValue16(void *rawObject) {
+void Object_WaitForScriptEnd(void *rawObject) {
   struct Object *interpreter = rawObject;
   s32 waitedFrames;
 

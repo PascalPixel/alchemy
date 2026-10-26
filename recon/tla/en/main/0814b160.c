@@ -1,4 +1,4 @@
-// Near miss, differ 42 of 222 (effect kinds 41 and 354, the target markers).
+// Near miss, differ 18 of 222 (effect kinds 41 and 354, the target markers).
 
 // ☀️ twin: BattleEffect_RunCurse (games/tbs/src/effect/effect.c), shape
 // 0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
@@ -21,6 +21,8 @@
 // ☀️'s slot form (slot = &battleFxWork[1]; canvas = slot[0];
 // work = slot[-1]; draw[0] = slot[2])                               48
 // greedy declaration-order scan, every local through every place     42
+// the frame's blitter read before the transfer value is cleared, and
+// i stepped before marker in the marker loop (statement swaps)       18
 
 #include "types.h"
 #include "system.h"
@@ -83,8 +85,8 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER,
                 BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   work->transferMode = 1;
-  work->transferValue = 0;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
 
   // Each star starts at a random point in its turn.
@@ -120,8 +122,8 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
                     12);
           }
         }
-        marker++;
         i++;
+        marker++;
       } while (i != effect->count);
     }
     work->transferPending = 1;

@@ -1,17 +1,3 @@
-// Draft of Func_0812824c, The Broken Seal's BattleEnemy_RecordDefeat
-// (games/tbs/src/battle/battle/spoils.c), with the battle work from its heap
-// slot. This game also keeps the last two defeated enemies (their ids and
-// Func_08128228's first digit of their names, alternating slots, with a count
-// up to 2), sets the seen flag only for enemy ids below 0x200, and compares
-// item ids signed.
-// Near miss, differ 151 of 300 (2026-10-19, first draft). The shape matches
-// the native's; what is left is mostly register choice: the native keeps the
-// enemy-class search's index in r0 and the address of the unit's enemy id in
-// ip, and builds the definition's field addresses (coins, experience, item,
-// drop chance) in r3 and r1 where this draft takes r4 and r0, which shifts
-// the registers of everything after. Kept: the slot as the value of its
-// assignment to the s8 field (differ 165 to 153), Battle_RandomFar signed (2
-// fewer).
 #include "types.h"
 #include "battle_unit.h"
 #include "ram_buffer.h"
@@ -86,6 +72,11 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   return bonus + base;
 }
 
+/// Counts a fallen enemy and adds its spoils, The Broken Seal's
+/// BattleEnemy_RecordDefeat with the battle work from its heap slot. This game
+/// also keeps the last two defeated enemies (their ids and Func_08128228's first
+/// digit of their names, alternating slots, with a count up to 2) and sets the
+/// seen flag only for enemy ids below 0x200.
 s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   struct EnemyDefinition *enemy;
@@ -98,6 +89,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   s32 lowestSlot;
   s32 itemPriority;
   s32 slot;
+  s32 classIndex;
 
   unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
@@ -109,18 +101,23 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
   spoils->lastDigits[slot] = Func_08128228((u8 *)unit);
-  if (spoils->lastCount <= 1)
-    spoils->lastCount++;
+  /* FAKEMATCH(one-pass): the count test in a once-only block, which loads
+   * the count unsigned for its increment before the signed load for the
+   * test; as the plain if, 2 of 300 instructions differ in tla-en. */
+  do {
+    if (spoils->lastCount <= 1)
+      spoils->lastCount++;
+  } while (0);
   classSlot = 0;
-  itemOrClassIndex = 0;
+  classIndex = 0;
   if (battle->enemyClasses[0] != unit->enemyId) {
     do {
-      if (++itemOrClassIndex > 5)
+      if (++classIndex > 5)
         break;
-    } while (battle->enemyClasses[itemOrClassIndex] != unit->enemyId);
+    } while (battle->enemyClasses[classIndex] != unit->enemyId);
   }
-  if (itemOrClassIndex != 6)
-    classSlot = itemOrClassIndex;
+  if (classIndex != 6)
+    classSlot = classIndex;
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
@@ -152,25 +149,25 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
         break;
     } while (spoils->items[itemOrClassIndex] != enemy->item);
   }
-  if (itemOrClassIndex != 4)
-    return 0;
-  dropShift = enemy->itemChance;
-  if (djinnBonus != 0)
-    dropShift -= 2;
-  if (dropShift < 0)
-    dropShift = 0;
-  if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
-    lowestSlot = -1;
-    lowestItemPriority = 0x40000000;
-    for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
-      if (itemPriority < lowestItemPriority) {
-        lowestItemPriority = itemPriority;
-        lowestSlot = itemOrClassIndex;
+  if (itemOrClassIndex == 4) {
+    dropShift = enemy->itemChance;
+    if (djinnBonus != 0)
+      dropShift -= 2;
+    if (dropShift < 0)
+      dropShift = 0;
+    if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
+      lowestSlot = -1;
+      lowestItemPriority = 0x40000000;
+      for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
+        itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
+        if (itemPriority < lowestItemPriority) {
+          lowestItemPriority = itemPriority;
+          lowestSlot = itemOrClassIndex;
+        }
       }
+      if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
+        spoils->items[lowestSlot] = enemy->item;
     }
-    if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
-      spoils->items[lowestSlot] = enemy->item;
   }
   return 0;
 }

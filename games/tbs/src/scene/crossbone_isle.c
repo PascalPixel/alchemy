@@ -360,7 +360,7 @@ s32 Scene_Initialize(void) {
   s32 first;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
   sceneId = gSaveBlock.sceneId;

@@ -478,7 +478,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   MapGrid_PlayMetatileCopySequence(gBilibin_DoorSteps[warpIndex], column, row);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
@@ -679,7 +679,7 @@ static void EventScript_JillGivesHardNut(void) {
 /// Bilibin Treasury: its object events by story flags, its metatile behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gSaveBlock.sceneId == (s32)&SceneId_Bilibin) {
     Bilibin_RestoreVillageObjectEvents();
   } else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade) {
@@ -888,7 +888,7 @@ static void Bilibin_SetUpTreasury(void) {
   struct ObjectEvent *leader;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
   if (gSaveBlock.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
       gSaveBlock.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {

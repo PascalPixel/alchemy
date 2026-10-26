@@ -1,10 +1,10 @@
-	.macro scene_header name, code:req, mapsec:req, maptype:req, map_index:req
+	.macro scene_header name, code:req, mapsec:req, scenetype:req, map_index:req
 	.ifnb \name
 	.global SceneId_\name
 	.equiv SceneId_\name, (. - gSceneHeaders) / 8
 	.endif
 	.2byte \code
-	.byte \mapsec, \maptype
+	.byte \mapsec, \scenetype
 	.2byte \map_index, 0
 	.endm
 

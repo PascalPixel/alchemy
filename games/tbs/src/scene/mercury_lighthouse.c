@@ -527,7 +527,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     Sound_PlaySong(SE_RUMBLE);
     FieldScript_WaitFrames(60);
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1307,7 +1307,8 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           FieldScript_WaitFrames(40);
           GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
           PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
-          gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+          gFieldWork->transition =
+              SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           FieldScript_FinishScreenTransition();
           FieldScript_WaitTransitionFrames();
           Import_ScriptRequestWarp(
@@ -2125,7 +2126,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
     FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, -1);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     FieldScript_WaitFrames(60);
     Import_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE);
@@ -2324,9 +2325,9 @@ s32 MercuryLighthouse_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   // Set up common lighting before restoring each map's puzzle-specific state.
   gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gSaveBlock.retreatMap = (s32)&SceneId_MercuryLighthouseExterior;
+  gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   {
     s32 alpha = BLEND_ALPHA(16, 16);
@@ -2334,7 +2335,7 @@ s32 MercuryLighthouse_Initialize(void) {
   }
   MercuryLighthouse_RestoreLights(
       MB_MERCURY_LIGHTHOUSE_POOL_WATER,
-      (struct MercuryLighthouseLights *)gMapLocalState);
+      (struct MercuryLighthouseLights *)gSceneLocalState);
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -2619,7 +2620,7 @@ s32 MercuryLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->bounce = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->gravity = 0x4ccc;
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 3;

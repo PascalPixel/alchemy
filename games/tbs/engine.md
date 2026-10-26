@@ -90,7 +90,7 @@ out). At its end, the import table holds one entrance for each function of
 the main image the map calls, so the map need not know where those functions
 are, only the entrances, which stay put.
 
-The entry table is `struct MapEntries`, and `Overlay_Load` unpacks an overlay.
+The entry table is `struct SceneEntries`, and `Overlay_Load` unpacks an overlay.
 [System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 

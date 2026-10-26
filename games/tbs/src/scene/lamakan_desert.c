@@ -984,7 +984,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   gSaveBlock.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertCave) {
   } else {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
                                TASK_PRIORITY_MAP);

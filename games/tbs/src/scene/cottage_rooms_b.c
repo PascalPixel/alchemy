@@ -441,7 +441,7 @@ static void CottageRoomsB_CloseScreenAndExit(s32 warpNumber) {
     Weather_StopLightning();
   }
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(warpNumber);
@@ -546,7 +546,7 @@ s32 CottageRoomsB_Initialize(void) {
   if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
       Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
@@ -589,7 +589,7 @@ s32 CottageRoomsB_Initialize(void) {
             EventScript_ShowMythrilBag();
           } else {
             ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-                MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+                SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
               // Through its heap slot rather than gFieldBlendWork, the spelling
@@ -678,7 +678,7 @@ static void EventScript_DoraWakesIsaac(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
   (*eventSlot)->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
   Weather_StartLightning();
   (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
@@ -778,7 +778,7 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gCottageRoomsB_IsaacLeavesScript);
   FieldScript_WaitFrames(20);
-  (*eventSlot)->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -825,7 +825,7 @@ static void EventScript_HurryToThePlaza(void) {
   ObjectEvent_SetActionScript(LOCALID_FLAME_AND_SMOKE,
                               gCottageRoomsB_FlameShakesScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, 1);
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
   MapGrid_CopyCellsTo(77, 23, 82, 23, 5, 7);
@@ -924,7 +924,7 @@ ramp:
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
                                      gCottageRoomsB_RunToPlazaScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1203,7 +1203,7 @@ static void EventScript_ShowMythrilBag(void) {
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);

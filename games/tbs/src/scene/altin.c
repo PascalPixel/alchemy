@@ -651,7 +651,7 @@ static void Altin_EnterDoor(void) {
 
   // Walk the leader through.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {

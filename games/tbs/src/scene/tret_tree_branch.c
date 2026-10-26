@@ -234,7 +234,7 @@ s32 TretTreeBranch_Initialize(void) {
 #endif
   struct ScreenTransitionState *state;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   ScreenTransition_InitializeBattleEffectState(9);
 

@@ -75,7 +75,7 @@ s32 Scene_Initialize(void) {
 
   work = gFieldWork;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FALLEN_STUMP, PIXELS(216), PIXELS(136));

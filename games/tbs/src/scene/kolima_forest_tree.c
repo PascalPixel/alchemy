@@ -816,8 +816,8 @@ s32 KolimaForestTree_Initialize(void) {
   ObjectEvent_ConfigureSpriteColor(LOCALID_TRETS_WRATHFUL_SIDE,
                                    SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gSaveBlock.retreatMap = (s32)&SceneId_KolimaForestEntrance;
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  gSaveBlock.retreatScene = (s32)&SceneId_KolimaForestEntrance;
   gSaveBlock.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);

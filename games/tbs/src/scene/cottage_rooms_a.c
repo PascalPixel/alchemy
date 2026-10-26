@@ -338,7 +338,7 @@ static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
     Weather_StopLightning();
   Sound_PlaySong(SE_MAP_EXIT);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -413,7 +413,7 @@ s32 CottageRoomsA_Initialize(void) {
   struct FieldWork **eventSlot = &gFieldWork;
 
   (*eventSlot)->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);

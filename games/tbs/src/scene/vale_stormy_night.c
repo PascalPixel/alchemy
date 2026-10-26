@@ -762,7 +762,7 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
     FieldScript_End();
   }
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 24;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -790,7 +790,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   FieldCamera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(294), PIXELS(868));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2961,7 +2961,8 @@ static void EventScript_FightThirdMonster(void) {
 
   FieldScript_Start();
   state = gFieldWork;
-  state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  state->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
@@ -2978,7 +2979,8 @@ static void EventScript_FightFourthMonster(void) {
 
   FieldScript_Start();
   state = gFieldWork;
-  state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  state->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   GameFlag_Set(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);

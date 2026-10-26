@@ -77,7 +77,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
     // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    ScreenTransition_Finish(MAP_TRANSITION(4, 1), 16);
+    ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     WaitFrames(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
@@ -89,7 +89,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     ScreenTransition_Finish(
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);
     work->transitionActive = 0;
     WaitFrames(16);

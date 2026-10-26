@@ -13,7 +13,7 @@ static void Vale_RequestBackdropWarp(s32 no) {
     Weather_StopLightning();
   }
   p = gFieldWork;
-  p->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  p->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   p->transitionFrames = 16;
   Import_ScriptRequestWarp(no);
 }

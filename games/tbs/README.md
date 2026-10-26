@@ -116,7 +116,7 @@ somewhere (the [map events](glossary.md#map-event)); and which areas of you
 lead out. Each answer is a function rather than a fixed table, so a map can
 answer differently as the story moves on.
 
-The six questions are `struct MapEntries`, at the start of every overlay.
+The six questions are `struct SceneEntries`, at the start of every overlay.
 [Engine](engine.md#overlays) describes how an overlay is loaded and
 [Maps](src/scene/README.md) how a map event is found.
 

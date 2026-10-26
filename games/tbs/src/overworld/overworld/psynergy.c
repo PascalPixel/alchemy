@@ -69,7 +69,7 @@ s32 Field_UsePsynergy(u32 code) {
     {
       struct SaveBlock *state = &gSaveBlock;
       s32 sceneId, returnWarpDest;
-      sceneId = (u16)state->retreatMap;
+      sceneId = (u16)state->retreatScene;
       state->sceneId = sceneId;
       returnWarpDest = (u16)state->retreatWarpDest;
       state->warpDest = returnWarpDest;

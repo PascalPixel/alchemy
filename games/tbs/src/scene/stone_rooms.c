@@ -243,7 +243,7 @@ s32 Scene_Initialize(void) {
   s16 warpDest;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gSaveBlock.warpDest;
 
   if (warpDest == STONE_ROOMS_FROM_LUNPA) {

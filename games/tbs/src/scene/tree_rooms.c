@@ -596,7 +596,7 @@ static void EventScript_FightTret(void) {
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   FieldScript_ShowMessageAndWait(SPEAKER(LOCALID_TRET), 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&SceneId_TreeRooms,
@@ -651,7 +651,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   }
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WaitFrames(10);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 48;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -868,7 +868,7 @@ s32 TreeRooms_EnterRoom(void) {
 
   tret = ObjectEvent_GetById(LOCALID_TRET);
   // Point the cocoon latch at the map state and save the palette first.
-  sLastCocoon = (s16 *)gMapLocalState;
+  sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -PIXELS(10);
@@ -904,7 +904,8 @@ s32 TreeRooms_EnterRoom(void) {
   WaitFrames(1);
   TreeRooms_ApplyPostBattleState(0);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   warpDest = gSaveBlock.warpDest;
   leaderLocalId = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(leaderLocalId);

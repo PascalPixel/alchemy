@@ -1547,7 +1547,7 @@ s32 BattleArena_RunRoundResult(void) {
 
   gBattleArenaCallFrames = 0;
   sBattleArenaWaitFrames = 0;
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   BattleArena_DrawThreeDigitValue(
       gSaveBlock.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);

@@ -313,7 +313,7 @@ static void EventScript_EnterPalace(void) {
     McCoyPalaceGrounds_OpenGate();
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   FieldScript_WaitFrames(16);
@@ -327,7 +327,7 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   struct ObjectEvent *objectEvent;
 
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   objectEvent = ObjectEvent_GetById(LOCALID_WEST_WORKER);
   objectEvent->priorityFlags = 0;
@@ -466,7 +466,7 @@ static void EventScript_GuardsArrestParty(void) {
   Import_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);

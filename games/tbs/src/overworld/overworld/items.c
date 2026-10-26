@@ -170,7 +170,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gSaveBlock.sceneId = gSaveBlock.retreatMap;
+        gSaveBlock.sceneId = gSaveBlock.retreatScene;
         gSaveBlock.warpDest = gSaveBlock.retreatWarpDest;
         work->warp = WARP_RETREAT;
       }

@@ -264,7 +264,7 @@ s32 LogRoomsC_Initialize(void) {
   u32 warpDest;
 
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // The residents remain visible as trees, with their sprite flags cleared.
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {

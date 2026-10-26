@@ -1101,7 +1101,7 @@ static void EventScript_TalkToTrialAttendant(void) {
     FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
     FieldCamera_MoveTo(PIXELS(540), -1, PIXELS(208), 1);
     FieldCamera_WaitForArrival();
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gFieldWork->transitionFrames = 32;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -1144,7 +1144,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1236,11 +1236,11 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   ObjectEvent_WalkToAndWait(LOCALID_FAILING_WARRIOR, 184, 863);
   ObjectEvent_WalkToAndWait(LOCALID_FAILING_WARRIOR, 184, 796);
   ObjectEvent_SetPosition(LOCALID_FAILING_WARRIOR, 0, 0);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ScriptRequestWarp(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
   FieldScript_End();
 }
@@ -1250,7 +1250,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 /// failed, or after the second trial that he cleared it.
 static void ColosseumEntrance_ExplainTrial(void) {
   FieldScript_Start();
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1304,7 +1304,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1408,7 +1408,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_CLEARING_WARRIOR, 10);
   FieldScript_WaitFrames(80);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1562,7 +1562,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1761,7 +1761,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 808, 164);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 808, 312);
   FieldScript_WaitFrames(60);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();

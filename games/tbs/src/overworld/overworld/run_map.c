@@ -43,7 +43,7 @@ s32 SceneManager_Run(s32 warpDest) {
   GameFlag_ClearFar(FLAG_IN_BATTLE);
   gSaveBlock.defaultMap = gSaveBlock.sceneId;
   gSaveBlock.defaultWarpDest = gSaveBlock.warpDest;
-  gSaveBlock.nextMap = -1;
+  gSaveBlock.nextScene = -1;
   gSaveBlock.nextWarpDest = -1;
   gSaveBlock.defeatScene = -1;
   gSaveBlock.defeatWarpDest = -1;
@@ -82,7 +82,7 @@ s32 SceneManager_Run(s32 warpDest) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   // The default fade is from the backdrop colour over 16 frames; the map's
   // initialization may choose another.
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
   work->transitionActive = 0;
   // Field_ProcessStep scales the leader's speed by this (16.16) into the
@@ -91,7 +91,7 @@ s32 SceneManager_Run(s32 warpDest) {
   // block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
-  if (gSaveBlock.mapType == MAP_TYPE_TOWN) {
+  if (gSaveBlock.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_SetFar(FLAG_RETREAT_BLOCKED);
   }

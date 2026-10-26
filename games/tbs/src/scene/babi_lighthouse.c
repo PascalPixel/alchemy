@@ -1343,12 +1343,12 @@ s32 BabiLighthouse_SetupMap(void) {
 
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gSaveBlock;
   sceneId = state->sceneId;
   if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
     state->retreatWarpDest = 1;
-    state->retreatMap = (s32)&SceneId_BabiLighthouseEntry;
+    state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
     mapCopy = state->sceneId;
   }
   // The road: the moved pillar's metatile behavior where it stands.

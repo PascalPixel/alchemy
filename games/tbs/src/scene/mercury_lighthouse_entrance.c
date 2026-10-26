@@ -400,7 +400,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_LIZARD_MAN, 2);
   FieldScript_WaitFrames(20);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination(
       (s32)&SceneId_MercuryLighthouseEntrance,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
@@ -435,10 +435,10 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
       MB_MERCURY_LIGHTHOUSE_POOL_WATER,
-      (struct MercuryLighthouseLights *)gMapLocalState);
+      (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gSaveBlock.retreatMap = (s32)&SceneId_MercuryLighthouseExterior;
+  gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -446,7 +446,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   else
     MercuryLighthouse_ClearPalette();
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each warp destination restores its route or plays its one-time arrival.
   switch (gSaveBlock.warpDest) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
@@ -562,7 +562,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     FieldScript_Start();
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(120);
@@ -688,7 +688,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(136), PIXELS(144));
     ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(60);
@@ -702,7 +702,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     FieldScript_End();
   }
 }

@@ -879,7 +879,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -944,7 +944,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
       SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 6);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 280);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1029,7 +1029,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   Task_Remove(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateFourthFallingLight);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1123,7 +1123,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
   }
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1379,7 +1379,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     Import_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
     FieldScript_WaitFrames(80);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     gFieldWork->transitionFrames = 24;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -1414,7 +1414,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
 
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   playedEntrySequence = 0;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) != 0 &&
       GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
@@ -1691,7 +1691,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   FieldScript_End();
 }

@@ -603,7 +603,7 @@ s32 Scene_Initialize(void) {
 
   work = gFieldWork;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
   if (GameFlag_Get(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {

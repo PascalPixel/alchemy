@@ -1304,7 +1304,7 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// or the pillars and Bane of CrossboneIsleBane.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }

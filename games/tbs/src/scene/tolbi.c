@@ -454,7 +454,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   void (*kidUpdate)(union ObjectEventOrEffect *);
   s32 clearFlags;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
   ObjectEvent_SetPosition(LOCALID_TOLBI_OLDER_BROTHER, PIXELS(352),

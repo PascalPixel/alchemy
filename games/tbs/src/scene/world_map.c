@@ -896,7 +896,7 @@ s32 WorldMap_Initialize(void) {
     Import_ScriptRequestWarp(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
     gFieldWork->transitionFrames = 16;
     WaitFrames(1);
     FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
@@ -2272,7 +2272,7 @@ static void WorldMap_ShowEndingEvent(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
@@ -2486,7 +2486,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   FieldCamera_FollowObjectEvent(LOCALID_CROSSING_SHIP, 1);
   WaitFrames(1);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_CROSSING_SHIP, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_CROSSING_SHIP, 4824, 712);
@@ -2608,7 +2608,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   objectEvent->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_DRIFTING_ISLAND, gIslandDriftsEast);
   FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
@@ -2816,7 +2816,7 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 /// (https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif).
 /// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
 /// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
-/// sets FLAG_SKIP_MAP_CHANGE_SOUND.
+/// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   u8 *buffer = AllocEwram(0x4000);
@@ -2882,7 +2882,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Free(buffer);
-  GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
+  GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 /// Unused: an update hook that blinks an object event and now and then creates

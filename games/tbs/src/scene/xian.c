@@ -832,7 +832,7 @@ s32 Xian_Initialize(void) {
   struct ObjectEvent *objectEvent;
   u32 crateIndex;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Scene_QueueMusic(SE_AMBIENT_WIND);
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name

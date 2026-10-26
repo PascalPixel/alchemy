@@ -734,7 +734,7 @@
 #define SE_VOICE_MAN_3 286
 #define SE_VOICE_MAN_4 287
 /// A song with no tracks on player 3, which stops the loop playing there: every
-/// map change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
+/// map change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_ACTION_SE 288
 /// The pair of upright effects spawned in the eruption at Sol Sanctum

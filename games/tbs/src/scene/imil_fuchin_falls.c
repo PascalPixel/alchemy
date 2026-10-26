@@ -1483,7 +1483,7 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 /// Cave blocks Retreat and walks the leader toward Fever; otherwise each room
 /// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gSaveBlock.sceneId == (s32)&SceneId_ImilFallsCave) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -1558,7 +1558,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
-        gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+        gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         PaletteFade_ApplySource(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),
                                 PALETTES_BG);
         PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),

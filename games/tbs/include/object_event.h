@@ -9,7 +9,7 @@
 
 #include "field_work.h"
 
-/// How a map fades in and out: MAP_TRANSITION's high byte, which
+/// How a map fades in and out: SCENE_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
 enum MapTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
@@ -24,7 +24,7 @@ enum MapTransitionStyle {
 /// TRANSITION_WINDOW the variant is the window mode, listed at
 /// ScreenTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
 /// ellipse around the leader, and others.
-#define MAP_TRANSITION(style, variant) ((style) << 8 | (variant))
+#define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
 #include "field_coordinate.h"
 

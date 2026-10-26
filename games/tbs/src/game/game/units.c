@@ -533,12 +533,12 @@ u32 BuildStamp_GetTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gMapLocalState on, which SaveBlock_InitializeDefaults
-/// writes one byte through. gMapLocalState's 0x78 bytes and
+/// A view of EWRAM from gSceneLocalState on, which SaveBlock_InitializeDefaults
+/// writes one byte through. gSceneLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
 /// of gObjectEventSnapshot.
 struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
+  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
@@ -559,20 +559,20 @@ void SaveBlock_InitializeDefaults(void) {
 
   // Clear the state header, map state, flags and save metadata in DMA order:
   // 0xb0 words are gSaveBlock up to the characters (units, which
-  // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
+  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
   START_DMA(&zero, &gSaveBlock,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
-  START_DMA(&zero, gMapLocalState,
+  START_DMA(&zero, gSceneLocalState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x3e1);
   WAIT_DMA();
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct MapLocalStateSnapshotView *)gMapLocalState)->firstSnapshotSlot =
+  ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       0xff;
   zero = 0;
   START_DMA(&zero, gBattleArenaRecord + 0x1c,

@@ -928,7 +928,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
       FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
       FieldScript_ShowMessageAndWait(warriorId, 0);
       work->transition =
-          MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
@@ -1027,7 +1027,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   s32 height;
   s32 column;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   // Restore the scale ledges, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
@@ -1370,7 +1370,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   WaitFrames(1);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2154,14 +2154,14 @@ static void ColosseumNavampaMatch_EmptyHook(void) {}
 
 /// Unused: marks the opponent path recorder as finished; nothing calls it.
 UNUSED static void ColosseumNavampaMatch_MarkOpponentFinished(void) {
-  struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
   recorder->mode = PATH_RECORDER_FINISHED;
 }
 
 /// Waits until the opponent path recorder reaches its finished mode.
 static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
-  struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
   while (recorder->mode != PATH_RECORDER_FINISHED) {
     WaitFrames(1);

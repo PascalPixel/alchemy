@@ -1548,13 +1548,13 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.
 s32 TunnelRuins_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue ||
       gSaveBlock.sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
     FieldEffect_StartFadeOverlay(0);
     gSaveBlock.retreatWarpDest =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gSaveBlock.retreatMap = (s32)&SceneId_TunnelRuinsGreatStatue;
+    gSaveBlock.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     switch (gSaveBlock.warpDest) {
@@ -1709,7 +1709,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
       gSaveBlock.retreatWarpDest =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gSaveBlock.retreatMap = (s32)&SceneId_BabiLighthouseEntry;
+      gSaveBlock.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_A,
                                        SPRITE_COLOR_GREY);

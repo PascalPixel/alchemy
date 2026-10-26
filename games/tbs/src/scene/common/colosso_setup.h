@@ -69,7 +69,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
 /// start, mirrored across the finish; then starts the opponent's callback.
 void Colosso_StartOpponent(s32 resource) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
-  struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
   FieldDecompress_TaggedLz(Resource_GetTableEntry(resource), work->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

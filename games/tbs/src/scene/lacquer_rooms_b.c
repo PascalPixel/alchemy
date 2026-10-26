@@ -294,7 +294,7 @@ s32 LacquerRoomsB_Initialize(void) {
   s16 warpDest;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gSaveBlock.warpDest;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.

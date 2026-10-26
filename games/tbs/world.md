@@ -57,7 +57,7 @@ This is the row for the young man above:
 The game runs the first row that fits, so a map lists its rows from the
 latest point in the story down to the default.
 
-The six questions are `struct MapEntries` at the start of every
+The six questions are `struct SceneEntries` at the start of every
 overlay, and the rows are `struct MapEvent`. [Maps](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front

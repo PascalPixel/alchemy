@@ -18,7 +18,7 @@ s32 SolSanctumRooms_Initialize(void) {
 
   work = gFieldWork;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);

@@ -1503,7 +1503,7 @@ static void EventScript_FightWestGuard(void) {
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(LOCALID_UPPER_FLOOR_WEST_GUARD);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
   Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_WEST_GUARD, 0, 0);
@@ -1521,7 +1521,7 @@ static void EventScript_FightHallGuard(void) {
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(LOCALID_UPPER_FLOOR_HALL_GUARD);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
   Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_HALL_GUARD, 0, 0);
@@ -1595,7 +1595,7 @@ static void EventScript_FightThreeGuards(void) {
   FieldScript_SetMessageId((messageBase + 6));
   FieldScript_ShowMessageAndWait(LOCALID_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination(
       (s32)&SceneId_LunpaFortressUpperFloor,
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
@@ -1639,7 +1639,7 @@ static void EventScript_FightEastGuard(void) {
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(LOCALID_UPPER_FLOOR_EAST_GUARD);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
   Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_EAST_GUARD, 0, 0);
@@ -1963,7 +1963,7 @@ static void EventScript_FindHammet(void) {
     FieldScript_ShowMessageAndWait(LOCALID_TOADONPA_DODONPA, 0);
     LunpaFortress_RevealMonster();
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     FieldScript_WaitFrames(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     FieldScript_SetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
@@ -2183,7 +2183,7 @@ static void EventScript_FindHammet(void) {
     LunpaFortress_RevealMonster();
     GameFlag_Set(FLAG_LUNPA_FORTRESS_TRAP_SEEN);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     FieldScript_WaitFrames(1);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     FieldScript_SetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
@@ -2912,7 +2912,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   FieldScript_WaitFrames(20);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitFrames(1);
   FieldScript_WaitFrames(210);
@@ -3316,7 +3316,7 @@ s32 Scene_Initialize(void) {
     LunpaFortress_InitializeCave();
   if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_TOADONPA_HAMMET), 0);
     ObjectEvent_FaceDirection(LOCALID_TOADONPA_HAMMET, FACING_EAST, 0);
     Import_ObjectEventSetAnimation(LOCALID_TOADONPA_HAMMET, 0);
@@ -3378,7 +3378,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTHEAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckEntranceGuard, TASK_PRIORITY_MAP);
     Task_AddCallback(LunpaFortress_CheckFirstEntranceSentry, TASK_PRIORITY_MAP);
     Task_AddCallback(LunpaFortress_CheckSecondEntranceSentry,
@@ -3388,14 +3388,14 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_UpdateGroundFloorPatrolDetection,
                      TASK_PRIORITY_MAP);
     Task_AddCallback(LunpaFortress_CheckGroundFloorDoorApproach,
@@ -3410,12 +3410,12 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckUpperHallGuard, TASK_PRIORITY_MAP);
     break;
   default:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
@@ -3465,7 +3465,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection,
                      TASK_PRIORITY_MAP);
@@ -3479,7 +3479,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM:
   case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_UPPER_FLOOR_DONPA), 0);
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_REWARD_SHOWN)) {
@@ -3490,7 +3490,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_CELL_KEY_ROOM:
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdateHallGuardDetection, TASK_PRIORITY_MAP);
     WaitFrames(1);
@@ -3500,14 +3500,14 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN)) {
       LunpaFortress_PlaceThreeBeatenGuards();
     }
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
+        SCENE_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
     LunpaFortress_PlaceThreeBeatenGuards();
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_MIDDLE_PASSAGE:
@@ -3518,7 +3518,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     break;
   default:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
@@ -3535,7 +3535,7 @@ static void LunpaFortress_InitializeCave(void) {
   struct ObjectEvent *mapObjectEvent;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   LunpaFortress_RestoreCaveDoors();
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_CRATES_MOVED)) {
     LunpaFortress_RestoreLoweredCrates();

@@ -511,7 +511,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
     Import_ScriptRequestWarp(
@@ -544,7 +544,7 @@ static void EventScript_KradenSetsOff(void) {
   objectEvent->facing = facing;
   MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -590,7 +590,7 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_SetPosition(LOCALID_SATUROS, 0, 0);
   ObjectEvent_SetPosition(LOCALID_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_VALE_KRADENS_DOOR_OPEN);
   FieldScript_End();
@@ -1156,7 +1156,8 @@ static void EventScript_FightFirstMonster(void) {
   FieldScript_Start();
 
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   GameFlag_Set(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
@@ -1176,7 +1177,8 @@ static void EventScript_FightSecondMonster(void) {
   FieldScript_Start();
 
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   GameFlag_Set(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);

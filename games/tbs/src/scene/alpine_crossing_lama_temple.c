@@ -303,7 +303,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(16);
@@ -328,7 +328,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(60);
@@ -818,7 +818,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   FieldScript_End();
   GameFlag_Set(FLAG_HSU_RESCUED);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Import_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 
@@ -929,7 +929,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   s32 warpDest;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gSaveBlock.sceneId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_AMBIENT_WIND) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are

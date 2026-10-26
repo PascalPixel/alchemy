@@ -365,15 +365,15 @@ static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
 /// otherwise. It may not when it was saved where a map script blocked
-/// Retreat (FLAG_RETREAT_BLOCKED), except in towns (MAP_TYPE_TOWN), which block
-/// it by themselves, and on the world map.
+/// Retreat (FLAG_RETREAT_BLOCKED), except in towns (SCENE_TYPE_TOWN), which
+/// block it by themselves, and on the world map.
 static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gSaveBlock.mapType == MAP_TYPE_TOWN) {
+  if (gSaveBlock.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
   // -1 unless the map is the world map: -d | d has its top bit set for any
@@ -385,7 +385,7 @@ static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
 /// A view of the map state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
-  u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
+  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
   s32 playTime;
@@ -571,7 +571,7 @@ menu_top:;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
-               ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
+               ((struct SaveMenuMapLocalState *)gSceneLocalState)->playTime) {
       FieldMessage_Show(MsgSaveDataCorrupted,
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, FIELD_MESSAGE_ZOOM |

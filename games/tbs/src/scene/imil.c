@@ -642,7 +642,7 @@ static void Imil_OpenDoorAndExit(void) {
     MapGrid_PlayMetatileCopySequence(gImil_DoorCellSteps[warp - 1], x, y);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warp == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
@@ -842,7 +842,7 @@ s32 Imil_Initialize(void) {
 
   if (gSaveBlock.sceneId == (s32)&SceneId_Imil) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
     if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -864,7 +864,7 @@ s32 Imil_Initialize(void) {
   } else if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
     // Restore each interior's occupants before running its arrival script.
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == ICE_ROOMS_HOUSE_SOUTHWEST) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, SPRITE_COLOR_HIDDEN);
@@ -989,7 +989,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1152,7 +1152,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldScript_WaitFrames(20);
   work = gFieldWork;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Import_GameFlagSet(FLAG_IMIL_MET_MIA);
   FieldScript_End();
@@ -1434,7 +1434,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;
   FieldScript_StartScreenTransition();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
@@ -1564,7 +1564,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   *((u8 *)ObjectEvent_GetById(LOCALID_MEGAN) +
     offsetof(struct ObjectEvent, steeringFlags)) |= OBJ_EVENT_FACES_MOTION;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Import_GameFlagSet(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
   FieldScript_End();

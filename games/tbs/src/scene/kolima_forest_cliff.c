@@ -120,7 +120,7 @@ s32 KolimaForestCliff_Initialize(void) {
   struct FieldWork *work = gFieldWork;
 
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Scene_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {

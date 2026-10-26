@@ -850,7 +850,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sceneId = gSaveBlock.sceneId;
   if (sceneId == (s32)&SceneId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer

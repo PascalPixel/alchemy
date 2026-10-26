@@ -224,7 +224,7 @@ s32 Scene_Initialize(void) {
   }
 
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
   if (GameFlag_Get(FLAG_SUHALLA_SPROUT_GROWN) != 0) {

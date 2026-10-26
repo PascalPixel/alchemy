@@ -65,10 +65,10 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 }
 
 /// Sets the map and warp destination that the field goes to next
-/// (gSaveBlock.nextMap and nextWarpDest). About 30 maps and the Battle Arena
+/// (gSaveBlock.nextScene and nextWarpDest). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
 void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest) {
-  gSaveBlock.nextMap = sceneId;
+  gSaveBlock.nextScene = sceneId;
   gSaveBlock.nextWarpDest = warpDest;
 }
 

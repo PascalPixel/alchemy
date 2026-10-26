@@ -1624,7 +1624,7 @@ s32 Scene_Initialize(void) {
   s32 x;
   s32 z;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
     Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
     Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);

@@ -1374,7 +1374,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// SE_AMBIENT_WATER.
 static void Kalay_StartWindowTransition(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
     {
@@ -1409,7 +1409,7 @@ static void Kalay_PrepareTunnel(void) {
   void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
 
   ((struct FieldWork *)workSlots[0])->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
 #if TBS_PATCH_1
   resumedMap = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
@@ -1842,7 +1842,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_SetPosition(LOCALID_SECOND_PALACE_GUARD, 0, 0);
   gFieldWork->transitionFrames = 24;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
@@ -2098,7 +2098,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 246, 142);
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectEvent_SetPosition(LOCALID_WAGON, PIXELS(440), PIXELS(340));
@@ -2145,7 +2145,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   work = gFieldWork;
   work->transitionFrames = 24;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);

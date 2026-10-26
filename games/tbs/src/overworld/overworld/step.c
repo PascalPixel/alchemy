@@ -306,7 +306,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     }
 
     // Avoid wears off with distance, outside towns.
-    if (gSaveBlock.avoidDistance != 0 && gSaveBlock.mapType != MAP_TYPE_TOWN) {
+    if (gSaveBlock.avoidDistance != 0 &&
+        gSaveBlock.sceneType != SCENE_TYPE_TOWN) {
       gSaveBlock.avoidDistance -= leader->speedLimit;
       if (gSaveBlock.avoidDistance <= 0) {
         gSaveBlock.avoidDistance = 1;

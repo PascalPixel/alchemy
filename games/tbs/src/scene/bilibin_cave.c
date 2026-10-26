@@ -458,7 +458,7 @@ static void BilibinCave_RestoreEntrance(void) {
 static void BilibinCave_RestoreRapierRoom(void) {
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
                                  TORCH_ANIMATION_UNLIT);
@@ -486,7 +486,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   s32 destinationCellX;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Set up the decorative animations before restoring interactive object
   // events.
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR);

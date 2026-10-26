@@ -1288,7 +1288,7 @@ s32 TolbiShipDeck_Initialize(void) {
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
   ((struct FieldWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   layer->speedY = 0;
   sSwayAngleX = (u16)Import_RandomNext();
   sSwayAngleY = (u16)Import_RandomNext();
@@ -1645,7 +1645,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 /// of the voyage. "Preparations... Ready!"
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -1665,7 +1665,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   FieldScript_SetMessageId(MsgTolbiShipPreparationsReady);
   Script_ShowMessageAndWait(crewMember, 0, 20);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR);
@@ -1681,7 +1681,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -1717,7 +1717,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_OURANOS, 242, 692);
@@ -1832,7 +1832,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
                               gTolbiShipDeck_HoverAndDiveAtOuranosActions);
   Import_ObjectEventSetPosition(LOCALID_SEA_KAJA, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(0x190);
@@ -1972,7 +1972,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1,
                                    SPRITE_COLOR_BGR);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(80);
@@ -2069,7 +2069,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = FACING_SOUTH;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -2195,7 +2195,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(LOCALID_SEA_OURANOS,
                               gTolbiShipDeck_OuranosPatrolsActions);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -2223,7 +2223,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 216, 0x244);
   ObjectEvent_SetPosition(LOCALID_SEA_KAJA, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
   FieldScript_End();
@@ -2255,10 +2255,10 @@ static void TolbiShipDeck_SightLand(void) {
   // of its load; the defined build reads it directly.
 #ifdef UBFIX
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
   ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #endif
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2900,7 +2900,7 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -3153,7 +3153,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS);

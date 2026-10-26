@@ -55,8 +55,9 @@ struct SparkleFrame;
 struct Swirl;
 union ObjectEventOrEffect;
 
-/// The Colosso opponent's path player, at the start of gMapLocalState: the path
-/// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
+/// The Colosso opponent's path player, at the start of gSceneLocalState: the
+/// path in ColossoRaceWork is played back or recorded by
+/// Colosso_UpdatePathOpponent.
 struct PathRecorder {
   s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
   s16 mirror;    ///< nonzero mirrors the path across the finish
@@ -91,13 +92,13 @@ extern const u8 gField_BgEventMessageOffsets[];
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gShipRooms_ShakeTimer;
-/// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
-/// float), 0 low; the floodgate switch flips it.
+/// The bend's water level in gSceneLocalState's second halfword: 1 high (the
+/// logs float), 0 low; the floodgate switch flips it.
 extern s16 *gKolimaForestFloodgateMap;
 struct FloodgateLog;
-/// The bend's logs in gMapLocalState from byte 4, so they survive a battle.
+/// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;
-/// The short log's place in gMapLocalState's first halfword: 1 west, 0 east.
+/// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gObjects
 /// Heap slot 5: the 64 objects, 0x70 bytes each.

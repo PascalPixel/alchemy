@@ -1002,7 +1002,7 @@ static void VaultCave_StartTimedFalls(void) {
 /// Vault.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_VaultCavePassage) {
     switch (gSaveBlock.warpDest) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
@@ -1132,7 +1132,7 @@ s32 Scene_Initialize(void) {
   // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
   // from Vault.
   gSaveBlock.retreatWarpDest = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gSaveBlock.retreatMap = (s32)&SceneId_VaultCavePassage;
+  gSaveBlock.retreatScene = (s32)&SceneId_VaultCavePassage;
   return 0;
 }
 

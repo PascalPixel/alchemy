@@ -946,7 +946,7 @@ s32 Scene_Initialize(void) {
   struct ObjectEvent *puddle;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_Lunpa) {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       Scene_FloatNut(LOCALID_FLOATING_NUT);
@@ -959,7 +959,7 @@ s32 Scene_Initialize(void) {
   }
   // Restore the gate's arrival event and active detection tasks separately.
   if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressGates) {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gSaveBlock.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

@@ -321,7 +321,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -366,7 +366,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_WaitFrames(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -469,7 +469,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
   ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
   Script_ClearFlag(FLAG_SHOW_LOCATION_NAME);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
   FieldScript_End();
 }
@@ -490,7 +490,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
 
   FieldScript_Start();
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -682,7 +682,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;
   FieldScript_End();
 }
@@ -865,7 +865,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 s32 SolSanctumStatue_Initialize(void) {
   struct ObjectEvent *centerEffect;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
   // Retreat does not work here (FLAG_RETREAT_BLOCKED).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);

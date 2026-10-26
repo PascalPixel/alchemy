@@ -182,7 +182,7 @@ static void Colosso_TakePlaceForMatch(void) {
   FieldScript_SetMessageId(MsgColossoMatchAboutBeginPleaseTake);
   FieldScript_ShowMessageAndWait(speakerId, 0);
   transition = &work->transition;
-  *transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  *transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
   FieldScript_WaitFrames(20);
   FieldScript_FinishScreenTransition();
@@ -238,7 +238,7 @@ void Colosso_AskDoneCheering(s32 id) {
     FieldScript_SetMessageId(msg + 1);
     FieldScript_ShowMessageAndWait(id, 0);
     work->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -254,7 +254,7 @@ void Colosso_AskDoneCheering(s32 id) {
       Colosso_ControlCharacterAlone(slot);
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
-      work->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
+      work->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
     FieldScript_SetMessageId(msg + 2);

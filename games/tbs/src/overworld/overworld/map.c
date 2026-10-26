@@ -30,7 +30,7 @@ void Scene_TakeWarp(s32 warpId) {
   const u32 *firstWarp;
   u32 word;
   s32 sceneId;
-  s32 nextMap;
+  s32 nextScene;
   s32 nextWarpDest;
   s32 warpDest;
   s32 kind;
@@ -38,7 +38,7 @@ void Scene_TakeWarp(s32 warpId) {
 
   currentMap = gSaveBlock.sceneId;
   warpTable = gOverlayArea.warps();
-  nextMap = WARP_NONE;
+  nextScene = WARP_NONE;
   nextWarpDest = 0;
   if (warpId == WARP_NONE)
     return;
@@ -64,12 +64,12 @@ void Scene_TakeWarp(s32 warpId) {
       if (flag)
         flag = *warpTable++;
       if (sceneId == WARP_TABLE_END || kind == 0) {
-        nextMap = *firstWarp & 0x1ff; // only 9 bits, unlike WARP_MAP_MASK
+        nextScene = *firstWarp & 0x1ff; // only 9 bits, unlike WARP_MAP_MASK
         break;
       }
       if (kind == WARP_ID_ANY || kind == warpId) {
         if (flag == 0 || GameFlag_GetFar(flag) == 0) {
-          nextMap = sceneId;
+          nextScene = sceneId;
           nextWarpDest = warpDest;
           break;
         }
@@ -79,8 +79,8 @@ void Scene_TakeWarp(s32 warpId) {
   }
 
   // Commit the chosen warp only after a matching map header was found.
-  if (nextMap != WARP_NONE) {
-    gSaveBlock.sceneId = nextMap;
+  if (nextScene != WARP_NONE) {
+    gSaveBlock.sceneId = nextScene;
     gSaveBlock.warpDest = nextWarpDest;
   }
 }
@@ -136,7 +136,7 @@ void Scene_ReturnFromSequence(s32 result) {
     }
   } else {
     // An explicit script destination overrides the map's default return.
-    sceneId = gSaveBlock.nextMap;
+    sceneId = gSaveBlock.nextScene;
     warpDest = gSaveBlock.nextWarpDest;
     if (sceneId != -1 || warpDest != -1) {
       if (sceneId != -1)
@@ -235,10 +235,10 @@ void SequenceManager_Run(s32 mode) {
   Task_ResetAll();
   Task_ResetAll();
   for (;;) {
-    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_ACTION_SE for one map
+    // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_ACTION_SE for one map
     // change, then clears itself.
-    if (GameFlag_GetFar(FLAG_SKIP_MAP_CHANGE_SOUND))
-      GameFlag_ClearFar(FLAG_SKIP_MAP_CHANGE_SOUND);
+    if (GameFlag_GetFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
+      GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlaySongFar(SE_STOP_ACTION_SE);
     record = &table[gSaveBlock.sceneId];
@@ -326,7 +326,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// point Retreat returns to. Then the map section's visited flag
 /// (FLAG_MAPSEC_VISITED) is set. Called by SequenceManager_Run before each map,
 /// with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.mapSec and
-/// .mapType.
+/// .sceneType.
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 mapSec = MAP_HEADER(gSaveBlock.sceneId)->mapSec;
   s32 flag;
@@ -346,7 +346,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gSaveBlock.retreatMap = gSaveBlock.sceneId;
+      gSaveBlock.retreatScene = gSaveBlock.sceneId;
       gSaveBlock.retreatWarpDest = gSaveBlock.warpDest;
     }
     // The Djinn's hiding flags last for one map, even within a map section, and
@@ -364,8 +364,8 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   }
   gSaveBlock.mapSec = mapSec;
   GameFlag_SetFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
-  gSaveBlock.mapType = MAP_HEADER(gSaveBlock.sceneId)->mapType;
-  if (gSaveBlock.mapType == MAP_TYPE_TOWN)
+  gSaveBlock.sceneType = MAP_HEADER(gSaveBlock.sceneId)->sceneType;
+  if (gSaveBlock.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }

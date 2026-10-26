@@ -1051,7 +1051,7 @@ static void Party_RidesWagon(void) {
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTH_PUDDLE), 0);

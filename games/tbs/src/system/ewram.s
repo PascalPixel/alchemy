@@ -20,8 +20,8 @@ gPlayerObjectId:
 	.global gBattleArenaRecord
 gBattleArenaRecord:
 	.space 0x00000b1c
-	.global gMapLocalState
-gMapLocalState:
+	.global gSceneLocalState
+gSceneLocalState:
 	.space 0x00000078
 	.global gInventorySnapshot
 gInventorySnapshot:

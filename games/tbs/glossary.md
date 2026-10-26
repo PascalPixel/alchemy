@@ -203,7 +203,7 @@ maps, 96 in all for 201 maps, and only one is loaded at a time ([Engine](engine.
 
 The two tables an overlay meets the main image through: the entry table opens
 it with six veneers the field calls to ask the map its questions
-(`struct MapEntries`), and the import table ends it with one veneer for each
+(`struct SceneEntries`), and the import table ends it with one veneer for each
 main-image function it calls
 ([System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 

@@ -41,7 +41,7 @@ timed work, or plays an arrival event; it may send the party on at once. It
 skips arrival events when the party is coming back to where it stood, as
 after a battle.
 
-The six are `struct MapEntries`, in a fixed order at the start of
+The six are `struct SceneEntries`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
 `Scene_GetWarpDests`, `Scene_GetWarps`, `Scene_GetObjectEventTemplates`,

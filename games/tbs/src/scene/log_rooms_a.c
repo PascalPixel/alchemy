@@ -1533,7 +1533,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = (s32)&SceneId_LogRoomsA;
   FieldScript_SetNextDestination(base, LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
   FieldScript_SetDefeatDestination(base,
@@ -1905,7 +1905,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   LogRoomsA_SetPartyImagePriority();
   gFieldWork->transitionFrames = 24;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   // Move the discussion away from the suspects while the screen is closed.
@@ -1928,7 +1928,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   FieldScheduler_AddCallback(LogRoomsA_FaceSuspectsTowardLeader,
                              TASK_PRIORITY_MAP);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_End();
 }
 
@@ -1971,7 +1971,7 @@ static void LogRoomsA_DiscussMindReading(void) {
 
     work->transitionFrames = 24;
     work->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   }
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2156,7 +2156,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 localId, s32 expected, s32 next,
 /// also removes Ivan from the party.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gSaveBlock.warpDest) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
@@ -2363,7 +2363,7 @@ static void LogRoomsA_LoseToThieves(void) {
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
@@ -2417,7 +2417,7 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_THIEF_LEADER,
                               0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
@@ -2450,7 +2450,7 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   LogRoomsA_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination((s32)&SceneId_LogRoomsA,
                                  LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
   FieldScript_SetDefeatDestination((s32)&SceneId_LogRoomsA,
@@ -2510,7 +2510,7 @@ static void LogRoomsA_DefeatThieves(void) {
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
@@ -2708,7 +2708,8 @@ static void LogRoomsA_DefeatThieves(void) {
   // The window closes while the thieves are tied up.
   work = gFieldWork;
   work->transitionFrames = 30;
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(60);
@@ -2776,7 +2777,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_THIEF_LEADER, 0);
   gFieldWork->transitionFrames = 30;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -3214,7 +3215,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, 0, 0);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_End();
 }
 
@@ -3224,7 +3225,7 @@ static void LogRoomsA_OpenWindowTransition(void) {
 
   state = gFieldWork;
   state->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(1);

@@ -791,7 +791,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
                                    SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
   Import_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldCamera_MoveWithinMapBounds(PIXELS(504), -PIXELS(24), PIXELS(168), 0);
@@ -2152,7 +2152,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   VenusLighthouseAerie_TryToPreventFall();
   GameFlag_Set(FLAG_KEEP_MUSIC);
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
 
   FieldScript_FinishScreenTransition();
@@ -2241,7 +2241,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   ObjectEvent_Get(LOCALID_BEACON_ORB)->y.fixed = PIXELS(40);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_MAP);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2678,7 +2678,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   do {
     WaitFrames(1);
   } while (GameFlag_Get(FLAG_VENUS_AERIE_PARTY_LIFTED) == 0);
-  GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
+  GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_Snapshot();
@@ -3112,7 +3112,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 272, 254);
   FieldScript_WaitFrames(80);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, 1);
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();

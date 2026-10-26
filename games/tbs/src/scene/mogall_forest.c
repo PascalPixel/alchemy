@@ -1481,7 +1481,7 @@ s32 MogallForest_Initialize(void) {
   s32 fixedZ;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gSaveBlock.sceneId;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed

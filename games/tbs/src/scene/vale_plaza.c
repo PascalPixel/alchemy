@@ -1518,7 +1518,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   {
     struct FieldWork *work = gFieldWork;
 
-    work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   FieldScript_StartScreenTransition();
   Weather_ResumeLightning();
@@ -1999,7 +1999,7 @@ static void EventScript_DepartForQuest(void) {
   ObjectEvent_SetActionScript(LOCALID_GARET, departureActions);
   FieldScript_WaitFrames(60);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 60;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();

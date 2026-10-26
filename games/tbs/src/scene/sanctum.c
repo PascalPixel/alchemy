@@ -456,7 +456,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 /// the party is returning after a battle.
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
@@ -632,7 +632,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     FieldCamera_WaitForArrival();
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gFieldWork->transitionFrames = 64;
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -644,7 +644,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     FieldCamera_WaitForArrival();
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     // Reenact the journey before explaining the quest.

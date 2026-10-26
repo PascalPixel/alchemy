@@ -1881,7 +1881,7 @@ static void EventScript_StepOnWallSwitch(void) {
       Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST);
       FieldScript_End();
@@ -2434,7 +2434,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
       Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST);
       FieldScript_End();
@@ -2507,7 +2507,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
       Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST);
       FieldScript_End();
@@ -2789,12 +2789,12 @@ s32 VenusLighthouse_Initialize(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreScriptedChildValues();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gSaveBlock.sceneId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // warp destination.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtObjectEvent(
           LOCALID_SOLDIER_TELLING_OF_THE_ATTACK);
@@ -2971,7 +2971,7 @@ s32 VenusLighthouse_Initialize(void) {
       EventScript_MoveGatePillar();
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH:
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // These warp destinations share the tile-wave setup.
       // fall through
@@ -3001,7 +3001,7 @@ s32 VenusLighthouse_Initialize(void) {
         break;
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -3180,7 +3180,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
-      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // Restore the same spray and passage state.
       // fall through
@@ -3225,7 +3225,7 @@ s32 VenusLighthouse_Initialize(void) {
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
         FieldScript_StartScreenTransition();
         FieldScript_WaitTransitionFrames();
-        gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+        gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       }
       if (gSaveBlock.warpDest ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
@@ -3449,7 +3449,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   u32 row;
   u32 particleIndex;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -3543,7 +3543,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   u32 particleIndex;
   struct EffectOptions *options;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -3609,7 +3609,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   u32 particleIndex;
   struct EffectOptions *options;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -3767,7 +3767,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   ObjectMotion_SetActionVariant(LOCALID_RISING_PLATFORM, 1);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_MATERIALIZE);
-  GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
+  GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   // Raise the leader, ground height and platform by the same pixel each
   // frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {

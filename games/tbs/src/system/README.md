@@ -120,7 +120,7 @@ takes from it only what it uses. As the game unpacks an overlay it also fixes
 up the overlay's calls: on the cartridge each call is stored relative to the
 start of the overlay, and the processor needs it relative to the call itself.
 
-The entry table is `struct MapEntries`; the list of imports is `overlay.inc`;
+The entry table is `struct SceneEntries`; the list of imports is `overlay.inc`;
 `Overlay_Load` unpacks an overlay, and the packer is `tools/ags-overlays`.
 
 ## The resource directory and table order

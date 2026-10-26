@@ -11,7 +11,7 @@
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
-/// gMapLocalState (gKolimaForestFloodgateMap, gKolimaForestFloodgateReturned
+/// gSceneLocalState (gKolimaForestFloodgateMap, gKolimaForestFloodgateReturned
 /// and gKolimaForestFloodgateRecords), so they survive a battle. Under each
 /// log KolimaForestFloodgate_StampLogCells writes MB_JUMP_FORWARD while
 /// the water is high, so the leader jumps across the floating logs, and
@@ -400,17 +400,17 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 }
 
 /// Sets up the logs and the river's level on entry. The logs come back
-/// from gMapLocalState, or on a first visit from the defaults with the water
+/// from gSceneLocalState, or on a first visit from the defaults with the water
 /// high; the logs are made and the river is drawn at its level. The forest
 /// keeps its cursed colours until the curse is lifted.
 s32 KolimaForestFloodgate_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  gKolimaForestFloodgateReturned = (u16 *)gMapLocalState;
-  gKolimaForestFloodgateMap = (s16 *)gMapLocalState + 1;
+  gKolimaForestFloodgateReturned = (u16 *)gSceneLocalState;
+  gKolimaForestFloodgateMap = (s16 *)gSceneLocalState + 1;
   // The return flag and water level occupy the first two halfwords.
   gKolimaForestFloodgateRecords =
-      (struct FloodgateLog *)(gMapLocalState + 2 * sizeof(u16));
+      (struct FloodgateLog *)(gSceneLocalState + 2 * sizeof(u16));
   MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
   MapGrid_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
@@ -432,7 +432,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   objectEvent->scaleX = 0xc000;
   objectEvent->scaleY = 0xc000;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
   return 0;

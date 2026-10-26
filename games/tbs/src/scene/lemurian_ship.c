@@ -567,7 +567,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_WaitFrames(300);
   // Fade out to the clear screen.
   work = gMapGridWork[19];
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
   FieldScript_FinishScreenTransition();
@@ -717,7 +717,7 @@ s32 LemurianShip_SetupMap(void) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
   ((struct FieldWork *)gMapGridWork[19])->transition =
-      MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->collisionFlags = 0;
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;

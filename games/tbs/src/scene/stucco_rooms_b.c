@@ -151,7 +151,8 @@ const struct MapEvent *StuccoRoomsB_SelectEvents(void) {
 UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
   struct FieldWork *work = gFieldWork;
 
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   work->transitionFrames = 24;
   Import_ScriptRequestWarp();
 }
@@ -320,7 +321,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
   struct ObjectEvent *objectEvent;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);

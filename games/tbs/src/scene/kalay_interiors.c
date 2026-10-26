@@ -390,7 +390,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 /// tiles.
 s32 KalayInteriors_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gSaveBlock.sceneId == (s32)&SceneId_StuccoRoomsA) {
     KalayInteriors_ApplyRoomState();
   }

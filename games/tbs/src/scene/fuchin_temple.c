@@ -1720,7 +1720,7 @@ static void EventScript_EnterTemple(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5,
                        2 * PIXELS(1) / 5);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(16);
@@ -1739,7 +1739,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 504);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
@@ -2436,7 +2436,7 @@ s32 Scene_Initialize(void) {
 
   if (gSaveBlock.sceneId == (s32)&SceneId_LacquerRoomsA) {
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gSaveBlock.warpDest == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
         Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_WITHERED);

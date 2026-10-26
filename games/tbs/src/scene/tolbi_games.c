@@ -369,7 +369,7 @@ s32 TolbiSpring_Initialize(void) {
   s32 item;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_TolbiSpring) {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
     Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
@@ -397,7 +397,7 @@ s32 TolbiSpring_Initialize(void) {
       Import_ObjectEventSetPosition(LOCALID_TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (gSaveBlock.warpDest == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
                                        SPRITE_COLOR_GRB);
@@ -417,7 +417,7 @@ s32 TolbiSpring_Initialize(void) {
       FieldScript_WaitFrames(10);
       ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 112);
       FieldScript_WaitFrames(20);
-      coinChange = gSaveBlock.coins - *(s32 *)gMapLocalState;
+      coinChange = gSaveBlock.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
           Sound_PlaySong(MUS_FANFARE_LARGE);
@@ -635,7 +635,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
-  *(u32 *)gMapLocalState = coins;
+  *(u32 *)gSceneLocalState = coins;
   ObjectEvent_Snapshot();
   FieldScript_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, 5);

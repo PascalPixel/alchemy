@@ -440,7 +440,7 @@ s32 CottageRoomsC_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   objectEvent = ObjectEvent_GetById(LOCALID_BILIBIN_DINER);
   objectEvent->priorityFlags = 0;
   objectEvent->sprite->image.priority = 2;

@@ -539,7 +539,7 @@ static void EventScript_CaptainSeesPartyOff(void) {
     ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 570, 758);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, 0, 0);
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(FLAG_PARTY_SEEN_OFF);
     FieldScript_End();
@@ -570,7 +570,7 @@ s32 Scene_Initialize(void) {
   struct ObjectEvent *chest;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
   GameFlag_Set(FLAG_MCCOY_PALACE_VISITED);
@@ -678,7 +678,7 @@ static void EventScript_AudienceWithMcCoy(void) {
   }
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1247,7 +1247,7 @@ static void EventScript_McCoyRewardsParty(void) {
   WaitFrames(1);
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gFieldWork->transitionFrames = 16;
 
   FieldScript_StartScreenTransition();
@@ -1557,7 +1557,7 @@ static void EventScript_PresentRewardChests(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();

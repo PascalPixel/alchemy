@@ -43,7 +43,7 @@ enum GameStart {
   GAME_START_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
-/// A window transition's shape: MAP_TRANSITION(TRANSITION_WINDOW, mode)'s
+/// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {
   WINDOW_TRANSITION_BARS = 0,   ///< a bar on each line, at random

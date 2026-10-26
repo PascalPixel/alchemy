@@ -417,7 +417,7 @@ s32 Scene_Initialize(void) {
   s32 clearedState;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gSaveBlock.warpDest;
 
   if (warpDest == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {

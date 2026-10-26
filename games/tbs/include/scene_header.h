@@ -23,10 +23,10 @@ struct SceneHeader {
   /// and the step counters and moves Retreat's destination;
   /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Scene_ResetFlagsOnEnter).
   s8 mapSec;
-  /// An enum MapType, copied to gSaveBlock.mapType:
-  /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
-  /// Bilibin, Kalay, Tolbi and others), MAP_TYPE_FIELD for the rest.
-  s8 mapType;
+  /// An enum SceneType, copied to gSaveBlock.sceneType:
+  /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,
+  /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_FIELD for the rest.
+  s8 sceneType;
   u16 mapIndex; ///< the layout loaded for it, copied to gSaveBlock.mapId
   u16 reserved; ///< 0 in every row; not read
 };
@@ -50,7 +50,7 @@ STATIC_ASSERT(sizeof(struct MapWarpRegion) == 16);
 /// The field reads each entry's veneer as the address word in its last four
 /// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
 /// gOverlayArea.initialize(), gOverlayArea.events() and so on.
-struct MapEntries {
+struct SceneEntries {
   u32 initializeVeneer;
   s32 (*initialize)(void);
   u32 warpDestsVeneer;
@@ -65,9 +65,9 @@ struct MapEntries {
   const struct MapWarpRegion *(*regions)(void);
 };
 
-STATIC_ASSERT(sizeof(struct MapEntries) == 48);
-STATIC_ASSERT(offsetof(struct MapEntries, warps) == 0x14);
-STATIC_ASSERT(offsetof(struct MapEntries, regions) == 0x2c);
+STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
+STATIC_ASSERT(offsetof(struct SceneEntries, warps) == 0x14);
+STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
 
 /// A position on the field.
 struct FieldPosition {
@@ -81,6 +81,6 @@ extern const struct SceneHeader gSceneHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each map change; its code opens with its 48-byte entry table. Every overlay
 /// is linked to run at this one fixed address (0x02008000).
-extern struct MapEntries gOverlayArea;
+extern struct SceneEntries gOverlayArea;
 
 #endif

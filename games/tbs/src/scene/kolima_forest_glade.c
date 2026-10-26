@@ -107,7 +107,7 @@ const struct MapEvent *KolimaForestGlade_GetEvents(void) {
 s32 KolimaForestGlade_Initialize(void) {
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Scene_FloatNut(LOCALID_NUT);
   }

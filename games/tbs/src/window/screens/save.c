@@ -172,15 +172,15 @@ u32 Save_BuildFileSummary(void) {
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
   gSaveBlock.buildStamp = BuildStamp_GetTimeFar(0);
   gSaveBlock.playTime = gPlayTimeFrames;
-  // A second copy of the play time, 256 bytes from gMapLocalState: past its
-  // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
+  // A second copy of the play time, 256 bytes from gSceneLocalState: past its
+  // 0x78 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
   // second record (after its 16-byte header), which
   // Save_LoadFileSummaries reads back into
   // SaveFileSummary.secondRecordPlayTime: the file menu lists a file whose two
   // play times differ as corrupted.
   {
-    u32 *copy = (u32 *)gMapLocalState;
+    u32 *copy = (u32 *)gSceneLocalState;
     copy[64] = gPlayTimeFrames;
   }
   gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;

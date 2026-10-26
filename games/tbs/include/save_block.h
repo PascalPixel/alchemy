@@ -9,13 +9,13 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (SceneHeader.mapType, copied to SaveBlock.mapType).
-enum MapType {
-  MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
+/// A map's type (SceneHeader.sceneType, copied to SaveBlock.sceneType).
+enum SceneType {
+  SCENE_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
   /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
   /// off and FLAG_IN_TOWN is set.
-  MAP_TYPE_TOWN = 2
+  SCENE_TYPE_TOWN = 2
 };
 
 /// gSaveBlock.hazardMode: what advances the hazard count (Field_ProcessStep).
@@ -92,8 +92,8 @@ struct SaveBlock {
   s16 restartWarpDest; ///< the restart point's warp destination
   s16 defaultMap;      ///< the map being run, kept as it starts
   s16 defaultWarpDest; ///< the warp destination it was entered by
-  s16 mapSec;  ///< the current map's map section; a new one resets its flags
-  s16 nextMap; ///< where the script sends the party next; -1 for none
+  s16 mapSec;    ///< the current map's map section; a new one resets its flags
+  s16 nextScene; ///< where the script sends the party next; -1 for none
   s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
   s16 defeatScene;    ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
@@ -166,8 +166,8 @@ struct SaveBlock {
   s16 runResult;      ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new map section
   u16 pendingItem;    ///< given on returning to the field if the party has room
-  s16 mapType;        ///< the current map's variant from its header
-  s16 retreatMap;     ///< where Retreat goes; the map section's first warp
+  s16 sceneType;      ///< the current map's variant from its header
+  s16 retreatScene;   ///< where Retreat goes; the map section's first warp
                       ///< destination
   s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
                            ///< destination

@@ -2392,7 +2392,7 @@ s32 ShipRooms_ApplyEntryState(void) {
   WaitFrames(1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gSaveBlock.warpDest) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
@@ -3033,7 +3033,7 @@ static void ShipRooms_ShowRowing(void) {
   FieldScript_WaitFrames(30);
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, 0, 0);
 
@@ -3472,7 +3472,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     break;
   case SHIP_OPEN_SCREEN:
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     FieldScript_StartScreenTransition();
     if (arg != 0) {
       FieldScript_WaitTransitionFrames();
@@ -3594,7 +3594,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       break;
     }
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(20);
@@ -3940,7 +3940,7 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 424, 164);
   FieldScript_WaitFrames(60);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
@@ -4339,7 +4339,7 @@ static void ShipRooms_DismissReplacementRowers(void) {
   ShipRooms_PlaceObjectEvent(LOCALID_ROWING_KAJA, 408, 142,
                              FACING_SOUTHEAST + FACING_STEP);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
@@ -4390,7 +4390,7 @@ static void ShipRooms_DismissReplacementRowers(void) {
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 444, 132);
   ObjectEvent_SetPosition(LOCALID_ROWING_KAJA, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   ShipRooms_SwapRowerSelections(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS,

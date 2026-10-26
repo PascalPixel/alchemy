@@ -475,7 +475,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 /// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
 UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
   Import_ScriptRequestWarp();
 }
@@ -487,7 +487,7 @@ UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
 s32 IncreaseItemAndLevel_Initialize(void) {
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x19999;

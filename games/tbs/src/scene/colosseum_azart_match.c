@@ -740,7 +740,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   u8 zero;
   s32 col;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   objectEvent = ObjectEvent_GetById(LOCALID_ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, objectEvent->x.fixed, objectEvent->z.fixed);
@@ -1407,7 +1407,7 @@ static void ColosseumAzartMatch_NoOp(void) {}
 /// Unused: marks the shared stage state ready for the waiting script; nothing
 /// calls it.
 UNUSED static void ColosseumAzartMatch_MarkStageReady(void) {
-  s16 *ready = (s16 *)gMapLocalState;
+  s16 *ready = (s16 *)gSceneLocalState;
   u16 nine = 9;
 
   *ready = nine;
@@ -1415,7 +1415,7 @@ UNUSED static void ColosseumAzartMatch_MarkStageReady(void) {
 
 /// Waits until the stage's setup task reports readiness.
 static void ColosseumAzartMatch_WaitForStageReady(void) {
-  s16 *ready = (s16 *)gMapLocalState;
+  s16 *ready = (s16 *)gSceneLocalState;
 
   while (*ready != 9) {
     WaitFrames(1);

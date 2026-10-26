@@ -1173,7 +1173,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
   Task_Wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
@@ -1203,7 +1203,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   state->active = 31;
   work = gFieldWork;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Script_Wait(20);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
@@ -2547,7 +2547,7 @@ s32 BabiPalace_ApplyEntryState(void) {
                               PIXELS(72));
     }
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     // The attendant before the rescue and after Colosso; during the finals
     // LOCALID_FINALS_HURRYING_WARRIORS_ALONG has this number.
     ObjectEvent_Get(LOCALID_BED_ATTENDANT)->collisionFlags |=

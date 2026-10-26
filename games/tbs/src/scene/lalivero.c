@@ -843,7 +843,7 @@ s32 Lalivero_Initialize(void) {
   if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 24;
 
   // The three plants stand in animation 3 and block nothing.

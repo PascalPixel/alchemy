@@ -345,7 +345,7 @@ s32 TolbiShipMast_Initialize(void) {
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if ((GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) != 0 ||
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
@@ -439,7 +439,7 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
 /// decks.
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -482,7 +482,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   work = (struct FieldWork **)(gMapGridWork +
                                (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID));
   (*work)->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   // Save the camera origin before the sparkle begins to turn.
@@ -552,7 +552,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   ObjectMotion_SetVariantCallback(LOCALID_LOOKOUT, 3);
   FieldScript_ShowMessageThenWait(LOCALID_LOOKOUT, 0, 20);
   (*work)->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS);
@@ -615,7 +615,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   TolbiShipMast_InitializeDriftingGroup();
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(120);
@@ -732,7 +732,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   TolbiShipMast_InitializeDriftingGroup();
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(300);
@@ -816,7 +816,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   objectEvent->facing = FACING_SOUTH + FACING_STEP;
   FieldScript_WaitFrames(40);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK);
@@ -836,7 +836,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   TolbiShipMast_InitializeDriftingGroup();
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(400);
@@ -871,7 +871,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_SetMessageId(MsgTolbiShipLandHo);
   Script_ShowMessageAndWait(LOCALID_LOOKOUT, 0, 20);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes

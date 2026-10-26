@@ -92,7 +92,7 @@ struct FieldWork {
   s32 walkingDistance;
   struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapGridCell *previousCell; ///< the cell before it
-  s32 transition;       ///< MAP_TRANSITION(style, variant); 0x100 on entry
+  s32 transition;       ///< SCENE_TRANSITION(style, variant); 0x100 on entry
   u16 unused;           ///< no code names it
   u16 transitionActive; ///< set once the opening transition has started
   s32 transitionFrames; ///< frames; 16 on entry and at each script

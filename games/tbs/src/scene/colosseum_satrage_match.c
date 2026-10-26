@@ -1005,7 +1005,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 row;
   s32 zero;
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   // Restore the metatile behavior templates before applying saved puzzle
   // progress.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -1722,11 +1722,11 @@ static void MapLocalState_EmptyHook(void) {}
 /// Unused: marks the opponent's path recorder finished
 /// (PATH_RECORDER_FINISHED); nothing calls it.
 static UNUSED void ColosseumSatrageMatch_MarkOpponentFinished(void) {
-  ((struct PathRecorder *)gMapLocalState)->mode = PATH_RECORDER_FINISHED;
+  ((struct PathRecorder *)gSceneLocalState)->mode = PATH_RECORDER_FINISHED;
 }
 
 static void ColosseumSatrageMatch_WaitForOpponentFinish(void) {
-  s16 *mode = &((struct PathRecorder *)gMapLocalState)->mode;
+  s16 *mode = &((struct PathRecorder *)gSceneLocalState)->mode;
 
   while (*mode != 9) {
     WaitFrames(1);
@@ -1905,7 +1905,7 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 /// Decodes the opponent's recorded path and starts its playback task.
 static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   struct ColossoRaceWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
-  struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 
   FieldDecompress_TaggedLz(Resource_GetTableEntry(pathResource), work->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

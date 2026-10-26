@@ -790,7 +790,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 /// name.
 static void KalayTolbiDocks_PrepareInterior(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 }
 

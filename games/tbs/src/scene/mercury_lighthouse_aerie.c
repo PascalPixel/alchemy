@@ -220,7 +220,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
@@ -313,7 +313,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   MapGrid_WaitForShakeToSettle();
@@ -964,7 +964,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
 
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(60);

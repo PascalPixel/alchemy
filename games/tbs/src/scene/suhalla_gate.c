@@ -206,12 +206,12 @@ s32 Scene_Initialize(void) {
     // and the map section's name is not shown again.
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
-        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gSaveBlock.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
         gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
-        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(sceneId);
+        gSaveBlock.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);
         gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }

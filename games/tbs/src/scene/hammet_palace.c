@@ -250,7 +250,7 @@ static void EventScript_LeaveThroughDoor(void) {
 /// warp-destination-specific setup.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gSaveBlock.sceneId == (u32)&SceneId_HammetPalace) {
     HammetPalace_SetUpWarpDest();
   }
@@ -344,7 +344,8 @@ static void HammetPalace_IvanReportsToLayana(void) {
   WaitFrames(1);
   work = gFieldWork;
   work->transitionFrames = 24;
-  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   ObjectEvent_SetPosition(LOCALID_LAYANA, PIXELS(856), PIXELS(440));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(856), PIXELS(486));
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(848), PIXELS(502));
@@ -820,7 +821,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   work = gFieldWork;
   work->transitionFrames = 16;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
   FieldScript_End();
@@ -1022,7 +1023,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   work = gFieldWork;
   work->transitionFrames = 16;
   work->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_HAMMET_BACK_HOME_SEEN);
   FieldScript_End();

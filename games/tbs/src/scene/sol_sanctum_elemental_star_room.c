@@ -240,7 +240,7 @@ static void EventScript_BagVenusStar(void) {
   MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
   FieldScript_WaitFrames(40);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(710), -1, PIXELS(474), 0);
@@ -346,7 +346,7 @@ static void EventScript_BagMercuryStar(void) {
   MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
   FieldScript_WaitFrames(40);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(712), -1, PIXELS(152), 0);
@@ -465,7 +465,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
   FieldScript_WaitFrames(40);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(477), 0);
@@ -1323,7 +1323,7 @@ static void EventScript_TakeMarsStar(void) {
   ObjectMotion_Launch(LOCALID_GARET, 2, 20);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
   ObjectMotion_Launch(LOCALID_GARET, 6, 40);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(
@@ -1470,7 +1470,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   *leaderMotion = 0;
   rising->y.fixed = PIXELS(40);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();

@@ -24,7 +24,7 @@
 /// entry from outside the cave (warp destination 0) to the room's first warp
 /// destination, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
-/// the overlay's own state is in map temp flags and gMapLocalState, so it
+/// the overlay's own state is in map temp flags and gSceneLocalState, so it
 /// starts over on every ordinary arrival.
 ///
 /// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK): BG1 is
@@ -34,16 +34,16 @@
 /// evenly dark room BG1 covers everything outside it and is only blended inside
 /// it. AltmillerCaveEntrance darkens by steps instead
 /// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS): coord events 60 to 65 each set a
-/// level, kept in gMapLocalState byte 4, from the lightest at the mouth to the
-/// darkest by the inner chamber, and blends outside the light while BG1 is left
-/// out inside it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the
+/// level, kept in gSceneLocalState byte 4, from the lightest at the mouth to
+/// the darkest by the inner chamber, and blends outside the light while BG1 is
+/// left out inside it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the
 /// layers under it 16 sixteenths at level 0, two fewer at each level after,
 /// down to 6 at level 5. Where one level meets the next, a cell of each lies
 /// side by side, so the level is that of the cell the leader last stepped on,
 /// in either direction. Reveal lights a dark room while it lasts and shows the
 /// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
-/// The rock puzzle keeps the rounds matched in gMapLocalState byte 0 and its
+/// The rock puzzle keeps the rounds matched in gSceneLocalState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the
 /// leftmost rock and then the rightmost brings out the ring of five lights; the
 /// ring spins (AltmillerCave_SpinLights, a task) and stops with one light at
@@ -271,14 +271,14 @@ enum {
   WHEEL_STOPPED = 99
 };
 
-/// AltmillerCaveDraught's rock puzzle, kept in gMapLocalState: the rounds of
+/// AltmillerCaveDraught's rock puzzle, kept in gSceneLocalState: the rounds of
 /// lights matched in byte 0, then the state and the light shown.
 struct RockPuzzle {
   u8 state;
   s8 chosen;
 };
 
-#define ROCK_PUZZLE ((struct RockPuzzle *)&gMapLocalState[1])
+#define ROCK_PUZZLE ((struct RockPuzzle *)&gSceneLocalState[1])
 
 /// The puzzle's states: the leftmost rock turned, then the rightmost, which
 /// shows the lights; after three lights matched the wall opens.
@@ -327,7 +327,7 @@ const struct ObjectEventTemplate *AltmillerCave_GetObjectEventTemplates(void) {
 /// Darkens AltmillerCaveEntrance to its current level: the brighter blend at
 /// level 0, each level one step darker.
 static void AltmillerCave_ApplyFadeBlend(void) {
-  s8 level = ((s8 *)gMapLocalState)[4];
+  s8 level = ((s8 *)gSceneLocalState)[4];
 
   Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   if (level == 0) {
@@ -361,7 +361,7 @@ static void AltmillerCave_ApplyFadeBlend(void) {
 /// lighting the room.
 static void AltmillerCave_SetFadeLevel(s32 level) {
   struct FieldWork *work;
-  u8 *fade = &gMapLocalState[4];
+  u8 *fade = &gSceneLocalState[4];
 
   work = gFieldWork;
   *fade = level;
@@ -412,7 +412,7 @@ static void AltmillerCave_InitializeDarkness(void) {
 
   {
     struct FieldWork *work = (struct FieldWork *)*workCells;
-    work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transitionFrames = 24;
   }
   WaitFrames(1);
@@ -703,7 +703,7 @@ static void AltmillerCave_SpinLights(void) {
       wheel->phase++;
     }
   } else if (phase == WHEEL_STOPPING) {
-    s32 chosenLight = ((s8 *)gMapLocalState)[2];
+    s32 chosenLight = ((s8 *)gSceneLocalState)[2];
     s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
     if ((unsigned int)(((u32)(wheel->angle - chosenAngle) << 16) +
                        0xc2ff0000) <= 0x5fe0000) {
@@ -774,7 +774,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
     } else {
       Script_PlaySong(SE_MENU_ERROR);
     }
-    gMapLocalState[0] = 0;
+    gSceneLocalState[0] = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == LOCALID_BLUE_ROCK) {
       Script_PlaySong(SE_CHIME);
@@ -827,7 +827,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Task_Wait(30);
     }
   }
-  puzzleState = &gMapLocalState[1];
+  puzzleState = &gSceneLocalState[1];
   puzzleState[0] = state;
   // A light matched: choose a different light and spin the ring to it.
   if (correctRock) {
@@ -2117,13 +2117,13 @@ s32 AltmillerCave_Initialize(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        *(u8 *)((u32)gMapLocalState + 4) = 0;
+        *(u8 *)((u32)gSceneLocalState + 4) = 0;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        *(u8 *)((u32)gMapLocalState + 4) = 5;
+        *(u8 *)((u32)gSceneLocalState + 4) = 5;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
@@ -2185,14 +2185,14 @@ s32 AltmillerCave_Initialize(void) {
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        u8 *puzzleState = gMapLocalState;
+        u8 *puzzleState = gSceneLocalState;
 
         puzzleState[0] = 0;
         puzzleState[1] = PUZZLE_START;
         puzzleState[2] = LOCALID_RED_LIGHT - LOCALID_FIRST_LIGHT;
       }
     }
-    state = (s8 *)&gMapLocalState[1];
+    state = (s8 *)&gSceneLocalState[1];
     if (state[0] == PUZZLE_SOLVED) {
       MapGrid_CopyCellsLayered(41, 55, 3, 2, 30, 55);
       MapGrid_CopyCellAttributes(42, 8, 1, 1, 31, 8);
@@ -2232,7 +2232,7 @@ s32 AltmillerCave_Initialize(void) {
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
-    gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gFieldWork->transitionFrames = 24;
   }
   return 0;

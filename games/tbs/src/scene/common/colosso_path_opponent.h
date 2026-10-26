@@ -43,7 +43,7 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 /// with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
-  struct PathRecorder *rec = (struct PathRecorder *)gMapLocalState;
+  struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;
   struct ObjectEvent *objectEvent;
   s32 x, z, d;
   u16 *itemLocalId;

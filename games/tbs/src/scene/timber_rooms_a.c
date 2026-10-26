@@ -542,7 +542,7 @@ s32 Scene_Initialize(void) {
   if (gSaveBlock.warpDest == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gFieldWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
   ObjectEvent_GetById(LOCALID_MERCHANT)->collisionFlags |= OBJ_EVENT_NEAR_TALK;

@@ -41,7 +41,7 @@
 /// The next map change is silent: the map loader clears it in place of
 /// playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
 /// transition.
-#define FLAG_SKIP_MAP_CHANGE_SOUND 0x101
+#define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field map starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field loop handles its requests, and cleared while the party
@@ -90,7 +90,7 @@
 /// (Warp_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
-/// The party is in a town (MAP_TYPE_TOWN); the map loader sets and
+/// The party is in a town (SCENE_TYPE_TOWN); the map loader sets and
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
 // Set as a file continues from its last Sanctum by the player's choice

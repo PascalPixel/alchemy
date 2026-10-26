@@ -811,9 +811,9 @@ s32 ValeCave_Initialize(void) {
   s32 *request = &gFieldWork->transition;
 
   *request =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveMouth) {
-    *request = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     WaitFrames(1);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_SECOND_LOG, 3);

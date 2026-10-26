@@ -844,7 +844,7 @@ s32 Scene_Initialize(void) {
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,

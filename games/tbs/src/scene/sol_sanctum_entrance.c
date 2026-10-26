@@ -682,7 +682,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles,
@@ -717,7 +717,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 warpDest;
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -742,7 +742,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gSaveBlock.retreatMap = (s32)&SceneId_SolSanctumReliefs;
+    gSaveBlock.retreatScene = (s32)&SceneId_SolSanctumReliefs;
     gSaveBlock.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
@@ -819,7 +819,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
-  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   FieldScript_WaitFrames(4);
@@ -896,7 +896,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   FieldScript_End();
 }
@@ -1140,7 +1140,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
 
   FieldScript_Start();
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);

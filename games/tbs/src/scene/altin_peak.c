@@ -1552,7 +1552,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 /// levels already lowered. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     AltinPeak_RestoreFirstWaterBeastRoom();
   } else if (gSaveBlock.sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
@@ -2119,7 +2119,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   ObjectEvent_SetPosition(LOCALID_FIRST_WATER_BEAST, 0, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -2135,7 +2135,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   FieldCamera_WaitForArrival();
   FieldScript_SetMapEvents(gAltinPeak_FirstWaterBeastEventsDrained);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldScript_End();
 }
 
@@ -2151,12 +2151,12 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   AltinPeak_DrainSecondWater();
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldScript_End();
 }
 
@@ -2171,12 +2171,12 @@ static void AltinPeak_DrainAfterThirdBeast(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   AltinPeak_DrainThirdWater();
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldScript_End();
 }
 
@@ -2243,7 +2243,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_SetPosition(LOCALID_STATUE_SHADOW, PIXELS(328), PIXELS(88));
   Import_ObjectEventSetAnimation(LOCALID_STATUE, 0);
   work = gFieldWork;
-  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2352,7 +2352,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, party);
   FieldScript_WaitFrames(20);
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transitionFrames = 16;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);

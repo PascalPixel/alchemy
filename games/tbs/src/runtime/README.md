@@ -275,7 +275,7 @@ the save code's from the flash records it writes. Constants such as
 
 `gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and
 above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
-(`gMapLocalState` opens the second, `gSleepActive` the third, the music state
+(`gSceneLocalState` opens the second, `gSleepActive` the third, the music state
 the fourth), and `gSavedStack` is the last cell of the third, sized to reach
 the fourth.
 

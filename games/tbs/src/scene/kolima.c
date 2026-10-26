@@ -521,7 +521,7 @@ s32 Kolima_Initialize(void) {
 
   if (sceneId == (s32)&SceneId_KolimaTunnel) {
     gFieldWork->transition =
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
   }
 

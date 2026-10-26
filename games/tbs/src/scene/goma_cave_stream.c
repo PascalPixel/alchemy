@@ -130,7 +130,7 @@ s32 Scene_Initialize(void) {
   struct ObjectEvent *stump;
 
   gFieldWork->transition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveStream) {
     if (gSaveBlock.warpDest == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);

@@ -161,15 +161,7 @@ Func_020028f4:
 	.global Func_020028fc
 	.thumb_func
 Func_020028fc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02002904
 	.thumb_func
 Func_02002904:
@@ -185,15 +177,7 @@ Object_LinkObjectAndSetCallback:
 	.global Func_0200291c
 	.thumb_func
 Func_0200291c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02002924
 	.thumb_func
 Func_02002924:

@@ -20827,7 +20827,7 @@ msgctxt "MsgYourCoins"
 msgid "05123"
 msgstr "Vos pièces:"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "05124"
 msgstr "Prix"
 
@@ -20855,11 +20855,11 @@ msgctxt "MsgNoItems"
 msgid "05130"
 msgstr "Pas d'objet"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "05131"
 msgstr "On ne l'achète pas."
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "05132"
 msgstr "Objet pas cassé."
 
@@ -20895,7 +20895,7 @@ msgctxt "message"
 msgid "05140"
 msgstr "CHANCE"
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "05141"
 msgstr "----------"
 

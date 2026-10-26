@@ -8,13 +8,6 @@
 #include "sound.h"
 #include "system.h"
 #include "object_runtime.h"
-#include "edition.h"
-
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// European far-call tables use a different name for the terrain height entry.
-#define Map_GetTerrainHeightFar Func_08020190
-#endif
 
 #define Object_SetPositionAndResetMotionFar                                    \
   ((s32 (*)(struct ObjectRuntime *, s32, s32,                                  \

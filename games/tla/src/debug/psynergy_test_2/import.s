@@ -65,63 +65,15 @@ Func_02000598:
 	.global Func_020005a0
 	.thumb_func
 Func_020005a0:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_020005a8
 	.thumb_func
 Func_020005a8:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_020005b0
 	.thumb_func
 Func_020005b0:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
 	overlay_veneer Func_080201f0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -145,60 +97,20 @@ Func_020005d8:
 	.global Func_020005e0
 	.thumb_func
 Func_020005e0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8698
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8698
-	.else
 	overlay_veneer Func_080c86a8
-	.endif
-	.endif
 	.global Func_020005e8
 	.thumb_func
 Func_020005e8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86a8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86a8
-	.else
 	overlay_veneer Func_080c86b8
-	.endif
-	.endif
 	.global Func_020005f0
 	.thumb_func
 Func_020005f0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87b0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87b0
-	.else
 	overlay_veneer Func_080c87c0
-	.endif
-	.endif
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87c0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87c0
-	.else
 	overlay_veneer Func_080c87d0
-	.endif
-	.endif
 	.global Func_02000600
 	.thumb_func
 Func_02000600:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d0
-	.else
 	overlay_veneer BattleEffect_StepVector3Far
-	.endif
-	.endif

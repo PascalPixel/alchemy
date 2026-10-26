@@ -77,23 +77,7 @@ Func_02003e1c:
 	.global Func_02003e24
 	.thumb_func
 Func_02003e24:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02003e2c
 	.thumb_func
 Func_02003e2c:
@@ -269,111 +253,39 @@ Func_02003f7c:
 	.global Func_02003f84
 	.thumb_func
 Func_02003f84:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_02003fa4
 	.thumb_func
 Func_02003fa4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02003fac
 	.thumb_func
 Func_02003fac:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
-	.else
 	overlay_veneer Func_080c84e8
-	.endif
-	.endif
 	.global Func_02003fb4
 	.thumb_func
 Func_02003fb4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.else
 	overlay_veneer Func_080c84f0
-	.endif
-	.endif
 	.global Func_02003fbc
 	.thumb_func
 Func_02003fbc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84e8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84e8
-	.else
 	overlay_veneer Func_080c84f8
-	.endif
-	.endif
 	.global Func_02003fc4
 	.thumb_func
 Func_02003fc4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c84f0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c84f0
-	.else
 	overlay_veneer Func_080c8500
-	.endif
-	.endif
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -381,52 +293,20 @@ Object_LinkObjectAndSetCallback:
 	.global Func_02003fd4
 	.thumb_func
 Func_02003fd4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Object_SetActionCallbackFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Object_SetActionCallbackFar
-	.else
 	overlay_veneer Event_NoOpFar
-	.endif
-	.endif
 	.global Func_02003fdc
 	.thumb_func
 Func_02003fdc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8728
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8728
-	.else
 	overlay_veneer Func_080c8738
-	.endif
-	.endif
 	.global Func_02003fe4
 	.thumb_func
 Func_02003fe4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8738
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8738
-	.else
 	overlay_veneer Func_080c8748
-	.endif
-	.endif
 	.ifndef TLA_EDITION_JA
 	.global Func_02003fec
 	.thumb_func
 Func_02003fec:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8750
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8750
-	.else
 	overlay_veneer Func_080c8760
-	.endif
-	.endif
 	.endif
 	.global Func_02003ff4
 	.thumb_func

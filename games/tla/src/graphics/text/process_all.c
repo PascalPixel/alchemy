@@ -18,13 +18,6 @@
 #define TEXT_WORK_TAIL 0x1384
 #endif
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach the controlled owner and its
-// screen position through slots two entries earlier, under those slots' names.
-#define EventRuntime_GetControlledOwnerFar Func_080c8768
-#define Func_080c82a8 Func_080d5becFar
-#endif
-
 struct Work;
 
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3,

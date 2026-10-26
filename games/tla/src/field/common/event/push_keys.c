@@ -1,7 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "edition.h"
 
 struct SceneEventEntry {
   s32 flags;
@@ -28,11 +27,6 @@ void BattleEffect_RunRisingObjectSequence(s32 owner, s32 a, s32 b);
 s32 Func_080d4d08(void);
 s32 Func_080d50f8(void);
 s32 Func_080d53b8(void);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian scaffolds label this function with the name their
-// far-call table gives the slot that reaches it.
-#define Func_080cdc74 Func_080eab98
-#endif
 s32 Func_080cdc74(void);
 void Func_080cdd80(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);

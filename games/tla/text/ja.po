@@ -18896,11 +18896,11 @@ msgctxt "MsgPiece"
 msgid "04648"
 msgstr "コ"
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "04649"
 msgstr "しょじコイン"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "04650"
 msgstr "ねだん"
 
@@ -18928,11 +18928,11 @@ msgctxt "MsgNoItems"
 msgid "04656"
 msgstr "なにももってません"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "04657"
 msgstr "かいとれません"
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "04658"
 msgstr "こわれてません"
 
@@ -18968,7 +18968,7 @@ msgctxt "message"
 msgid "04666"
 msgstr "うんのよさ"
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "04667"
 msgstr "----------"
 

@@ -2,14 +2,6 @@
 #include "types.h"
 #include "input.h"
 #include "object_runtime.h"
-#include "edition.h"
-
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach these functions under the
-// names of other entries.
-#define Func_080da908 Func_080dbe44
-#define Func_080da938 Func_080d3b28
-#endif
 
 extern s32 gData_080f3950;
 

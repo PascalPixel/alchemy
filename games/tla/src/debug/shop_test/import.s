@@ -29,23 +29,7 @@ Func_02000c88:
 	.global Func_02000c90
 	.thumb_func
 Func_02000c90:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -251,27 +235,11 @@ Func_02000e20:
 	.global Func_02000e28
 	.thumb_func
 Func_02000e28:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
 	overlay_veneer Func_080c83e0
-	.endif
-	.endif
 	.global Func_02000e30
 	.thumb_func
 Func_02000e30:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:

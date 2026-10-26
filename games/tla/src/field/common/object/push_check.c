@@ -3,12 +3,6 @@
 #include "party_state.h"
 #include "object_runtime.h"
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach this function under the
-// name of another entry.
-#define Func_080cdc74 Func_080eab98
-#endif
-
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 struct ObjectRuntime *Object_GetById(s32 id);

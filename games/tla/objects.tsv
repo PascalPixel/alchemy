@@ -54,31 +54,7 @@ main	rom_main_00	games/tla/src/system/resource/execute_transfer
 main	rom_main_00	games/tla/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tla/src/system/memory/release_heap_block
 main	rom_main_00	games/tla/src/system/memory/heap_free
-main	rom_main_00	recon/tla/it/rom	.rom.0001319c	it
-main	rom_main_00	recon/tla/it/rom	.rom.000132e4	it
-main	rom_main_00	recon/tla/it/rom	.rom.000132e8	it
-main	rom_main_00	recon/tla/it/rom	.rom.000132ec	it
-main	rom_main_00	recon/tla/it/rom	.rom.000132f0	it
-main	rom_main_00	recon/tla/it/rom	.rom.000132f4	it
-main	rom_main_00	recon/tla/fr/rom	.rom.0001319c	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000132e4	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000132e8	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000132ec	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000132f0	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000132f4	fr
-main	rom_main_00	recon/tla/es/rom	.rom.0001319c	es
-main	rom_main_00	recon/tla/es/rom	.rom.000132e4	es
-main	rom_main_00	recon/tla/es/rom	.rom.000132e8	es
-main	rom_main_00	recon/tla/es/rom	.rom.000132ec	es
-main	rom_main_00	recon/tla/es/rom	.rom.000132f0	es
-main	rom_main_00	recon/tla/es/rom	.rom.000132f4	es
-main	rom_main_00	recon/tla/de/rom	.rom.0001319c	de
-main	rom_main_00	recon/tla/de/rom	.rom.000132e4	de
-main	rom_main_00	recon/tla/de/rom	.rom.000132e8	de
-main	rom_main_00	recon/tla/de/rom	.rom.000132ec	de
-main	rom_main_00	recon/tla/de/rom	.rom.000132f0	de
-main	rom_main_00	recon/tla/de/rom	.rom.000132f4	de
-main	rom_main_00	games/tla/src/system/f01319c	.text	ja en
+main	rom_main_00	games/tla/src/system/f01319c	.text
 main	rom_main_00	games/tla/src/system/constant_zero_result	.text
 main	rom_main_00	games/tla/src/system/resource/resource	.text
 main	rom_main_00	recon/tla/it/rom	.rom.000133f0	it
@@ -203,116 +179,32 @@ main	rom_main_00	games/tla/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/tla/src/system/save/flashat	.rodata
 main	rom_main_00	games/tla/src/system/save/atmel	.rodata
 main	rom_main_01	games/tla/src/system/far_call/resource
-main	rom_main_01	recon/tla/it/rom	.rom.00020010	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020030	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020038	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020010	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020030	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020038	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020010	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020030	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020038	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020010	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020030	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020038	de
 main	rom_main_01	games/tla/src/system/far_call/table
-main	rom_main_01	recon/tla/it/rom	.rom.00020060	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020068	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020070	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020078	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020060	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020068	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020070	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020078	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020060	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020068	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020070	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020078	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020060	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020068	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020070	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020078	de
-main	rom_main_01	games/tla/src/system/far_call/animation		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_2		ja en
-main	rom_main_01	games/tla/src/system/far_call/resource_2		ja en
+main	rom_main_01	games/tla/src/system/far_call/animation
+main	rom_main_01	games/tla/src/system/far_call/table_2
+main	rom_main_01	games/tla/src/system/far_call/resource_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_3
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_4
 main	rom_main_01	games/tla/src/system/far_call/object
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_5
-main	rom_main_01	recon/tla/it/rom	.rom.00020180	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020198	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201a0	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201a8	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020180	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020198	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201a0	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201a8	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020180	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020198	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201a0	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201a8	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020180	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020198	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201a0	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201a8	de
 main	rom_main_01	games/tla/src/system/far_call/table_3
-main	rom_main_01	recon/tla/it/rom	.rom.000201f0	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201f8	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020200	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020208	it
-main	rom_main_01	recon/tla/fr/rom	.rom.000201f0	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201f8	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020200	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020208	fr
-main	rom_main_01	recon/tla/es/rom	.rom.000201f0	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201f8	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020200	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020208	es
-main	rom_main_01	recon/tla/de/rom	.rom.000201f0	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201f8	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020200	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020208	de
-main	rom_main_01	games/tla/src/system/far_call/table_4		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_5		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_4
+main	rom_main_01	games/tla/src/system/far_call/table_5
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_6
 main	rom_main_01	games/tla/src/system/far_call/table_6
-main	rom_main_01	recon/tla/it/rom	.rom.00020238	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020240	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020248	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020250	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020238	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020240	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020248	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020250	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020238	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020240	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020248	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020250	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020238	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020240	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020248	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020250	de
-main	rom_main_01	games/tla/src/system/far_call/animation_2		ja en
+main	rom_main_01	games/tla/src/system/far_call/animation_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_7
 main	rom_main_01	games/tla/src/system/far_call/animation_3
 main	rom_main_01	games/tla/src/system/far_call/resource_3
-main	rom_main_01	recon/tla/it/rom	.rom.00020308	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020318	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020308	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020318	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020308	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020318	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020308	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020318	de
 main	rom_main_01	games/tla/src/system/far_call/table_7
 main	rom_main_01	games/tla/src/system/far_call/table_8
 main	rom_main_01	games/tla/src/system/far_call/table_9
-main	rom_main_01	games/tla/src/system/far_call/table_10		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_11		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_10
+main	rom_main_01	games/tla/src/system/far_call/table_11
 main	rom_main_01	games/tla/src/system/far_call/table_12
-main	rom_main_01	games/tla/src/system/far_call/table_13		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_13
 main	rom_main_01	games/tla/src/system/resource/colconv	.rodata
 main	rom_main_01	games/tla/src/field/common/remap	.rodata
 main	rom_main_01	games/tla/src/graphics/render/decode_frame
@@ -935,13 +827,7 @@ main	rom_main_02	games/tla/src/graphics/text/noop	.text
 main	rom_main_02	games/tla/src/graphics/text/f03f624	.text
 main	rom_main_02	games/tla/src/graphics/text/resource	.text
 main	rom_main_02	games/tla/src/menu/topsel	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003f7d0	it
-main	rom_main_02	recon/tla/it/rom	.rom.0003f858	it
-main	rom_main_02	recon/tla/es/rom	.rom.0003f7d8	es
-main	rom_main_02	recon/tla/es/rom	.rom.0003f860	es
-main	rom_main_02	games/tla/src/menu/topsel_run	.text	en de fr
-main	rom_main_02	recon/tla/ja/rom	.rom.0003f8ac	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0003f934	ja
+main	rom_main_02	games/tla/src/menu/topsel_run	.text
 main	rom_main_02	games/tla/src/graphics/window/runtime_close_and_release	.text
 main	rom_main_02	games/tla/src/graphics/window/reset	.text
 main	rom_main_02	games/tla/src/graphics/window/notice	.text
@@ -1503,292 +1389,26 @@ main	rom_main_04	games/tla/src/system/far_call/run_scene
 main	rom_main_04	games/tla/src/system/far_call/event
 main	rom_main_04	games/tla/src/system/far_call/object_motion
 main	rom_main_04	games/tla/src/system/far_call/table_25
-main	rom_main_04	recon/tla/it/rom	.rom.000c82a8	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d12a8	es
-main	rom_main_04	games/tla/src/system/far_call/table_26		en de es fr it
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82a8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82c0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82d8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c82f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8330	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8350	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8368	ja
+main	rom_main_04	games/tla/src/system/far_call/table_26
 main	rom_main_04	games/tla/src/system/far_call/table_27
 main	rom_main_04	games/tla/src/system/far_call/table_28
-main	rom_main_04	recon/tla/it/rom	.rom.000c83b8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83c0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83c8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83d0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83d8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83e0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83e8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83f0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c83f8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8400	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8408	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8410	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8418	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8420	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8428	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8430	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8438	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8440	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8448	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8450	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8458	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8460	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8468	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8470	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8478	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8480	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8488	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8490	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8498	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84a0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84a8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84b0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84b8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84c0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84c8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84d0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84d8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c84e0	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d13b8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13c0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13c8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13d0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13d8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13e0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13e8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13f0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d13f8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1400	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1408	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1410	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1418	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1420	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1428	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1430	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1438	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1440	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1448	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1450	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1458	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1460	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1468	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1470	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1478	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1480	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1488	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1490	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1498	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14a0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14a8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14b0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14b8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14c0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14c8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14d0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14d8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d14e0	es
-main	rom_main_04	games/tla/src/system/far_call/objectta		en de fr
-main	rom_main_04	games/tla/src/system/far_call/table_29		en de es fr it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8518	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8520	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8528	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d1518	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1520	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1528	es
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83a8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83b0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83b8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83c0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83d8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c83e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8408	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8420	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8428	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8430	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8438	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8458	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8480	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8498	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84a0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84a8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84b0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84b8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84c0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84d0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84d8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84f0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c84f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8500	ja
-main	rom_main_04	games/tla/src/system/far_call/table_30		ja en de fr
-main	rom_main_04	games/tla/src/system/far_call/battlefx		en de es fr it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8598	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c85a0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c85a8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c85b0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c85b8	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d1598	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d15a0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d15a8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d15b0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d15b8	es
-main	rom_main_04	games/tla/src/system/far_call/effect_b	.text	en de fr
-main	rom_main_04	games/tla/src/system/far_call/camera		en de es fr it
-main	rom_main_04	games/tla/src/system/far_call/object_motion_2		en de es fr it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8628	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d1628	es
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8520	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8528	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8530	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8538	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8540	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8548	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8558	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8570	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8578	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8580	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8588	ja
-main	rom_main_04	games/tla/src/system/far_call/camera		ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c85c8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c85d0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c85e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c85f0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c85f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8600	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8620	ja
+main	rom_main_04	games/tla/src/system/far_call/objectta
+main	rom_main_04	games/tla/src/system/far_call/table_29
+main	rom_main_04	games/tla/src/system/far_call/table_30
+main	rom_main_04	games/tla/src/system/far_call/battlefx
+main	rom_main_04	games/tla/src/system/far_call/effect_b	.text
+main	rom_main_04	games/tla/src/system/far_call/camera
+main	rom_main_04	games/tla/src/system/far_call/object_motion_2
 main	rom_main_04	games/tla/src/system/far_call/table_31
-main	rom_main_04	recon/tla/it/rom	.rom.000c8658	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8660	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8668	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8670	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8678	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8680	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8688	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8690	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8698	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c86a0	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d1658	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1660	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1668	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1670	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1678	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1680	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1688	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1690	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1698	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d16a0	es
-main	rom_main_04	games/tla/src/system/far_call/object_2		en de fr
-main	rom_main_04	games/tla/src/system/far_call/table_32		en de es fr it
-main	rom_main_04	games/tla/src/system/far_call/table_33		en de es fr it
-main	rom_main_04	games/tla/src/system/far_call/table_34		en de es fr it
-main	rom_main_04	games/tla/src/system/far_call/field		en de es fr it
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8648	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8680	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8688	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8690	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8698	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86a8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86b0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86b8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86c0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86d0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86d8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86f0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c86f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8700	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8708	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8710	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8718	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8720	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8728	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8730	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8738	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8740	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8748	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8750	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8758	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8760	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8778	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8780	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8798	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87a0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87a8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87b0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87b8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87c0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87c8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87d0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87f0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c87f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8800	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8808	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8810	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8818	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8820	ja
+main	rom_main_04	games/tla/src/system/far_call/object_2
+main	rom_main_04	games/tla/src/system/far_call/table_32
+main	rom_main_04	games/tla/src/system/far_call/table_33
+main	rom_main_04	games/tla/src/system/far_call/table_34
+main	rom_main_04	games/tla/src/system/far_call/field
 main	rom_main_04	games/tla/src/system/far_call/table_35
-main	rom_main_04	recon/tla/it/rom	.rom.000c88d8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c88e0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c88e8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c88ec	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c88f0	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c88f8	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8900	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8908	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8910	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8918	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8920	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8928	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8930	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8938	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8940	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8948	it
-main	rom_main_04	recon/tla/it/rom	.rom.000c8950	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d18d8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d18e0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d18e8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d18ec	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d18f0	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d18f8	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1900	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1908	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1910	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1918	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1920	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1928	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1930	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1938	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1940	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1948	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d1950	es
-main	rom_main_04	games/tla/src/system/far_call/object_motion_3		en de fr
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88c8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88cc	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88d0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88d8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88e0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88e8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88ec	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88f0	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c88f8	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8900	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8918	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8928	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8930	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8940	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000c8948	ja
+main	rom_main_04	games/tla/src/system/far_call/object_motion_3
 main	rom_main_04	games/tla/src/system/far_call/table_36
-main	rom_main_04	games/tla/src/system/far_call/table_37		ja en de fr
+main	rom_main_04	games/tla/src/system/far_call/table_37
 main	rom_main_04	games/tla/src/battle/effect/integrate_vectors
 main	rom_main_04	games/tla/src/system/resource/tables2	.rodata
 main	rom_main_04	games/tla/src/battle/effect/decode_frame
@@ -3140,27 +2760,9 @@ main	rom_main_05	recon/tla/unidentified	.unidentified.080f3984	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000f3890	ja
 main	rom_main_05	games/tla/src/battle/effect/fademap	.rodata
 main	rom_main_06	games/tla/src/system/far_call/table_38
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa028	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa030	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa038	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa040	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa048	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa050	fr
-main	rom_main_06	recon/tla/es/rom	.rom.000fe028	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe030	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe038	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe040	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe048	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe050	es
-main	rom_main_06	recon/tla/de/rom	.rom.00102028	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102030	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102038	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102040	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102048	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102050	de
-main	rom_main_06	games/tla/src/system/far_call/uiicon_2		ja en it
+main	rom_main_06	games/tla/src/system/far_call/uiicon_2
 main	rom_main_06	games/tla/src/system/far_call/table_39
-main	rom_main_06	games/tla/src/system/far_call/table_40		ja en it
+main	rom_main_06	games/tla/src/system/far_call/table_40
 main	rom_main_06	games/tla/src/system/scheduler/disable_overlay_callbacks_with_flags	.text
 main	rom_main_06	games/tla/src/graphics/window/initialize_work	.text
 main	rom_main_06	games/tla/src/menu/lifecycle	.text
@@ -3506,24 +3108,7 @@ main	rom_main_06	games/tla/src/menu/build_availability	.text
 main	rom_main_06	games/tla/src/graphics/ui/menuspr	.rodata
 main	rom_main_06	games/tla/src/menu/menustr	.rodata
 main	rom_main_06	games/tla/src/menu/menudata	.data
-main	rom_main_07	recon/tla/it/rom	.rom.00108000	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108008	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108010	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108018	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108020	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108028	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108030	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108038	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108040	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108048	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108050	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108058	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108060	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108068	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108070	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108078	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108080	it
-main	rom_main_07	games/tla/src/system/far_call/table_41		ja en de es fr
+main	rom_main_07	games/tla/src/system/far_call/table_41
 main	rom_main_07	games/tla/src/system/far_call/table_42
 main	rom_main_07	games/tla/src/menu/shop/list_items	.text
 main	rom_main_07	games/tla/src/menu/shop/open_work	.text
@@ -3543,13 +3128,9 @@ main	rom_main_07	recon/tla/es/rom	.rom.0010cb70	es
 main	rom_main_07	recon/tla/de/rom	.rom.00110b70	de
 main	rom_main_07	recon/tla/raw/08108b70	.text	en
 main	rom_main_07	recon/tla/raw/08109068	.text	en
-main	rom_main_07	games/tla/src/menu/shop/coin_window	.text	en de es fr it
-main	rom_main_07	recon/tla/it/rom	.rom.001091cc	it
-main	rom_main_07	recon/tla/fr/rom	.rom.001091cc	fr
-main	rom_main_07	recon/tla/es/rom	.rom.0010d1cc	es
 main	rom_main_07	recon/tla/ja/rom	.rom.00108b70	ja
-main	rom_main_07	recon/tla/ja/rom	.rom.00109170	ja
-main	rom_main_07	games/tla/src/menu/shop/item_price	.text	en de
+main	rom_main_07	games/tla/src/menu/shop/coin_window	.text
+main	rom_main_07	games/tla/src/menu/shop/item_price	.text
 main	rom_main_07	games/tla/src/menu/shop/draw_message	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010928c	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010928c	fr
@@ -3585,28 +3166,29 @@ main	rom_main_07	recon/tla/fr/rom	.rom.0010a10c	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010e10c	es
 main	rom_main_07	recon/tla/de/rom	.rom.0011210c	de
 main	rom_main_07	recon/tla/raw/0810a108	.text	en
-main	rom_main_07	games/tla/src/menu/shop/price	.text	en de es fr it
+main	rom_main_07	recon/tla/ja/rom	.rom.0010a110	ja
+main	rom_main_07	games/tla/src/menu/shop/price	.text
+main	rom_main_07	recon/tla/ja/rom	.rom.0010a2e0	ja
 main	rom_main_07	recon/tla/it/rom	.rom.0010a2dc	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010a2dc	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010e2dc	es
 main	rom_main_07	recon/tla/de/rom	.rom.001122dc	de
 main	rom_main_07	recon/tla/raw/0810a2d8	.text	en
 main	rom_main_07	recon/tla/raw/0810a490	.text	en
-main	rom_main_07	games/tla/src/menu/shop/rowlimit	.text	en de es fr it
-main	rom_main_07	games/tla/src/menu/shop/f10a670	.text	en de es fr it
-main	rom_main_07	recon/tla/ja/rom	.rom.0010a110	ja
+main	rom_main_07	games/tla/src/menu/shop/rowlimit	.text
+main	rom_main_07	games/tla/src/menu/shop/f10a670	.text
 main	rom_main_07	games/tla/src/menu/shop/f10a6b8	.text
 main	rom_main_07	games/tla/src/menu/shop/rowtype	.text
 main	rom_main_07	games/tla/src/menu/shop/forge	.text
 main	rom_main_07	games/tla/src/menu/shop/service	.text
 main	rom_main_07	games/tla/src/menu/shop/f10a960	.text
-main	rom_main_07	games/tla/src/menu/shop/f10aa80	.text	en de es fr it
+main	rom_main_07	games/tla/src/menu/shop/f10aa80	.text
+main	rom_main_07	recon/tla/ja/rom	.rom.0010ac00	ja
 main	rom_main_07	recon/tla/de/rom	.rom.00112bf4	de
 main	rom_main_07	recon/tla/es/rom	.rom.0010ebf4	es
 main	rom_main_07	recon/tla/fr/rom	.rom.0010abf4	fr
 main	rom_main_07	recon/tla/it/rom	.rom.0010abf4	it
 main	rom_main_07	recon/tla/raw/0810abf0	.text	en
-main	rom_main_07	recon/tla/ja/rom	.rom.0010aa90	ja
 main	rom_main_07	games/tla/src/menu/shop/reset_state_by_mode	.text
 main	rom_main_07	games/tla/src/menu/shop/f10af24	.text
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b05a	ja
@@ -3615,20 +3197,16 @@ main	rom_main_07	recon/tla/es/rom	.rom.0010f04e	es
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b04e	fr
 main	rom_main_07	recon/tla/it/rom	.rom.0010b02e	it
 main	rom_main_07	games/tla/src/menu/shop/select_msg	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
-main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
-main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	en de fr
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b0cc	ja
-main	rom_main_07	games/tla/src/menu/shop/fx_update	.text	ja en de fr
+main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text
+main	rom_main_07	games/tla/src/menu/shop/fx_update	.text
+main	rom_main_07	recon/tla/es/rom	.rom.0010f1b8	es
+main	rom_main_07	recon/tla/it/rom	.rom.0010b198	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b1b8	fr
 main	rom_main_07	recon/tla/de/rom	.rom.001131b8	de
 main	rom_main_07	recon/tla/raw/0810b1b4	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b1c4	ja
 main	rom_main_07	games/tla/src/menu/shop/run_room_price	.text
-main	rom_main_07	games/tla/src/menu/shop/f10b418	.text	en de es fr it
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b428	ja
+main	rom_main_07	games/tla/src/menu/shop/f10b418	.text
 main	rom_main_07	games/tla/src/menu/shop/inn_sleep	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010b5a8	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b5c8	fr
@@ -3669,50 +3247,10 @@ main	rom_main_07	games/tla/src/menu/shop/shopdata	.rodata
 main	rom_main_08	games/tla/src/system/far_call/resource_09
 main	rom_main_08	games/tla/src/system/far_call/table_43
 main	rom_main_08	games/tla/src/system/far_call/table_44
-main	rom_main_08	recon/tla/es/rom	.rom.00118058	es
-main	rom_main_08	recon/tla/es/rom	.rom.00118060	es
-main	rom_main_08	recon/tla/es/rom	.rom.00118068	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118058	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118060	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118068	de
-main	rom_main_08	games/tla/src/system/far_call/table_45		ja en fr it
-main	rom_main_08	recon/tla/it/rom	.rom.00118070	it
-main	rom_main_08	recon/tla/it/rom	.rom.00118078	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118070	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.00118078	fr
-main	rom_main_08	games/tla/src/system/far_call/table_46		en de es
-main	rom_main_08	recon/tla/de/rom	.rom.00118088	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118090	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118098	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180a0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180a8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180b0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180b8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180c0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180c8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180d0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180d8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180e0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180e8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180f0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180f8	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118100	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118108	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118110	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118118	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118120	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118128	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118130	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118138	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118140	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118148	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118150	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118158	de
-main	rom_main_08	recon/tla/ja/rom	.rom.00118070	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00118078	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00118080	ja
-main	rom_main_08	games/tla/src/system/far_call/battlepl		ja en es fr it
-main	rom_main_08	games/tla/src/system/far_call/battleac		ja en es fr it
+main	rom_main_08	games/tla/src/system/far_call/table_45
+main	rom_main_08	games/tla/src/system/far_call/table_46
+main	rom_main_08	games/tla/src/system/far_call/battlepl
+main	rom_main_08	games/tla/src/system/far_call/battleac
 main	rom_main_08	games/tla/src/graphics/tile/model_decode
 main	rom_main_08	recon/tla/it/rom	.rom.00118230	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00118230	fr

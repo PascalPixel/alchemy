@@ -6,7 +6,6 @@
 #include "io_reg.h"
 #include "mem.h"
 #include "resource.h"
-#include "edition.h"
 
 struct CueEvent {
   u8 unk000[358];
@@ -16,12 +15,6 @@ struct CueEvent {
 extern u8 gPartyState[];
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian scaffolds label these two functions with the names
-// their far-call tables give the slots that reach them.
-#define Func_080dbd48 Func_080e25e8
-#define Func_080e4244 Func_080e137c
-#endif
 s32 Func_080dbd48(s32 x, s32 z, s32 layer);
 s32 Func_080e4244(struct ObjectRuntime *object);
 

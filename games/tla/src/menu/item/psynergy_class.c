@@ -43,13 +43,7 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuState, useResult) == 0x25e);
 STATIC_ASSERT(offsetof(struct PsynergyMenuState, mode) == 0x26c);
 
 struct BattleAct *BattleAction_Get(s32 action);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach BattleEffect_HasMatchingEvent5
-// through this stub (as selrow.c).
-s32 Func_080c84f8(s32 type);
-#else
 s32 BattleEffect_HasMatchingEvent5Far(s32 type);
-#endif
 
 #define MENU_TARGET_WHOLE_PARTY 9 ///< memberIds[1] for the whole party
 #define PSYNERGY_ABILITY_MASK 0x3fff
@@ -341,11 +335,7 @@ s32 Func_080fcf14(void) {
   action = menu->paneAction[0];
   asm volatile("");
   psynergy = BattleAction_Get(0x3fff & action);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  if (Func_080c84f8(psynergy->type) != 0)
-#else
   if (BattleEffect_HasMatchingEvent5Far(psynergy->type) != 0)
-#endif
     return 0;
   ret = 2;
   if (psynergy->range != 0xff) {

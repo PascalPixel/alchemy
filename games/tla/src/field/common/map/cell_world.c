@@ -1,17 +1,8 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "edition.h"
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// European far-call tables use a different name for the world map collision
-// entry.
-s32 Func_08020328(s32 *position);
-#define GetWorldMapCollisionFar Func_08020328
-#else
 s32 GetWorldMapCollisionFar(s32 *position);
-#endif
 
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 

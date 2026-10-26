@@ -11,13 +11,6 @@
 #include "field_event.h"
 #include "edition.h"
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables use a different name for the
-// operand call entry.
-s32 Func_080c88b8(struct ScriptInterpreter *interpreter, s32 value);
-#define Func_080c88c8 Func_080c88b8
-#endif
-
 s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
   Audio_PlayCue(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;

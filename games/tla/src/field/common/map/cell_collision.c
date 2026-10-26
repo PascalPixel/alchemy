@@ -69,11 +69,7 @@ void Func_0802d600(s32 x, s32 z, s32 layer, s32 value) {
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (x >> 20) + ((z >> 20) << 7);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  *shape = Func_080c8720(layer, 0, value);
-#else
   *shape = Func_080c8730(layer, 0, value);
-#endif
 }
 
 s32 Func_0802d644(s32 a, s32 b, s32 c) { return Func_0802d45c(c, a, b) >> 19; }

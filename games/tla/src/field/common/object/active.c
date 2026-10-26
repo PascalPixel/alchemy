@@ -8,12 +8,6 @@
 #include "resource.h"
 #include "edition.h"
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach this function under the
-// name of another entry.
-#define Func_080d3b28 Func_080dbe08
-#endif
-
 struct ObjectRuntime *Object_GetById(u32);
 void Func_08038248(s32 resource, u8 *buffer);
 void ResourceMetadata_ClearRecordFar(void *record);

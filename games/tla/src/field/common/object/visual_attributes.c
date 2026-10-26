@@ -12,12 +12,6 @@
 #include "field_sprite.h"
 #include "edition.h"
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach this function under the
-// name of another entry.
-#define Func_080d3928 Func_080d5d70
-#endif
-
 struct ObjectRuntime *Object_GetById(u32);
 
 void Object_ResetTargetAndSetMode1(u32 objectId) {

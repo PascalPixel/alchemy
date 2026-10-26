@@ -129,99 +129,35 @@ Camera_MoveWithinMapBounds:
 	.global Field_DispatchTypeHandler
 	.thumb_func
 Field_DispatchTypeHandler:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8488
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8488
-	.else
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.endif
-	.endif
 	.global Func_02002294
 	.thumb_func
 Func_02002294:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8490
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8490
-	.else
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.endif
-	.endif
 	.global Func_0200229c
 	.thumb_func
 Func_0200229c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_DispatchTypeHandlerFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_DispatchTypeHandlerFar
-	.else
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.endif
-	.endif
 	.global Func_020022a4
 	.thumb_func
 Func_020022a4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
-	.endif
-	.endif
 	.global Func_020022ac
 	.thumb_func
 Func_020022ac:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetupObjectPairFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetupObjectPairFar
-	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.endif
-	.endif
 	.global Func_020022b4
 	.thumb_func
 Func_020022b4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EffectRuntime_StopCurrentObjectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EffectRuntime_StopCurrentObjectFar
-	.else
 	overlay_veneer EventObject_InitializeFar
-	.endif
-	.endif
 	.global Func_020022bc
 	.thumb_func
 Func_020022bc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_020022c4
 	.thumb_func
 Func_020022c4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
 	overlay_veneer Func_080c8580
-	.endif
-	.endif
 	.global Func_020022cc
 	.thumb_func
 Func_020022cc:
@@ -233,63 +169,23 @@ ObjectMotion_OffsetPositionAndReset:
 	.global Func_020022dc
 	.thumb_func
 Func_020022dc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_020022e4
 	.thumb_func
 Func_020022e4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87f8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87f8
-	.else
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.endif
-	.endif
 	.global Func_020022ec
 	.thumb_func
 Func_020022ec:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.endif
-	.endif
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.endif
-	.endif
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
 	overlay_veneer BattleEffect_SetObjectTickModeFar
-	.endif
-	.endif
 	.global Func_02002304
 	.thumb_func
 Func_02002304:

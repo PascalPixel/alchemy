@@ -93,99 +93,35 @@ Func_020005c8:
 	.global Func_020005d0
 	.thumb_func
 Func_020005d0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.endif
-	.endif
 	.global Func_020005d8
 	.thumb_func
 Func_020005d8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.endif
-	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02000600
 	.thumb_func
 Func_02000600:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
-	.else
 	overlay_veneer Func_080c84e8
-	.endif
-	.endif
 	.global Func_02000608
 	.thumb_func
 Func_02000608:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.else
 	overlay_veneer Func_080c84f0
-	.endif
-	.endif
 	.global Func_02000610
 	.thumb_func
 Func_02000610:

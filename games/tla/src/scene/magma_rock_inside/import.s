@@ -117,63 +117,15 @@ Func_02004cd8:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020190
-	.else
 	overlay_veneer Map_GetTerrainHeightFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004ce8
 	.thumb_func
 Func_02004ce8:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004cf0
 	.thumb_func
 Func_02004cf0:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
 	overlay_veneer Func_080201f0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004cf8
 	.thumb_func
 Func_02004cf8:
@@ -337,375 +289,127 @@ Func_02004e30:
 	.global Func_02004e38
 	.thumb_func
 Func_02004e38:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.global Func_02004e40
 	.thumb_func
 Func_02004e40:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.endif
-	.endif
 	.global Func_02004e48
 	.thumb_func
 Func_02004e48:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_InitializeBuffersFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_InitializeBuffersFar
-	.else
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.endif
-	.endif
 	.global Func_02004e50
 	.thumb_func
 Func_02004e50:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.endif
-	.endif
 	.global Func_02004e58
 	.thumb_func
 Func_02004e58:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_PlayCueAndStartEmitterOnTargetFar
-	.else
 	overlay_veneer Func_080c83e0
-	.endif
-	.endif
 	.global Func_02004e60
 	.thumb_func
 Func_02004e60:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global Field_DispatchTypeHandler
 	.thumb_func
 Field_DispatchTypeHandler:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8488
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8488
-	.else
 	overlay_veneer Field_DispatchTypeHandlerFar
-	.endif
-	.endif
 	.global Func_02004e70
 	.thumb_func
 Func_02004e70:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8490
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8490
-	.else
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.endif
-	.endif
 	.global Func_02004e78
 	.thumb_func
 Func_02004e78:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_DispatchTypeHandlerFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_DispatchTypeHandlerFar
-	.else
 	overlay_veneer BattleEffect_SetupObjectPairFar
-	.endif
-	.endif
 	.global Func_02004e80
 	.thumb_func
 Func_02004e80:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.else
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
-	.endif
-	.endif
 	.global Func_02004e88
 	.thumb_func
 Func_02004e88:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetupObjectPairFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetupObjectPairFar
-	.else
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
-	.endif
-	.endif
 	.global Func_02004e90
 	.thumb_func
 Func_02004e90:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02004e98
 	.thumb_func
 Func_02004e98:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_HasMatchingEvent5Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_HasMatchingEvent5Far
-	.else
 	overlay_veneer Func_080c8518
-	.endif
-	.endif
 	.global Func_02004ea0
 	.thumb_func
 Func_02004ea0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
 	overlay_veneer Party_PlaySavedMusicFar
-	.endif
-	.endif
 	.global Func_02004ea8
 	.thumb_func
 Func_02004ea8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
 	overlay_veneer Func_080c8580
-	.endif
-	.endif
 	.global Object_SetActionCallback
 	.thumb_func
 Object_SetActionCallback:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8670
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8670
-	.else
 	overlay_veneer Object_SetActionCallbackFar
-	.endif
-	.endif
 	.global Func_02004eb8
 	.thumb_func
 Func_02004eb8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Object_SetActionCallbackFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Object_SetActionCallbackFar
-	.else
 	overlay_veneer Event_NoOpFar
-	.endif
-	.endif
 	.global Func_02004ec0
 	.thumb_func
 Func_02004ec0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86c0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86c0
-	.else
 	overlay_veneer Func_080c86d0
-	.endif
-	.endif
 	.global Func_02004ec8
 	.thumb_func
 Func_02004ec8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86c8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86c8
-	.else
 	overlay_veneer Func_080c86d8
-	.endif
-	.endif
 	.global Func_02004ed0
 	.thumb_func
 Func_02004ed0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8700
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8700
-	.else
 	overlay_veneer Func_080c8710
-	.endif
-	.endif
 	.global Func_02004ed8
 	.thumb_func
 Func_02004ed8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8708
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8708
-	.else
 	overlay_veneer Func_080c8718
-	.endif
-	.endif
 	.global Func_02004ee0
 	.thumb_func
 Func_02004ee0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8710
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8710
-	.else
 	overlay_veneer Func_080c8720
-	.endif
-	.endif
 	.global Func_02004ee8
 	.thumb_func
 Func_02004ee8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8718
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8718
-	.else
 	overlay_veneer Func_080c8728
-	.endif
-	.endif
 	.global Func_02004ef0
 	.thumb_func
 Func_02004ef0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8720
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8720
-	.else
 	overlay_veneer Func_080c8730
-	.endif
-	.endif
 	.global Func_02004ef8
 	.thumb_func
 Func_02004ef8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8728
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8728
-	.else
 	overlay_veneer Func_080c8738
-	.endif
-	.endif
 	.global Func_02004f00
 	.thumb_func
 Func_02004f00:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02004f08
 	.thumb_func
 Func_02004f08:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8770
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8770
-	.else
 	overlay_veneer Func_080c8780
-	.endif
-	.endif
 	.global Func_02004f10
 	.thumb_func
 Func_02004f10:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87b0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87b0
-	.else
 	overlay_veneer Func_080c87c0
-	.endif
-	.endif
 	.global Func_02004f18
 	.thumb_func
 Func_02004f18:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87c0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87c0
-	.else
 	overlay_veneer Func_080c87d0
-	.endif
-	.endif
 	.global Func_02004f20
 	.thumb_func
 Func_02004f20:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d0
-	.else
 	overlay_veneer BattleEffect_StepVector3Far
-	.endif
-	.endif
 	.global Func_02004f28
 	.thumb_func
 Func_02004f28:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c88b8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c88b8
-	.else
 	overlay_veneer Func_080c88c8
-	.endif
-	.endif
 	.global Func_02004f30
 	.thumb_func
 Func_02004f30:

@@ -15,12 +15,7 @@ void ObjectMotion_SnapToTerrain(void *object) {
   struct ObjectRuntime *state = object;
   s32 height;
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  height = Func_08020190(0, state->x, state->z);
-#else
   height = Map_GetTerrainHeightFar(0, state->x, state->z);
-#endif
   state->y = height;
   state->terrainHeight = height;
 }

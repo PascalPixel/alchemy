@@ -145,23 +145,7 @@ Func_02004844:
 	.global Func_0200484c
 	.thumb_func
 Func_0200484c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -385,75 +369,27 @@ Func_02004a04:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_02004a24
 	.thumb_func
 Func_02004a24:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02004a2c
 	.thumb_func
 Func_02004a2c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
 	overlay_veneer Party_PlaySavedMusicFar
-	.endif
-	.endif
 	.global Func_02004a34
 	.thumb_func
 Func_02004a34:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Party_PlaySavedMusicFar
-	.else
 	overlay_veneer Func_080c8580
-	.endif
-	.endif
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -461,75 +397,27 @@ Object_LinkObjectAndSetCallback:
 	.global Func_02004a44
 	.thumb_func
 Func_02004a44:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8698
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8698
-	.else
 	overlay_veneer Func_080c86a8
-	.endif
-	.endif
 	.global Func_02004a4c
 	.thumb_func
 Func_02004a4c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86d8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86d8
-	.else
 	overlay_veneer Func_080c86e8
-	.endif
-	.endif
 	.global Func_02004a54
 	.thumb_func
 Func_02004a54:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87f8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87f8
-	.else
 	overlay_veneer BattleEffect_StartArcEffectFar
-	.endif
-	.endif
 	.global Func_02004a5c
 	.thumb_func
 Func_02004a5c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_EndActorSpriteEffectFar
-	.else
 	overlay_veneer BattleEffect_EndArcEffectFar
-	.endif
-	.endif
 	.global Func_02004a64
 	.thumb_func
 Func_02004a64:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_StartArcEffectFar
-	.else
 	overlay_veneer BattleEffect_WaitForArcGroupsFar
-	.endif
-	.endif
 	.global Func_02004a6c
 	.thumb_func
 Func_02004a6c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_EndArcEffectFar
-	.else
 	overlay_veneer BattleEffect_SetObjectTickModeFar
-	.endif
-	.endif
 	.global Func_02004a74
 	.thumb_func
 Func_02004a74:

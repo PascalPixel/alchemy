@@ -19,13 +19,8 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle,
 void *Object_Spawn(s32 id, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(void *object, u32 script);
 void BattleEffect_PrepareBufferInterpolation(void);
-// Far call to the target classifier Func_080237c8. English and Japanese name
-// its slot Func_08020330; in the others that name is a later slot, and the
-// one at 0x08020330 is Func_080237c8Far.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
-#define Func_080237c8Far Func_08020330
-#endif
-s32 Func_080237c8Far(struct ObjectRuntime *object);
+// Far call to the target classifier Func_080237c8.
+s32 Func_08020330(struct ObjectRuntime *object);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 void Func_080daecc(s32 objectId, s32 mode);
@@ -51,9 +46,9 @@ void Func_080dda30(s32 unused) {
     return;
 
   Func_080ddbd8();
-  if (Func_080237c8Far(target) == TARGET_KIND_SCATTERS)
+  if (Func_08020330(target) == TARGET_KIND_SCATTERS)
     kind = 1;
-  if (Func_080237c8Far(target) == TARGET_KIND_STAYS)
+  if (Func_08020330(target) == TARGET_KIND_STAYS)
     kind = 2;
 
   if (kind == 0) {

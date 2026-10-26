@@ -149,21 +149,7 @@ EventObject_InitializeFar:
 	.thumb_func
 BattleEffect_InitializeSharedSceneFar:
 	overlay_veneer BattleEffect_InitializeSharedScene
-.ifdef TLA_EDITION_ES
-	.global BattleEffect_ResolvePendingActionsFar
-	.thumb_func
-BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer EventRuntime_ResolvePendingActions
-.else
-.ifdef TLA_EDITION_IT
-	.global BattleEffect_ResolvePendingActionsFar
-	.thumb_func
-BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer EventRuntime_ResolvePendingActions
-.else
 	.global BattleEffect_PrepareBufferInterpolationFar
 	.thumb_func
 BattleEffect_PrepareBufferInterpolationFar:
 	overlay_veneer BattleEffect_PrepareBufferInterpolation
-.endif
-.endif

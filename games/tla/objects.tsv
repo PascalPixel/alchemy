@@ -3570,12 +3570,7 @@ main	rom_main_06	recon/tla/de/rom	.rom.0010bc94	de
 main	rom_main_06	recon/tla/raw/08101ac8	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.00101ad0	ja
 main	rom_main_06	games/tla/src/menu/panel_highlight	.text
-main	rom_main_06	recon/tla/it/rom	.rom.00101d9c	it
-main	rom_main_06	recon/tla/fr/rom	.rom.00103dec	fr
-main	rom_main_06	recon/tla/es/rom	.rom.00107dd4	es
-main	rom_main_06	recon/tla/de/rom	.rom.0010be48	de
-main	rom_main_06	recon/tla/raw/08101c7c	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.00101c84	ja
+main	rom_main_06	games/tla/src/menu/f101c7c	.text
 main	rom_main_06	games/tla/src/menu/panel_palette	.text
 main	rom_main_06	recon/tla/raw/08101d5c	.text	en
 main	rom_main_06	recon/tla/raw/08102008	.text	en

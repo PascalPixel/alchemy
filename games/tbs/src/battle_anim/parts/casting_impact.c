@@ -415,9 +415,9 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         (s32)&ResourceId_JupiterDjinnSmallSheet,
         Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
-  // XXX: likely the first impact's kind written where its impact was meant,
-  // because mode is the kind less ANIM_RANGE_CASTING_IMPACT; a reader of the
-  // value outside this function would settle it.
+  // DEAD: never reached, as the dispatcher passes only the 36 impacts
+  // (BattleAnim_DispatchByIdRange) and each already has its element's case
+  // above.
   case ANIM_RANGE_CASTING_IMPACT:
     Resource_LoadAndDecompress(
         (s32)&ResourceId_MercuryDjinnSmallSheet,

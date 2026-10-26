@@ -1,3 +1,13 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 464. The BLDALPHA
+// store is plain again (its pinned halfword and one-pass block matched no
+// better). Left, three places: the native stores the mode argument
+// (str r1, [sp, #40]) before it starts the RAM base, here after; an empty
+// one-pass block or asm before the heap reads stores it first but moves the
+// effect's copy to sl up as well (8 either way); before the frame loop the
+// native stores a doubled frame offset (str r3, [sp, #12]) before it copies
+// the zero to r9; and for the cue call it sets r2 and r1 after the stacked
+// argument's store, here before it.
+
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
 // BattleEffect_RunBlast) and 380 (mode 1, through BattleEffect_RunSmokeBomb).
 
@@ -102,17 +112,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  {
-    /* FAKEMATCH: the native loads the BLDALPHA halfword from the pool before
-     * it starts the register's address; pinned to r3 in a one-pass block it
-     * does (differ 20 without it). */
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x1010;
-    } while (0);
-    REG_BLDALPHA = value;
-  }
+  REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   if (mode == 1) {
     for (i = 0; i != 64; i++) {

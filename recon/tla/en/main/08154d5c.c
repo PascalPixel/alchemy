@@ -1,3 +1,12 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 12 of 245. The BG2CNT
+// store is plain again and BattleEffect_LoadBlitter is declared returning
+// s32, as nibble_pair.c defines it: the preparer's arguments, BLDCNT's zero
+// and the second blitter's r1 before r0 all match now. Left: the vine draw,
+// where the native loads vine->x and stores both stacked arguments (32 and
+// height) before it finishes the source address; here the address first
+// and the stores later (about six rows). alchemy permute 6 minutes, 3 jobs:
+// nothing below 12.
+
 // Draft of BattleEffect_RunVine, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
@@ -55,7 +64,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void ObjectGroup_TickMemberTimers(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
@@ -103,20 +112,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5,
                 &screen, &world);
-  {
-    /* FAKEMATCH: the native loads the control word from the pool before it
-     * starts the register address, which also places its first literal pool
-     * one instruction earlier. Pinned to the r3 it takes behind a one-pass
-     * block: differ 28 -> 20. Plain, or pinned alone, the address starts
-     * first (28); pinned behind canvas.c's empty asm the pool lands two
-     * instructions early (24). The block's loop notes reorder the
-     * preparer's argument setup by two rows. */
-    register u16 control asm("r3") = 0x785;
-
-    do {
-    } while (0);
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = 0x785;
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,

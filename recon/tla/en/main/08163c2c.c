@@ -1,17 +1,16 @@
-// Draft, differ 8 of 170: The Broken Seal's Func_08163c2c with
-// The Lost Age's third mode (3 wipes nothing) and its transfer flag at
-// 0x78e8 (BattleFxWork). The one-pass block around the canvas read fixes
-// the prologue's value store and the delay array's address (add r2, sp,
-// #8), but moves the mode copy (adds r6, r0, #0) and the canvas copy (mov
-// r9, r1) up to it; the native has them after add r3, sp, #136. Left too:
-// at each frame's end the native reloads the work (ldr r1, [sp]) before it
-// starts the flag's offset 0x78e8; here the offset first (twice). That
-// reload and the offset are both reloads for one add: the offset's three
-// rows outrank the load in sched2 (prio 8 against 7). Tried: a one-pass
-// block or an input asm around the store (9, 58), the work copied through
-// an asm (58), the offset held in an asm (93), the work or both loads in a
-// block (10 to 12), a pointer for the delay loop (51), alchemy permute 7
-// minutes (8 at best, this block).
+// Draft, differ 2 of 170 under -mthumb-slow-loads (2026-10-25): The Broken
+// Seal's Func_08163c2c with The Lost Age's third mode (3 wipes nothing)
+// and its transfer flag at 0x78e8 (BattleFxWork).
+//
+// Left: one row. The native stores the value argument (str r1, [sp, #4])
+// before it starts the RAM base (movs r3, #192); here the base first. An
+// empty one-pass block or an empty asm before the heap reads stores it
+// first but also moves the mode's copy (adds r6, r0, #0) up from after
+// add r3, sp, #136 (differ 2 either way); the old one-pass block around the
+// canvas read differs 4 now and is gone. Tried as well (differ): the heap
+// reads in the other order (12), mode or value unsigned (2), value as u8
+// (4), the work or both reads in a one-pass block (6, 8), alchemy permute 5
+// minutes, 2 jobs (nothing below 2).
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"
@@ -25,12 +24,7 @@ void Func_08163c2c(s32 mode, s32 value) {
   s32 y;
   s32 pos;
 
-  /* FAKEMATCH: the one-pass block stores the value argument before 0x03000000
-   * is started and builds the delay array's address in one add (add r2, sp,
-   * #8), as the native does (differ 9 without it). */
-  do {
-    canvas = Ram_HeapSlots->battleFxWork[1];
-  } while (0);
+  canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;

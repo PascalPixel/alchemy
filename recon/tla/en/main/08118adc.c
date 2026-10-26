@@ -1,3 +1,11 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 108 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0. Left: the
+// native copies the camera into r1 for the vector call before it loads the
+// distance; a pinned copy in r1 at either place keeps the load first.
 // Near miss, differ 4 of 108 (two reordered rows): The Broken Seal's
 // BattlePresentation_UpdateCamera (games/tbs/src/battle/battle/setup.c) with
 // this game's heap slots, the battle work read from its slot at each use,

@@ -1,3 +1,10 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 14 of 776 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// each call argument copied into its argument register (pinned) at the call
+// or up to three statements before it; none reaches 0. One barrier (after
+// line 296 of the draft as it stood) lowers it to 12, and no second one
+// lowers it further.
 // Draft, differ 16 of 776: ☀️'s BattleTarget_SelectForAction
 // (games/tbs/src/battle/battle/ targeting.c), ported: picks the target of an
 // enemy's ability (or a confused unit's) as a place code, among the units of

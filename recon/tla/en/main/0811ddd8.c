@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 4 of 78 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// five minutes of permute; none reaches 0. Left: the native copies the plan
+// into r6 after the flags' store and issues sub sp after the variant's store,
+// as if its prologue followed the first statements.
 // Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattlePresentation_BuildTargetList
 // (games/tbs/src/battle/battle/staging.c) with ⚓️'s added test that the
 // target is in the battle (BattleParty_IsUnitListed); void, as its callers

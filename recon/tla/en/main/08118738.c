@@ -1,3 +1,14 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 240 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0. The native
+// stores the set counter and the Djinn array's end to their stack slots
+// before it builds the array's zero; sched2 here takes the zero first because
+// those spill stores carry an output dependence on the table count's store
+// (arm_adjust_cost gives it cost 0, class 2), where the native orders them as
+// if independent.
 // differ 12: five loads, the spilled done flag, the table base, the owner byte
 // and the set counter, issue one slot earlier in the native (arm9tdmi load
 // latency).

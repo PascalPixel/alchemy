@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 305 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 2 of 305: drains one of a unit's Djinn at random, a Set one
 // when it has any (Djinn_IsActiveFar), else one Djinn_IsReadyFar accepts: up
 // to ten candidates are gathered and one picked. A Set Djinni goes on standby;

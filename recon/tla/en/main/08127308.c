@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 24 of 280 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each call argument copied into its
+// argument register (pinned) at the call or up to three statements before it;
+// none reaches 0.
 // Draft of Func_08127308, The Broken Seal's ElementGlow_Play
 // (games/tbs/src/battle/battle.c): differ 36 of 280 (tla-en, 2026-10-15).
 // The Lost Age reads the battle work once (slot 36) and keeps it on the

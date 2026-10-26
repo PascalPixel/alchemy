@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 6 of 413 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// each call argument copied into its argument register (pinned) at the call
+// or up to three statements before it, five minutes of permute; none reaches
+// 0.
 // Draft of Func_0811e3ac, from the listing (no ☀️ twin found): for a plan
 // whose outcome is 15 to 17 and that has not failed, saves a battle object and
 // shows a class's sprite in its place: the actor's own object when actor and

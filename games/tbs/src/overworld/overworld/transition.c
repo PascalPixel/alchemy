@@ -150,7 +150,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
   // Build the page not shown. Its line pairs start as the open UI windows'
   // edges (ScanlineWindow_FillSpansFar; with no UI work, 0xe0e0 over the
-  // first 80 lines only, as its XXX notes); each mode below then writes window
+  // first 80 lines only, as its BUG notes); each mode below then writes window
   // 0's edge of every pair and leaves window 1's.
   scanlineData = state->pages[1 ^ state->page];
   ScanlineWindow_FillSpansFar(scanlineData + 2);

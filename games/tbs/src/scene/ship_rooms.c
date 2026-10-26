@@ -3382,10 +3382,14 @@ static void ShipRooms_MoveCameraAndWait(s32 x, s32 y, s32 z, u32 flags) {
   u32 selected;
 
   FieldCamera_MoveWithinMapBounds(x, y, z, ~flags & SHIP_CAMERA_JUMP);
-  // XXX: likely a mask of 0xffff was meant, because the callers pass waits of
-  // 20 and 40 frames, which this mask cuts to 16 and none; SHIP_CAMERA_JUMP
-  // also adds a frame.
+  // BUG: the mask keeps only bits 0, 4, 8 and 12 of the wait, so the callers'
+  // waits of 20 and 40 frames become 16 and none; SHIP_CAMERA_JUMP also adds
+  // a frame.
+#ifdef BUGFIX
+  selected = flags & 0xffff;
+#else
   selected = flags & 0x1111;
+#endif
   if ((flags & SHIP_CAMERA_WAIT_FOR_ARRIVAL) != 0)
     FieldCamera_WaitForArrival();
   if ((flags & SHIP_CAMERA_RECENTER_LAYERS) != 0)

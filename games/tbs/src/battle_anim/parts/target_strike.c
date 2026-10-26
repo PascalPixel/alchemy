@@ -388,10 +388,12 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // A hit: the target flashes; the last hit lets the battle show the
         // damage, the others only play the hit sound. Each hit lights a
         // group of 64 sparks, 8 smoke puffs and 16 motes.
-        // XXX: the group is frame / (6 * IMAGE_FRAMES), a slash's period,
-        // though column hits are four images apart, so a three-hit column's
-        // second and third hits light the same group; a capture of Acid Bite
-        // would show whether the third hit throws anything new.
+        // The group is frame / (6 * IMAGE_FRAMES), a slash's period, though
+        // column hits are four images apart, so a three-hit column's third
+        // hit relights its second's group. Lighting sets only the lives, not
+        // the positions, so the third hit throws nothing new: Acid Bite's
+        // third puffs (frame 66) start again from where its second's,
+        // 24 frames old, have risen to.
         BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;

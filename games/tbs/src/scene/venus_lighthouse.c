@@ -1650,9 +1650,15 @@ static void EventScript_FallThroughFloor(void) {
 #if TBS_PATCH_3
   *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 #endif
-  // XXX: likely the leader's object event was meant, because the fall set up
-  // above is his; a null pointer reads velocityY from the BIOS instead.
+  // BUG: the fall set up above is the leader's, but the wait is given a null
+  // pointer, so it reads velocityY from the BIOS, which outside a BIOS call
+  // reads as its last instruction, never 0: the wait always takes its full
+  // second, however soon the leader lands.
+#ifdef BUGFIX
+  ObjectEvent_WaitUntilIdle(leader);
+#else
   ObjectEvent_WaitUntilIdle(0);
+#endif
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE);

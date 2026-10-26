@@ -380,12 +380,12 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       } while (index != 9);
 
       // From frame 256 the motes, sparks and comets are drawn 256 pixels
-      // into the animation.
-      // XXX: likely none of these points projects, because each result is
-      // read back as a 16.16 point (x >> 17 for the canvas, y and depth
-      // >> 16): Transform_ProjectPoint leaves the transformed point for a depth
-      // outside gProjection's range, and from the reset transform these
-      // points lie at depths near -256, below the battle's near depth.
+      // into the animation. None of these points projects: moved 256 pixels
+      // along z, with the motes at most 100 pixels from that, the sparks 160
+      // and the rings 20, each lies behind the view, nearer than
+      // gProjection's near depth, so Transform_ProjectPoint leaves the
+      // transformed point, which is read back in 16.16 (x >> 17 for the
+      // canvas, y and depth >> 16).
       if (frame > 255) {
         s32 threshold;
 

@@ -221,9 +221,10 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
 
     // Chips: at the burst, 32 fly up from canvas rows 80 to 95 at 1/8 to 2
     // pixels a frame, for 16 to 31 frames each (24 of them are drawn).
-    // XXX: velocityX is never set here, so a chip drifts by whatever its
-    // PARTICLES slot last held; whether that is ever nonzero in play needs a
-    // run after another animation.
+    // BUG: velocityX is never set, so a chip drifts sideways by whatever word
+    // its PARTICLES slot last held. Nothing in a battle clears that buffer,
+    // the map grid's cells, so the word is the field's cells or an earlier
+    // animation's particles or pictures.
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &PARTICLES[i];
@@ -231,6 +232,9 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
         SET_POSITION(chip, (Random16() & 127) << 16,
                      ((Random16() & 15) + 80) << 16,
                      ((Random16() & 63) - 32) << 12);
+#ifdef BUGFIX
+        chip->velocityX = 0;
+#endif
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
       }

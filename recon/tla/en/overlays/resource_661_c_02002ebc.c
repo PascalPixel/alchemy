@@ -1,9 +1,10 @@
-// Draft, differ 90 of 187: the leader and monster 8 drop into the sand pit,
-// each in a ring of dust, the monster leaps to its spot and the battle starts
-// with escape forbidden and the defeat destination set. Left: register
-// choice and the native keeping 0 and 3 in r5 for the motion flags (permute
-// found 18 by passing the 2 through a temporary, a register-allocation
-// ripple rather than the source's form).
+// Draft, differ 88 of 187 (was 90): the leader and monster 8 drop into the
+// sand pit, each in a ring of dust, the monster leaps to its spot and the
+// battle starts with escape forbidden and the defeat destination set.
+// ObjectMotion_SetSpeedParameters goes through CallN, as the native builds
+// its constants afresh. Left: register choice and the native keeping 0 and
+// 3 in r5 for the motion flags (permute found 18 by passing the 2 through a
+// temporary, a register-allocation ripple rather than the source's form).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -80,7 +81,7 @@ void Func_02002ebc(void) {
   monster->motionFlags = 3;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
   FieldEvent_WaitFrames(24);
-  Call3((void (*)())Func_02000b84, monster->x, monster->y, monster->z);
+  Func_02000b84(monster->x, monster->y, monster->z);
   Func_020041f8(188);
   ObjectMotion_ArmCallback(Data_02000454, 0xc000, 0);
   FieldEvent_WaitFrames(40);
@@ -89,7 +90,7 @@ void Func_02002ebc(void) {
   FieldEvent_WaitFrames(20);
   monster->velocityY = 0x80000;
   monster->gravity = 0xe666;
-  ObjectMotion_SetSpeedParameters(8, 0x19999, 0xcccc);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x19999, 0xcccc);
   ObjectMotion_SetPositionAndCommit(8, 232, 184);
   gPartyState.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);

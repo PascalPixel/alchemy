@@ -1,6 +1,8 @@
-// Draft, differ 53 of 177: overlay 653's Func_02002ec4 (the leader drops
-// in with a burst of 17 effects) with this overlay's calls and 0xa3d7 as
-// the effects' scale; the same remaining difference.
+// Draft, differ 16 of 177 (was 49): overlay 653's Func_02002ec4 (the leader
+// drops in with a burst of 17 effects) with this overlay's calls and 0xa3d7
+// as the effects' scale. Left: as overlay 664's Func_0200505c: the native
+// keeps &options in r8 and the count in r10, this draft the reverse, and the
+// velocity's address is built after the first call there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -122,8 +124,8 @@ void Func_02003764(void) {
   Func_02003df8(188);
   Func_02003cd0(gPartyState.currentOwner, 0x101);
   Object_SetModeById(gPartyState.currentOwner, 49);
-  Func_02003c00(0x50000, 0x50000, 0x10000);
-  Func_02003c00(-1, -1, 0xe666);
+  Call3((void (*)())Func_02003c00, 0x50000, 0x50000, 0x10000);
+  Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
   Func_02003c08();
   Func_02003cd0(gPartyState.currentOwner, 0x100);
   leader->gravity = 0x10000;

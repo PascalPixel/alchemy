@@ -1,5 +1,6 @@
-// Draft, differ 133 of 185: the leader drops in with actor 9 and
-// gData_02004420, ending with flag 0x871. Left: register allocation.
+// Draft, differ 121 of 185 (was 133): the leader drops in with actor 9 and
+// gData_02004420, ending with flag 0x871. The calls whose constants the
+// native builds afresh go through CallN. Left: register allocation.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -129,13 +130,13 @@ void Func_02002c14(void) {
   Func_02003cc8(9, 0x103, 0);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
   ObjectMotion_ArmCallback(9, 0x8000, 60);
-  ObjectMotion_SetPositionAndReset(9, 296, 104);
-  ObjectMotion_SetPositionAndReset(9, 296, 80);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 296, 104);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 296, 80);
   Func_02003c68(9, 0, 0);
   FieldEvent_WaitFrames(20);
   if (gData_02004420 != NULL) {
     gData_02004420->motionFlags = 0;
-    Func_02003bf0(0, 0, 1, 1, 15, 5);
+    Call6((void (*)())Func_02003bf0, 0, 0, 1, 1, 15, 5);
     WaitFrames(1);
   }
   GameFlag_SetBit(0x871);

@@ -1,10 +1,16 @@
-// Draft, differ 27 of 77: a burst of eight effects that shrink from twice to
-// half size, scattered over 64 by 16 pixels around (x, z) and rising at random
-// speeds, then two screen shakes (Func_02005dcc). Left: order inside the loop
-// around the first random call.
+// Draft, differ 8 of 77 (was 27): a burst of eight effects that shrink from
+// twice to half size, scattered over 64 by 16 pixels around (x, z) and rising
+// at random speeds, then two screen shakes (Func_02005dcc). The loop counts
+// up as a goto loop (as a for loop loop.c reverses it) and the scales are
+// stored in field order. Left: the native copies x and z to r10 and r8 after
+// the options' stores and builds the spawn position's address after the first
+// random call, where this draft does both earlier (the parameter spill before
+// the base address that no C form has changed); 12 minutes of permute found
+// nothing better.
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
+#include "lib/call.h"
 
 u16 Random16Far(void);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -18,9 +24,12 @@ void Func_02002aa8(s32 x, s32 z) {
   s32 i;
 
   options.priority = 1;
-  options.startScaleX = options.startScaleY = 0x20000;
-  options.targetScaleX = options.targetScaleY = 0x8000;
-  for (i = 0; i < 8; i++) {
+  options.startScaleX = 0x20000;
+  options.startScaleY = 0x20000;
+  options.targetScaleX = 0x8000;
+  options.targetScaleY = 0x8000;
+  i = 0;
+burst:
     spawn.x = x + ((Random16Far() & 63) << 16) - 0x200000;
     spawn.y = (Random16Far() & 15) << 12;
     spawn.z = z + ((Random16Far() & 7) << 16) - 0x100000;
@@ -28,7 +37,9 @@ void Func_02002aa8(s32 x, s32 z) {
                   EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
                       EFFECT_USE_PRIORITY | 1,
                   &options);
-  }
+  i++;
+  if (i != 8)
+    goto burst;
   Func_02005dcc(0x50000, 0x70000, 0x10000);
-  Func_02005dcc(-1, -1, 0xe666);
+  Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
 }

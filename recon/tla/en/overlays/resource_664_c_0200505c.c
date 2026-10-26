@@ -1,15 +1,21 @@
-// Draft, differ 81 of 172: inside an event, the leader drops from height 130
-// after a screen transition (cue 204), lands in a ring of seventeen dust
-// effects, plays cue 188 and mode 22 while the screen shakes twice, then
-// gets its normal gravity back. The same listing as overlay 68f's
-// Func_020011e0. Left: the ring loop's registers and order (the native keeps
-// the count in r10 and the velocity on the stack).
+// Draft, differ 16 of 172 (was 83): inside an event, the leader drops from
+// height 130 after a screen transition (cue 204), lands in a ring of
+// seventeen dust effects, plays cue 188 and mode 22 while the screen shakes
+// twice, then gets its normal gravity back. The same listing as overlay 68f's
+// Func_020011e0; the ring is written as overlay 655's Func_02003764.
+// Left: the native keeps &options in r8 and the count in r10, this draft the
+// reverse (global.c ranks the count first: 9 refs over 110 insns against 7
+// over 62), and the velocity's address is built after the first call there.
+// Measured: the loop as do, while or goto, s32 or u8 count, the count
+// declared in a block, an options pointer (23), the count set at its
+// declaration (40); 12 minutes of permute found nothing better.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
+#include "lib/call.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02005e14(void);
@@ -24,7 +30,7 @@ void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-u16 Random16Far(void);
+u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -37,13 +43,11 @@ void Func_02005dd4(void);
 void Func_0200505c(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct EffectOptions options;
-  struct Vector3 velocity;
   u32 i;
-  s32 angle;
 
   Func_02005e14();
   Func_02005f2c(0);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02005d84();
   WaitFrames(1);
   leader->y = 0x820000;
@@ -58,25 +62,28 @@ void Func_0200505c(void) {
   FieldEvent_WaitFrames(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = options.startScaleY = 0xcccc;
+  options.startScaleX = 0xcccc;
+  options.startScaleY = 0xcccc;
   for (i = 0; i <= 16; i++) {
-    angle = i << 12;
-    velocity.x = Math_Cosine(angle);
-    velocity.y = 0;
-    velocity.z = Math_Sine(angle);
-    velocity.x += velocity.x >> 1;
-    velocity.x += ((u32)(Random16Far() * 3) << 14 >> 16) - 0x6000;
-    velocity.z += ((u32)(Random16Far() * 3) << 13 >> 16) - 0x3000;
+    s32 velocity[3];
+
+    velocity[0] = Math_Cosine(i << 12);
+    velocity[1] = 0;
+    velocity[2] = Math_Sine(i << 12);
+    velocity[0] += velocity[0] >> 1;
+    velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+    velocity[0] += -0x6000;
+    velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
     Func_020002f4(
-        leader->x, leader->y, leader->z, velocity.x, velocity.y, velocity.z,
+        leader->x, leader->y, leader->z, velocity[0], velocity[1], velocity[2],
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
         &options);
   }
   Func_02005f94(188);
   Func_02005ec4(gPartyState.currentOwner, 257);
   Object_SetModeById(gPartyState.currentOwner, 22);
-  Func_02005dcc(0x50000, 0x50000, 0x10000);
-  Func_02005dcc(-1, -1, 0xe666);
+  Call3((void (*)())Func_02005dcc, 0x50000, 0x50000, 0x10000);
+  Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
   Func_02005dd4();
   Func_02005ec4(gPartyState.currentOwner, 256);
   leader->gravity = 0x10000;

@@ -60,7 +60,7 @@
 ///
 /// Abilities: Thor (SUMMON_ANIM_THOR).
 ///
-/// The scene plays in two parts on the animation canvas. In the dusk part
+/// The animation plays in two parts on the animation canvas. In the dusk part
 /// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
 /// lines across it form over scrolling dusk clouds; the circle turns, sinks
 /// into the sky and a beam of light falls from it. In the lightning part

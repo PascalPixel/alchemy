@@ -69,7 +69,7 @@ struct BattleAnimWork {
       u8 imageTail[0x480];
     };
     u8 imageStorage[0x7080];
-    /// The tracked elemental scene stages its origin inside the image area.
+    /// The tracked elemental animation stages its origin inside the image area.
     struct {
       u8 image[0x13c4];
       struct BattleBg2Origin origin;

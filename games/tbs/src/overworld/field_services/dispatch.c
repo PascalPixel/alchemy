@@ -4,7 +4,7 @@
 
 #include "../field_services_internal.h"
 
-// The dispatchers use the common effect scene. Individual update hooks use
+// The dispatchers use the common field effect. Individual update hooks use
 // their object event or FieldEffectSprite contract; neither is a map-script
 // callback.
 
@@ -26,7 +26,7 @@ void Field_DispatchTypeHandler(s32 kind) {
 void _call_via_r3(s32, s32);
 
 /// Casts the current Psynergy effect with no target: runs the body of its
-/// kind (scene->fieldPsynergy).
+/// kind (effectWork->fieldPsynergy).
 ///
 /// Called by Field_UsePsynergy when no map event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
@@ -85,7 +85,7 @@ void FieldEffect_Run(void) {
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
-    if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
+    if (Scene_FindObjectEventTalkEvent(nearestTargetId) != 0) {
       FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
@@ -120,10 +120,11 @@ void FieldEffect_Run(void) {
 ///
 /// Called by Field_UsePsynergy when a map event names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
-/// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
-/// first: that is how the runners FieldEffect_Run shares (Force, Frost, Ply,
-/// Whirlwind, Catch) tell that a map event decides what happens to the
-/// target. Halt also moves gSaveBlock.pausedObject to the target.
+/// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears
+/// effectWork->enabled first: that is how the runners FieldEffect_Run shares
+/// (Force, Frost, Ply, Whirlwind, Catch) tell that a map event decides what
+/// happens to the target. Halt also moves gSaveBlock.pausedObject to the
+/// target.
 void FieldEffect_DispatchRequestKind(void) {
   struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);

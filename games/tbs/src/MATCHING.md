@@ -144,7 +144,7 @@ game is rebuilt from source; under it, assembly counts only with such a
 proof. In a handwritten file the
 proof names the instruction, frame or pattern alchemy-gcc can't emit. The
 [far-call](../glossary.md#far-call) tables, such as the `entry/` and `import/` files of the debug rooms,
-the menus and the [maps](../glossary.md#map), carry one too. Each of their entries is a [veneer](../glossary.md#veneer),
+the menus and the [scenes](../glossary.md#scene), carry one too. Each of their entries is a [veneer](../glossary.md#veneer),
 a tiny piece of code that only jumps on: 8 bytes holding an `ldr r4` (load
 the target's address), a `bx r4` (jump to it) and that address, which the
 `overlay_veneer` macro writes out whole.
@@ -212,7 +212,7 @@ is the struct an [object event](../glossary.md#object-event) is read through.
 ### Views of one struct
 
 Some memory is read through a struct of its own, a field-for-field copy of
-the layout that differs only where its reader does, because that reader's
+the map that differs only where its reader does, because that reader's
 code matches only through it. [An object](../glossary.md#object)'s 112 bytes
 are `struct Object` almost everywhere, but `BattleObject_SpawnObjectsForList`
 reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
@@ -258,8 +258,8 @@ load moves.
   counts letters in its `s32` value rather than in `i` or `j`.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches: Crossbone Isle's
-  `EventScript_MovePillar` takes `&state->mapId` with `state = &gSaveBlock`,
-  because `&gSaveBlock.mapId` folds into one literal.
+  `EventScript_MovePillar` takes `&state->sceneId` with `state = &gSaveBlock`,
+  because `&gSaveBlock.sceneId` folds into one literal.
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move constants and addresses out of the loop,
   strength-reduce its counters and delete it when it is empty, and they let
@@ -268,7 +268,7 @@ load moves.
   from labels and `goto` gets none of this, so where the ROM shows none of it
   the loop stays a `goto`, and the comment beside it gives the measured cost
   of its loop form. The `goto`s without such a comment (the wander retries,
-  the step searches, the map effects' [script](../glossary.md#script) loops and
+  the step searches, the scene effects' [script](../glossary.md#script) loops and
   the debug loops) stay until someone finds their loops.
 - A function whose result nothing reads keeps its `s32` return where `void`
   would change its epilogue, the instructions that end it; `UBFIX` gives the
@@ -289,10 +289,10 @@ load moves.
   `EventScript_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in
-  another order. Helpers in Colosso and in `MapId_KolimaForestFloodgate` are
+  another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
   unit headers under `UBFIX`, and `script_layer.h` gathers the engine routines
-  the maps call that way (`Import_GameFlagSet`).
+  the scenes call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
   compiler library's call through r3, with the code's address as its fourth

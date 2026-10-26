@@ -46,9 +46,9 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   effectWork->savedShakeX = grid->shakeX;
   effectWork->savedShakeY = grid->shakeY;
   effectWork->savedShakeDecay = grid->shakeDecay;
-  if (gSaveBlock.layoutId == (s32)&MapId_MercuryLighthouseEntrance)
+  if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseEntrance)
     effectWork->lit = 1;
-  if (gSaveBlock.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
+  if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
   FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
@@ -188,7 +188,7 @@ void FieldEffect_End(void) {
     grid->shakeDecay = effectWork->savedShakeDecay;
     if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
       runtime->effectTimerRunning = 1;
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
     FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
   }
 }
@@ -250,7 +250,7 @@ void FieldEffect_StartCast(void) {
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
 /// effects open with it, and FieldEffect_FadeFromEffectColor fades back.
 void FieldEffect_FadeToEffectColor(void) {
-  u8 *scene;
+  u8 *field;
   struct PaletteFade *work;
   s32 no;
 
@@ -261,12 +261,12 @@ void FieldEffect_FadeToEffectColor(void) {
   // before it must stay. Then show the targets at once.
   // Both blocks are read through gHeapSlots, the spelling this site matched
   // with; gFieldWork and gPaletteFadeWork are not measured here.
-  scene = *(gHeapSlots + HEAP_SLOT_FIELD);
+  field = *(gHeapSlots + HEAP_SLOT_FIELD);
   work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
-  Dma_Set(&work->target[0x2a0], scene + 0x776,
+  Dma_Set(&work->target[0x2a0], field + 0x776,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
-  if (((struct FieldWork *)scene)->revealActive == 0)
-    Dma_Set(work->target, scene + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
+  if (((struct FieldWork *)field)->revealActive == 0)
+    Dma_Set(work->target, field + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
             REG_DMA3);
   Dma_Set(work->target, work->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),

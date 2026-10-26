@@ -48,8 +48,8 @@ enum {
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for a bg event giving one, until it is taken. A treasure spot with no
 /// such event takes no slot. The objects are kept in work->treasureSpots, not
-/// in object event slots. Called by Map_Run on map load; clears and fills
-/// work->treasureSpots.
+/// in object event slots. Called by SceneManager_Run on map load; clears and
+/// fills work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];

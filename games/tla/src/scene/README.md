@@ -2,7 +2,7 @@
 
 This folder holds The Lost Age's scenes: one folder per place, 106 of them,
 each an overlay loaded at 0x2008000 like ☀️'s. ☀️'s
-[Scenes](../../../tbs/src/map/README.md) explains how a scene runs, its
+[Scenes](../../../tbs/src/scene/README.md) explains how a scene runs, its
 tables and its events; this page says only what differs here.
 
 ## What differs from ☀️

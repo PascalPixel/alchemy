@@ -271,7 +271,7 @@ void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   if (localId <= 7) {
     member = localId & 0x0fff;
 
-    if (Map_FindObjectEventTemplate(member) == 0) {
+    if (Scene_FindObjectEventTemplate(member) == 0) {
       sprite = member;
     }
   }

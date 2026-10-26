@@ -4,7 +4,7 @@
 
 #include "../battle_anim_internal.h"
 
-// Cybele reuses work->particles over the scene:
+// Cybele reuses work->particles over the animation:
 // - 0 to 15: vines (only the first ten are drawn).
 // - 32 to 47: thorns, until frame 127.
 // - 16 to 63: chips, thrown on frame 128 (only 32 to 63 are drawn); from
@@ -27,7 +27,7 @@
 ///
 /// Abilities: Cybele (SUMMON_ANIM_CYBELE).
 ///
-/// The scene runs for CYBELE_FRAMES, in these stages:
+/// The animation runs for CYBELE_FRAMES, in these stages:
 ///
 /// - 0 to 127: the formation objects drop in, landing on frame 31; from 72
 ///   a thorn flies in from the right each frame.
@@ -537,7 +537,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   }
 
   // The end: the impact burst builds its own blitters and starts its own
-  // transfer, so the scene's are released first.
+  // transfer, so the animation's are released first.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   ANIM_RELEASE_BLITTERS();
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);

@@ -4,7 +4,7 @@
 
 #include "../field_services_internal.h"
 
-// The scene owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
+// The event owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
 /// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
@@ -175,7 +175,7 @@ void FieldEffect_RunRetreat(void) {
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
-/// the ground (4 on the world map, whose map is MapId_MainMenu).
+/// the ground (4 on the world map, whose map is SceneId_MainMenu).
 void FieldEffect_UpdateDescendingParticlePositiveArc(
     union ObjectEventOrEffect *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
@@ -188,7 +188,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&MapId_MainMenu)
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -219,7 +219,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&MapId_MainMenu)
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -277,8 +277,8 @@ struct DescendingArcSprite {
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
-/// it, at 0.4 of full size, drawn with the tiles in scene->arcTileSlot. The
-/// upside-down arc draws in front of everything (priority 0), the other at
+/// it, at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
+/// The upside-down arc draws in front of everything (priority 0), the other at
 /// the caster's priority, as FieldEffect_SpawnScaledArcObjects does. Called by
 /// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {

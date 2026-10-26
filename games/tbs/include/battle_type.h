@@ -52,7 +52,8 @@ struct BattleTurn {
   s32 staging; ///< enum BattleStaging: how the action is shown
   /// The animation word: how it is staged (STAGING_ in battle_internal.h).
   /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
-  /// 15 scene | 14 by id range | 13..12 variant | 11..0 animation kind
+  /// 15 large animation | 14 by id range | 13..12 variant | 11..0 animation
+  /// kind
   u32 animation;
   s32 failure; ///< enum BattleTurnFailure
   /// The damage the evil spirit deals a haunted actor at the end of its turn.

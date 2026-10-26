@@ -2,13 +2,13 @@
 /// Map events, field Psynergy, objects and effect lifecycles.
 
 /// Runs the field map the party entered by warp destination until it leaves,
-/// and returns the warp kind for Map_TakeWarp, or WARP_NONE when gSaveBlock
+/// and returns the warp kind for Scene_TakeWarp, or WARP_NONE when gSaveBlock
 /// already holds the next map.
-s32 Map_RunFar(s32 warpDest);
+s32 SceneManager_RunFar(s32 warpDest);
 /// The game's main loop, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_Restart starts it again.
-void Game_MainLoopFar(s32 mode);
+void SequenceManager_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void FieldScript_WaitFramesFar(s32 frames);
 /// Opens a script: closes any map name popup, stops the leader and resets the
@@ -18,12 +18,12 @@ void FieldScript_StartFar(void);
 /// FLAG_LURE_CAP.
 void FieldScript_EndFar(void);
 /// Spawns the object events of an object event template table after the last
-/// object event in use, so a ship map can bring people in mid-scene.
+/// object event in use, so a ship map can bring people in mid-event.
 void FieldScript_CallWithLastActiveObjectIdFar(
     struct ObjectEventTemplate *table);
 /// Gives each unconditional object event template a condition that shows it
 /// only while it lies inside the map's view bounds.
-void Map_AssignViewFlagsFar(struct ObjectEventTemplate *entry);
+void Scene_AssignViewFlagsFar(struct ObjectEventTemplate *entry);
 /// Replaces the map's event table, the one the field checks as the leader
 /// moves.
 void FieldScript_SetMapEventsFar(const struct MapEvent *events);
@@ -328,10 +328,10 @@ void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 void FieldEffect_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
-s32 Map_HasFieldPsynergyEventFar(s32 group);
+s32 Scene_HasFieldPsynergyEventFar(s32 group);
 /// Returns whether the map has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
-u32 Map_HasPsynergyEventFar(u16 item);
+u32 Scene_HasPsynergyEventFar(u16 item);
 /// Makes a sprite share another's VRAM block, so a chain of afterimages draws
 /// from one copy. Returns the sprite whose block is shared from now on, or
 /// NULL for no source.
@@ -346,7 +346,7 @@ void Party_AddPpFar(s32 amount, s32 unused);
 /// Returns 0 for yes, 1 for no.
 s32 FieldYesNo_AskFar(s32 value);
 /// Starts the current map's field music.
-void Map_PlayMusicFar(void);
+void Scene_PlayMusicFar(void);
 /// A Djinni joins the member with the fewest Djinn, after its object event in
 /// slot plays its element's capture effect (none for slot -1).
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
@@ -414,15 +414,15 @@ void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 void FieldScript_WaitForZoomTransitionFar(void);
 /// Returns the area name of a map and warp destination, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
-s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
+s32 MapSec_GetNameIndexFar(s32 sceneId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
 /// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
 /// -1), and remembers sound_id to play again later.
-void Map_QueueMusicFar(s32 sound_id);
-/// Plays the sound Map_QueueMusic remembered, if any.
-void Map_PlayQueuedMusicFar(void);
+void Scene_QueueMusicFar(s32 sound_id);
+/// Plays the sound Scene_QueueMusic remembered, if any.
+void Scene_PlayQueuedMusicFar(void);
 /// Returns a character's sprite for a save file's summary, which records only
 /// whether it was childhood.
 s32 Party_RemapCharacterIdIfEnabledFar(s32 character, s32 childhood);

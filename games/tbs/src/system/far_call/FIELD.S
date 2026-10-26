@@ -38,7 +38,7 @@ FarCall_FieldTable:
 	export render_animated_tile_frameFar, SpriteDissolve_Step
 	export SpriteDissolve_RunFar, SpriteDissolve_Run
 	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
-	export MapGrid_LoadLayoutFar, MapGrid_LoadLayout
+	export MapGrid_LoadMapFar, MapGrid_LoadMap
 	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
 	overlay_veneer MapGrid_SetCameraCenter
 	export MapGrid_CenterOnFollowedPointFar, MapGrid_CenterOnFollowedPoint

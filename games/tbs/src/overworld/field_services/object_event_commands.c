@@ -427,7 +427,7 @@ void ObjectMotion_NoOp(void) {}
 /// speed pixels per frame with a jump sound (a higher one above 5), then waits
 /// frames frames. Sets bit 1 of the object event's motion flags, so gravity
 /// brings it down, and its velocityY. Map scripts reach it (ObjectEvent_Jump),
-/// about 40 of them; the scenes of Djinn joining the party (djinni.c and the
+/// about 40 of them; the events of Djinn joining the party (djinni.c and the
 /// four element parts) call it too.
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   struct Object *object;
@@ -473,7 +473,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
 /// The script command "run repeated motion": as
 /// ObjectMotion_SetVariantCallback, then waits for it to end. Map scripts reach
 /// it (ObjectEvent_RunRepeatedMotion);
-/// the scenes of Djinn joining the party call it too.
+/// the events of Djinn joining the party call it too.
 void ObjectMotion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   ObjectMotion_SetVariantCallback(objectId, count);
   ObjectEvent_RefreshSelectorById(objectId);
@@ -562,7 +562,7 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
 /// past FACING_SOUTH) while sinking 28 pixels with a dust puff every other
 /// frame (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
-/// (Map_PlayQueuedMusic). Called by Field_RunPushCellEvent for a ledge
+/// (Scene_PlayQueuedMusic). Called by Field_RunPushCellEvent for a ledge
 /// (MB_LEDGE) with pose 6 and param 0, and by seven maps through
 /// FieldObjectEvent_JumpDownLedge; Mercury Lighthouse passes -1.
 void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
@@ -619,7 +619,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
       WaitFrames(1);
     }
     WaitFrames(2);
-    Map_PlayQueuedMusic();
+    Scene_PlayQueuedMusic();
   }
 }
 
@@ -641,8 +641,8 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
 
 /// The script command "object events face each other": turns two object events
 /// toward each other, then waits wait frames. Map scripts reach it
-/// (ObjectEvent_FaceEachOther); Map_TalkToObjectEvent turns the leader and the
-/// object event spoken to with it.
+/// (ObjectEvent_FaceEachOther); Scene_TalkToObjectEvent turns the leader and
+/// the object event spoken to with it.
 void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait) {
   void *first = ObjectEvent_GetByLocalId(firstId);
   void *second = ObjectEvent_GetByLocalId(secondId);

@@ -29,8 +29,9 @@ void MapNamePopup_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = MapSec_GetNameIndexFar(gSaveBlock.mapId, gSaveBlock.warpDest) +
-                RENDER_RESOURCE_BASE;
+  areaMessage =
+      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest) +
+      RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;

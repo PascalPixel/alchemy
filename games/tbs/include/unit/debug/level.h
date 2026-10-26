@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 u8 *IncreaseItemAndLevel_GetWarpDests(void);
-s32 Map_GetWarpRegions(void);
+s32 Scene_GetWarpRegions(void);
 u8 *IncreaseItemAndLevel_GetWarps(void);
 u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void);
 u8 *IncreaseItemAndLevel_GetEvents(void);

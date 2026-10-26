@@ -160,7 +160,7 @@
 /// (VenusLighthouseAerie_TryToPreventFall).
 #define MUS_SHEBA_HANGS_ON 62
 /// Field music of Sol Sanctum once Mt. Aleph has erupted
-/// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption scene; it also plays as the
+/// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption event; it also plays as the
 /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
 #define MUS_ERUPTION 63
 /// The title screen's music as the intro holds the title, without its prompt,
@@ -188,9 +188,9 @@
 /// The main menu's music, and the field music of the Sanctum.
 #define MUS_MAIN_MENU 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-/// scene on the world map, until a key is pressed (Title_Run's warp destination
+/// event on the world map, until a key is pressed (Title_Run's warp destination
 /// 10). ★ Named from what the player sees: the Golden Sun logo after the
-/// ending's last scene (its render)
+/// ending's last event (its render)
 #define MUS_ENDING_LOGO 75
 /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
 /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
@@ -460,16 +460,16 @@
 // plays beside; the sequence alone can't tell wind from water, so a recording
 // of one of the three maps would settle it.
 /// The ambient sound a map queues in Lama Temple, Xian and the Manticore's part
-/// of Lamakan Desert (Map_QueueMusic). It sounds like a steady quiet hiss, a
+/// of Lamakan Desert (Scene_QueueMusic). It sounds like a steady quiet hiss, a
 /// little darker and softer than SE_AMBIENT_WATER on the same noise voice.
 #define SE_AMBIENT_WIND 169
-/// The ambient sound a map queues (Map_QueueMusic) with the rain's ground
+/// The ambient sound a map queues (Scene_QueueMusic) with the rain's ground
 /// particles (Weather_StartRain) and Altin's water-spitting beasts, and in
 /// Fuchin Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the
 /// Goma Cave entrance.
 #define SE_AMBIENT_WATER 170
 /// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
-/// Sol Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
+/// Sol Sanctum's Luna room as the event opens on Kraden, the flash of a Lucky
 /// Wheels win, and the Jupiter battle animation.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
@@ -734,14 +734,14 @@
 #define SE_VOICE_MAN_3 286
 #define SE_VOICE_MAN_4 287
 /// A song with no tracks on player 3, which stops the loop playing there: every
-/// map change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
+/// map change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_ACTION_SE 288
 /// The pair of upright effects spawned in the eruption at Sol Sanctum
 /// (SolSanctumEruption_SpawnEffectPair).
 #define SE_ERUPTION_COLUMNS 292
 /// A song with no tracks on player 5, which stops what plays there; played
-/// before each queued map sound (Map_QueueMusic).
+/// before each queued map sound (Scene_QueueMusic).
 #define SE_STOP_MUSIC_PLAYER_5 298
 /// Tolbi Spring: a coin or medal on its way, 50 frames into the toss
 /// (TolbiSpring_RunToss).

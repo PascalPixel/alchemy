@@ -3,12 +3,12 @@
 Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the
 world map, is run by the same four parts. The loop in `src/overworld` lets the
 party walk and deals with whatever interrupts it. The engine in `src/field`
-moves everything that moves and draws the [map](glossary.md#map). The
-[layout](glossary.md#layout), in `src/layout`, says what the ground is like.
-And each map's own code, its [overlay](glossary.md#overlay) in `src/map`, says
-who is there and what happens; only that part knows anything about one map.
+moves everything that moves and draws the [map](glossary.md#map), and the
+map's own data, in `src/map`, says what the ground is like. And each
+[scene](glossary.md#scene)'s own code, its [overlay](glossary.md#overlay) in `src/scene`, says
+who is there and what happens; only that part knows anything about one scene.
 The two engine folders take the names of the [banks](glossary.md#bank) they
-fill, not of what they do. How maps and overlays fit into the whole game is on
+fill, not of what they do. How scenes and overlays fit into the whole game is on
 [the front page](README.md).
 
 ## The field loop and its requests
@@ -20,27 +20,27 @@ whether something should happen. Stepping into a doorway, pressing A beside
 someone or a random battle starting does not act at once: it only raises a
 flag of its own, a request. The walk then stops, the game deals with the
 requests one at a time in a fixed order, and the walk starts again. Each kind
-of request has one flag, so at most one of each can wait. Leaving the map
-comes first, so a cutscene that ends by taking a [warp](glossary.md#warp),
-like this door, simply ends the map.
+of request has one flag, so at most one of each can wait. Leaving the scene
+comes first, so an event that ends by taking a [warp](glossary.md#warp),
+like this door, simply ends the scene.
 
-A random battle is a way out of the map too: the game remembers where
-everyone stood, loads the battle as if it were the next map, and afterwards
-loads the map again with everyone put back where they were.
+A random battle is a way out of the scene too: the game remembers where
+everyone stood, loads the battle as if it were the next scene, and afterwards
+loads the scene again with everyone put back where they were.
 
-`Map_Run` runs one map and `struct FieldWork` holds the
+`SceneManager_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
-map](src/overworld/README.md#the-map-loop-handles-requests-not-scripts) lists
+scene](src/overworld/README.md#the-scene-loop-handles-requests-not-scripts) lists
 all twelve requests in the order they are handled.
 
-## Map entries
+## Scene entries
 
 ![Isaac walks up to a young man in Vault, who says "Welcome to Vault, the town at the heart of Angara.", then walks on](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The engine knows nothing about any one map. It asks the map's code six
+The engine knows nothing about any one scene. It asks the scene's code six
 questions: what can happen here, where the party arrives, who stands where,
 whether anything needs setting up, whether the leader stands in a warp area,
-and where a warp leads. Each answer comes from a function, so a map can answer
+and where a warp leads. Each answer comes from a function, so a scene can answer
 differently as the story moves on without the engine knowing any story: Vault
 gives one list of what can happen before its thieves are jailed and another
 after.
@@ -54,29 +54,29 @@ This is the row for the young man above:
 { MAP_EVENT_TALK, LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
 ```
 
-The game runs the first row that fits, so a map lists its rows from the
+The game runs the first row that fits, so a scene lists its rows from the
 latest point in the story down to the default.
 
-The six questions are `struct MapEntries` at the start of every
-overlay, and the rows are `struct MapEvent`. [Maps](src/map/README.md#the-entry-table)
+The six questions are `struct SceneEntries` at the start of every
+overlay, and the rows are `struct MapEvent`. [Scenes](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
-page describes [how maps depend on the story](README.md#how-maps-depend-on-the-story),
-and [Places](src/field/map_headers.s) lists every map in
+page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
+and [Places](src/field/scene_headers.s) lists every scene in
 [story order](glossary.md#the-places-in-story-order).
 
-## Map and map section flags
+## Scene and map section flags
 
-A map never undoes what it changed. The game keeps two ranges of
-[game flags](glossary.md#game-flag) for maps to use and clears them as the
-party moves on: map flags whenever the party enters a map, and
+A scene never undoes what it changed. The game keeps two ranges of
+[game flags](glossary.md#game-flag) for scenes to use and clears them as the
+party moves on: scene flags whenever the party enters a scene, and
 [map section](glossary.md#map-section) flags when it enters another map
 section. Neither is cleared on a return from battle. A pushed stone pillar
-kept in a map flag is back in place the next time the party comes in; logs
+kept in a scene flag is back in place the next time the party comes in; logs
 floated in one room of a cave, kept in map section flags, stay floated while
 the party moves between the cave's rooms. [The front
 page](README.md#game-flags) gives the ranges, and
-[Maps](src/map/README.md#state-that-cleans-itself-up) says how a map uses
+[Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene uses
 them.
 
 ## Objects and their scripts
@@ -120,25 +120,25 @@ wall.
 | `COLLISION_IMPASSABLE` | 2 | the cell is a wall |
 
 [Field](src/field/README.md#walking-and-running) has the speeds on each kind
-of map and [how high a step can go](src/field/README.md#how-high-a-step-can-go).
+of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-go).
 
 ## Cells and metatile behaviors
 
 ![Isaac faces the stack of wooden boxes by a house in Vale and presses A: "Isaac checked the wooden box..." and "but didn't find anything."](https://alchemy.pascalpixel.com/guides/world/wooden-box.gif)
 
-A layout is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
+A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
 cell says three things: what is drawn there, how high its ground is, and what
 standing there does. That last part, its [metatile
 behavior](glossary.md#metatile-behavior), is a number that walls and map
-events are keyed on. Most numbers belong to the map, whose event table says
+events are keyed on. Most numbers belong to the scene, whose event table says
 what each one does, so the same number is a door in one town and a chest in
-another. A few mean the same on every map: the jars, barrels and wooden boxes
+another. A few mean the same in every scene: the jars, barrels and wooden boxes
 anyone can search, as in the recording, ledges, the desert's sand and walls.
 
 A loaded cell is `struct MapGridCell`, and the behaviors are
-`enum MetatileBehavior`. [Layouts](src/layout/README.md#cells) gives every
+`enum MetatileBehavior`. [Maps](src/map/README.md#cells) gives every
 behavior and [how the build makes each
-layout](src/layout/README.md#how-the-build-makes-a-layout).
+map](src/map/README.md#how-the-build-makes-a-map).
 
 ## Map layers
 
@@ -165,7 +165,7 @@ priority of the cell under it.
 | `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the characters |
 
 [Field](src/field/README.md#towns-and-dungeons-on-screen) shows how the layers
-are put on screen, and [Layouts](src/layout/README.md#one-grid-three-layers)
+are put on screen, and [Maps](src/map/README.md#one-grid-three-layers)
 how they share one grid.
 
 ## The world map
@@ -183,8 +183,8 @@ still picture, so that the windows can use the layer the tilt was using.
 `WorldMap_BuildScanlineTable` works out each line's scale and
 `WorldMap_StartStillView` makes the still picture.
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
-lines, [Layouts](src/layout/README.md#the-world-maps-data) the world map's
-data, and [Running a map](src/overworld/README.md#the-world-map-screen) the
+lines, [Maps](src/map/README.md#the-world-maps-data) the world map's
+data, and [Running a scene](src/overworld/README.md#the-world-map-screen) the
 picture of the whole world R brings up. The world map's own places and events
 are on [the front page](README.md#the-world-map).
 
@@ -200,7 +200,7 @@ often there, and with Avoid none at all.
 
 `Encounter_CountStepsAndSelectFormation` fills the counter and
 picks the enemies, and each zone is a row of `gEncounterZones`. [Running a
-map](src/overworld/README.md#random-battles) has the roll step by step, and
+scene](src/overworld/README.md#random-battles) has the roll step by step, and
 [Battle](battle.md#starting-a-battle) what happens once it starts.
 
 ## Field Psynergy
@@ -209,22 +209,22 @@ map](src/overworld/README.md#random-battles) has the roll step by step, and
 
 Using Move on a stone pillar slides it; using it where nothing answers shows
 the same hand and moves nothing. What [Psynergy](glossary.md#psynergy-and-pp)
-does to a map is decided by the map's own events, and the effect only draws
-it. A map can answer a Psynergy just before its effect plays and just after:
+does to a scene is decided by the scene's own events, and the effect only draws
+it. A scene can answer a Psynergy just before its effect plays and just after:
 in Vale, the event after Move notes where the pillar now stands and makes the
 ground under it solid.
 
 `Field_UsePsynergy` runs a cast and `FieldEffect_Run` plays its
-effect. [Running a map](src/overworld/README.md#how-field-psynergy-reaches-its-effect)
-covers every moment a map can answer and each Psynergy's effect.
+effect. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-effect)
+covers every moment a scene can answer and each Psynergy's effect.
 
 ## Limits
 
 - 64 objects, and 64 sprites sharing 64 sprite anims, up to four each.
 - 66 object event places in the field work, the party's 8 and then 58 for
-  the map's object event templates, though only 64 objects exist to fill them.
+  the scene's object event templates, though only 64 objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
-- 256 map flags and 256 map section flags, each range reused by every map or
+- 256 scene flags and 256 map section flags, each range reused by every scene or
   map section.
 - 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds only

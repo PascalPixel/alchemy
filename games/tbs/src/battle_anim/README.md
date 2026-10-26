@@ -53,25 +53,25 @@ handler is passed a `struct BattleAnimArgs`.
 ### The animation word
 
 An ability's row is one number holding the animation, its variant and a few
-switches: whether it is one of the numbered scenes or a summon's, whether it
+switches: whether it is one of the numbered animations or a summon's, whether it
 also shows on downed targets, and whether the camera takes the other side's
 view or turns right round (Venus, Mercury, Mars and Jupiter do the first;
 twenty rows, among them the blessings, the second). Building the turn adjusts
 it: a double or triple blow raises the variant, a revival adds the switch for
 downed targets, and Annihilation's instant death landing on its first target
 sets the variant to 1. A critical hit adds `ANIM_ID_CRITICAL_OFFSET` to a plain attack's
-animation, which turns it into the ring and spark scene.
+animation, which turns it into the ring and spark animation.
 
 The bits are named by the `ANIM_` macros in `../battle/battle_internal.h`,
-and the layout is written out on `BattleTurn.animation`
+and the map is written out on `BattleTurn.animation`
 (`include/battle_type.h`).
 
 ## Entry points and their blocks
 
 The battle reaches this folder by three doors
-([Battle](../../battle.md#animations)): the summons' scenes; a range of
-numbered scenes (the casting impacts that Djinn and weapon unleashes share,
-the ring and spark scenes of critical hits, and the beams of plain attacks);
+([Battle](../../battle.md#animations)): the summons' animations; a range of
+numbered animations (the casting impacts that Djinn and weapon unleashes share,
+the ring and spark animations of critical hits, and the beams of plain attacks);
 and everything else, through the handler table.
 
 Whichever door it takes, the animation is lent three blocks of memory for as
@@ -293,7 +293,7 @@ They are in [`djinn_attacks.c`](parts/djinn_attacks.c).
 ![Isaac summons Judgment against Garet, Ivan and Mia: the screen goes dark, Judgment rises out of purple clouds and gathers light, a burst sweeps over an aerial view of hills, a beach and a forest, and the battle comes back as `Garet takes 405 damage!!!`, then Ivan 510 and Mia 367.](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
 For most of its length Judgment doesn't draw over the battle at all: it
-replaces the screen with scenes of its own, then brings the battle back for
+replaces the screen with animations of its own, then brings the battle back for
 the damage.
 
 It runs in two parts, each with its own count of frames. The gathering lasts
@@ -357,7 +357,7 @@ colours over the burst's.
 
 It is [`rushing_strike.c`](parts/rushing_strike.c).
 
-### Stat reductions and the scenes beside them
+### Stat reductions and the animations beside them
 
 ![Garet casts Debilitate at Isaac, Mia and Ivan, and a glowing shield over each of them shatters into shards that fly away.](https://alchemy.pascalpixel.com/abilities/debilitate.gif)
 
@@ -367,7 +367,7 @@ that breaks apart.
 A dagger (Dull) or a shield (Impair and Weaken) appears over each target, 4
 frames apart, and breaks into 24 shards that darken through seven dimmer
 copies of the shard picture, made before the first frame; the canvas is
-halved each frame, so they trail. Single scenes nearby follow the same plan:
+halved each frame, so they trail. Single animations nearby follow the same plan:
 Flare raises flames along half an ellipse ([`flare.c`](parts/flare.c)), Fire
 sends out embers that hang and then home in ([`fire.c`](parts/fire.c)), Frost
 spirals motes while ice columns spring up ([`frost.c`](parts/frost.c)), and
@@ -474,7 +474,7 @@ damage, and [Battle](../../battle.md#animations) stages the animation. The
 animation only draws, and tells the battle when to show the damage. While it
 draws it borrows from the rest of the game: the heap from
 [Runtime](../runtime/README.md), the map grid's buffer
-([Layouts](../layout/README.md)), and the battle's own background, camera and
+([Maps](../map/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 blitter builder also serves the battle's star field and the Lucky Wheels.
 
@@ -493,7 +493,7 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 
 - **animation kind**: the number that picks which animation plays.
   `enum BattleAnimId` names the handler table's kinds, `enum SummonAnimId` the
-  summons' scenes and `enum CastingImpact` the casting impacts. It is not the
+  summons' animations and `enum CastingImpact` the casting impacts. It is not the
   ability kind.
 - **runner** and **mode**: a runner draws a family of animations, and the
   mode it is passed picks the member.
@@ -541,7 +541,7 @@ for an enemy (`battle_sprites.c`), all by id range, so the beam sequences play
 them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
 only plain attacks score critical hits, and `ANIM_ID_CRITICAL_OFFSET` reaches
-kinds 201 to 205: the ring and spark scene, which plays the same for each.
+kinds 201 to 205: the ring and spark animation, which plays the same for each.
 
 The work block holds no unknown fields. `unused7788` and `padding` (before the
 word-aligned `bg2x`) are never read or written in either game; `imageTail` is

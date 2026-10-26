@@ -88,7 +88,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
     velocity.x = -(16 << 16);
     velocity.y = -(4 << 16);
     // work->particles 24 to 39 are given a place and a delay that nothing in
-    // the scene reads again.
+    // the animation reads again.
     ANIM_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];

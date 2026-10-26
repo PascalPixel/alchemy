@@ -6,10 +6,10 @@
 s32 BattleAnim_BuildBlitterFar(s32 slot, s32 width_shift, s32 height_shift,
                                s32 flags, u32 mode);
 /// Runs an animation from the second range of kinds: the casting impacts, the
-/// beam sequences, and the ring and spark scenes.
+/// beam sequences, and the ring and spark animations.
 void BattleAnim_DispatchByIdRangeFar(struct BattleAnimArgs *effect);
-/// Runs one of the large animations, the summons' scenes, with its sheet, work
-/// and canvas taken for it and freed after.
+/// Runs one of the large animations, the summons' animations, with its sheet,
+/// work and canvas taken for it and freed after.
 void BattleAnim_RunSummonEffectFar(struct BattleAnimArgs *effect);
 /// Runs an ordinary animation, the gBattleAnim_Handlers entry for its
 /// kind, with its sheet, work and canvas taken for it and freed after.

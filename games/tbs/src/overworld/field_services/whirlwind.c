@@ -19,7 +19,7 @@ enum {
 
 /// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
-#include "../../map/common/effect_spawn.h"
+#include "../../scene/common/effect_spawn.h"
 #undef EFFECT_SPAWN_RESIDENT
 
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z
@@ -151,12 +151,12 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(
 }
 
 /// Runs Whirlwind cast on a target, using the target already stored in the
-/// effect scene.
+/// field effect.
 ///
 /// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
 /// FieldEffect_DispatchRequestKind passes an argument this adapter ignores; the
-/// shared runner reads scene->child instead.
+/// shared runner reads effectWork->child instead.
 void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
   FieldEffect_RunWhirlwind();
 }
@@ -166,8 +166,8 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 ///
 /// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
-/// Without scene->enabled the target shrinks, and 16 particles appear round the
-/// orb, one every 6 frames, and circle it.
+/// Without effectWork->enabled the target shrinks, and 16 particles appear
+/// round the orb, one every 6 frames, and circle it.
 ///
 /// Called by FieldEffect_Run and FieldEffect_RunWhirlwindOnTarget. Fades the
 /// palettes to an effect colour and back, and gives the target its shrinking

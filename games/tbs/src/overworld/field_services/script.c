@@ -66,9 +66,9 @@ void FieldScript_WaitFrames(s32 frames) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// FieldScript_Start, by Map_Run before it handles several requests, by
-/// Field_UsePsynergy, Map_TalkToObjectEvent, Field_CheckWarpRegions and the
-/// world map's zoom (FieldEffect_RunVisibilityTransition).
+/// FieldScript_Start, by SceneManager_Run before it handles several requests,
+/// by Field_UsePsynergy, Scene_TalkToObjectEvent, Field_CheckWarpRegions and
+/// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct Object *object;
 
@@ -149,7 +149,7 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
 
 /// Spawns the object events of an object event template table after the last
 /// object event in use. Called by the Kolima, Kalay and Tolbi ship map scripts
-/// to bring object events in during a scene.
+/// to bring object events in during an event.
 void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
   FieldScript_SpawnObjectEventTemplates(table, ObjectEvent_FindLastActiveId());
 }
@@ -248,7 +248,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// most 30 of one item. When they are all full, says
 /// `Isaac's party cannot carry any more <item>s...` and
 /// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
-/// returns 0. Map_Run calls it before it gives gSaveBlock.pendingItem
+/// returns 0. SceneManager_Run calls it before it gives gSaveBlock.pendingItem
 /// with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
@@ -274,7 +274,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the member who received the item, or -1 when
 /// it was left behind. Map scripts reach it (about
-/// 24 of them); Map_Run gives the pending item and the debug test menu
+/// 24 of them); SceneManager_Run gives the pending item and the debug test menu
 /// gives items through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
@@ -422,7 +422,7 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 /// it too.
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
-  s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
+  s32 sprite = Scene_FindObjectEventTemplate(work->speaker)->sprite;
   struct Window *window = (struct Window *)work->messageWindow;
   struct Window *side = (struct Window *)work->sideWindow;
   s32 useBottom = 1;
@@ -514,28 +514,28 @@ void FieldScript_WaitTransitionFrames(void) {
 }
 
 /// Makes the script leave for the given warp destination of the given map:
-/// raises the warp request WARP_NONE and writes gSaveBlock.mapId and warpDest.
-/// Called by the title, the main menu, the Battle Arena, the debug battle
-/// command and five map scripts (the Lemurian ship and the world map among
-/// them).
-void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
+/// raises the warp request WARP_NONE and writes gSaveBlock.sceneId and
+/// warpDest. Called by the title, the main menu, the Battle Arena, the debug
+/// battle command and five map scripts (the Lemurian ship and the world map
+/// among them).
+void FieldScript_SetDestination(s32 sceneId, s32 warpDest) {
   gFieldWork->warp = WARP_NONE;
-  gSaveBlock.mapId = mapId;
+  gSaveBlock.sceneId = sceneId;
   gSaveBlock.warpDest = warpDest;
 }
 
 /// Makes the script leave and records map and warp destination as the saved
 /// destination. Reached only through an unnamed veneer in the overworld bank's
 /// far-call table; nothing in ☀️ names it.
-void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
+void FieldScript_SetSavedDestination(u16 sceneId, u16 warpDest) {
   struct FieldWork *state = gFieldWork;
   state->warp = WARP_NONE;
-  gSaveBlock.restartMap = mapId;
+  gSaveBlock.restartScene = sceneId;
   gSaveBlock.restartWarpDest = warpDest;
 }
 
 /// The script command "request warp": sets the field's warp request (999 leaves
-/// for gSaveBlock's mapId and warpDest). Map scripts reach it as
+/// for gSaveBlock's sceneId and warpDest). Map scripts reach it as
 /// Import_ScriptRequestWarp (about 61 of them).
 void FieldScript_SetWarpRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

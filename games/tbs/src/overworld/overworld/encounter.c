@@ -8,7 +8,7 @@
 /// ended by map -1. Encounter_SelectMapZones takes the first rule that
 /// matches the map and warp destination and is not turned off.
 struct BattleLocationRule {
-  s16 mapId;                 ///< -1 ends the table
+  s16 sceneId;               ///< -1 ends the table
   s16 warpDest;              ///< -1 for any warp destination
   s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
   s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
@@ -42,12 +42,12 @@ typedef struct WorldMapEncounterRule {
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gSaveBlock.encounterSteps, is reset only when a random
 /// battle starts or a new map section is entered) and chooses the battle
-/// background. Called by Map_Run on map load, with useRules 0 on the world
-/// map and 1 in a map; writes work->encounterZones, encounterBias and
+/// background. Called by SceneManager_Run on map load, with useRules 0 on the
+/// world map and 1 in a map; writes work->encounterZones, encounterBias and
 /// encounterThreshold, and gSaveBlock.special.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
-  s32 mapId;
+  s32 sceneId;
   s32 warpDest;
   u8 *groundZones;
   const struct BattleLocationRule *rule;
@@ -56,15 +56,15 @@ void Encounter_SelectMapZones(s32 useRules) {
   u32 i;
 
   work = gFieldWork;
-  mapId = gSaveBlock.mapId;
+  sceneId = gSaveBlock.sceneId;
   warpDest = gSaveBlock.warpDest;
   groundZones = work->encounterZones;
   rule = gBattle_LocationRules;
   zone = 0;
   firstZoneOnGround = 0;
   if (useRules != 0) {
-    while (rule->mapId != -1) {
-      if (rule->mapId == mapId &&
+    while (rule->sceneId != -1) {
+      if (rule->sceneId == sceneId &&
           (rule->warpDest == -1 || rule->warpDest == warpDest)) {
         if (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0) {
           zone = rule->firstZone;
@@ -165,7 +165,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     // With Jenna in the party, there are no encounters while she has more
     // than 130 experience points. She is in the party only from Vale
-    // (EventScript_RoofMended, map/vale.c) to the Sol Sanctum's eruption,
+    // (EventScript_RoofMended, scene/vale.c) to the Sol Sanctum's eruption,
     // starting at level 1 with none, so the rule acts only in the Sol
     // Sanctum, where it ends random battles once she nears level 4 (158):
     // the party cannot train there before the journey begins.
@@ -197,7 +197,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: Map_Run clears it when it starts the battle.
+    // not cleared here: SceneManager_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gSaveBlock.encounterSteps += Iwram_MulQ16(step, steps);
@@ -289,18 +289,18 @@ extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gSaveBlock.cue) from the first rule
 /// matching the map or its map section and the warp destination;
-/// SONG_KEEP_BGM when none does. Called by Game_MainLoop on entering each map,
-/// before Map_PlayMusic plays it.
-void Map_ChooseMusic(void) {
+/// SONG_KEEP_BGM when none does. Called by SequenceManager_Run on entering each
+/// map, before Scene_PlayMusic plays it.
+void Scene_ChooseMusic(void) {
   s16 music = SONG_KEEP_BGM;
-  s16 mapId = gSaveBlock.mapId;
+  s16 sceneId = gSaveBlock.sceneId;
   s16 warpDest = gSaveBlock.warpDest;
   s16 group = gSaveBlock.mapSec;
   const struct MapMusicRule *rule = gMap_MusicRules;
 
   for (; rule->id != -1; rule++) {
     if (rule->idIsMap) {
-      if (rule->id != mapId)
+      if (rule->id != sceneId)
         continue;
       if (rule->warpDest != -1 && rule->warpDest != warpDest)
         continue;
@@ -319,7 +319,7 @@ void Map_ChooseMusic(void) {
     break;
   }
 
-  gSaveBlock.mapMusic = music;
+  gSaveBlock.sceneMusic = music;
 }
 
 /// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),
@@ -336,20 +336,20 @@ struct MapSecNameRule {
 
 extern const struct MapSecNameRule gMapSec_NameRules[];
 
-/// Returns the area name of mapId and warpDest, from the first rule matching
+/// Returns the area name of sceneId and warpDest, from the first rule matching
 /// the map or its map section; 0, the title screen's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
 /// location windows through MapSec_GetNameIndexFar, and by
 /// RegionMap_UpdateMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save.h).
-s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
+s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest) {
   const struct MapSecNameRule *rule = gMapSec_NameRules;
   s32 name = 0;
-  s32 mapSec = Map_GetMapSec(mapId);
+  s32 mapSec = Scene_GetMapSec(sceneId);
 
   while (rule->id != -1) {
     if (rule->useMapId) {
-      if (rule->id == mapId) {
+      if (rule->id == sceneId) {
         if (rule->warpDest == -1 || rule->warpDest == warpDest) {
           name = rule->areaNameIndex;
           break;
@@ -368,19 +368,20 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
   return name;
 }
 
-/// Sets the map the party returns to after a defeat (gSaveBlock.restartMap
+/// Sets the map the party returns to after a defeat (gSaveBlock.restartScene
 /// and restartWarpDest), from the first rule of gDefeatReturnPoints that
 /// matches the current map and warp destination: {map, warp destination (-1
 /// for any), return map, return warp destination}, ended by map -1. Without a
-/// match the return point stays as it was. Called by Map_Run on map load.
-void Map_SetDefeatReturnPoint(void) {
-  s16 mapId = gSaveBlock.mapId;
+/// match the return point stays as it was. Called by SceneManager_Run on map
+/// load.
+void Scene_SetDefeatReturnPoint(void) {
+  s16 sceneId = gSaveBlock.sceneId;
   s16 warpDest = gSaveBlock.warpDest;
   const s16 *rule = gDefeatReturnPoints;
 
   while (rule[0] != -1) {
-    if (rule[0] == mapId && (rule[1] == -1 || rule[1] == warpDest)) {
-      gSaveBlock.restartMap = rule[2];
+    if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == warpDest)) {
+      gSaveBlock.restartScene = rule[2];
       gSaveBlock.restartWarpDest = rule[3];
       return;
     }
@@ -399,7 +400,7 @@ s16 FieldScript_GetSpecialValue(void) { return gSaveBlock.special; }
 /// map not listed takes the last one. Called by
 /// Encounter_SelectMapZones; sets gSaveBlock.special.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gSaveBlock.mapId;
+  s32 target = gSaveBlock.sceneId;
   s32 *table = gBattleBackground_Maps;
   s32 entry = *table++;
   // The first map_rules.s word names a battle background. It cannot match the

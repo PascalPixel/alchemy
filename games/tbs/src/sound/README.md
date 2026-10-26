@@ -21,7 +21,7 @@ effect. Each kind has music players of its own, so a sound effect never stops
 the music. A few numbers are orders rather than sounds: one fades the music
 out over about two seconds, one keeps whatever is playing, one fades out the
 sound of the field's and battle's actions. Asking for the music already
-chosen does nothing, which lets a [map](../../glossary.md#map) name its music
+chosen does nothing, which lets a [scene](../../glossary.md#scene) name its music
 on every arrival without restarting it, but also means a piece that doesn't
 loop plays again only after other music or a fade.
 
@@ -103,7 +103,7 @@ runs from [IWRAM](../../glossary.md#iwram-and-ewram).
 
 ## How it fits with the rest of the game
 
-Every part of the game plays sound through `Sound_PlaySongFar`: maps name
+Every part of the game plays sound through `Sound_PlaySongFar`: scenes name
 their music on entry, menus click, battle animations play their impacts. The
 blank's code in [Runtime](../runtime/README.md#the-frame-loop) steps the
 music's volume and enters the mixer every frame, and the mixer's resident

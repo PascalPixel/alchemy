@@ -100,7 +100,7 @@ union ObjectEventOrEffect {
 #define SCRIPT_DELETE 27
 
 /// The flags of a map's effect spawner (EFFECT_SPAWN in
-/// map/common/effect_spawn.h): a script number in the low bits and which of
+/// scene/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the

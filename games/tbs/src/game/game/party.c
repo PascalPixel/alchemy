@@ -136,7 +136,7 @@ s32 Party_CountMembers(void) {
 
 /// Adds character `unitId` to the end of the party: sets its game flag and
 /// appends it to gSaveBlock.party unless it is already listed.
-/// Returns the party size. Called by the scenes where a character joins, by
+/// Returns the party size. Called by the events where a character joins, by
 /// the member chooser and the main menu, and by the debug presets.
 s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
@@ -155,7 +155,7 @@ s32 Party_AddMember(s32 unitId) {
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
 /// the gap it leaves in gSaveBlock.party. Returns the party size.
-/// Called by the scenes where a character leaves, by the member chooser and
+/// Called by the events where a character leaves, by the member chooser and
 /// the main menu, and by the debug presets.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();

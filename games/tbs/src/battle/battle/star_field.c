@@ -427,7 +427,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
     struct BattleAnimWork *effectWork;
 
-    // The scene uses its image area to stage the tracked canvas origin.
+    // The animation uses its image area to stage the tracked canvas origin.
     BattleAnim_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];

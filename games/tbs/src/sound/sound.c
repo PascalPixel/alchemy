@@ -283,7 +283,7 @@ void Sound_Initialize(void) {
 
 /// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. The
 /// scale lasts until the next song starts (MPlayStart sets 0x100)
-/// or the tempo and pitch ramp moves. Called only by the Lemurian ship scene,
+/// or the tempo and pitch ramp moves. Called only by the Lemurian ship event,
 /// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
 void Sound_SetBgmTempo(u16 tempoScale) {
   m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
@@ -349,9 +349,9 @@ void Sound_UpdateCommandMask(u32 command) {
 }
 
 /// Returns the music Sound_PlaySong last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music. Map_Run saves it
+/// MUS_SILENCE after a fade, else the last music. SceneManager_Run saves it
 /// as gSaveBlock.returnMusic before the pause menu, so the music can be started
-/// again when the party is put back where it was (Game_MainLoop,
+/// again when the party is put back where it was (SequenceManager_Run,
 /// overworld/overworld/map.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 

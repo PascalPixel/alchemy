@@ -22,7 +22,7 @@
 #include "unit/shop/shop.h"
 #include "unit/window/window.h"
 #include "unit/menu/menu.h"
-#include "unit/map/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "fixed_math.h"
 #include "map_grid_copy.h"
 
@@ -43,7 +43,7 @@
 /// 0x78 bytes of EWRAM where map overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a map change
 /// leaves it alone; SaveBlock_InitializeDefaults clears it for a new game.
-extern u8 gMapLocalState[];
+extern u8 gSceneLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
 /// Colosso's code reads it under either name, each site as it matched; the

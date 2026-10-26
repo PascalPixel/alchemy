@@ -19,7 +19,7 @@ the shop counters in [Shops](../shop/README.md).
 ## The work block
 
 Everything the window system keeps between frames lives in one block of
-memory, set up with each [map](../../glossary.md#map) and with each battle,
+memory, set up with each [scene](../../glossary.md#scene) and with each battle,
 and gone when the next begins: the windows themselves, the three text
 printers that type into them, the small pictures they carry, the unpacked
 text waiting to be typed and the blanks to fill in it.
@@ -47,7 +47,7 @@ A window grows out of its centre over a few frames when it opens and shrinks
 back when it closes. The code that opened it waits until it is full size
 before writing in it. Its frame and blue filling are tiles of one
 [background layer](../../glossary.md#background-layer), in front of the three
-the map uses; what it carries (letters, portraits, the hand) are sprites riding
+the scene uses; what it carries (letters, portraits, the hand) are sprites riding
 on it.
 
 Windows are placed on a grid of 8-pixel tiles, 30 across and 20 down, the size
@@ -210,7 +210,7 @@ The game keeps three save files in the cartridge's backup memory. Saving asks
 which file, with the one last used first, and asks `OK to save over this
 file?` when it already holds a game; then the saved jingle plays and the game
 is written. Along with the game it writes a short summary for the file list
-(the leader, level, play time and Djinn found) and where the map's people
+(the leader, level, play time and Djinn found) and where the scene's people
 stand. A file is 8 KB, written as two halves of 4 KB.
 
 `Save_ToChosenFile` (`window/screens/save.c`) does all of it; its file list,
@@ -262,7 +262,7 @@ routines that work pixel by pixel or bit by bit, the canvas painter and the
 Huffman decoder, are copied into the console's fast internal memory and run
 from there in ARM code, the processor's full 32-bit instructions: that memory
 fetches such an instruction in one read, where the cartridge takes two. The
-rest runs from the cartridge as Thumb code. The work block's two layouts are
+rest runs from the cartridge as Thumb code. The work block's two maps are
 one struct whose array sizes come from `tbs_edition.h`, so the code that reads
 it is the same in every edition.
 

@@ -1,6 +1,6 @@
 /// @file
 /// The title overlay: the start screen, the Golden Sun logo shown after the
-/// ending, and the screens that lead from the prologue and the last scene on
+/// ending, and the screens that lead from the prologue and the last event on
 /// to Vale and the main menu. Title_Run chooses by warp destination.
 
 #include "save_block.h"
@@ -31,7 +31,7 @@
 #include "mem.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "resource_ids.h"
 #include "title.h"
 #include "dma.h"
@@ -46,13 +46,13 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's map tables, which Map_Run reads through
+/// The title overlay's scene tables, which SceneManager_Run reads through
 /// entry/title.s: one warp destination row, the warp, and no object event
 /// templates or map events.
 u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
 
 /// The warp regions entry: the title has no warp boxes.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 u8 *Title_GetWarps(void) { return (u8 *)gTitleWarps; }
 
@@ -66,13 +66,14 @@ u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 
 /// The overlay's initialize entry: plays what the warp destination asks for,
 /// sets the next destination and returns 0.
-/// - Warp destination 10, after Jenna and Kraden's closing scene on the world
-///   map (WorldMap_ShowEndingScene): the Golden Sun logo for two seconds, then
+/// - Warp destination 10, after Jenna and Kraden's closing event on the world
+///   map (WorldMap_ShowEndingEvent): the Golden Sun logo for two seconds, then
 ///   until a key is pressed or a minute passes, then warp destination 2.
 /// - Warp destination 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the main menu's warp destination 2, which offers to
 ///   save the cleared game.
-/// - Warp destination 2, at power-on (Game_MainLoop) and after the logo: the
+/// - Warp destination 2, at power-on (SequenceManager_Run) and after the logo:
+/// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
 ///   with its "Press Start" prompt; then the main menu's warp
 ///   destination 1.
@@ -97,7 +98,7 @@ s32 Title_Run(void) {
           break;
       } while (gKeysPressed == 0);
     }
-    FieldScript_SetDestination((s32)&MapId_Title, TITLE_AFTER_RUN);
+    FieldScript_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
   if (gSaveBlock.warpDest == TITLE_FROM_LEMURIAN_SHIP) {
@@ -110,7 +111,7 @@ s32 Title_Run(void) {
     ScreenFade_Wait();
     FieldScript_WaitFrames(240);
     Sound_PlaySong(MUS_SILENCE);
-    FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_TITLE);
+    FieldScript_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c), the
@@ -146,13 +147,13 @@ s32 Title_Run(void) {
       }
       break;
     }
-    FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
+    FieldScript_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Sound_PlaySong(MUS_TITLE_AFTER_PROLOGUE);
     Title_ShowIntro(0);
     Party_EndChildhood();
-    FieldScript_SetDestination((s32)&MapId_Vale, VALE_FROM_TITLE);
+    FieldScript_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
     Sound_PlaySong(SONG_FADE_OUT_BGM);
   }
   Sound_PlaySong(SONG_FADE_OUT_BGM);
@@ -332,10 +333,10 @@ static void Title_RevealScreen(s32 unused) {
   gFieldWork->transitionFrames = 60;
 }
 
-/// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ layout) with the
+/// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ map) with the
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
-/// decoded through Ram_MapGridCellBuffer, and a map that numbers them row by
-/// row. Zeroes the four backgrounds' scroll and leaves the map work showing
+/// decoded through Ram_MapGridCellBuffer, and a tile map that numbers them row
+/// by row. Zeroes the four backgrounds' scroll and leaves the map work showing
 /// only BG2 and the sprites. MainMenu_LoadBackground (main_menu.c) is its twin.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;

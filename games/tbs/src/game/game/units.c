@@ -33,7 +33,7 @@ struct StatWork {
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
   SaveBlock_InitializeDefaults();
-  Game_MainLoopFar(0);
+  SequenceManager_RunFar(0);
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
@@ -452,8 +452,8 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a map (Map_ResetFlagsOnEnter, Map_Run) and at the end of a field
-/// script, so the encounter rate follows the cap.
+/// entering a map (Scene_ResetFlagsOnEnter, SceneManager_Run) and at the end of
+/// a field script, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -533,12 +533,12 @@ u32 BuildStamp_GetTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gMapLocalState on, which SaveBlock_InitializeDefaults
-/// writes one byte through. gMapLocalState's 0x78 bytes and
+/// A view of EWRAM from gSceneLocalState on, which SaveBlock_InitializeDefaults
+/// writes one byte through. gSceneLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
 /// of gObjectEventSnapshot.
 struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
+  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
@@ -553,26 +553,26 @@ struct MapLocalStateSnapshotView {
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the main menu's new game, by
-/// Game_Restart and Game_MainLoop, and by the debug battle menu.
+/// Game_Restart and SequenceManager_Run, and by the debug battle menu.
 void SaveBlock_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, map state, flags and save metadata in DMA order:
   // 0xb0 words are gSaveBlock up to the characters (units, which
-  // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
+  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
   START_DMA(&zero, &gSaveBlock,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
-  START_DMA(&zero, gMapLocalState,
+  START_DMA(&zero, gSceneLocalState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x3e1);
   WAIT_DMA();
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct MapLocalStateSnapshotView *)gMapLocalState)->firstSnapshotSlot =
+  ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       0xff;
   zero = 0;
   START_DMA(&zero, gBattleArenaRecord + 0x1c,

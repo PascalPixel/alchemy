@@ -18,7 +18,7 @@ extern u32 gFallingEffectState; ///< the dust's phase, 0 to 3
 /// Nonzero asks Kolima_ApplyPendingPose to give its object event mode 2, once.
 extern s32 gKolima_PendingPose;
 /// Whether Mia was in the party as the curse struck, which decides her part
-/// in the scene; read from FLAG_IN_PARTY(MIA) as it begins.
+/// in the event; read from FLAG_IN_PARTY(MIA) as it begins.
 extern s32 gKolima_MiaInParty;
 /// Nonzero while the curse's sparkles fall: each new one plays SE_SPARKLE_FALL.
 extern s32 gKolima_EffectActive;

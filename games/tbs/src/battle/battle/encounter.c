@@ -25,8 +25,8 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each round.
 ///
-/// Reached through its far stub from Game_MainLoop's map switch
-/// (RUN_BATTLE, with the warp destination as enemyGroup), and from
+/// Reached through its far stub from SequenceManager_Run's map switch
+/// (SEQUENCE_BATTLE, with the warp destination as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
 /// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
@@ -149,7 +149,8 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, TASK_PRIORITY_MAIN_LOOP - 1);
 
-  // The battle music: the scene's own song, or the usual battle songs.
+  // The battle music: the song an event set for this battle, or the usual
+  // battle songs.
   cue = gSaveBlock.battleMusic;
   if (cue != 0) {
     Sound_PlaySongFar(cue);

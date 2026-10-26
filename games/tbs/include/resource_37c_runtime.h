@@ -3,6 +3,6 @@
 
 /// @file
 /// The Sol Sanctum Psynergy Stone room's imports, under their overlay.inc
-/// names: Map_QueueMusic and FieldEffect_InitializeSparkles.
+/// names: Scene_QueueMusic and FieldEffect_InitializeSparkles.
 
 #endif

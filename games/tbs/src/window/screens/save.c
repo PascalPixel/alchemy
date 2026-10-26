@@ -172,15 +172,15 @@ u32 Save_BuildFileSummary(void) {
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
   gSaveBlock.buildStamp = BuildStamp_GetTimeFar(0);
   gSaveBlock.playTime = gPlayTimeFrames;
-  // A second copy of the play time, 256 bytes from gMapLocalState: past its
-  // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
+  // A second copy of the play time, 256 bytes from gSceneLocalState: past its
+  // 0x78 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
   // second record (after its 16-byte header), which
   // Save_LoadFileSummaries reads back into
   // SaveFileSummary.secondRecordPlayTime: the file menu lists a file whose two
   // play times differ as corrupted.
   {
-    u32 *copy = (u32 *)gMapLocalState;
+    u32 *copy = (u32 *)gSceneLocalState;
     copy[64] = gPlayTimeFrames;
   }
   gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
@@ -192,7 +192,8 @@ u32 Save_BuildFileSummary(void) {
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gSaveBlock.playTime;
-  summary->area = MapSec_GetNameIndexFar(gSaveBlock.mapId, gSaveBlock.warpDest);
+  summary->area =
+      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest);
   summary->classId = leader->classId;
   summary->coins = gSaveBlock.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -968,7 +969,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at SaveBlock.restartMap, not where it was saved
+      // file resumes at SaveBlock.restartScene, not where it was saved
       // (menu/main_menu.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {
@@ -1302,7 +1303,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
 /// bytes) into a free VRAM slot and returns the slot, which the caller frees
 /// with VramCache_FreeEntry. The slot is not checked: with the cache full
 /// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
-/// (map/common/colosso_marker.h) and, by far call, the world map's cursor
+/// (scene/common/colosso_marker.h) and, by far call, the world map's cursor
 /// (overworld/field_services/world_map.c) use it.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;

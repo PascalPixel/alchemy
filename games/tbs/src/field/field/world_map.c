@@ -586,8 +586,9 @@ void WorldMap_UpdateView(void) {
   // Rebuild the projection and look at the followed position from the
   // current pitch and yaw, the eye one pixel beyond the zoomed distance.
   // followedPosition is read here without the NULL test above, which never
-  // fails on the world map: Map_Run's ObjectEvent_ResetForObject points it at
-  // the camera object before any frame passes, and nothing clears it.
+  // fails on the world map: SceneManager_Run's ObjectEvent_ResetForObject
+  // points it at the camera object before any frame passes, and nothing clears
+  // it.
   gProjection.centerX = 120;
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
@@ -794,7 +795,7 @@ void WorldMap_LoadAreaGraphics(void) {
 
 /// Puts the default world map cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles. Called
-/// three times by WorldMap_ShowEndingScene, each time after its messages.
+/// three times by WorldMap_ShowEndingEvent, each time after its messages.
 /// Unlike WorldMap_LoadAreaGraphics it leaves animationActive set, which only
 /// stops a menu suspending and resuming the tileset animations; the ending
 /// opens no menu before it leaves for the title screen.

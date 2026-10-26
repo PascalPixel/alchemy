@@ -18,7 +18,7 @@
 /// it goes. Returns when the wipe is done, a frame at a time: 23 frames
 /// across, 15 down.
 ///
-/// Called by the summons and scenes that open on a wiped canvas: Boreas,
+/// Called by the summons and animations that open on a wiped canvas: Boreas,
 /// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
 /// Judgment. Writes the canvas and sets work->transferPending each frame;
 /// the caller's transfer callback must already be running.

@@ -12,7 +12,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
 /// names an object event (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a metatile behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
-/// a direction. Called by Field_UseItem, and by Map_HasPsynergyEvent
+/// a direction. Called by Field_UseItem, and by Scene_HasPsynergyEvent
 /// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = gFieldWork;
@@ -64,9 +64,9 @@ s32 Field_FindItemEvent(s32 item) {
 /// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
-/// item's own action included; Map_Run ignores it.
-/// Called by Map_Run for the item request (work->item and
-/// work->itemArgument). Retreat sets gSaveBlock.mapId and .warpDest to the
+/// item's own action included; SceneManager_Run ignores it.
+/// Called by SceneManager_Run for the item request (work->item and
+/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .warpDest to the
 /// Retreat point and raises work->warp.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
@@ -170,7 +170,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gSaveBlock.mapId = gSaveBlock.retreatMap;
+        gSaveBlock.sceneId = gSaveBlock.retreatScene;
         gSaveBlock.warpDest = gSaveBlock.retreatWarpDest;
         work->warp = WARP_RETREAT;
       }
@@ -212,7 +212,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (field_services/) for their own phases.
-void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
+void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing =
@@ -275,10 +275,10 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
   ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  beforeEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END),
-                                      group, &target);
-  afterEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
-                                     group, &target);
+  beforeEvent = Scene_FindPsynergyEvent(
+      PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END), group, &target);
+  afterEvent = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
+                                       group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, target);
   Field_RunEventAction(beforeEvent, userId, target);

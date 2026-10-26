@@ -14,7 +14,7 @@ struct Particle;
 /// summons. A summon's row of gAbilityAnimations has effect 0x8000 plus its
 /// kind.
 enum SummonAnimId {
-  SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's scene too
+  SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's animation too
   SUMMON_ANIM_RAMSES,   ///< BattleAnim_RunRamses (ramses.c)
   SUMMON_ANIM_NEREID,   ///< BattleAnim_RunNereid (nereid.c)
   SUMMON_ANIM_KIRIN,    ///< BattleAnim_RunKirin (kirin.c)
@@ -249,9 +249,9 @@ typedef struct {
 #endif
 
 /// Two-dimensional {x, y} pair for position or velocity, a local of the
-/// summon scenes (Nereid, Procne, Tiamat and Ramses).
+/// summon animations (Nereid, Procne, Tiamat and Ramses).
 struct Point2D {
-  s32 x; ///< 16.16 pixels in every scene that uses it
+  s32 x; ///< 16.16 pixels in every animation that uses it
   s32 y; ///< 16.16 pixels
 };
 

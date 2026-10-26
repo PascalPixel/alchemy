@@ -181,7 +181,7 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
 s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *scene = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
    * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
    * of 105 instructions differ in tbs-en. */
@@ -202,7 +202,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
   if (plan->actorId <= ALLY_MAX) {
     partyMode = completed.value;
 
-    if (scene->firstStrike != FIRST_STRIKE_ENEMIES) {
+    if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
       partyMode = 1;
     }
 
@@ -246,13 +246,13 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 }
 
 /// Plays a summon or a full-screen Psynergy. The camera turns to the target
-/// side (or to the actor's, for a staged scene), the actor glows in its
+/// side (or to the actor's, for a staged animation), the actor glows in its
 /// element and the other side fades out; then, unless the cast failed
 /// ("blocked" or too little PP), the target side's units are readied alone
 /// and the animation plays during playback. Everyone fades back in.
 /// Called by BattleStaging_DispatchAction for STAGING_SUMMON (with
 /// STAGING_HIDE_ACTOR) and STAGING_FULL_SCREEN. Sets gBattleBackgroundWork's
-/// yaw (and its frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the
+/// yaw (and its frames, for an animation), REG_BLDCNT and REG_BLDALPHA for the
 /// fades, and the units' colour modes; schedules BattlePlayback_Run around the
 /// animation.
 /// @param mode STAGING_HIDE_ACTOR hides the actor too (the summons)
@@ -272,7 +272,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   void **slots = (void **)&gBattleWork;
 #endif
 
-  // The camera: a staged scene turns to the actor's side over 60 frames (an
+  // The camera: a staged animation turns to the actor's side over 60 frames (an
   // enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's usual view.
   BattleStaging_BuildTargetList(plan, &work.effect);
   actor = plan->actorId;

@@ -598,9 +598,9 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
 /// opening from the centre line (4, which a non-zero low byte makes flicker).
 /// It returns after one frame while the fade runs on: a caller that must wait
-/// for it, as Map_Run does, waits itself.
+/// for it, as SceneManager_Run does, waits itself.
 ///
-/// Called by Map_Run to fade a map in with work->transition and
+/// Called by SceneManager_Run to fade a map in with work->transition and
 /// work->transitionFrames, and by FieldScript_StartScreenTransition for map
 /// scripts. Every style but the fades adds a task (and the centre
 /// line the HBlank handler, IRQ 1) that runs the transition; every kind
@@ -696,12 +696,12 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
 /// it in.
 ///
-/// Called by Map_Run as a map ends, by Field_StartEncounterTransition
+/// Called by SceneManager_Run as a map ends, by Field_StartEncounterTransition
 /// before a battle (the flickering centre line, and the
 /// WINDOW_TRANSITION_LEADER_INVERSE window), and by
 /// FieldScript_FinishScreenTransition for map scripts. The window and
 /// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
-/// ScreenTransition_Start it does not wait for the fade: Map_Run waits
+/// ScreenTransition_Start it does not wait for the fade: SceneManager_Run waits
 /// transitionFrames after it.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;

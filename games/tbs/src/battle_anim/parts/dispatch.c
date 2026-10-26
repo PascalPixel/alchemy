@@ -37,13 +37,14 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// animation word has ANIM_SUMMON, and by
 /// AutoBattle_RunPsynergy (battle/auto_battle.c).
 ///
-/// Each scene is named for the summon whose gAbilityAnimations entry selects
-/// its kind, as the handlers of gBattleAnim_Handlers are;
-/// SUMMON_ANIM_NONE, which no ability selects, runs Meteor's scene too. Takes
-/// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
-/// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the scene must have
-/// removed every callback that reads them. Unlike BattleAnim_RunTableEffect
-/// it does not set work->effect: each scene does that itself.
+/// Each animation is named for the summon whose gAbilityAnimations entry
+/// selects its kind, as the handlers of gBattleAnim_Handlers are;
+/// SUMMON_ANIM_NONE, which no ability selects, runs Meteor's animation too.
+/// Takes heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
+/// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the animation must
+/// have removed every callback that reads them. Unlike
+/// BattleAnim_RunTableEffect it does not set work->effect: each animation does
+/// that itself.
 void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
@@ -181,7 +182,7 @@ void BattleAnim_BuildWindowEdgeTable(void) {
 /// the enemies (units 128 to 133) when the first target is one, otherwise
 /// the party (units 0 to 7).
 ///
-/// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
+/// Called by the summon animations (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
 /// objects through BattleObject_SpawnObjectsForListFar.
@@ -213,7 +214,7 @@ void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect) {
 /// BG2 to all of what lies below them and moves the projection centre down to
 /// line 120.
 ///
-/// Called by the summon scenes (Ramses, Kirin, Atalanta, Neptune, Procne,
+/// Called by the summon animations (Ramses, Kirin, Atalanta, Neptune, Procne,
 /// Judgment, Boreas, Thor) and the particle streams as they close, to give
 /// the battle back its own background. Sets gBgScroll[1].y to 32, reloads
 /// BG1 with the battle's background darkened to level 24, waits one frame

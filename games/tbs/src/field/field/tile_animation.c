@@ -111,7 +111,7 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// Starts the tileset animations a map's animation script lists: each
 /// 0xfdNN marker starts tileset animation NN & 15 there (paused when bit 7 is
 /// set). Clears all 16 first, and adds TilesetAnim_Update as a task when any
-/// starts. Called by MapGrid_LoadLayout with the map's own script, and by
+/// starts. Called by MapGrid_LoadMap with the map's own script, and by
 /// WorldMap_InitializePerspective with the world map's default one.
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapGridScrollAnimView *gridState;
@@ -233,7 +233,7 @@ again:
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
 /// three-word blend state first, then adds BlendScript_Run as a task.
-/// Called by MapGrid_LoadLayout when the map's header has a blend script.
+/// Called by MapGrid_LoadMap when the map's header has a blend script.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;
@@ -257,7 +257,7 @@ void BlendScript_Start(u16 *script) {
     Task_Add(BlendScript_Run, TASK_PRIORITY_MAIN_LOOP);
 }
 
-/// Suspends the blend script. The lighthouse maps and Vale's Babi scene
+/// Suspends the blend script. The lighthouse maps and Vale's Babi event
 /// reach it through BlendScript_SuspendFar.
 void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 

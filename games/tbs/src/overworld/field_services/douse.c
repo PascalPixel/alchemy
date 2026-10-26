@@ -28,7 +28,7 @@ struct ObjectEventDouseView {
       union ObjectEventOrEffect *fieldObject); ///< per-frame update
 };
 
-/// The effect scene (struct FieldEffectWork, gFieldEffectWork) as Douse reads
+/// The field effect (struct FieldEffectWork, gFieldEffectWork) as Douse reads
 /// it; the notes give the FieldEffectWork fields at the same offsets.
 struct FieldEffectDouseView {
   s32 angle;             ///< 1/65536 turns: the way the caster faces

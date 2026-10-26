@@ -14,7 +14,7 @@
 /// Swirling stars: 64 stars scattered around a point 80 pixels up spin
 /// about it, each on its own axis, appearing four a frame; 30 frames after
 /// it appears, each star is drawn back towards the centre. Stars are drawn
-/// smaller the further away they are. The scene runs for 160 frames. All
+/// smaller the further away they are. The animation runs for 160 frames. All
 /// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
 /// though only 64 are drawn.
 ///

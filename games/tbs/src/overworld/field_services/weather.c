@@ -120,7 +120,7 @@ void Weather_UpdateLightning(void) {
 /// loads their tiles and puts 32 of them under the leader with staggered
 /// timers, drawn semi-transparent. Their work is HEAP_SLOT_WEATHER,
 /// which the motes and sparkles also take. SE_AMBIENT_WATER is queued
-/// (Map_QueueMusic), so it plays again wherever the queued
+/// (Scene_QueueMusic), so it plays again wherever the queued
 /// sound is replayed, as after a Psynergy effect.
 void Weather_StartRain(void) {
   struct WeatherWork *work;
@@ -134,7 +134,7 @@ void Weather_StartRain(void) {
    * instructions differ in tbs-en. */
   work = AllocHeapSlotEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  Map_QueueMusic(SE_AMBIENT_WATER);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct WeatherWork));
@@ -303,7 +303,7 @@ void FieldMotes_Start(void) {
 /// gFieldEffect_SparkleFrames from the row its timer starts at down to row 0,
 /// coming down onto the spot, flipping every other frame. No new bursts start
 /// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
-/// Sanctum's eruption scene starts them (sol_sanctum_eruption.c).
+/// Sanctum's eruption event starts them (sol_sanctum_eruption.c).
 void FieldEffect_UpdateSparkles(void) {
   struct WeatherWork *work;
   u32 spawned;
@@ -461,7 +461,7 @@ void FieldEffect_InitializeSparkles(void) {
 /// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
 /// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
-/// other lightning calls look up again. Vale's storm scenes call it.
+/// other lightning calls look up again. Vale's storm events call it.
 void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;
@@ -489,7 +489,7 @@ void Weather_StopLightning(void) {
 
 /// One last burst of lightning, its first flash two frames from now (timer
 /// 12; Weather_UpdateLightning flashes at 11), then no more. Vale's storm
-/// and eruption scenes call it.
+/// and eruption events call it.
 void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));

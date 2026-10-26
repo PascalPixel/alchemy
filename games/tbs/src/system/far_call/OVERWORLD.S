@@ -4,14 +4,14 @@
 #include "stub.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
-	export Map_RunFar, Map_Run
-	export Game_MainLoopFar, Game_MainLoop
+	export SceneManager_RunFar, SceneManager_Run
+	export SequenceManager_RunFar, SequenceManager_Run
 	export FieldScript_WaitFramesFar, FieldScript_WaitFrames
 	export FieldScript_StartFar, FieldScript_Start
 	export FieldScript_EndFar, FieldScript_End
 	overlay_veneer FieldScript_RunObjectHookAndWait
 	export FieldScript_CallWithLastActiveObjectIdFar, FieldScript_CallWithLastActiveObjectId
-	export Map_AssignViewFlagsFar, Map_AssignViewFlags
+	export Scene_AssignViewFlagsFar, Scene_AssignViewFlags
 	export FieldScript_SetMapEventsFar, FieldScript_SetMapEvents
 	export FieldScript_PrepareObjectAndApplyValueFar, FieldScript_PrepareObjectAndApplyValue
 	export FieldScript_PrepareTwoObjectsAndApplyFar, FieldScript_PrepareTwoObjectsAndApply
@@ -149,8 +149,8 @@ FarCall_OverworldTable:
 	export FieldEffect_FinishWaveAndReleaseHeapBlockFar, FieldEffect_FinishWaveAndReleaseHeapBlock
 	overlay_veneer FieldEffect_GreyMindReadPalette
 	export FieldEffect_RestoreMindReadPaletteFar, FieldEffect_RestoreMindReadPalette
-	export Map_HasFieldPsynergyEventFar, Map_HasFieldPsynergyEvent
-	export Map_HasPsynergyEventFar, Map_HasPsynergyEvent
+	export Scene_HasFieldPsynergyEventFar, Scene_HasFieldPsynergyEvent
+	export Scene_HasPsynergyEventFar, Scene_HasPsynergyEvent
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export FieldScript_GetSpecialValueFar, FieldScript_GetSpecialValue
 	overlay_veneer FieldEffect_StartItemBreak
@@ -162,7 +162,7 @@ FarCall_OverworldTable:
 	export FieldYesNo_AskFar, FieldYesNo_Ask
 	overlay_veneer Encounter_GetFormationAtSlot
 	overlay_veneer Encounter_GetDjinnFormation
-	export Map_PlayMusicFar, Map_PlayMusic
+	export Scene_PlayMusicFar, Scene_PlayMusic
 	export Djinn_JoinPartyFar, Djinn_JoinParty
 	export FieldEffectSprite_UpdateFar, FieldEffectSprite_Update
 	export FieldEffectSprite_HasPendingTargetFar, FieldEffectSprite_HasPendingTarget
@@ -192,8 +192,8 @@ FarCall_OverworldTable:
 	export FieldScript_WaitForZoomTransitionFar, FieldScript_WaitForZoomTransition
 	export MapSec_GetNameIndexFar, MapSec_GetNameIndex
 	export ObjectEvent_SetMovementTypeFar, ObjectEvent_SetMovementType
-	export Map_QueueMusicFar, Map_QueueMusic
-	export Map_PlayQueuedMusicFar, Map_PlayQueuedMusic
+	export Scene_QueueMusicFar, Scene_QueueMusic
+	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled
 #if TBS_PATCH_2
 	export FieldEffect_ClearRandomParticlesFar, FieldEffect_ClearRandomParticles

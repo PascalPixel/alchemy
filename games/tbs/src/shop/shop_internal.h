@@ -44,7 +44,7 @@
 #include "lib.h"
 #include "fixed_point_position.h"
 #include "inn.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "battle_calc.h"
 #include "object_event.h"
 #include "heap.h"

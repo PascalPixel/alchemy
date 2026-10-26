@@ -2,20 +2,20 @@
 #define ALCHEMY_SAVE_BLOCK_H
 
 /// @file
-/// SaveBlock, the state a save file keeps: play time, coins, the map and the
+/// SaveBlock, the state a save file keeps: play time, coins, the scene and the
 /// leader's position, the active party and the options.
 
 #include "types.h"
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (MapHeader.mapType, copied to SaveBlock.mapType).
-enum MapType {
-  MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
+/// A scene's type (SceneHeader.sceneType, copied to SaveBlock.sceneType).
+enum SceneType {
+  SCENE_TYPE_FIELD = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
   /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
   /// off and FLAG_IN_TOWN is set.
-  MAP_TYPE_TOWN = 2
+  SCENE_TYPE_TOWN = 2
 };
 
 /// gSaveBlock.hazardMode: what advances the hazard count (Field_ProcessStep).
@@ -37,7 +37,7 @@ enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
   /// (overworld/overworld/events.c) and the travelers' fight in Vale
-  /// (ValePlaza_FightTravelers, map/vale_plaza.c).
+  /// (ValePlaza_FightTravelers, scene/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
@@ -50,7 +50,7 @@ enum BattleType {
   BATTLE_TYPE_DEBUG = 5
 };
 
-/// The state a save file keeps: play time, coins, the map and the leader's
+/// The state a save file keeps: play time, coins, the scene and the leader's
 /// position, the active party and the options.
 ///
 /// It is the one gSaveBlock in EWRAM, right after the 0x200 bytes of game
@@ -58,7 +58,7 @@ enum BattleType {
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
 /// new game sets its defaults (SaveBlock_InitializeDefaults), and the field,
-/// battle, menus and maps read and write it directly.
+/// battle, menus and scenes read and write it directly.
 struct SaveBlock {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
@@ -83,32 +83,33 @@ struct SaveBlock {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The map being played: its index in gMapHeaders (a MapId_
-  /// symbol), or RUN_BATTLE or another number above the field maps.
-  s16 mapId;
-  s16 warpDest;   ///< the warp destination taken; in RUN_BATTLE, the formation
-  s16 restartMap; ///< where the party restarts: the last Sanctum, usually
+  /// The scene being played: its index in gSceneHeaders (a SceneId_
+  /// symbol), or SEQUENCE_BATTLE or another number above the field scenes.
+  s16 sceneId;
+  s16 warpDest;        ///< the warp destination taken; in SEQUENCE_BATTLE, the
+                       ///< formation
+  s16 restartScene;    ///< where the party restarts: the last Sanctum, usually
   s16 restartWarpDest; ///< the restart point's warp destination
-  s16 defaultMap;      ///< the map being run, kept as it starts
+  s16 defaultScene;    ///< the scene being run, kept as it starts
   s16 defaultWarpDest; ///< the warp destination it was entered by
-  s16 mapSec;  ///< the current map's map section; a new one resets its flags
-  s16 nextMap; ///< where the script sends the party next; -1 for none
+  s16 mapSec; ///< the current scene's map section; a new one resets its flags
+  s16 nextScene;      ///< where the script sends the party next; -1 for none
   s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
-  s16 defeatMap;      ///< where a defeat returns to; -1 for none
+  s16 defeatScene;    ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
-  s16 special;        ///< the battle background chosen for the map or
+  s16 special;        ///< the battle background chosen for the scene or
                       ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
-  /// The map header's layout (layoutIndex); the world map's is 1, which the
-  /// code compares as (s32)&MapId_MainMenu.
-  s16 layoutId;
+  /// The scene header's map (mapIndex); the world map's is 1, which the
+  /// code compares as (s32)&SceneId_MainMenu.
+  s16 mapId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels
   u32 heading;             ///< 1/65536 turns
   u16 turn;                ///< the leader's layer, kept with its position
   s16 battleMusic;         ///< the battle music chosen for the encounter
-  s16 mapMusic;            ///< the current map's field music
+  s16 sceneMusic;          ///< the current scene's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
   u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
   s32 leaderLocalId;       ///< the leader: its unit and its object event
@@ -149,9 +150,9 @@ struct SaveBlock {
   u8 battleType;                ///< an enum BattleType
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
-  /// fresh entry into a map, not a return from battle, resets them to 1 HP
+  /// fresh entry into a scene, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (Map_Run, LamakanDesert_Initialize).
+  /// (SceneManager_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode
@@ -165,8 +166,8 @@ struct SaveBlock {
   s16 runResult;      ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new map section
   u16 pendingItem;    ///< given on returning to the field if the party has room
-  s16 mapType;        ///< the current map's variant from its header
-  s16 retreatMap;     ///< where Retreat goes; the map section's first warp
+  s16 sceneType;      ///< the current scene's variant from its header
+  s16 retreatScene;   ///< where Retreat goes; the map section's first warp
                       ///< destination
   s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
                            ///< destination

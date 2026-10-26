@@ -159,7 +159,7 @@ void BattleMessage_OpenFar(s32 argument);
 /// when the speaker has none.
 s32 Portrait_GetForSpeakerFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
-/// returns that screen's result; Map_Run ignores it.
+/// returns that screen's result; SceneManager_Run ignores it.
 s32 FieldMenu_RunFar(void);
 /// Runs the title menu built from the save files, New Game to Send, and returns
 /// the chosen FileAction, or -1 when cancelled.
@@ -317,7 +317,7 @@ void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
 /// too, doubling the room for text to 256 tiles while a menu is open.
 void Text_UseExtraTilesFar(s32 flag);
 /// Opens the field command menu and moves its cursor to a command's icon, as
-/// the world map's scenes show it picking Djinn. Returns the icon's position.
+/// the world map's events show it picking Djinn. Returns the icon's position.
 s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
 /// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
 s32 WindowSprite_GetPointerTilesFar(s32 no);

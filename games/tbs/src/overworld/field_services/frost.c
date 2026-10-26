@@ -84,8 +84,8 @@ void FieldEffect_UpdateOrbitingParticleRight(
 ///
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
-/// The target is the object event in scene->child. With childMode the target is
-/// left as it is and only the particles appear.
+/// The target is the object event in effectWork->child. With childMode the
+/// target is left as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *target = effectWork->child;
@@ -185,8 +185,8 @@ void FieldEffect_RunFrost(void) {
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;
-    event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                  FIELD_PSYNERGY_FROST, &eventTarget);
+    event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                    FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
       Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
     }

@@ -56,8 +56,9 @@ UNUSED void Warp_ReservedNoOp941DC(void) {}
 // changes.
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by Map_Run when it handles
-/// work->battle; clears work->transitionActive once the screen is closed.
+/// fading it to black over 16 frames. Called by SceneManager_Run when it
+/// handles work->battle; clears work->transitionActive once the screen is
+/// closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
 #else
@@ -76,7 +77,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
     // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    ScreenTransition_Finish(MAP_TRANSITION(4, 1), 16);
+    ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     WaitFrames(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
@@ -88,7 +89,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     ScreenTransition_Finish(
-        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);
     work->transitionActive = 0;
     WaitFrames(16);
@@ -188,7 +189,7 @@ void Warp_EndArrivalAnimation(s32 animation) {
 /// ANIM_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
 /// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by Map_Run as the
+/// Returns 0 when there is nothing to play. Called by SceneManager_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 Warp_PlayArrival(void) {

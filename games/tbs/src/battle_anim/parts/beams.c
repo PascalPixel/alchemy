@@ -1,5 +1,5 @@
 /// @file
-/// Beam sequences and the ring and spark scene.
+/// Beam sequences and the ring and spark animation.
 // Part of battle_anim.c.
 
 #include "../battle_anim_internal.h"

@@ -1,5 +1,5 @@
 /// @file
-/// The casting impact scene and its image helpers.
+/// The casting impact animation and its image helpers.
 // Part of battle_anim.c.
 
 #include "../battle_anim_internal.h"

@@ -391,8 +391,8 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
   BattleAnim_EndCanvasLayer();
 }
 
-// Stat-reduction shards. The scenes the folder README groups with them under
-// "Animation families" follow in their own parts: Flare (flare.c), Quake
+// Stat-reduction shards. The animations the folder README groups with them
+// under "Animation families" follow in their own parts: Flare (flare.c), Quake
 // (quake.c), Fire (fire.c), Frost (frost.c) and, after ray.c, Smoke Bomb and
 // Blast (eruption.c).
 

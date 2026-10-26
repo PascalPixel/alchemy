@@ -79,7 +79,7 @@ struct SpriteArcOamView {
   u8 pad0a[18];
   u8 slot; ///< VRAM cache entry holding its tiles
   /// retainCacheEntry: set, releasing the arc leaves the effect's spark tiles
-  /// (scene->tileSlot), which it borrows, loaded.
+  /// (effectWork->tileSlot), which it borrows, loaded.
   u8 active : 1;
   u8 displayFlags : 7;
   u8 pad1e[8];
@@ -140,7 +140,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
-/// gives it to the caster as a cast starts with a flash (scene->visible).
+/// gives it to the caster as a cast starts with a flash (effectWork->visible).
 void FieldEffect_FlickerObjectAndTick(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if ((gFrameCount & 2) != 0) {

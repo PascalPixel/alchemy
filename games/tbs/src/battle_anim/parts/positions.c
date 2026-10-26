@@ -23,7 +23,7 @@
 /// gravity to its vertical speed, then damps every speed by damping / 64.
 ///
 /// Called each frame for the 3D sparks, motes, shards and shells of 18 parts,
-/// from the casting impacts, the beam sequences and the burst scene to the
+/// from the casting impacts, the beam sequences and the burst animation to the
 /// lobbed shells and the stat reductions; each then projects the particle
 /// with Projection_Point. Changes only the step.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -89,7 +89,7 @@ void Projection_Sprite(s32 id, struct ScreenPoint *position) {
 ///
 /// The usual anchor for an animation on its user or first target: called during
 /// the setup of 21 parts, from the casting impacts, beams, the burst
-/// scene and Spire to the healing motes and the stat boosts.
+/// animation and Spire to the healing motes and the stat boosts.
 void Projection_ScaledUnit(s32 id, struct ScreenPoint *position) {
   BattleMotion_ProjectScaledPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
@@ -149,7 +149,7 @@ void BattleAnim_ProbeKeysForExtendedActor(void) {
 
 /// Runs a battle animation from the second range of kinds, split by enum
 /// BattleAnimIdRange: the casting impacts (kind - ANIM_RANGE_CASTING_IMPACT),
-/// the beam sequences and the ring and spark scenes.
+/// the beam sequences and the ring and spark animations.
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners

@@ -15,7 +15,7 @@ enum BattleAnimSide { ANIM_SIDE_ENEMIES, ANIM_SIDE_PARTY };
 /// BattleStaging_RunAttack plays the critical version of the blow. Only
 /// plain attacks score critical hits, and their kinds are 1 to 5, all
 /// dispatched by id range, so it reaches kinds 201 to 205: the ring and spark
-/// scene, the same for each.
+/// animation, the same for each.
 #define ANIM_ID_CRITICAL_OFFSET 200
 
 /// The command shared by an animation's caller, dispatcher and handlers.

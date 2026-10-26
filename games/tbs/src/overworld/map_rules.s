@@ -3,7 +3,7 @@
 @ Field music: the music of the first rule matching the map or its group and
 @ the warp destination (-1 for any) whose flag (-1 for always) is set.
 	.macro map_music map:req, warpDest:req, flag:req, cue:req
-	.2byte MapId_\map, (\warpDest & 0x7fff) | 0x8000, \flag, \cue
+	.2byte SceneId_\map, (\warpDest & 0x7fff) | 0x8000, \flag, \cue
 	.endm
 	.macro mapsec_music group:req, warpDest:req, flag:req, cue:req
 	.2byte \group, \warpDest & 0x7fff, \flag, \cue
@@ -12,7 +12,7 @@
 @ Area names: the name of the map or its group and the warp destination (-1
 @ for any).
 	.macro map_name map:req, warpDest:req, name:req
-	.2byte MapId_\map, (\warpDest & 0x7fff) | 0x8000
+	.2byte SceneId_\map, (\warpDest & 0x7fff) | 0x8000
 	.4byte \name
 	.endm
 	.macro group_name group:req, warpDest:req, name:req
@@ -23,7 +23,7 @@
 @ Defeat return points: the map and warp destination (-1 for any), then the
 @ map and warp destination the party returns to after a defeat there.
 	.macro return_to map:req, warpDest:req, saved:req, saved_warp_dest:req
-	.2byte MapId_\map, \warpDest, MapId_\saved, \saved_warp_dest
+	.2byte SceneId_\map, \warpDest, SceneId_\saved, \saved_warp_dest
 	.endm
 
 @ A battle background and the maps that use it.
@@ -31,7 +31,7 @@
 	.2byte ResourceId_\resource, 0x8000
 	.ifnb \maps
 	.irp map, \maps
-	.4byte MapId_\map
+	.4byte SceneId_\map
 	.endr
 	.endif
 	.endm

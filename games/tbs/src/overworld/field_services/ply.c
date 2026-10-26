@@ -112,7 +112,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 ///
 /// Called by FieldEffect_Run and FieldEffect_RunPlyOnTarget; frees the
 /// particles' shared VRAM cache entry at the end and runs the effect
-/// scene's finishCallback.
+/// event's finishCallback.
 void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *target = effectWork->mainObject;

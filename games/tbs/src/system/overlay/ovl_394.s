@@ -6,8 +6,8 @@ gKolimaForestFloodgateRecords:
 	.global gKolimaForestFloodgateReturned
 gKolimaForestFloodgateReturned:
 	.space 4
-	.global gKolimaForestFloodgateLayout
-gKolimaForestFloodgateLayout:
+	.global gKolimaForestFloodgateMap
+gKolimaForestFloodgateMap:
 	.space 8
 	.global gKolimaPalette_Healthy
 gKolimaPalette_Healthy:

@@ -1,6 +1,6 @@
 # Menus, windows and shops
 
-Everything the player reads or chooses outside the [map](glossary.md#map)
+Everything the player reads or chooses outside the [scene](glossary.md#scene)
 itself comes in a framed box: what people say, the field menu and its screens,
 the pause menu, the shop and inn counters. This layer draws those boxes
 (windows), types the game's text into them, runs the field menu's four screens
@@ -87,13 +87,13 @@ The watcher is `Menu_CancelSoundTick`, and the flag
 
 Psynergy or an item used on a party member works inside the screen, but
 Psynergy meant for the world, such as Move, is cast by the field after the
-menu has closed. Only the running map knows what the leader is facing and
+menu has closed. Only the running scene knows what the leader is facing and
 what its own [map events](glossary.md#map-event) do with it, so the screen
-writes down what was chosen and closes, and the map decides what Move does to
+writes down what was chosen and closes, and the scene decides what Move does to
 that pillar.
 
 The screen writes its choice into the field work (`gFieldWork`), and
-`Map_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
+`SceneManager_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
 
 ## The pause menu and saving
 
@@ -112,12 +112,12 @@ the settings. [Windows](src/window/README.md#the-pause-menu) has each.
 ![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 A town's counters are its shops, sanctums and inns, each opened by the town's
-map when the player talks to the keeper. A shop sells what its row of a stock
+scene when the player talks to the keeper. A shop sells what its row of a stock
 table lists, plus the rare items (artifacts) the party has seen in shops of
 its kind; a sanctum's priest revives, cures and lifts curses for a fee; an inn
 restores the members still standing for a price per guest.
 
-A map opens a shop with `Shop_Run`, a sanctum with `Sanctum_Run` and an inn
+A scene opens a shop with `Shop_Run`, a sanctum with `Sanctum_Run` and an inn
 with `Inn_CheckIn`. The counters borrow the field menu's memory, since the two
 are never open together.
 
@@ -133,7 +133,7 @@ puts the slow work in one place and leaves each frame's typing cheap. The
 field menu's screens and the counters take turns in one block of memory
 because only one of them runs at a time. Field Psynergy is passed back as a
 request because it needs the field running, the leader facing something and
-the map's events, none of which exist while the menu runs.
+the scene's events, none of which exist while the menu runs.
 
 ## Limits
 

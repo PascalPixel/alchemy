@@ -18,7 +18,7 @@ FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *objectEvent,
 }
 
 /// A shot appears in front of the caster, grows and flies forward with three
-/// afterimages; what it hits (scene->child) is pushed 16 pixels.
+/// afterimages; what it hits (effectWork->child) is pushed 16 pixels.
 ///
 /// Abilities: Force (FIELD_PSYNERGY_FORCE).
 ///
@@ -117,7 +117,7 @@ void FieldEffect_RunForce(void) {
   }
   resourceSlot = sharedAnimation->slot;
 
-  // Destination: 56 pixels in front of the caster with scene->enabled set
+  // Destination: 56 pixels in front of the caster with effectWork->enabled set
   // (no map event named the target), otherwise the effect's position.
   // The shot's script waits to arrive and makes the impact
   // (gFieldEffect_BurstParticleObjectScript + 4 is
@@ -174,8 +174,8 @@ void FieldEffect_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                FIELD_PSYNERGY_FORCE, &eventTarget);
+  event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                  FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
   WaitFrames(10);

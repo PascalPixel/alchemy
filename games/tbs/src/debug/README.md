@@ -4,29 +4,29 @@ The cartridge still holds three rooms the developers used to test the game,
 though no player can walk into them: one that hands out
 [Djinn](../../glossary.md#djinn), one for raising levels and browsing items,
 icons and letters, and one of shop and message tests. Each is an ordinary
-[map](../../glossary.md#map) [overlay](../../glossary.md#overlay), with an
+[scene](../../glossary.md#scene) [overlay](../../glossary.md#overlay), with an
 [entry table](../../glossary.md#entry-table-and-import-table) of the functions
-the field calls to ask the map its questions and an import table of the
-main-image functions it calls, built exactly as [Maps](../map/README.md)
-describes. That makes them the smallest complete examples of a map in the
+the field calls to ask the scene its questions and an import table of the
+main-image functions it calls, built exactly as [Scenes](../scene/README.md)
+describes. That makes them the smallest complete examples of a scene in the
 game; [the Djinn room](#the-djinn-room) shows one whole.
 
 ## How the rooms are reached
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a map; Left steps the number down past the World Map and the title screen and round to the level room, and A warps there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and A warps there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
-The debug map selector is a one-line window that names a map and an arrival
+The debug scene selector is a one-line window that names a scene and an arrival
 point by number; Left and Right step the number, R and L step it by ten, and
-A warps there. It reaches every map, the test rooms included, but the field
+A warps there. It reaches every scene, the test rooms included, but the field
 opens it only in debug mode, when Start is pressed with B held, and the
 released game never turns debug mode on.
 
-The last ten rows of the map table are the test rooms: eight of them run the
-Djinn room, each on a layout of its own, and the other two are the level room
+The last ten rows of the scene table are the test rooms: eight of them run the
+Djinn room, each on a map of its own, and the other two are the level room
 and the menu test room.
 
 The selector is `DebugMapSelect_Run`, among the window bank's menus since it
-is built from windows ([debug.c](../window/screens/debug.c)); the rooms' maps
+is built from windows ([debug.c](../window/screens/debug.c)); the rooms' scenes
 are `TestRoom0` to `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`.
 
 ### Why debug mode stays off
@@ -36,13 +36,13 @@ and a [sprite](../../glossary.md#sprite-and-oam) viewer, which nothing in the
 game can reach. The sprite viewer's only way in is an entrance in the field
 bank's table whose address nothing on the cartridge holds. The rooms still
 count as reachable rather than [unused](../../glossary.md#unused), since the
-debug map selector reaches them, as it reaches every map.
+debug scene selector reaches them, as it reaches every scene.
 
 The switch is `gDebugMode`, and the viewer `SpriteViewer_Run`.
 
 ## Setup on every visit
 
-A map's set-up runs each time the [party](../../glossary.md#the-party)
+A scene's set-up runs each time the [party](../../glossary.md#the-party)
 enters, not once. For a town that means placing its people; for a test room it
 means building the test setup again, so a second visit repeats the first.
 
@@ -77,7 +77,7 @@ talks to Flint, always, run Flint's script.
 The room answers the field's six questions with `TestRoom_Initialize`,
 `TestRoom_GetWarpDests`, `TestRoom_GetWarps`,
 `TestRoom_GetObjectEventTemplates`, `TestRoom_GetEvents` and
-`Map_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
+`Scene_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
 script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
@@ -139,34 +139,34 @@ The palette editor's swatch, `swatch.png`, belongs to no room: it is placed
 in the [main image](../../glossary.md#main-image) for the palette editor,
 which opens with L on the pause menu in debug mode
 (`PaletteEditor_Run`). Each room's functions take the room's prefix, except
-the set-up and warp region entries, which take the map overlays' names.
+the set-up and warp region entries, which take the scene overlays' names.
 
 ## How it fits with the rest of the game
 
-The rooms are maps like any other: the map table names their overlays,
-`Map_Run` runs them, and their [scripts](../../glossary.md#script) call the
-same main-image code the real maps call, through the same import tables
+The rooms are scenes like any other: the scene table names their overlays,
+`SceneManager_Run` runs them, and their [scripts](../../glossary.md#script) call the
+same main-image code the real scenes call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
 palette editor the same debug mode opens is in
-[Running a map](../overworld/README.md).
+[Running a scene](../overworld/README.md).
 
 ## Limits
 
-- Each room is an overlay in the same 32 KB overlay area as every map.
+- Each room is an overlay in the same 32 KB overlay area as every scene.
 - The item browsers cover item numbers 0 to 269.
 
 ## Evidence
 
-The game gives the rooms no names, so their map ids (`TestRoom0` to
+The game gives the rooms no names, so their scene ids (`TestRoom0` to
 `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`) and functions are named for
 what they let a tester do, going by the messages they show. `test.c` keeps one
 empty function nothing calls, `MenuTest_NoOp`, marked
 [`UNUSED`](../../glossary.md#unused).
 
-The eight Djinn room maps use layouts 172 to 179, which no other map uses. The
-eight layouts are one placeholder copied eight times: each `layout.s` places
-the same data, borrowed from layouts 0 and 1 and tileset 68, and differs only
+The eight Djinn room scenes use maps 172 to 179, which no other scene uses. The
+eight maps are one placeholder copied eight times: each `map.s` places
+the same data, borrowed from maps 0 and 1 and tileset 68, and differs only
 in its labels, so the rooms are reserved slots never given their own content,
 which is why one overlay serves them all.
 

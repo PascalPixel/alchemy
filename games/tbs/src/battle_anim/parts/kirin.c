@@ -14,7 +14,7 @@
 ///
 /// Abilities: Kirin (SUMMON_ANIM_KIRIN).
 ///
-/// The scene runs in two stages. In the sweep (120 frames; A or B ends it
+/// The animation runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
 /// battle background scrolls, a ring of motes opens around them and a trail of
 /// fire follows. In the rise (96 frames) the row slides across the targets;
@@ -27,7 +27,7 @@
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which the
 /// rise's BattleCamera_Shake then moves while the screen shakes. The nine
-/// objects are released before the scene returns.
+/// objects are released before the animation returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
@@ -95,7 +95,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   shift = 0;
   // Each copy clears the canvas to 0, baseX's value here.
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
-  // The scene owns BG1's scroll until the rise stage.
+  // The animation owns BG1's scroll until the rise stage.
   view->busy = 1;
 
   i = 0;

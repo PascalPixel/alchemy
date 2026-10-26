@@ -3,7 +3,7 @@
 /// continue, copy and delete), the door to the Battle Arena and the transfer of
 /// a save's data, by link or as a password.
 
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "unit/menu/main_menu.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -140,7 +140,7 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
 
 /// The warp regions entry: the main menu has no warp boxes.
-s32 Map_GetWarpRegions(void) { return 0; }
+s32 Scene_GetWarpRegions(void) { return 0; }
 
 u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
 
@@ -365,27 +365,27 @@ static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
 /// otherwise. It may not when it was saved where a map script blocked
-/// Retreat (FLAG_RETREAT_BLOCKED), except in towns (MAP_TYPE_TOWN), which block
-/// it by themselves, and on the world map.
+/// Retreat (FLAG_RETREAT_BLOCKED), except in towns (SCENE_TYPE_TOWN), which
+/// block it by themselves, and on the world map.
 static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gSaveBlock.mapType == MAP_TYPE_TOWN) {
+  if (gSaveBlock.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
   // -1 unless the map is the world map: -d | d has its top bit set for any
   // d but 0.
-  mapDifference = gSaveBlock.mapId ^ (s32)&MapId_WorldMap;
+  mapDifference = gSaveBlock.sceneId ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
 /// A view of the map state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
-  u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
+  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
   s32 playTime;
@@ -471,7 +471,8 @@ s32 MainMenu_Run(void) {
     FieldScript_FinishScreenTransition();
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     FieldScript_WaitFrames(0x12c);
-    FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
+    FieldScript_SetDestination((s32)&SceneId_WorldMap,
+                               WORLD_MAP_FROM_MAIN_MENU);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -536,13 +537,13 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gSaveBlock.mapId = (s32)&MapId_CottageRoomsB;
+    gSaveBlock.sceneId = (s32)&SceneId_CottageRoomsB;
     gSaveBlock.warpDest = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
   // the game, or one loaded with L and Start held, restarts at its last
-  // Sanctum (restartMap); a file whose two play times differ is reported
+  // Sanctum (restartScene); a file whose two play times differ is reported
   // corrupted, with the offer to restart there. The two chosen restarts set
   // flags that nothing reads.
   if (v6 == 1) {
@@ -556,7 +557,7 @@ menu_top:;
     state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
-      state->mapId = state->restartMap;
+      state->sceneId = state->restartScene;
       state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
@@ -565,12 +566,12 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->mapId = state->restartMap;
+      state->sceneId = state->restartScene;
       state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
-               ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
+               ((struct SaveMenuMapLocalState *)gSceneLocalState)->playTime) {
       FieldMessage_Show(MsgSaveDataCorrupted,
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, FIELD_MESSAGE_ZOOM |
@@ -589,7 +590,7 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->mapId = state->restartMap;
+      state->sceneId = state->restartScene;
       state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RECOVERED_AT_SANCTUM);
@@ -630,7 +631,7 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    FieldScript_SetDestination((s32)&MapId_BattleArena,
+    FieldScript_SetDestination((s32)&SceneId_BattleArena,
                                BATTLE_ARENA_FROM_MAIN_MENU);
     goto leave;
   } else {

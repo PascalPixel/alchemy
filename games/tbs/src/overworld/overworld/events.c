@@ -9,10 +9,10 @@
 /// its sprite, and for a placed object event (8 on) the row it was created
 /// from, counting the placed rows in order.
 ///
-/// Called by Map_TalkToObjectEvent for the talk facing, and by the field
+/// Called by Scene_TalkToObjectEvent for the talk facing, and by the field
 /// Psynergy effects that read an object event's template (Mind Read, the
 /// Djinni effect, the script messages and the view).
-struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
+struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id) {
   struct ObjectEventTemplate *template;
   s32 tableIndex;
   s32 placedLocalId = LOCALID_FIRST_PLACED;
@@ -62,7 +62,7 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a map's tables: events
-/// (Map_FindEvent, Field_SearchCell), object event templates
+/// (Scene_FindEvent, Field_SearchCell), object event templates
 /// (FieldScript_SpawnObjectEventTemplates), warp regions
 /// (Field_CheckWarpRegions) and item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
@@ -82,11 +82,11 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (type 0x005 in its top 12 bits).
 ///
-/// Called by Map_FindEvent. Field_SearchCell tests such an event's condition
+/// Called by Scene_FindEvent. Field_SearchCell tests such an event's condition
 /// itself (a chest's flag is set once it is opened), so the event is found
 /// either way and the leader still checks the spot; a mimic is found only
 /// while its condition holds.
-u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
+u32 Scene_BgEventIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
   u32 ignoresCondition;
@@ -112,7 +112,7 @@ u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
 ///
 /// Called by every lookup of a map's events in this part and by
 /// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
-struct MapEventView *Map_FindEvent(s32 kind, s32 target) {
+struct MapEventView *Scene_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct MapEventView *event = (struct MapEventView *)work->events;
   s32 flags;
@@ -124,7 +124,7 @@ struct MapEventView *Map_FindEvent(s32 kind, s32 target) {
   // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
     if ((flags & 0xf) == kind && event->value == target &&
-        (Map_BgEventIgnoresCondition(flags, event->result) != 0 ||
+        (Scene_BgEventIgnoresCondition(flags, event->result) != 0 ||
          (GameFlag_IsConditionActive(event->condition) != 0 &&
           (flags = event->flags, 1)))) {
       s32 matches = 0;
@@ -179,16 +179,16 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
-/// Called by Map_Run for the A button, to choose between talking and
+/// Called by SceneManager_Run for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an object
 /// event with a talk event; both test the result only for non-zero.
-s32 Map_FindObjectEventTalkEvent(s32 id) {
-  struct MapEventView *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
+s32 Scene_FindObjectEventTalkEvent(s32 id) {
+  struct MapEventView *talkEvent = Scene_FindEvent(MAP_EVENT_TALK, id);
   s32 pausedLocalId = gSaveBlock.pausedObject;
 
   if (pausedLocalId == id) {
     struct MapEventView *pausedEvent =
-        Map_FindEvent(MAP_EVENT_TALK_HALTED, pausedLocalId);
+        Scene_FindEvent(MAP_EVENT_TALK_HALTED, pausedLocalId);
 
     if (pausedEvent != 0) {
       return (s32)pausedEvent;
@@ -203,13 +203,13 @@ s32 Map_FindObjectEventTalkEvent(s32 id) {
 /// comes first; without one, a talk event that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
-/// stood in for it; Map_Run ignores the result.
+/// stood in for it; SceneManager_Run ignores the result.
 ///
-/// Called by Map_Run for its talk request (work->talk). Resumes
+/// Called by SceneManager_Run for its talk request (work->talk). Resumes
 /// the stopped object event and sets gSaveBlock.pausedObject back to -1
 /// afterwards.
-s32 Map_TalkToObjectEvent(s32 id) {
-  struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
+s32 Scene_TalkToObjectEvent(s32 id) {
+  struct ObjectEventTemplate *template = Scene_FindObjectEventTemplate(id);
   s32 result = -1;
   struct Object *objectEvent = (struct Object *)ObjectEvent_GetById(id);
   struct MapEventView *event;
@@ -220,9 +220,9 @@ s32 Map_TalkToObjectEvent(s32 id) {
 
   if (gSaveBlock.pausedObject == id) {
     objectEventPaused = 1;
-    event = Map_FindEvent(7, id);
+    event = Scene_FindEvent(7, id);
     if (event == 0) {
-      event = Map_FindEvent(MAP_EVENT_TALK, id);
+      event = Scene_FindEvent(MAP_EVENT_TALK, id);
       usePausedDialogue = 1;
       if (event == 0) {
         return -1;
@@ -243,7 +243,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
       }
     }
   } else {
-    event = Map_FindEvent(MAP_EVENT_TALK, id);
+    event = Scene_FindEvent(MAP_EVENT_TALK, id);
   }
 
   if (event != 0 && event->result != 0) {
@@ -312,13 +312,13 @@ finish:
 /// Runs the map's raised event (MAP_EVENT_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
-/// Called by Map_Run for a positive event request (work->event).
-s32 Map_RunRaisedEvent(s32 value) {
+/// Called by SceneManager_Run for a positive event request (work->event).
+s32 Scene_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
   struct MapEventView *event;
 
-  event = Map_FindEvent(MAP_EVENT_RAISED, value);
+  event = Scene_FindEvent(MAP_EVENT_RAISED, value);
   handled = -1;
   if (event != NULL) {
     result = event->result;
@@ -343,18 +343,18 @@ s32 Map_RunRaisedEvent(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by Map_Run for its step request (work->action), which
+/// Called by SceneManager_Run for its step request (work->action), which
 /// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->warp for a warp, and clears work->blockedSteps after a coord
 /// event that needs pushing.
-s32 Map_RunCoordEventOrWarp(s32 value) {
+s32 Scene_RunCoordEventOrWarp(s32 value) {
   struct MapEventView *touch;
   struct MapEventView *warp;
   s32 warpId;
   s32 handled;
   struct FieldWork *work;
 
-  touch = Map_FindEvent(MAP_EVENT_COORD, value);
+  touch = Scene_FindEvent(MAP_EVENT_COORD, value);
   handled = -1;
   work = gFieldWork;
   if ((touch != 0) && (touch->result != 0)) {
@@ -372,7 +372,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
       handled = 0;
     }
   } else {
-    warp = Map_FindEvent(MAP_EVENT_WARP, value);
+    warp = Scene_FindEvent(MAP_EVENT_WARP, value);
     if (warp != 0) {
       // An enum WarpStyle chooses how the leader leaves; the animated styles'
       // flags make the next map play the matching arrival.
@@ -401,7 +401,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by Map_Run for its push request (work->pushCell), which
+/// Called by SceneManager_Run for its push request (work->pushCell), which
 /// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCellEvent(s32 behavior) {
@@ -442,7 +442,7 @@ s32 Field_RunPushCellEvent(s32 behavior) {
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
-/// Called by Map_Run for its search request (work->tile). Opening a
+/// Called by SceneManager_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->battle), give coins or an item, or restore all PP.
 s32 Field_SearchCell(s32 tile) {
@@ -465,7 +465,7 @@ s32 Field_SearchCell(s32 tile) {
     FieldMessage_ShowFar(MsgTileChecked + tile, FIELD_MESSAGE_ZOOM);
     FieldMessage_ShowFar(MsgTileResult + tile, FIELD_MESSAGE_ZOOM);
   } else {
-    event = (const struct MapEvent *)Map_FindEvent(MAP_EVENT_BG, tile);
+    event = (const struct MapEvent *)Scene_FindEvent(MAP_EVENT_BG, tile);
     if (event != NULL) {
       s32 flags = event->kind;
 
@@ -554,7 +554,7 @@ s32 Field_SearchCell(s32 tile) {
               if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 TreasureSpot_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
-              // which Map_Run resolves when the map is entered again
+              // which SceneManager_Run resolves when the map is entered again
               // after the battle.
               if (condition != -1) {
                 condition = gSaveBlock.pendingDjinnEvent = condition | 0x1000;
@@ -640,7 +640,7 @@ s32 Field_SearchCell(s32 tile) {
                                FIELD_MESSAGE_ZOOM);
         }
         FieldScript_End();
-        Map_PlayQueuedMusic();
+        Scene_PlayQueuedMusic();
       }
     } else {
       FieldMessage_ShowFar(MsgCheckedGround, FIELD_MESSAGE_ZOOM);

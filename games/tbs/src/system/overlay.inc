@@ -217,7 +217,7 @@
 	import FieldScript_Start, FieldScript_StartFar
 	import FieldScript_End, FieldScript_EndFar
 	import FieldScript_CallWithLastActiveObjectId, FieldScript_CallWithLastActiveObjectIdFar
-	import Map_AssignViewFlags, Map_AssignViewFlagsFar
+	import Scene_AssignViewFlags, Scene_AssignViewFlagsFar
 	import FieldScript_SetMapEvents, FieldScript_SetMapEventsFar
 	import FieldScript_PrepareObjectAndApplyValue, FieldScript_PrepareObjectAndApplyValueFar
 	import FieldScript_PrepareTwoObjectsAndApply, FieldScript_PrepareTwoObjectsAndApplyFar
@@ -321,7 +321,7 @@
 	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
 	import FieldYesNo_Ask, FieldYesNo_AskFar
-	import Map_PlayMusic, Map_PlayMusicFar
+	import Scene_PlayMusic, Scene_PlayMusicFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
 	import FieldEffectSprite_HasPendingTarget, FieldEffectSprite_HasPendingTargetFar
 	import FieldEffectSprite_SetObjectMode, FieldEffectSprite_SetObjectModeFar
@@ -342,8 +342,8 @@
 	import FieldEffect_ScheduleRatioTransition, FieldEffect_ScheduleRatioTransitionFar
 	import FieldScript_WaitForZoomTransition, FieldScript_WaitForZoomTransitionFar
 	import ObjectEvent_SetMovementType, ObjectEvent_SetMovementTypeFar
-	import Map_QueueMusic, Map_QueueMusicFar
-	import Map_PlayQueuedMusic, Map_PlayQueuedMusicFar
+	import Scene_QueueMusic, Scene_QueueMusicFar
+	import Scene_PlayQueuedMusic, Scene_PlayQueuedMusicFar
 @ Menu bank (far_call/MENU.S)
 	import MemberChooser_Open, MemberChooser_OpenFar
 	import DjinnMenu_Run, DjinnMenu_RunFar

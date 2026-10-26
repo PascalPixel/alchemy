@@ -14,7 +14,7 @@
 #include "types.h"
 #include "battle_type.h"
 #include "save_block.h"
-#include "map_header.h"
+#include "scene_header.h"
 #include "battle_system.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -28,7 +28,7 @@
 #include "system.h"
 #include "mem.h"
 #include "dma.h"
-#include "map_ids.h"
+#include "scene_ids.h"
 #include "io_reg.h"
 #include "iowrite.h"
 #include "irq.h"
@@ -86,13 +86,13 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
-#include "unit/map/common/effect_spawn.h"
-#include "unit/map/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "macros.h"
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The field effect sprites of a Psynergy effect's scene
+/// The field effect sprites of a Psynergy effect
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 

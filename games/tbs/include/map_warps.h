@@ -8,12 +8,12 @@
 /// Warps between rooms of one map are named by their rooms
 /// (<MAP>_<ROOM>_TO_<ROOM>).
 
-/// The warp destination a map's table lists first: Map_TakeWarp sends the
+/// The warp destination a map's table lists first: Scene_TakeWarp sends the
 /// party there when a warp has no row of its own, and the debug menu's map
 /// select starts there. A map that gives it a place of its own names it below.
 enum DefaultWarpDest { WARP_DEST_DEFAULT = 0 };
 
-/// MapId_Title's warp destinations and warps.
+/// SceneId_Title's warp destinations and warps.
 enum {
   TITLE_FROM_VALE_PLAZA = 1,
   TITLE_AFTER_RUN = 2, ///< Title_Run
@@ -21,13 +21,13 @@ enum {
   TITLE_FROM_WORLD_MAP = 10,
 };
 
-/// MapId_MainMenu's warp destinations and warps.
+/// SceneId_MainMenu's warp destinations and warps.
 enum {
   MAIN_MENU_FROM_SANCTUM = 1,
   MAIN_MENU_FROM_TITLE = 2,
 };
 
-/// MapId_WorldMap's warp destinations.
+/// SceneId_WorldMap's warp destinations.
 enum {
   WORLD_MAP_FROM_VALE_PLAZA = 1,
   WORLD_MAP_FROM_TITLE = 2,
@@ -123,7 +123,7 @@ enum {
   /// FLAG_NO_ENCOUNTERS_IN_MAPSEC and FLAG_DEBUG_STEPS_OFF.
   WORLD_MAP_FROM_DEBUG = 99,
 };
-/// MapId_WorldMap's warps.
+/// SceneId_WorldMap's warps.
 enum {
   WORLD_MAP_TO_VALE_PLAZA = 1,
   WORLD_MAP_TO_WORLD_MAP_FROM_TITLE = 2,
@@ -204,7 +204,7 @@ enum {
   WORLD_MAP_TO_ROCK_ROOMS = 112,
 };
 
-/// MapId_ValeStormyNight's warp destinations.
+/// SceneId_ValeStormyNight's warp destinations.
 enum {
   VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
@@ -219,7 +219,7 @@ enum {
   VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
   VALE_STORMY_NIGHT_FROM_BOULDER_PASSED = 16,
 };
-/// MapId_ValeStormyNight's warps.
+/// SceneId_ValeStormyNight's warps.
 enum {
   VALE_STORMY_NIGHT_TO_VALE_PLAZA = 2,
   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
@@ -245,7 +245,7 @@ enum {
           ///< stands once the Boulder has swept down the river (its render)
 };
 
-/// MapId_Vale's warp destinations.
+/// SceneId_Vale's warp destinations.
 enum {
   VALE_FROM_SANCTUM = 1,
   VALE_FROM_SOL_ENTRANCE = 2,
@@ -264,7 +264,7 @@ enum {
   VALE_FROM_TITLE = 16,
   VALE_FROM_ROOF_MENDED = 17,
 };
-/// MapId_Vale's warps.
+/// SceneId_Vale's warps.
 enum {
   VALE_TO_SOL_ENTRANCE = 1,
   VALE_TO_VALE_PLAZA = 2,
@@ -283,7 +283,7 @@ enum {
       12, ///< ★ Named from the game: "You patched it nicely." (MsgValeGoodJob)
 };
 
-/// MapId_ValePlaza's warp destinations.
+/// SceneId_ValePlaza's warp destinations.
 enum {
   VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH = 1,
   VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH = 2,
@@ -311,7 +311,7 @@ enum {
   /// ★ Named from its area name: Vale
   VALE_PLAZA_DEBUG_STORY_FLAGS = 99,
 };
-/// MapId_ValePlaza's warps.
+/// SceneId_ValePlaza's warps.
 enum {
   VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST = 1,
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH = 2,
@@ -328,7 +328,7 @@ enum {
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST = 50,
 };
 
-/// MapId_ValeKradensCottage's warp destinations.
+/// SceneId_ValeKradensCottage's warp destinations.
 enum {
   VALE_KRADENS_COTTAGE_FROM_VALE_NORTH = 1,
   VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH = 2,
@@ -341,7 +341,7 @@ enum {
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST = 6,
   VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH = 10,
 };
-/// MapId_ValeKradensCottage's warps.
+/// SceneId_ValeKradensCottage's warps.
 enum {
   VALE_KRADENS_COTTAGE_TO_VALE_NORTH = 1,
   VALE_KRADENS_COTTAGE_TO_VALE_SOUTH = 2,
@@ -354,7 +354,7 @@ enum {
       13, ///< ★ Named from the game: "Mythril Bag" (MsgItemName)
 };
 
-/// MapId_CottageRoomsA's warp destinations.
+/// SceneId_CottageRoomsA's warp destinations.
 enum {
   COTTAGE_ROOMS_A_FROM_VALE_WEST = 1,
   COTTAGE_ROOMS_A_FROM_VALE_NORTH = 2,
@@ -365,7 +365,7 @@ enum {
   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 7,
   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST = 8,
 };
-/// MapId_CottageRoomsA's warps.
+/// SceneId_CottageRoomsA's warps.
 enum {
   COTTAGE_ROOMS_A_TO_VALE_WEST = 1,
   COTTAGE_ROOMS_A_TO_VALE_NORTH = 2,
@@ -377,7 +377,7 @@ enum {
   COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH = 8,
 };
 
-/// MapId_CottageRoomsB's warp destinations.
+/// SceneId_CottageRoomsB's warp destinations.
 enum {
   COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST = 1,
   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH = 2,
@@ -407,7 +407,7 @@ enum {
           ///< wakes him on the stormy night (its render)
   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
 };
-/// MapId_CottageRoomsB's warps.
+/// SceneId_CottageRoomsB's warps.
 enum {
   COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST = 1,
   COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH = 2,
@@ -438,7 +438,7 @@ enum {
   COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH = 22,
 };
 
-/// MapId_Sanctum's warp destinations.
+/// SceneId_Sanctum's warp destinations.
 enum {
   SANCTUM_UNUSED = 0, ///< no warp leads here and it places nobody; the area
                       ///< names call it Sanctum
@@ -457,7 +457,7 @@ enum {
   /// here and the warp destination table has no row for it.
   SANCTUM_QUEST_UNUSED = 50,
 };
-/// MapId_Sanctum's warps.
+/// SceneId_Sanctum's warps.
 enum {
   SANCTUM_TO_VALE = 1,
   SANCTUM_TO_VAULT = 10,
@@ -472,16 +472,16 @@ enum {
   SANCTUM_TO_MAIN_MENU = 50,
 };
 
-/// MapId_ValeEruption's warp destinations.
+/// SceneId_ValeEruption's warp destinations.
 enum {
   VALE_ERUPTION_FROM_SOL_ENTRANCE = 15,
 };
-/// MapId_ValeEruption's warps.
+/// SceneId_ValeEruption's warps.
 enum {
   VALE_ERUPTION_TO_SANCTUM = 1,
 };
 
-/// MapId_SolSanctumLunaSolRooms's warp destinations.
+/// SceneId_SolSanctumLunaSolRooms's warp destinations.
 enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS = 1,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE = 2,
@@ -492,7 +492,7 @@ enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED = 7,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION = 8,
 };
-/// MapId_SolSanctumLunaSolRooms's warps.
+/// SceneId_SolSanctumLunaSolRooms's warps.
 enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS = 1,
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE = 2,
@@ -510,7 +510,7 @@ enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE = 10,
 };
 
-/// MapId_SolSanctumStatue's warp destinations.
+/// SceneId_SolSanctumStatue's warp destinations.
 enum {
   SOL_SANCTUM_STATUE_FROM_VALE_PLAZA = 0,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
@@ -520,7 +520,7 @@ enum {
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN = 5,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
 };
-/// MapId_SolSanctumStatue's warps.
+/// SceneId_SolSanctumStatue's warps.
 enum {
   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE = 2,
@@ -537,38 +537,38 @@ enum {
   SOL_SANCTUM_STATUE_TO_BATTLE = 10,
 };
 
-/// MapId_SolSanctumPsynergyStone's warp destinations.
+/// SceneId_SolSanctumPsynergyStone's warp destinations.
 enum {
   SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE = 1,
 };
-/// MapId_SolSanctumPsynergyStone's warps.
+/// SceneId_SolSanctumPsynergyStone's warps.
 enum {
   SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE = 1,
 };
 
-/// MapId_SolSanctumMaze's warp destinations.
+/// SceneId_SolSanctumMaze's warp destinations.
 enum {
   SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH = 1,
   SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
-/// MapId_SolSanctumMaze's warps.
+/// SceneId_SolSanctumMaze's warps.
 enum {
   SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH = 1,
   SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
 
-/// MapId_SolSanctumCorridor's warp destinations.
+/// SceneId_SolSanctumCorridor's warp destinations.
 enum {
   SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST = 1,
   SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
-/// MapId_SolSanctumCorridor's warps.
+/// SceneId_SolSanctumCorridor's warps.
 enum {
   SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST = 1,
   SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
 
-/// MapId_SolSanctumReliefs's warp destinations.
+/// SceneId_SolSanctumReliefs's warp destinations.
 enum {
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST = 1,
   SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM =
@@ -609,7 +609,7 @@ enum {
           ///< (MsgSolSanctumMinotaurReliefOneEye)
   SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
 };
-/// MapId_SolSanctumReliefs's warps.
+/// SceneId_SolSanctumReliefs's warps.
 enum {
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST = 1,
   SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM =
@@ -651,36 +651,36 @@ enum {
   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
 };
 
-/// MapId_SolSanctumElementalStarRoom's warp destinations.
+/// SceneId_SolSanctumElementalStarRoom's warp destinations.
 enum {
   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 10,
 };
-/// MapId_SolSanctumElementalStarRoom's warps.
+/// SceneId_SolSanctumElementalStarRoom's warps.
 enum {
   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION = 2,
 };
 
-/// MapId_SolSanctumEruption's warp destinations.
+/// SceneId_SolSanctumEruption's warp destinations.
 enum {
   SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM = 10,
 };
-/// MapId_SolSanctumEruption's warps.
+/// SceneId_SolSanctumEruption's warps.
 enum {
   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 5,
 };
 
-/// MapId_SolEntrance's warp destinations.
+/// SceneId_SolEntrance's warp destinations.
 enum {
   SOL_ENTRANCE_FROM_VALE = 1,
   SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS = 2,
 };
-/// MapId_SolEntrance's warps.
+/// SceneId_SolEntrance's warps.
 enum {
   SOL_ENTRANCE_TO_VALE = 1,
   SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS = 2,
 };
 
-/// MapId_Vault's warp destinations.
+/// SceneId_Vault's warp destinations.
 enum {
   VAULT_FROM_WORLD_MAP_SOUTH = 1,
   VAULT_NORTH_UNUSED = 2, ///< inside the north gate; no warp leads here
@@ -695,7 +695,7 @@ enum {
   VAULT_FROM_STONE_ROOMS = 12,
   VAULT_FROM_LOG_ROOMS_A_WEST = 13,
 };
-/// MapId_Vault's warps.
+/// SceneId_Vault's warps.
 enum {
   VAULT_TO_WORLD_MAP_SOUTH = 1,
   VAULT_TO_WORLD_MAP_NORTH = 2,
@@ -711,7 +711,7 @@ enum {
   VAULT_TO_VAULT_REVISIT = 14,
 };
 
-/// MapId_LogRoomsA's warp destinations.
+/// SceneId_LogRoomsA's warp destinations.
 enum {
   LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST = 5,
   LOG_ROOMS_A_FROM_VAULT_SOUTHEAST = 6,
@@ -741,7 +741,7 @@ enum {
   /// ★ Named from the game: "I came into this loft" (MsgVaultVaultCutFree)
   LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED = 17,
 };
-/// MapId_LogRoomsA's warps.
+/// SceneId_LogRoomsA's warps.
 enum {
   LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST = 5,
   LOG_ROOMS_A_TO_VAULT_SOUTHEAST = 6,
@@ -764,20 +764,20 @@ enum {
   LOG_ROOMS_A_TO_SANCTUM = 16,
 };
 
-/// MapId_StoneRooms's warp destinations.
+/// SceneId_StoneRooms's warp destinations.
 enum {
   STONE_ROOMS_FROM_VAULT = 1,
   STONE_ROOMS_FROM_LUNPA = 2,
   STONE_ROOMS_FROM_VAULT_REVISIT = 10,
 };
-/// MapId_StoneRooms's warps.
+/// SceneId_StoneRooms's warps.
 enum {
   STONE_ROOMS_TO_VAULT = 1,
   STONE_ROOMS_TO_VAULT_REVISIT = 2,
   STONE_ROOMS_TO_LUNPA = 3,
 };
 
-/// MapId_VaultRevisit's warp destinations.
+/// SceneId_VaultRevisit's warp destinations.
 enum {
   VAULT_REVISIT_FROM_VAULT = 1,
   VAULT_REVISIT_NORTH_UNUSED = 2, ///< inside the north gate; no warp leads here
@@ -792,7 +792,7 @@ enum {
   VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE = 13,
   VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH = 14,
 };
-/// MapId_VaultRevisit's warps.
+/// SceneId_VaultRevisit's warps.
 enum {
   VAULT_REVISIT_TO_WORLD_MAP_SOUTH = 1,
   VAULT_REVISIT_TO_WORLD_MAP_NORTH = 2,
@@ -808,7 +808,7 @@ enum {
   VAULT_REVISIT_TO_VAULT_CAVE_MOUTH = 14,
 };
 
-/// MapId_LogRoomsB's warp destinations.
+/// SceneId_LogRoomsB's warp destinations.
 enum {
   LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST = 5,
   LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH = 6,
@@ -823,7 +823,7 @@ enum {
       12, ///< ★ Named from what the player sees: the room of beds up the inn's
           ///< stairs (its render)
 };
-/// MapId_LogRoomsB's warps.
+/// SceneId_LogRoomsB's warps.
 enum {
   LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST = 5,
   LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH = 6,
@@ -839,31 +839,31 @@ enum {
           ///< stairs (its render)
 };
 
-/// MapId_GomaCaveEntrance's warp destinations.
+/// SceneId_GomaCaveEntrance's warp destinations.
 enum {
   GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
   GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM = 2,
 };
-/// MapId_GomaCaveEntrance's warps.
+/// SceneId_GomaCaveEntrance's warps.
 enum {
   GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM = 1,
   GOMA_CAVE_ENTRANCE_TO_WORLD_MAP = 2,
 };
 
-/// MapId_GomaCavePond's warp destinations.
+/// SceneId_GomaCavePond's warp destinations.
 enum {
   GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST = 1,
   GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH = 2,
   GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST = 3,
 };
-/// MapId_GomaCavePond's warps.
+/// SceneId_GomaCavePond's warps.
 enum {
   GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST = 1,
   GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH = 2,
   GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST = 3,
 };
 
-/// MapId_GomaCavePillar's warp destinations.
+/// SceneId_GomaCavePillar's warp destinations.
 enum {
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST = 1,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST = 2,
@@ -871,7 +871,7 @@ enum {
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST = 4,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH = 5,
 };
-/// MapId_GomaCavePillar's warps.
+/// SceneId_GomaCavePillar's warps.
 enum {
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST = 1,
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST = 2,
@@ -880,7 +880,7 @@ enum {
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST = 5,
 };
 
-/// MapId_GomaCaveStream's warp destinations.
+/// SceneId_GomaCaveStream's warp destinations.
 enum {
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE = 1,
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
@@ -888,7 +888,7 @@ enum {
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE = 4,
   GOMA_CAVE_STREAM_FROM_VALE_PLAZA = 5,
 };
-/// MapId_GomaCaveStream's warps.
+/// SceneId_GomaCaveStream's warps.
 enum {
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE = 1,
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
@@ -897,18 +897,18 @@ enum {
   GOMA_CAVE_STREAM_TO_VALE_PLAZA = 5,
 };
 
-/// MapId_GomaCaveBridge's warp destinations.
+/// SceneId_GomaCaveBridge's warp destinations.
 enum {
   GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM = 1,
   GOMA_CAVE_BRIDGE_FROM_WORLD_MAP = 2,
 };
-/// MapId_GomaCaveBridge's warps.
+/// SceneId_GomaCaveBridge's warps.
 enum {
   GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM = 1,
   GOMA_CAVE_BRIDGE_TO_WORLD_MAP = 2,
 };
 
-/// MapId_Bilibin's warp destinations.
+/// SceneId_Bilibin's warp destinations.
 enum {
   BILIBIN_FROM_WORLD_MAP = 1,
   BILIBIN_FROM_MCCOY_PALACE_GROUNDS = 2,
@@ -922,7 +922,7 @@ enum {
   BILIBIN_FROM_BILIBIN_TREASURY_WEST = 10,
   BILIBIN_FROM_BILIBIN_TREASURY_EAST = 11,
 };
-/// MapId_Bilibin's warps.
+/// SceneId_Bilibin's warps.
 enum {
   BILIBIN_TO_WORLD_MAP = 1,
   BILIBIN_TO_MCCOY_PALACE_GROUNDS = 2,
@@ -943,7 +943,7 @@ enum {
   BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
 };
 
-/// MapId_CottageRoomsC's warp destinations.
+/// SceneId_CottageRoomsC's warp destinations.
 enum {
   COTTAGE_ROOMS_C_HOUSE_EAST = 1,  ///< the room behind Bilibin's house east
                                    ///< door; through BILIBIN_TO_HOUSE_EAST
@@ -968,7 +968,7 @@ enum {
       8, ///< ★ Named from what the player sees: Bilibin's inn, with the
          ///< restaurant beside its counter (its render)
 };
-/// MapId_CottageRoomsC's warps.
+/// SceneId_CottageRoomsC's warps.
 enum {
   COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN = 1,
   COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN = 2,
@@ -984,7 +984,7 @@ enum {
          ///< the inn's stairs (its render)
 };
 
-/// MapId_BilibinTreasury's warp destinations.
+/// SceneId_BilibinTreasury's warp destinations.
 enum {
   BILIBIN_TREASURY_FROM_BILIBIN_SOUTH = 1,
   BILIBIN_TREASURY_LOWER_FROM_UPPER =
@@ -995,7 +995,7 @@ enum {
          ///< golden statue and Gust (its render)
   BILIBIN_TREASURY_FROM_BILIBIN_NORTH = 4,
 };
-/// MapId_BilibinTreasury's warps.
+/// SceneId_BilibinTreasury's warps.
 enum {
   BILIBIN_TREASURY_TO_BILIBIN_SOUTH = 1,
   BILIBIN_TREASURY_LOWER_TO_UPPER =
@@ -1007,7 +1007,7 @@ enum {
   BILIBIN_TREASURY_TO_BILIBIN_NORTH = 4,
 };
 
-/// MapId_McCoyPalace's warp destinations.
+/// SceneId_McCoyPalace's warp destinations.
 enum {
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST = 1,
   MCCOY_PALACE_ENTRANCE_ROOM_FROM_SOUTHWEST_LANDING =
@@ -1094,7 +1094,7 @@ enum {
           ///< (MsgBilibinDoThinkTheseBilibinsGreat)
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST = 29,
 };
-/// MapId_McCoyPalace's warps.
+/// SceneId_McCoyPalace's warps.
 enum {
   MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST = 1,
   MCCOY_PALACE_ENTRANCE_ROOM_TO_SOUTHWEST_LANDING =
@@ -1184,30 +1184,30 @@ enum {
           ///< carpet leads to McCoy's door (its render)
 };
 
-/// MapId_McCoyPalaceGrounds's warp destinations.
+/// SceneId_McCoyPalaceGrounds's warp destinations.
 enum {
   MCCOY_PALACE_GROUNDS_FROM_BILIBIN = 1,
   MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE = 2,
 };
-/// MapId_McCoyPalaceGrounds's warps.
+/// SceneId_McCoyPalaceGrounds's warps.
 enum {
   MCCOY_PALACE_GROUNDS_TO_BILIBIN = 1,
   MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE = 2,
   MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST = 10,
 };
 
-/// MapId_BilibinBarricade's warp destinations.
+/// SceneId_BilibinBarricade's warp destinations.
 enum {
   BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST = 1,
   BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST = 2,
 };
-/// MapId_BilibinBarricade's warps.
+/// SceneId_BilibinBarricade's warps.
 enum {
   BILIBIN_BARRICADE_TO_WORLD_MAP_EAST = 1,
   BILIBIN_BARRICADE_TO_WORLD_MAP_WEST = 2,
 };
 
-/// MapId_Kolima's warp destinations.
+/// SceneId_Kolima's warp destinations.
 enum {
   KOLIMA_FROM_WORLD_MAP = 1,
   KOLIMA_FROM_INN = 3,
@@ -1217,7 +1217,7 @@ enum {
   KOLIMA_FROM_HOUSE_NORTH = 7,
   KOLIMA_FROM_KOLIMA_TUNNEL = 8,
 };
-/// MapId_Kolima's warps.
+/// SceneId_Kolima's warps.
 enum {
   KOLIMA_TO_WORLD_MAP = 1,
   KOLIMA_TO_WORLD_MAP_EAST = 2,
@@ -1229,7 +1229,7 @@ enum {
   KOLIMA_TO_KOLIMA_TUNNEL = 10,
 };
 
-/// MapId_LogRoomsC's warp destinations.
+/// SceneId_LogRoomsC's warp destinations.
 enum {
   LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP =
       1, ///< ★ Named from what the player sees: the room up the shop's stair, a
@@ -1274,7 +1274,7 @@ enum {
       14, ///< ★ Named from what the player sees: the top room of the shop's
           ///< tree, a lumberjack and his two children (its render)
 };
-/// MapId_LogRoomsC's warps.
+/// SceneId_LogRoomsC's warps.
 enum {
   LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP =
       1, ///< ★ Named from what the player sees: the weapon and armor sellers
@@ -1309,29 +1309,29 @@ enum {
   LOG_ROOMS_C_TO_KOLIMA_TUNNEL = 14,
 };
 
-/// MapId_KolimaTunnel's warp destinations.
+/// SceneId_KolimaTunnel's warp destinations.
 enum {
   KOLIMA_TUNNEL_FROM_LOG_ROOMS_C = 1,
   KOLIMA_TUNNEL_FROM_KOLIMA = 2,
 };
-/// MapId_KolimaTunnel's warps.
+/// SceneId_KolimaTunnel's warps.
 enum {
   KOLIMA_TUNNEL_TO_LOG_ROOMS_C = 1,
   KOLIMA_TUNNEL_TO_KOLIMA = 2,
 };
 
-/// MapId_KolimaBridge's warp destinations.
+/// SceneId_KolimaBridge's warp destinations.
 enum {
   KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH = 1,
   KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH = 2,
 };
-/// MapId_KolimaBridge's warps.
+/// SceneId_KolimaBridge's warps.
 enum {
   KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH = 1,
   KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH = 2,
 };
 
-/// MapId_KolimaForestEntrance's warp destinations.
+/// SceneId_KolimaForestEntrance's warp destinations.
 enum {
   /// Only the two unused warps lead here, and the warp destination table has no
   /// row
@@ -1340,7 +1340,7 @@ enum {
   KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,
   KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP = 4,
 };
-/// MapId_KolimaForestEntrance's warps.
+/// SceneId_KolimaForestEntrance's warps.
 enum {
   KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
   /// Two warps no script takes, back into this map
@@ -1352,51 +1352,51 @@ enum {
   KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP = 4,
 };
 
-/// MapId_KolimaForestGlade's warp destinations.
+/// SceneId_KolimaForestGlade's warp destinations.
 enum {
   KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE = 1,
   KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF = 2,
 };
-/// MapId_KolimaForestGlade's warps.
+/// SceneId_KolimaForestGlade's warps.
 enum {
   KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF = 1,
   KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE = 2,
 };
 
-/// MapId_KolimaForestCliff's warp destinations.
+/// SceneId_KolimaForestCliff's warp destinations.
 enum {
   KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE = 1,
   KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE = 2,
 };
-/// MapId_KolimaForestCliff's warps.
+/// SceneId_KolimaForestCliff's warps.
 enum {
   KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE = 1,
   KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE = 2,
 };
 
-/// MapId_KolimaForestFloodgate's warp destinations.
+/// SceneId_KolimaForestFloodgate's warp destinations.
 enum {
   KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF = 1,
   KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE = 2,
 };
-/// MapId_KolimaForestFloodgate's warps.
+/// SceneId_KolimaForestFloodgate's warps.
 enum {
   KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF = 1,
   KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE = 2,
 };
 
-/// MapId_KolimaForestTree's warp destinations.
+/// SceneId_KolimaForestTree's warp destinations.
 enum {
   KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE = 1,
   KOLIMA_FOREST_TREE_FROM_TREE_ROOMS = 2,
 };
-/// MapId_KolimaForestTree's warps.
+/// SceneId_KolimaForestTree's warps.
 enum {
   KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE = 1,
   KOLIMA_FOREST_TREE_TO_TREE_ROOMS = 2,
 };
 
-/// MapId_TreeRooms's warp destinations.
+/// SceneId_TreeRooms's warp destinations.
 enum {
   TREE_ROOMS_FROM_KOLIMA_FOREST_TREE = 1,
   TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
@@ -1451,7 +1451,7 @@ enum {
   TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON = 58,
   TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON = 59,
 };
-/// MapId_TreeRooms's warps.
+/// SceneId_TreeRooms's warps.
 enum {
   TREE_ROOMS_TO_KOLIMA_FOREST_TREE = 1,
   TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST =
@@ -1498,7 +1498,7 @@ enum {
           ///< face looks out of the wall (its render)
 };
 
-/// MapId_TretTreeBranch's warp destinations.
+/// SceneId_TretTreeBranch's warp destinations.
 enum {
   TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
   TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
@@ -1509,7 +1509,7 @@ enum {
   TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST = 7,
   TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
-/// MapId_TretTreeBranch's warps.
+/// SceneId_TretTreeBranch's warps.
 enum {
   TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
   TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
@@ -1521,7 +1521,7 @@ enum {
   TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
 
-/// MapId_BilibinCaveIce's warp destinations.
+/// SceneId_BilibinCaveIce's warp destinations.
 enum {
   BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST = 1,
   BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST = 2,
@@ -1531,7 +1531,7 @@ enum {
       5, ///< ★ Named from what the player sees: the small nook beyond the north
          ///< doorway that holds two chests (its render)
 };
-/// MapId_BilibinCaveIce's warps.
+/// SceneId_BilibinCaveIce's warps.
 enum {
   BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST = 1,
   BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST = 2,
@@ -1542,7 +1542,7 @@ enum {
   BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE = 5,
 };
 
-/// MapId_BilibinCaveRapier's warp destinations.
+/// SceneId_BilibinCaveRapier's warp destinations.
 enum {
   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST = 1,
   BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST = 2,
@@ -1553,7 +1553,7 @@ enum {
       6, ///< ★ Named from what the player sees: the nook where a fire burns
          ///< between two torches at the way on into the cave (its render)
 };
-/// MapId_BilibinCaveRapier's warps.
+/// SceneId_BilibinCaveRapier's warps.
 enum {
   BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST = 1,
   BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST = 2,
@@ -1565,20 +1565,20 @@ enum {
   BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER = 6,
 };
 
-/// MapId_BilibinCaveEntrance's warp destinations.
+/// SceneId_BilibinCaveEntrance's warp destinations.
 enum {
   BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
   BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH = 2,
   BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
-/// MapId_BilibinCaveEntrance's warps.
+/// SceneId_BilibinCaveEntrance's warps.
 enum {
   BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP = 1,
   BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH = 2,
   BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
 
-/// MapId_Imil's warp destinations.
+/// SceneId_Imil's warp destinations.
 enum {
   IMIL_FROM_HOUSE_SOUTHWEST = 1,
   IMIL_EAST_UNUSED =
@@ -1591,7 +1591,7 @@ enum {
   IMIL_FROM_ICE_ROOMS_SOUTHWEST = 8,
   IMIL_FROM_IMIL_FALLS_CAVE = 9,
 };
-/// MapId_Imil's warps.
+/// SceneId_Imil's warps.
 enum {
   IMIL_TO_HOUSE_SOUTHWEST = 1, ///< ★ Named from what the player sees: a house
                                ///< with beds, a table and a hearth (its render)
@@ -1606,7 +1606,7 @@ enum {
   IMIL_TO_WORLD_MAP_NORTH = 12,
 };
 
-/// MapId_IceRooms's warp destinations.
+/// SceneId_IceRooms's warp destinations.
 enum {
   ICE_ROOMS_HOUSE_SOUTHWEST = 1, ///< the room behind Imil's house southwest
                                  ///< door; through IMIL_TO_HOUSE_SOUTHWEST
@@ -1624,7 +1624,7 @@ enum {
       8, ///< ★ Named from what the player sees: Imil's inn, its innkeeper
          ///< behind the counter (its render)
 };
-/// MapId_IceRooms's warps.
+/// SceneId_IceRooms's warps.
 enum {
   ICE_ROOMS_HOUSE_WEST_TO_IMIL = 1,
   ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST = 2,
@@ -1640,16 +1640,16 @@ enum {
          ///< with barrels (its render)
 };
 
-/// MapId_ImilFallsCave's warp destinations.
+/// SceneId_ImilFallsCave's warp destinations.
 enum {
   IMIL_FALLS_CAVE_FROM_IMIL = 1,
 };
-/// MapId_ImilFallsCave's warps.
+/// SceneId_ImilFallsCave's warps.
 enum {
   IMIL_FALLS_CAVE_TO_IMIL = 1,
 };
 
-/// MapId_MercuryLighthouseEntrance's warp destinations.
+/// SceneId_MercuryLighthouseEntrance's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS =
@@ -1711,7 +1711,7 @@ enum {
   /// ★ Named from its area name: Mercury Lighthouse
   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE = 99,
 };
-/// MapId_MercuryLighthouseEntrance's warps.
+/// SceneId_MercuryLighthouseEntrance's warps.
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS =
@@ -1765,7 +1765,7 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN = 63,
 };
 
-/// MapId_MercuryLighthouseLower's warp destinations.
+/// SceneId_MercuryLighthouseLower's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
@@ -1788,7 +1788,7 @@ enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH = 11,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE = 15,
 };
-/// MapId_MercuryLighthouseLower's warps.
+/// SceneId_MercuryLighthouseLower's warps.
 enum {
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
@@ -1821,7 +1821,7 @@ enum {
           ///< the party down to the ground floor and back (its render)
 };
 
-/// MapId_MercuryLighthouseMiddle's warp destinations.
+/// SceneId_MercuryLighthouseMiddle's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH = 1,
   MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE =
@@ -1838,7 +1838,7 @@ enum {
   MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 9,
   MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST = 10,
 };
-/// MapId_MercuryLighthouseMiddle's warps.
+/// SceneId_MercuryLighthouseMiddle's warps.
 enum {
   MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH = 1,
   MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES =
@@ -1856,7 +1856,7 @@ enum {
   MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 10,
 };
 
-/// MapId_MercuryLighthouseUpper's warp destinations.
+/// SceneId_MercuryLighthouseUpper's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
@@ -1892,7 +1892,7 @@ enum {
       16, ///< ★ Named from what the player sees: the room of three stone doors
           ///< and the statue that slides off its ledge (its render)
 };
-/// MapId_MercuryLighthouseUpper's warps.
+/// SceneId_MercuryLighthouseUpper's warps.
 enum {
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
@@ -1929,7 +1929,7 @@ enum {
           ///< below as the statue falls and lands (its render)
 };
 
-/// MapId_MercuryLighthouseExterior's warp destinations.
+/// SceneId_MercuryLighthouseExterior's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE = 1,
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
@@ -1945,7 +1945,7 @@ enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_UNUSED = 13, ///< no warp leads here
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE = 15,
 };
-/// MapId_MercuryLighthouseExterior's warps.
+/// SceneId_MercuryLighthouseExterior's warps.
 enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE = 1,
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
@@ -1965,7 +1965,7 @@ enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE = 9,
 };
 
-/// MapId_MercuryLighthouseAerie's warp destinations.
+/// SceneId_MercuryLighthouseAerie's warp destinations.
 enum {
   MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       1, ///< the world map sends the party here after its lighthouse cut
@@ -1973,12 +1973,12 @@ enum {
       2, ///< MercuryLighthouseAerie_ConfrontSaturos
   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 5,
 };
-/// MapId_MercuryLighthouseAerie's warps.
+/// SceneId_MercuryLighthouseAerie's warps.
 enum {
   MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
 };
 
-/// MapId_FuchinTempleGrounds's warp destinations.
+/// SceneId_FuchinTempleGrounds's warp destinations.
 enum {
   FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP = 1,
   FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A = 2,
@@ -1987,14 +1987,14 @@ enum {
   /// Fuchin Temple wakes (its return point in overworld/map_rules.s).
   FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT = 5,
 };
-/// MapId_FuchinTempleGrounds's warps.
+/// SceneId_FuchinTempleGrounds's warps.
 enum {
   FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP = 1,
   FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A = 2,
   FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
 };
 
-/// MapId_LacquerRoomsA's warp destinations.
+/// SceneId_LacquerRoomsA's warp destinations.
 enum {
   LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
   /// ★ Named from the game: "You warriors should visit Master Feh's school."
@@ -2005,7 +2005,7 @@ enum {
   LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
   LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE = 4,
 };
-/// MapId_LacquerRoomsA's warps.
+/// SceneId_LacquerRoomsA's warps.
 enum {
   LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS = 1,
   LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN = 2,
@@ -2015,7 +2015,7 @@ enum {
          ///< behind the door Master Feh and Feizhi come out of (its render)
 };
 
-/// MapId_FuchinFallsCaveEntrance's warp destinations.
+/// SceneId_FuchinFallsCaveEntrance's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
   FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR = 2,
@@ -2030,7 +2030,7 @@ enum {
   FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
   FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
-/// MapId_FuchinFallsCaveEntrance's warps.
+/// SceneId_FuchinFallsCaveEntrance's warps.
 enum {
   FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS = 1,
   FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ZEPHYR = 2,
@@ -2046,18 +2046,18 @@ enum {
   FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
 
-/// MapId_FuchinFallsCaveZephyr's warp destinations.
+/// SceneId_FuchinFallsCaveZephyr's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
   FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 2,
 };
-/// MapId_FuchinFallsCaveZephyr's warps.
+/// SceneId_FuchinFallsCaveZephyr's warps.
 enum {
   FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
   FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 2,
 };
 
-/// MapId_FuchinFallsCaveDragonsEye's warp destinations.
+/// SceneId_FuchinFallsCaveDragonsEye's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS =
       1, ///< ★ Named from what the player sees: the round chamber where the
@@ -2069,7 +2069,7 @@ enum {
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR = 5,
 };
-/// MapId_FuchinFallsCaveDragonsEye's warps.
+/// SceneId_FuchinFallsCaveDragonsEye's warps.
 enum {
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS =
       1, ///< ★ Named from what the player sees: the pool crossed on floating
@@ -2082,7 +2082,7 @@ enum {
   FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR = 5,
 };
 
-/// MapId_FuchinFallsCaveArcticBlade's warp destinations.
+/// SceneId_FuchinFallsCaveArcticBlade's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF =
@@ -2093,7 +2093,7 @@ enum {
          ///< the cave's mouth (its render)
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
 };
-/// MapId_FuchinFallsCaveArcticBlade's warps.
+/// SceneId_FuchinFallsCaveArcticBlade's warps.
 enum {
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_TO_SOUTH_HALF =
@@ -2105,7 +2105,7 @@ enum {
   FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
 };
 
-/// MapId_FuchinFallsCaveOrbOfForce's warp destinations.
+/// SceneId_FuchinFallsCaveOrbOfForce's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_FROM_SOUTH_HALF =
       1, ///< ★ Named from what the player sees: the small chamber holding the
@@ -2116,7 +2116,7 @@ enum {
   FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
   FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
 };
-/// MapId_FuchinFallsCaveOrbOfForce's warps.
+/// SceneId_FuchinFallsCaveOrbOfForce's warps.
 enum {
   FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_TO_SOUTH_HALF =
       1, ///< ★ Named from what the player sees: the winding passage with the Ki
@@ -2128,7 +2128,7 @@ enum {
   FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
 };
 
-/// MapId_FuchinFallsCaveDragonStatue's warp destinations.
+/// SceneId_FuchinFallsCaveDragonStatue's warp destinations.
 enum {
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 1,
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 2,
@@ -2155,7 +2155,7 @@ enum {
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_EAST = 11,
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_WEST = 12,
 };
-/// MapId_FuchinFallsCaveDragonStatue's warps.
+/// SceneId_FuchinFallsCaveDragonStatue's warps.
 enum {
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 1,
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 2,
@@ -2183,7 +2183,7 @@ enum {
   FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_WEST = 12,
 };
 
-/// MapId_MogallForestSign's warp destinations.
+/// SceneId_MogallForestSign's warp destinations.
 enum {
   MOGALL_FOREST_SIGN_FROM_WORLD_MAP = 1,
   MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST = 2,
@@ -2203,7 +2203,7 @@ enum {
   MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST = 8,
   MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ = 9,
 };
-/// MapId_MogallForestSign's warps.
+/// SceneId_MogallForestSign's warps.
 enum {
   MOGALL_FOREST_SIGN_TO_WORLD_MAP = 1,
   MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST = 2,
@@ -2224,7 +2224,7 @@ enum {
   MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_QUARTZ = 9,
 };
 
-/// MapId_MogallForestQuartz's warp destinations.
+/// SceneId_MogallForestQuartz's warp destinations.
 enum {
   MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN = 1,
   MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS =
@@ -2255,7 +2255,7 @@ enum {
   MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE = 11,
   MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
-/// MapId_MogallForestQuartz's warps.
+/// SceneId_MogallForestQuartz's warps.
 enum {
   MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIGN = 1,
   MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_TO_STUMPS =
@@ -2287,7 +2287,7 @@ enum {
   MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
 
-/// MapId_MogallForestKillerApe's warp destinations.
+/// SceneId_MogallForestKillerApe's warp destinations.
 enum {
   MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS =
       1, ///< ★ Named from what the player sees: the clearing of only trees
@@ -2322,7 +2322,7 @@ enum {
   MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS =
       15, ///< MogallForest_KillerApeAttacks
 };
-/// MapId_MogallForestKillerApe's warps.
+/// SceneId_MogallForestKillerApe's warps.
 enum {
   MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS =
       1, ///< ★ Named from what the player sees: the clearing with three great
@@ -2356,7 +2356,7 @@ enum {
   MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP = 13,
 };
 
-/// MapId_MogallForestSidePaths's warp destinations.
+/// SceneId_MogallForestSidePaths's warp destinations.
 enum {
   MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_NORTH = 1,
   MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST = 2,
@@ -2369,7 +2369,7 @@ enum {
   MOGALL_FOREST_SIDE_PATHS_NORTH_CLEARING_EAST = 9,
   MOGALL_FOREST_SIDE_PATHS_WEST_CLEARING_WEST = 10,
 };
-/// MapId_MogallForestSidePaths's warps.
+/// SceneId_MogallForestSidePaths's warps.
 enum {
   MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_NORTH = 1,
   MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_WEST = 2,
@@ -2411,7 +2411,7 @@ enum {
           ///< side-path clearings (its render)
 };
 
-/// MapId_Xian's warp destinations.
+/// SceneId_Xian's warp destinations.
 enum {
   XIAN_FROM_HOUSE = 1,
   XIAN_FROM_WEAPON_AND_ARMOR_SHOP = 5,
@@ -2422,7 +2422,7 @@ enum {
   XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 10,
   XIAN_FROM_SANCTUM_WEST = 11,
 };
-/// MapId_Xian's warps.
+/// SceneId_Xian's warps.
 enum {
   XIAN_TO_HOUSE = 1, ///< ★ Named from what the player sees: a house with beds,
                      ///< a table and a hearth (its render)
@@ -2438,7 +2438,7 @@ enum {
   XIAN_TO_WORLD_MAP = 8,
 };
 
-/// MapId_LacquerRoomsB's warp destinations.
+/// SceneId_LacquerRoomsB's warp destinations.
 enum {
   LACQUER_ROOMS_B_HOUSE =
       1, ///< the room behind Xian's house door; through XIAN_TO_HOUSE
@@ -2459,7 +2459,7 @@ enum {
       8, ///< the room behind LacquerRoomsA's house door; through
          ///< LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE
 };
-/// MapId_LacquerRoomsB's warps.
+/// SceneId_LacquerRoomsB's warps.
 enum {
   LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
   LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN = 2,
@@ -2473,7 +2473,7 @@ enum {
   LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
 };
 
-/// MapId_AlpineCrossing's warp destinations.
+/// SceneId_AlpineCrossing's warp destinations.
 enum {
   ALPINE_CROSSING_FROM_WORLD_MAP_EAST = 1,
   ALPINE_CROSSING_FROM_WORLD_MAP_NORTH = 2,
@@ -2481,7 +2481,7 @@ enum {
   ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST = 4,
   ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST = 5,
 };
-/// MapId_AlpineCrossing's warps.
+/// SceneId_AlpineCrossing's warps.
 enum {
   ALPINE_CROSSING_TO_WORLD_MAP_EAST = 1,
   ALPINE_CROSSING_TO_WORLD_MAP_NORTH = 2,
@@ -2491,7 +2491,7 @@ enum {
   ALPINE_CROSSING_TO_LAMA_TEMPLE = 6,
 };
 
-/// MapId_Altin's warp destinations.
+/// SceneId_Altin's warp destinations.
 enum {
   ALTIN_FROM_WORLD_MAP = 1,
   ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST = 2,
@@ -2507,7 +2507,7 @@ enum {
   ALTIN_FROM_ALTIN_PEAK_JUNCTION = 12,
   ALTIN_FROM_ALTIN_PEAK_SPRITZ = 13,
 };
-/// MapId_Altin's warps.
+/// SceneId_Altin's warps.
 enum {
   ALTIN_TO_WORLD_MAP = 1,
   ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST = 2,
@@ -2524,7 +2524,7 @@ enum {
   ALTIN_TO_ALTIN_PEAK_SPRITZ = 13,
 };
 
-/// MapId_CottageRoomsD's warp destinations.
+/// SceneId_CottageRoomsD's warp destinations.
 enum {
   COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST = 1,
   COTTAGE_ROOMS_D_FROM_ALTIN_NORTH = 2,
@@ -2539,7 +2539,7 @@ enum {
       9, ///< ★ Named from what the player sees: the inn's upper floor of guest
          ///< rooms, reached by the stairs beside its counter (its render)
 };
-/// MapId_CottageRoomsD's warps.
+/// SceneId_CottageRoomsD's warps.
 enum {
   COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST = 1,
   COTTAGE_ROOMS_D_TO_ALTIN_NORTH = 2,
@@ -2555,27 +2555,27 @@ enum {
       9, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
 };
 
-/// MapId_AltinPeakFirstWaterBeast's warp destinations.
+/// SceneId_AltinPeakFirstWaterBeast's warp destinations.
 enum {
   ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN = 1,
 };
-/// MapId_AltinPeakFirstWaterBeast's warps.
+/// SceneId_AltinPeakFirstWaterBeast's warps.
 enum {
   ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN = 1,
 };
 
-/// MapId_AltinPeakRailTunnel's warp destinations.
+/// SceneId_AltinPeakRailTunnel's warp destinations.
 enum {
   ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE = 1,
   ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
 };
-/// MapId_AltinPeakRailTunnel's warps.
+/// SceneId_AltinPeakRailTunnel's warps.
 enum {
   ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE = 1,
   ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST = 2,
 };
 
-/// MapId_AltinPeakSecondWaterBeast's warp destinations.
+/// SceneId_AltinPeakSecondWaterBeast's warp destinations.
 enum {
   ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL = 1,
   ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM =
@@ -2585,7 +2585,7 @@ enum {
       3, ///< ★ Named from what the player sees: the small chamber off the lake
          ///< that holds a chest and a boulder (its render)
 };
-/// MapId_AltinPeakSecondWaterBeast's warps.
+/// SceneId_AltinPeakSecondWaterBeast's warps.
 enum {
   ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL = 1,
   ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM =
@@ -2596,7 +2596,7 @@ enum {
          ///< rails with an island where the water beast spits (its render)
 };
 
-/// MapId_AltinPeakSouthEntrance's warp destinations.
+/// SceneId_AltinPeakSouthEntrance's warp destinations.
 enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN = 1,
   ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER =
@@ -2610,7 +2610,7 @@ enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST = 6,
   ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST = 7,
 };
-/// MapId_AltinPeakSouthEntrance's warps.
+/// SceneId_AltinPeakSouthEntrance's warps.
 enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN = 1,
   ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER =
@@ -2629,16 +2629,16 @@ enum {
   ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST = 7,
 };
 
-/// MapId_AltinPeakThirdWaterBeast's warp destinations.
+/// SceneId_AltinPeakThirdWaterBeast's warp destinations.
 enum {
   ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL = 1,
 };
-/// MapId_AltinPeakThirdWaterBeast's warps.
+/// SceneId_AltinPeakThirdWaterBeast's warps.
 enum {
   ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL = 1,
 };
 
-/// MapId_AltinPeakPool's warp destinations.
+/// SceneId_AltinPeakPool's warp destinations.
 enum {
   ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE = 1,
   ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST = 2,
@@ -2647,7 +2647,7 @@ enum {
   ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST = 5,
   ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
 };
-/// MapId_AltinPeakPool's warps.
+/// SceneId_AltinPeakPool's warps.
 enum {
   ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE = 1,
   ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST = 2,
@@ -2657,20 +2657,20 @@ enum {
   ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST = 6,
 };
 
-/// MapId_AltinPeakSpritz's warp destinations.
+/// SceneId_AltinPeakSpritz's warp destinations.
 enum {
   ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION = 1,
   ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS = 2,
   ALTIN_PEAK_SPRITZ_FROM_ALTIN = 3,
 };
-/// MapId_AltinPeakSpritz's warps.
+/// SceneId_AltinPeakSpritz's warps.
 enum {
   ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION = 1,
   ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS = 2,
   ALTIN_PEAK_SPRITZ_TO_ALTIN = 3,
 };
 
-/// MapId_AltinPeakJunction's warp destinations.
+/// SceneId_AltinPeakJunction's warp destinations.
 enum {
   ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ = 1,
   ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
@@ -2678,7 +2678,7 @@ enum {
   ALTIN_PEAK_JUNCTION_FROM_ALTIN = 4,
   ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
 };
-/// MapId_AltinPeakJunction's warps.
+/// SceneId_AltinPeakJunction's warps.
 enum {
   ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ = 1,
   ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH = 2,
@@ -2687,7 +2687,7 @@ enum {
   ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH = 5,
 };
 
-/// MapId_AltinPeakFallingRocks's warp destinations.
+/// SceneId_AltinPeakFallingRocks's warp destinations.
 enum {
   ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ = 1,
   ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST = 2,
@@ -2696,7 +2696,7 @@ enum {
   ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH = 5,
   ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE = 6,
 };
-/// MapId_AltinPeakFallingRocks's warps.
+/// SceneId_AltinPeakFallingRocks's warps.
 enum {
   ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ = 1,
   ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST = 2,
@@ -2706,16 +2706,16 @@ enum {
   ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE = 6,
 };
 
-/// MapId_AltinPeakHydrosStatue's warp destinations.
+/// SceneId_AltinPeakHydrosStatue's warp destinations.
 enum {
   ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS = 1,
 };
-/// MapId_AltinPeakHydrosStatue's warps.
+/// SceneId_AltinPeakHydrosStatue's warps.
 enum {
   ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS = 1,
 };
 
-/// MapId_AltinPeakWestExit's warp destinations.
+/// SceneId_AltinPeakWestExit's warp destinations.
 enum {
   ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION = 1,
   ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM =
@@ -2726,7 +2726,7 @@ enum {
          ///< tunnel that holds a chest (its render)
   ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP = 4,
 };
-/// MapId_AltinPeakWestExit's warps.
+/// SceneId_AltinPeakWestExit's warps.
 enum {
   ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION = 1,
   ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM =
@@ -2738,7 +2738,7 @@ enum {
   ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP = 4,
 };
 
-/// MapId_LamaTemple's warp destinations.
+/// SceneId_LamaTemple's warp destinations.
 enum {
   LAMA_TEMPLE_FROM_WORLD_MAP = 1,
   LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
@@ -2747,35 +2747,35 @@ enum {
   /// Temple wakes (its return point in overworld/map_rules.s).
   LAMA_TEMPLE_AFTER_DEFEAT = 5,
 };
-/// MapId_LamaTemple's warps.
+/// SceneId_LamaTemple's warps.
 enum {
   LAMA_TEMPLE_TO_WORLD_MAP = 1,
   LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
 };
 
-/// MapId_LamakanDesertEast's warp destinations.
+/// SceneId_LamakanDesertEast's warp destinations.
 enum {
   LAMAKAN_DESERT_EAST_FROM_WORLD_MAP = 1,
   LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG = 2,
 };
-/// MapId_LamakanDesertEast's warps.
+/// SceneId_LamakanDesertEast's warps.
 enum {
   LAMAKAN_DESERT_EAST_TO_WORLD_MAP = 1,
   LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG = 2,
 };
 
-/// MapId_LamakanDesertSmog's warp destinations.
+/// SceneId_LamakanDesertSmog's warp destinations.
 enum {
   LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST = 1,
   LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE = 2,
 };
-/// MapId_LamakanDesertSmog's warps.
+/// SceneId_LamakanDesertSmog's warps.
 enum {
   LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST = 1,
   LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE = 2,
 };
 
-/// MapId_LamakanDesertManticore's warp destinations.
+/// SceneId_LamakanDesertManticore's warp destinations.
 enum {
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG = 1,
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST = 2,
@@ -2783,7 +2783,7 @@ enum {
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST = 4,
   LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE = 5, ///< FightManticore
 };
-/// MapId_LamakanDesertManticore's warps.
+/// SceneId_LamakanDesertManticore's warps.
 enum {
   LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG = 1,
   LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST = 2,
@@ -2791,14 +2791,14 @@ enum {
   LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST = 4,
 };
 
-/// MapId_LamakanDesertCave's warp destinations.
+/// SceneId_LamakanDesertCave's warp destinations.
 enum {
   LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH = 1,
   LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST = 2,
   LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST = 3,
   LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP = 4,
 };
-/// MapId_LamakanDesertCave's warps.
+/// SceneId_LamakanDesertCave's warps.
 enum {
   LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST = 1,
   LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH = 2,
@@ -2806,20 +2806,20 @@ enum {
   LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST = 4,
 };
 
-/// MapId_ValeCaveMouth's warp destinations.
+/// SceneId_ValeCaveMouth's warp destinations.
 enum {
   VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST = 1,
   VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE = 2,
   VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST = 3,
 };
-/// MapId_ValeCaveMouth's warps.
+/// SceneId_ValeCaveMouth's warps.
 enum {
   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST = 1,
   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE = 2,
   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST = 3,
 };
 
-/// MapId_ValeCaveKite's warp destinations.
+/// SceneId_ValeCaveKite's warp destinations.
 enum {
   VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH = 1,
   VALE_CAVE_KITE_WEST_FROM_EAST = 2,
@@ -2832,7 +2832,7 @@ enum {
   VALE_CAVE_KITE_SOUTH_FROM_EAST = 9,
   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH = 10,
 };
-/// MapId_ValeCaveKite's warps.
+/// SceneId_ValeCaveKite's warps.
 enum {
   VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH = 1,
   VALE_CAVE_KITE_WEST_TO_EAST = 2,
@@ -2846,7 +2846,7 @@ enum {
   VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH = 10,
 };
 
-/// MapId_ValeCaveLogs's warp destinations.
+/// SceneId_ValeCaveLogs's warp destinations.
 enum {
   VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST = 1,
   VALE_CAVE_LOGS_NORTH_FROM_SOUTH = 2,
@@ -2854,7 +2854,7 @@ enum {
   VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH = 4,
   VALE_CAVE_LOGS_SOUTH_FROM_NORTH = 5,
 };
-/// MapId_ValeCaveLogs's warps.
+/// SceneId_ValeCaveLogs's warps.
 enum {
   VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST = 1,
   VALE_CAVE_LOGS_NORTH_TO_SOUTH = 2,
@@ -2863,7 +2863,7 @@ enum {
   VALE_CAVE_LOGS_SOUTH_TO_NORTH = 5,
 };
 
-/// MapId_VaultCavePassage's warp destinations.
+/// SceneId_VaultCavePassage's warp destinations.
 enum {
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH = 1,
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
@@ -2891,7 +2891,7 @@ enum {
       13, ///< ★ Named from what the player sees: the room of water where the
           ///< switch stands (its render)
 };
-/// MapId_VaultCavePassage's warps.
+/// SceneId_VaultCavePassage's warps.
 enum {
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH = 1,
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
@@ -2920,7 +2920,7 @@ enum {
   VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST = 13,
 };
 
-/// MapId_VaultCaveVambrace's warp destinations.
+/// SceneId_VaultCaveVambrace's warp destinations.
 enum {
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH = 1,
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH = 2,
@@ -2944,7 +2944,7 @@ enum {
       14, ///< ★ Named from what the player sees: the room of six puddles that
           ///< Frost freezes, under falling objects (its render)
 };
-/// MapId_VaultCaveVambrace's warps.
+/// SceneId_VaultCaveVambrace's warps.
 enum {
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH = 1,
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH = 2,
@@ -2969,7 +2969,7 @@ enum {
           ///< Frost freezes, under falling objects (its render)
 };
 
-/// MapId_VaultCaveMouth's warp destinations.
+/// SceneId_VaultCaveMouth's warp destinations.
 enum {
   VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT = 1,
   VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE = 2,
@@ -2978,7 +2978,7 @@ enum {
   VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH = 5,
   VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
-/// MapId_VaultCaveMouth's warps.
+/// SceneId_VaultCaveMouth's warps.
 enum {
   VAULT_CAVE_MOUTH_TO_VAULT_REVISIT = 1,
   VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE = 2,
@@ -2988,7 +2988,7 @@ enum {
   VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 
-/// MapId_Kalay's warp destinations.
+/// SceneId_Kalay's warp destinations.
 enum {
   KALAY_FROM_HOUSE_NORTHWEST = 1,
   KALAY_FROM_HOUSE_NORTHEAST_UPPER = 2,
@@ -3005,7 +3005,7 @@ enum {
   KALAY_FROM_ARMOR_SHOP_COUNTER = 13,
   KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
-/// MapId_Kalay's warps.
+/// SceneId_Kalay's warps.
 enum {
   KALAY_TO_HOUSE_NORTHWEST = 1,
   KALAY_TO_HOUSE_NORTHEAST_UPPER =
@@ -3037,7 +3037,7 @@ enum {
   KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 
-/// MapId_StuccoRoomsA's warp destinations.
+/// SceneId_StuccoRoomsA's warp destinations.
 enum {
   STUCCO_ROOMS_A_HOUSE_NORTHWEST = 1,
   STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER =
@@ -3086,7 +3086,7 @@ enum {
       19, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
 };
-/// MapId_StuccoRoomsA's warps.
+/// SceneId_StuccoRoomsA's warps.
 enum {
   STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY = 1,
   STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY = 2,
@@ -3129,28 +3129,28 @@ enum {
           ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
-/// MapId_KalaySanctum's warp destinations.
+/// SceneId_KalaySanctum's warp destinations.
 enum {
   KALAY_SANCTUM_FROM_KALAY = 1,
 };
-/// MapId_KalaySanctum's warps.
+/// SceneId_KalaySanctum's warps.
 enum {
   KALAY_SANCTUM_TO_KALAY = 1,
 };
 
-/// MapId_HammetPalaceGrounds's warp destinations.
+/// SceneId_HammetPalaceGrounds's warp destinations.
 enum {
   HAMMET_PALACE_GROUNDS_FROM_KALAY = 1,
   HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE = 2,
 };
-/// MapId_HammetPalaceGrounds's warps.
+/// SceneId_HammetPalaceGrounds's warps.
 enum {
   HAMMET_PALACE_GROUNDS_TO_KALAY = 1,
   HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE = 2,
   HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM = 5,
 };
 
-/// MapId_HammetPalace's warp destinations.
+/// SceneId_HammetPalace's warp destinations.
 enum {
   HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS = 1,
   HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING =
@@ -3194,7 +3194,7 @@ enum {
       20, ///< ★ Named from what the player sees: the room with two thrones on a
           ///< red dais where Layana sits (its render)
 };
-/// MapId_HammetPalace's warps.
+/// SceneId_HammetPalace's warps.
 enum {
   HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS = 1,
   HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING =
@@ -3236,7 +3236,7 @@ enum {
           ///< round table off the landing (its render)
 };
 
-/// MapId_Lunpa's warp destinations.
+/// SceneId_Lunpa's warp destinations.
 enum {
   LUNPA_FROM_WORLD_MAP = 1,
   LUNPA_FROM_LUNPA_FORTRESS_GATES = 2,
@@ -3251,7 +3251,7 @@ enum {
   LUNPA_FROM_CRATE_ROOM = 11,
   LUNPA_FROM_STONE_ROOMS = 12,
 };
-/// MapId_Lunpa's warps.
+/// SceneId_Lunpa's warps.
 enum {
   LUNPA_TO_WORLD_MAP = 1,
   LUNPA_TO_LUNPA_FORTRESS_GATES = 2,
@@ -3280,14 +3280,14 @@ enum {
   LUNPA_TO_STONE_ROOMS = 12,
 };
 
-/// MapId_RockRooms's warp destinations and warps.
+/// SceneId_RockRooms's warp destinations and warps.
 enum {
   /// The house at the gate to Suhalla, the one room of the sheet that is not
   /// Lunpa's.
   ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 
-/// MapId_WestLunpaCave's warp destinations.
+/// SceneId_WestLunpaCave's warp destinations.
 enum {
   WEST_LUNPA_CAVE_FROM_WORLD_MAP = 1,
   WEST_LUNPA_CAVE_FROM_LUNPA = 2,
@@ -3295,7 +3295,7 @@ enum {
   /// here.
   WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED = 3,
 };
-/// MapId_WestLunpaCave's warps.
+/// SceneId_WestLunpaCave's warps.
 enum {
   WEST_LUNPA_CAVE_TO_WORLD_MAP = 1,
   WEST_LUNPA_CAVE_TO_LUNPA = 2,
@@ -3304,14 +3304,14 @@ enum {
          ///< (MsgLunpaLetsTakeWagon)
 };
 
-/// MapId_KalayDocks's warp destinations.
+/// SceneId_KalayDocks's warp destinations.
 enum {
   KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
   KALAY_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
   KALAY_DOCKS_FROM_WORLD_MAP_NORTH = 4,
 };
-/// MapId_KalayDocks's warps.
+/// SceneId_KalayDocks's warps.
 enum {
   KALAY_DOCKS_TO_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_TO_TOLBI_SHIP_DECK = 2,
@@ -3319,18 +3319,18 @@ enum {
   KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
 };
 
-/// MapId_CottageRoomsE's warp destinations.
+/// SceneId_CottageRoomsE's warp destinations.
 enum {
   COTTAGE_ROOMS_E_FROM_KALAY_DOCKS = 1,
   COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS = 2,
 };
-/// MapId_CottageRoomsE's warps.
+/// SceneId_CottageRoomsE's warps.
 enum {
   COTTAGE_ROOMS_E_TO_KALAY_DOCKS = 1,
   COTTAGE_ROOMS_E_TO_TOLBI_DOCKS = 2,
 };
 
-/// MapId_TolbiShipDeck's warp destinations.
+/// SceneId_TolbiShipDeck's warp destinations.
 enum {
   TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD = 1,
   TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD = 2,
@@ -3351,7 +3351,7 @@ enum {
   TOLBI_SHIP_DECK_FROM_WORLD_MAP = 18,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE = 19,
 };
-/// MapId_TolbiShipDeck's warps.
+/// SceneId_TolbiShipDeck's warps.
 enum {
   TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD = 1,
   TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD = 2,
@@ -3375,7 +3375,7 @@ enum {
   TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS = 17,
 };
 
-/// MapId_TolbiShipMast's warp destinations.
+/// SceneId_TolbiShipMast's warp destinations.
 enum {
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR = 10,
@@ -3385,7 +3385,7 @@ enum {
   TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO =
       14, ///< ★ Named from the game: "Land ho!" (MsgTolbiShipLandHo)
 };
-/// MapId_TolbiShipMast's warps.
+/// SceneId_TolbiShipMast's warps.
 enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK = 1,
   TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF = 10,
@@ -3397,7 +3397,7 @@ enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE = 15,
 };
 
-/// MapId_ShipRooms's warp destinations.
+/// SceneId_ShipRooms's warp destinations.
 enum {
   SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK =
       1, ///< ★ Named from what the player sees: the room below deck where the
@@ -3455,7 +3455,7 @@ enum {
   /// party goes up on deck.
   SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
 };
-/// MapId_ShipRooms's warps.
+/// SceneId_ShipRooms's warps.
 enum {
   SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK = 1,
   SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK =
@@ -3503,130 +3503,130 @@ enum {
   SHIP_ROOMS_TO_WORLD_MAP = 21,
 };
 
-/// MapId_TolbiDocks's warp destinations.
+/// SceneId_TolbiDocks's warp destinations.
 enum {
   TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_DOCKS_FROM_WORLD_MAP = 2,
   TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
 };
-/// MapId_TolbiDocks's warps.
+/// SceneId_TolbiDocks's warps.
 enum {
   TOLBI_DOCKS_TO_WORLD_MAP = 1,
   TOLBI_DOCKS_TO_TOLBI_SHIP_DECK = 2,
   TOLBI_DOCKS_TO_COTTAGE_ROOMS_E = 3,
 };
 
-/// MapId_CrossboneIsle's warp destinations.
+/// SceneId_CrossboneIsle's warp destinations.
 enum {
   CROSSBONE_ISLE_FROM_WORLD_MAP = 1,
   CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
 };
-/// MapId_CrossboneIsle's warps.
+/// SceneId_CrossboneIsle's warps.
 enum {
   CROSSBONE_ISLE_TO_WORLD_MAP = 1,
   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE = 2,
 };
 
-/// MapId_CrossboneIsleCaveEntrance's warp destinations.
+/// SceneId_CrossboneIsleCaveEntrance's warp destinations.
 enum {
   CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE = 1,
   CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR = 2,
 };
-/// MapId_CrossboneIsleCaveEntrance's warps.
+/// SceneId_CrossboneIsleCaveEntrance's warps.
 enum {
   CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE = 1,
   CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR = 2,
 };
 
-/// MapId_CrossboneIsleSteppingStones's warp destinations.
+/// SceneId_CrossboneIsleSteppingStones's warp destinations.
 enum {
   CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleSteppingStones's warps.
+/// SceneId_CrossboneIsleSteppingStones's warps.
 enum {
   CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleIcePillars's warp destinations.
+/// SceneId_CrossboneIsleIcePillars's warp destinations.
 enum {
   CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
   CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleIcePillars's warps.
+/// SceneId_CrossboneIsleIcePillars's warps.
 enum {
   CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST = 1,
   CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleKeys's warp destinations.
+/// SceneId_CrossboneIsleKeys's warp destinations.
 enum {
   CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
   CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleKeys's warps.
+/// SceneId_CrossboneIsleKeys's warps.
 enum {
   CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST = 1,
   CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleStatues's warp destinations.
+/// SceneId_CrossboneIsleStatues's warp destinations.
 enum {
   CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleStatues's warps.
+/// SceneId_CrossboneIsleStatues's warps.
 enum {
   CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleFloodgate's warp destinations.
+/// SceneId_CrossboneIsleFloodgate's warp destinations.
 enum {
   CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleFloodgate's warps.
+/// SceneId_CrossboneIsleFloodgate's warps.
 enum {
   CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleBane's warp destinations.
+/// SceneId_CrossboneIsleBane's warp destinations.
 enum {
   CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleBane's warps.
+/// SceneId_CrossboneIsleBane's warps.
 enum {
   CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleStackedPillars's warp destinations.
+/// SceneId_CrossboneIsleStackedPillars's warp destinations.
 enum {
   CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleStackedPillars's warps.
+/// SceneId_CrossboneIsleStackedPillars's warps.
 enum {
   CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleDragonStatue's warp destinations.
+/// SceneId_CrossboneIsleDragonStatue's warp destinations.
 enum {
   CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
 };
-/// MapId_CrossboneIsleDragonStatue's warps.
+/// SceneId_CrossboneIsleDragonStatue's warps.
 enum {
   CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIsleFloatingLogs's warp destinations.
+/// SceneId_CrossboneIsleFloatingLogs's warp destinations.
 enum {
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
@@ -3635,40 +3635,40 @@ enum {
   /// it. ★ Named from its area name: Crossbone Isle
   CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE = 99,
 };
-/// MapId_CrossboneIsleFloatingLogs's warps.
+/// SceneId_CrossboneIsleFloatingLogs's warps.
 enum {
   CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST = 1,
   CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST = 2,
 };
 
-/// MapId_CrossboneIslePier's warp destinations.
+/// SceneId_CrossboneIslePier's warp destinations.
 enum {
   CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR = 1,
   CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP = 2,
 };
-/// MapId_CrossboneIslePier's warps.
+/// SceneId_CrossboneIslePier's warps.
 enum {
   CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR = 1,
   CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP = 2,
 };
 
-/// MapId_PirateShip's warp destinations.
+/// SceneId_PirateShip's warp destinations.
 enum {
   PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER = 1,
 };
-/// MapId_PirateShip's warps.
+/// SceneId_PirateShip's warps.
 enum {
   PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER = 1,
 };
 
-/// MapId_CrossboneIsleFirstFloor's warp destinations.
+/// SceneId_CrossboneIsleFirstFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE = 1,
   CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR = 2,
   CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_EAST = 3,
   CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
 };
-/// MapId_CrossboneIsleFirstFloor's warps.
+/// SceneId_CrossboneIsleFirstFloor's warps.
 enum {
   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_CAVE_ENTRANCE = 1,
   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR = 2,
@@ -3676,14 +3676,14 @@ enum {
   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_WEST = 4,
 };
 
-/// MapId_CrossboneIsleSecondFloor's warp destinations.
+/// SceneId_CrossboneIsleSecondFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_FIRST_FLOOR = 1,
   CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR = 2,
   CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_EAST = 3,
   CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
 };
-/// MapId_CrossboneIsleSecondFloor's warps.
+/// SceneId_CrossboneIsleSecondFloor's warps.
 enum {
   CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_FIRST_FLOOR = 1,
   CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR = 2,
@@ -3691,14 +3691,14 @@ enum {
   CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_WEST = 4,
 };
 
-/// MapId_CrossboneIsleThirdFloor's warp destinations.
+/// SceneId_CrossboneIsleThirdFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR = 1,
   CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
   CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST = 3,
   CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST = 4,
 };
-/// MapId_CrossboneIsleThirdFloor's warps.
+/// SceneId_CrossboneIsleThirdFloor's warps.
 enum {
   CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR = 1,
   CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR = 2,
@@ -3706,14 +3706,14 @@ enum {
   CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_WEST = 4,
 };
 
-/// MapId_CrossboneIsleFourthFloor's warp destinations.
+/// SceneId_CrossboneIsleFourthFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR = 1,
   CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR = 2,
   CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST = 3,
   CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST = 4,
 };
-/// MapId_CrossboneIsleFourthFloor's warps.
+/// SceneId_CrossboneIsleFourthFloor's warps.
 enum {
   CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR = 1,
   CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR = 2,
@@ -3721,14 +3721,14 @@ enum {
   CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_WEST = 4,
 };
 
-/// MapId_CrossboneIsleFifthFloor's warp destinations.
+/// SceneId_CrossboneIsleFifthFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR = 1,
   CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR = 2,
   CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_EAST = 3,
   CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
 };
-/// MapId_CrossboneIsleFifthFloor's warps.
+/// SceneId_CrossboneIsleFifthFloor's warps.
 enum {
   CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR = 1,
   CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR = 2,
@@ -3736,14 +3736,14 @@ enum {
   CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
 };
 
-/// MapId_CrossboneIsleSixthFloor's warp destinations.
+/// SceneId_CrossboneIsleSixthFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR = 1,
   CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
   CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST = 3,
   CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST = 4,
 };
-/// MapId_CrossboneIsleSixthFloor's warps.
+/// SceneId_CrossboneIsleSixthFloor's warps.
 enum {
   CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR = 1,
   CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR = 2,
@@ -3751,14 +3751,14 @@ enum {
   CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_WEST = 4,
 };
 
-/// MapId_CrossboneIsleSeventhFloor's warp destinations.
+/// SceneId_CrossboneIsleSeventhFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR = 1,
   CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR = 2,
   CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_EAST = 3,
   CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
 };
-/// MapId_CrossboneIsleSeventhFloor's warps.
+/// SceneId_CrossboneIsleSeventhFloor's warps.
 enum {
   CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR = 1,
   CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR = 2,
@@ -3766,14 +3766,14 @@ enum {
   CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_WEST = 4,
 };
 
-/// MapId_CrossboneIsleEighthFloor's warp destinations.
+/// SceneId_CrossboneIsleEighthFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR = 1,
   CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_NINTH_FLOOR = 2,
   CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_EAST = 3,
   CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
 };
-/// MapId_CrossboneIsleEighthFloor's warps.
+/// SceneId_CrossboneIsleEighthFloor's warps.
 enum {
   CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR = 1,
   CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_NINTH_FLOOR = 2,
@@ -3781,14 +3781,14 @@ enum {
   CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_WEST = 4,
 };
 
-/// MapId_CrossboneIsleNinthFloor's warp destinations.
+/// SceneId_CrossboneIsleNinthFloor's warp destinations.
 enum {
   CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR = 1,
   CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_PIER = 2,
   CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_EAST = 3,
   CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
 };
-/// MapId_CrossboneIsleNinthFloor's warps.
+/// SceneId_CrossboneIsleNinthFloor's warps.
 enum {
   CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR = 1,
   CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_PIER = 2,
@@ -3796,7 +3796,7 @@ enum {
   CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_WEST = 4,
 };
 
-/// MapId_Tolbi's warp destinations.
+/// SceneId_Tolbi's warp destinations.
 enum {
   TOLBI_FROM_HOUSE_SOUTH = 1,
   TOLBI_FROM_HOUSE_NORTHWEST = 2,
@@ -3813,7 +3813,7 @@ enum {
   TOLBI_FROM_LUCKY_DICE = 13,
   TOLBI_FROM_TOLBI_SPRING = 20,
 };
-/// MapId_Tolbi's warps.
+/// SceneId_Tolbi's warps.
 enum {
   TOLBI_TO_HOUSE_SOUTH = 1, ///< ★ Named from what the player sees: a house with
                             ///< beds, a table and a hearth (its render)
@@ -3837,7 +3837,7 @@ enum {
   TOLBI_TO_TOLBI_SPRING = 30,
 };
 
-/// MapId_StuccoRoomsB's warp destinations.
+/// SceneId_StuccoRoomsB's warp destinations.
 enum {
   STUCCO_ROOMS_B_HOUSE_NORTHEAST =
       1, ///< the room behind Tolbi's house northeast door; through
@@ -3895,7 +3895,7 @@ enum {
           ///< Medal (its render)
   STUCCO_ROOMS_B_SANCTUM_NORTH = 30, ///< the room holds the sanctum;
 };
-/// MapId_StuccoRoomsB's warps.
+/// SceneId_StuccoRoomsB's warps.
 enum {
   STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI = 1,
   STUCCO_ROOMS_B_INN_TO_TOLBI = 2,
@@ -3940,7 +3940,7 @@ enum {
           ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
-/// MapId_StuccoRoomsC's warp destinations.
+/// SceneId_StuccoRoomsC's warp destinations.
 enum {
   STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI =
       10, ///< ★ Named from the game: "Throw the dice"
@@ -3952,13 +3952,13 @@ enum {
       12,                                     ///< TolbiSpring_OfferLuckyWheels
   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
 };
-/// MapId_StuccoRoomsC's warps.
+/// SceneId_StuccoRoomsC's warps.
 enum {
   STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI = 1,
   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI = 2,
 };
 
-/// MapId_BabiPalace's warp destinations.
+/// SceneId_BabiPalace's warp destinations.
 enum {
   BABI_PALACE_FROM_BABI_PALACE_ENTRANCE = 1,
   BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST =
@@ -4081,7 +4081,7 @@ enum {
   BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH = 98,
   BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH = 99,
 };
-/// MapId_BabiPalace's warps.
+/// SceneId_BabiPalace's warps.
 enum {
   BABI_PALACE_TO_BABI_PALACE_ENTRANCE = 1,
   BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST =
@@ -4195,18 +4195,18 @@ enum {
           ///< door outside Sheba's room (its render)
 };
 
-/// MapId_BabiPalaceEntrance's warp destinations.
+/// SceneId_BabiPalaceEntrance's warp destinations.
 enum {
   BABI_PALACE_ENTRANCE_FROM_TOLBI = 1,
   BABI_PALACE_ENTRANCE_FROM_BABI_PALACE = 2,
 };
-/// MapId_BabiPalaceEntrance's warps.
+/// SceneId_BabiPalaceEntrance's warps.
 enum {
   BABI_PALACE_ENTRANCE_TO_TOLBI = 1,
   BABI_PALACE_ENTRANCE_TO_BABI_PALACE = 2,
 };
 
-/// MapId_Colosseum's warp destinations.
+/// SceneId_Colosseum's warp destinations.
 enum {
   COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH =
       1, ///< ★ Named from what the player sees: the stone corridor the
@@ -4245,7 +4245,7 @@ enum {
       70, ///< ★ Named from what the player sees: a warrior heaves the trial's
           ///< load up and drops it, shaking the ground (its render)
 };
-/// MapId_Colosseum's warps.
+/// SceneId_Colosseum's warps.
 enum {
   COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH =
       1, ///< ★ Named from what the player sees: the crowded seats above the
@@ -4292,28 +4292,28 @@ enum {
           ///< load up and drops it, shaking the ground (its render)
 };
 
-/// MapId_ColosseumTunnel's warp destinations.
+/// SceneId_ColosseumTunnel's warp destinations.
 enum {
   COLOSSEUM_TUNNEL_FROM_BABI_PALACE = 1,
   COLOSSEUM_TUNNEL_FROM_COLOSSEUM = 2,
 };
-/// MapId_ColosseumTunnel's warps.
+/// SceneId_ColosseumTunnel's warps.
 enum {
   COLOSSEUM_TUNNEL_TO_BABI_PALACE = 1,
   COLOSSEUM_TUNNEL_TO_COLOSSEUM = 2,
 };
 
-/// MapId_ColosseumEntrance's warp destinations.
+/// SceneId_ColosseumEntrance's warp destinations.
 enum {
   COLOSSEUM_ENTRANCE_FROM_TOLBI = 1,
 };
-/// MapId_ColosseumEntrance's warps.
+/// SceneId_ColosseumEntrance's warps.
 enum {
   COLOSSEUM_ENTRANCE_TO_TOLBI = 1,
   COLOSSEUM_ENTRANCE_TO_COLOSSEUM = 2,
 };
 
-/// MapId_ColosseumAzartMatch's warp destinations.
+/// SceneId_ColosseumAzartMatch's warp destinations.
 enum {
   COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND =
       1, ///< ★ Named from what the player sees: Isaac racing Azart through the
@@ -4325,7 +4325,7 @@ enum {
   /// The return from the battle with Azart when Isaac loses.
   COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST = 5,
 };
-/// MapId_ColosseumAzartMatch's warps.
+/// SceneId_ColosseumAzartMatch's warps.
 enum {
   COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST = 4,
   COLOSSEUM_AZART_MATCH_TO_BABI_PALACE = 5,
@@ -4335,7 +4335,7 @@ enum {
   COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST = 11,
 };
 
-/// MapId_ColosseumSatrageMatch's warp destinations.
+/// SceneId_ColosseumSatrageMatch's warp destinations.
 enum {
   COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND =
       1, ///< ★ Named from what the player sees: Isaac racing Satrage through
@@ -4347,7 +4347,7 @@ enum {
   /// The return from the battle with Satrage when Isaac loses.
   COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST = 5,
 };
-/// MapId_ColosseumSatrageMatch's warps.
+/// SceneId_ColosseumSatrageMatch's warps.
 enum {
   COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH = 4,
   COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE = 5,
@@ -4357,7 +4357,7 @@ enum {
   COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH = 11,
 };
 
-/// MapId_ColosseumNavampaMatch's warp destinations.
+/// SceneId_ColosseumNavampaMatch's warp destinations.
 enum {
   COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND =
       1, ///< ★ Named from what the player sees: Isaac racing Navampa through
@@ -4369,7 +4369,7 @@ enum {
   /// The return from the battle with Navampa when Isaac loses.
   COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST = 5,
 };
-/// MapId_ColosseumNavampaMatch's warps.
+/// SceneId_ColosseumNavampaMatch's warps.
 enum {
   COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE = 4,
   COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST =
@@ -4381,7 +4381,7 @@ enum {
   COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM = 11,
 };
 
-/// MapId_AltmillerCaveEntrance's warp destinations.
+/// SceneId_AltmillerCaveEntrance's warp destinations.
 enum {
   ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
   ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER = 2,
@@ -4390,7 +4390,7 @@ enum {
          ///< hole at the passage's end, with a torch-lit doorway (its render)
   ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI = 4,
 };
-/// MapId_AltmillerCaveEntrance's warps.
+/// SceneId_AltmillerCaveEntrance's warps.
 enum {
   ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP = 1,
   ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER =
@@ -4402,51 +4402,51 @@ enum {
   ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI = 4,
 };
 
-/// MapId_AltmillerCaveBabi's warp destinations.
+/// SceneId_AltmillerCaveBabi's warp destinations.
 enum {
   ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE = 10,
   ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST = 11,
 };
-/// MapId_AltmillerCaveBabi's warps.
+/// SceneId_AltmillerCaveBabi's warps.
 enum {
   ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE = 10,
   ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST = 11,
 };
 
-/// MapId_AltmillerCaveVialChest's warp destinations.
+/// SceneId_AltmillerCaveVialChest's warp destinations.
 enum {
   ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI = 20,
   ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 21,
 };
-/// MapId_AltmillerCaveVialChest's warps.
+/// SceneId_AltmillerCaveVialChest's warps.
 enum {
   ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI = 20,
   ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL = 21,
 };
 
-/// MapId_AltmillerCaveSquall's warp destinations.
+/// SceneId_AltmillerCaveSquall's warp destinations.
 enum {
   ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST = 30,
   ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 31,
 };
-/// MapId_AltmillerCaveSquall's warps.
+/// SceneId_AltmillerCaveSquall's warps.
 enum {
   ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST = 30,
   ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST = 31,
 };
 
-/// MapId_AltmillerCaveCookieChest's warp destinations.
+/// SceneId_AltmillerCaveCookieChest's warp destinations.
 enum {
   ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 40,
   ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT = 41,
 };
-/// MapId_AltmillerCaveCookieChest's warps.
+/// SceneId_AltmillerCaveCookieChest's warps.
 enum {
   ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL = 40,
   ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT = 41,
 };
 
-/// MapId_AltmillerCaveDraught's warp destinations.
+/// SceneId_AltmillerCaveDraught's warp destinations.
 enum {
   ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 50,
   ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS = 51,
@@ -4460,7 +4460,7 @@ enum {
       54, ///< ★ Named from what the player sees: the chamber behind the burst
           ///< wall, with one chest on a stone (its render)
 };
-/// MapId_AltmillerCaveDraught's warps.
+/// SceneId_AltmillerCaveDraught's warps.
 enum {
   ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST =
       50, ///< ★ Named from what the player sees: the chamber behind the burst
@@ -4478,42 +4478,42 @@ enum {
           ///< (MsgAltmillerRotatedRock)
 };
 
-/// MapId_GondowanPassage's warp destinations.
+/// SceneId_GondowanPassage's warp destinations.
 enum {
   GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH = 1,
   GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH = 2,
 };
-/// MapId_GondowanPassage's warps.
+/// SceneId_GondowanPassage's warps.
 enum {
   GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH = 1,
   GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH = 2,
 };
 
-/// MapId_KalayTunnelEntrance's warp destinations.
+/// SceneId_KalayTunnelEntrance's warp destinations.
 enum {
   KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE = 1,
   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH = 2,
   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH = 10,
 };
-/// MapId_KalayTunnelEntrance's warps.
+/// SceneId_KalayTunnelEntrance's warps.
 enum {
   KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE = 1,
   KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH = 2,
   KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH = 10,
 };
 
-/// MapId_KalayTunnelCave's warp destinations.
+/// SceneId_KalayTunnelCave's warp destinations.
 enum {
   KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE = 1,
   KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE = 2,
 };
-/// MapId_KalayTunnelCave's warps.
+/// SceneId_KalayTunnelCave's warps.
 enum {
   KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE = 1,
   KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE = 2,
 };
 
-/// MapId_KalayTunnelPassage's warp destinations.
+/// SceneId_KalayTunnelPassage's warp destinations.
 enum {
   KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
   KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
@@ -4526,7 +4526,7 @@ enum {
          ///< render)
   KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE = 5,
 };
-/// MapId_KalayTunnelPassage's warps.
+/// SceneId_KalayTunnelPassage's warps.
 enum {
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
@@ -4540,14 +4540,14 @@ enum {
   KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE = 5,
 };
 
-/// MapId_KalayTunnelTreasureRoom's warp destinations.
+/// SceneId_KalayTunnelTreasureRoom's warp destinations.
 enum {
   KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE = 1,
   KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST = 2,
   KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST = 3,
   KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY = 4,
 };
-/// MapId_KalayTunnelTreasureRoom's warps.
+/// SceneId_KalayTunnelTreasureRoom's warps.
 enum {
   KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE = 1,
   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST = 2,
@@ -4555,7 +4555,7 @@ enum {
   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY = 4,
 };
 
-/// MapId_GondowanCaveRiver's warp destinations.
+/// SceneId_GondowanCaveRiver's warp destinations.
 enum {
   GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH = 1,
   GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE = 2,
@@ -4564,7 +4564,7 @@ enum {
          ///< Lift raises (its render)
   GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH = 4,
 };
-/// MapId_GondowanCaveRiver's warps.
+/// SceneId_GondowanCaveRiver's warps.
 enum {
   GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH = 1,
   GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE =
@@ -4576,7 +4576,7 @@ enum {
   GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH = 4,
 };
 
-/// MapId_GondowanCave's warp destinations.
+/// SceneId_GondowanCave's warp destinations.
 enum {
   GONDOWAN_CAVE_FROM_WORLD_MAP_EAST = 1,
   GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH = 2,
@@ -4587,7 +4587,7 @@ enum {
   GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH = 5,
   GONDOWAN_CAVE_FROM_WORLD_MAP_WEST = 6,
 };
-/// MapId_GondowanCave's warps.
+/// SceneId_GondowanCave's warps.
 enum {
   GONDOWAN_CAVE_TO_WORLD_MAP_EAST = 1,
   GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH = 2,
@@ -4601,7 +4601,7 @@ enum {
   GONDOWAN_CAVE_TO_WORLD_MAP_WEST = 6,
 };
 
-/// MapId_LunpaFortressGates's warp destinations.
+/// SceneId_LunpaFortressGates's warp destinations.
 enum {
   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_GATES_FROM_LUNPA = 2,
@@ -4610,13 +4610,13 @@ enum {
       4, ///< where a guard who catches the party in the fortress sends it:
          ///< "You're on your way out now!" (LunpaFortress_GuardThrowsPartyOut)
 };
-/// MapId_LunpaFortressGates's warps.
+/// SceneId_LunpaFortressGates's warps.
 enum {
   LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_GATES_TO_LUNPA = 2,
 };
 
-/// MapId_LunpaFortressGroundFloor's warp destinations.
+/// SceneId_LunpaFortressGroundFloor's warp destinations.
 enum {
   LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES = 1,
   LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_PASSAGE =
@@ -4672,7 +4672,7 @@ enum {
       20, ///< ★ Named from what the player sees: the room of four chests (its
           ///< render)
 };
-/// MapId_LunpaFortressGroundFloor's warps.
+/// SceneId_LunpaFortressGroundFloor's warps.
 enum {
   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES = 1,
   LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_PASSAGE =
@@ -4729,7 +4729,7 @@ enum {
           ///< map with a patrolling guard and a cell door (its render)
 };
 
-/// MapId_LunpaFortressUpperFloor's warp destinations.
+/// SceneId_LunpaFortressUpperFloor's warp destinations.
 enum {
   LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
   LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE =
@@ -4802,7 +4802,7 @@ enum {
   /// guard room.
   LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE = 31,
 };
-/// MapId_LunpaFortressUpperFloor's warps.
+/// SceneId_LunpaFortressUpperFloor's warps.
 enum {
   LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
   LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_NORTH_PASSAGE =
@@ -4871,7 +4871,7 @@ enum {
       24, ///< ★ Named from the game: "Tonic" (MsgDjinnName)
 };
 
-/// MapId_LunpaFortressCave's warp destinations.
+/// SceneId_LunpaFortressCave's warp destinations.
 enum {
   LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_LAKE =
@@ -4884,7 +4884,7 @@ enum {
   LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTH = 5,
   LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
-/// MapId_LunpaFortressCave's warps.
+/// SceneId_LunpaFortressCave's warps.
 enum {
   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_CAVE_ENTRANCE_TO_LAKE =
@@ -4898,7 +4898,7 @@ enum {
   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
 
-/// MapId_LunpaFortressToadonpa's warp destinations.
+/// SceneId_LunpaFortressToadonpa's warp destinations.
 enum {
   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH = 1,
   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
@@ -4906,7 +4906,7 @@ enum {
   /// Where the party comes back after the battle with Toadonpa.
   LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE = 4,
 };
-/// MapId_LunpaFortressToadonpa's warps.
+/// SceneId_LunpaFortressToadonpa's warps.
 enum {
   LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH = 1,
   LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
@@ -4914,25 +4914,25 @@ enum {
   LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST = 5,
 };
 
-/// MapId_SuhallaDesertNorth's warp destinations.
+/// SceneId_SuhallaDesertNorth's warp destinations.
 enum {
   SUHALLA_DESERT_NORTH_FROM_WORLD_MAP = 1,
   SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH = 2,
 };
-/// MapId_SuhallaDesertNorth's warps.
+/// SceneId_SuhallaDesertNorth's warps.
 enum {
   SUHALLA_DESERT_NORTH_TO_WORLD_MAP = 1,
   SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH = 2,
 };
 
-/// MapId_SuhallaDesertSouth's warp destinations.
+/// SceneId_SuhallaDesertSouth's warp destinations.
 enum {
   SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH = 1,
   SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP = 2,
   SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST = 3,
   SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST = 4,
 };
-/// MapId_SuhallaDesertSouth's warps.
+/// SceneId_SuhallaDesertSouth's warps.
 enum {
   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH = 1,
   SUHALLA_DESERT_SOUTH_TO_WORLD_MAP = 2,
@@ -4940,7 +4940,7 @@ enum {
   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST = 4,
 };
 
-/// MapId_SuhallaDesertCaves's warp destinations.
+/// SceneId_SuhallaDesertCaves's warp destinations.
 enum {
   SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST = 1,
   SUHALLA_DESERT_CAVES_WEST_FROM_EAST =
@@ -4951,7 +4951,7 @@ enum {
          ///< under the desert's eastern cave mouth (its render)
   SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST = 4,
 };
-/// MapId_SuhallaDesertCaves's warps.
+/// SceneId_SuhallaDesertCaves's warps.
 enum {
   SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST =
       1, ///< ★ Named from what the player sees: the long winding cave on the
@@ -4967,7 +4967,7 @@ enum {
          ///< under the desert's eastern cave mouth (its render)
 };
 
-/// MapId_Suhalla's warp destinations.
+/// SceneId_Suhalla's warp destinations.
 enum {
   SUHALLA_FROM_INN = 1,
   SUHALLA_FROM_SANCTUM = 2,
@@ -4986,7 +4986,7 @@ enum {
   /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held.
   SUHALLA_AFTER_BABI_SPOKE = 90,
 };
-/// MapId_Suhalla's warps.
+/// SceneId_Suhalla's warps.
 enum {
   SUHALLA_TO_INN =
       1, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
@@ -5000,7 +5000,7 @@ enum {
   SUHALLA_TO_WORLD_MAP_EAST = 12,
 };
 
-/// MapId_TimberRoomsA's warp destinations.
+/// SceneId_TimberRoomsA's warp destinations.
 enum {
   TIMBER_ROOMS_A_INN = 1,
   TIMBER_ROOMS_A_SANCTUM =
@@ -5039,7 +5039,7 @@ enum {
   /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
   TIMBER_ROOMS_A_AFTER_BABI_SPOKE = 90,
 };
-/// MapId_TimberRoomsA's warps.
+/// SceneId_TimberRoomsA's warps.
 enum {
   TIMBER_ROOMS_A_INN_TO_SUHALLA = 1,
   TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA = 2,
@@ -5066,7 +5066,7 @@ enum {
           ///< (its render)
 };
 
-/// MapId_SuhallaGateCheckpoint's warp destinations.
+/// SceneId_SuhallaGateCheckpoint's warp destinations.
 enum {
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
@@ -5074,7 +5074,7 @@ enum {
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST = 5,
 };
-/// MapId_SuhallaGateCheckpoint's warps.
+/// SceneId_SuhallaGateCheckpoint's warps.
 enum {
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
@@ -5083,7 +5083,7 @@ enum {
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST = 5,
 };
 
-/// MapId_SuhallaGateDew's warp destinations.
+/// SceneId_SuhallaGateDew's warp destinations.
 enum {
   SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST = 1,
   SUHALLA_GATE_DEW_WEST_FROM_EAST =
@@ -5095,7 +5095,7 @@ enum {
   SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST = 4,
   SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE = 5,
 };
-/// MapId_SuhallaGateDew's warps.
+/// SceneId_SuhallaGateDew's warps.
 enum {
   SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST =
       1, ///< ★ Named from what the player sees: the cliffs reached by the
@@ -5112,7 +5112,7 @@ enum {
   SUHALLA_GATE_DEW_TO_GATEWAY_CAVE = 5,
 };
 
-/// MapId_GatewayCave's warp destinations.
+/// SceneId_GatewayCave's warp destinations.
 enum {
   GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW = 1,
   GATEWAY_CAVE_NORTH_FROM_SOUTH =
@@ -5123,7 +5123,7 @@ enum {
          ///< purple crystals that leads out (its render)
   GATEWAY_CAVE_FROM_WORLD_MAP = 4,
 };
-/// MapId_GatewayCave's warps.
+/// SceneId_GatewayCave's warps.
 enum {
   GATEWAY_CAVE_TO_SUHALLA_GATE_DEW = 1,
   GATEWAY_CAVE_NORTH_TO_SOUTH =
@@ -5135,7 +5135,7 @@ enum {
   GATEWAY_CAVE_TO_WORLD_MAP = 4,
 };
 
-/// MapId_TunnelRuinsGreatStatue's warp destinations.
+/// SceneId_TunnelRuinsGreatStatue's warp destinations.
 enum {
   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR = 1,
   TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS =
@@ -5184,7 +5184,7 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
   TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
-/// MapId_TunnelRuinsGreatStatue's warps.
+/// SceneId_TunnelRuinsGreatStatue's warps.
 enum {
   TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR = 1,
   TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS =
@@ -5234,7 +5234,7 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 
-/// MapId_TunnelRuinsLadyStatues's warp destinations.
+/// SceneId_TunnelRuinsLadyStatues's warp destinations.
 enum {
   TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 1,
   TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH = 2,
@@ -5254,7 +5254,7 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 16,
   TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 17,
 };
-/// MapId_TunnelRuinsLadyStatues's warps.
+/// SceneId_TunnelRuinsLadyStatues's warps.
 enum {
   TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH = 1,
   TUNNEL_RUINS_LADY_STATUES_TO_PATHS_NORTHWEST =
@@ -5295,19 +5295,19 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH = 17,
 };
 
-/// MapId_BabiLighthouseStoneDoor's warp destinations.
+/// SceneId_BabiLighthouseStoneDoor's warp destinations.
 enum {
   BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
   BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
   BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST = 3,
 };
-/// MapId_BabiLighthouseStoneDoor's warps.
+/// SceneId_BabiLighthouseStoneDoor's warps.
 enum {
   BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
   BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST = 2,
 };
 
-/// MapId_BabiLighthouseLuff's warp destinations.
+/// SceneId_BabiLighthouseLuff's warp destinations.
 enum {
   BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS =
       1, ///< ★ Named from what the player sees: the tall room of two arches and
@@ -5355,7 +5355,7 @@ enum {
       17, ///< ★ Named from what the player sees: the tall room of two arches
           ///< and a narrow passage south (its render)
 };
-/// MapId_BabiLighthouseLuff's warps.
+/// SceneId_BabiLighthouseLuff's warps.
 enum {
   BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS =
       1, ///< ★ Named from what the player sees: the brick room entered by the
@@ -5405,7 +5405,7 @@ enum {
   BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST = 18,
 };
 
-/// MapId_BabiLighthouseEntry's warp destinations.
+/// SceneId_BabiLighthouseEntry's warp destinations.
 enum {
   BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE = 1,
   BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
@@ -5414,7 +5414,7 @@ enum {
   BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
   BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
-/// MapId_BabiLighthouseEntry's warps.
+/// SceneId_BabiLighthouseEntry's warps.
 enum {
   BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE = 1,
   BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST = 2,
@@ -5424,18 +5424,18 @@ enum {
   BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 
-/// MapId_RoadToBabiLighthouse's warp destinations.
+/// SceneId_RoadToBabiLighthouse's warp destinations.
 enum {
   ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP = 1,
   ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY = 2,
 };
-/// MapId_RoadToBabiLighthouse's warps.
+/// SceneId_RoadToBabiLighthouse's warps.
 enum {
   ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP = 1,
   ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY = 2,
 };
 
-/// MapId_Lalivero's warp destinations.
+/// SceneId_Lalivero's warp destinations.
 enum {
   LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST = 1,
   LALIVERO_FROM_TIMBER_ROOMS_B_WEST = 2,
@@ -5451,7 +5451,7 @@ enum {
   LALIVERO_FROM_WORLD_MAP_EAST = 20,
   LALIVERO_FROM_WORLD_MAP_WEST = 21,
 };
-/// MapId_Lalivero's warps.
+/// SceneId_Lalivero's warps.
 enum {
   LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST = 1,
   LALIVERO_TO_TIMBER_ROOMS_B_WEST = 2,
@@ -5468,7 +5468,7 @@ enum {
   LALIVERO_TO_WORLD_MAP_WEST = 21,
 };
 
-/// MapId_TimberRoomsB's warp destinations.
+/// SceneId_TimberRoomsB's warp destinations.
 enum {
   TIMBER_ROOMS_B_FROM_LALIVERO_WEST = 1,
   TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST = 2,
@@ -5493,7 +5493,7 @@ enum {
   TIMBER_ROOMS_B_SANCTUM =
       12, ///< stepping in makes the sanctum where a defeated party wakes
 };
-/// MapId_TimberRoomsB's warps.
+/// SceneId_TimberRoomsB's warps.
 enum {
   TIMBER_ROOMS_B_TO_LALIVERO_WEST = 1,
   TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST = 2,
@@ -5517,7 +5517,7 @@ enum {
   TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST = 11,
 };
 
-/// MapId_TimberRoomsC's warp destinations.
+/// SceneId_TimberRoomsC's warp destinations.
 enum {
   TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST = 21,
   TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH = 22,
@@ -5545,7 +5545,7 @@ enum {
   TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE =
       99, ///< back from Venus Lighthouse, the party is led straight to Faran
 };
-/// MapId_TimberRoomsC's warps.
+/// SceneId_TimberRoomsC's warps.
 enum {
   TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST = 21,
   TIMBER_ROOMS_C_TO_LALIVERO_SOUTH = 22,
@@ -5572,20 +5572,20 @@ enum {
   TIMBER_ROOMS_C_TO_LEMURIAN_SHIP = 31,
 };
 
-/// MapId_VenusLighthouseEntry's warp destinations.
+/// SceneId_VenusLighthouseEntry's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST = 1,
   VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
   VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST = 3,
 };
-/// MapId_VenusLighthouseEntry's warps.
+/// SceneId_VenusLighthouseEntry's warps.
 enum {
   VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST = 1,
   VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
   VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST = 3,
 };
 
-/// MapId_VenusLighthouseGroundFloor's warp destinations.
+/// SceneId_VenusLighthouseGroundFloor's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY = 1,
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS =
@@ -5653,7 +5653,7 @@ enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_PILLARS =
       32, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
 };
-/// MapId_VenusLighthouseGroundFloor's warps.
+/// SceneId_VenusLighthouseGroundFloor's warps.
 enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY = 1,
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS =
@@ -5722,7 +5722,7 @@ enum {
           ///< stone pillars (its render)
 };
 
-/// MapId_VenusLighthouseFirstFloor's warp destinations.
+/// SceneId_VenusLighthouseFirstFloor's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_LOWER_ROOM =
       1, ///< ★ Named from what the player sees: the room of a golden floor that
@@ -5773,7 +5773,7 @@ enum {
           ///< (its render)
   VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST = 21,
 };
-/// MapId_VenusLighthouseFirstFloor's warps.
+/// SceneId_VenusLighthouseFirstFloor's warps.
 enum {
   VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM =
       1, ///< ★ Named from what the player sees: the small room below the hole
@@ -5825,7 +5825,7 @@ enum {
   VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 21,
 };
 
-/// MapId_VenusLighthouseSecondFloor's warp destinations.
+/// SceneId_VenusLighthouseSecondFloor's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 1,
   VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT =
@@ -5851,7 +5851,7 @@ enum {
           ///< in its socket opens, with a statue and a locked door (its render)
   VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 11,
 };
-/// MapId_VenusLighthouseSecondFloor's warps.
+/// SceneId_VenusLighthouseSecondFloor's warps.
 enum {
   VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 1,
   VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT =
@@ -5878,7 +5878,7 @@ enum {
   VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST = 11,
 };
 
-/// MapId_VenusLighthouseThirdFloor's warp destinations.
+/// SceneId_VenusLighthouseThirdFloor's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST =
       1,
@@ -5931,7 +5931,7 @@ enum {
   VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST =
       20,
 };
-/// MapId_VenusLighthouseThirdFloor's warps.
+/// SceneId_VenusLighthouseThirdFloor's warps.
 enum {
   VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST =
       1,
@@ -5982,7 +5982,7 @@ enum {
       20,
 };
 
-/// MapId_VenusLighthouseFourthFloor's warp destinations.
+/// SceneId_VenusLighthouseFourthFloor's warp destinations.
 enum {
   VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST =
       1,
@@ -6033,7 +6033,7 @@ enum {
       20, ///< ★ Named from what the player sees: the large room of the west and
           ///< east floor switches and the rising platform (its render)
 };
-/// MapId_VenusLighthouseFourthFloor's warps.
+/// SceneId_VenusLighthouseFourthFloor's warps.
 enum {
   VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST =
       1,
@@ -6085,7 +6085,7 @@ enum {
   VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE = 21,
 };
 
-/// MapId_VenusLighthouseAerie's warp destinations and warps.
+/// SceneId_VenusLighthouseAerie's warp destinations and warps.
 enum {
   VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR = 1,
   VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE = 2,  ///< after Saturos and Menardi
@@ -6099,7 +6099,7 @@ enum {
   VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B = 9,
 };
 
-/// MapId_LemurianShip's warp destinations.
+/// SceneId_LemurianShip's warp destinations.
 enum {
   LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C = 1,
   /// In no table row and led to by no warp: only the debug map selector,
@@ -6108,21 +6108,21 @@ enum {
   /// Black Orb." (MsgWorldMapLook)
   LEMURIAN_SHIP_WITH_BLACK_ORB = 99,
 };
-/// MapId_LemurianShip's warps.
+/// SceneId_LemurianShip's warps.
 enum {
   LEMURIAN_SHIP_TO_TIMBER_ROOMS_C = 1,
 };
 
-/// MapId_TolbiSpring's warp destinations.
+/// SceneId_TolbiSpring's warp destinations.
 enum {
   TOLBI_SPRING_FROM_TOLBI = 1,
 };
-/// MapId_TolbiSpring's warps.
+/// SceneId_TolbiSpring's warps.
 enum {
   TOLBI_SPRING_TO_TOLBI = 1,
 };
 
-/// MapId_BattleArena's warp destinations and warps.
+/// SceneId_BattleArena's warp destinations and warps.
 enum {
   BATTLE_ARENA_FROM_MAIN_MENU = 1,
   BATTLE_ARENA_AFTER_MONSTER_WIN = 8,

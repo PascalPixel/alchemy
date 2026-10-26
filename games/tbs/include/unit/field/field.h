@@ -377,7 +377,7 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);
 void TileMap_NumberPlaceholderMetatiles(void);
 void TileMap_ConvertBuffer(void);
-s32 MapGrid_LoadLayout(s32 index);
+s32 MapGrid_LoadMap(s32 index);
 void MapGrid_CenterOnFollowedPoint(void);
 void MapGrid_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
 void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);

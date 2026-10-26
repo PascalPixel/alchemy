@@ -9,7 +9,7 @@
 // root and making the targets react a few frames later. The dust is a pool
 // of EffectSteps in PARTICLES, a free one marked by variant -1, its x and y
 // in canvas pixels; each puff plays seven pictures, 2 frames each, drawn
-// mirrored about its x. Both scenes fade out over their last 16 frames.
+// mirrored about its x. Both animations fade out over their last 16 frames.
 
 /// The dust pictures in the vine sheet, after the vines.
 #define GROWING_COLUMNS_VINE_DUST_CELLS 0x1e59
@@ -60,7 +60,8 @@ void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
 /// at its gGrowth_PillarHeights. On frame 4i + 12 the targets react (even
 /// columns with a sound), and on frames 4i + 12 and 4i + 16 the column throws
 /// up a puff of dust. The battle moves on to the results 64 frames before the
-/// end; the scene fades out over 16 frames, and nothing grows in its last 4.
+/// end; the animation fades out over 16 frames, and nothing grows in its
+/// last 4.
 ///
 /// Called by BattleAnim_RunGrowth and BattleAnim_RunPunji.
 /// work->particles holds the 16 columns (struct ParticleGrowthColumnView) and
@@ -69,8 +70,8 @@ void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
 ///
 /// effect: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
-///         Punji Trap and Punji Strike, 12 for Wild Growth. The scene runs 4
-///         frames a column and 56 more.
+///         Punji Trap and Punji Strike, 12 for Wild Growth. The animation runs
+///         4 frames a column and 56 more.
 void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   void **slots;
   void **cursor;
@@ -429,12 +430,12 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
 /// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
 /// of dust on each of its first two frames; on frame 8i + 12 the targets
 /// react with a sound. The battle moves on to the results 64 frames before
-/// the end, and the scene fades out over its last 16 frames.
+/// the end, and the animation fades out over its last 16 frames.
 ///
 /// effect: the targets; variant picks the number of thorns
 ///         (gGrowth_Counts): 3 for Thorn, 5 for Briar, 8 for Nettle; the
-///         scene runs 8 frames a thorn and 56 more. gGrowth_Kinds gives each
-///         thorn's size and direction.
+///         animation runs 8 frames a thorn and 56 more. gGrowth_Kinds gives
+///         each thorn's size and direction.
 ///
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
 /// REG_BLDALPHA and, on ANIM_SIDE_PARTY, REG_BG2X; sets work->shakeFrames as

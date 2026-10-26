@@ -58,11 +58,11 @@ extern char ResourceId_IntroTilesB;
 /// Suhalla Gate's checkpoint and Dew rooms. The debug battle menu fights on it
 /// too.
 extern char ResourceId_SuhallaGateBackdrop;
-extern char ResourceId_PirateShipBackdrop;        ///< MapId_PirateShip.
+extern char ResourceId_PirateShipBackdrop;        ///< SceneId_PirateShip.
 extern char ResourceId_CrossboneIsleCaveBackdrop; ///< Crossbone Isle's floors.
 /// Colosso's three matches (Azart, Satrage and Navampa) and the Battle Arena.
 extern char ResourceId_ColossoBackdrop;
-/// MapId_VenusLighthouseAerie.
+/// SceneId_VenusLighthouseAerie.
 extern char ResourceId_VenusLighthouseAerieBackdrop;
 /// Venus Lighthouse's floors, from the ground floor to the fourth.
 extern char ResourceId_VenusLighthouseBackdrop;
@@ -71,20 +71,20 @@ extern char ResourceId_SuhallaDesertBackdrop;
 /// Altmiller Cave and Lunpa Fortress.
 extern char ResourceId_AltmillerCaveBackdrop;
 extern char ResourceId_TunnelRuinsBackdrop; ///< Tunnel Ruins' two statue rooms.
-/// Babi Lighthouse, and MapId_CrossboneIsleBane on Crossbone Isle.
+/// Babi Lighthouse, and SceneId_CrossboneIsleBane on Crossbone Isle.
 extern char ResourceId_BabiLighthouseBackdrop;
 /// Lamakan Desert's three maps.
 extern char ResourceId_LamakanDesertBackdrop;
 extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three maps.
-/// MapId_MercuryLighthouseAerie.
+/// SceneId_MercuryLighthouseAerie.
 extern char ResourceId_MercuryLighthouseAerieBackdrop;
-/// MapId_ShipRooms.
+/// SceneId_ShipRooms.
 extern char ResourceId_TolbiShipInteriorsBackdrop;
-/// Fuchin Falls Cave, and MapId_CrossboneIsleFloatingLogs on Crossbone
+/// Fuchin Falls Cave, and SceneId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
 extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five maps.
-/// MapId_TreeRooms.
+/// SceneId_TreeRooms.
 extern char ResourceId_TretTreeInteriorsBackdrop;
 /// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any map the
 /// table doesn't list, since it comes last.
@@ -93,13 +93,13 @@ extern char ResourceId_GomaCaveBackdrop;
 extern char ResourceId_InteriorBackdrop;
 /// Altin Peak's maps but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;
-/// MapId_TolbiShipDeck and MapId_TolbiShipMast.
+/// SceneId_TolbiShipDeck and SceneId_TolbiShipMast.
 extern char ResourceId_TolbiShipDeckBackdrop;
 /// Mercury Lighthouse's floors below the aerie and its exterior.
 extern char ResourceId_MercuryLighthouseBackdrop;
 /// Vale's maps, the stormy night included; the credits open on it.
 extern char ResourceId_ValeStormBackdrop;
-extern char ResourceId_TretTreeBranchBackdrop; ///< MapId_TretTreeBranch.
+extern char ResourceId_TretTreeBranchBackdrop; ///< SceneId_TretTreeBranch.
 /// Set by the first slot of ENCOUNTER_ZONE_SCRIPTED
 /// (Field_RequestBattleFromEncounterTable), and by the storm opening of
 /// BattleTransition_Run, where the enemies alone take part.
@@ -109,8 +109,8 @@ extern char ResourceId_BeachBackdrop;
 /// World map snowfields and snowy forests.
 extern char ResourceId_SnowfieldBackdrop;
 extern char ResourceId_GrasslandBackdrop; ///< World map grassland.
-/// Sol Sanctum's rooms, MapId_AltinPeakHydrosStatue and
-/// MapId_CrossboneIsleSteppingStones, and any battle environment without a
+/// Sol Sanctum's rooms, SceneId_AltinPeakHydrosStatue and
+/// SceneId_CrossboneIsleSteppingStones, and any battle environment without a
 /// battle background of its own.
 extern char ResourceId_SolSanctumBackdrop;
 /// World map forests; the Judgment and Kirin summons draw it too.
@@ -297,10 +297,10 @@ extern char ResourceId_Icons;
 /// The command icons, a halfword offset each and then 1 KB of 256-colour
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.
 extern char ResourceId_CommandIcons;
-/// The first layout row, layout 1's header (layout/layout_001), whose number
-/// it is named for: gLayouts counts its rows from here, and
-/// MapGrid_LoadLayout adds them to it.
-extern char ResourceId_Layout001;
+/// The first layout row, layout 1's header (map/map_001), whose number
+/// it is named for: gMaps counts its rows from here, and
+/// MapGrid_LoadMap adds them to it.
+extern char ResourceId_Map001;
 
 // Battle animation pictures, continued.
 

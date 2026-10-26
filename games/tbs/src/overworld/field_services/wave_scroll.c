@@ -121,7 +121,7 @@ void ScanlineEffect_BuildPage(void) {
 }
 
 // The shared source that starts the scanline effect, at its place in the ROM.
-#include "../../map/common/scroll_initialize_hblank_dma.h"
+#include "../../scene/common/scroll_initialize_hblank_dma.h"
 
 /// Stops the scanline effect: removes its two callbacks and stops DMA 0.
 void ScanlineEffect_Stop(void) {

@@ -1,6 +1,10 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 58 of 2142: the constant 1
-// the native keeps in r8 is rebuilt in r5 at several sites, which moves pool
-// offsets; not reworked.
+// 26 October 2026: differ 45 of 2142 (was 58). The 1 of the six bit sets goes
+// through a variable set at the first one, as the native keeps it in r8 from
+// there and ties the last set's result to it (a temporary device if adopted).
+// Left: at the four middle sets the native loads the byte straight into the
+// result register and copies the 1 beside it, where this draft does the
+// reverse; pool offsets; and instruction order at a few calls and the spark
+// callback stores.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -77,7 +81,7 @@ void Scene_RunSoldierInterception(void) {
   s32 rec;
   u8 *record;
   s32 v5;
-  s32 v2;
+  s32 one;
   s32 callback;
 
   Call1(Func_02002854, 0x890);
@@ -597,7 +601,7 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1c8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= 1;
+  *(u8 *)(Func_020028cc(14) + 90) |= (one = 1);
   Call3(Func_02002954, 14, 0x6000, 0);
   Call3(Func_020028d4, 14, 0x10000, 0x8000);
   Func_020028ac(20);
@@ -613,7 +617,7 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1c8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= 1;
+  *(u8 *)(Func_020028cc(15) + 90) |= one;
   Func_020028ac(10);
   Value3(Func_02002964, 9, 0x108, 30);
   Call3(Func_0200294c, 0x1009, 0, 10);
@@ -632,11 +636,11 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1e8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= 1;
+  *(u8 *)(Func_020028cc(14) + 90) |= one;
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1e8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= 1;
+  *(u8 *)(Func_020028cc(15) + 90) |= one;
   Call3(Func_020028f4, 9, 0x1c8, 0x1b0);
   Func_02002954(9, 0, 0);
   Func_020028ac(10);
@@ -651,15 +655,12 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1f8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= 1;
+  *(u8 *)(Func_020028cc(14) + 90) |= one;
   Func_0200290c(14, 0, 0);
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1f8, 0x1b8);
   Func_020028ac(1);
-  record = Func_020028cc(15);
-  v2 = (1 | *(u8 *)(record + 90));
-  *(u8 *)(record + 90) = v2;
-  p8 = v2;
+  *(u8 *)(Func_020028cc(15) + 90) |= one;
   Func_0200290c(15, 0, 0);
   Func_020028ac(10);
   Call3(Func_020028d4, 9, 0xcccc, 0x6666);

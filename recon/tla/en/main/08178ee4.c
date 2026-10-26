@@ -1,11 +1,13 @@
-// Draft (tla-en): listing 525 instructions, draft 525, common 488, differ 74.
+// Draft (tla-en): listing 525 instructions, draft 525, common 512, differ 26
+// (2026-10-26: the cel tables as plain externs, since const changes their
+// readers, 54 to 28; BG2PA's pinned 0x100 and its one-pass block are no
+// longer needed under -mthumb-slow-loads, 28 to 26).
 // Written from the listing (☀️'s BattleEffect_RunCounterReveal is only a
 // hint). A large sprite assembled from gMapCellBuffer cells sways on a
 // sine path over 108 frames, faded in and out through BLDALPHA, with two
 // blitters (heap slots 104 and 188) chosen by the effect's side.
-// Devices already in (each a one-pass block): one before the heap loads so
-// effect's spill comes first, as the native; one between BG2PA's pinned
-// 0x100 and its store so the pool load comes before the address.
+// Device: a one-pass block before the heap loads so effect's spill comes
+// first, as the native.
 // Left:
 // - the native loads gMapCellBuffer into r6 before BattleEffect_StartTiledCanvas
 // (here after it).
@@ -60,12 +62,13 @@ extern char ResourceId_Data0DC;
 
 // The swing's cels: widths, heights and offsets; the fist's: heights,
 // y offsets and offsets.
-extern const u8 gData_081993d0[];
-extern const u8 gData_081993d4[];
-extern const u16 gData_081993d8[];
-extern const u8 gData_081993e0[];
-extern const u8 gData_081993e8[];
-extern const u16 gData_081993f0[];
+// Plain externs: const changes the code that reads them.
+extern u8 gData_081993d0[];
+extern u8 gData_081993d4[];
+extern u16 gData_081993d8[];
+extern u8 gData_081993e0[];
+extern u8 gData_081993e8[];
+extern u16 gData_081993f0[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
@@ -113,16 +116,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(0x2001);
-  {
-    /* FAKEMATCH: the native loads BG2PA's 0x100 from the pool before it
-     * starts the register address; pinned behind a one-pass block it does
-     * the same (plain: one reordered pair). */
-    register u16 scale __asm__("r3") = 0x100;
-
-    do {
-    } while (0);
-    REG_BG2PA = scale;
-  }
+  REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
   draw[0] = (DrawRectangle)heap->unk64[1];

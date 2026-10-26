@@ -1,4 +1,6 @@
-// Draft (tla-en): listing 436 instructions, draft 436, common 409, differ 54.
+// Draft (tla-en): listing 436 instructions, draft 436, common 413, differ 46
+// (2026-10-26: the pinned BLDALPHA value and its one-pass block are gone;
+// under -mthumb-slow-loads the plain store measures the same).
 // Written from the listing (☀️'s BattleEffect_RunJupiter is only a
 // hint). The pink star burst: 32 smoke puffs rise from the caster for 24
 // frames, the caster rises and leans to the target, and at frame 32 the
@@ -122,16 +124,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  {
-    /* FAKEMATCH: the native loads BLDALPHA's 0x1010 from the pool before
-     * it starts the register address; pinned behind a one-pass block it
-     * does the same (plain: one reordered pair). */
-    register u16 alpha __asm__("r3") = 0x1010;
-
-    do {
-    } while (0);
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);

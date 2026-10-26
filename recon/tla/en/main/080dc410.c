@@ -1,4 +1,4 @@
-// Near miss, differ 43 of 239 (2026-10-18): BattleEffect_LoadActionEffectResources,
+// Near miss, differ 34 of 239 (2026-10-26, statements reordered) (2026-10-18): BattleEffect_LoadActionEffectResources,
 // from ☀️'s function of the same name (games/tbs/src/object/psynergy_effects.c)
 // with ⚓️'s 0x7f4-byte effect work and seven lit scenes (SceneId_ symbols:
 // the listing loads each id from the pool). Left: the native loads the event
@@ -77,10 +77,10 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->messageMode = 1;
   work->unk713 = 0;
   work->unk7c4 = running;
+  work->savedShakeY = map->shakeY;
   work->unk7c6 = -1;
   work->unk7f2 = running;
   work->savedShakeX = map->shakeX;
-  work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
   if (gPartyState.map == (s32)&SceneId_Ov673Room5)
     work->lit = 1;

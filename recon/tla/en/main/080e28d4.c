@@ -1,8 +1,8 @@
-// Near miss, differ 46 of 178: order and the loop bound. The native
-// hoists the 20 of i < 20 into r11 (one more saved register) and compares
-// cmp r8, r11; blt, where this compares a copy with 19; the rest is small
-// order (scale constants, the arc's first loads). Storing scaleX before
-// scaleY (scaleY = scaleX = v) measured 46, the other way 52.
+// Near miss, differ 6 of 178 (2026-10-26). The arc's bound is a local the
+// loop compares with (the native keeps it in r11), while the divisions use
+// the literal 20 (42 -> 6). Left: order only, the scale constants and the arc's
+// position copies, where after a store the native issues another instruction
+// before the next load.
 // An event sequence. Creates object sprite at (x, 0, z), which grows
 // from 0.4 to full size while spinning, turns it and the controlled owner to
 // face each other, plays the owner's variant 3 and Func_080d489c(, 258), then
@@ -31,6 +31,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 from[3];
   s32 to[3];
   s32 i;
+  s32 steps;
 
   if (object == NULL)
     return;
@@ -66,7 +67,8 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   to[0] = owner->x;
   to[1] = owner->y;
   to[2] = owner->z;
-  for (i = 0; i < 20; i++) {
+  steps = 20;
+  for (i = 0; i < steps; i++) {
     object->x = from[0] + i * (to[0] - from[0]) / 20;
     object->y = from[1] + i * (to[1] - from[1]) / 20 +
                 Trig_Sin((i << 15) / 20) * 40;

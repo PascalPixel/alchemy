@@ -1,4 +1,4 @@
-// Near miss, differ 10 of 237 (2026-10-26): the twin of The Broken Seal's
+// Near miss, differ 8 of 237 (2026-10-26): the twin of The Broken Seal's
 // FieldEffect_RunMercuryDjinnCapture, with The Lost Age's effect work
 // (Ram_HeapSlots->effectWork), leader (gPartyState.currentOwner), droplet
 // object 301, sprite slots from 80 and the cache slot byte at 16. Only
@@ -155,9 +155,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   WaitFrames(20);
 
   position.x = djinni->x;
+  Camera_WorldToScreen(&position.x);
   position.y = djinni->y;
   position.z = djinni->z;
-  Camera_WorldToScreen(&position.x);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;

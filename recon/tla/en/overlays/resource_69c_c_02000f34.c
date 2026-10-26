@@ -11,7 +11,7 @@
 #include "field_sprite.h"
 
 extern const u16 gData_02002478[];
-extern const s8 gData_02002484[];
+extern const s8 gData_02002484[][4];
 extern const s32 gData_0200249c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -42,17 +42,16 @@ nextObject:
   {
   nextShape:
     {
-      asm volatile("" ::: "memory");
       if (*(s16 *)((struct FieldSprite *)object->animation)->record !=
           gData_02002478[k])
         goto skip;
       ahead = gData_0200249c[*step];
       x = (PIXELS(leader->x) + (ahead >> 16)) >> 4;
       z = (PIXELS(leader->z) + (s16)ahead) >> 4;
-      left = (PIXELS(object->x) + gData_02002484[k * 4]) >> 4;
-      top = (PIXELS(object->z) + gData_02002484[k * 4 + 1]) >> 4;
-      right = (PIXELS(object->x) + gData_02002484[k * 4 + 2]) >> 4;
-      bottom = (PIXELS(object->z) + gData_02002484[k * 4 + 3]) >> 4;
+      left = (PIXELS(object->x) + gData_02002484[k][0]) >> 4;
+      top = (PIXELS(object->z) + gData_02002484[k][1]) >> 4;
+      right = (PIXELS(object->x) + gData_02002484[k][2]) >> 4;
+      bottom = (PIXELS(object->z) + gData_02002484[k][3]) >> 4;
       if (left > x || x >= right || top > z || z >= bottom)
         goto skip;
       *footprint = k;

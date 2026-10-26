@@ -4147,8 +4147,7 @@ main	rom_main_08	recon/tla/ja/rom	.rom.00126974	ja
 main	rom_main_08	games/tla/src/battle/mulq16	.text
 main	rom_main_08	games/tla/src/battle/presentation/init_transition_entries	.text
 main	rom_main_08	games/tla/src/battle/presentation/divide16	.text
-main	rom_main_08	games/tla/src/battle/presentation/debug_value	.text	en de es fr it
-main	rom_main_08	recon/tla/ja/rom	.rom.001269f4	ja
+main	rom_main_08	games/tla/src/battle/presentation/debug_value	.text
 main	rom_main_08	games/tla/src/battle/presentation/present	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00126be4	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00126be4	fr

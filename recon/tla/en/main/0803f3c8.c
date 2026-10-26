@@ -1,3 +1,8 @@
+// Draft, differ 26 of 276 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 14
+// with an empty asm after `other->scaleEnd = 0x100;`; an empty asm after
+// `screen->head = NULL;`, and finds nothing closer.
 // Draft, differ 34 of 276, 2026-10-15: The Broken Seal's
 // Menu_ConfirmSelection, ported fresh; every instruction is the native's
 // and only the order differs. Remaining: in five blocks the native

@@ -1,3 +1,12 @@
+// Draft, differ 38 of 418 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 10
+// with an empty asm after `UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel,
+// win, 8, 64);`; a one-pass block around `work->cursor.output = out;`; an
+// empty asm after `out = RenderOutput_Create(x, 0x40000000, win, 0, 0);`; an
+// empty asm after `work->marker[0].output = out;`; an empty asm after `out =
+// RenderOutput_Create(x, 0x40000000, win, 0, 0);`; an empty asm after
+// `work->marker[1].output = out;`, and finds nothing closer.
 // Draft of Func_0803fd28, the option screen's window (Menu_OpenWorkspaceOptions
 // here): differ 42 of 418 (tla-en, 2026-10-18). Its ☀️ twin is
 // games/tbs/src/window/window.c's OptionMenu_Open: the labels, the slider

@@ -1,3 +1,7 @@
+// Draft, differ 2 of 60 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 6 of 60: The Broken Seal's
 // Menu_UpdateFirstObjectRowPositions over this game's menu work (objects at
 // 248, x at 280, y at 296, scale at 312). Three rows sit one step off: at

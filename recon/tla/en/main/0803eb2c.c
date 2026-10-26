@@ -1,3 +1,7 @@
+// Draft, differ 2 of 80 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 4 of 80 (2026-10-24): a one-pass block around the upScroll
 // store and an empty asm after the status store place the upScroll offset and
 // the reloads as the native has them. Left: in the else branch the native

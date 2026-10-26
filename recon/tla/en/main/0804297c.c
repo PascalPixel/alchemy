@@ -1,3 +1,9 @@
+// Draft, differ 22 of 495 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 20
+// with `struct UiRenderWork *work = (struct UiRenderWork
+// *)Ram_HeapSlots->windowTiles;` moved after `struct UiWindow *window =
+// layout->window;`, and finds nothing closer.
 // Near miss, differ 26 of 495: The Broken Seal's PartyStatus_Draw on this
 // game's work: at most four party members outside battle, the Djinn counts
 // drawn as tiles, with the glyphs past 9 copied to VRAM when any count passes

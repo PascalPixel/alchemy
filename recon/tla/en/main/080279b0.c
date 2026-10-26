@@ -1,3 +1,7 @@
+// Draft, differ 14 of 503 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 12
+// with an empty asm after `struct EventWork *work;`, and finds nothing closer.
 // Near miss, differ 24 of 503, instruction order only: script command 0x1a,
 // the twin of The Broken Seal's Object_MoveOnWorldMap in its Japanese layout
 // (three probes 30 degrees apart, six retry headings), with this game's dash

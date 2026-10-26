@@ -1,3 +1,7 @@
+// Draft, differ 2 of 92 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss of UiWindow_UpdateInterpolatedGeometry (The Broken Seal twin in
 // graphics/window/window.c; first written 2026-10-12): differ 2 of 92. After
 // each of three ratio calls the native loads the next operand (window->x,

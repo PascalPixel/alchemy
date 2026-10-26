@@ -1,3 +1,7 @@
+// Draft, differ 6 of 62 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 4 of 62: after the terminator store the native shifts the row
 // offset (lsrs r2, r4, #3) before it loads the window row, and adds them
 // after copying the column offset; this loads the row first. Measured: the

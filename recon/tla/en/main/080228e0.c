@@ -1,3 +1,7 @@
+// Draft, differ 2 of 68 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 2 of 68, one reordered pair in the loop's setup: the native
 // stores the slot pointer to its stack home before it copies the zero index to
 // r8 (str r2, [sp, #4]; mov r8, r1), this form copies first. The two tagged

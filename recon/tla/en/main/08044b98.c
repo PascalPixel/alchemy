@@ -1,3 +1,7 @@
+// Draft, differ 2 of 95 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss: differ 8 of 95 (2026-10-12). From ☀️ Party_ShowJoinedMessage.
 // Three scheduling differences remain, no instruction or register differs:
 // the palette load comes after the 0xe000 mask starts (native: load first);

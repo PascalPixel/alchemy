@@ -1,3 +1,8 @@
+// Draft, differ 4 of 140 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
+// an empty asm after `state->records[0].x = state->baseX - 9;`, and finds
+// nothing closer.
 // Near miss, differ 6 of 140 (three reordered pairs), 2026-10-15: The
 // Broken Seal's Menu_SetupSelectionSide on this game's cursor tiles
 // (gData_0805c5c4 right, gData_0805c1c4 left). One empty one-pass block after

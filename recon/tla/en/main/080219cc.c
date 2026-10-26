@@ -1,3 +1,7 @@
+// Draft, differ 2 of 56 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 2 of 56, instruction order only: steps each channel's byte
 // script by command and argument pairs until a wait command (0xef, 0xf1,
 // 0xfd, 0xfe), which backs up over itself and flags the player and the

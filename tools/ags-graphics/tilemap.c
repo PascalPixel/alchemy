@@ -52,21 +52,38 @@ mappedPart(const char *input, const char *path, const char *form,
 		   count = decimalOrHex(fields->items[4], 1024);
 	if (!count)
 		fail("empty tile range");
-	char *name = formatString("%s.tsv", fields->items[2]);
+	/* A tile map written as text (tilemap form), else a table of u16 columns. */
+	char *text = formatString("%s.txt", fields->items[2]),
+		 *textPath = sibling(input, text);
+	bool isText = exists(textPath);
+	free(text);
+	free(textPath);
+	char *name = formatString("%s.%s", fields->items[2], isText ? "txt" : "tsv");
 	Buffer rawMap = readSibling(input, name);
 	free(name);
-	Strings lines = linesOf(&rawMap);
-	if (!lines.len)
-		fail("empty tilemap");
-	Strings columns = split(lines.items[0], '\t');
-	size_t wide = columns.len;
-	for (size_t i = 0; i < wide; i++)
+	size_t wide = 0;
+	Buffer map;
+	if (isText)
+		map = tilemap(&rawMap, &wide);
+	else
 	{
-		char *type = strrchr(columns.items[i], ':');
-		if (!type || strcmp(type, ":u16"))
-			fail("tilemap requires u16 columns");
+		Strings lines = linesOf(&rawMap);
+		if (!lines.len)
+			fail("empty tilemap");
+		Strings columns = split(lines.items[0], '\t');
+		wide = columns.len;
+		for (size_t i = 0; i < wide; i++)
+		{
+			char *type = strrchr(columns.items[i], ':');
+			if (!type || strcmp(type, ":u16"))
+				fail("tilemap requires u16 columns");
+		}
+		freeStrings(&columns);
+		freeStrings(&lines);
+		map = table(&rawMap);
 	}
-	Buffer map = table(&rawMap);
+	if (!wide)
+		fail("empty tilemap");
 	if (map.len % (2 * wide))
 		fail("tilemap has incomplete rows");
 	size_t left = wide, right = 0, top = SIZE_MAX, bottom = 0;
@@ -142,7 +159,5 @@ mappedPart(const char *input, const char *path, const char *form,
 	freeImage(&image);
 	free(map.data);
 	free(rawMap.data);
-	freeStrings(&columns);
-	freeStrings(&lines);
 	return out;
 }

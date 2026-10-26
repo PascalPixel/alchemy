@@ -240,6 +240,29 @@ graphics(void)
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, metatiles");
 	free(grid.data);
+	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
+	RUN("graphics", true, "screen.txt", "screen.tilemap");
+	Buffer screen = readFile("screen.tilemap");
+	uint8_t screenBytes[] = {0x80, 0xe0, 0xff, 0xe7, 1, 0xe8, 2, 0xec};
+	Buffer screenReference = {screenBytes, sizeof(screenBytes), 0};
+	equal(&screen, &screenReference, "a tile map writes tile, flips, palette");
+	free(screen.data);
+	textFile("ragged.txt", "palette:0\n1 2\n3\n");
+	RUN("graphics", false, "ragged.txt", "ragged.tilemap");
+	textFile("walls.txt", "0123 4567\n89ab cdef\n0000 1111\n2222 3333\n\n"
+						  "ffff ffff\nffff ffff\nffff ffff\nffff ffff\n");
+	RUN("graphics", true, "walls.txt", "walls.collision");
+	Buffer walls = readFile("walls.collision");
+	check(walls.len == 32, "four collision tiles of eight bytes");
+	uint8_t wallBytes[] = {0x10, 0x32, 0x98, 0xba, 0, 0, 0x22, 0x22,
+						   0x54, 0x76, 0xdc, 0xfe, 0x11, 0x11, 0x33, 0x33};
+	Buffer wallReference = {wallBytes, sizeof(wallBytes), 0};
+	walls.len = sizeof(wallBytes);
+	equal(&walls, &wallReference,
+		  "collision tiles run across, rows down, left value low");
+	free(walls.data);
+	textFile("short.txt", "0123\n0123\n0123\n");
+	RUN("graphics", false, "short.txt", "short.collision");
 	textFile("records.tsv", "kind:u8\tvalue:u16\tname\n1\t0x203\tQuake\n2\t4\tSpire\n");
 	RUN("graphics", true, "records.tsv", "records.table");
 	Buffer records = readFile("records.table");

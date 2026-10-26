@@ -104,7 +104,7 @@ PICTURE_FORMS := 1bpp 4bpp 4bpp16x16 4bpp16x32 4bpp32x8 4bpp32x16 4bpp32x32 4bpp
 TABLE_FORMS   := blocks delta0 delta1 delta2 icons4 parts plane script spriteblocks sprites table
 CODECS        := lz plz mtf d7 hlz
 FORMS         := $(PICTURE_FORMS) $(TABLE_FORMS)
-ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) bin grid.lz
+ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) bin grid.lz tilemap.lz collision.lz
 
 # Every file an encoder reads is a prerequisite: a compressed asset's packer
 # patch (NAME_patch.tsv, W3) where it has one.
@@ -119,6 +119,11 @@ $(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec
 # A map's grid: map.txt, one cell per square, builds the three planes the
 # game reads.
 %.grid.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+
+# A background's tile map as the screen shows it, and the world map's
+# collision tiles as the game reads them: text grids, like map.txt.
+%.tilemap.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
+%.collision.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 
 # Sound samples: NAME.pcm8.bin from NAME.pcm8.wav, NAME.bin from NAME.pcm4.
 %.pcm8.bin: %.pcm8.wav $(WAV2AGS) ; $(WAV2AGS) $< $@

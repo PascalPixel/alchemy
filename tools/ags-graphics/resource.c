@@ -53,6 +53,7 @@ dataForm(const char *form)
 {
 	return !strncmp(form, "delta", 5) || !strcmp(form, "table") ||
 		   !strcmp(form, "plane") || !strcmp(form, "grid") || !strcmp(form, "parts") ||
+		   !strcmp(form, "tilemap") || !strcmp(form, "collision") ||
 		   !strcmp(form, "icons4") || !strcmp(form, "blocks") ||
 		   !strcmp(form, "script") || !strcmp(form, "sprites") ||
 		   !strcmp(form, "spriteblocks");
@@ -79,12 +80,13 @@ parts(const char *input, const Buffer *data, unsigned depth)
 		if (f.len < 2)
 			fail("part needs a name and form");
 		const char *form = f.items[1];
+		bool map = !strcmp(form, "tilemap");
 		if ((dataForm(form) && strcmp(form, "table") &&
-			 strcmp(form, "plane")) ||
+			 strcmp(form, "plane") && !map) ||
 			!strcmp(form, "font"))
-			fail("part must be an image or table");
-		char *name = formatString("%s.%s", f.items[0],
-								  dataForm(form) ? "tsv" : "png"),
+			fail("part must be an image, table or tile map");
+		const char *ext = map ? "txt" : dataForm(form) ? "tsv" : "png";
+		char *name = formatString("%s.%s", f.items[0], ext),
 			 *path = sibling(input, name);
 		free(name);
 		Buffer part = f.len == 2 ? buildResource(path, form, NULL, depth + 1)
@@ -206,6 +208,10 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = plane(&data);
 	else if (!strcmp(form, "grid"))
 		raw = grid(&data);
+	else if (!strcmp(form, "tilemap"))
+		raw = tilemap(&data, NULL);
+	else if (!strcmp(form, "collision"))
+		raw = collision(&data);
 	else if (!strcmp(form, "script"))
 		raw = script(&data);
 	else if (!strcmp(form, "blocks"))

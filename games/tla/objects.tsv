@@ -841,11 +841,7 @@ main	rom_main_02	games/tla/src/graphics/text/noop	.text
 main	rom_main_02	games/tla/src/graphics/text/f03f624	.text
 main	rom_main_02	games/tla/src/graphics/text/resource	.text
 main	rom_main_02	games/tla/src/menu/topsel	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003f7d0	it
-main	rom_main_02	recon/tla/it/rom	.rom.0003f858	it
-main	rom_main_02	recon/tla/es/rom	.rom.0003f7d8	es
-main	rom_main_02	recon/tla/es/rom	.rom.0003f860	es
-main	rom_main_02	games/tla/src/menu/topsel_run	.text	ja en de fr
+main	rom_main_02	games/tla/src/menu/topsel_run	.text
 main	rom_main_02	games/tla/src/graphics/window/runtime_close_and_release	.text
 main	rom_main_02	games/tla/src/graphics/window/reset	.text
 main	rom_main_02	games/tla/src/graphics/window/notice	.text
@@ -3285,13 +3281,10 @@ main	rom_main_07	recon/tla/es/rom	.rom.0010f04e	es
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b04e	fr
 main	rom_main_07	recon/tla/it/rom	.rom.0010b02e	it
 main	rom_main_07	games/tla/src/menu/shop/select_msg	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
-main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
-main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	ja en de fr
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b176	ja
-main	rom_main_07	games/tla/src/menu/shop/fx_update	.text	ja en de fr
+main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text
+main	rom_main_07	games/tla/src/menu/shop/fx_update	.text
+main	rom_main_07	recon/tla/es/rom	.rom.0010f1b8	es
+main	rom_main_07	recon/tla/it/rom	.rom.0010b198	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b1b8	fr
 main	rom_main_07	recon/tla/de/rom	.rom.001131b8	de
 main	rom_main_07	recon/tla/raw/0810b1b4	.text	en

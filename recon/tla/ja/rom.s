@@ -1846,8 +1846,6 @@ Func_0810abf0:
 	.incbin "baserom.gba", 0x0010ac00, 0x000002b4
 	.section .rom.0010b05a, "ax"
 	.incbin "baserom.gba", 0x0010b05a, 0x00000002
-	.section .rom.0010b176, "ax"
-	.incbin "baserom.gba", 0x0010b176, 0x00000002
 	.section .rom.0010b1c4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010b1c4, 0x000001c4

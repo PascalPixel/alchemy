@@ -472,18 +472,6 @@ Menu_ScrollSelectionList:
 	.thumb_func
 Menu_ConfirmSelection:
 	.incbin "baserom.gba", 0x0003f420, 0x00000248
-	.section .rom.0003f7d0, "ax"
-	.global Menu_RunTopSelection
-	.type Menu_RunTopSelection, %function
-	.thumb_func
-Menu_RunTopSelection:
-	.incbin "baserom.gba", 0x0003f7d0, 0x00000088
-	.section .rom.0003f858, "ax"
-	.global UiWindow_OpenMode1AndWaitFrame
-	.type UiWindow_OpenMode1AndWaitFrame, %function
-	.thumb_func
-UiWindow_OpenMode1AndWaitFrame:
-	.incbin "baserom.gba", 0x0003f858, 0x00000010
 	.section .rom.0003fd80, "ax"
 	.incbin "baserom.gba", 0x0003fd80, 0x000003c0
 	.section .rom.00040140, "ax"
@@ -2146,14 +2134,9 @@ Func_0810abf0:
 	.incbin "baserom.gba", 0x0010abf4, 0x00000294
 	.section .rom.0010b02e, "ax"
 	.incbin "baserom.gba", 0x0010b02e, 0x00000002
-	.section .rom.0010b0a0, "ax"
-	.global BattleEffect_UpdateRadialMotion
-BattleEffect_UpdateRadialMotion:
-	.incbin "baserom.gba", 0x0010b0a0, 0x000000ac
-	.section .rom.0010b14c, "ax"
-	.global Func_0810b168
-Func_0810b168:
-	.incbin "baserom.gba", 0x0010b14c, 0x00000210
+	.section .rom.0010b198, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0010b198, 0x000001c4
 	.section .rom.0010b5a8, "ax"
 	.global Func_0810b5c4
 	.type Func_0810b5c4, %function

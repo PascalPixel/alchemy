@@ -1963,8 +1963,6 @@ Func_080fb8b8:
 	.section .rom.00105f30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00105f30, 0x00000618
-	.section .rom.00106620, "ax"
-	.incbin "baserom.gba", 0x00106620, 0x000000b0
 	.section .rom.00106784, "ax"
 	.incbin "baserom.gba", 0x00106784, 0x00000430
 	.section .rom.00106bb4, "ax"

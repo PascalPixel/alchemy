@@ -499,60 +499,6 @@ Func_02000d74:
 	pop {r5, r6, pc}
 	.section .text.x0200af32,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200b184,"ax",%progbits
-	.global Func_02003184
-	.thumb_func
-Func_02003184:
-	push {r5, lr}
-	ldr r3, .L_0200b1c4
-	movs r2, #128
-	lsls r2, r2, #19
-	adds r2, #82
-	strh r3, [r2]
-	ldr r3, .L_0200b1c8
-	subs r2, #2
-	movs r5, #220
-	strh r3, [r2]
-	lsls r5, r5, #17
-	movs r1, #160
-	movs r2, #225
-	adds r0, r5, #0
-	lsls r1, r1, #14
-	lsls r2, r2, #17
-	bl Func_02003104
-	movs r1, #184
-	movs r2, #219
-	adds r0, r5, #0
-	lsls r1, r1, #14
-	lsls r2, r2, #17
-	bl Func_02003104
-	movs r1, #208
-	movs r2, #213
-	adds r0, r5, #0
-	lsls r1, r1, #14
-	lsls r2, r2, #17
-	b .L_0200b1cc
-	.2byte 0x0000
-.L_0200b1c4:
-	.4byte 0x00000c08
-.L_0200b1c8:
-	.4byte 0x00003f10
-.L_0200b1cc:
-	bl Func_02003104
-	movs r1, #232
-	movs r2, #207
-	adds r0, r5, #0
-	lsls r1, r1, #14
-	lsls r2, r2, #17
-	bl Func_02003104
-	movs r1, #128
-	movs r2, #201
-	lsls r1, r1, #15
-	lsls r2, r2, #17
-	adds r0, r5, #0
-	bl Func_02003104
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200b308,"ax",%progbits
 	.balign 4
 	.global Func_02003308

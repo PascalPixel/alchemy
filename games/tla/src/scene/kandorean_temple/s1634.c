@@ -1,8 +1,4 @@
-// Draft, differ 16 of 193: the first lift (actors 13 and 15) of the
-// Kandorean Temple, run by gData_020062a0: rises, bobs and sinks, with
-// Func_02001804 as its twin. Left: the stack arguments of the Func_02005178
-// calls in another order (some of them are direct calls in the native).
-#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
+#include "local.h"
 #include "call.h"
 
 extern s32 gData_020062a0;
@@ -35,7 +31,9 @@ void Func_02001634(void) {
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += 0x40000;
     Func_02000cd8(15, 0x4ccc, 0x4ccc);
-    if (lift->y > -0x50000)
+    // y read as long, another alias set than the reads around it: GCSE then
+    // keeps the reload after this call; as lift->y, 2 instructions move.
+    if (*(long *)&lift->y > -0x50000)
       ObjectMotion_SetActionVariant(13, 2);
     if (lift->y >= 0) {
       Call6((void (*)())Func_02005178, 0, 0, 1, 1, 27, 12);
@@ -59,13 +57,19 @@ void Func_02001634(void) {
   } else {
     lift->y += -0x40000;
     Func_02000cf8(15, 0x4ccc, 0x4ccc);
-    if (lift->y < -0x50000)
+    // y read as long, as above.
+    if (*(long *)&lift->y < -0x50000)
       ObjectMotion_SetActionVariant(13, 3);
     if (lift->y <= -0x140000) {
+      /* FAKEMATCH(temporary): the timer pointer's own address taken, which
+       * orders the stack arguments of the 2280 call as the native does; as
+       * *timer = 0, 6 of 193 instructions differ in tla-en. */
+      s32 **timerRef = &timer;
+
       Func_02005388(245);
       Func_02005230(13, 0, 0);
       Func_02005230(15, 0, 0);
-      *timer = 0;
+      **timerRef = 0;
     }
   }
   gData_020062a0++;

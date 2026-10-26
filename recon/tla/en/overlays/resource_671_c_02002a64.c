@@ -1,12 +1,13 @@
-// Draft, differ 24 of 521: written from the listing with the scene-layer
-// wrappers of s253c.c, where it adopts after Func_020027cc. Its Func_0200578c
-// calls go through s253c.c's Func_0200578c_ArgsFirst (the two values pinned to
-// r1 and r2), which sets the id last as the native does at all but the first
-// call of the if branch (38 to 24). Left: that call sets the id before the 20;
-// the counter at event work 0x1c4 swaps r2 and r3 in the else branch (also as a
-// pointer local, the work base in a local, or read and written apart); the
-// speed 0xc000 finishes one row early; the second party-state address takes r2
-// where the native has r3. Tried: call.h Call3, unprototyped, u8, s16 or u16
+// Draft, differ 4 of 521 under -mthumb-slow-loads: written from the listing
+// with the scene-layer wrappers of s253c.c, where it adopts after
+// Func_020027cc. Its Func_0200578c calls go through s253c.c's
+// Func_0200578c_ArgsFirst (the two values pinned to r1 and r2), which sets the
+// id last as the native does at all but the first call of the if branch (38 to
+// 24). The else branch's 0x6007 in a local set early fixes the event work
+// counter's registers (24 to 4, alchemy permute). Left: the if branch's
+// Func_0200578c(7, 256, 20) sets the id before the 20, and the speed 0xc000
+// finishes one row early (lsls r5 before adds r6); empty asms or one-pass
+// blocks after any one statement do not move either. Tried: call.h Call3, unprototyped, u8, s16 or u16
 // ids, an argument barrier in the wrapper (124) or in a do-while macro (67).
 // UiText_OpenMessageAtObject is unprototyped, as the native's argument order
 // needs (40 to 38).
@@ -138,6 +139,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
 
 void Func_02002a64(void) {
   s32 speed;
+  s32 cue;
 
   Func_020056b4();
   Func_0200580c(0);
@@ -162,6 +164,10 @@ void Func_02002a64(void) {
   Func_02005764_(23, 0);
   Func_020057bc()->motionFlags = 0;
   Func_020057a4(0xcccc, 0x1999);
+  /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
+   * gives the event work counter r3 and r2 as the native has them; as
+   * Func_02005764(0x6007, 0), 24 of 521 instructions differ in tla-en. */
+  cue = 0x6007;
   Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
   Actor_Turn(gPartyState.currentOwner, 0, 0);
@@ -190,7 +196,7 @@ void Func_02002a64(void) {
     Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
     Func_02005774_(7, 0x6000);
     Object_SetModeById(7, 3);
-    Func_02005764(0x6007, 0);
+    Func_02005764(cue, 0);
   }
   Func_02005774_(23, 0x8000);
   Motion_SetModeAndWaitAnimation(23, 4);

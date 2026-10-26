@@ -1,11 +1,3 @@
-// Draft, differ 18 of 467: Eastern Alhafra's setup: by flags 0x8a7, 0x905 and
-// 0x90f places actors 25 to 31 (Func_02004b04) and sets their modes and
-// sprite flags, opens the passages (Func_02004a5c and Func_02004a54) once
-// flag 0x905 is set, handles entrance 99 (placing actors 4, 26 and 28 to 31
-// and setting the entrance and the secondary entrance to 1), then sets up
-// the rest of the map's objects (8, 9, 12 to 24) by flags 0x8a2, 0x8a6 and
-// 0x8ab. Returns 0. Left: for objects 18 and 20 the native copies the object to
-// r2 before marking it solid, and the branch over that block is 4 bytes longer.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -129,7 +121,12 @@ s32 Func_02000b18(void) {
   flag = Value1(GameFlag_Test, 0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
-    object->collisionFlags |= 8;
+    /* FAKEMATCH(one-pass): the solid bit set in a once-only block, which lays
+     * out the branch over this block as the native does; as a plain
+     * statement, 18 of 467 instructions differ in tla-en. */
+    do {
+      object->collisionFlags |= 8;
+    } while (0);
     object = OBJECT(19);
     object->motionFlags = flag;
     object->y = 0x100000;

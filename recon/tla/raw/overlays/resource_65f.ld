@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/garoh/s0808.o"(.text)
         "*/games/tla/src/scene/garoh/gate.o"(.text)
         "*/games/tla/src/scene/garoh/chime.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x02008aa8)
+        "*/games/tla/src/scene/garoh/s0aa8.o"(.text)
         "*/games/tla/src/scene/garoh/prepare.o"(.text)
         "*/games/tla/src/scene/garoh/s0be4.o"(.text)
         "*/games/tla/src/scene/garoh/s0d30.o"(.text)

@@ -1,5 +1,3 @@
-// Draft, differ 4 of 56: Func_02001820 (resource_655_c_02001820.c) over the
-// eight records at gData_0200410e; the same remaining difference.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -49,8 +47,8 @@ struct CellRecord {
   u16 unk06[3];
 };
 
-extern const u16 gData_02003fda[];
-extern const struct CellRecord gData_0200410e[];
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
@@ -83,21 +81,26 @@ static __inline__ void Wait(s32 frames) {
   WaitFrames(frames);
 }
 
-void Func_020018a8(void) {
-  const u16 *cell = &gData_0200410e[0].present;
+void Func_02001820(void) {
+  const u16 *cell = &gData_02004066[0].present;
   s32 flag = 0x240;
   u32 i;
+  const u16 *dest;
 
-  for (i = 0; i <= 7; i++) {
+  for (i = 0; i <= 13; i++) {
     if (Flag_Test(0x109) != 0) {
       if (Flag_Test(flag) != 0) {
         s32 x;
         s32 y;
 
-        cell = &gData_0200410e[i].x;
+        cell = &gData_02004066[i].x;
         x = *cell++;
         y = *cell++;
-        Func_02003be0(gData_02003fda[0], gData_02003fda[1], x, y, 1, 1);
+        /* FAKEMATCH(temporary): the destination table through a local set here,
+         * which loads its first halfword before the 1 is built; as
+         * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */
+        dest = gData_02003fd2;
+        Func_02003be0(dest[0], dest[1], x, y, 1, 1);
       }
     } else {
       if (*cell != 0)

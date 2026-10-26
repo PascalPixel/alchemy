@@ -103,6 +103,9 @@ L_0200b762:
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Value0((s32 (*)())Func_02003604);
+  /* FAKEMATCH(temporary): the table's address in a local set after the call,
+   * which makes it the load's base register; as gData_02005d8c's address
+   * added in place, 2 of 211 instructions differ in tla-en. */
   table = gData_02005d8c;
   Call4((void (*)())Func_020048a4, 19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Call2((void (*)())Object_SetModeById, 15, 5);

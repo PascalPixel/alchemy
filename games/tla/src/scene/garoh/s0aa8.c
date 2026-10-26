@@ -1,6 +1,4 @@
-// Draft, differ 6 of 128: Garoh's map setup, choosing each room's screen effect
-// and its entry steps by scene and entrance. Left: register choice.
-#include "../../../../games/tla/src/scene/garoh/garoh.h"
+#include "garoh.h"
 #include "party_state.h"
 #include "event_work.h"
 #include "call.h"
@@ -30,8 +28,13 @@ s32 Func_02000aa8(void) {
   } else if (gPartyState.scene == (s32)&SceneId_Ov65FRoom5) {
     ObjectMotion_SetActionVariant(13, 1);
     ObjectMotion_SetActionVariant(14, 1);
-    if (GameFlag_Test(0x91f))
-      Value4((s32 (*)())Func_02005214, 10, 0x1480000, 0xa20000, 0x4000);
+    if (GameFlag_Test(0x91f)) {
+      /* FAKEMATCH(temporary): the angle in its own local; as Value4(...,
+       * 0x4000), 4 of 128 instructions differ in tla-en. */
+      s32 angle = 0x4000;
+
+      Value4((s32 (*)())Func_02005214, 10, 0x1480000, 0xa20000, angle);
+    }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
     Func_020052f4(0);
     if (gPartyState.entrance == 6) {

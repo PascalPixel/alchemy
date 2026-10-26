@@ -26,17 +26,22 @@
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
 
-// Listing 571 instructions, draft 571, differ 36 (2026-10-15). Left: the
-// spill slots of target and of the screen point's address are swapped
-// (sp+24 and sp+28; 8 rows), and rows one place apart (constants and
-// stores around the heap base, the blitter's stacked arguments, pool
-// loads).
+// Listing 571 instructions, draft 571, differ 24 (2026-10-26). target is
+// declared in a block opened where it is first set: its pseudo is then
+// numbered after the screen point's address, and the two take their spill
+// slots in the native's order (target at sp+24, the address at sp+28;
+// 34 to 24). Left: rows one place apart (constants and stores around the
+// heap base, the blitter's stacked arguments, pool loads), the known
+// store-then-load scheduling limit; an empty asm before the heap reads
+// fixes the prologue's two rows (22).
 
 // Tried:
 // ☀️'s body with The Lost Age's changes                      42
 // the preparer's two arrays declared before the position,
 // as the native frame has them (screen at sp+84)          42 -> 36
 // declaration order, a greedy sweep of 12 locals           36
+// target in a block from its first assignment (kept)       34 -> 24
+// barriers at every statement, one at a time               22
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -121,7 +126,6 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   s32 frame;
   BlitterPair draw;
   s32 *camera;
-  struct MotionObject *target;
   struct MotionObject *actor;
   s32 screen[3];
   s32 otherPoint[3];
@@ -153,140 +157,144 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
   actor = GetBattleObjectSlotFar(effect->actor)->object;
-  target = GetBattleObjectSlotFar(effect->actors[0])->object;
-  for (i = 0; i != 8; i++) {
-    struct EffectStep *rock = &work->particles[i];
+  {
+    struct MotionObject *target =
+        GetBattleObjectSlotFar(effect->actors[0])->object;
 
-    rock->x = actor->x;
-    rock->y = 0x420000;
-    rock->z = actor->z;
-    rock->velocityX = (i * 0x500000) >> 5;
-    rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
-    rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
-    if (rock->x > 0)
-      rock->velocityX = -rock->velocityX;
-    rock->variant = 1;
-  }
-
-  for (frame = 0; frame != 96; frame++) {
-    // The background takes on the portal's colours from frame 17.
-    if (frame > 16)
-      Func_0815f0a0((s32)&ResourceId_PortalSheet);
-
-    // With its Djinn prelude, the Djinn hovers over the anchor and rises
-    // off from frame 17; the first four frames add a bright copy.
-    if (effect->prelude == 1) {
-      s32 angle = frame << 11;
-      s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
-      s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
-
-      if (frame > 16)
-        y = y - frame * 2 + 32;
-      if (effect->side == 1)
-        BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                 COMPOSITE_CLIP_Y |
-                                                 COMPOSITE_FLIP_X));
-      else
-        BattleEffect_LoadBlitter(
-            HEAP_BLITTER_ALTERNATE,
-            BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      if (frame <= 3)
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
-                                                 x, y, 20, 40);
-      Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-      draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
-    }
-
-    // Every other frame each chip takes a new shape (3 to 8) and flip.
-    if ((frame & 1) == 0) {
-      for (i = 0; i != 32; i++) {
-        struct EffectStep *chip = &work->particles[FIRST_CHIP + i];
-
-        chip->velocityX = Random16() % 6 + 3;
-        chip->velocityY = Data_08198524[Random16() & 3];
-      }
-    }
-
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera, camera + 3);
-    for (i = 0; i != ROCK_COUNT; i++) {
+    for (i = 0; i != 8; i++) {
       struct EffectStep *rock = &work->particles[i];
 
-      if (rock->variant == 1) {
-        // Rock i flies from frame 2i: the rock, its highlight (two shapes
-        // in turn, two frames each) and its four chips.
-        if (frame > i * 2) {
-          s32 x;
-          s32 y;
+      rock->x = actor->x;
+      rock->y = 0x420000;
+      rock->z = actor->z;
+      rock->velocityX = (i * 0x500000) >> 5;
+      rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
+      rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
+      if (rock->x > 0)
+        rock->velocityX = -rock->velocityX;
+      rock->variant = 1;
+    }
 
-          EffectPosition_ProjectPoint(&rock->x, &position);
-          position.x >>= 1;
-          x = position.x - 12;
-          y = position.y - 24;
-          draw[0](canvas, work->sheet, x, y, 24, 48);
-          if ((frame & 3) <= 1)
-            draw[0](canvas, work->sheet + Data_0819853a[1],
-                    x + Data_0819854c[1], y + Data_08198555[1],
-                    Data_08198528[1], Data_08198531[1]);
-          else
-            draw[0](canvas, work->sheet + Data_0819853a[2],
-                    x + Data_0819854c[2], y + Data_08198555[2],
-                    Data_08198528[2], Data_08198531[2]);
-          for (j = 0; j != CHIPS_PER_ROCK; j++) {
-            struct EffectStep *chip =
-                &work->particles[FIRST_CHIP + i * CHIPS_PER_ROCK + j];
-            s32 chipX;
-            s32 chipY;
+    for (frame = 0; frame != 96; frame++) {
+      // The background takes on the portal's colours from frame 17.
+      if (frame > 16)
+        Func_0815f0a0((s32)&ResourceId_PortalSheet);
 
-            // A max blitter with the chip's own flip, for this chip only.
-            Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, chip->velocityY,
-                          BLIT_MAX);
-            draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-            if (chip->velocityY & COMPOSITE_FLIP_X)
-              chipX = x - Data_08198528[chip->velocityX] -
-                      Data_0819854c[chip->velocityX] + 24;
-            else
-              chipX = x + Data_0819854c[chip->velocityX];
-            if (chip->velocityY & COMPOSITE_FLIP_Y)
-              chipY = y - Data_08198531[chip->velocityX] -
-                      Data_08198555[chip->velocityX] + 48;
-            else
-              chipY = y + Data_08198555[chip->velocityX];
-            draw[1](canvas, work->sheet + Data_0819853a[chip->velocityX], chipX,
-                    chipY, Data_08198528[chip->velocityX],
-                    Data_08198531[chip->velocityX]);
-            Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
-          }
-          rock->x += rock->velocityX;
-          rock->y += rock->velocityY;
-          rock->z += rock->velocityZ;
+      // With its Djinn prelude, the Djinn hovers over the anchor and rises
+      // off from frame 17; the first four frames add a bright copy.
+      if (effect->prelude == 1) {
+        s32 angle = frame << 11;
+        s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
+        s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
+
+        if (frame > 16)
+          y = y - frame * 2 + 32;
+        if (effect->side == 1)
+          BattleEffect_LoadBlitter(
+              HEAP_BLITTER_ALTERNATE,
+              BLITTER(BLIT_ADDITIVE,
+                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+        else
+          BattleEffect_LoadBlitter(
+              HEAP_BLITTER_ALTERNATE,
+              BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+        if (frame <= 3)
+          ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
+                                                   x, y, 20, 40);
+        Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      }
+
+      // Every other frame each chip takes a new shape (3 to 8) and flip.
+      if ((frame & 1) == 0) {
+        for (i = 0; i != 32; i++) {
+          struct EffectStep *chip = &work->particles[FIRST_CHIP + i];
+
+          chip->velocityX = Random16() % 6 + 3;
+          chip->velocityY = Data_08198524[Random16() & 3];
         }
-        // Sixteen frames later it is pulled towards the target, 20 high,
-        // and slowed until frame 2i + 85; below y 20 it hits.
-        if (frame > i * 2 + 16) {
-          rock->velocityX += (target->x - rock->x) >> 8;
-          rock->velocityY += (0x140000 - rock->y) >> 8;
-          rock->velocityZ += (target->z - rock->z) >> 8;
-          if (frame < i * 2 + 85) {
-            rock->velocityX = rock->velocityX * 60 / 64;
-            rock->velocityY = rock->velocityY * 60 / 64;
-            rock->velocityZ = rock->velocityZ * 60 / 64;
+      }
+
+      Render_ResetTransformState();
+      Transform_SetLookAt(camera, camera + 3);
+      for (i = 0; i != ROCK_COUNT; i++) {
+        struct EffectStep *rock = &work->particles[i];
+
+        if (rock->variant == 1) {
+          // Rock i flies from frame 2i: the rock, its highlight (two shapes
+          // in turn, two frames each) and its four chips.
+          if (frame > i * 2) {
+            s32 x;
+            s32 y;
+
+            EffectPosition_ProjectPoint(&rock->x, &position);
+            position.x >>= 1;
+            x = position.x - 12;
+            y = position.y - 24;
+            draw[0](canvas, work->sheet, x, y, 24, 48);
+            if ((frame & 3) <= 1)
+              draw[0](canvas, work->sheet + Data_0819853a[1],
+                      x + Data_0819854c[1], y + Data_08198555[1],
+                      Data_08198528[1], Data_08198531[1]);
+            else
+              draw[0](canvas, work->sheet + Data_0819853a[2],
+                      x + Data_0819854c[2], y + Data_08198555[2],
+                      Data_08198528[2], Data_08198531[2]);
+            for (j = 0; j != CHIPS_PER_ROCK; j++) {
+              struct EffectStep *chip =
+                  &work->particles[FIRST_CHIP + i * CHIPS_PER_ROCK + j];
+              s32 chipX;
+              s32 chipY;
+
+              // A max blitter with the chip's own flip, for this chip only.
+              Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, chip->velocityY,
+                            BLIT_MAX);
+              draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+              if (chip->velocityY & COMPOSITE_FLIP_X)
+                chipX = x - Data_08198528[chip->velocityX] -
+                        Data_0819854c[chip->velocityX] + 24;
+              else
+                chipX = x + Data_0819854c[chip->velocityX];
+              if (chip->velocityY & COMPOSITE_FLIP_Y)
+                chipY = y - Data_08198531[chip->velocityX] -
+                        Data_08198555[chip->velocityX] + 48;
+              else
+                chipY = y + Data_08198555[chip->velocityX];
+              draw[1](canvas, work->sheet + Data_0819853a[chip->velocityX],
+                      chipX, chipY, Data_08198528[chip->velocityX],
+                      Data_08198531[chip->velocityX]);
+              Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+            }
+            rock->x += rock->velocityX;
+            rock->y += rock->velocityY;
+            rock->z += rock->velocityZ;
           }
-          if (rock->y < 0x140000) {
-            work->shakeFrames = 8;
-            rock->variant = 0;
-            Audio_PlayCue(134);
-            Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
-            Func_08118088(effect->actors[0], 4);
+          // Sixteen frames later it is pulled towards the target, 20 high,
+          // and slowed until frame 2i + 85; below y 20 it hits.
+          if (frame > i * 2 + 16) {
+            rock->velocityX += (target->x - rock->x) >> 8;
+            rock->velocityY += (0x140000 - rock->y) >> 8;
+            rock->velocityZ += (target->z - rock->z) >> 8;
+            if (frame < i * 2 + 85) {
+              rock->velocityX = rock->velocityX * 60 / 64;
+              rock->velocityY = rock->velocityY * 60 / 64;
+              rock->velocityZ = rock->velocityZ * 60 / 64;
+            }
+            if (rock->y < 0x140000) {
+              work->shakeFrames = 8;
+              rock->variant = 0;
+              Audio_PlayCue(134);
+              Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
+              Func_08118088(effect->actors[0], 4);
+            }
           }
         }
       }
+      Func_08158ce0(16, 16);
+      ObjectGroup_TickMemberTimers();
+      work->transferPending = 1;
+      WaitFrames(1);
     }
-    Func_08158ce0(16, 16);
-    ObjectGroup_TickMemberTimers();
-    work->transferPending = 1;
-    WaitFrames(1);
   }
 
   // Teardown.

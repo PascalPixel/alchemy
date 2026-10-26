@@ -40,6 +40,13 @@
 // the native builds the constant at each call            88 -> 74
 // declaration order, a greedy sweep of 18 locals           74
 
+// 2026-10-26, under -mthumb-slow-loads: differ 30 of 676, the instructions
+// and registers otherwise the native's. What remains is single rows where
+// the native issues a spill or argument store before a load (the known
+// store-then-load scheduling limit); barriers and one-pass blocks at each
+// statement, statement moves and each local scoped to a block gain only
+// the prologue's row or rows of that kind.
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

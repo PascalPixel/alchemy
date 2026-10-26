@@ -1,4 +1,4 @@
-// Near miss of BattleEffect_RunQuake, effect kind 1: differ 58 of 444 (draft 444).
+// Near miss of BattleEffect_RunQuake, effect kind 1: differ 42 of 444 (draft 444).
 
 // Twin: The Broken Seal's BattleEffect_RunQuake (effect.c), call for call.
 // The Lost Age reads the effect from its argument, takes its heap blocks as
@@ -8,15 +8,19 @@
 // ResourceId_RockWallSheet is row 0x14e of directory.s (asset
 // BattleEffect_RockWallSheet), not yet named there.
 
-// Left: the native sets the buffer (r5) and both band-loop counters (r6,
-// r7) before the first call and loads the map buffer again for
-// Iwram_CopyWords; here they start after the copy. The rest is single-row
-// scheduling (immediates and pool loads one slot apart).
+// Left (differ 42, 2026-10-26; the copy through a local inline forwarder,
+// as f143d80.c makes it and as The Broken Seal's IWRAM call layer makes
+// every IWRAM call, so that the map buffer is loaded again for it: 44 to
+// 42): the native sets the buffer (r5) and both band-loop counters (r6,
+// r7) before the first call; here they start after the copy. The rest is
+// single-row scheduling (immediates and pool loads one slot apart).
 
 // Tried (trials 0 and 1, 2026-10-15): the map buffer read directly (98),
 // counters and buffer set at the top (382), the buffer at the top only
 // (76), do-while with an explicit offset (382), alchemy permute 6 minutes
-// (58).
+// (58). 2026-10-26: the buffer set at the top with the copy reading
+// Ram_MapCellBuffer (48 to 58), and with the counters and a row offset
+// set there too (364 to 374).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -35,6 +39,11 @@
 #include "ram_buffer.h"
 #include "system.h"
 #include "transform.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
@@ -112,7 +121,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   // Copy the background's characters and cut the band out of them.
   cells = Ram_MapCellBuffer;
-  Iwram_CopyWords(cells, (void *)0x06008000, 0x8000);
+  CopyWords_(cells, (void *)0x06008000, 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {

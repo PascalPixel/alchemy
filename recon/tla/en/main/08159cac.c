@@ -41,6 +41,13 @@
 // alchemy permute, 6 minutes: only a canvas load moved
 // past the call, which the native does not do             not kept
 
+// 2026-10-26, under -mthumb-slow-loads: differ 14 of 409, the instructions
+// and registers otherwise the native's. What remains is single rows where
+// the native issues a spill or argument store before a load (the known
+// store-then-load scheduling limit); barriers and one-pass blocks at each
+// statement, statement moves and each local scoped to a block gain only
+// the prologue's row or rows of that kind.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

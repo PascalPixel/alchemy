@@ -8,15 +8,29 @@
 // are rows 0x17c and 0x17e of directory.s (assets BattleEffect_IceChipSheet and
 // BattleEffect_SparkleDots), not yet named there.
 
-// Draft: differ 114 of 753 (draft 755).
+// Draft: differ 34 of 753 (draft 753), tla-en, 2026-10-26 (78 under
+// -mthumb-slow-loads before the tagged dead store below).
 
-// Left: the pillar loop (12 rows) and the frame loop's test (11) differ in
-// allocation, and two extra instructions sit in the frame loop's setup;
-// the rest is order residue in the three draws.
+// What moved it: the native shares one call between the two pillar draws
+// (the MAX one jumps into the other's mov lr, r4; bl). jump2 cross-jumps
+// them only when the second draw's block does not end in its call: flow
+// puts a no-op use after a call that ends a block before a label, and that
+// use stops the cross-jump. A dead store after the second draw, which
+// life analysis deletes after the blocks are made, leaves the call last
+// and the two calls shared: 78 to 34, the instruction count exact.
+
+// Left: the prologue's argument spill before the heap base and single
+// rows where the native issues a store before a load (the frame loop's
+// setup, the draws' stacked arguments): the known store-then-load
+// scheduling limit.
 
 // Tried (2026-10-15):
 // - greedy declaration-order sweep, two passes: no gain.
 // - a separate counter for the frame loop: 288.
+// Tried (2026-10-26): the timing and spot tables as [][3] and [][2]
+// arrays (no change); the second draw through draw[0] (97); the MAX draw
+// followed by continue (no change), or wrapped in a one-pass block (no
+// change: its labels are gone before flow makes the blocks).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -207,6 +221,11 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
                     Data_08198322[i * 2],
                     Data_08198322[i * 2 + 1] - (height = Data_08198378[cel]),
                     32, height);
+            /* FAKEMATCH(dead): a store flow deletes once the blocks are made,
+             * so this block ends in its call with no no-op after it and jump2
+             * shares the call with the MAX draw, as the native does; as plain
+             * C, 78 of 753 instructions differ in tla-en. */
+            height = 0;
           }
         }
       }

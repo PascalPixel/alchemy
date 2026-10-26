@@ -17,6 +17,9 @@ void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 /// label and the owner's name, or an empty-slot message. Measures each
 /// ability's name (result unused). Returns 1.
 s32 Func_080fd55c(s32 window) {
+  // The other editions skip the owner's name when the ability's name is wider
+  // than 10, and stay on their scaffolds: written so, the party state's address
+  // and the id mask stay in registers the native reloads at each use.
   s32 left;
   s32 top;
   s32 width;

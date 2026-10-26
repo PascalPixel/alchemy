@@ -132,8 +132,8 @@ void FieldEffect_UpdateMindReadWave(void) {
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
         particle->update = FieldEffect_SetCallbackWhenTargetUnset;
         // No shadow or outline, sprite priority 1.
-        sprite->palette = 0;
-        sprite->mode = 1;
+        sprite->flags = 0;
+        sprite->priority = 1;
         Object_SetMoveTargetFar((struct Object *)particle, from.x, from.y,
                                 from.z);
       }

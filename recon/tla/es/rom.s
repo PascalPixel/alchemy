@@ -709,12 +709,6 @@ PartyStatus_Draw:
 	.thumb_func
 SaveState_BuildSummaryHeader:
 	.incbin "baserom.gba", 0x000433c4, 0x00000194
-	.section .rom.000435a0, "ax"
-	.global Func_08043534
-	.type Func_08043534, %function
-	.thumb_func
-Func_08043534:
-	.incbin "baserom.gba", 0x000435a0, 0x000000c8
 	.section .rom.00043ad0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00043ad0, 0x000000d0

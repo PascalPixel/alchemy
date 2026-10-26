@@ -1,9 +1,13 @@
-// Draft, differ 26 of 122: a glow at cell (x, z): creates a blended object (type
+// Draft, differ 4 of 122: a glow at cell (x, z): creates a blended object (type
 // 288) there with sound 106, fades its blend in over 8 frames and out over 16
 // inside the object window, then copies the 1 by 2 cells from 64 columns across
 // (Func_02004cd8), clears the cell's high byte (Func_02000694) and removes the
-// object.
+// object. The copy goes through Call6, which keeps the stack arguments 1 and 2
+// in their own registers (called directly: 14). Left: the native builds the
+// display control's address after the window store before it and after the
+// blend store at the end (an empty asm or one-pass block there: 8 or more).
 #include "types.h"
+#include "lib/call.h"
 #include "io_reg.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
@@ -51,7 +55,7 @@ fadeOut:
     goto fadeOut;
   x >>= 4;
   cellZ = (z >> 4) - 1;
-  Func_02004cd8(65, 1, x + 64, cellZ, 1, 2);
+  Call6((void (*)())Func_02004cd8, 65, 1, x + 64, cellZ, 1, 2);
   Func_02000694(0, x, cellZ, 0xff00);
   Func_02004cb0(object);
   Func_02004d48();

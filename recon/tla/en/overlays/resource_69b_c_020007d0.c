@@ -5,7 +5,8 @@
 // into r2 (ldrb r3; adds r2, r0, #0; ands r3, r2; movs r2, #4; orrs r3, r2);
 // this draft reads the byte into r2. Tried: the sprite as a local, the cast
 // store, i < 22 with i * 5 (24), the declarations in another order; permute 3
-// minutes found nothing.
+// minutes found nothing, nor did explicit masks on byte 9 (14) or 12 more
+// minutes of permute; a mask pinned to r2 drops the copy (11).
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"

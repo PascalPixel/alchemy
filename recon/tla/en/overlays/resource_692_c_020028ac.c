@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 120; left: as
+// Func_020021c0 in this overlay (resource_692_c_020021c0.c), the effect
+// pointer's copy before the motionFlags store.
 // Near miss of Func_020028ac of overlay 692 (120 instructions, 2 differ): one
 // scheduling row. After OverlayObject_PrepareObject the native clears the
 // motion flags byte before it copies the returned actor into r7; the draft

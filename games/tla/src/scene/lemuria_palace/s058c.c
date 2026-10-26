@@ -1,5 +1,3 @@
-// Draft, differ 12 of 2574: translated from its listing; names and structure still
-// to do.
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
@@ -284,10 +282,8 @@ L_0200863c:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Func_020003a0();
   r8_1 = 1;
-  r6_1 = (s32)Data_02003090;
-  r5_2 = (s32)Data_02003024;
-  FIELD_AT(r6_1, s32, 0) = r8_1;
-  FIELD_AT(r5_2, s32, 0) = r7_1;
+  *(s32 *)Data_02003090 = r8_1;
+  *(s32 *)Data_02003024 = r7_1;
   v9 = Func_02002124(153);
   Func_02000510();
   Value3((s32 (*)())Func_0200208c, 4, 0x100, 0);
@@ -300,9 +296,9 @@ L_0200863c:
   v10 = Func_020001d8(13);
   Func_02000550();
   Call1((void (*)())FieldEvent_WaitFrames, 30);
-  FIELD_AT(r6_1, s32, 0) = r7_1;
-  FIELD_AT(r5_2, s32, 0) = r8_1;
-  v11 = Func_02002124(153);
+  *(s32 *)Data_02003090 = r7_1;
+  *(s32 *)Data_02003024 = r8_1;
+  Call1((void (*)())Func_02002124, 153);
   Func_02000510();
   Call3((void (*)())Func_0200206c, 0x200d, 0, 10);
   Call3((void (*)())Func_0200206c, 14, 0, 5);

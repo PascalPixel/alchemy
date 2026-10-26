@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 63; left: the native reads
+// position[1] at (index * 8 + 4) + base + 2, reusing position[0]'s offset; this
+// form adds 6 to the scaled index. A position pointer, struct and s16 types
+// were worse.
 // Draft, differ 8 of 63 (10 before). The (owner, 0, -4) call and the table
 // call now go through call.h, which fixes the -4 halves. Left: the native
 // shifts the index after Func_02001344 returns and reads the second halfword

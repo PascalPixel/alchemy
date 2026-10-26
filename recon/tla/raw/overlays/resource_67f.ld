@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/izumo_ruins/entry.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/izumo_ruins/s0038.o"(.text)
         "*/resource_67f_overlay.o"(.text.x020080a4)
         "*/games/tla/src/scene/izumo_ruins/s0128.o"(.text)
         "*/resource_67f_overlay.o"(.text.x020081d0)

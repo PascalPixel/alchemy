@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 94; left: the sprite's
+// priority byte loads before the radius store. Read and written through a
+// signed char pointer, the load follows the store (the store and the bitfield
+// are in unrelated alias sets) but still precedes the zero's copy out of r8.
 // Draft, differ 2 of 94 under -mthumb-slow-loads: adopted in ab36ea7bce and
 // exact under the old options; with the new option it no longer compiles
 // exactly, so it is back on its listing.

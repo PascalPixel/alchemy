@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 37; left: a load issues
+// two rows before the native's.
 // Draft, differ 2 of 37: the native builds 728 before it reloads gFrameCount
 // for the sine; the draft loads first. Tried: 728 * gFrameCount, an s32 cast, a
 // u32 local, + 0xf800, and a 1-minute permute (nothing better). Through the

@@ -1,9 +1,3 @@
-// Near miss, differ 16 (2026-10-15): written from the listing; scheduling is
-// left. The listing loads the sprite pointer (effect->animation) after the two
-// scale stores, where this source loads it before them; it stores REG_WINOUT
-// before building REG_DISPCNT's address, where this source stores it after; and
-// it places its mid-function literal pool (with the branch around it) before
-// the Func_020033e0 call, where this source places it after.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -55,9 +49,17 @@ void Func_020019a8(void) {
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x18000;
+  /* FAKEMATCH(barrier): the sprite pointer loads after the two scale stores,
+   * as in the native; as plain statements, 6 of 98 instructions differ in
+   * tla-en. */
+  asm("");
   sprite = effect->animation;
   ((struct SpriteView *)sprite)->mode = 2;
-  REG_WINOUT = 0x2f3f;
+  /* FAKEMATCH(one-pass): REG_WINOUT is stored before REG_DISPCNT's address is
+   * built; as a plain store, 2 of 98 instructions differ in tla-en. */
+  do {
+    REG_WINOUT = 0x2f3f;
+  } while (0);
   REG_DISPCNT |= 0x8000;
   Func_020034b8(204);
   object->motionFlags = 3;

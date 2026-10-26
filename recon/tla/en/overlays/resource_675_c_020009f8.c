@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 103; left: the pool load
+// still rises above sub sp, as recorded below.
 // Near miss, differ 2 of 103: The Broken Seal's
 // StagedActor_PlacePairAtOffsetAndRun with this overlay's stubs. The native
 // order is sub sp; ldr r3, =gPartyState; str r1, [sp, #4]; str r2, [sp];

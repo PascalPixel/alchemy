@@ -1,15 +1,3 @@
-// Draft of Func_020001b0 (overlay 6B2, 303 instructions), differ 12: the scene
-// of Imil's voices (actors 8, 9, 11 and 12), written from the listing. Calls
-// with constants go through call.h's Call2 and Call3, Func_020005c0 through
-// Value3 (as Call3: differ 22; all direct: 135). Three scheduling differences
-// remain:
-// - the event work's frames store: the native builds 0x3000000 (copied to r8)
-// before it starts 436 (copied to r10); here 436 is started and copied first;
-// - actor 11: the native loads Func_02000060 into r5 between the timer's
-// address and its + 40; here after the timer's store;
-// - actor 12: the timer's address (+ 98) comes before its + 40 here, after it
-// in the native. Measured: both actors through one inline helper (differ 67).
-// alchemy permute, 6 minutes: nothing closer (differ 18 at best).
 #include "types.h"
 #include "party_state.h"
 #include "ram_buffer.h"
@@ -87,7 +75,13 @@ void Func_020001b0(void) {
   *((u8 *)actor + 99) = 0;
   actor->update = (void (*)(void))Func_02000060;
   actor = Object_GetById(12);
-  *((u8 *)actor + 98) = ((Random16Far() * 80) >> 16) + 40;
+  {
+    /* FAKEMATCH(temporary): the timer's + 40 comes before its address, as in
+     * the native; as a direct store, 2 of 303 instructions differ in tla-en. */
+    u8 timer = ((Random16Far() * 80) >> 16) + 40;
+
+    *((u8 *)actor + 98) = timer;
+  }
   *((u8 *)actor + 99) = 2;
   actor->update = (void (*)(void))Func_02000060;
   Call2((void (*)())Func_02000600, 13, 14);

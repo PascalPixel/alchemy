@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 94; left: in two places a
+// load (the object's x, then a pool constant) issues one row earlier than the
+// native's.
 // Draft, differ 8 of 94: two objects of kind 674 spawned beside object 13
 // and sent off. Left: three load-and-constant pairs come in the other order
 // (the native loads x and y before it starts 0x100000 after the cue call,

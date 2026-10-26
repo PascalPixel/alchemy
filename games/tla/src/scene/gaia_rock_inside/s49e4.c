@@ -1,8 +1,3 @@
-// Draft, differ 10 of 53: the native adds the cell offset to the layer's cells
-// (adds r2, r2, r3) and shifts z after building 0x1a8; this draft adds them the
-// other way and the party state's pool load moves one slot. Tried: the index
-// either way round, pointer arithmetic, z * 128, a u8 code, a minute of
-// alchemy permute (differ 8 at best, with registers changed).
 #include "../../../../games/tla/include/types.h"
 #include "../../../../games/tla/include/ram_buffer.h"
 #include "../../../../games/tla/include/map.h"
@@ -19,7 +14,8 @@ void Func_020049e4(void) {
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;
-    s32 code = cells[x + (z << 7)].collisionCode;
+    struct MapCell *cell = &cells[x + (z << 7)];
+    s32 code = cell->collisionCode;
 
     if (code >= 1 && code <= 230)
       *(u16 *)(event + 340) = code;

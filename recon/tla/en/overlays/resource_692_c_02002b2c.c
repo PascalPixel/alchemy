@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 75; left: as overlay 681's
+// Func_0200142c (resource_681_c_0200142c.c).
 // Draft, differ 2 of 75: overlay 692's copy of the function drafted in
 // resource_681_c_0200142c.c (overlay 681's Func_0200142c, differ 2 there), whose
 // header says what it is, what still differs and what was tried.

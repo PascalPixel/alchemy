@@ -1,10 +1,3 @@
-// Draft, differ 12 of 260: the Islets' two pushable stone pillars (objects 12
-// and 13) and their pressure plates: marks the plates at (12, 24) and
-// (7, 27) pressed or not, blocks the pillars' cells, and when pillar 12
-// first rests on (12, 26) or pillar 13 on (7, 29) (flags 0x210 and 0x211)
-// it sinks into place with cue 161; when both plates hold pillars the cells
-// are cleared, the bridge copied in (Func_02003e24) and flag 0x212 set.
-// Left: in both plate tests' else branches the native loads the second variable's address into r3 afresh where this draft keeps it in r6 (the branch over each pair of calls is 2 bytes shorter).
 #include "types.h"
 #include "object_runtime.h"
 #include "call.h"
@@ -34,13 +27,23 @@ void Func_020021d0(void) {
     Func_020020ec(gData_0200519c, gData_02005194, 1, 21);
     Func_020020ec(gData_0200519c, gData_02005194, 2, 0);
   } else {
-    Func_020020ec(gData_0200519c, gData_02005194, 3, 0);
+    /* FAKEMATCH(pin): the address pinned to r3 is loaded afresh, as in the
+     * native; as a plain read of gData_02005194, 6 of 260 instructions differ
+     * in tla-en. */
+    register s32 *z asm("r3") = &gData_02005194;
+
+    Func_020020ec(gData_0200519c, *z, 3, 0);
   }
   if (gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 27) {
     Func_020020ec(gData_02005198, gData_02005190, 1, 21);
     Func_020020ec(gData_02005198, gData_02005190, 2, 0);
   } else {
-    Func_020020ec(gData_02005198, gData_02005190, 3, 0);
+    /* FAKEMATCH(pin): the address pinned to r3 is loaded afresh, as in the
+     * native; as a plain read of gData_02005190, 6 of 260 instructions differ
+     * in tla-en. */
+    register s32 *z asm("r3") = &gData_02005190;
+
+    Func_020020ec(gData_02005198, *z, 3, 0);
   }
   Func_020020ec(first->x, first->z, 3, 255);
   Func_020020ec(second->x, second->z, 3, 255);

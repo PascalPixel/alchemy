@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 73; left: the animation
+// pointer (ldr r0, [r7, #76]) loads one row before the native's.
 // Near miss, differ 4 of 73 (21 before, 2026-10-12): rewritten with a struct;
 // the function returns 0 when the radius is under the step and 1 after two
 // steps. Two rows are left in another order, both in the first step only: the

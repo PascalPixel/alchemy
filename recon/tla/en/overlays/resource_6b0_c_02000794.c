@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 39; left: the parameter's
+// copy (adds r5, r0) comes first, after the first store in the native.
 // Draft, differ 2 of 39: the listing copies the object out of r0 after it
 // stores params.kind (add r4; movs; str; adds r5, r0); this draft copies it
 // first. Tried: a pointer local for the params (same); permute 3 minutes found

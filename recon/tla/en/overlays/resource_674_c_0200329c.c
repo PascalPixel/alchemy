@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 145; left: argument
+// constants of the first palette fade and the actor 9 placement are built in
+// another order (Call3 and Call4 forms measured, 6 at best with the two
+// placements through them).
 // Draft, differ 12 of 145 (the English listing; the Japanese one has no case
 // for entrance 5): the Islets' setup: sets BG layer priority, clears flag
 // 303 on entrance 2, queues two palette fades, places actors 9 and 10 when

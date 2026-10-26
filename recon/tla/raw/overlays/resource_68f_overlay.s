@@ -236,69 +236,6 @@ Func_020000b8:
 	.4byte BattleEffect_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200827c:
 	.4byte 0xffff0000
-	.section .text.x02008404,"ax",%progbits
-	.global Func_02000404
-	.thumb_func
-Func_02000404:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r2, #255
-	ldrh r3, [r0]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	beq .L_02008478
-	adds r7, r0, #0
-.L_02008418:
-	ldrh r0, [r7]
-	bl Object_GetById
-	movs r3, #4
-	ldrsh r2, [r7, r3]
-	movs r1, #0
-	mov r8, r2
-	adds r6, r0, #0
-	movs r3, #2
-	ldrsh r5, [r7, r3]
-	bl ObjectDispatch_SetSingleChildFlags
-	mov r2, r8
-	lsls r0, r2, #16
-	lsrs r0, r0, #16
-	bl GameFlag_Test
-	lsls r5, r5, #16
-	lsrs r5, r5, #16
-	adds r5, r5, r0
-	adds r1, r5, #0
-	adds r0, r6, #0
-	bl Func_02002f80
-	adds r2, r6, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r1, r6, #0
-	adds r1, #89
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	adds r3, r6, #0
-	adds r3, #100
-	mov r2, r8
-	strh r2, [r3]
-	adds r0, r6, #0
-	adds r7, #6
-	bl Func_02000338
-	movs r2, #255
-	ldrh r3, [r7]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_02008418
-.L_02008478:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x020085d0,"ax",%progbits
 	.balign 4
 	.global Func_020005d0
@@ -2804,63 +2741,6 @@ Func_02001e68:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200a094,"ax",%progbits
-	.global Func_02002094
-	.thumb_func
-Func_02002094:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r2, #255
-	ldrh r3, [r0]
-	lsls r2, r2, #8
-	adds r2, #255
-	sub sp, #4
-	cmp r3, r2
-	beq .L_0200a0f8
-	adds r7, r0, #0
-.L_0200a0aa:
-	ldrh r3, [r7]
-	mov r8, r3
-	mov r0, r8
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #89
-	movs r2, #2
-	ldrsh r6, [r7, r2]
-	ldrb r2, [r1]
-	movs r3, #4
-	ldrsh r4, [r7, r3]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	movs r1, #0
-	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r4, [sp, #0]
-	lsls r6, r6, #16
-	lsls r4, r4, #16
-	lsrs r4, r4, #16
-	lsrs r6, r6, #16
-	adds r5, #34
-	ldrb r3, [r5]
-	adds r2, r4, #0
-	mov r0, r8
-	adds r1, r6, #0
-	adds r7, #6
-	bl Func_02002184
-	movs r2, #255
-	ldrh r3, [r7]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_0200a0aa
-.L_0200a0f8:
-	add sp, #4
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x0200a100,"ax",%progbits
 	.global Func_02002100
 	.thumb_func

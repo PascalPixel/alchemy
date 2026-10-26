@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 177; left: the velocity
+// array's address is hoisted out of the loop by GCSE, as overlay 698's copy
+// records (resource_698_c_02001674.c).
 // Draft, differ 10 of 177: the leader drops into the room from above: the
 // screen fades in, the leader lands with seventeen dust effects, a shake and a
 // bounce. Overlay 671's Func_02002394 (whose draft holds the notes) is the same

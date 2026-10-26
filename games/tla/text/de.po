@@ -15790,27 +15790,27 @@ msgctxt "MsgSlotsControls"
 msgid "03897"
 msgstr "{button_icon:1}:Starten     {button_icon:2}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "03898"
 msgstr "{button_icon:4}:Anhalten"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "03899"
 msgstr "Wähle Slots, die stehen blei-"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "03900"
 msgstr "ben sollen und zieh am Hebel!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "03901"
 msgstr "{button_icon:1}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "03902"
 msgstr "{button_icon:1}:Drehen"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "03903"
 msgstr "{button_icon:1}:Starten"
 
@@ -15822,11 +15822,11 @@ msgctxt "message"
 msgid "03905"
 msgstr "{button_icon:2}:Aufhören"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "03906"
 msgstr "Alle Slots stehen!"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "Du kannst nicht drehen!"
 

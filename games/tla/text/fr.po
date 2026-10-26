@@ -15739,27 +15739,27 @@ msgctxt "MsgSlotsControls"
 msgid "03897"
 msgstr "{button_icon:1}:Jouer      {button_icon:2}:Quitter"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "03898"
 msgstr "{button_icon:4}:Stopper"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "03899"
 msgstr "Quand vous aurez choisi quelles"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "03900"
 msgstr "roues bloquer, tirez le levier!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "03901"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "03902"
 msgstr "{button_icon:1}:Joue"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "03903"
 msgstr "{button_icon:1}:Jouer"
 
@@ -15771,11 +15771,11 @@ msgctxt "message"
 msgid "03905"
 msgstr "{button_icon:2}:Quitter"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "03906"
 msgstr "En les bloquant toutes,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "vous ne jouerez pas!"
 

@@ -1,10 +1,17 @@
-// Draft, differ 45 of 218: Kibombo's setup: unless flag 265 is set, places
-// actor 11 and, arriving by entrance 19 with unit 7 in the party (flag 7),
-// restores unit 7's HP and PP, sets their gauges, clears two of its bytes,
-// sets flag 0x92f, clears 0x92e and removes it from the party; then saves
-// four palette colours, frees actors 30 to 35, sets flags 0x202 and 0x20b,
-// places actor 29, places actors 21 and 26 to 28 when flag 0x8fd is set,
-// sets flag 0x86b and fades in with Func_02002c34 scheduled. Left: the native clamps each gauge with the zero built before its sign test, stores the minimum gauge 1 from a register where this draft loads it from the pool, and places its first literal pool after the guard's jump; the rest matches.
+// Draft, differ 35 of 218 (was 45): Kibombo's setup: unless flag 265 is set,
+// places actor 11 and, arriving by entrance 19 with unit 7 in the party (flag
+// 7), restores unit 7's HP and PP, sets their gauges, clears two of its bytes,
+// sets flag 0x92f, clears 0x92e and removes it from the party; then saves four
+// palette colours, frees actors 30 to 35, sets flags 0x202 and 0x20b, places
+// actor 29, places actors 21 and 26 to 28 when flag 0x8fd is set, sets flag
+// 0x86b and fades in with Func_02002c34 scheduled. Measured: the gauge clamp
+// builds its zero before the sign test when the result starts at 0 and takes
+// the gauge only when it is not negative (45 to 35; a ternary in either order
+// or an if-else chain does not). Left: the minimum gauge 1 is a halfword
+// constant this draft loads from the literal pool where the native has movs
+// (u16 or s16 stores alike), and that pool word moves the first literal pool
+// inside the guarded block, so the guard needs a long branch and every later
+// pc offset shifts.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -32,7 +39,16 @@ void Func_02002c34(void);
 static __inline__ s32 Gauge(s32 value, s32 max) {
   s32 gauge = (value << 14) / max;
 
-  return gauge > 0x4000 ? 0x4000 : gauge >= 0 ? gauge : 0;
+  s32 result;
+
+  if (gauge > 0x4000)
+    result = 0x4000;
+  else {
+    result = 0;
+    if (gauge >= 0)
+      result = gauge;
+  }
+  return result;
 }
 
 void Func_0200516c(void) {

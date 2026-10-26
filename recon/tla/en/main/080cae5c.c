@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 129 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"

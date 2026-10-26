@@ -1,3 +1,11 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 324 in tla-en, instruction
+// order only. The leader's map cell goes through a function-scope temporary
+// (ground), declared between the sprite flags and gridY, which gives the
+// native's registers (24 before; found by permute; a FAKEMATCH(temporary) to
+// tag on adoption). Left: the leader's copy (adds r7, r0) comes after the two
+// stack spills in the native, the 8 of gridX is built earlier, and for
+// ObjectDispatch_SetSingleChildFlagsFar the native reloads the sprite flags
+// into r1 before copying the leader to r0. No single empty asm lowers it.
 // Near miss, differ 30 of 324: The Broken Seal twin (Field_ClimbDown), with
 // this game's checks. On the ground, when the leader's map cell and the one
 // south of it are both climbable (attribute 0x40), the cell below is not a
@@ -40,6 +48,7 @@ s32 Func_080d50f8(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 gridX;
   s16 spriteFlags;
+  struct MapCell *ground;
   s32 gridY;
   s32 gridZ;
   s32 position[3];
@@ -61,7 +70,8 @@ s32 Func_080d50f8(void) {
     s32 radius;
     s32 i;
 
-    cell = &map->layers[leader->terrainId].cells[cellX + cellZ * 128];
+    ground = &map->layers[leader->terrainId].cells[cellX + cellZ * 128];
+    cell = ground;
     south = cell + 128;
     if (!(cell->attributeB & 0x40) || !(south->attributeB & 0x40))
       goto failure;

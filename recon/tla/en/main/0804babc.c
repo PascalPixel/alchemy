@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 110 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Draft, differ 8 of 110: sorts the living party's action slots (one per
 // actionEntryCount) for a turn: a unit that is asleep, or confused, charmed
 // or stunned (the word at delusion masked past its first byte) gets a forced

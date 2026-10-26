@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 142 in tla-en, instruction
+// order and register choice. The native's flag loop counts up with a signed
+// counter (ble) that loop.c does not reverse; here a signed counter is reversed
+// (subs, bge) and an unsigned one closes with bls. A counter that stays live
+// after the loop (djinni) is reversed too. No single empty asm lowers it.
 // Draft, differ 6 of 142 (2026-10-18): applies data carried over from The
 // Broken Seal: each of the 28 djinn flags from 0x800 (seven per element) sets
 // the matching flag from 0x30 (twenty per element), item 222 is removed,

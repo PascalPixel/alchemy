@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 204 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 8 of 204 with three barriers (was 100 with the work read
 // first, 14 with none): the native loads the work after building the 0xe0
 // slot's address, before the effect pointer; here after it. The radius

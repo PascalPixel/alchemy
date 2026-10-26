@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 80 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 6 of 80 (2026-10-15), ported from ☀️'s
 // SpawnHeavyImpactEffect with ⚓️'s objects 671 and 673. The halfword timer at
 // 0x5e takes a struct field so the 20 is an immediate. Left: the listing loads

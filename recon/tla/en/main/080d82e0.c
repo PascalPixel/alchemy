@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 12 of 292 in tla-en,
+// instruction order only. No empty asm before any one statement lowers it.
 // Near miss, differ 12 of 292: ported from ☀️ (BattleEffect_RunVenusDjinnCapture),
 // with ⚓️'s data: the effect scene keeps its slots at 0x50, the sparks and
 // the spawned objects are kind 672 and the cue is 298. What remains is order:

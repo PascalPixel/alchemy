@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 147 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 4 of 147 (two reordered pairs), 2026-10-18: The
 // Broken Seal's Menu_SelectResourceLayout with the mode reduced to its low
 // bit, callbacks at 0x476 and the English edition's windows. Messages 4472

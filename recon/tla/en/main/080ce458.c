@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 136 in tla-en, instruction
+// order only. The filter test is now one condition with flags read once after
+// it, as the native's shared load shows (differ 8 before). Left: the native
+// builds the heap slot address (movs r3, #192) before it spills kind (str r1,
+// [sp, #8]); no empty asm placement and no 5-minute permute changes that.
 // Near miss, differ 8 of 136 (2026-10-18): finds the Psynergy event (kind
 // 5) that Func_080ce31c's selector names, of kind, matching filter
 // (0xf0000005 for any). Rewritten in Event_FindFacingTrigger's shape. Left:
@@ -56,12 +61,9 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
         if (distance > 0x17ff)
           goto next;
       }
-      if (filter != 0xf0000005) {
-        if (((flags = event->control) & 0xf000000f) != filter)
-          goto next;
-      } else {
-        flags = event->control;
-      }
+      if (filter != 0xf0000005 && (event->control & 0xf000000f) != filter)
+        goto next;
+      flags = event->control;
       {
         if (flags & 0x80) {
           if ((selector & 0xff00) == 0x200)

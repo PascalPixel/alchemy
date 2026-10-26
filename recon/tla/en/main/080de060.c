@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 113 in tla-en,
+// instruction order only. No empty asm before any one statement lowers it.
 // Near miss, differ 12 of 113 (was 20): the effect work comes from its heap
 // slot and the angle is a halfword. What is left is scheduling: the work load
 // against the argument copy, the three position loads against the two

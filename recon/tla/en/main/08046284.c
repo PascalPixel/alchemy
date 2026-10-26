@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 158 in tla-en, instruction
+// order only. An empty asm before `count++;` lowers it to 6.
 #include "battle_system.h"
 
 struct DjinnSlot {

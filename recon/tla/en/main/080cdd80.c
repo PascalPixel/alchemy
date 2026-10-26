@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 12 of 127 in tla-en,
+// instruction order only. No empty asm before any one statement lowers it.
 // Near miss: four reordered rows of one kind. The native starts a split
 // constant or an argument copy before the next position word is loaded (movs
 // r2, #128; ldr r3, [r5, #12]; lsls r2, r2, #11 and adds r2, r7, #0; ldr r3,

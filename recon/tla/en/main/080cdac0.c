@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 148 in tla-en, instruction
+// order and register choice. Rewriting the footing test's inner condition as
+// `<= height` with an empty statement changes nothing; no empty asm placement
+// lowers it.
 // Near miss, differ 4 of 148 (2026-10-15). The test inside The Broken
 // Seal's Field_FindNearbyPsynergyTarget (object.c), taken out into a
 // function of its own: ⚓️'s BattleEffect_FindNearestObject

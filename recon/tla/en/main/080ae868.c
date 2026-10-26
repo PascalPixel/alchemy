@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 20 of 206 in tla-en,
+// instruction order and register choice. As in Func_080ae6e4, the flag loop's
+// counter is unsigned (bls for the native's ble). Empty asms before counts[2] =
+// 0 and elsewhere lower it to 14 at best. 8 minutes of permute (2026-10-26)
+// found nothing.
 // Near miss, differ 22 of 206, 2026-10-18, written from the listing: unless
 // flag 0x800 is set, sets the party aside, makes the first four owners the
 // party, gives them their first djinn, then hands out 16 random djinn still

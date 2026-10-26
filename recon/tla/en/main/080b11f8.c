@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 58 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 4 of 58 (was 10 before the activeOwners stores went
 // through one pointer local, 6 before the barrier below). The snapshot's
 // clearing zero (movs r0, #0), which the native sets before the last halfword

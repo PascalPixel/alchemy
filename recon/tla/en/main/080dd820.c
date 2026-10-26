@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 137 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 4 of 137 (2026-10-18; 8 on 2026-10-15), The Broken Seal's
 // FieldEffect_RunReveal: Reveal. ⚓️
 // centres the transition on the caster from the effect scene, clears the

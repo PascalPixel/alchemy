@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 106 in tla-en, instruction
+// order only. An empty asm before `*out++ = second;` lowers it to 2; no second
+// one closes it.
 // Draft, differ 4 of 106: on entering a scene, looks up Data_080ee6d4 (8-byte
 // entries: scene, entrance or -1, a flag that must be clear or -1, and two
 // bytes; a scene of -1 ends it) when search is set, and writes the matching

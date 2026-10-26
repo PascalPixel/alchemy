@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 132 in tla-en, instruction
+// order only. Empty asms before the angle's rounding, the first
+// SetMapCellCollisionFar and the priority flags lower it to 2: the native then
+// stores x between movs r3, #128 and its shift, where this stores it first.
 // Near miss, differ 14 of 132: turns an object to one of the four facings
 // (angle rounded to the nearest quarter turn), optionally setting its mode,
 // marks its cell and the cell ahead of it blocked, and nudges its position and

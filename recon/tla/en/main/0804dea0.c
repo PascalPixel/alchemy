@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 87 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 #include "types.h"
 extern const u8 gMenu_HexDigitsString[];
 

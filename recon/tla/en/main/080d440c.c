@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 119 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // differ 8: the native spills the event block and stores the column bounds
 // before the next constant's shift; only ARM9TDMI store scheduling differs
 #include "battle.h"

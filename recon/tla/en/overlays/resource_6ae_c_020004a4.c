@@ -1,9 +1,10 @@
-// Draft, differ 87 of 103: rewritten from the listing. Every 16th call, while
+// Draft, differ 70 of 103: rewritten from the listing. Every 16th call, while
 // object 8 exists, spawns an effect of type 0x2a0 above it at a random height
-// that follows it on its sprite's layer. Left: GCSE shares the counter's
-// address between its first read and the closing increment (inserting a load on
-// the path without object 8) and keeps it in r11, which shifts every
-// callee-saved register; the native loads it again at the end.
+// that follows it on its sprite's layer. An empty asm with a memory clobber
+// before the closing increment stops GCSE sharing the counter's address with
+// its first read (87 without). Left: the native tests and reads object 8
+// through a copy in r0 where this uses r2 and r4, and the callee-saved
+// registers and the pool order differ from there.
 #include "types.h"
 #include "object_runtime.h"
 
@@ -53,5 +54,6 @@ void Func_020004a4(void) {
           ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
     }
   }
+  __asm__("" : : : "memory");
   Data_0200eb60++;
 }

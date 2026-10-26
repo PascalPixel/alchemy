@@ -2,7 +2,7 @@
 
 Every page links here the first time it uses one of these words. They come in
 the order a newcomer meets them: the game's own words, then the project's,
-the engine's and the maps'.
+the engine's and the scenes'.
 
 ## Golden Sun
 
@@ -30,7 +30,7 @@ The story starts in Vale, under Mt. Aleph, and follows the thieves of the
 Elemental Stars through Vault, Bilibin, Kolima, Imil, Mercury Lighthouse,
 Xian, Altin, Kalay and Tolbi to Lalivero and Venus Lighthouse, where the game
 ends. The story is the order the [game flags](#game-flag) are set in, so pages
-list places in that order; [Places](src/field/scene_headers.s) lists every map.
+list places in that order; [Places](src/field/scene_headers.s) lists every scene.
 
 ### Psynergy and PP
 
@@ -112,7 +112,7 @@ not Camelot's version numbers.
 
 The group behind the Pokémon decompilations, whose conventions Alchemy follows
 where they settle a question: naming, the `BUG` and `BUGFIX` markers, and the
-map layer's words, from pokeemerald.
+words for places, from pokeemerald.
 
 ### The compilers
 
@@ -171,7 +171,7 @@ rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
 ### Main image
 
 The program the processor runs straight from the cartridge, about 1 MB of code
-in [banks](#bank); the rest runs from RAM, a map's [overlay](#overlay) in EWRAM
+in [banks](#bank); the rest runs from RAM, a scene's [overlay](#overlay) in EWRAM
 and the fast routines in IWRAM.
 
 ### Bank
@@ -196,13 +196,13 @@ table entry and every stub of an overlay's tables is one.
 ### Overlay
 
 A packed piece of code unpacked into one 32 KB area of EWRAM, `gOverlayArea`,
-when it is needed: each holds the scripts of one map or of a few neighbouring
-maps, 96 in all for 201 maps, and only one is loaded at a time ([Engine](engine.md#overlays)).
+when it is needed: each holds the scripts of one scene or of a few neighbouring
+scenes, 96 in all for 201 scenes, and only one is loaded at a time ([Engine](engine.md#overlays)).
 
 ### Entry table and import table
 
 The two tables an overlay meets the main image through: the entry table opens
-it with six veneers the field calls to ask the map its questions
+it with six veneers the field calls to ask the scene its questions
 (`struct SceneEntries`), and the import table ends it with one veneer for each
 main-image function it calls
 ([System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
@@ -211,12 +211,12 @@ main-image function it calls
 
 The heap lends blocks of memory from two pools, one in IWRAM and one in EWRAM;
 blocks go back in the reverse of the order they were taken, and the whole heap
-is emptied before each map ([Runtime](src/runtime/README.md#the-heap)).
+is emptied before each scene ([Runtime](src/runtime/README.md#the-heap)).
 
 ### Heap slot
 
 One of 62 numbered places that each hold a heap block other code has to find
-again, such as the running map's state (`gHeapSlots`).
+again, such as the running scene's state (`gHeapSlots`).
 
 ### Task
 
@@ -231,41 +231,47 @@ Every sound the game plays is asked for by a song number: below 80 music,
 from 80 the fanfares, and from 100 the sound effects
 ([Sound](src/sound/README.md#what-a-song-number-means)).
 
-## Maps
+## Scenes and maps
 
-Most of these words are pret's, from pokeemerald, so a reader of that project
-finds them in the same sense.
+The words for places are mostly pret's, from pokeemerald, so a reader of that
+project finds them in the same sense; pret has no word for the scene or the
+sequence, because its games have no such unit.
 
-### Map
+### Sequence
 
-One row of the map table: a room, a town, a dungeon floor or the world map,
-201 in all, each running an overlay's code and showing a layout
-([The front page](README.md#the-main-loop)).
+One turn of the sequence manager, the loop the whole game runs in: a scene, a
+battle, Lucky Dice or Lucky Wheels, each running until it ends and names the
+next ([The front page](README.md#the-sequence-manager)).
+
+### Scene
+
+One row of the scene table: a room, a town, a dungeon floor, the world map,
+or a screen such as the title or the main menu, 201 in all, each running an
+overlay's code and drawn on a map ([The front page](README.md#scenes-and-overlays)).
 
 ### Map section
 
-A group of maps, 71 in all, sharing their music, their area name and one range
-of [scratch flags](#game-flag)
-([The front page](README.md#the-map-table-and-map-sections)).
+A group of scenes, 71 in all, sharing their music, their area name and one
+range of [scratch flags](#game-flag)
+([The front page](README.md#the-scene-table-and-map-sections)).
 
-### Layout
+### Map
 
-What a town or dungeon map shows and stands on: three background layers and a
-grid of cells under them, 128 by 128; several maps can share one
-([Layouts](src/map/README.md)).
+What a scene shows and stands on: three background layers and a grid of cells
+under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md)).
 
 ### Sheet of rooms
 
-A map that packs indoor rooms drawn in one tile style side by side, each with
-a camera box the warp destination chooses; its rooms may belong to different
-places, so it is named for the style they are drawn in, as Cottage rooms or
-Stucco rooms ([Maps](src/scene/README.md#design)).
+A map that packs indoor rooms drawn in one tile style side by side, each its
+own scene with a camera box its warp destination chooses; its rooms may belong
+to different places, so it is named for the style they are drawn in, as
+Cottage rooms or Stucco rooms ([Scenes](src/scene/README.md#design)).
 
 ### Cell
 
-One 16 by 16 pixel square of a layout: which metatile is drawn there, the
+One 16 by 16 pixel square of a map: which metatile is drawn there, the
 shape and height of the ground, and its metatile behavior
-([Layouts](src/map/README.md#cells)).
+([Maps](src/map/README.md#cells)).
 
 ### Metatile
 
@@ -275,38 +281,39 @@ The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 
 The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
-map's own event table says
+scene's own event table says
 ([World](world.md#cells-and-metatile-behaviors)).
 
 ### Object
 
-One of the 64 slots of `gObjects` (`struct Object`): anything in a map that
+One of the 64 slots of `gObjects` (`struct Object`): anything in a scene that
 acts on its own, from the party and the townspeople to the camera and the
 footprints in snow ([World](world.md#objects-and-their-scripts)).
 
 ### Object event
 
-A person or thing a map knows by its local id: the party, and everyone its
+A person or thing a scene knows by its local id: the party, and everyone its
 object event templates place. The camera and the footprints are objects but
-not object events ([Maps](src/scene/README.md#who-stands-where)).
+not object events ([Scenes](src/scene/README.md#who-stands-where)).
 
 ### Local id
 
-An object event's number in its map: 0 to 7 the party, the leader at 0, and
+An object event's number in its scene: 0 to 7 the party, the leader at 0, and
 from 8 (`LOCALID_FIRST_PLACED`) the object event templates' rows in order; each
-map names its own in an enum.
+scene names its own in an enum.
 
 ### Map event
 
-A row of a map's event table (`struct MapEvent`): a kind, a trigger, a
-condition and what to run. When the player talks, searches, steps on a marked
-cell or uses Psynergy, the first row that fits runs
-([Maps](src/scene/README.md#what-a-map-event-row-says)).
+A row of a scene's event table (`struct MapEvent`): a kind, a trigger, a
+condition and the event it runs. When the player talks, searches, steps on a
+marked cell or uses Psynergy, the first row that fits runs
+([Scenes](src/scene/README.md#what-a-map-event-row-says)).
 
 ### Trigger
 
 What a map event row answers: an object event's local id for talking, a
-metatile behavior for a cell, or a value the map's code raises.
+metatile behavior for a cell, or a value the scene's code raises. Object,
+coord and bg events are the triggers.
 
 ### Coord event
 
@@ -321,25 +328,31 @@ layers.
 
 ### Warp
 
-A way out of a map, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
-first row for it in the map's warp table whose condition holds gives the next
-map and warp destination
+A way out of a scene, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
+first row for it in the scene's warp table whose condition holds gives the next
+scene and warp destination
 ([The front page](README.md#warps-and-warp-destinations)).
 
 ### Warp destination
 
-Where the party arrives in a map, named for where it comes from
+Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits.
+
+### Event
+
+Whatever a trigger runs: talking to someone, opening a chest, a door, or the
+party and the camera moving through a scripted moment of the story. The engine
+draws no line between them, so each is an event, and its code an event script.
 
 ### Script
 
 A function a map event names (`EventScript_EnterIsaacsHouse`), written one step
 to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
-an [object](#object) runs each frame ([Maps](src/scene/README.md#scripts)).
+an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).
 
 ### Game flag
 
 One of the 4,096 yes-or-no facts saved with the game, such as a chest being
-open; two ranges are scratch space, cleared as the party enters maps and map
+open; two ranges are scratch space, cleared as the party enters scenes and map
 sections ([The front page](README.md#game-flags)).

@@ -1,7 +1,7 @@
 # Runtime
 
 When an event pauses for half a second, the code that runs it simply waits,
-yet the screen keeps moving: windows still type, the [map](../../glossary.md#map)
+yet the screen keeps moving: windows still type, the [scene](../../glossary.md#scene)
 still scrolls with the camera. Everything in the game waits the same way,
 through one function, `WaitFrames`, which runs a short list of jobs, the
 [tasks](../../glossary.md#task), once every [frame](../../glossary.md#frame)
@@ -18,15 +18,15 @@ it works in is laid out in [System](../system/README.md).
 Pressing A, B, Select and Start together throws the game away and starts it
 again from the cartridge's first instruction, exactly as switching on does.
 Start-up puts memory in order and starts the services everything relies on,
-once, then hands over to the loop of maps for as long as the console is on.
+once, then hands over to the loop of scenes for as long as the console is on.
 
 In order, start-up stops any screen effect left running, clears the fast
 memory, [IWRAM](../../glossary.md#iwram-and-ewram), and empties the heap,
 copies the routines that must run fastest into IWRAM, loads the windows'
 graphics, sets up the code that hands each frame to the screen, arms the
 reset buttons, starts the sound and empties the task list. It then waits ten
-frames and starts the loop of maps, which never ends
-([Running a map](../overworld/README.md)). The reset buttons work through an
+frames and starts the loop of scenes, which never ends
+([Running a scene](../overworld/README.md)). The reset buttons work through an
 interrupt: pressing all four marks a reset as wanted, and the next frame
 carries it out.
 
@@ -104,16 +104,16 @@ The line is `Ram_FrameWaitStackTop`, and the copy goes to `gSavedStack`.
 
 ## The heap
 
-The heap lends blocks of memory to the rest of the game: a map's working
+The heap lends blocks of memory to the rest of the game: a scene's working
 state, a menu's buffers, a battle animation's pictures. It works like a pile:
 each block goes on top of the last, and giving one back gives back everything
 taken after it. That makes both almost free, at the price of one rule: blocks
 go back in the reverse of the order they were taken. The whole heap is
-emptied before each map, so no block outlives the map that took it.
+emptied before each scene, so no block outlives the scene that took it.
 
 There are two piles, one in fast IWRAM and one in the larger EWRAM; a request
 says which to try first and falls back on the other. Some blocks have to be
-found again by code that didn't take them, such as a map's state, which a
+found again by code that didn't take them, such as a scene's state, which a
 task reads every frame. Those are kept in numbered places, the
 [heap slots](../../glossary.md#heap-slot), and asking for a slot that already
 holds a block simply returns that block. Blocks are not cleared when lent.
@@ -129,15 +129,15 @@ back with `Free` or `FreeHeapSlot`; the slots are `gHeapSlots`.
 ## The task runner
 
 Some work has to happen every frame whatever else is going on: scrolling the
-map, typing the windows' text, copying their changed tiles to the screen in
+scene, typing the windows' text, copying their changed tiles to the screen in
 the blank. Each is a task, added once and run until it is removed or the next
-map starts. A task's priority says which of the two passes runs it, the
+scene starts. A task's priority says which of the two passes runs it, the
 frame's or the blank's, and where in that pass. That order matters: a
 battle's camera runs after the battle's figures, so that it moves to where
 they now are.
 
 A task can be paused and resumed without losing its place in the order. When
-a menu opens over a map, the map's own tasks pause, except the few a map
+a menu opens over a scene, the scene's own tasks pause, except the few a scene
 marks to keep running under a menu, as the Battle Arena and Colosso do. The
 table holds 20 tasks. The game never adds a task while a pass is running, so
 a pass never sees the table reordered under it.
@@ -219,7 +219,7 @@ the VBlank's code commits them only for a finished frame, so a late frame
 shows the previous picture whole rather than a mixture of two.
 
 The ROM shows the runtime as one object, compiled once through `runtime.c`;
-the files are our cut of it. The maps' code reaches many of its functions
+the files are our cut of it. The scenes' code reaches many of its functions
 through the runtime bank's [far-call](../../glossary.md#far-call) table, so
 renaming one touches other folders too.
 
@@ -282,10 +282,10 @@ the fourth.
 No task waits, and none adds a task. A call graph of the English build's
 objects, main image and overlays, from each function the code adds as a task,
 each object hook and each `SC_CALL` callback, finds nine tasks with a path of
-calls to `WaitFrames`, and none takes it: the map tasks turn object events
+calls to `WaitFrames`, and none takes it: the scene tasks turn object events
 with a wait of 0 (`ObjectMotion_ArmCallback`), the world map's lighthouse
 jitter moves the camera with a glide, Lucky Wheels and the link countdown
 open instant windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite
-respawn tests `gTasksRunning`. The tenth path is the debug map selector,
+respawn tests `gTasksRunning`. The tenth path is the debug scene selector,
 which only the unused `DebugMapSelect_Schedule` would add as a task. The same
 graph has no path from any task to `Task_Add`.

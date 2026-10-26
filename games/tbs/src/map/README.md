@@ -1,15 +1,15 @@
-# Layouts
+# Maps
 
-A town or dungeon [layout](../../glossary.md#layout) is one big square grid of
+A town or dungeon [map](../../glossary.md#map) is one big square grid of
 16-pixel [cells](../../glossary.md#cell), 128 on a side, and each of its three
-layers is a rectangle cut from that grid; the layout's header says where each
+layers is a rectangle cut from that grid; the map's header says where each
 one starts, and the rest of the grid goes unused.
 
 The `src/map` folder holds this data as editable tables, and no code: 182
-layouts for the towns, dungeons and interiors, and two more sets of data kept
+maps for the towns, dungeons and interiors, and two more sets of data kept
 beside them because they are packed and placed the same way: the world map's
 ground and the opponents' recorded runs in the Colosso finals. A
-[map](../../glossary.md#map) names its layout, [Field](../field/README.md)
+[scene](../../glossary.md#scene) names its map, [Field](../field/README.md)
 draws and scrolls it, and the sections below say how each part is stored,
 built and loaded.
 
@@ -17,25 +17,25 @@ built and loaded.
 
 ![Isaac walks to the edge of a ledge in Bilibin Cave's entrance and, with Down held, jumps down to the ground below in a puff of dust](https://alchemy.pascalpixel.com/guides/layout/ledge.gif)
 
-A cell is one 16 by 16 pixel square of a layout, and it says three things:
+A cell is one 16 by 16 pixel square of a map, and it says three things:
 what is drawn there, what standing on it does, and how its ground is shaped.
 The ledge in the recording is all three: a picture of a ledge, cells that say
 "jump down when pushed", and ground 32 pixels higher than the ground below.
 
 **What is drawn.** A [metatile](../../glossary.md#metatile) is the picture of
 one cell, 2 by 2 of the console's 8-pixel tiles. A cell names its picture by
-number, a row of the layout's table of pictures.
+number, a row of the map's table of pictures.
 
 **What standing on it does.** The [metatile
 behavior](../../glossary.md#metatile-behavior) is a number that walls and
 [map events](../../glossary.md#map-event) are keyed on. One number is a wall
-whatever the heights. Most belong to the map: a [coord
+whatever the heights. Most belong to the scene: a [coord
 event](../../glossary.md#coord-event) runs when the leader steps onto or
 pushes against a cell with that number, and a [bg
 event](../../glossary.md#bg-event) when the player presses A facing one, so
 the same number can be a door in one town and a chest in another
-([Maps](../scene/README.md#which-map-events-a-cell-starts)). The rest mean the
-same on every map: ground with random battles of its own, the jars, barrels,
+([Scenes](../scene/README.md#which-map-events-a-cell-starts)). The rest mean the
+same in every scene: ground with random battles of its own, the jars, barrels,
 wooden boxes, graves, books and wells anyone can search, the Lamakan Desert's
 burning sand, and the ledges, climbing spots and gaps the leader jumps when
 pushing against them.
@@ -50,7 +50,7 @@ cliff, some of it cut along a cell's diagonal.
 
 Behavior and height belong to a layer. Each layer is a window onto the grid
 ([below](#one-grid-three-layers)), and an object follows the ground of one
-layer, which a map's code can change, so the three layers can have different
+layer, which a scene's code can change, so the three layers can have different
 walls and heights ([Field](../field/README.md#how-high-a-step-can-go)).
 
 A loaded cell is `struct MapGridCell`, one 32-bit word: 12 bits
@@ -61,25 +61,25 @@ the behavior and a byte the shape. The behaviors are
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the map's own coord events, [warps](../../glossary.md#warp) and bg events |
+| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own coord events, [warps](../../glossary.md#warp) and bg events |
 | `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with random battles of its own |
-| `MB_JAR` to `MB_WELL` | 242 to 247 | search spots with lines every map shares: a jar, a barrel, a wooden box, a grave, books, a well |
+| `MB_JAR` to `MB_WELL` | 242 to 247 | search spots with lines every scene shares: a jar, a barrel, a wooden box, a grave, books, a well |
 | `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
 | `MB_LEDGE` | 252 | jumped down with Down held |
 | `MB_CLIMB` | 253 | climbed up or down with Up or Down held |
 | `MB_JUMP_FORWARD` | 254 | jumped across |
 | `MB_WALL` | 255 | a wall, whatever the heights |
 
-## A layout's tables
+## A map's tables
 
-Everything that makes one town or dungeon layout, from the pictures of its
+Everything that makes one town or dungeon map, from the pictures of its
 squares to where its chests stand, is kept as a handful of plain tables in the
-layout's own folder. Each table holds one part of the layout, and the layout's
+map's own folder. Each table holds one part of the map, and the map's
 `map.s` puts the parts together behind its header.
 
 | File | What it is |
 | --- | --- |
-| `map.s` | the header, then the parts; in 129 layouts a tileset's palette and tiles follow (from `games/tbs/src/graphics/tileset`) |
+| `map.s` | the header, then the parts; in 129 maps a tileset's palette and tiles follow (from `games/tbs/src/graphics/tileset`) |
 | `metatiles.tsv` | the pictures of the cells; a picture's number is its row, from 0 |
 | `shapes.tsv` | the shapes of the ground |
 | `map.txt` | the grid: each cell's picture, behavior and shape |
@@ -100,13 +100,13 @@ and the cell every square the rows leave out holds.
 ![Isaac stands in the north of Suhalla Desert while a haze of sand grains streams across the screen, then walks south through it](https://alchemy.pascalpixel.com/guides/layout/haze.gif)
 
 In Suhalla Desert a haze of sand streams across the screen faster than the
-ground moves, and wraps round as it goes. The layout's header is what sets
+ground moves, and wraps round as it goes. The map's header is what sets
 that up: for each layer it says how fast the layer follows the camera, whether
 it drifts by itself and where it wraps, as well as how far the camera may go.
 
 A layer that follows the camera at the camera's own pace looks as far away as
 the ground; one that moves faster looks nearer. The north of Suhalla Desert
-(`SceneId_SuhallaDesertNorth`, whose row in the map table names the layout in
+(`SceneId_SuhallaDesertNorth`, whose row in the scene table names the map in
 `map_147`) moves its ground and middle layers with the camera and its
 overhead haze a quarter faster, drifts the haze about 7.6 pixels right and 2.2
 up the screen every [frame](../../glossary.md#frame), and wraps it every 256 pixels.
@@ -118,7 +118,7 @@ deck (`map_103`), which drifts down the screen by a pixel and a half a frame and
 
 Six offsets follow the header: where the pictures, the shapes, the grid, the
 tileset animation, the blend script and the treasure spots start. An offset of
-0 means the layout has none of that part.
+0 means the map has none of that part.
 
 The header is one `map_header` line and three `map_layer`
 lines in `map.s`, read as `struct MapHeader` and `struct MapLayer`.
@@ -132,7 +132,7 @@ lines in `map.s`, read as `struct MapHeader` and `struct MapLayer`.
 | `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift |
 | `layers[n].periodX`, `.periodY` | 8-pixel tiles, less one | where the layer wraps: `0x1f` wraps every 32 tiles |
 
-## How the build makes a layout
+## How the build makes a map
 
 The tables are for people to read and edit; the game wants packed bytes. The
 build turns each table into the bytes the game reads and packs them exactly as
@@ -151,7 +151,7 @@ the packer left in its buffer, `map.s` places them as literal bytes with a
 Where Camelot changed a stream after packing it, a `_patch.tsv` lists each
 changed byte. The table holds what shipped, and the patch gives the packer
 the byte it packed, so the packer makes the same choices and the stream still
-unpacks to the edited layout. The first row of Gondowan Passage's grid patch:
+unpacks to the edited map. The first row of Gondowan Passage's grid patch:
 
 ```text
 position  pack  ship  proof
@@ -170,36 +170,36 @@ An edition's own version of a table (`grid_es.tsv`, `treasure_spots_ja.tsv`)
 is chosen in `map.s` with `.ifdef` on the edition's name
 (`TBS_EDITION_ES`), and editions that agree share one file: Venus Lighthouse's
 entrance has a French grid and a Spanish one, and the Italian edition uses the
-Spanish. A layout whose whole data differs by edition has a block of its
-`map.s` for each. A layout that uses another layout's table names that
-layout's file.
+Spanish. A map whose whole data differs by edition has a block of its
+`map.s` for each. A map that uses another map's table names that
+map's file.
 
 The forms are named in the `Makefile`'s asset rules, and
 `enum MetatilePacking` names the ways the pictures are stored, which
 `TileMap_DecodeStagedBuffer` undoes.
 
-## Loading a layout
+## Loading a map
 
 When the party enters a town or dungeon, the map's layers and
-[sprites](../../glossary.md#sprite-and-oam) are hidden while its layout is
+[sprites](../../glossary.md#sprite-and-oam) are hidden while its map is
 unpacked into working memory. Most of what is unpacked is the grid, which is
 stored as three separate planes and put together into one word per cell as it
 loads, so that everything about a cell can be read in one go.
 
 The cells take 64 KB, twice the room set aside for them, so they run on over
-two other buffers, and neither can hold anything else while a layout is
+two other buffers, and neither can hold anything else while a map is
 loaded. Only code that loads the cells again afterwards writes there: a
-battle, after which the map's layout is loaded again; the Battle Arena, which
+battle, after which the scene's map is loaded again; the Battle Arena, which
 leaves the partner's party there for the link battle that follows; the world
 map's still picture; and the debug sprite viewer.
 
-Each map's row of `gSceneHeaders`
-([`field/scene_headers.s`](../field/scene_headers.s)) gives a layout number,
+Each scene's row of `gSceneHeaders`
+([`field/scene_headers.s`](../field/scene_headers.s)) gives a map number,
 which picks a row of `gMaps` ([`field/maps.c`](../field/maps.c)):
-the layout's header, palette and tiles. `MapGrid_LoadMap` unpacks each
+the map's header, palette and tiles. `MapGrid_LoadMap` unpacks each
 part, and `Tile_ConvertMapGrid` puts the three planes together into the cell
 words in `gMapGridCellBuffer`. [System](../system/README.md) has the memory's
-layout.
+map.
 
 | Plane, in stored order | Size | Values |
 | --- | --- | --- |
@@ -217,7 +217,7 @@ by side: all three are windows onto the one grid. In Goma Cave's entrance room
 the ground layer, the cave floor and its pool, starts at cell 0, 0; the middle
 layer, the rock walls, at cell 0, 34, below it; and the overhead layer, only
 the glow of the torches, at cell 50, 0, to its right. Each layer's place in
-the header picks the cell its window starts at, so a layout lays its layers
+the header picks the cell its window starts at, so a map lays its layers
 out side by side or one above another: `map_000`'s start at tiles 0, 60 and
 120 across, and Venus Lighthouse's entrance puts them at (0, 0), (64, 0) and
 (0, 68). A window has no size of its own: the camera's bounds stop the view,
@@ -230,12 +230,12 @@ explains how their priorities put
 
 ### Placeholder metatiles
 
-A layout's grid doesn't store the number of every cell's picture from the
+A map's grid doesn't store the number of every cell's picture from the
 start. The first time a picture appears in the grid, the cell holds a
 placeholder instead, and the game hands out picture numbers in order as it
-loads the layout. Each layout's table of pictures is ordered by where they
-first appear, so a layout has exactly as many placeholders as pictures
-(`map_003` has 1,331 of each). Every layout follows the rule but Venus
+loads the map. Each map's table of pictures is ordered by where they
+first appear, so a map has exactly as many placeholders as pictures
+(`map_003` has 1,331 of each). Every map follows the rule but Venus
 Lighthouse's entrance, whose grid names 170 cells' pictures before their
 placeholders; those cells still get the right pictures, since the numbering
 depends only on the placeholders.
@@ -250,10 +250,10 @@ also keeps an unused C version, `TileMap_NumberPlaceholderMetatiles`.
 
 ![In Sol Sanctum, Isaac searches the Psynergy Stone in front of him: it rises over his head, "Isaac got a Psynergy Stone.", "The party's PP is fully restored!", and "The Psynergy Stone disappeared..."](https://alchemy.pascalpixel.com/guides/layout/psynergy-stone.gif)
 
-Several maps can share one layout, and each puts its own chests in it. The
-layout lists the spots where a chest or a
+Several scenes can share one map, and each puts its own chests in it. The
+map lists the spots where a chest or a
 [Psynergy](../../glossary.md#psynergy-and-pp) Stone can stand, each with the
-event that would place one there, and a map places one only where it has that
+event that would place one there, and a scene places one only where it has that
 event. A chest is shown open once it has been opened and is gone once its
 mimic has been beaten; a Psynergy Stone stands until it is taken, and taking
 it fills every member's PP.
@@ -266,11 +266,11 @@ pillar carrying it reaches the ladder, since its treasure spot's cell lies
 past the room's east wall.
 
 The treasure spot list is (column, row, trigger) rows ended by 255, 255, and
-`Field_PlaceTreasureSpots` places an object at each spot whose trigger the map
-has an event for, up to `TREASURE_SPOT_MAX` (10); a spot the map has no event
-for takes none of the ten. 76 layouts use `map_000`'s list, which holds
-only the end row. Opening a chest and taking a stone are the map's search
-events ([Maps](../scene/README.md#how-a-map-event-is-chosen)).
+`Field_PlaceTreasureSpots` places an object at each spot whose trigger the scene
+has an event for, up to `TREASURE_SPOT_MAX` (10); a spot the scene has no event
+for takes none of the ten. 76 maps use `map_000`'s list, which holds
+only the end row. Opening a chest and taking a stone are the scene's search
+events ([Scenes](../scene/README.md#how-a-map-event-is-chosen)).
 
 ### Tileset animation and blend scripts
 
@@ -278,7 +278,7 @@ events ([Maps](../scene/README.md#how-a-map-event-is-chosen)).
 
 Some parts of a map move by themselves without anything on the map moving:
 the game simply swaps the pictures of a few tiles on a timer, as with Vale's
-waterfall. A layout's tileset animation script says which pictures to copy
+waterfall. A map's tileset animation script says which pictures to copy
 over which tiles and how long to wait between them; its blend script changes,
 in the same way, how the layers mix. Suhalla Desert's north shows the usual
 shape: one of its channels copies four rows of four tiles from one of four
@@ -369,27 +369,27 @@ The treasure spots are the one part stored unpacked, and the loader reads them
 in place rather than copying them: only `Field_PlaceTreasureSpots` reads them,
 once as the map loads.
 
-One grid serves all three layers, so every layout takes the same 64 KB of
+One grid serves all three layers, so every map takes the same 64 KB of
 cells, and a layer's window can sit anywhere in the grid.
 
-The layout numbers are the order of the directories, not numbers the game
-gives its layouts: a map's row in `gSceneHeaders` names a row of `gMaps`,
-and that row names the layout's resources.
+The map numbers are the order of the directories, not numbers the game
+gives its maps: a scene's row in `gSceneHeaders` names a row of `gMaps`,
+and that row names the map's resources.
 
 ## Limits
 
 - 128 by 128 cells, for all three layers together.
-- 4,095 metatiles a layout: a cell's metatile number has 12 bits, and 4,095
+- 4,095 metatiles a map: a cell's metatile number has 12 bits, and 4,095
   is the placeholder.
-- 256 shapes a layout, since a cell names its shape in one byte.
+- 256 shapes a map, since a cell names its shape in one byte.
 - 16 tileset animation channels (`struct MapGridScrollAnimView`).
-- `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed on a map.
+- `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed in a scene.
 
 ## Words used here
 
 - A **shape** is the form of the ground in a cell: a terrain kind and three
   height samples.
-- A **layer** is one of the layout's three backgrounds, each a window onto the
+- A **layer** is one of the map's three backgrounds, each a window onto the
   one cell grid.
 - A **plane** is one value per cell over the whole 128 by 128 grid.
 - A **treasure spot** is a cell where a chest or a Psynergy Stone can stand.
@@ -403,24 +403,24 @@ code does with it: the 16-pixel pictures become BG map entries, so they are
 called the treasure spot list because that function is the only code that reads the
 pointer the loader stores to it (`MapGridScrollWork.markers`).
 
-The haze's layout is found from the map table: `SceneId_SuhallaDesertNorth`'s
-row of `gSceneHeaders` gives layout 151, whose row of `gMaps` names the
+The haze's map is found from the scene table: `SceneId_SuhallaDesertNorth`'s
+row of `gSceneHeaders` gives map 151, whose row of `gMaps` names the
 resource the directory's `area` line gives to `Field_Map147`; the south's
 row leads the same way to `Field_Map148`, and the Tolbi ship deck's to
-`Field_Map103`. These three are the only layouts whose headers drift a
+`Field_Map103`. These three are the only maps whose headers drift a
 layer.
 
 The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
-`struct MapHeader`) are 0 in every layout of both games, and nothing
+`struct MapHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
 
 The four bits above a cell's metatile number are set all over the game's
-grids: of the cells the layouts write out, bit 15 is set in about 59,000 and
-bit 14 in about 33,000, in more than 150 layouts, and bits 12 and 13 in about
+grids: of the cells the maps write out, bit 15 is set in about 59,000 and
+bit 14 in about 33,000, in more than 150 maps, and bits 12 and 13 in about
 1,200 and 500, in some 25. Nothing gives them a meaning. `Tile_ConvertMapGrid`
 carries them through when it numbers the placeholder metatiles, and every
 other reader, from the scroll code that draws the metatiles to the height and
 behavior lookups, takes the metatile number's 12 bits or the cell's other
-bytes alone, so a layout drawn with the bits cleared looks the same. Only
+bytes alone, so a map drawn with the bits cleared looks the same. Only
 the unused `MapGrid_GetCellHighFlags` and Crossbone Isle's stepping stones,
 which copy them along with the rest of a cell, name them.

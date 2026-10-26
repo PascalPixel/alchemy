@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_HEADER_H
 
 /// @file
-/// Map headers, warp regions and map entry tables, with the field work they
+/// Scene headers, warp regions and scene entry tables, with the field work they
 /// fill (field_work.h).
 
 #include "types.h"
@@ -14,8 +14,8 @@
 struct MapGridCell;
 struct ObjectEvent;
 
-/// A map's row in gSceneHeaders: its overlay's resource, its map section,
-/// its map type and its layout. One row per map number; field/scene_headers.s
+/// A scene's row in gSceneHeaders: its overlay's resource, its map section,
+/// its scene type and its map. One row per scene number; field/scene_headers.s
 /// writes them, and its SceneId_ symbols are the row numbers.
 struct SceneHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
@@ -27,13 +27,13 @@ struct SceneHeader {
   /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_FIELD for the rest.
   s8 sceneType;
-  u16 mapIndex; ///< the layout loaded for it, copied to gSaveBlock.mapId
+  u16 mapIndex; ///< the map loaded for it, copied to gSaveBlock.mapId
   u16 reserved; ///< 0 in every row; not read
 };
 
 STATIC_ASSERT(sizeof(struct SceneHeader) == 8);
 
-/// A map's warp region: the box that, while its condition holds, takes the
+/// A scene's warp region: the box that, while its condition holds, takes the
 /// party leader out through its warp.
 struct MapWarpRegion {
   s16 minX, minY, minZ; ///< pixels, inclusive; minX -1 ends the table
@@ -44,7 +44,7 @@ struct MapWarpRegion {
 
 STATIC_ASSERT(sizeof(struct MapWarpRegion) == 16);
 
-/// The entry table at the start of each map overlay: its initialize
+/// The entry table at the start of each scene overlay: its initialize
 /// function and the functions returning its warp destinations, warps, object
 /// event templates, map events and warp regions, each behind a veneer word.
 /// The field reads each entry's veneer as the address word in its last four
@@ -76,11 +76,11 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every map's header, by map number (field/scene_headers.s).
+/// Every scene's header, by scene number (field/scene_headers.s).
 extern const struct SceneHeader gSceneHeaders[];
-/// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
-/// each map change; its code opens with its 48-byte entry table. Every overlay
-/// is linked to run at this one fixed address (0x02008000).
+/// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
+/// each scene change; its code opens with its 48-byte entry table. Every
+/// overlay is linked to run at this one fixed address (0x02008000).
 extern struct SceneEntries gOverlayArea;
 
 #endif

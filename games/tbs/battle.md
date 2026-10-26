@@ -18,7 +18,7 @@ draws them.
 
 ![A battle in Goma Cave ends: Ivan's Magic Rod puts a Skeleton to sleep, Isaac and Garet strike it down, the spoils are announced, and the screen fades back to the cave with Isaac standing where the battle found him.](https://alchemy.pascalpixel.com/guides/battle/won.gif)
 
-To the rest of the game a battle is one more [map](glossary.md#map). The
+To the rest of the game a battle is one more [sequence](glossary.md#sequence). The
 field leaves for it as it would leave through a doorway, and when the battle
 is won it comes back to the same spot. After a defeat it goes to the place the
 game sends a beaten party instead.
@@ -26,21 +26,21 @@ game sends a beaten party instead.
 A random encounter raises a field [warp](glossary.md#warp) like any other,
 whose destination is the battle and whose arrival point names the enemies'
 formation. The game clears its [tasks](glossary.md#task) and its
-[heap](glossary.md#heap-and-pools), as it does between any two maps, and
-then, instead of loading the next map's [overlay](glossary.md#overlay), runs
+[heap](glossary.md#heap-and-pools), as it does between any two scenes, and
+then, instead of loading the next scene's [overlay](glossary.md#overlay), runs
 the battle from start to finish. The battle's code sits in its own
 [bank](glossary.md#bank) of the [main image](glossary.md#main-image), reached
-by a [far call](glossary.md#far-call). When it returns, the field map is
-loaded again, or after a defeat the map the defeat rules name. The debug
+by a [far call](glossary.md#far-call). When it returns, the field scene is
+loaded again, or after a defeat the scene the defeat rules name. The debug
 battle menu is the only other way in.
 
-`SequenceManager_Run` (`src/overworld/overworld/map.c`) sees the next map
+`SequenceManager_Run` (`src/overworld/overworld/map.c`) sees the next scene
 `SEQUENCE_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
 (`src/battle/battle/encounter.c`). The formations are the rows of
 `src/battle/formations.c`, chosen by the encounter zones in
 `src/overworld/encounter_zones.c`.
 
-[Running a map](src/overworld/README.md#random-battles) covers how the field
+[Running a scene](src/overworld/README.md#random-battles) covers how the field
 rolls the encounter, and [Battles](src/battle/README.md#rounds) what the
 battle does from the opening to the spoils.
 

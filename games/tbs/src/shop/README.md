@@ -10,7 +10,7 @@ smaller things that share their screens: the Game Tickets a shopkeeper gives
 for spending, and the item picker, which asks what to drop when the party is
 given an item with every bag full.
 
-Each counter is opened by its town's [map](../../glossary.md#map)
+Each counter is opened by its town's [scene](../../glossary.md#scene)
 [script](../../glossary.md#script) when the player talks to the keeper.
 [Menus, windows and shops](../../menus.md#shops) gives the counters in brief;
 the windows and messages they draw with are in [Windows](../window/README.md),
@@ -148,7 +148,7 @@ overnight. A member who is down stays down until a sanctum revives them, and
 is not charged. Each town's inn has its own price a guest, from 2 coins in
 Vale to 25 in Lalivero.
 
-`Inn_CheckIn` runs it, with each town's map naming its row of
+`Inn_CheckIn` runs it, with each town's scene naming its row of
 `sInnPricesPerGuest`, and `Inn_PlaySleep` plays the night.
 
 ## The item picker
@@ -183,7 +183,7 @@ stock row is all that stops a revisited shop from adding its artifacts again.
 Keeper lines are found by distance from the weapon shop's version, so one call
 serves every kind of shop.
 
-Map overlays import these functions by name (`games/tbs/src/scene/import/`),
+Scene overlays import these functions by name (`games/tbs/src/scene/import/`),
 and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
 so renaming one changes those folders too.
 
@@ -198,7 +198,7 @@ one `#if` block in `shop_internal.h`.
 
 ## How it fits with the rest of the game
 
-Maps open the counters through their
+Scenes open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
 of the program through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
@@ -242,7 +242,7 @@ Altmiller Cave bursts.
 The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
-from the town maps that open them. The item names on this page are
+from the town scenes that open them. The item names on this page are
 `MsgItemName` plus each row's item ids. The recordings were made with the
 party's coins, the shop credit and the members' bags and health set first,
 so each shows its rule at once; the inn's price, 21 coins at 7 a guest, shows

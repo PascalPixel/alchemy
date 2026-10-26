@@ -1,5 +1,5 @@
 /// @file
-/// Running a map until the party leaves it, and its warp destination.
+/// Running a scene until the party leaves it, and its warp destination.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -15,20 +15,20 @@ struct ObjectSystemSuspendView {
   u16 wait;
 };
 
-/// Runs the current map, which the party entered by warpDest, until it
+/// Runs the current scene, which the party entered by warpDest, until it
 /// leaves; returns the warp kind it left by, for Scene_TakeWarp, or WARP_NONE
-/// when the next map is already in gSaveBlock: a random battle, a
+/// when the next scene is already in gSaveBlock: a random battle, a
 /// party that fell outside battle, Retreat or a script's destination. Sets the
-/// map up (layout, object events, encounters, return points), runs its
+/// scene up (map, object events, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
-/// Called from SequenceManager_Run's main loop for every map, which
+/// Called by SequenceManager_Run for every scene, which
 /// passes the result to Scene_TakeWarp. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
-/// block the map took after it from the same pool; sets gSaveBlock's default,
-/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the map
+/// block the scene took after it from the same pool; sets gSaveBlock's default,
+/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
 /// has started, FLAG_KEEP_PARTY_POSITION.
 s32 SceneManager_Run(s32 warpDest) {
   struct FieldWork *work;
@@ -37,11 +37,11 @@ s32 SceneManager_Run(s32 warpDest) {
   s32 result = 0;
   s32 code;
 
-  // Set up the map.
+  // Set up the scene.
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gSaveBlock.defaultMap = gSaveBlock.sceneId;
+  gSaveBlock.defaultScene = gSaveBlock.sceneId;
   gSaveBlock.defaultWarpDest = gSaveBlock.warpDest;
   gSaveBlock.nextScene = -1;
   gSaveBlock.nextWarpDest = -1;
@@ -80,7 +80,7 @@ s32 SceneManager_Run(s32 warpDest) {
   Field_PlaceTreasureSpots();
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
-  // The default fade is from the backdrop colour over 16 frames; the map's
+  // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
@@ -110,7 +110,7 @@ s32 SceneManager_Run(s32 warpDest) {
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
-  // The map's initialization may already have taken a warp.
+  // The scene's initialization may already have taken a warp.
   code = work->warp;
   if (code != 0) {
     result = code;
@@ -123,7 +123,7 @@ s32 SceneManager_Run(s32 warpDest) {
         ScreenTransition_Start(work->transition, work->transitionFrames);
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
-        // An arrival the last map asked for
+        // An arrival the last scene asked for
         // (Warp_PlayArrival) plays through the fade; with none,
         // wait out half of it.
         if (Warp_PlayArrival() == 0)
@@ -220,7 +220,7 @@ s32 SceneManager_Run(s32 warpDest) {
         } else if (work->battle != 0) {
           // A random encounter: save the object events and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
-          // clears transitionActive, so the map ends without another fade.
+          // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
           ObjectEvent_Snapshot();
           gSaveBlock.returnMusic = -1;
@@ -400,7 +400,7 @@ done:
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
 /// (MB_JAR to MB_WELL) whose ground is level with the leader or up
-/// to 64 pixels above it, or a behavior the map has a bg event for. Returns 0
+/// to 64 pixels above it, or a behavior the scene has a bg event for. Returns 0
 /// otherwise.
 ///
 /// Called by SceneManager_Run for the A button (a non-zero result becomes
@@ -456,11 +456,11 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
 }
 
 /// Places the party at the warp destination it came in by (the first matching
-/// entry, or the map's first one) unless it keeps its position, and sets the
+/// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by SceneManager_Run once the map's events are set. Writes
-/// gSaveBlock's position, heading and turn, and the map's minX to maxY.
+/// Called by SceneManager_Run once the scene's events are set. Writes
+/// gSaveBlock's position, heading and turn, and the scene's minX to maxY.
 void Scene_ApplyWarpDest(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 warpDest = gSaveBlock.warpDest;

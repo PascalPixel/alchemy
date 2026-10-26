@@ -63,7 +63,7 @@ sets the variant to 1. A critical hit adds `ANIM_ID_CRITICAL_OFFSET` to a plain 
 animation, which turns it into the ring and spark animation.
 
 The bits are named by the `ANIM_` macros in `../battle/battle_internal.h`,
-and the layout is written out on `BattleTurn.animation`
+and the map is written out on `BattleTurn.animation`
 (`include/battle_type.h`).
 
 ## Entry points and their blocks
@@ -474,7 +474,7 @@ damage, and [Battle](../../battle.md#animations) stages the animation. The
 animation only draws, and tells the battle when to show the damage. While it
 draws it borrows from the rest of the game: the heap from
 [Runtime](../runtime/README.md), the map grid's buffer
-([Layouts](../map/README.md)), and the battle's own background, camera and
+([Maps](../map/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 blitter builder also serves the battle's star field and the Lucky Wheels.
 

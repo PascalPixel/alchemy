@@ -2,8 +2,8 @@
 #define ALCHEMY_MAP_TABLES_H
 
 /// @file
-/// The map table formats: warp destinations, warps, object event templates and
-/// map events, and the macros that write them.
+/// The scene table formats: warp destinations, warps, object event templates
+/// and map events, and the macros that write them.
 
 #include "static_assert.h"
 #include "scene_ids.h"
@@ -32,7 +32,7 @@ enum { FACING_STEP = 0x1000 };
   ((u32)((facing) - (FACING_NORTHWEST + 1)) <=                                 \
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
-/// In the first column of a map table, ends the table.
+/// In the first column of a scene table, ends the table.
 enum { MAP_TABLE_END = -1 };
 
 /// A table row's condition: CONDITION_ALWAYS, a flag number that must be
@@ -42,7 +42,7 @@ enum {
   CONDITION_ALWAYS = -1,
   /// An object event template's condition that Scene_AssignViewFlags replaces
   /// with whether the object event lies within the map's view bounds, in the
-  /// maps that call it, so only the room entered is populated.
+  /// scenes that call it, so only the room entered is populated.
   CONDITION_IN_VIEW = 0,
   CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
 };
@@ -51,15 +51,15 @@ enum {
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
 /// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
-/// maps then place their later object events and lines, the Sanctum takes
+/// scenes then place their later object events and lines, the Sanctum takes
 /// another map event table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes metatile behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
 /// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
-/// A map's warp destination: where and facing which way the party arrives, and
-/// the camera's bounds there (-1 for none).
+/// A scene's warp destination: where and facing which way the party arrives,
+/// and the camera's bounds there (-1 for none).
 struct MapWarpDest {
   s16 warpDest; ///< the warp destination number the save block names; -1 ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
@@ -78,16 +78,16 @@ struct MapWarpDest {
 STATIC_ASSERT(sizeof(struct MapWarpDest) == 24);
 STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 
-/// A warp table's header word: the map whose warps follow, named by its
+/// A warp table's header word: the scene whose warps follow, named by its
 /// name (`MAP_WARPS(Bilibin)`). The table is read by Scene_TakeWarp as the
-/// map ends, with the warp kind it ended on.
+/// scene ends, with the warp kind it ended on.
 #define MAP_WARPS(map) ((u32)&SceneId_##map)
-/// One warp: warp kind `warp` leads to `warpDest` of the map `map`, both
+/// One warp: warp kind `warp` leads to `warpDest` of the scene `scene`, both
 /// named in map_warps.h. Kind 0xff matches any warp; kind 0 or the next
-/// header sends the party to the first warp's map. The fields are added
-/// rather than ORed so the map can be its SceneId_ symbol, which the linker
+/// header sends the party to the first warp's scene. The fields are added
+/// rather than ORed so the scene can be its SceneId_ symbol, which the linker
 /// fills in; they never overlap. bits: 27..20 warp kind | 19..12 warp
-/// destination | 11..0 map
+/// destination | 11..0 scene
 #define MAP_WARP(warp, map, warpDest)                                          \
   (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&SceneId_##map)
 /// A warp with a flag word after it (bit 28). Despite the name, the warp is
@@ -95,10 +95,10 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 /// the next warp.
 #define MAP_WARP_IF(warp, map, warpDest, flag)                                 \
   (MAP_WARP(warp, map, warpDest) + 0x10000000), (u32)(flag)
-/// The last header word: it ends the last map's warps and the table.
+/// The last header word: it ends the last scene's warps and the table.
 #define MAP_WARPS_END 0x1ff
 
-/// Map numbers above the field maps: what runs instead of a map
+/// Scene numbers above the field scenes: what runs instead of a scene
 /// (SceneManager_Run). They have no row in gSceneHeaders.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
@@ -116,8 +116,8 @@ enum {
 #define WARP_TO_BATTLE(warp, group)                                            \
   (((u32)(warp) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
 
-/// An object event a map places: its sprite, the condition for placing it, how
-/// it behaves, where it stands and which way it faces, and how it turns to
+/// An object event a scene places: its sprite, the condition for placing it,
+/// how it behaves, where it stands and which way it faces, and how it turns to
 /// talk.
 struct ObjectEventTemplate {
   /// The object event's sprite; 0 to 7 are the party's characters, each in its
@@ -125,8 +125,8 @@ struct ObjectEventTemplate {
   s16 sprite;
   /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
   /// a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
-  /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the map
-  /// is entered normally again.
+  /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the
+  /// scene is entered normally again.
   s16 condition;
   /// A built-in action (enum MovementType) or an action script, for
   /// ObjectEvent_SetMovementType.
@@ -190,7 +190,7 @@ enum LocalId {
   /// ★ Named from the game: "Sheba" (MsgCharacterName)
   LOCALID_SHEBA = 6,
   LOCALID_FIRST_PLACED = 8,
-  /// The last of the 66 object event slots, as maps loop over every placed
+  /// The last of the 66 object event slots, as scenes loop over every placed
   /// object event.
   LOCALID_LAST_SLOT = 65
 };
@@ -214,7 +214,7 @@ struct MapEvent {
   s16 trigger;
   s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
   /// A message below 0x10000, else a script function; for a warp, the warp
-  /// kind its map's warp table matches, and for a bg event, a FIND_ value.
+  /// kind its scene's warp table matches, and for a bg event, a FIND_ value.
   u32 value;
 };
 
@@ -249,10 +249,10 @@ enum MapEventKind {
 enum WarpStyle {
   WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   WARP_STYLE_SILENT = 0x10,
-  /// With SE_STAIRS_UP and ANIM_LEADER_LEAVE; the next map plays
+  /// With SE_STAIRS_UP and ANIM_LEADER_LEAVE; the next scene plays
   /// ANIM_LEADER_ARRIVE (FLAG_WARP_ARRIVAL_STAIRS_UP).
   WARP_STYLE_STAIRS_UP = 0x20,
-  /// With SE_STAIRS_DOWN and ANIM_LEADER_LEAVE_ALTERNATE; the next map
+  /// With SE_STAIRS_DOWN and ANIM_LEADER_LEAVE_ALTERNATE; the next scene
   /// plays ANIM_LEADER_ARRIVE_ALTERNATE (FLAG_WARP_ARRIVAL_STAIRS_DOWN).
   WARP_STYLE_STAIRS_DOWN = 0x30,
   WARP_STYLE_MASK = 0x30
@@ -290,7 +290,7 @@ enum PsynergyPhase {
   /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
   PSYNERGY_PHASE_AFTER_END = 2,
   PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
-  /// As Reveal's colours come back (FieldEffect_EndReveal): the maps
+  /// As Reveal's colours come back (FieldEffect_EndReveal): the scenes
   /// hide again what Reveal showed.
   PSYNERGY_PHASE_EFFECT_ENDS = 4,
   /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as

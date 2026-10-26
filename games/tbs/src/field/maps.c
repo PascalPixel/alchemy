@@ -1,5 +1,5 @@
 /// @file
-/// Each layout's resources, as offsets from ResourceId_Map001, by layout.
+/// Each map's resources, as offsets from ResourceId_Map001, by map.
 
 #include "map_grid.h"
 

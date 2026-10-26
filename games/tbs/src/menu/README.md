@@ -9,7 +9,7 @@ a page of their stats. The field holds still behind the screen, and when the
 player backs out the icons come back.
 
 The menu code runs those four screens, the member chooser the
-[maps](../../glossary.md#map) of Colosso, Tolbi's tournament, open, and three
+[scenes](../../glossary.md#scene) of Colosso, Tolbi's tournament, open, and three
 [overlays](../../glossary.md#overlay) that are mostly menus: the title screen,
 the main menu and the Battle Arena.
 [Menus, windows and shops](../../menus.md#the-field-menu) gives the layer in
@@ -67,7 +67,7 @@ closes the menu so the field can cast it at whatever the leader faces
 The same list, opened another way, sets the Psynergy the L and R buttons cast
 on the field.
 
-Which of those happens depends on the Psynergy. If the map has an event for it
+Which of those happens depends on the Psynergy. If the scene has an event for it
 where the leader stands, the field casts it. If it reaches the whole party, it
 is used on everyone at once. If it is aimed at one ally, the screen asks whom.
 Anything else is handed to the field as well, which shows that nothing
@@ -129,7 +129,7 @@ and step out of sight for the other two.
 `MemberChooser_RunRearrange` as the member row and `DjinnFigures_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)) placing the figures.
 `MemberChooser_Open`, the same row on its own over the field, is how the
-Colosso maps ask for a member.
+Colosso scenes ask for a member.
 
 ## The status panel
 
@@ -165,7 +165,7 @@ named by `enum ListSort`. `ItemMenu_Sort` sorts the bag by one.
 
 The screens hold the field still while they run. Each tells the object system
 to stop drawing the field's sprites, which also frees the video memory they
-held, and pauses the map's tasks, its animated tiles, the weather and any
+held, and pauses the scene's tasks, its animated tiles, the weather and any
 colour change in progress; closing undoes it. The earliest
 [editions](../../glossary.md#editions) did this only for the Djinn and summary
 screens, and the later ones added the Item and then the Psynergy screen

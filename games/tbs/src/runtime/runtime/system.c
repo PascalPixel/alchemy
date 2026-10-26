@@ -234,7 +234,7 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 /// overlay, and the patch turns that into the offset from the instruction,
 /// which the processor expects; the packer, tools/ags-overlays, does the
 /// reverse.
-/// Called by Scene_LoadOverlay for each map's overlay, and through the
+/// Called by Scene_LoadOverlay for each scene's overlay, and through the
 /// far-call table.
 void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);

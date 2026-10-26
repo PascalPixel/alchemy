@@ -319,7 +319,7 @@ void Scene_ChooseMusic(void) {
     break;
   }
 
-  gSaveBlock.mapMusic = music;
+  gSaveBlock.sceneMusic = music;
 }
 
 /// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),

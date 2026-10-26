@@ -9,8 +9,8 @@ handwritten decoders that unpack tiles and animation
 [frames](../../glossary.md#frame) for the rest of the game, and a few helpers
 of the German and Italian message text that sit beside them on the cartridge.
 [Battle animations](../battle_anim/README.md) load their sheets from
-`battle_anims/`, and each [layout](../../glossary.md#layout) in
-[Layouts](../map/README.md) places its tiles from `tileset/`.
+`battle_anims/`, and each [map](../../glossary.md#map) in
+[Maps](../map/README.md) places its tiles from `tileset/`.
 
 ## How a picture is built and placed
 
@@ -116,7 +116,7 @@ hide the rows that are only partly on screen. Each letter is drawn with a
 shadow a pixel down and to the right. The original game forgets
 to give back one line's memory at the very end
 ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)), which does no harm,
-since all memory is cleared before the next map.
+since all memory is cleared before the next scene.
 
 Each line is drawn by `Credits_DrawEnteringLine` and `Credits_DrawLine`, set
 up by `Credits_InitTextSprites`; the text is `gCredits_Lines`.
@@ -148,7 +148,7 @@ The title intro and the credits are main-image code the title overlay calls
 through their banks' [far-call](../../glossary.md#far-call) tables. The
 decoders are called by the code that loads pictures everywhere else, many
 from a copy in a [heap slot](../../glossary.md#heap-slot). The pictures
-belong to the code that loads them: battle animations, maps, layouts, windows
+belong to the code that loads them: battle animations, scenes, maps, windows
 and menus.
 
 ## Limits
@@ -170,7 +170,7 @@ and menus.
 
 ## Evidence
 
-The pictures are named for what they show, from the maps and battle
+The pictures are named for what they show, from the scenes and battle
 animations that load them, and the decoders for the format each unpacks,
 proven in their headers. The credits' and the title's functions are named for
 what they draw.

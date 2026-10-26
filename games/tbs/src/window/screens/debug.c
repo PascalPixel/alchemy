@@ -56,7 +56,7 @@ s16 DebugMapSelect_Run(void) {
 
   window = 0;
   selectedField = 0;
-  sceneId = gSaveBlock.defaultMap;
+  sceneId = gSaveBlock.defaultScene;
   warpDest = gSaveBlock.defaultWarpDest;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugMapSelect_DrawRow(window, sceneId, &warpDest);

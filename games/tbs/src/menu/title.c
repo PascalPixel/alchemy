@@ -46,7 +46,7 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's map tables, which SceneManager_Run reads through
+/// The title overlay's scene tables, which SceneManager_Run reads through
 /// entry/title.s: one warp destination row, the warp, and no object event
 /// templates or map events.
 u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
@@ -333,10 +333,10 @@ static void Title_RevealScreen(s32 unused) {
   gFieldWork->transitionFrames = 60;
 }
 
-/// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ layout) with the
+/// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ map) with the
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
-/// decoded through Ram_MapGridCellBuffer, and a map that numbers them row by
-/// row. Zeroes the four backgrounds' scroll and leaves the map work showing
+/// decoded through Ram_MapGridCellBuffer, and a tile map that numbers them row
+/// by row. Zeroes the four backgrounds' scroll and leaves the map work showing
 /// only BG2 and the sprites. MainMenu_LoadBackground (main_menu.c) is its twin.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;

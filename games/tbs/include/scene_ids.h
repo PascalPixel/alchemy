@@ -2,12 +2,12 @@
 #define ALCHEMY_SCENE_IDS_H
 
 /// @file
-/// Map numbers, named after their places, in the order of gSceneHeaders
+/// Scene numbers, named after their places, in the order of gSceneHeaders
 /// (field/scene_headers.s).
 ///
-/// Each SceneId_ is an absolute symbol whose value is the map's row in the
+/// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C takes the number as (s32)&SceneId_Vale, and the warp tables name a
-/// map by its place (MAP_WARP).
+/// scene by its place (MAP_WARP).
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char SceneId_Title;
@@ -124,13 +124,13 @@ extern char SceneId_KolimaTunnel;
 /// ★ Named from its area name: Kolima Bridge
 extern char SceneId_KolimaBridge;
 /// ★ Named from what the player sees: the way into Kolima Forest from the world
-/// map, a river crossed on log bridges (its render)
+/// scene, a river crossed on log bridges (its render)
 extern char SceneId_KolimaForestEntrance;
-/// ★ Named from what the player sees: the one forest map with no water, an open
-/// grassy glade ringed by trees (its render)
+/// ★ Named from what the player sees: the one forest scene with no water, an
+/// open grassy glade ringed by trees (its render)
 extern char SceneId_KolimaForestGlade;
 /// ★ Named from what the player sees: a cliff ridge runs along the whole north
-/// of the map, a river down its west (its render)
+/// of the scene, a river down its west (its render)
 extern char SceneId_KolimaForestCliff;
 /// ★ Named from the game: "Floodgate Switch" (MsgKolimaDoNotTouchFloodgate)
 extern char SceneId_KolimaForestFloodgate;

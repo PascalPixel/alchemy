@@ -6,7 +6,7 @@ one carries, the [Djinn](../../glossary.md#djinn) they hold, and the flags that
 remember what has happened in the story. So do the tables that describe every
 item, ability, Djinni, enemy, [summon](../../glossary.md#summons) and class.
 The rest of the game asks this code its questions: a
-[map](../../glossary.md#map) whether a chest has been opened, a shop what an
+[scene](../../glossary.md#scene) whether a chest has been opened, a shop what an
 item costs, a menu what a character's Attack would be with another sword, and
 a battle what a blow does. [Battles](../battle/README.md) follows an ability
 from these tables to its damage.
@@ -129,8 +129,8 @@ save files count the Djinn found. The title screen offers its Battle command
 only once some save file has found a Djinni.
 
 Eight flags in a row, read together as a byte, also hold small counters, such
-as the Battle Arena's win count. Two ranges are scratch space for the map
-code: a map's own flags, cleared every time the party enters a map, and a map
+as the Battle Arena's win count. Two ranges are scratch space for the scene
+code: a scene's own flags, cleared every time the party enters a scene, and a map
 section's, cleared when it enters another
 [map section](../../glossary.md#map-section)
 ([the front page](../../README.md#game-flags) gives the ranges).
@@ -155,7 +155,7 @@ with a counter); `Item_AdjustCounter` changes them.
 ## How it fits with the rest of the game
 
 Code in the other banks calls this one's functions by their far-call names,
-and a map's [overlay](../../glossary.md#overlay) through the list of
+and a scene's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
 `gSaveBlock`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `abilities.c` beside its own tables,
@@ -225,7 +225,7 @@ and skips items without an icon. They are filler to 324 rows.
 
 The save block's byte after the Speech option, `unusedAfterSpeech`, is set to 1
 by a new game and read by nothing in the game: the option menu keeps only the
-window colour, message speed, Speech and auto-sleep, and no map reaches the
+window colour, message speed, Speech and auto-sleep, and no scene reaches the
 save block by offset there. A cleared file sent by cable sends the 4,100
 bytes from `gSaveBuffer`, which hold the game flags and the save block, this
 byte included, to The Lost Age. The Lost Age does not read it either: its

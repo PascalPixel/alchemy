@@ -1,18 +1,26 @@
-// Draft of BattleEffect_RunSoulShatter, effect kind 115 (Soul Shatter), The Broken
-// Seal's BattleEffect_RunUndeadSword as The Lost Age reworked it (structure
-// twin 0.703): the same two mirrored halves of a column and the same
+// Draft of BattleEffect_RunSoulShatter, effect kind 115 (Soul Shatter), The
+// Broken Seal's BattleEffect_RunUndeadSword as The Lost Age reworked it
+// (structure twin 0.703): the same two mirrored halves of a column and the same
 // sixteen sparks, over a longer effect in which the target is thrown up
 // and 32 motes of its soul drift back into the user (pulled as
 // BattleEffect_RunNirvana's orb is).
 
-// Listing 589 instructions, draft 587, differ 144 (2026-10-26).
-// Left: the spark blitter choice. The native computes the mirror choice
-// as a byte offset (4 or 0) right after the cell clamp, and the constant
-// 3 of the divide stays in a pseudo that is spilled (sp 8) and reused for
-// i & 3; this draft's 0/1 flag is scaled at the call. With the choice
-// written as a byte offset into the blitter pair the differ is 165, which
-// is not kept: it is no natural source. The rest is allocation in the
-// spark and mote loops (r5/r6/r7 rotated) and the pool offsets.
+// Listing 589 instructions, draft 587, differ 114 (2026-10-26, round 5).
+// The spark's blitter is draw[(i & 3) ? 0 : 1] written in the call with the
+// size table read in place (the native folds the choice into a byte offset,
+// 4 or 0, right after the cell clamp, sharing the divide's 3): 144 to 123.
+// The test that a mote has passed the user is SameSide, an inline function
+// whose two returns keep the flag values the native computes (lsrs and
+// mvns) instead of a jump on each sign: 123 to 114. The native also copies
+// the flag test into the first arm and puts the user-left arm first (two
+// instructions this draft lacks); written with the user-left arm first, as
+// a conditional, an if/else on a local or explicit returns of 1 and 0, the
+// tests fold back into jumps (123 to 125). Left: allocation in the spark
+// and mote loops (the native keeps the spark in r5 and the mote in r6, here
+// r7; declaration order and the loop forms change nothing) and the pool
+// offsets.
+// Before (144): the mirror choice in a local 0/1 flag scaled at the call;
+// as a byte offset into the pair 165.
 // Tried (differ):
 // first draft                                                       261
 // position declared before screen (stack slots)                     261
@@ -71,26 +79,33 @@ extern u16 gData_08197410[];
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);                       // BattleEffect_BuildBlitter
+                  u32 mode); // BattleEffect_BuildBlitter
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);          // ObjectGroup_UpdateMembers
-void ObjectGroup_TickMemberTimers(void);                // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void Func_081180e8(s32 phase);           // BattleEventRuntime_StartPhaseFar
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *position);
-void EffectPosition_ProjectBattler(
-    s32 actor, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Audio_PlayCue(s32 cue);
+
+// Whether b lies on the same side of x = 0 as a.
+static inline s32 SameSide(s32 a, s32 b) {
+  if (a >= 0)
+    return b >= 0;
+  return b < 0;
+}
 
 // Soul Shatter: a column bursts up under the target in a spray of sparks
 // and throws it into the air; the user glows, and from frame 32 motes of
@@ -130,7 +145,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+                                0xc80);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
@@ -233,15 +249,13 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
         s32 cell = spark->variant / 3;
         s32 x = HI(spark->x);
         s32 y = HI(spark->y);
-        s32 mirror;
-        u32 size;
 
         if (cell > 6)
           cell = 6;
-        mirror = (i & 3) == 0;
-        size = Data_08198b6c[cell];
-        draw[mirror](canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
-                     x - size / 2, y - size / 2, size, size);
+        draw[(i & 3) ? 0 : 1](
+            canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
+            x - Data_08198b6c[cell] / 2, y - Data_08198b6c[cell] / 2,
+            Data_08198b6c[cell], Data_08198b6c[cell]);
         spark->variant++;
         BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
       }
@@ -284,7 +298,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
             userX = user->x;
             if (userX < 0)
               userX = -userX;
-            if (moteX >= userX && (user->x >= 0 ? mote->x >= 0 : mote->x < 0))
+            if (moteX >= userX && SameSide(user->x, mote->x))
               mote->variant = -1;
           }
         }

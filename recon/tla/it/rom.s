@@ -2487,106 +2487,6 @@ Func_081051a8:
 	.incbin "baserom.gba", 0x001052bc, 0x000000c4
 	.section .rom.001055f4, "ax"
 	.incbin "baserom.gba", 0x001055f4, 0x000000a0
-	.section .rom.00108000, "ax"
-	.global Resource_FarCall008
-Resource_FarCall008:
-	.incbin "baserom.gba", 0x00108000, 0x00000008
-	.section .rom.00108008, "ax"
-	.global Func_08108008
-	.type Func_08108008, %function
-	.thumb_func
-Func_08108008:
-	.incbin "baserom.gba", 0x00108008, 0x00000008
-	.section .rom.00108010, "ax"
-	.global Func_08108010
-	.type Func_08108010, %function
-	.thumb_func
-Func_08108010:
-	.incbin "baserom.gba", 0x00108010, 0x00000008
-	.section .rom.00108018, "ax"
-	.global Func_08108018
-	.type Func_08108018, %function
-	.thumb_func
-Func_08108018:
-	.incbin "baserom.gba", 0x00108018, 0x00000008
-	.section .rom.00108020, "ax"
-	.global Func_08108020
-	.type Func_08108020, %function
-	.thumb_func
-Func_08108020:
-	.incbin "baserom.gba", 0x00108020, 0x00000008
-	.section .rom.00108028, "ax"
-	.global Func_08108028
-	.type Func_08108028, %function
-	.thumb_func
-Func_08108028:
-	.incbin "baserom.gba", 0x00108028, 0x00000008
-	.section .rom.00108030, "ax"
-	.global Func_08108030
-	.type Func_08108030, %function
-	.thumb_func
-Func_08108030:
-	.incbin "baserom.gba", 0x00108030, 0x00000008
-	.section .rom.00108038, "ax"
-	.global Func_08108038
-	.type Func_08108038, %function
-	.thumb_func
-Func_08108038:
-	.incbin "baserom.gba", 0x00108038, 0x00000008
-	.section .rom.00108040, "ax"
-	.global Func_08108040
-	.type Func_08108040, %function
-	.thumb_func
-Func_08108040:
-	.incbin "baserom.gba", 0x00108040, 0x00000008
-	.section .rom.00108048, "ax"
-	.global Func_08108048
-	.type Func_08108048, %function
-	.thumb_func
-Func_08108048:
-	.incbin "baserom.gba", 0x00108048, 0x00000008
-	.section .rom.00108050, "ax"
-	.global Shop_FillSelectorFar
-	.type Shop_FillSelectorFar, %function
-	.thumb_func
-Shop_FillSelectorFar:
-	.incbin "baserom.gba", 0x00108050, 0x00000008
-	.section .rom.00108058, "ax"
-	.global Shop_RestoreSceneTilesFar
-	.type Shop_RestoreSceneTilesFar, %function
-	.thumb_func
-Shop_RestoreSceneTilesFar:
-	.incbin "baserom.gba", 0x00108058, 0x00000008
-	.section .rom.00108060, "ax"
-	.global Shop_InitializeEffectFar
-	.type Shop_InitializeEffectFar, %function
-	.thumb_func
-Shop_InitializeEffectFar:
-	.incbin "baserom.gba", 0x00108060, 0x00000008
-	.section .rom.00108068, "ax"
-	.global Func_08108068
-	.type Func_08108068, %function
-	.thumb_func
-Func_08108068:
-	.incbin "baserom.gba", 0x00108068, 0x00000008
-	.section .rom.00108070, "ax"
-	.global Func_08108070
-	.type Func_08108070, %function
-	.thumb_func
-Func_08108070:
-	.incbin "baserom.gba", 0x00108070, 0x00000008
-	.section .rom.00108078, "ax"
-	.global AudioCommand_WaitForStateByteClearFar
-	.type AudioCommand_WaitForStateByteClearFar, %function
-	.thumb_func
-AudioCommand_WaitForStateByteClearFar:
-	.incbin "baserom.gba", 0x00108078, 0x00000008
-	.section .rom.00108080, "ax"
-	.global Inn_PlaySleepFar
-	.type Inn_PlaySleepFar, %function
-	.thumb_func
-Inn_PlaySleepFar:
-	.incbin "baserom.gba", 0x00108080, 0x00000008
 	.section .rom.00108b70, "ax"
 	.global Func_08108b70
 	.type Func_08108b70, %function
@@ -2640,6 +2540,10 @@ BattleEffect_UpdateRadialMotion:
 Func_0810b168:
 	.incbin "baserom.gba", 0x0010b14c, 0x00000210
 	.section .rom.0010b5a8, "ax"
+	.global Func_0810b5c4
+	.type Func_0810b5c4, %function
+	.thumb_func
+Func_0810b5c4:
 	.incbin "baserom.gba", 0x0010b5a8, 0x000000f8
 	.section .rom.0010b6b0, "ax"
 	.incbin "baserom.gba", 0x0010b6b0, 0x000000d0
@@ -2656,14 +2560,6 @@ Func_0810b7b4:
 	.thumb_func
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010bde8, 0x00000048
-	.section .rom.00118070, "ax"
-	.incbin "baserom.gba", 0x00118070, 0x00000008
-	.section .rom.00118078, "ax"
-	.global BattleMotion_ApproachTargetFar
-	.type BattleMotion_ApproachTargetFar, %function
-	.thumb_func
-BattleMotion_ApproachTargetFar:
-	.incbin "baserom.gba", 0x00118078, 0x00000010
 	.section .rom.00118230, "ax"
 	.incbin "baserom.gba", 0x00118230, 0x00000008
 	.section .rom.00118244, "ax"

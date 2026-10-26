@@ -3346,24 +3346,7 @@ main	rom_main_06	games/tla/src/menu/build_availability	.text
 main	rom_main_06	games/tla/src/graphics/ui/menuspr	.rodata
 main	rom_main_06	games/tla/src/menu/menustr	.rodata
 main	rom_main_06	games/tla/src/menu/menudata	.data
-main	rom_main_07	recon/tla/it/rom	.rom.00108000	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108008	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108010	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108018	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108020	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108028	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108030	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108038	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108040	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108048	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108050	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108058	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108060	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108068	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108070	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108078	it
-main	rom_main_07	recon/tla/it/rom	.rom.00108080	it
-main	rom_main_07	games/tla/src/system/far_call/table_41		ja en de es fr
+main	rom_main_07	games/tla/src/system/far_call/table_41
 main	rom_main_07	games/tla/src/system/far_call/table_42
 main	rom_main_07	games/tla/src/menu/shop/list_items	.text
 main	rom_main_07	games/tla/src/menu/shop/open_work	.text
@@ -3511,50 +3494,10 @@ main	rom_main_07	games/tla/src/menu/shop/shopdata	.rodata
 main	rom_main_08	games/tla/src/system/far_call/resource_09
 main	rom_main_08	games/tla/src/system/far_call/table_43
 main	rom_main_08	games/tla/src/system/far_call/table_44
-main	rom_main_08	recon/tla/es/rom	.rom.00118058	es
-main	rom_main_08	recon/tla/es/rom	.rom.00118060	es
-main	rom_main_08	recon/tla/es/rom	.rom.00118068	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118058	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118060	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118068	de
-main	rom_main_08	games/tla/src/system/far_call/table_45		ja en fr it
-main	rom_main_08	recon/tla/it/rom	.rom.00118070	it
-main	rom_main_08	recon/tla/it/rom	.rom.00118078	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118070	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.00118078	fr
-main	rom_main_08	games/tla/src/system/far_call/table_46		en de es
-main	rom_main_08	recon/tla/de/rom	.rom.00118088	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118090	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118098	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180a0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180a8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180b0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180b8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180c0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180c8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180d0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180d8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180e0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180e8	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180f0	de
-main	rom_main_08	recon/tla/de/rom	.rom.001180f8	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118100	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118108	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118110	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118118	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118120	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118128	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118130	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118138	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118140	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118148	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118150	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118158	de
-main	rom_main_08	recon/tla/ja/rom	.rom.00118070	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00118078	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00118080	ja
-main	rom_main_08	games/tla/src/system/far_call/battlepl		ja en es fr it
-main	rom_main_08	games/tla/src/system/far_call/battleac		ja en es fr it
+main	rom_main_08	games/tla/src/system/far_call/table_45
+main	rom_main_08	games/tla/src/system/far_call/table_46
+main	rom_main_08	games/tla/src/system/far_call/battlepl
+main	rom_main_08	games/tla/src/system/far_call/battleac
 main	rom_main_08	games/tla/src/graphics/tile/model_decode
 main	rom_main_08	recon/tla/it/rom	.rom.00118230	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00118230	fr

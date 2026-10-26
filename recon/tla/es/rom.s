@@ -2510,24 +2510,6 @@ Func_0810b7b4:
 	.thumb_func
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010fe08, 0x00000048
-	.section .rom.00118058, "ax"
-	.global Summon_IsEntrySecondaryFlaggedFar
-	.type Summon_IsEntrySecondaryFlaggedFar, %function
-	.thumb_func
-Summon_IsEntrySecondaryFlaggedFar:
-	.incbin "baserom.gba", 0x00118058, 0x00000008
-	.section .rom.00118060, "ax"
-	.global BattleClass_GetAttackHopFar
-	.type BattleClass_GetAttackHopFar, %function
-	.thumb_func
-BattleClass_GetAttackHopFar:
-	.incbin "baserom.gba", 0x00118060, 0x00000008
-	.section .rom.00118068, "ax"
-	.global BattleClass_IsSmallFar
-	.type BattleClass_IsSmallFar, %function
-	.thumb_func
-BattleClass_IsSmallFar:
-	.incbin "baserom.gba", 0x00118068, 0x00000008
 	.section .rom.00118230, "ax"
 	.incbin "baserom.gba", 0x00118230, 0x00000008
 	.section .rom.00118244, "ax"

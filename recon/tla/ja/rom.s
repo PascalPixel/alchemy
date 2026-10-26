@@ -1892,20 +1892,6 @@ Func_0810b7b4:
 	.thumb_func
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010be08, 0x00000048
-	.section .rom.00118070, "ax"
-	.incbin "baserom.gba", 0x00118070, 0x00000008
-	.section .rom.00118078, "ax"
-	.global BattleMotion_ApproachTargetFar
-	.type BattleMotion_ApproachTargetFar, %function
-	.thumb_func
-BattleMotion_ApproachTargetFar:
-	.incbin "baserom.gba", 0x00118078, 0x00000008
-	.section .rom.00118080, "ax"
-	.global BattleUnit_GetEffectHeightFar
-	.type BattleUnit_GetEffectHeightFar, %function
-	.thumb_func
-BattleUnit_GetEffectHeightFar:
-	.incbin "baserom.gba", 0x00118080, 0x00000008
 	.section .rom.00118230, "ax"
 	.incbin "baserom.gba", 0x00118230, 0x00000008
 	.section .rom.00118244, "ax"

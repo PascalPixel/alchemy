@@ -1,96 +1,79 @@
-// Draft, differ 101 of 113: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "lib/call.h"
-#include "object_runtime.h"
-#include "party_state.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Draft, differ 51 of 113: the update of a glowing object: for its first 50
+// frames it throws effect 403 every fourth frame and blinks, then blinks on
+// another rhythm until frame 140, glows (attribute 7) until 144, and then
+// hands its position to its linked object, which takes Func_02000dc0. The
+// mask is set before the random draw as overlay 686's Func_020023d0 does.
+// Left: the native keeps the frame count's address in r9 for the blink test,
+// the phase in r6 and the parameters' address in r8.
 #include "types.h"
+#include "object_runtime.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct MagmaRockEffectParams {
+  s32 unk00;
+  u8 unk04[0x14];
+  u16 kind;
+  u8 unk1a[2];
+  const void *script;
+  u8 unk20[8];
+};
 
-extern u8 gFrameCount[];
-extern u8 gData_02003d74[];
-extern u8 Func_02000dc0[];
-s32 Random16Far();
-void Func_0200015c();
-void Object_SetPartAttribute();
+extern u32 gFrameCount;
+extern const u8 gData_02003d74[];
 
-s32 Func_02000c40(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r7, r5, r10, r3, r6, r9, r8, v0, v1, r2, v2, r0, v3, v4, v5;
-  s32 stack[14];
+u32 Random16Far(void);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
+                   s32 life, struct MagmaRockEffectParams *params);
+void Func_02000dc0(void);
 
-  r7 = a0;
-  /* sub (s32)stack, #56 */
-  r5 = FIELD_AT(r7, s32, 104);
-  r10 = 100 + r7;
-  r3 = FIELD_AT(r7, s16, 100);
-  if ((FIELD_AT(r7, s16, 100)) > 49)
-    goto L_02008cc2;
-  r6 = FIELD_AT((s32)gFrameCount, s32, 0);
-  r9 = (s32)gFrameCount;
-  r6 = r6 & 3;
-  if (r6 == 0) {
-    r8 = (s32)((u8 *)stack + 16);
-    FIELD_AT(r8, u16, 24) = 0x193;
-    FIELD_AT(r8, s32, 0) = 1;
-    r5 = 15;
-    FIELD_AT(r8, s32, 28) = (s32)gData_02003d74;
-    v0 = Random16Far();
-    r5 = r5 & v0;
-    v1 = Random16Far();
-    r5 = r5 - 8;
-    r5 = r5 << 16;
-    Func_0200015c((FIELD_AT(r7, s32, 8)) + r5,
-                  ((FIELD_AT(r7, s32, 12)) + ((31 & v1) << 16)) - 524288,
-                  FIELD_AT(r7, s32, 16), 0, r6, r6, 0x320001, r8);
-  }
-  r3 = FIELD_AT(r9, s32, 0);
-  r2 = 4;
-  goto L_02008cd6;
-L_02008cc2:
-  if (r3 <= 99) {
-    r2 = 4;
-    r3 = (s32)gFrameCount;
+void Func_02000c40(struct ObjectRuntime *object) {
+  s16 *timer = &object->action;
+  struct ObjectRuntime *linked = object->linkedObject;
+
+  if (*timer < 50) {
+    u32 phase = gFrameCount & 3;
+
+    if (phase == 0) {
+      struct MagmaRockEffectParams params;
+      s32 dx;
+      s32 dy;
+
+      params.kind = 403;
+      params.unk00 = 1;
+      params.script = gData_02003d74;
+      {
+        s32 mask = 15;
+
+        dx = mask & Random16Far();
+      }
+      dy = Random16Far() & 31;
+      Func_0200015c(object->x + ((dx - 8) << 16),
+                    object->y + (dy << 16) - 0x80000, object->z, 0, phase,
+                    phase, 0x320001, &params);
+    }
+    if (gFrameCount & 4)
+      Object_SetPartAttribute(object, 10);
+    else
+      Object_SetPartAttribute(object, 0);
+  } else if (*timer < 100) {
+    if (gFrameCount & 4)
+      Object_SetPartAttribute(object, 10);
+    else
+      Object_SetPartAttribute(object, 0);
+  } else if (*timer < 140) {
+    if (gFrameCount & 2)
+      Object_SetPartAttribute(object, 10);
+    else
+      Object_SetPartAttribute(object, 0);
+  } else if (*timer < 144) {
+    Object_SetPartAttribute(object, 7);
   } else {
-    if (r3 > 139)
-      goto L_02008cf0;
-    r2 = 2;
-    r3 = (s32)gFrameCount;
+    Object_SetPartAttribute(object, 0);
+    object->update = NULL;
+    linked->x = object->x;
+    linked->y = object->y;
+    linked->z = object->z;
+    linked->update = Func_02000dc0;
   }
-  r3 = FIELD_AT(r3, s32, 0);
-L_02008cd6:
-  if ((r3 & r2) == 0)
-    goto L_02008ce6;
-  Value2((s32 (*)())Object_SetPartAttribute, r7, 10);
-  r0 = v2;
-  goto L_02008d1a;
-L_02008ce6:
-  Value2((s32 (*)())Object_SetPartAttribute, r7, 0);
-  r0 = v3;
-  goto L_02008d1a;
-L_02008cf0:
-  if (r3 > 143)
-    goto L_02008cfe;
-  Value2((s32 (*)())Object_SetPartAttribute, r7, 7);
-  r0 = v4;
-  goto L_02008d1a;
-L_02008cfe:
-  Value2((s32 (*)())Object_SetPartAttribute, r7, 0);
-  FIELD_AT(r7, s32, 108) = 0;
-  FIELD_AT(r5, s32, 8) = FIELD_AT(r7, s32, 8);
-  FIELD_AT(r5, s32, 12) = FIELD_AT(r7, s32, 12);
-  FIELD_AT(r5, s32, 16) = FIELD_AT(r7, s32, 16);
-  FIELD_AT(r5, s32, 108) = (s32)Func_02000dc0;
-  r0 = v5;
-L_02008d1a:
-  FIELD_AT(r10, u16, 0) = (FIELD_AT(r10, u16, 0)) + 1;
-  /* add (s32)stack, #56 */
-  return r0;
+  (*timer)++;
 }

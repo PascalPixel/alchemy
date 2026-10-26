@@ -1,3 +1,9 @@
+// Draft, differ 36 of 324 (2026-10-26, 73 before): the best point's position
+// copied y first, which gives the native's registers and instruction count;
+// left: the ladder count's start (127) hoisted above the work's null test
+// (if-conversion here, not in the native), the opening position's address
+// built in one step, and the x and y copies' loads in the other order.
+// Earlier notes follow.
 // Near miss, differ 81 of 324: script command 0x1d, the ladder sibling of
 // Func_080292fc: moves an object to the nearest ladder point within 32 pixels
 // of the direction pad's step, turning it toward the pad by at most 0x1000
@@ -55,10 +61,8 @@ extern const u16 gData_0802ec5c[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
-                                            s32 argument);
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
-                                         s32 value);
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 value);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 static inline void TurnToward(struct ObjectRuntime *object, u16 angle) {
@@ -138,8 +142,8 @@ s32 Func_08029570(struct ObjectRuntime *object) {
             pair->speed = 0x20000;
           object->linkedObject = (struct ObjectRuntime *)best;
         }
-        position.x = best->x;
         position.y = best->y;
+        position.x = best->x;
         position.z = best->z;
       }
     }

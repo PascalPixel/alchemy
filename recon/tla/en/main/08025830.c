@@ -1,3 +1,5 @@
+// Draft, differ 52 of 370 (2026-10-26, 58 before): two probes copy y after z.
+// Earlier notes follow.
 // Near miss, differ 60 of 370, all instruction order (the same 370
 // instructions): The Broken Seal's ScriptObject_WanderNearHome
 // (SC_WANDER_HOME) on this game's headers. As in Func_08025698, where a
@@ -92,14 +94,14 @@ s32 Func_08025830(struct ScriptObjectRuntime *object) {
       if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
-      probePosition.y = object->y;
       probePosition.z = object->z;
+      probePosition.y = object->y;
       Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
       if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
-      probePosition.y = object->y;
       probePosition.z = object->z;
+      probePosition.y = object->y;
       Vector_AddPolarOffset(travelDistance, heading + 0x4000, &probePosition);
       if (Func_0802d87c((struct ObjectRuntime *)object, &probePosition) != 0)
         goto roam;

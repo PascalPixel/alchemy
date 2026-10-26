@@ -1,17 +1,20 @@
+// Draft, differ 30 of 535 (2026-10-26, 38 before): preset stepped after redraw
+// is set, as the device search found. Earlier notes follow.
 // Draft, differ 38 of 535 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 30
 // with the volatile reads made plain; `work->preset++;` moved after `redraw =
 // 1;`, and finds nothing closer.
 // Draft, differ 52 of 535 (145 before the saved settings were written as
-// gPartyState's fields rather than through a byte pointer, 2026-10-25): the option screen, as ☀️'s
-// Menu_RunWorkspaceOptions (games/tbs/src/window/window.c). The five messages
-// (0x113b, 0x1141, 0x1144, 0x1146 and 0x1161 in English) are pool symbols the
-// catalogs must name before adoption (MsgOptionA to MsgOptionE here).
-// Remaining: mostly the native's loads issued ahead of constants (each frame
-// loop's reload of the frame before the option offset, the slider rows), the
-// cursor row's registers and the offsets of the cursor and the preset,
-// which the native builds in the other register.
+// gPartyState's fields rather than through a byte pointer, 2026-10-25): the
+// option screen, as ☀️'s Menu_RunWorkspaceOptions
+// (games/tbs/src/window/window.c). The five messages (0x113b, 0x1141, 0x1144,
+// 0x1146 and 0x1161 in English) are pool symbols the catalogs must name before
+// adoption (MsgOptionA to MsgOptionE here). Remaining: mostly the native's
+// loads issued ahead of constants (each frame loop's reload of the frame before
+// the option offset, the slider rows), the cursor row's registers and the
+// offsets of the cursor and the preset, which the native builds in the other
+// register.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -48,9 +51,8 @@ struct RenderInput *Func_0803fd28(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
-struct RenderOutput *RenderResource_CreatePair(s32 group,
-                                               struct RenderInput *input,
-                                               s32 x, s32 y);
+struct RenderOutput *
+RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 void Func_08045018(struct RenderOutput *pair);
 void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
@@ -174,8 +176,8 @@ s32 Func_080400e8(void) {
 
     if (PRESSED & 4) {
       Audio_PlayCue(112);
-      work->preset++;
       redraw = 1;
+      work->preset++;
       if (work->preset > 5)
         work->preset = 0;
       *hue = gOptionMenu_FirstColorPresets[work->preset];

@@ -72,7 +72,7 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x0200ca8c)
         "*/resource_6ad_overlay.o"(.text.x0200cbf4)
         "*/resource_6ad_overlay.o"(.text.x0200cd10)
-        "*/resource_6ad_overlay.o"(.text.x0200cfc0)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/s4fc0.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200d048)
         "*/games/tla/src/scene/mars_lighthouse_room_f/light.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s538c.o"(.text)

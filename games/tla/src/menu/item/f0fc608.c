@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 struct MenuResult {
   s32 ownerState;
@@ -20,8 +21,14 @@ struct InventoryMenuState {
   u16 items[32];
 };
 
+// The Japanese page draws its page icons and names further right.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_X 120
+#define ENTRY_X 32
+#else
 #define PAGE_X 116
 #define ENTRY_X 24
+#endif
 
 extern char MsgItemName[];
 

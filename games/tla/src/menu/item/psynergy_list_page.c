@@ -27,6 +27,31 @@ struct PsynergyMenuState {
 #define OWNER_CLASS_MSG_OFFSET 0x129
 #define OWNER_LEVEL_OFFSET 15
 
+// The Japanese page lists six abilities rather than five, a row higher, and
+// lays its heading, names, costs, page icons and "no Psynergy" message out on
+// its own columns.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_ROWS 6
+#define PAGE_ICONS_X 86
+#define PAGE_ICONS_Y 53
+#define HEADING_X 144
+#define FIRST_ROW_Y 8
+#define NAME_X 96
+#define COST_X 168
+#define FIRST_RANGE_ROW 1
+#define EMPTY_MESSAGE_Y 8
+#else
+#define PAGE_ROWS 5
+#define PAGE_ICONS_X 80
+#define PAGE_ICONS_Y 58
+#define HEADING_X 176
+#define FIRST_ROW_Y 16
+#define NAME_X 88
+#define COST_X 176
+#define FIRST_RANGE_ROW 2
+#define EMPTY_MESSAGE_Y 17
+#endif
+
 extern u8 MsgAbilityNothing[];
 extern u8 MsgClassName[];
 extern u8 MsgPsynergyChooseTarget[];
@@ -65,17 +90,17 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   RenderOutput_RedrawSavedRectFar(window);
 
-  first = res->page * 5;
+  first = res->page * PAGE_ROWS;
   rows = (u8)(res->entryCount - first);
-  if (rows > 5) {
-    rows = 5;
+  if (rows > PAGE_ROWS) {
+    rows = PAGE_ROWS;
   }
 
-  Menu_SetPageIcons(5, first, window, 80, 58);
-  Menu_DrawPageIndicator(window, res->entryCount, 5, res->page, 28);
+  Menu_SetPageIcons(PAGE_ROWS, first, window, PAGE_ICONS_X, PAGE_ICONS_Y);
+  Menu_DrawPageIndicator(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
-  UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window, 176,
-                                  0);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
+                                  HEADING_X, 0);
 
   row = 0;
   if (rows > row) {
@@ -88,10 +113,10 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       act = BattleAction_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
       msg =
           (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityNothing;
-      y = row * 16 + 16;
+      y = row * 16 + FIRST_ROW_Y;
 
-      UiText_DrawCharacterAtOffsetFar(msg, window, 88, y);
-      UiText_DrawNumberAtOffsetFar(act->ppCost, 2, window, 176, y);
+      UiText_DrawCharacterAtOffsetFar(msg, window, NAME_X, y);
+      UiText_DrawNumberAtOffsetFar(act->ppCost, 2, window, COST_X, y);
 
       range = act->range;
       if (range == 0xff) {
@@ -99,7 +124,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       } else {
         range--;
       }
-      PsynergyMenu_DrawRange(window, 25, row * 2 + 2, range, 0);
+      PsynergyMenu_DrawRange(window, 25, row * 2 + FIRST_RANGE_ROW, range, 0);
 
       row++;
       offset += 2;
@@ -108,7 +133,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   if (menu->psynergyCount == 0) {
     UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseForR - 1, window, 96,
-                                    17);
+                                    EMPTY_MESSAGE_Y);
   }
 
   UiText_DrawStringAtOffsetFar(owner, window, 40, 0);

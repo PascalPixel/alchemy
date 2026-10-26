@@ -16888,7 +16888,7 @@ msgctxt "message"
 msgid "04156"
 msgstr "LR:ならびかえ"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "04157"
 msgstr "けいけんち"
 

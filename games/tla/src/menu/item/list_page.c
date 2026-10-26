@@ -5,8 +5,12 @@
 #include "text/msg_ids.h"
 #include "edition.h"
 
-/// The rows of a page of the item list.
+/// The rows of a page of the item list: six in Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_ROWS 6
+#else
 #define PAGE_ROWS 5
+#endif
 
 // The page icons, the item names, the "no items" message and the Attack and
 // Defense figures, as each translation lays them out.

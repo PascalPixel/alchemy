@@ -45,7 +45,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s5034.o"(.text)
         "*/games/tla/src/scene/kibombo/prepare.o"(.text)
         "*/games/tla/src/scene/kibombo/s50ac.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200d16c)
+        "*/games/tla/src/scene/kibombo/s516c.o"(.text)
         "*/games/tla/src/scene/kibombo/s538c.o"(.text)
         "*/games/tla/src/scene/kibombo/s54e0.o"(.text)
         "*/games/tla/src/scene/kibombo/s5594.o"(.text)

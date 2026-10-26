@@ -21,6 +21,18 @@
 /// give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
 
+/// The world map screen's work. Its setup (Func_080ebf94) reaches it at a
+/// constant address: the work's fields are read again after stores to the
+/// screen values whose addresses it passes out, which only a constant gives.
+#define Ram_WorldMapWork                                                       \
+  FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
+/// Where Func_080ed0a0 reads the cursor from (x, then y, 16.16 pixels): the
+/// setup points it at the work's cursor.
+#define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
+/// The cursor's place when the screen opens (x, then y, 16.16 pixels).
+#define Ram_WorldMapCursorStart                                                \
+  FIXED_ADDRESS((s32 *), 0x0202a64c, Data_0202a64c)
+
 struct BattleWork;
 struct BattlePresentationTransition;
 struct MapWork;

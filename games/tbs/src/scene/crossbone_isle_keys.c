@@ -229,7 +229,6 @@ static void EventScript_BaneJoins(void) {
   Djinn_JoinParty(LOCALID_BANE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
 const struct MapWarpDest *Scene_GetWarpDests(void) {
@@ -981,7 +980,6 @@ static void EventScript_UseLadder(void) {
   }
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsleKeys_UnusedCallback(void) {}
 
 /// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of

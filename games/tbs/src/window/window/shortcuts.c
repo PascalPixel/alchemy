@@ -81,7 +81,6 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// Steps the window hue one step: back when keys contains LEFT, on
 /// otherwise. The hue wraps in a byte (0 back is 255), not at the option
 /// screen's 24 hues.
-/// Nothing calls it.
 UNUSED void OptionMenu_StepWindowHue(s32 keys) {
   u8 hue = gSaveBlock.windowColor[0];
   if (keys & KEY_LEFT)

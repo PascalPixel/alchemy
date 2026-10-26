@@ -144,7 +144,6 @@ struct ObjectEvent *FieldCamera_GetScriptObject(void) {
 
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set it
 /// jumps there at once.
-/// Nothing calls it.
 UNUSED void FieldCamera_FollowObject(struct Object *target,
                                      s32 keepCurrentPosition) {
   struct Object *camera;

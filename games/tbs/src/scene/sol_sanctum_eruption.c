@@ -629,7 +629,6 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
 /// Unused: a second empty function nothing calls.

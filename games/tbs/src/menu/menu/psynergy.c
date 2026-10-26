@@ -505,10 +505,8 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 memberId) {
   }
 }
 
-/// Nothing calls it.
 UNUSED s32 PsynergyMenu_ReturnTrue(void) { return 1; }
 
-/// Nothing calls it.
 UNUSED void PsynergyMenu_NoOp(void) {}
 
 /// Chooses the party member to use the selected Psynergy on. In mode 0 each

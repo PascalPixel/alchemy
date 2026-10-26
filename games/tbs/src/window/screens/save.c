@@ -362,7 +362,6 @@ s32 Save_ProcessSelectedFile(void) {
 /// Asks whether to save over the current file and, on Yes, writes the save
 /// stamp into it (Save_ProcessSelectedFile) and says so. "OK to save over
 /// this file?" and "Your game was saved." Returns that result.
-/// Nothing calls it.
 UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   s32 result;
 

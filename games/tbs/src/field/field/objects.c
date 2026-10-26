@@ -200,10 +200,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
   system->fill = 0;
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void nullsub_0800C0C4(void) {}
 
-/// Unused: an empty function nothing calls.
 UNUSED void nullsub_0800C0C8(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.

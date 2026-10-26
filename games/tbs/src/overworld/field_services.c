@@ -18,9 +18,7 @@
 
 #include "field_services_internal.h"
 
-// The object's code, in ROM order. Each part is compiled here, as part of
-// this one object, never on its own: the order of these includes is the
-// order of the code in the ROM.
+// The parts, in ROM order (src/README.md, "Objects and parts").
 #include "field_services/script.c"
 #include "field_services/requests.c"
 #include "field_services/object_event_commands.c"

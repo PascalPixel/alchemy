@@ -294,7 +294,6 @@ UNUSED void PaletteCycle_Initialize(void) {
 /// paletteBank from firstColor, rotated by one every delay + 1 frames. Returns
 /// 0, or -1 when all four cycles are taken. The cycle keeps a copy of the
 /// colours as they were, which every step rotates from.
-/// Nothing calls it.
 UNUSED s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
                             s16 colorCount) {
   struct PaletteCycleWork *paletteQueue;
@@ -331,7 +330,6 @@ UNUSED void PaletteCycle_Stop(void) {
 }
 
 /// Unused: starts running the palette cycles each frame.
-/// Nothing calls it.
 UNUSED void PaletteCycle_Start(void) {
   Task_Add(PaletteCycle_Step, TASK_PRIORITY_MAIN_LOOP);
 }

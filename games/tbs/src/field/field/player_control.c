@@ -36,7 +36,6 @@ enum FieldShortcutKind {
 };
 
 /// Unused: stores value as a word in the object's update hook.
-/// Nothing calls it.
 UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
   struct Object *object = rawObject;
 

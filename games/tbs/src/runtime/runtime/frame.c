@@ -456,10 +456,8 @@ s32 Sound_LoadReverbCode(s32 code) {
   return 0;
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
-/// Unused: an empty function nothing calls.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,

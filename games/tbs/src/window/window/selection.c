@@ -694,7 +694,6 @@ u32 SelectionScreen_RunWithSounds(u32 mode) {
 
 /// Moves the cursor one entry right, scrolling the row at its fourth place.
 /// This variant stops at the end; SelectionScreen_StepRight also wraps around.
-/// Nothing calls it.
 UNUSED void Menu_MoveSelectionForward(struct SelectionScreenWork *screen) {
   u32 nextEntry = screen->top + screen->cursorIndex + 1;
 
@@ -1489,7 +1488,6 @@ void PartyStatus_OpenAndWait(void) {
 void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 
 /// Sets up an empty selection screen and waits a frame.
-/// Nothing calls it.
 UNUSED void SelectionScreen_CreateEmpty(void) {
   SelectionScreen_Create();
   SelectionScreen_Clear();

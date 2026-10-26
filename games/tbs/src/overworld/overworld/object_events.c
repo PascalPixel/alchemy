@@ -337,7 +337,6 @@ s32 ObjectEvent_FindLastActiveId(void) {
 }
 
 /// Unused: returns the address of object event slot index in the field work.
-/// Nothing calls it.
 UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
   return (u8 *)gFieldWork + 0x14 + objectEventIndex * sizeof(void *);
 }

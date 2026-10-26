@@ -396,7 +396,6 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   } while (j >= 0);
 }
 
-/// Nothing calls it.
 UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to

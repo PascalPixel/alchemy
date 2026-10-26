@@ -1,6 +1,4 @@
 @ Frame tasks, memory, resources and core runtime services.
-@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
-@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 @ XXX (no evidence): why the other banks call the functions of this bank
 @ directly, when they reach every other bank through its table; only the

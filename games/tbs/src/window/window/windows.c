@@ -490,7 +490,6 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
 
 /// Points a list's tail link back at its last sprite, after the list has been
 /// edited by hand.
-/// Nothing calls it.
 UNUSED void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   struct WindowSprite *node = list->head;
   struct WindowSprite **tail = &list->head;

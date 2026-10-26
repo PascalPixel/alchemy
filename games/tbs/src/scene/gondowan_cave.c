@@ -416,7 +416,6 @@ static void EventScript_MovePillar(void) {
   FieldScript_End();
 }
 
-/// Unused: an empty function nothing calls.
 static UNUSED void GondowanCave_UnusedObjectEventCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
@@ -494,7 +493,6 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   Import_ObjectEventSetAnimation(localId, STUMP_ANIMATION_SINK);
 }
 
-/// Unused: an empty function nothing calls.
 static UNUSED void GondowanCave_UnusedMapCallback(void) {}
 
 /// Lift on the boulder in GondowanCave also takes away the

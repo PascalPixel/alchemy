@@ -20,7 +20,6 @@ struct OptionMenuEntry {
 
 /// Clears the option menu's seven entry states, its row, its tint and its
 /// cursor animation.
-/// Nothing calls it.
 UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
   struct OptionMenuEntry *entry =
       (struct OptionMenuEntry *)((u8 *)work + 0x400);
@@ -51,7 +50,6 @@ UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
 /// brightness shifts all three channels.
 /// The three wave samples are one third of the 96-step colour cycle apart.
 /// The arithmetic is WindowColor_Apply's.
-/// Nothing calls it.
 UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s16 phase;
   s32 bias;
@@ -86,7 +84,6 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 
 /// Writes window colours 4 to 10 of WINDOW_PALETTE, each a fixed scale of the
 /// window tint.
-/// Nothing calls it.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
       WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
@@ -212,7 +209,6 @@ enum OptionMenuRow {
 // calls them, so the game never shows one.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of OptionMenu_LowerSetting.
-/// Nothing calls it.
 UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
   if (work->page == OPTION_ROW_MESSAGE_SPEED)
     work->page = OPTION_ROW_WINDOW_BRIGHTNESS;
@@ -221,7 +217,6 @@ UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
 }
 
 /// Moves the three-row settings cursor down, wrapping to the top.
-/// Nothing calls it.
 UNUSED void OptionMenu_NextRow(struct OptionMenuWork *work) {
   if (++work->page > OPTION_ROW_WINDOW_BRIGHTNESS)
     work->page = OPTION_ROW_MESSAGE_SPEED;
@@ -229,7 +224,6 @@ UNUSED void OptionMenu_NextRow(struct OptionMenuWork *work) {
 
 /// Lowers the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
-/// Nothing calls it.
 UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
@@ -249,7 +243,6 @@ UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
 
 /// Raises the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
-/// Nothing calls it.
 UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:

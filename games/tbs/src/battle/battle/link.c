@@ -176,7 +176,6 @@ s32 LinkBattle_SendParty(void) {
 /// UBFIX keeps the private scratch buffer valid until the next call; the
 /// original returns a pointer to expired stack storage. The first two
 /// arguments are ignored.
-/// Nothing calls it.
 UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
                                                u16 *source) {
 #ifdef UBFIX

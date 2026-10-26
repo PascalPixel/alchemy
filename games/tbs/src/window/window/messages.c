@@ -418,7 +418,6 @@ void Message_Find(struct MessageReader *reader, s32 message) {
 /// becomes the next context.
 /// Tree traversal consumes bytes; reader->words retains that byte position
 /// between calls.
-/// Nothing calls it.
 UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   u32 code;
   u32 contextBank;

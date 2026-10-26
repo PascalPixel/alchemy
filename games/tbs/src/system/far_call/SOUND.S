@@ -1,6 +1,4 @@
 @ Audio mixing, playback commands and music-player updates.
-@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
-@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_SoundTable
 FarCall_SoundTable:

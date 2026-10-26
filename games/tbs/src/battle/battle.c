@@ -17,9 +17,7 @@
 
 #include "battle_internal.h"
 
-// The battle object's code, in ROM order. Each part is compiled here, as
-// part of this one object, never on its own: the order of these includes is
-// the order of the code in the ROM.
+// The parts, in ROM order (src/README.md, "Objects and parts").
 #include "battle/debug.c"
 #include "battle/setup.c"
 #include "battle/link.c"

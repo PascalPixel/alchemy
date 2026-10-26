@@ -29,9 +29,7 @@
 
 #include "window_internal.h"
 
-// The window object's code, in ROM order. Each part is compiled here, as part
-// of this one object, never on its own: the order of these includes is the
-// order of the code in the ROM.
+// The parts, in ROM order (src/README.md, "Objects and parts").
 #include "window/windows.c"
 #include "window/typing.c"
 #include "window/frames.c"

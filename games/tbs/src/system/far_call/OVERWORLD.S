@@ -1,6 +1,4 @@
 @ Map events, field Psynergy, objects and effect lifecycles.
-@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
-@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:

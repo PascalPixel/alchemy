@@ -12,9 +12,7 @@
 
 #include "menu_internal.h"
 
-// The menu object's code, in ROM order. Each part is compiled here, as part
-// of this one object, never on its own: the order of these includes is the
-// order of the code in the ROM.
+// The parts, in ROM order (src/README.md, "Objects and parts").
 #include "menu/common.c"
 #include "menu/item.c"
 #include "menu/psynergy.c"

@@ -420,7 +420,6 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
 /// source and byte buffer, then releases the copied code. Its ARM entry reads
 /// the stream through r0 and writes bytes through r1, as Icon_Decode does.
-/// Nothing calls it.
 UNUSED void Icon_Decompress(GlyphTransfer *work) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);

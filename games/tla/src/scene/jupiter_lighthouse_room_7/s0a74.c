@@ -22,8 +22,6 @@ void Func_020002f0(void);
 void Func_02000a74(void) {
   struct ObjectRuntime *object;
   s32 i;
-  s32 y;
-  s32 height;
 
   if (Value1(GameFlag_Test, 2576) + Value1(GameFlag_Test, 2578) +
           Value1(GameFlag_Test, 2580) + Value1(GameFlag_Test, 2577) +
@@ -54,42 +52,26 @@ void Func_02000a74(void) {
   Func_020002f0();
   WaitFrames(2);
   object = Object_GetById(18);
-  /* FAKEMATCH(temporary): the heights read into locals before the test's
-   * label, so they load ahead of the jump into the test; read in the test,
-   * 14 of 222 instructions differ in tla-en. */
-  y = object->y;
-  height = object->terrainHeight;
   i = 0;
-  goto test1;
-wait1:
-  WaitFrames(1);
-  i++;
-  if (i > 29)
-    goto done1;
-  y = object->y;
-  height = object->terrainHeight;
-test1:
-  if (y > height || object->velocityY != 0)
-    goto wait1;
-done1:
+  if (object->y > object->terrainHeight || object->velocityY != 0) {
+    do {
+      WaitFrames(1);
+      i++;
+      if (i > 29)
+        break;
+    } while (object->y > object->terrainHeight || object->velocityY != 0);
+  }
   object->motionFlags = 0;
   object = Object_GetById(19);
-  /* FAKEMATCH(temporary): the heights read into locals, as above. */
-  y = object->y;
-  height = object->terrainHeight;
   i = 0;
-  goto test2;
-wait2:
-  WaitFrames(1);
-  i++;
-  if (i > 29)
-    goto done2;
-  y = object->y;
-  height = object->terrainHeight;
-test2:
-  if (y > height || object->velocityY != 0)
-    goto wait2;
-done2:
+  if (object->y > object->terrainHeight || object->velocityY != 0) {
+    do {
+      WaitFrames(1);
+      i++;
+      if (i > 29)
+        break;
+    } while (object->y > object->terrainHeight || object->velocityY != 0);
+  }
   object->motionFlags = 0;
   FieldEvent_WaitFrames(30);
   Camera_FollowActor(gPartyState.currentOwner, 1);

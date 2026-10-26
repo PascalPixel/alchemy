@@ -1,9 +1,10 @@
-// Draft (tla-en): listing 525 instructions, draft 525, common 517, differ 16
+// Draft (tla-en): listing 525 instructions, draft 525, common 518, differ 14
 // (2026-10-26: the cel tables as plain externs, since const changes their
 // readers, 54 to 28; BG2PA's pinned 0x100 and its one-pass block are no
 // longer needed under -mthumb-slow-loads, 28 to 26; two tagged one-pass
 // blocks after the arm and fist draws, found by a device sweep, 26 to 20;
-// BattleEffect_LoadBlitter returning s32, as nibble_pair.c defines it, 20 to 16).
+// BattleEffect_LoadBlitter returning s32, as nibble_pair.c defines it, 20 to 16;
+// Scheduler_AddOrUpdateCallback returning s32, as defined, 16 to 14).
 // Written from the listing (☀️'s BattleEffect_RunCounterReveal is only a
 // hint). A large sprite assembled from gMapCellBuffer cells sways on a
 // sine path over 108 frames, faded in and out through BLDALPHA, with two
@@ -73,7 +74,7 @@ extern u8 gData_081993e8[];
 extern u16 gData_081993f0[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -179,7 +180,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
                            y + 16, 42, 35);
       /* FAKEMATCH(one-pass): an empty one-pass block after the near side's arm;
        * its loop notes move the argument stores of the calls around it; as
-       * plain C, 18 of 525 instructions differ in tla-en (here 16). */
+       * plain C, 16 of 525 instructions differ in tla-en (here 14). */
       do {
       } while (0);
     } else {
@@ -220,8 +221,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
         else
           draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 66,
                              y + 46, 32, 29);
-        /* FAKEMATCH(one-pass): the same after the raised fist; as plain C, 20
-         * of 525 instructions differ in tla-en (here 16). */
+        /* FAKEMATCH(one-pass): the same after the raised fist; as plain C, 18
+         * of 525 instructions differ in tla-en (here 14). */
         do {
         } while (0);
       } else {

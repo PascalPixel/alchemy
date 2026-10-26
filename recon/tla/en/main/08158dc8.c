@@ -1,8 +1,14 @@
-// Draft of BattleEffect_RunThor, Thor (scene kind 12): differ 1462 of 1676
-// (draft 1670), the same 125 calls in the same order. Left: the frame is
-// 328 bytes for 324 (one more spill slot), which shifts every stack
-// offset, and the allocation differs from the prologue on (the native keeps
-// the dimmed-copy counter in r9 and the effect at [sp, #120]).
+// Draft of BattleEffect_RunThor, Thor (scene kind 12): differ 1410 of 1676
+// (draft 1670; 2026-10-26: the twin's fullWidth barrier and the s32 returns
+// of the blitter loaders and the scheduler, as defined, 1439 to 1410), the
+// same 125 calls in the same order. Left: the frame is 328 bytes for 324,
+// which shifts every stack offset, and the allocation differs from the
+// prologue on (the native keeps the dimmed-copy counter in r9 and the
+// effect at [sp, #120]). The native frame has an unused word at sp+96, as
+// the twin's blitter pair leaves; with the pair here the frame is 332, so
+// this draft spills two words the native keeps in registers (this draft's slots
+// 12 to 44 hold one more variable, and r4's caller-save slot at sp+8 is used
+// 22 times in the native, 8 here).
 
 // Twin: The Broken Seal's BattleEffect_RunThor (effect.c), ported. The Lost Age
 // loads the light fan once, copies palette 0x184 to BG palette RAM after the
@@ -34,8 +40,8 @@ void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
                    s32 mode);     // BattleEffect_BuildBlitter, five arguments
 void Func_0815f0a0(s32 resource); // the dusk palette step
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
@@ -61,8 +67,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Audio_PlayCue(s32 cue);
@@ -365,7 +371,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        blit(canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
+        s32 fullWidth = 32;
+        /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop, as in The
+         * Broken Seal's twin; as plain C, 1431 of 1676 instructions differ
+         * in tla-en (here 1410). */
+        asm("" : "+r"(fullWidth));
+        blit(canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2, 1);
       }
       BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,

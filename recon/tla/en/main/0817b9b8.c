@@ -73,7 +73,7 @@ extern char ResourceId_SmokeSheet;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);

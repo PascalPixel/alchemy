@@ -1,20 +1,10 @@
-// Draft, differ 8 of 68: leaving Gaia Rock: after flag 0x927 a message;
-// otherwise sets the next destinations (scene 0xb1, entrance 10, and 11 or 12
-// by the item 0x1c3 and the four flags 0x9bc to 0x9bf) and leaves. The
-// destination setters take s32: as u16 the scene symbol loads through ldrh
-// (pool range 60) and the pools break up (differ 19). Left: the native adds the
-// fourth flag into the count before loading gPartyState; here the add follows
-// the load. SceneId_Ov681Room1 (row 0xb1 of scenes.s) is not yet named there.
+// Leaving Gaia Rock: after flag 0x927 a message; otherwise sets the next
+// destinations (scene 0xb1, entrance 10, and 11 or 12 by the item 0x1c3 and
+// the four flags 0x9bc to 0x9bf) and leaves. The destination setters take s32:
+// as u16 the scene symbol loads through ldrh and the pools break up.
 #include "types.h"
 #include "party_state.h"
 #include "text/msg_ids.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern char SceneId_Ov681Room1;
 
@@ -37,7 +27,13 @@ void Func_02001ebc(void) {
     s32 scene;
 
     count = a + b + c + GameFlag_Test(0x9bf);
+    /* FAKEMATCH(barrier): the count is summed before the battle rule store;
+     * without it, 8 of 68 instructions differ in tla-en. */
+    __asm__ volatile("");
     gPartyState.battleRule24b = 2;
+    /* FAKEMATCH(barrier): the scene address is loaded after the battle rule
+     * store; without it, 4 of 68 instructions differ in tla-en. */
+    __asm__ volatile("");
     scene = (s32)&SceneId_Ov681Room1;
     Party_SetFields1eeAnd1f0(scene, 10);
     if (PartyInventory_FindOwner(0x1c3) != -1) {

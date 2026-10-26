@@ -51,7 +51,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/advance.o"(.text)
         "*/resource_681_overlay.o"(.text.x02009c9c)
         "*/resource_681_overlay.o"(.text.x02009d14)
-        "*/resource_681_overlay.o"(.text.x02009ebc)
+        "*/games/tla/src/scene/gaia_rock_inside/s1ebc.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1f68.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1f84.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1fa0.o"(.text)

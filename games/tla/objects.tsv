@@ -1333,11 +1333,7 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0004dcba	ja
 main	rom_main_02	games/tla/src/menu/selsched	.text
 main	rom_main_02	games/tla/src/menu/selrow	.text
 main	rom_main_02	games/tla/src/menu/run_selection	.text	en de es fr it
-main	rom_main_02	recon/tla/it/rom	.rom.0004de38	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0004de90	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0004de60	es
-main	rom_main_02	recon/tla/de/rom	.rom.0004de78	de
-main	rom_main_02	recon/tla/raw/0804dc6c	.text	en
+main	rom_main_02	games/tla/src/menu/handle_selection_row_input	.text	en de es fr it
 main	rom_main_02	recon/tla/ja/rom	.rom.0004dd74	ja
 main	rom_main_02	games/tla/src/menu/run_selection_with_cursor_object	.text
 main	rom_main_02	recon/tla/raw/0804de52		en

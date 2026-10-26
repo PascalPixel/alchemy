@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock/s00d0.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_663_overlay.o"(.text.x0200815a)
-        "*/resource_663_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/airs_rock/s015c.o"(.text)
         "*/games/tla/src/scene/airs_rock/s033c.o"(.text)
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)
         "*/resource_663_overlay.o"(.text.x020083e8)

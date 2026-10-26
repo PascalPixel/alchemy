@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/apojii_islands/object.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_679_overlay.o"(.text.x0200815a)
-        "*/resource_679_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/apojii_islands/s015c.o"(.text)
         "*/games/tla/src/scene/apojii_islands/scene_tables.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s0360.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_a.o"(.text)

@@ -3,14 +3,22 @@
 /// Broken Seal's EFFECT_SPAWN (map/common/effect_spawn.h) with default type
 /// 285. The including file names its overlay's copy and the imports it calls:
 /// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
-/// EFFECT_SCRIPTS.
+/// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY give the
+/// sprite the requested priority themselves before Object_SetSpritePriority,
+/// as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
 #include "party_state.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
 extern struct FieldEffect *Object_GetById(s32 id);
-extern struct FieldEffect *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
+extern struct FieldActor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
+#ifdef EFFECT_SPRITE_PRIORITY
+static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y,
+                                                s32 z) {
+  return (struct FieldEffect *)EFFECT_CREATE(type, x, y, z);
+}
+#endif
 extern void EFFECT_SET_MODE(struct FieldEffect *effect, s32 mode);
 extern void EFFECT_SET_SCRIPT(struct FieldEffect *effect, const s32 *script);
 extern const s32 *EFFECT_SCRIPTS[];
@@ -28,10 +36,19 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   const s32 *script;
   u32 start;
 
+#ifdef EFFECT_SPRITE_PRIORITY
+  /* FAKEMATCH(wrapper): the create call forwarded through Effect_Create; as
+   * a direct call, 36 of 219 instructions differ in tla-en (overlay 663). */
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = EFFECT_CREATE(options->type, x, y, z);
+    effect = Effect_Create(options->type, x, y, z);
   else
-    effect = EFFECT_CREATE(285, x, y, z);
+    effect = Effect_Create(285, x, y, z);
+#else
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = (struct FieldEffect *)EFFECT_CREATE(options->type, x, y, z);
+  else
+    effect = (struct FieldEffect *)EFFECT_CREATE(285, x, y, z);
+#endif
   if (effect == 0)
     return;
 
@@ -54,7 +71,17 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Object_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
+#ifdef EFFECT_SPRITE_PRIORITY
+    /* FAKEMATCH(one-pass): the flag cleared in a once-only block; as a plain
+     * statement, 4 of 219 instructions differ in tla-en (overlay 663). */
+    do {
+      effect->priorityFlags &= ~1;
+    } while (0);
+    // Read as its low byte: (u8)options->priority orders the loads apart.
+    sprite->priority = *(u8 *)&options->priority;
+#else
     effect->priorityFlags &= ~1;
+#endif
     Object_SetSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;

@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock_inside/object.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_664_overlay.o"(.text.x020082f2)
-        "*/resource_664_overlay.o"(.text.x020082f4)
+        "*/games/tla/src/scene/airs_rock_inside/s02f4.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s0550.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/map_cell.o"(.text)
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)

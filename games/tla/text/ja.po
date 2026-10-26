@@ -565,7 +565,7 @@ msgctxt "message"
 msgid "00128"
 msgstr "おそい"
 
-msgctxt "message"
+msgctxt "MsgFieldOff"
 msgid "00129"
 msgstr "しない"
 
@@ -573,7 +573,7 @@ msgctxt "message"
 msgid "00130"
 msgstr "3ぷんご"
 
-msgctxt "MsgFieldOff"
+msgctxt "MsgCharacterName"
 msgid "00131"
 msgstr "ロビン"
 

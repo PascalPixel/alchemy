@@ -1,6 +1,15 @@
 #include "types.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
+#include "edition.h"
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+// XXX: the Japanese table holds 131 where the others hold MsgFieldOff's number;
+// what reads gData_02002044 would settle whether it is a message at all.
+#define UNK_02002044_VALUE 131
+#else
+#define UNK_02002044_VALUE MSGNO(MsgFieldOff)
+#endif
 
 void Func_0200033c(void);
 void Func_020003b0(void);
@@ -86,7 +95,7 @@ s32 gData_02002038[] = {
 s32 gData_02002044[] = {
     22,
     30,
-    MSGNO(MsgFieldOff),
+    UNK_02002044_VALUE,
     22,
     16,
     0x3333,

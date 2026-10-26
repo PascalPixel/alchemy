@@ -1454,8 +1454,7 @@ main	rom_main_03	games/tla/src/game/inventory/count	.text
 main	rom_main_03	games/tla/src/game/character/class_actions	.text
 main	rom_main_03	games/tla/src/game/character/add_action	.text
 main	rom_main_03	games/tla/src/game/character/growth	.text
-main	rom_main_03	games/tla/src/game/character/initialize_characters	.text	en de es fr it
-main	rom_main_03	recon/tla/ja/rom	.rom.000aa7a8	ja
+main	rom_main_03	games/tla/src/game/character/initialize_characters	.text
 main	rom_main_03	games/tla/src/game/character/level_hook	.text
 main	rom_main_03	games/tla/src/game/character/level_up	.text
 main	rom_main_03	games/tla/src/game/advance_owner_count_to_target	.text
@@ -1896,14 +1895,13 @@ main	rom_main_04	recon/tla/de/rom	.rom.000d891c	de
 main	rom_main_04	recon/tla/de/rom	.rom.000d954c	de
 main	rom_main_04	recon/tla/raw/080cb91c	.text	en
 main	rom_main_04	recon/tla/raw/080cc54c	.text	en
-main	rom_main_04	games/tla/src/field/common/object/f0cc67c	.text	en de es fr it
+main	rom_main_04	recon/tla/ja/rom	.rom.000cb91c	ja
+main	rom_main_04	games/tla/src/field/common/object/f0cc67c	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000cc7c4	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000d17c4	fr
 main	rom_main_04	recon/tla/es/rom	.rom.000d57c4	es
 main	rom_main_04	recon/tla/de/rom	.rom.000d97c4	de
 main	rom_main_04	recon/tla/raw/080cc7c4	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000cb91c	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000cc674	ja
 main	rom_main_04	recon/tla/ja/rom	.rom.000cc7bc	ja
 main	rom_main_04	games/tla/src/debug/stream	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000cc9fc	it
@@ -4165,8 +4163,7 @@ main	rom_main_08	recon/tla/raw/08127cd4	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00127cd0	ja
 main	rom_main_08	games/tla/src/battle/summon/definition	.text
 main	rom_main_08	games/tla/src/game/item/encode_banked_id	.text
-main	rom_main_08	games/tla/src/game/item/first_digit	.text	en de es fr it
-main	rom_main_08	recon/tla/ja/rom	.rom.00128224	ja
+main	rom_main_08	games/tla/src/game/item/first_digit	.text
 main	rom_main_08	games/tla/src/battle/f12824c	.text
 main	rom_main_08	recon/tla/ja/rom	.rom.001284bc	ja
 main	rom_main_08	recon/tla/de/rom	.rom.001284d8	de

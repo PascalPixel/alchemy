@@ -744,13 +744,6 @@ Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000a9c64, 0x0000003c
 	.section .rom.000aa0de, "ax"
 	.incbin "baserom.gba", 0x000aa0de, 0x00000002
-	.section .rom.000aa7a8, "ax"
-	.balign 4
-	.global Func_080af7ac
-	.type Func_080af7ac, %function
-	.thumb_func
-Func_080af7ac:
-	.incbin "baserom.gba", 0x000aa7a8, 0x00000120
 	.section .rom.000aabe8, "ax"
 	.balign 4
 	.global Func_080afbec
@@ -1517,10 +1510,6 @@ Func_080cb09c:
 	.thumb_func
 Field_RunScene:
 	.incbin "baserom.gba", 0x000cb91c, 0x00000d58
-	.section .rom.000cc674, "ax"
-	.global Func_080cc67c
-Func_080cc67c:
-	.incbin "baserom.gba", 0x000cc674, 0x00000148
 	.section .rom.000cc7bc, "ax"
 	.global Func_080cc7c4
 Func_080cc7c4:
@@ -2775,12 +2764,6 @@ BattleEnemy_ClaimNameLetter:
 	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
-	.section .rom.00128224, "ax"
-	.global Func_08128228
-	.type Func_08128228, %function
-	.thumb_func
-Func_08128228:
-	.incbin "baserom.gba", 0x00128224, 0x00000024
 	.section .rom.001284bc, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001284bc, 0x00000304

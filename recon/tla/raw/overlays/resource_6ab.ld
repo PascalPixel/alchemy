@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_star_room/dismiss.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x020082f4)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s055c.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x020085b0)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s05b0.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0714.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0ab4.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02008ae4)

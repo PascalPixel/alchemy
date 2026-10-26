@@ -26,7 +26,7 @@ enum {
 /// velocity a little, and changes its scale and spin. Assigned by
 /// FieldEffect_SpawnRadialParticleRing for Carry's landing particles.
 void FieldEffect_UpdateParticleMotionAndScale(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
   struct FieldEffect *effect = &fieldObject->effect;
 
   effect->x += effect->velocity.x;
@@ -73,7 +73,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
 /// While it wanders, the engine's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
-void FieldEffect_WanderAroundAnchor(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
   struct Object *effect = (struct Object *)fieldObject;
   s32 len;
   s32 angle;
@@ -104,7 +104,7 @@ void FieldEffect_WanderAroundAnchor(union ObjectEventOrEffect *fieldObject) {
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
-void FieldEffect_CircleAnchor(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
   struct Object *effect = (struct Object *)fieldObject;
   struct Object *anchor;
   s32 angle;
@@ -136,8 +136,7 @@ void FieldEffect_CircleAnchor(union ObjectEventOrEffect *fieldObject) {
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
-void FieldEffect_ShrinkObjectScaleUntilHalf(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_ShrinkObjectScaleUntilHalf(union ActorOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   s32 scale;
 
@@ -174,14 +173,14 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldEffect_RunWhirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ObjectEvent *src = effectWork->mainObject;
-  struct ObjectEvent *target = effectWork->child;
+  struct Actor *src = effectWork->mainObject;
+  struct Actor *target = effectWork->child;
   struct Vector3 pos;
   struct Vector3 from;
   struct Vector3 to;
-  struct ObjectEvent *ball;
+  struct Actor *ball;
   s32 step;
-  struct ObjectEvent *particle;
+  struct Actor *particle;
   s32 steps = WHIRLWIND_TRAVEL_FRAMES + 1;
 
   step = 0;
@@ -192,7 +191,7 @@ void FieldEffect_RunWhirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = (struct ObjectEvent *)Object_Spawn(0xda, 0, 0, 0);
+  ball = (struct Actor *)Object_Spawn(0xda, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -214,7 +213,7 @@ void FieldEffect_RunWhirlwind(void) {
   ball->scaleY = 0x14ccc; // 1.3 high
   Sound_PlaySongFar(SE_RUSH);
   WaitFrames(20);
-  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
+  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a trigger
   // names, the target is blown away.
   if (effectWork->enabled == 0) {
     if (target != 0)
@@ -231,7 +230,7 @@ void FieldEffect_RunWhirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = (struct ObjectEvent *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = (struct Actor *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->linkedObject = ball;

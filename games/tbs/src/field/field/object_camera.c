@@ -124,7 +124,7 @@ void ObjectSystem_PlaceSprites(void) {
         // row holds 128 of them.
         tile = &((struct ObjectCameraTile *)grid->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
-        if (object->priorityFlags & OBJ_EVENT_PRIORITY_AUTOMATIC) {
+        if (object->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
             sprite->image.priority = priority;
@@ -140,15 +140,15 @@ void ObjectSystem_PlaceSprites(void) {
         drawPosition.height = object->y;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->groundHeight;
-        // OBJ_EVENT_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
+        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
         // or down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
         // which Render_ApplyProjectedPlacement takes from the point's y
-        // before its height is taken off. OBJ_EVENT_PRIORITY_UNDERFOOT, which
+        // before its height is taken off. ACTOR_PRIORITY_UNDERFOOT, which
         // footprints take, moves the slot 160 back, and an object at most 220
         // pixels up crosses that function's 100-pixel line into its lowest
         // slot; bit 2 moves it 160 on.
-        if (object->priorityFlags & OBJ_EVENT_PRIORITY_UNDERFOOT) {
+        if (object->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
           drawPosition.groundHeight += 0xfec00000;

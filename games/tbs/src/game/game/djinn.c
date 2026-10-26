@@ -270,7 +270,7 @@ s32 Djinn_GetAbilityId(u32 group, u32 index) {
 }
 
 /// Returns how many Djinn of `element` the party holds, or of all
-/// elements for -1. Called by the save summary, the field summary screen, the
+/// elements for -1. Called by the save summary, the field Status screen, the
 /// battle status screen and the battle command menu.
 s32 Party_SumDjinnCounts(s32 element) {
   u16 unitIds[16];

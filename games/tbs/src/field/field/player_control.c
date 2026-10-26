@@ -47,13 +47,13 @@ UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
 /// requests (enum FieldShortcutKind) and the low 14 bits which one. With
 /// FLAG_MENUS_RAISE_EVENT set it raises FIELD_RAISED_EVENT_MENUS instead, as
 /// the menus do then; on the world map R raises
-/// FIELD_RAISED_EVENT_REGION_MAP and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
+/// FIELD_RAISED_EVENT_WORLD_PICTURE and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
 /// Returns the request id, the assignment's low 14 bits, even when it raised an
 /// event instead; a shortcut with nothing assigned returns 0, as no key pressed
 /// does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the map loop (run_map.c)
+/// work->item or work->event, which the map loop (run_scene.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -64,7 +64,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
     work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      work->raisedEvent = FIELD_RAISED_EVENT_REGION_MAP;
+      work->raisedEvent = FIELD_RAISED_EVENT_WORLD_PICTURE;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
       work->raisedEvent = FIELD_RAISED_EVENT_WORLD_MAP_ZOOM;
     }
@@ -147,7 +147,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// keys. Returns 1.
 ///
 /// Run each frame by gObject_PlayerScript, which the map loop
-/// (run_map.c) starts on the leader through
+/// (run_scene.c) starts on the leader through
 /// Object_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gFieldWork->blockedSteps and creates the
@@ -337,7 +337,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
       collision |= 1;
 
     push_objects:
-      // Push the movable objects (OBJ_EVENT_PUSHABLE) just ahead 4 pixels
+      // Push the movable objects (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid object there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
@@ -351,7 +351,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
         radius = object->radius - 2;
         if (pushedObject->script == 0)
           continue;
-        if ((pushedObject->collisionFlags & OBJ_EVENT_SOLID) == 0)
+        if ((pushedObject->collisionFlags & ACTOR_SOLID) == 0)
           continue;
         if (pushedObject == object)
           continue;
@@ -361,7 +361,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
         // A movable object that is not paused slides a quarter pixel away from
         // the player, if no solid object is there and the ground 10 pixels on,
         // straight and 22.5 degrees either side, is clear.
-        if ((pushedObject->collisionFlags & OBJ_EVENT_PUSHABLE) != 0 &&
+        if ((pushedObject->collisionFlags & ACTOR_PUSHABLE) != 0 &&
             pushedObject->paused == 0) {
           direction =
               ArcTan2(pushedObject->z - object->z, pushedObject->x - object->x);
@@ -430,7 +430,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gSaveBlock.leaderLocalId)->hp == 0)
+    if (Unit_GetFar(gSaveBlock.leaderActorId)->hp == 0)
       action = 22;
     Object_SelectAnimation(object, action);
   } else {
@@ -494,7 +494,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
       effect->groundHeight = object->groundHeight;
       animation = effect->sprite;
       Object_Initialize((struct Object *)effect, gWorldMap_FootprintActions);
-      effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (animation != 0) {
         Sprite_StartAnim(animation, 1);
@@ -528,7 +528,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
 /// Run each frame by gObject_WorldMapScript, which the map loop
-/// (run_map.c) starts on the leader through
+/// (run_scene.c) starts on the leader through
 /// Object_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.

@@ -2,22 +2,22 @@
 #define ALCHEMY_UNIT_DEBUG_TEST_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-u8 *MenuTest_GetWarpDests(void);
-s32 Scene_GetWarpRegions(void);
-u8 *MenuTest_GetWarps(void);
-u8 *MenuTest_GetObjectEventTemplates(void);
-s32 MenuTest_GetEvents(void);
+u8 *MenuTest_GetEntrances(void);
+s32 Scene_GetExitRegions(void);
+u8 *MenuTest_GetExits(void);
+u8 *MenuTest_GetActorTemplates(void);
+s32 MenuTest_GetTriggers(void);
 s32 MenuTest_Initialize(void);
 extern u32 gDebugItemPromptHead[];
 extern char gDebugItemPrompt[12];
 extern char gDebugItemCapacityLabel[24];
 extern char gDebugItemFullLabel[20];
-extern struct MapWarpDest gMenuTest_WarpDests[];
-extern u32 gMenuTest_Warps[];
-extern struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[];
-extern struct MapEvent gMenuTest_Events[];
+extern struct SceneEntrance gMenuTest_Entrances[];
+extern u32 gMenuTest_Exits[];
+extern struct ActorTemplate gMenuTest_ActorTemplates[];
+extern struct Trigger gMenuTest_Triggers[];
 extern s32 gMenuTest_SlotOffsets;
 extern s32 gMenuTest_FillLetter;
 

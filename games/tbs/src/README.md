@@ -19,11 +19,11 @@ The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the [objects](../glossary.md#object), movement, and
 loading, scrolling and drawing the map grid. [Running a scene](overworld/README.md),
 the `overworld` folder, runs
-one scene on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
+one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands scene scripts
 use; `SequenceManager_Run`, the loop that runs one scene after another, is there too.
-[Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
-templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
+[Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
+templates, [triggers](../glossary.md#trigger), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
@@ -33,7 +33,7 @@ one function for each animation.
 
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
-windows, among them the battle menus, the file menu and the naming screen.
+windows, among them the battle menus, the file menu and the name entry screen.
 [Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and
 Status screens, and three overlays: the title, the main menu and the
 Battle Arena. [Shops](shop/README.md) holds every counter that buys,
@@ -85,7 +85,7 @@ three overlays beside its bank.
 Every file the build compiles or assembles is one object, and an object too
 long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
-field's objects or the object events in a scene.
+field's objects or the actors in a scene.
 
 [The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
@@ -136,7 +136,7 @@ In the source an overlay is three files in its folder:
 
 - `entry/<map>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six [veneers](../glossary.md#veneer) the field code
   calls to start the scene and to ask it its questions, such as where its
-  [warp destinations](../glossary.md#warp-destination) are ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+  [entrances](../glossary.md#entrance) are ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
   lists them).
 - `<scene>.c`, the scene's code and tables.
 - `import/<map>.s`, the import table: the veneers the overlay calls the main

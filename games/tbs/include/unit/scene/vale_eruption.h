@@ -2,21 +2,21 @@
 #define ALCHEMY_UNIT_MAP_VALE_ERUPTION_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *ValeEruption_GetWarpDests(void);
-const struct MapWarpRegion *ValeEruption_GetRegions(void);
-const u32 *ValeEruption_GetWarps(void);
-const struct ObjectEventTemplate *ValeEruption_GetObjectEventTemplates(void);
-const struct MapEvent *ValeEruption_GetEvents(void);
+const struct SceneEntrance *ValeEruption_GetEntrances(void);
+const struct SceneExitRegion *ValeEruption_GetRegions(void);
+const u32 *ValeEruption_GetExits(void);
+const struct ActorTemplate *ValeEruption_GetActorTemplates(void);
+const struct Trigger *ValeEruption_GetTriggers(void);
 s32 ValeEruption_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];
 extern s32 gValeEruption_GaretWalksDown[];
 extern s32 gValeEruption_EnterSanctum[];
-extern struct MapWarpDest gValeEruption_WarpDests[];
-extern u32 gValeEruption_Warps[];
-extern struct ObjectEventTemplate gValeEruption_ObjectEventTemplates[];
-extern struct MapEvent gValeEruption_Events[];
+extern struct SceneEntrance gValeEruption_Entrances[];
+extern u32 gValeEruption_Exits[];
+extern struct ActorTemplate gValeEruption_ActorTemplates[];
+extern struct Trigger gValeEruption_Triggers[];
 extern u16 gValeEruption_SanctumDoorOpens[];
 
 #endif

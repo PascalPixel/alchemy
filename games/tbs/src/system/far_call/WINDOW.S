@@ -66,8 +66,8 @@ FarCall_WindowTable:
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileMenu_SelectActionFar, FileMenu_SelectAction
 	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
-	export MapNamePopup_ShowFar, MapNamePopup_Show
-	export MapNamePopup_HideFar, MapNamePopup_Hide
+	export AreaNameWindow_ShowFar, AreaNameWindow_Show
+	export AreaNameWindow_HideFar, AreaNameWindow_Hide
 	export FieldMessage_ShowCenteredFar, FieldMessage_ShowCentered
 	export BattleMessage_CloseFar, BattleMessage_Close
 	export TextPrinter_ResetFreeFar, TextPrinter_ResetFree
@@ -102,9 +102,9 @@ FarCall_WindowTable:
 	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
 	overlay_veneer Save_WriteFile
 	export Save_ScanRecordFlagsFar, Save_ScanRecordFlags
-	export NamingScreen_EditMemberNameFar, NamingScreen_EditMemberName
-	overlay_veneer NamingScreen_LoadPointingHandTiles
-	overlay_veneer NamingScreen_LoadCaretTiles
+	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
+	overlay_veneer NameEntry_LoadPointingHandTiles
+	overlay_veneer NameEntry_LoadCaretTiles
 	overlay_veneer SelectionScreen_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits

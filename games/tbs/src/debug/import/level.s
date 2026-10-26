@@ -29,11 +29,11 @@
 	.ifdef TBS_EDITION_JA
 	.set import.FieldScript_End, 1
 	.endif
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ActorSetPosition, 1
 	.endif
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetAnimation, 1
 	.ifdef TBS_EDITION_JA
 	.set import.ObjectMotion_WaitForAnimationChange, 1
 	.endif
@@ -46,7 +46,7 @@
 	.ifndef TBS_EDITION_JA
 	.set import.FieldEffect_SpawnLinked, 1
 	.endif
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.ItemMenu_DrawItemDetails, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

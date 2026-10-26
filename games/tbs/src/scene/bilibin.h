@@ -6,7 +6,7 @@
 #define NULL ((void *)0)
 
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 #include "item_ids.h"
 

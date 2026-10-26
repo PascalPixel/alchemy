@@ -1,5 +1,5 @@
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "field_effect.h"
 
 // Mercury Lighthouse and its entrance: the trail of sparks the leader leaves
@@ -12,13 +12,11 @@
 // void differs in 21 bytes (extent 136 to 132 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void
-MercuryLighthouse_TrailSparks(union ObjectEventOrEffect *fieldObject) {
+static void MercuryLighthouse_TrailSparks(union ActorOrEffect *fieldObject) {
 #else
-static s32
-MercuryLighthouse_TrailSparks(union ObjectEventOrEffect *fieldObject) {
+static s32 MercuryLighthouse_TrailSparks(union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+  struct Actor *actor = (struct Actor *)fieldObject;
   struct EffectOptions options;
   s32 velocityY;
 
@@ -30,11 +28,11 @@ MercuryLighthouse_TrailSparks(union ObjectEventOrEffect *fieldObject) {
   options.startScaleY = 0xcccc;
   options.priority = 0;
   velocityY = -((((u32)Import_RandomNext() * 8) >> 16) * 0x3333);
-  FieldEffect_Spawn(
-      objectEvent->x.fixed + ((8 - (gFrameCount & 15)) << 16),
-      objectEvent->y.fixed + 0x1a0000, objectEvent->z.fixed, 0, velocityY, 0,
-      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-      &options);
+  FieldEffect_Spawn(actor->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+                    actor->y.fixed + 0x1a0000, actor->z.fixed, 0, velocityY, 0,
+                    EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_PALETTE,
+                    &options);
 #ifdef UBFIX
   return;
 #else

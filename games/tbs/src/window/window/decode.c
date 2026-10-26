@@ -241,7 +241,7 @@ enum {
   MESSAGE_LOCALIZED_WORD = 13,
   /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
   MESSAGE_WINDOW_EFFECT = 15,
-  /// The name of the unit gSaveBlock.leaderLocalId names.
+  /// The name of the unit gSaveBlock.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
@@ -612,7 +612,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                MapSec_GetNameIndexFar(
+                Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
@@ -628,7 +628,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             // A unit's name is 15 bytes, widened here to codes.
-            nameBytes = Unit_GetFar(gSaveBlock.leaderLocalId)->name;
+            nameBytes = Unit_GetFar(gSaveBlock.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1064,7 +1064,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                MapSec_GetNameIndexFar(
+                Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
@@ -1073,7 +1073,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_GetFar(gSaveBlock.leaderLocalId)->name;
+            nameBytes = Unit_GetFar(gSaveBlock.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {

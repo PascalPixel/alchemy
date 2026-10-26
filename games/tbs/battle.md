@@ -23,8 +23,8 @@ field leaves for it as it would leave through a doorway, and when the battle
 is won it comes back to the same spot. After a defeat it goes to the place the
 game sends a beaten party instead.
 
-A random encounter raises a field [warp](glossary.md#warp) like any other,
-whose destination is the battle and whose arrival point names the enemies'
+A random encounter raises a field [exit](glossary.md#exit) like any other,
+whose destination is the battle and whose entrance names the enemies'
 formation. The game clears its [tasks](glossary.md#task) and its
 [heap](glossary.md#heap-and-pools), as it does between any two scenes, and
 then, instead of loading the next scene's [overlay](glossary.md#overlay), runs

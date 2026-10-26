@@ -2,24 +2,24 @@
 #define ALCHEMY_UNIT_MAP_MCCOY_PALACE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapEvent;
-struct ObjectEventTemplate;
+struct Trigger;
+struct ActorTemplate;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
-extern struct MapWarpDest gMcCoyPalaceWarpDests[];
-extern u32 gMcCoyPalaceWarps[];
-extern struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[];
-extern struct ObjectEventTemplate gMcCoyPalaceObjectEventTemplates[];
-extern struct MapEvent gMcCoyPalaceNoEvents[];
-extern struct MapEvent gMcCoyPalaceEvents[];
+extern struct SceneEntrance gMcCoyPalaceEntrances[];
+extern u32 gMcCoyPalaceExits[];
+extern struct ActorTemplate gMcCoyPalaceNoActorTemplates[];
+extern struct ActorTemplate gMcCoyPalaceActorTemplates[];
+extern struct Trigger gMcCoyPalaceNoTriggers[];
+extern struct Trigger gMcCoyPalaceTriggers[];
 
 #endif

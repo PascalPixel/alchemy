@@ -12,25 +12,25 @@
 /// plays ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
 /// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
-/// object event slot; the Djinni's object and its afterimages are released
+/// actor slot; the Djinni's object and its afterimages are released
 /// here. Uses all 24 field effect sprites (FieldEffect_InitializeSlots).
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
-  struct ObjectEvent *djinni;
-  struct ObjectEvent *copy;
-  struct ObjectEvent *previous;
+  struct Actor *djinni;
+  struct Actor *copy;
+  struct Actor *previous;
   struct Sprite *resource;
   struct FieldEffectWork *effectWork;
-  struct ObjectEvent **cursor;
-  struct ObjectEvent **list;
+  struct Actor **cursor;
+  struct Actor **list;
   struct FieldEffectSprite *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
   s32 resourceId;
-  struct ObjectEvent *copies[MERCURY_AFTERIMAGE_MAX];
+  struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
   struct Vector3 position;
 
-  djinni = ObjectEvent_GetById(djinniId);
+  djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -64,8 +64,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   previous = djinni;
   cursor = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
-    copy = (struct ObjectEvent *)Object_CreateFar(
-        kind, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+    copy = (struct Actor *)Object_CreateFar(kind, djinni->x.fixed,
+                                            djinni->y.fixed, djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -101,9 +101,9 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
                             ANIM_LEADER_ARMS_RAISED);
   WaitFrames(20);
 

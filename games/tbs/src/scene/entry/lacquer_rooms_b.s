@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer LacquerRoomsB_Initialize
-	overlay_veneer LacquerRoomsB_GetWarpDests
-	overlay_veneer LacquerRoomsB_GetWarps
-	overlay_veneer LacquerRoomsB_GetObjectEventTemplates
-	overlay_veneer LacquerRoomsB_GetEvents
+	overlay_veneer LacquerRoomsB_GetEntrances
+	overlay_veneer LacquerRoomsB_GetExits
+	overlay_veneer LacquerRoomsB_GetActorTemplates
+	overlay_veneer LacquerRoomsB_GetTriggers
 	overlay_veneer LacquerRoomsB_GetRegions

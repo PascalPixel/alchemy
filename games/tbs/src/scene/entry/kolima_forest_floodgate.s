@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer KolimaForestFloodgate_Initialize
-	overlay_veneer KolimaForestFloodgate_GetWarpDests
-	overlay_veneer KolimaForestFloodgate_GetWarps
-	overlay_veneer KolimaForestFloodgate_GetObjectEventTemplates
-	overlay_veneer KolimaForestFloodgate_GetEvents
+	overlay_veneer KolimaForestFloodgate_GetEntrances
+	overlay_veneer KolimaForestFloodgate_GetExits
+	overlay_veneer KolimaForestFloodgate_GetActorTemplates
+	overlay_veneer KolimaForestFloodgate_GetTriggers
 	overlay_veneer KolimaForestFloodgate_GetRegions

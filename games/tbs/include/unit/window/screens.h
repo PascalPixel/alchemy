@@ -75,16 +75,16 @@ s32 FileMenu_SelectFile(s32 file, s32 mode);
 s32 Save_ToChosenFile(void);
 s32 Save_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-s32 NamingScreen_AcceptsMark(s32 mark, s32 letter);
-s32 NamingScreen_CountLetters(const u8 *name);
+s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
+s32 NameEntry_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette);
-void NamingScreen_LoadPointingHandTiles(s32 slot);
-void NamingScreen_LoadCaretTiles(s32 slot);
+void NameEntry_LoadPointingHandTiles(s32 slot);
+void NameEntry_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
 void Text_DrawPaddedLabel(struct Window *window, u8 *name);
-s32 NamingScreen_EditMemberName(s32 member);
+s32 NameEntry_EditMemberName(s32 member);
 s32 ColossoMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
@@ -153,7 +153,7 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 code, s32 page,
                                                  s32 *pageCount);
-s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member);
+s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId);

@@ -177,29 +177,29 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
 s32 MemberChooser_Open(void);
 s32 MemberChooser_Run(void);
-s32 SummaryScreen_Run(void);
-s32 SummaryScreen_RunPages(void);
-s32 SummaryScreen_SelectMember(s32 slot);
+s32 StatusScreen_Run(void);
+s32 StatusScreen_RunPages(void);
+s32 StatusScreen_SelectMember(s32 slot);
 s32 DjinnMenu_ShowCurrentList(void);
 s32 MemberChooser_RunRearrange(void);
 s32 PsynergyMenu_ChooseMember(void);
 s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
 void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
                                              s32 unused2, s32 unused3);
-void SummaryScreen_ShowMemberStatus(s32 member, s32 frame);
-s32 SummaryScreen_SelectCommand(void);
-void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
-                                       s32 invert);
-void SummaryScreen_DrawSelectionLabels(struct Window *target, s32 selected,
-                                       const u8 *entries);
-void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
-                                             s32 messageVariant,
-                                             s32 preserveVariant);
-void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
-                                      s32 mode);
+void StatusScreen_ShowMemberStatus(s32 member, s32 frame);
+s32 StatusScreen_SelectCommand(void);
+void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+                                      s32 invert);
+void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
+                                      const u8 *entries);
+void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
+                                            s32 messageVariant,
+                                            s32 preserveVariant);
+void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
+                                     s32 mode);
 void Menu_BusyWait(void);
 void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags);
-s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId);
+s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId);
 s32 PagedList_Build(struct PagedList *result, s32 index);
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
@@ -230,7 +230,7 @@ void ItemMenu_PositionCategory(void);
 s32 Menu_CreateEightEntryObjects(struct Window *window);
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ResetCategory(void);
-s32 SummaryScreen_UpdateSelectionIcons(const u8 *enabled);
+s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled);
 
 void Item_PrepareUsePalette(void);
 void Item_UseNoOpCallback(void);

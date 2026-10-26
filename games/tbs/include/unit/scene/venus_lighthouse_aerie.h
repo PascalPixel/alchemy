@@ -2,19 +2,18 @@
 #define ALCHEMY_UNIT_MAP_VENUS_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *VenusLighthouseAerie_GetWarpDests(void);
-const struct MapWarpRegion *VenusLighthouseAerie_GetRegions(void);
-const u32 *VenusLighthouseAerie_GetWarps(void);
-const struct ObjectEventTemplate *
-VenusLighthouseAerie_GetObjectEventTemplates(void);
-const struct MapEvent *VenusLighthouseAerie_GetEvents(void);
+const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
+const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
+const u32 *VenusLighthouseAerie_GetExits(void);
+const struct ActorTemplate *VenusLighthouseAerie_GetActorTemplates(void);
+const struct Trigger *VenusLighthouseAerie_GetTriggers(void);
 s32 VenusLighthouseAerie_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -37,11 +36,11 @@ extern s32 gVenusLighthouseAerie_StepBackAction[];
 extern s32 gVenusLighthouseAerie_LeapAction[];
 extern s32 gVenusLighthouseAerie_PartyExitAction[];
 extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
-extern struct MapWarpDest gVenusLighthouseAerieWarpDests[];
-extern u32 gVenusLighthouseAerieWarps[];
-extern struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[];
+extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
+extern u32 gVenusLighthouseAerieExits[];
+extern struct ActorTemplate gVenusLighthouseAerieActorTemplates[];
 extern s32 gVenusLighthouseAerie_LandedPlatform;
-extern struct MapEvent gVenusLighthouseAerieEvents[];
+extern struct Trigger gVenusLighthouseAerieTriggers[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 
 #endif

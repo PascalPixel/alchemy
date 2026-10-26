@@ -3,29 +3,29 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gCottageRoomsD_CookScript[];
-extern struct MapWarpDest gAltin_NoWarpDests[];
-extern struct MapWarpDest gAltin_WarpDests[];
-extern struct MapWarpDest gCottageRoomsD_WarpDests[];
-extern u32 gAltin_Warps[];
-extern struct ObjectEventTemplate gAltin_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltin_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gCottageRoomsD_ObjectEventTemplates[];
-extern struct MapEvent gAltin_NoEvents[];
-extern struct MapEvent gAltin_Events[];
-extern struct MapEvent gCottageRoomsD_Events[];
+extern struct SceneEntrance gAltin_NoEntrances[];
+extern struct SceneEntrance gAltin_Entrances[];
+extern struct SceneEntrance gCottageRoomsD_Entrances[];
+extern u32 gAltin_Exits[];
+extern struct ActorTemplate gAltin_NoActorTemplates[];
+extern struct ActorTemplate gAltin_ActorTemplates[];
+extern struct ActorTemplate gCottageRoomsD_ActorTemplates[];
+extern struct Trigger gAltin_NoTriggers[];
+extern struct Trigger gAltin_Triggers[];
+extern struct Trigger gCottageRoomsD_Triggers[];
 extern u16 gAltin_SanctumDoorCells[];
 extern u16 gAltin_SouthwestDoorCells[];
 extern u16 gAltin_SoutheastDoorCells[];

@@ -1,5 +1,5 @@
 /// @file
-/// Object event scripts: moving, turning and the built-in actions.
+/// Actor scripts: moving, turning and the built-in actions.
 // Part of field_services.c.
 
 #include "../field_services_internal.h"
@@ -17,7 +17,7 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action pixels away the object walks (animation 2) toward a point 16 /
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
-/// runs it again every frame until the object event's script is replaced.
+/// runs it again every frame until the actor's script is replaced.
 s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
   s32 step;
   struct Object *target;
@@ -59,7 +59,7 @@ s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
 
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
-/// the object event's script is replaced.
+/// the actor's script is replaced.
 s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
   s16 turnStep;
   u16 currentAngle;
@@ -68,7 +68,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
 
   target = object->linkedObject;
   if (target != NULL) {
-    // Clear OBJ_EVENT_FACES_MOTION, so moving does not turn it away again.
+    // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     object->steeringFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
     currentAngle = object->facing;
@@ -84,13 +84,13 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
   return 1;
 }
 
-/// Starts an object event's action script: an enum MovementType, or any other
+/// Starts an actor's action script: an enum MovementType, or any other
 /// value as the script to run itself. The built-in scripts are in scripts.s
-/// (field.h). Reached from an object event template's behavior column
-/// (overworld/object_events.c), from Scene_TalkToObjectEvent after a talk
-/// (overworld/events.c), from the object event commands and from Lalivero's
+/// (field.h). Reached from an actor template's behavior column
+/// (overworld/actors.c), from Scene_TalkToActor after a talk
+/// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.
-void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
+void Actor_SetMovementType(struct Object *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
     action = (s32)gMovementType_StandScript;
@@ -109,7 +109,7 @@ void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     object->linkedObject =
-        (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+        (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

@@ -14,12 +14,12 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

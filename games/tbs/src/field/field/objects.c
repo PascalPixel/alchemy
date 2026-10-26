@@ -165,8 +165,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Object *object,
 /// map change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field map runner
-/// (overworld/overworld/run_map.c) and the battle's encounter, and directly by
-/// the sprite viewer, each with its enum ObjectSystemMode. Allocates
+/// (overworld/overworld/run_scene.c) and the battle's encounter, and directly
+/// by the sprite viewer, each with its enum ObjectSystemMode. Allocates
 /// HEAP_SLOT_OBJECT_SYSTEM for the ObjectSystemWork and HEAP_SLOT_OBJECTS
 /// for the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
@@ -255,14 +255,14 @@ void Object_Release(struct Object *object) {
 /// the sprite's animation id.
 ///
 /// Called as Object_CreateFar by the battle's placement, the Psynergy
-/// effects, the field map's object events and treasure spots and the map
+/// effects, the field map's actors and treasure spots and the map
 /// scripts, and directly by the player control for footprints and ripples.
 /// Gives the object gObject_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
 /// the ObjectSystemWork's group tables.
 struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
   struct Object *object;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct Object *motion;
   struct Object *scripted;
   struct Sprite *sprite;
@@ -275,16 +275,15 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
   encodedSprite &= 0xfff;
   object = Object_FindFree();
   if (object != NULL) {
-    objectEvent = (struct ObjectEvent *)object;
-    objectEvent->radius = 16;
+    actor = (struct Actor *)object;
+    actor->radius = 16;
     switch (spriteStorageKind) {
     case OBJECT_CREATE_ONE_SPRITE:
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         object->spriteStorageKind = OBJECT_SPRITE_ONE;
         object->sprite = sprite;
-        objectEvent->radius =
-            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
         object->spriteStorageKind = OBJECT_SPRITE_NONE;
       }
@@ -294,7 +293,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // A list is four words but the next starts a word later, so a second
       // list would overlap the first and its zeroing clear count. No caller
       // passes OBJECT_CREATE_GROUP: every id is a sprite below 0x1000, an
-      // object event template's (0 to 504), or a kind with no sprite.
+      // actor template's (0 to 504), or a kind with no sprite.
       // XXX (no evidence): whether the lists were meant four words apart;
       // nothing in the game creates a group to show it.
       spriteSlots =
@@ -304,8 +303,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
       Dma_Fill32(0, spriteSlots, 0x10);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        objectEvent->radius =
-            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
         *spriteSlots++ = sprite;
       }
       sprite = Sprite_Create(encodedSprite + 1);
@@ -325,15 +323,15 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     object->script = (s32 *)gObject_DefaultScript;
     object->speedLimit = 0x20000;
     object->scriptCursor = 0;
-    objectEvent->scaleX = Q16_ONE;
-    objectEvent->scaleY = Q16_ONE;
+    actor->scaleX = Q16_ONE;
+    actor->scaleY = Q16_ONE;
     object->acceleration = Q16_ONE;
-    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     motion->gravity = Q16_ONE;
     motion->bounce = 0x4000;
     object->collisionFlags = 0;
-    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
-    objectEvent->riseBaseY = 0;
+    object->steeringFlags = ACTOR_FACES_MOTION;
+    actor->riseBaseY = 0;
     object->facing = FACING_SOUTH;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;
@@ -464,8 +462,8 @@ void Object_StartApproachLink(struct Object *object, s32 linkedObjectHandle) {
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
-/// The field map runner (overworld/overworld/run_map.c) gives it to the leader
-/// when gSaveBlock.movementMode is 2.
+/// The field map runner (overworld/overworld/run_scene.c) gives it to the
+/// leader when gSaveBlock.movementMode is 2.
 void Object_StartKeyCheck(struct Object *object) {
   Object_Initialize(object, gObject_KeyCheckScript);
 }
@@ -497,7 +495,7 @@ void Object_StartIdle(struct Object *object) {
 /// Starts an object on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
 /// acceleration of 0.5. Called through
-/// Object_StartCameraFar by the field map's object events, the Psynergy
+/// Object_StartCameraFar by the field map's actors, the Psynergy
 /// camera and the Colosso and Kolima Forest maps.
 void Object_StartCamera(struct Object *object, s32 linkedObjectHandle) {
   Object_Initialize(object, gObject_CameraScript);
@@ -512,7 +510,7 @@ void Object_StartCamera(struct Object *object, s32 linkedObjectHandle) {
 /// Waits until the object's script reaches SC_END, at most 300 frames
 /// (five seconds); it returns as soon as the script idles, and after the
 /// limit whether or not it has.
-/// Called through Object_WaitForScriptEndFar by the Psynergy object event
+/// Called through Object_WaitForScriptEndFar by the Psynergy actor
 /// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void Object_WaitForScriptEnd(void *rawObject) {

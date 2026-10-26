@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_TUNNEL_RUINS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_coordinate.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct SceneExitRegion;
 
-const struct MapWarpDest *TunnelRuins_GetWarpDests(void);
-const struct MapWarpRegion *TunnelRuins_GetRegions(void);
-const u32 *TunnelRuins_GetWarps(void);
-const struct ObjectEventTemplate *TunnelRuins_GetObjectEventTemplates(void);
-const struct MapEvent *TunnelRuins_GetEvents(void);
+const struct SceneEntrance *TunnelRuins_GetEntrances(void);
+const struct SceneExitRegion *TunnelRuins_GetRegions(void);
+const u32 *TunnelRuins_GetExits(void);
+const struct ActorTemplate *TunnelRuins_GetActorTemplates(void);
+const struct Trigger *TunnelRuins_GetTriggers(void);
 s32 TunnelRuins_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -28,14 +28,14 @@ extern s32 gTunnelRuins_StretchScript[];
 extern s32 gTunnelRuins_DouseSplashScript[];
 extern u16 gTunnelRuins_DoorOpenSteps[];
 extern u16 gTunnelRuins_DoorCloseSteps[];
-extern struct MapWarpDest gTunnelRuinsWarpDestsOther[];
-extern struct MapWarpDest gTunnelRuinsGreatStatueWarpDests[];
-extern struct MapWarpDest gTunnelRuinsLadyStatuesWarpDests[];
-extern struct MapWarpRegion gTunnelRuinsLadyStatuesRegions[];
-extern u32 gTunnelRuinsWarps[];
-extern struct ObjectEventTemplate gTunnelRuinsGreatStatueObjectEventTemplates[];
-extern struct ObjectEventTemplate gTunnelRuinsObjectEventTemplatesOther[];
-extern struct MapEvent gTunnelRuinsGreatStatueEvents[];
-extern struct MapEvent gTunnelRuinsEventsOther[];
+extern struct SceneEntrance gTunnelRuinsEntrancesOther[];
+extern struct SceneEntrance gTunnelRuinsGreatStatueEntrances[];
+extern struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[];
+extern struct SceneExitRegion gTunnelRuinsLadyStatuesRegions[];
+extern u32 gTunnelRuinsExits[];
+extern struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[];
+extern struct ActorTemplate gTunnelRuinsActorTemplatesOther[];
+extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
+extern struct Trigger gTunnelRuinsTriggersOther[];
 
 #endif

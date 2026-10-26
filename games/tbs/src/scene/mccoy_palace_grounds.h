@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 #define NULL ((void *)0)
 

@@ -203,7 +203,7 @@ void Window_LoadGraphics(void) {
 }
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
-/// Window_LoadGraphics and the object event setup.
+/// Window_LoadGraphics and the actor setup.
 void Palette_LoadBasicSpriteColors(void) {
   Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);

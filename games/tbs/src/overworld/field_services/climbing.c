@@ -27,7 +27,7 @@ s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
   struct Object *leader =
-      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+      (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   s32 result = -1;
   s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->motionFlags;
@@ -68,7 +68,7 @@ again:
     *flags &= 0x7e;
     Object_SetSpriteFlagsFar((struct Object *)leader, spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
-        gSaveBlock.leaderLocalId,
+        gSaveBlock.leaderActorId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
     Object_SelectAnimationFar(leader, 6);
@@ -124,7 +124,7 @@ again:
 /// gSaveBlock.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
   struct Object *object =
-      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+      (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -153,17 +153,17 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
+      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
       object->speedLimit = Q16_ONE;
-      ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_NORTH, 0);
-      ObjectEvent_RefreshSelectorById(gSaveBlock.leaderLocalId);
-      object->steeringFlags = OBJ_EVENT_FACES_MOTION;
+      ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_NORTH, 0);
+      Actor_RefreshSelectorById(gSaveBlock.leaderActorId);
+      object->steeringFlags = ACTOR_FACES_MOTION;
       object->motionFlags = 0;
       Object_SetSpriteFlagsFar((struct Object *)object, 0);
       Object_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
-      ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderLocalId);
+      ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderActorId);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
@@ -173,13 +173,13 @@ s32 Field_ClimbDown(void) {
     // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the ground is read, and the shadow back.
     Object_SelectAnimationFar(object, ANIM_LEADER_CLIMB);
-    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = 0x40000;
     object->groundHeight = object->y;
     Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_SHADOW);
     FieldScript_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
+    object->steeringFlags = ACTOR_FACES_MOTION;
     object->facing = FACING_NORTH;
   }
 
@@ -203,7 +203,7 @@ failure:
 /// gSaveBlock.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
   struct Object *object =
-      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+      (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
@@ -235,7 +235,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       object->steeringFlags = 0;
-      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
+      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
       Object_SelectAnimationFar(object, 6);
       WaitFrames(4);
       Object_SelectAnimationFar(object, 7);
@@ -249,7 +249,7 @@ s32 Field_ClimbUp(void) {
       Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
       WaitFrames(4);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
-      object->steeringFlags = OBJ_EVENT_FACES_MOTION;
+      object->steeringFlags = ACTOR_FACES_MOTION;
       WaitFrames(8);
     } else {
       goto failure;
@@ -260,14 +260,14 @@ s32 Field_ClimbUp(void) {
     Object_SelectAnimationFar(object, 11);
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,
                             (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderLocalId);
-    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderActorId);
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;
     object->groundHeight = object->y;
     Object_SetSpriteFlagsFar((struct Object *)object, spriteFlags);
     FieldScript_WaitFrames(4);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
+    object->steeringFlags = ACTOR_FACES_MOTION;
   }
 
   FieldScript_End();

@@ -400,28 +400,28 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_KpString,
+              Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_KpString,
                                       conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
-              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+              Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PvString,
                                       conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_SPANISH:
-              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+              Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PvString,
                                       conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+              Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_HpString,
                                       conditionWindow, 0, 0);
               break;
             }
 #else
-            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+            Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_HpString,
                                     conditionWindow, 0, 0);
 #endif
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+            Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_SlashString,
                                     conditionWindow, 48, 0);
             Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
@@ -434,10 +434,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               helpColumn = 17;
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
-            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PpString,
+            Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PpString,
                                     conditionWindow, 0, 0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+            Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_SlashString,
                                     conditionWindow, 48, 0);
             Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;

@@ -1,7 +1,7 @@
 /// @file
 /// The title overlay: the start screen, the Golden Sun logo shown after the
 /// ending, and the screens that lead from the prologue and the last event on
-/// to Vale and the main menu. Title_Run chooses by warp destination.
+/// to Vale and the main menu. Title_Run chooses by entrance.
 
 #include "save_block.h"
 #include "vram_cache.h"
@@ -38,7 +38,7 @@
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_grid_scroll.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -47,46 +47,44 @@ static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which SceneManager_Run reads through
-/// entry/title.s: one warp destination row, the warp, and no object event
-/// templates or map events.
-u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
+/// entry/title.s: one entrance row, the exit, and no actor
+/// templates or triggers.
+u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
-/// The warp regions entry: the title has no warp boxes.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The exit regions entry: the title has no exit boxes.
+s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *Title_GetWarps(void) { return (u8 *)gTitleWarps; }
+u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
-/// The title overlay has no object events.
-u8 *Title_GetObjectEventTemplates(void) {
-  return (u8 *)gTitleObjectEventTemplates;
-}
+/// The title overlay has no actors.
+u8 *Title_GetActorTemplates(void) { return (u8 *)gTitleActorTemplates; }
 
-/// The title overlay has no map events.
-u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
+/// The title overlay has no triggers.
+u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 
-/// The overlay's initialize entry: plays what the warp destination asks for,
+/// The overlay's initialize entry: plays what the entrance asks for,
 /// sets the next destination and returns 0.
-/// - Warp destination 10, after Jenna and Kraden's closing event on the world
+/// - Entrance 10, after Jenna and Kraden's closing event on the world
 ///   map (WorldMap_ShowEndingEvent): the Golden Sun logo for two seconds, then
-///   until a key is pressed or a minute passes, then warp destination 2.
-/// - Warp destination 9, after the ship sails (lemurian_ship.c's SetSail): the
-///   credits, then the main menu's warp destination 2, which offers to
+///   until a key is pressed or a minute passes, then entrance 2.
+/// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
+///   credits, then the main menu's entrance 2, which offers to
 ///   save the cleared game.
-/// - Warp destination 2, at power-on (SequenceManager_Run) and after the logo:
+/// - Entrance 2, at power-on (SequenceManager_Run) and after the logo:
 /// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
-///   with its "Press Start" prompt; then the main menu's warp
-///   destination 1.
-/// - Any other warp destination is the title shown after the prologue: the
-///   intro without its prompt, then Vale's warp destination 16
+///   with its "Press Start" prompt; then the main menu's
+///   entrance 1.
+/// - Any other entrance is the title shown after the prologue: the
+///   intro without its prompt, then Vale's entrance 16
 ///   (Party_EndChildhood).
 s32 Title_Run(void) {
   s32 waitFrames;
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gSaveBlock.warpDest == TITLE_FROM_WORLD_MAP) {
-    ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags = 0;
+  if (gSaveBlock.entrance == TITLE_FROM_WORLD_MAP) {
+    Actor_GetById(gSaveBlock.leaderActorId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     WaitFrames(120);
@@ -101,7 +99,7 @@ s32 Title_Run(void) {
     FieldScript_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gSaveBlock.warpDest == TITLE_FROM_LEMURIAN_SHIP) {
+  if (gSaveBlock.entrance == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
@@ -119,7 +117,7 @@ s32 Title_Run(void) {
   // evidence): what the call once did; the stub is empty in every edition, so
   // only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
-  if (gSaveBlock.warpDest == TITLE_AFTER_RUN) {
+  if (gSaveBlock.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
@@ -289,7 +287,7 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for Title_Run's warp destination 10: loads it
+/// Shows the Golden Sun logo for Title_Run's entrance 10: loads it
 /// while the screen is black, starts the lettering's reveal
 /// (Title_UpdateSpriteReveal, left running), brings the logo up from black over
 /// 51 frames and opens the screen. Leaves the field work's transitions at 60
@@ -381,21 +379,21 @@ static void Title_LoadBackground(void) {
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
-struct MapWarpDest gTitleWarpDests[] = {
+struct SceneEntrance gTitleEntrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
-u32 gTitleWarps[] = {
-    MAP_WARPS_END,
+u32 gTitleExits[] = {
+    SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gTitleObjectEventTemplates[] = {
-    {MAP_TABLE_END},
+struct ActorTemplate gTitleActorTemplates[] = {
+    {SCENE_TABLE_END},
 };
 
-struct MapEvent gTitleEvents[] = {
-    {MAP_EVENTS_END},
+struct Trigger gTitleTriggers[] = {
+    {TRIGGERS_END},
 };
 
 /// The VRAM cache entry holding the lettering's tiles; -1 until

@@ -1,5 +1,5 @@
 /// @file
-/// The world map screen: map section markers, the cursor and the map section's
+/// The world map screen: area markers, the cursor and the area's
 /// name.
 // Part of field_services.c.
 
@@ -13,10 +13,10 @@
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
 #define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
-/// The first ordinary map section object event, the first slot with a row of
-/// gRegionMap_MapSecMarkers whatever the leader is.
-#define WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT 11
-#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per object event slot
+/// The first ordinary area actor, the first slot with a row of
+/// gWorldPicture_AreaMarkers whatever the leader is.
+#define WORLD_MAP_FIRST_AREA_ACTOR 11
+#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
 /// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
 #define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1) ///< screen pixels a frame
@@ -32,7 +32,7 @@
 ///@}
 
 /// The renderer's linked sprite entry and the three words that initialize it.
-union RegionMapMarkerPart {
+union WorldPictureMarkerPart {
   struct AnimationSpritePart sprite;
   u32 words[3];
 };
@@ -43,7 +43,7 @@ union RegionMapMarkerPart {
 #define WORLD_MAP_MARKER_VIEW(marker) (*(marker))
 #endif
 
-STATIC_ASSERT(sizeof(union RegionMapMarkerPart) ==
+STATIC_ASSERT(sizeof(union WorldPictureMarkerPart) ==
               sizeof(struct AnimationSpritePart));
 
 // BUG: the original reserves 32 bytes but writes and uploads 128. The bump
@@ -54,52 +54,53 @@ STATIC_ASSERT(sizeof(union RegionMapMarkerPart) ==
 #define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
 #endif
 
-/// Scratch work while RegionMap_Show owns gMapGridCellBuffer. Setup runs before
-/// the marker task; cleanup removes its window before map graphics reuse it.
-struct RegionMapWork {
+/// Scratch work while WorldPicture_Show owns gMapGridCellBuffer. Setup runs
+/// before the marker task; cleanup removes its window before map graphics reuse
+/// it.
+struct WorldPictureWork {
   u16 markerVramBlock;           ///< owns the four generated marker tiles
   u16 cursorVramBlock;           ///< owns the cursor picture's tiles
   union FieldCoordinate cursorX; ///< screen column, 16.16 pixels
   union FieldCoordinate cursorY; ///< screen row, 16.16 pixels
   u8 padding0c[6];               ///< not read by this screen
-  s16 namedMarker; ///< object event whose name is drawn; -1 clears the name
-  u8 padding14[4]; ///< not read by this screen
-  s32 cursorSpeed; ///< 16.16 screen pixels per frame
+  s16 namedMarker;           ///< actor whose name is drawn; -1 clears the name
+  u8 padding14[4];           ///< not read by this screen
+  s32 cursorSpeed;           ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
-  // Packed visible map sections, then a nearest-section frame; the last is the
+  // Packed visible areas, then a nearest-section frame; the last is the
   // cursor.
 #ifdef UBFIX
-  union RegionMapMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
+  union WorldPictureMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
 #else
   struct AnimationSpritePart markers[WORLD_MAP_MARKER_CAPACITY + 1];
 #endif
 };
 
-STATIC_ASSERT(offsetof(struct RegionMapWork, markers) == 0x20);
-STATIC_ASSERT(sizeof(struct RegionMapWork) == 0x344);
+STATIC_ASSERT(offsetof(struct WorldPictureWork, markers) == 0x20);
+STATIC_ASSERT(sizeof(struct WorldPictureWork) == 0x344);
 STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
-              sizeof(((struct FieldWork *)0)->objectEvents) /
-                  sizeof(((struct FieldWork *)0)->objectEvents[0]));
+              sizeof(((struct FieldWork *)0)->actors) /
+                  sizeof(((struct FieldWork *)0)->actors[0]));
 
 /// Sets up the world map screen: the marker tiles and their OAM entries, the
-/// cursor where the leader is on the map (or mid-screen when the map section is
+/// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
 void FieldEffect_SetupResourcesAndWindow(void) {
 #ifdef UBFIX
-  union RegionMapMarkerPart *marker;
+  union WorldPictureMarkerPart *marker;
 #else
   u32 *oam;
 #endif
   u32 *markerTiles;
-  struct RegionMapWork *work;
-  struct ObjectEvent *objectEvent;
+  struct WorldPictureWork *work;
+  struct Actor *actor;
   s32 tileAttributes;
   u32 i;
   u32 tile;
   u32 cursorAttributes;
 
   markerTiles = AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
-  work = (struct RegionMapWork *)gMapGridCellBuffer;
+  work = (struct WorldPictureWork *)gMapGridCellBuffer;
 #ifdef UBFIX
   marker = work->markers;
 #else
@@ -107,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
@@ -144,12 +145,11 @@ void FieldEffect_SetupResourcesAndWindow(void) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
-    work->cursorX.fixed = (((objectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    work->cursorX.fixed = (((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                            WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE)
                           << 16;
     work->cursorY.fixed =
-        ((objectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
-         WORLD_MAP_WORLD_SIZE)
+        ((actor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) / WORLD_MAP_WORLD_SIZE)
         << 16;
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
@@ -174,32 +174,32 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 }
 
 #if TBS_PATCH_2
-/// The cursor snaps to the nearest map section when the d-pad is released.
-#define REGION_MAP_CURSOR_SNAPS 1
-#define REGION_MAP_NAME_RANGE                                                  \
+/// The cursor snaps to the nearest area when the d-pad is released.
+#define WORLD_PICTURE_CURSOR_SNAPS 1
+#define WORLD_PICTURE_NAME_RANGE                                               \
   64                          ///< squared distance that shows a marker's name
 #define WORLD_MAP_NAME_LEFT 3 ///< how far left of its marker the name goes
 #else
-#define REGION_MAP_CURSOR_SNAPS 0
-#define REGION_MAP_NAME_RANGE 100
+#define WORLD_PICTURE_CURSOR_SNAPS 0
+#define WORLD_PICTURE_NAME_RANGE 100
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
 /// Closes the world map screen: returns its VRAM blocks and removes the
 /// name window.
 void FieldEffect_CleanupResourcesAndWindow(void) {
-  struct RegionMapWork *work = (struct RegionMapWork *)gMapGridCellBuffer;
+  struct WorldPictureWork *work = (struct WorldPictureWork *)gMapGridCellBuffer;
 
   VramCache_FreeEntry(work->markerVramBlock);
   VramCache_FreeEntry(work->cursorVramBlock);
   Window_CloseFar(work->nameWindow, 2);
 }
 
-/// Task of the world map screen: shows a marker at each map
-/// section whose flag is set, moves the cursor with the d-pad (to the current
-/// map section while L or R is held) and shows the name of the marker nearest
+/// Task of the world map screen: shows a marker at each
+/// area whose flag is set, moves the cursor with the d-pad (to the current
+/// area while L or R is held) and shows the name of the marker nearest
 /// the cursor.
-void RegionMap_UpdateMarkers(void) {
+void WorldPicture_UpdateMarkers(void) {
   s32 leader;
   const s32 *place;
   s32 tileBase;
@@ -214,15 +214,15 @@ void RegionMap_UpdateMarkers(void) {
   s32 height;
   s32 width;
   struct FieldPosition position;
-  struct RegionMapWork *work;
-  struct ObjectEvent *mapSecObjectEvent;
+  struct WorldPictureWork *work;
+  struct Actor *areaActor;
   s32 cursorY;
   s32 tile;
   s32 mode;
   s32 flag;
   s32 markerIndex;
 #ifdef UBFIX
-  union RegionMapMarkerPart *marker;
+  union WorldPictureMarkerPart *marker;
 #else
   struct AnimationSpritePart *marker;
 #endif
@@ -230,41 +230,41 @@ void RegionMap_UpdateMarkers(void) {
   s32 y;
   s32 angle;
 
-#if REGION_MAP_CURSOR_SNAPS
-  leader = gSaveBlock.leaderLocalId;
-  work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
+#if WORLD_PICTURE_CURSOR_SNAPS
+  leader = gSaveBlock.leaderActorId;
+  work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
-  place = gRegionMap_MapSecMarkers;
+  place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
 #else
-  work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
-  leader = gSaveBlock.leaderLocalId;
-  place = gRegionMap_MapSecMarkers;
+  work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
+  leader = gSaveBlock.leaderActorId;
+  place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
   marker = work->markers;
 #endif
   nearestMarker = -1;
-  nearestDistanceSquared = REGION_MAP_NAME_RANGE;
+  nearestDistanceSquared = WORLD_PICTURE_NAME_RANGE;
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // SceneManager_Run creates the selected object event before event -888 opens
-  // this screen. No object event task removes it while the marker callback
+  // SceneManager_Run creates the selected actor before event -888 opens
+  // this screen. No actor task removes it while the marker callback
   // runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
-    // L or R: the current map section.
-    mapSecObjectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+    // L or R: the current area.
+    areaActor = Actor_GetByActorId(gSaveBlock.leaderActorId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
-    // A missing selected object event violates the screen's lifetime contract;
+    // A missing selected actor violates the screen's lifetime contract;
     // skipping that frame changes tbs-en from 1088 to 1092 bytes.
-    if (mapSecObjectEvent == NULL)
+    if (areaActor == NULL)
       return;
 #endif
-    if (mapSecObjectEvent != NULL) {
-      cursorX = ((mapSecObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    if (areaActor != NULL) {
+      cursorX = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-      cursorY = mapSecObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+      cursorY = areaActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
@@ -294,12 +294,12 @@ void RegionMap_UpdateMarkers(void) {
     cursorY = work->cursorY.part.pixel;
   }
 
-  // Local id 0 consumes no marker row. Ordinary rows begin at local id 11; a
-  // selected slot in 1..10 also consumes one. Zero rows reserve object events
+  // Actor id 0 consumes no marker row. Ordinary rows begin at actor id 11; a
+  // selected slot in 1..10 also consumes one. Zero rows reserve actors
   // with no marker and -1 ends the table. A row is (tile << 16 | flag, map id).
   for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
        markerIndex++) {
-    if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT)
+    if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_ACTOR)
       continue;
     if (markerIndex == 0) {
       if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
@@ -312,7 +312,7 @@ void RegionMap_UpdateMarkers(void) {
       message = *place++;
       if (flag == 0)
         continue;
-#if REGION_MAP_CURSOR_SNAPS
+#if WORLD_PICTURE_CURSOR_SNAPS
       if (flag == -1)
         break;
       tile = flag >> 16;
@@ -326,14 +326,14 @@ void RegionMap_UpdateMarkers(void) {
     }
     if (!GameFlag_GetFar(flag))
       continue;
-    mapSecObjectEvent = ObjectEvent_GetByLocalId(markerIndex);
-    if (mapSecObjectEvent == NULL)
+    areaActor = Actor_GetByActorId(markerIndex);
+    if (areaActor == NULL)
       continue;
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
-    x = ((mapSecObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    x = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-    y = mapSecObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+    y = areaActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
     WORLD_MAP_MARKER_VIEW(marker).objectMode = mode;
     WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + tile;
@@ -354,11 +354,11 @@ void RegionMap_UpdateMarkers(void) {
       nearestX = x;
       nearestY = y;
     }
-    // Blink the current map section for eight frames out of sixteen.
+    // Blink the current area for eight frames out of sixteen.
     if (markerIndex != 0 || (gFrameCount & 15) <= 7)
       Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker++), y);
   }
-#if REGION_MAP_CURSOR_SNAPS
+#if WORLD_PICTURE_CURSOR_SNAPS
   // With the d-pad released, the cursor moves onto the nearest marker.
   if (gKeysHeld == 0) {
     if (nearestMarker != -1) {
@@ -411,7 +411,7 @@ void RegionMap_UpdateMarkers(void) {
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
       else
-        nearestName = MapSec_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
+        nearestName = Area_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
       Text_MeasureMessageFar(nearestName, &width, &height);
       cursorX = nearestX;
       cursorY = nearestY;
@@ -441,7 +441,7 @@ void RegionMap_UpdateMarkers(void) {
 /// SceneManager_Run reaches this for event -888 in world-map mode. The marker
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
-void RegionMap_Show(s32 picture) {
+void WorldPicture_Show(s32 picture) {
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
@@ -488,13 +488,13 @@ void RegionMap_Show(s32 picture) {
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
   FieldEffect_SetupResourcesAndWindow();
-  Task_Add(RegionMap_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(WorldPicture_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
     FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
   do {
     WaitFrames(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-  Task_Remove(RegionMap_UpdateMarkers);
+  Task_Remove(WorldPicture_UpdateMarkers);
   FieldEffect_CleanupResourcesAndWindow();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   WorldMap_LoadAreaGraphicsFar();
@@ -511,7 +511,7 @@ void RegionMap_Show(s32 picture) {
   work->camera->paused = 0;
 }
 
-/// On the world map, shows only the map's object events within 320 pixels
+/// On the world map, shows only the map's actors within 320 pixels
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateObjectVisibilityBounds(void) {
   struct Object *object;
@@ -523,9 +523,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
   s32 bottom;
   u32 id;
 
-  // The selected object event lookup has no used result; the bounds follow the
+  // The selected actor lookup has no used result; the bounds follow the
   // camera.
-  ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  Actor_GetById(gSaveBlock.leaderActorId);
   object = gFieldWork->camera;
   x = object->x;
   left = x - (320 << 16);
@@ -534,9 +534,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
   top = y - (600 << 16);
   bottom = y + (400 << 16);
 
-  id = LOCALID_FIRST_PLACED;
+  id = ACTOR_FIRST_PLACED;
   do {
-    object = ObjectEvent_GetByLocalId(id);
+    object = Actor_GetByActorId(id);
 
     if (object != 0) {
       s32 ox = object->x;
@@ -580,7 +580,7 @@ void FieldEffect_RunVisibilityTransition(void) {
 #undef WORLD_MAP_SCREEN_HEIGHT
 #undef WORLD_MAP_WORLD_SIZE
 #undef WORLD_MAP_X_ORIGIN
-#undef WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT
+#undef WORLD_MAP_FIRST_AREA_ACTOR
 #undef WORLD_MAP_MARKER_CAPACITY
 #undef WORLD_MAP_CURSOR_PART
 #undef WORLD_MAP_CURSOR_MIN_SPEED
@@ -592,6 +592,6 @@ void FieldEffect_RunVisibilityTransition(void) {
 #undef WORLD_MAP_CURSOR_MAX_Y
 #undef WORLD_MAP_MARKER_VIEW
 #undef WORLD_MAP_MARKER_ALLOCATION_SIZE
-#undef REGION_MAP_CURSOR_SNAPS
-#undef REGION_MAP_NAME_RANGE
+#undef WORLD_PICTURE_CURSOR_SNAPS
+#undef WORLD_PICTURE_NAME_RANGE
 #undef WORLD_MAP_NAME_LEFT

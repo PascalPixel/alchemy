@@ -18,13 +18,13 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
-/// of the caster with effectWork->enabled (no map event named the target),
+/// of the caster with effectWork->enabled (no trigger named the target),
 /// otherwise the effect's position, 32 pixels up in both cases. Called by
 /// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the field effect's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Object *objectEvent = effectWork->mainObject;
+  struct Object *actor = effectWork->mainObject;
   struct Object *child = effectWork->child;
   struct Object *object;
   struct FixedPointPosition spawn;
@@ -34,13 +34,13 @@ void FieldEffect_RunCatch(void) {
   s32 i;
   s32 steps = 11;
 
-  origin.x = objectEvent->x;
-  origin.y = objectEvent->y + (16 << 16);
-  origin.z = objectEvent->z;
+  origin.x = actor->x;
+  origin.y = actor->y + (16 << 16);
+  origin.z = actor->z;
   if (effectWork->enabled) {
-    target.x = objectEvent->x;
-    target.y = objectEvent->y + (32 << 16);
-    target.z = objectEvent->z;
+    target.x = actor->x;
+    target.y = actor->y + (32 << 16);
+    target.z = actor->z;
     Vector_AddPolarOffset(32 << 16, effectWork->angle, &target.x);
   } else {
     target.x = effectWork->x;
@@ -56,7 +56,7 @@ void FieldEffect_RunCatch(void) {
     return;
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  object->facing = objectEvent->facing;
+  object->facing = actor->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Object_SelectAnimationFar(object, 5);

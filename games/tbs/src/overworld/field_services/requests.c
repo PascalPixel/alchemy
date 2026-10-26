@@ -22,7 +22,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+    struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -30,7 +30,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 }
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
-/// Djinni's object event, which hops first unless DJINN_NO_HOP is set. Djinn
+/// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn
 /// are numbered 20 to an element (Djinn_ResolvePendingEvent). Sets
 /// gSaveBlock.pendingDjinnEvent and the field work's battle request; when
 /// the map is entered again after the battle, Djinn_ResolvePendingEvent
@@ -49,13 +49,13 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
     Djinn_RunBattleStartHop(flag);
 
   state = &gSaveBlock;
-  // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
+  // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
   state->pendingDjinnEvent = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->battle = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);
+    struct Object *leader = Actor_GetByActorId(state->leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -64,32 +64,32 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   Encounter_SelectBattleMusic(0, 0);
 }
 
-/// Sets the map and warp destination that the field goes to next
-/// (gSaveBlock.nextScene and nextWarpDest). About 30 maps and the Battle Arena
+/// Sets the map and entrance that the field goes to next
+/// (gSaveBlock.nextScene and nextEntrance). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
-void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest) {
+void FieldScript_SetNextDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.nextScene = sceneId;
-  gSaveBlock.nextWarpDest = warpDest;
+  gSaveBlock.nextEntrance = entrance;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gSaveBlock.defeatScene and defeatWarpDest). The maps before scripted
+/// (gSaveBlock.defeatScene and defeatEntrance). The maps before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
-void FieldScript_SetDefeatDestination(s32 sceneId, s32 warpDest) {
+void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.defeatScene = sceneId;
-  gSaveBlock.defeatWarpDest = warpDest;
+  gSaveBlock.defeatEntrance = entrance;
 }
 
-/// Makes the script leave for warp destination warpDest of map sceneId: sets
-/// gSaveBlock.sceneId and warpDest and raises the warp request WARP_NONE (999),
+/// Makes the script leave for entrance entrance of map sceneId: sets
+/// gSaveBlock.sceneId and entrance and raises the exit request EXIT_NONE (999),
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
-void FieldScript_RequestDestination(u16 sceneId, u16 warpDest) {
+void FieldScript_RequestDestination(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gSaveBlock.sceneId = sceneId;
-  gSaveBlock.warpDest = warpDest;
-  work->warp = WARP_NONE;
+  gSaveBlock.entrance = entrance;
+  work->exit = EXIT_NONE;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),
@@ -107,8 +107,8 @@ void Scene_QueueMusic(s32 soundId) {
 }
 
 /// Plays the sound Scene_QueueMusic remembered, if any. Called
-/// by maps, by the event runner (overworld/events.c), by setup.c and by an
-/// object event's landing (object_event_commands.c).
+/// by maps, by the event runner (overworld/triggers.c), by setup.c and by an
+/// actor's landing (actor_commands.c).
 void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;
 

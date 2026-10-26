@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "system.h"
 
 #include "save_block.h"

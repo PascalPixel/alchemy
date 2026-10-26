@@ -2,9 +2,9 @@
 /// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
 /// Isle. Each opens off one of the nine floors the cave descends through
 /// (crossbone_isle.c) through two doors, east and west: the floor's east door
-/// leads in at the room's `_EAST` warp destination
+/// leads in at the room's `_EAST` entrance
 /// (CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST in the
-/// first) and its west door at the `_WEST` one, and the warps of the same names
+/// first) and its west door at the `_WEST` one, and the exits of the same names
 /// lead back out. Each is a puzzle with four chests, and all five take the area
 /// name Crossbone Isle Cave. In the order the party meets them:
 ///
@@ -45,11 +45,11 @@
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "animspr.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 #include "create_configured_overlay_object.h"
 #include "pushed_object.h"
@@ -85,52 +85,52 @@
 #include "macros.h"
 
 /// A chest searched while facing the given way.
-#define BG_EVENT_CHEST_FACING(facing)                                          \
-  (BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | (facing))
+#define EXAMINE_CHEST_FACING(facing)                                           \
+  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
-/// The placed object events, numbered in the order of each room's object event
-/// templates (Scene_GetObjectEventTemplates).
-enum CrossboneIsleSteppingStonesLocalId {
+/// The placed actors, numbered in the order of each room's actor
+/// templates (Scene_GetActorTemplates).
+enum CrossboneIsleSteppingStonesActorId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
-  /// sprite 0x100), the only object events those rooms place.
+  /// sprite 0x100), the only actors those rooms place.
   /// ★ Named from what the player sees: tan stone pillars over the pit,
   /// pillars of ice on the spikes, and grey carved pillars stacked two high
   /// (its render)
-  LOCALID_FIRST_PILLAR = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
   /// Forest's: eight in
   /// CrossboneIsleFloodgate, where the seven after the first float on the
   /// raised water, and two in CrossboneIsleDragonStatue.
   /// ★ Named from what the player sees: logs lying on the cave floor (its
   /// render)
-  LOCALID_FIRST_LOG = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// CrossboneIsleDragonStatue's boulder for Move, sprite 0x125, which sinks
   /// into place at column 16.
   /// ★ Named from what the player sees: a round grey boulder below the logs
   /// (its render)
-  LOCALID_SINKING_BOULDER = LOCALID_FIRST_LOG + 2,
+  ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
   /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
   /// freezes into pillars of ice.
   /// ★ Named from what the player sees: a small blue puddle on the west ledge
   /// (its render)
-  LOCALID_FIRST_PUDDLE,
+  ACTOR_FIRST_PUDDLE,
   /// ★ Named from what the player sees: a small blue puddle on the middle
   /// ledge (its render)
-  LOCALID_SECOND_PUDDLE,
+  ACTOR_SECOND_PUDDLE,
   /// ★ Named from what the player sees: the puddle by the dragon statue,
   /// drawn frozen around its pillar (its render)
-  LOCALID_THIRD_PUDDLE,
+  ACTOR_THIRD_PUDDLE,
   /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 0x122,
   /// which rises 32 pixels as Frost freezes the puddle.
   /// ★ Named from what the player sees: a narrow dark pillar standing in the
   /// third puddle (its render)
-  LOCALID_RISING_PILLAR,
+  ACTOR_RISING_PILLAR,
   /// CrossboneIsleFloodgate's water, sprite 0xd6, raised behind the closed
   /// floodgate.
   /// ★ Named from what the player sees: the stream's green water, which the
   /// closed floodgate backs up (its render)
-  LOCALID_WATER = LOCALID_FIRST_LOG + 8
+  ACTOR_WATER = ACTOR_FIRST_LOG + 8
 };
 
 /// CrossboneIsleFloodgate: the water has been raised.
@@ -180,14 +180,14 @@ STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.shape) == 3);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_object_event.h"
+#include "common/object_staged_actor.h"
 
 #include "common/map_grid_panel.h"
 
 /// Waits up to sixty frames for landing, then stops vertical movement on the
 /// ground.
-static void CrossboneIsleSteppingStones_SettleObjectEventOnGround(
-    struct ObjectEvent *objectEvent) {
+static void
+CrossboneIsleSteppingStones_SettleActorOnGround(struct Actor *actor) {
   s32 remainingFrames = 60;
 
   for (;;) {
@@ -195,21 +195,22 @@ static void CrossboneIsleSteppingStones_SettleObjectEventOnGround(
       break;
     }
     WaitFrames(1);
-    if ((u32)objectEvent->y.fixed == (u32)objectEvent->groundHeight) {
+    if ((u32)actor->y.fixed == (u32)actor->groundHeight) {
       break;
     }
     remainingFrames--;
   }
 
-  objectEvent->velocityY = 0;
-  objectEvent->targetY = OBJ_EVENT_NO_TARGET;
-  objectEvent->y.fixed = objectEvent->groundHeight;
+  actor->velocityY = 0;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->y.fixed = actor->groundHeight;
 }
 
-/// Waits until the object event reaches the ground or height limit, then stops
+/// Waits until the actor reaches the ground or height limit, then stops
 /// its descent.
-static void CrossboneIsleSteppingStones_StopAtGroundOrHeight(
-    struct ObjectEvent *objectEvent, s32 limit) {
+static void
+CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
+                                                 s32 limit) {
   s32 remainingFrames = 60;
 
   for (;;) {
@@ -217,32 +218,32 @@ static void CrossboneIsleSteppingStones_StopAtGroundOrHeight(
       break;
     }
     WaitFrames(1);
-    if (objectEvent->y.fixed <= objectEvent->groundHeight) {
+    if (actor->y.fixed <= actor->groundHeight) {
       break;
     }
-    if (objectEvent->y.fixed <= limit) {
+    if (actor->y.fixed <= limit) {
       break;
     }
     remainingFrames--;
   }
 
-  objectEvent->velocityY = 0;
-  objectEvent->targetY = OBJ_EVENT_NO_TARGET;
+  actor->velocityY = 0;
+  actor->targetY = ACTOR_NO_TARGET;
 }
 
-/// Finds the object event's footprint dimensions, grid position, and map-layer
+/// Finds the actor's footprint dimensions, grid position, and map-layer
 /// origin.
 static s32 CrossboneIsleSteppingStones_QueryFootprint(
     s32 id, u32 *width, u32 *depth, struct PushedObjectProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   u32 i;
   s32 coordinate;
   s32 farExtent;
 
   for (i = 0; i <= 5; i++) {
-    if (objectEvent->sprite->entries[0]->animationId ==
+    if (actor->sprite->entries[0]->animationId ==
         gPushedObject_FootprintKinds[i]) {
       probe->footprintIndex = i;
       break;
@@ -253,9 +254,9 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
     return 0;
   }
   // Bounds are pixel offsets; dimensions and origins below are 16-pixel cells.
-  probe->position.x = objectEvent->x.fixed;
-  probe->position.y = objectEvent->y.fixed;
-  probe->position.z = objectEvent->z.fixed;
+  probe->position.x = actor->x.fixed;
+  probe->position.y = actor->y.fixed;
+  probe->position.z = actor->z.fixed;
   coordinate = gPushedObject_FootprintBounds[probe->footprintIndex * 4 + 1];
   if (coordinate < 0) {
     coordinate = -coordinate;
@@ -274,7 +275,7 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
-  // Move from the object event's center to the footprint's top-left cell.
+  // Move from the actor's center to the footprint's top-left cell.
   probe->position.x +=
       gPushedObject_FootprintBounds[probe->footprintIndex * 4] * PIXELS(1);
   {
@@ -293,10 +294,10 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
 }
 
 /// Draws a log's footprint where it floats on CrossboneIsleFloodgate's raised
-/// water, lying across or along the room as the log does, and puts its object
-/// event under the leader.
-static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+/// water, lying across or along the room as the log does, and puts its
+/// actor under the leader.
+static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
+  struct Actor *actor = Actor_GetById(actorId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct PushedObjectProbe probe;
@@ -304,7 +305,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
   u8 mask;
 
   if (CrossboneIsleSteppingStones_QueryFootprint(
-          localId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
+          actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -312,9 +313,9 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
   cellZ = probe.position.z;
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  Object_SelectAnimation(objectEvent, 4);
+  Object_SelectAnimation(actor, 4);
   mask = 2;
-  objectEvent->priorityFlags |= mask;
+  actor->priorityFlags |= mask;
 
   if (width > depth) {
     MapGrid_CopyCellsTo(70, 40, probe.position.x + 32, probe.position.z + 2,
@@ -329,25 +330,25 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
 
 /// Redraws CrossboneIsleFloodgate's seven logs floating on the raised water.
 static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 1);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 2);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 3);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 4);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 5);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 6);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 7);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 1);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 2);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 3);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 4);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 5);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 6);
+  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 7);
 }
 
-/// Restores the ground metatiles and metatile behaviors under the object
-/// event's footprint.
-static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+/// Restores the ground metatiles and metatile behaviors under the
+/// actor's footprint.
+static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
+  struct Actor *actor = Actor_GetById(actorId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct PushedObjectProbe probe;
 
   if (CrossboneIsleSteppingStones_QueryFootprint(
-          localId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
+          actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -361,8 +362,8 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
         0, probe.position.x, probe.position.z, width, depth, MB_WALL);
   }
 
-  Object_SelectAnimation(objectEvent, 1);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
+  Object_SelectAnimation(actor, 1);
+  actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 
   return 1;
 }
@@ -418,13 +419,12 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   }
 }
 
-/// Finds the next terrain ledge and stops the falling object event at its
+/// Finds the next terrain ledge and stops the falling actor at its
 /// projected height.
-static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
-                                                               s32 far) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
+static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
+  struct Actor *actor = Actor_GetById(id);
   s32 found;
-  struct ObjectEvent *temporaryObjectEvent;
+  struct Actor *temporaryActor;
   s32 height;
   s32 level;
   s32 top;
@@ -436,10 +436,9 @@ static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
   s32 kind;
 
   found = 0;
-  temporaryObjectEvent = NULL;
-  ObjectEvent_SetSpriteFlags(objectEvent, found);
-  height =
-      MapGrid_GetTerrainHeight(2, objectEvent->x.fixed, objectEvent->z.fixed);
+  temporaryActor = NULL;
+  Actor_SetSpriteFlags(actor, found);
+  height = MapGrid_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
   level = height / PIXELS(16);
   rows = level;
   if (level < 0) {
@@ -447,59 +446,59 @@ static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
   }
   rows++;
   for (row = 0; row <= rows; row++) {
-    top = MapGrid_GetTerrainHeight(objectEvent->layer, objectEvent->x.fixed,
-                                   (row << 20) + objectEvent->z.fixed);
+    top = MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed,
+                                   (row << 20) + actor->z.fixed);
     top /= PIXELS(16);
     if (level < top) {
-      x = ((objectEvent->x.fixed >> 20) << 20) + PIXELS(8);
+      x = ((actor->x.fixed >> 20) << 20) + PIXELS(8);
       if (far == 0) {
         row += 2;
-        z = ((row + (objectEvent->z.fixed >> 20)) << 20) + PIXELS(2);
+        z = ((row + (actor->z.fixed >> 20)) << 20) + PIXELS(2);
         y = top << 20;
         kind = 223;
       } else {
         row += 3;
-        z = ((row + (objectEvent->z.fixed >> 20)) << 20) - PIXELS(2);
+        z = ((row + (actor->z.fixed >> 20)) << 20) - PIXELS(2);
         y = top << 20;
         kind = 253;
       }
       /* FAKEMATCH(one-pass): the block keeps found's constant after the height
        * arithmetic; as no block, 1 of 117 instructions differ in tbs-en. */
       do {
-        temporaryObjectEvent = ObjectEvent_PrepareObject(x, y, z, kind);
-        height = objectEvent->z.fixed - z + y;
+        temporaryActor = Actor_PrepareObject(x, y, z, kind);
+        height = actor->z.fixed - z + y;
       } while (0);
       found = 1;
       break;
     }
   }
-  CrossboneIsleSteppingStones_StopAtGroundOrHeight(objectEvent, height);
-  objectEvent->x.fixed = 0;
-  objectEvent->y.fixed = 0;
-  objectEvent->z.fixed = 0;
-  if (temporaryObjectEvent != 0) {
-    ObjectEvent_Release(temporaryObjectEvent);
+  CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, height);
+  actor->x.fixed = 0;
+  actor->y.fixed = 0;
+  actor->z.fixed = 0;
+  if (temporaryActor != 0) {
+    Actor_Release(temporaryActor);
   }
   return found;
 }
 
 /// Shrinks the pillar and lowers its height for up to thirty-two frames.
 static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(index);
+  struct Actor *actor = Actor_GetById(index);
   u32 elapsedFrames;
 
-  objectEvent->motionFlags = 0;
+  actor->motionFlags = 0;
 
   elapsedFrames = 0;
   for (;;) {
     if (elapsedFrames > 31)
       return;
     WaitFrames(1);
-    objectEvent->scaleY += -Q16_ONE / 10;
-    objectEvent->y.fixed += -PIXELS(4) / 5;
+    actor->scaleY += -Q16_ONE / 10;
+    actor->y.fixed += -PIXELS(4) / 5;
     elapsedFrames++;
-    if (objectEvent->scaleY <= Q16_ONE / 10 - 1) {
-      objectEvent->scaleY = Q16_ONE / 10;
+    if (actor->scaleY <= Q16_ONE / 10 - 1) {
+      actor->scaleY = Q16_ONE / 10;
       return;
     }
   }
@@ -509,7 +508,7 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
 /// calls it.
 UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
 
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   s32 cycleFrame;
   s32 x;
   s32 z;
@@ -520,7 +519,7 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   struct EffectOptions *settings;
   struct EffectOptions options;
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   cycleFrame = gFrameCount & 3;
   if (cycleFrame == 0) {
     settings = &options;
@@ -544,7 +543,7 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
 /// Jumps two cells forward when both the intervening and landing cells permit
 /// it.
 static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   u8 *flags;
   s32 savedMotionFlags;
   s32 jumpDirection;
@@ -554,7 +553,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   struct FieldPosition *position;
   struct FieldPosition destination;
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
 #if TBS_PATCH_1
@@ -603,11 +602,11 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       *flags &= 126;
-      ObjectEvent_SetSpriteFlags(leader, 0);
-      ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, position->x >> 16,
+      Actor_SetSpriteFlags(leader, 0);
+      ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER, position->x >> 16,
                                         position->z >> 16);
       Object_SelectAnimation(leader, 6);
-      ObjectEvent_SetSpriteFlags(leader, 1);
+      Actor_SetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
       FieldScript_End();
       return 1;
@@ -619,7 +618,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 /// Moves the particle while damping its velocity, growing it, and advancing
 /// rotation.
 static void CrossboneIsleSteppingStones_UpdateDampedParticle(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
@@ -638,57 +637,57 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
   fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
-/// Sets the object event's sprite to the colour mode (enum SpriteColorMode) in
+/// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
 /// the low four bits of its timer.
 static s32
 CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectEvent_SetSpriteColor(objectEvent, objectEvent->timer & 15);
+  struct Actor *actor = (struct Actor *)interpreter;
+  Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesWarpDests;
+    return gCrossboneIsleSteppingStonesEntrances;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleIcePillarsWarpDests;
+    return gCrossboneIsleIcePillarsEntrances;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleFloodgateWarpDests;
+    return gCrossboneIsleFloodgateEntrances;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
-    return gCrossboneIsleStackedPillarsWarpDests;
+    return gCrossboneIsleStackedPillarsEntrances;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleDragonStatueWarpDests;
+    return gCrossboneIsleDragonStatueEntrances;
   }
-  return gCrossboneIsleSteppingStonesWarpDestsOther;
+  return gCrossboneIsleSteppingStonesEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Returns the warps the five rooms share.
-const u32 *Scene_GetWarps(void) { return gCrossboneIsleSteppingStonesWarps; }
+/// Returns the exits the five rooms share.
+const u32 *Scene_GetExits(void) { return gCrossboneIsleSteppingStonesExits; }
 
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesObjectEventTemplates;
+    return gCrossboneIsleSteppingStonesActorTemplates;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleIcePillarsObjectEventTemplates;
+    return gCrossboneIsleIcePillarsActorTemplates;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleFloodgateObjectEventTemplates;
+    return gCrossboneIsleFloodgateActorTemplates;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleDragonStatueObjectEventTemplates;
+    return gCrossboneIsleDragonStatueActorTemplates;
   }
-  return gCrossboneIsleSteppingStonesObjectEventTemplatesOther;
+  return gCrossboneIsleSteppingStonesActorTemplatesOther;
 }
 
 /// Walking into a pillar in CrossboneIsleSteppingStones: jump two cells across
@@ -707,7 +706,7 @@ static void EventScript_PushPillar(void) {
 
   FieldScript_Start();
   if (PushedObject_FindClearPosition(&out) != 0)
-    ObjectEvent_MoveAndRedraw(out);
+    Actor_MoveAndRedraw(out);
   FieldScript_End();
 }
 
@@ -826,7 +825,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 /// and the logs settle on the floor.
 static void EventScript_FlipWaterSwitch(void) {
   s32 waterRaised;
-  struct ObjectEvent *water;
+  struct Actor *water;
 
   FieldScript_Start();
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -840,12 +839,12 @@ static void EventScript_FlipWaterSwitch(void) {
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     FieldScript_WaitFrames(30);
     Script_PlaySong(SE_LOG_FALL);
-    ObjectMotion_SetActionVariant(LOCALID_WATER, 1);
-    ObjectEvent_GetById(LOCALID_WATER)->motionFlags = waterRaised;
-    water = ObjectEvent_Get(LOCALID_WATER);
+    ObjectMotion_SetActionVariant(ACTOR_WATER, 1);
+    Actor_GetById(ACTOR_WATER)->motionFlags = waterRaised;
+    water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    ObjectEvent_SetPosition(LOCALID_WATER, PIXELS(272), PIXELS(416));
-    Import_ObjectEventSetAnimation(LOCALID_WATER, 1);
+    Actor_SetPosition(ACTOR_WATER, PIXELS(272), PIXELS(416));
+    Import_ActorSetAnimation(ACTOR_WATER, 1);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80,
                          24);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80,
@@ -860,74 +859,74 @@ static void EventScript_FlipWaterSwitch(void) {
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
     FieldScript_WaitFrames(30);
     Script_PlaySong(SE_WATER_DRAIN);
-    ObjectEvent_GetById(LOCALID_WATER)->motionFlags = 0;
-    water = ObjectEvent_Get(LOCALID_WATER);
+    Actor_GetById(ACTOR_WATER)->motionFlags = 0;
+    water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    ObjectEvent_SetPosition(LOCALID_WATER, PIXELS(272), PIXELS(436));
-    Import_ObjectEventSetAnimation(LOCALID_WATER, 2);
+    Actor_SetPosition(ACTOR_WATER, PIXELS(272), PIXELS(436));
+    Import_ActorSetAnimation(ACTOR_WATER, 2);
     MapGrid_CopyCellsTo(65, 45, 16, 27, 2, 4);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80,
                          24);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 1);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 2);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 3);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 4);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 5);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 6);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 7);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 1);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 2);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 3);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 4);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 5);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 6);
+    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 7);
     MapGrid_CopyCellAttributes(24, 4, 1, 1, 24, 8);
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   }
   FieldScript_End();
 }
 
-/// Matches a nearby object event's draw priority when it is behind the
-/// comparison object event.
-static s32 CrossboneIsleSteppingStones_SyncPriorityIfBehind(
-    struct ObjectEvent *objectEvent, struct ObjectEvent *front) {
+/// Matches a nearby actor's draw priority when it is behind the
+/// comparison actor.
+static s32
+CrossboneIsleSteppingStones_SyncPriorityIfBehind(struct Actor *actor,
+                                                 struct Actor *front) {
   s32 result = 0;
 
-  if (front->x.fixed == objectEvent->x.fixed &&
-      front->y.fixed == objectEvent->y.fixed &&
-      front->z.fixed == objectEvent->z.fixed) {
+  if (front->x.fixed == actor->x.fixed && front->y.fixed == actor->y.fixed &&
+      front->z.fixed == actor->z.fixed) {
     return result;
   }
-  if (front->x.fixed - PIXELS(16) < objectEvent->x.fixed &&
-      objectEvent->x.fixed < front->x.fixed + PIXELS(16) &&
-      front->y.fixed / PIXELS(1) == objectEvent->y.fixed / PIXELS(1) &&
-      front->z.fixed > objectEvent->z.fixed &&
-      front->z.fixed - PIXELS(32) < objectEvent->z.fixed) {
-    if (objectEvent->sprite->image.priority < front->sprite->image.priority) {
-      objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-      objectEvent->sprite->image.priority = front->sprite->image.priority;
-      objectEvent->sprite->shadow.priority = front->sprite->shadow.priority;
+  if (front->x.fixed - PIXELS(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + PIXELS(16) &&
+      front->y.fixed / PIXELS(1) == actor->y.fixed / PIXELS(1) &&
+      front->z.fixed > actor->z.fixed &&
+      front->z.fixed - PIXELS(32) < actor->z.fixed) {
+    if (actor->sprite->image.priority < front->sprite->image.priority) {
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      actor->sprite->image.priority = front->sprite->image.priority;
+      actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
     result = 1;
   }
   return result;
 }
 
-/// Matches the comparison object event's draw priority when it overlaps the
-/// object event in front.
-static s32 CrossboneIsleSteppingStones_SyncPriorityIfAhead(
-    struct ObjectEvent *front, struct ObjectEvent *objectEvent) {
+/// Matches the comparison actor's draw priority when it overlaps the
+/// actor in front.
+static s32
+CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
+                                                struct Actor *actor) {
   s32 result = 0;
 
-  if (objectEvent->x.fixed == front->x.fixed &&
-      objectEvent->y.fixed == front->y.fixed &&
-      objectEvent->z.fixed == front->z.fixed) {
+  if (actor->x.fixed == front->x.fixed && actor->y.fixed == front->y.fixed &&
+      actor->z.fixed == front->z.fixed) {
     return result;
   }
-  if (front->x.fixed - PIXELS(16) < objectEvent->x.fixed &&
-      objectEvent->x.fixed < front->x.fixed + PIXELS(16) &&
-      objectEvent->y.fixed / PIXELS(1) == front->y.fixed / PIXELS(1) &&
-      front->z.fixed > objectEvent->z.fixed &&
-      front->z.fixed - PIXELS(32) < objectEvent->z.fixed) {
-    if (front->sprite->image.priority > objectEvent->sprite->image.priority) {
-      objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-      objectEvent->sprite->image.priority = front->sprite->image.priority;
-      objectEvent->sprite->shadow.priority = front->sprite->shadow.priority;
+  if (front->x.fixed - PIXELS(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + PIXELS(16) &&
+      actor->y.fixed / PIXELS(1) == front->y.fixed / PIXELS(1) &&
+      front->z.fixed > actor->z.fixed &&
+      front->z.fixed - PIXELS(32) < actor->z.fixed) {
+    if (front->sprite->image.priority > actor->sprite->image.priority) {
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      actor->sprite->image.priority = front->sprite->image.priority;
+      actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
     result = 1;
   }
@@ -939,54 +938,53 @@ static s32 CrossboneIsleSteppingStones_SyncPriorityIfAhead(
 #ifdef UBFIX
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static void CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union ObjectEventOrEffect *fieldObject) {
+static void CrossboneIsleSteppingStones_UpdateActorPriority(
+    union ActorOrEffect *fieldObject) {
 #else
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union ObjectEventOrEffect *fieldObject) {
+static s32 CrossboneIsleSteppingStones_UpdateActorPriority(
+    union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   s32 hit;
   u32 id;
 
   if (gFieldWork->castStarted == 1) {
-    objectEvent->sprite->image.priority = leader->sprite->image.priority;
-    objectEvent->collisionFlags |= OBJ_EVENT_SOLID;
+    actor->sprite->image.priority = leader->sprite->image.priority;
+    actor->collisionFlags |= ACTOR_SOLID;
 #ifdef UBFIX
     return;
 #else
     return 0;
 #endif
   }
-  hit = CrossboneIsleSteppingStones_SyncPriorityIfBehind(objectEvent, leader);
-  for (id = LOCALID_FIRST_PILLAR; id <= LOCALID_FIRST_PILLAR + 3; id++) {
-    hit += CrossboneIsleSteppingStones_SyncPriorityIfBehind(
-        objectEvent, ObjectEvent_GetById(id));
+  hit = CrossboneIsleSteppingStones_SyncPriorityIfBehind(actor, leader);
+  for (id = ACTOR_FIRST_PILLAR; id <= ACTOR_FIRST_PILLAR + 3; id++) {
+    hit += CrossboneIsleSteppingStones_SyncPriorityIfBehind(actor,
+                                                            Actor_GetById(id));
   }
   if (hit != 0) {
-    for (id = LOCALID_FIRST_PILLAR; id <= LOCALID_FIRST_PILLAR + 3; id++) {
-      CrossboneIsleSteppingStones_SyncPriorityIfAhead(objectEvent,
-                                                      ObjectEvent_GetById(id));
+    for (id = ACTOR_FIRST_PILLAR; id <= ACTOR_FIRST_PILLAR + 3; id++) {
+      CrossboneIsleSteppingStones_SyncPriorityIfAhead(actor, Actor_GetById(id));
     }
   }
-  if (objectEvent->y.fixed < leader->y.fixed) {
-    objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
-    if (objectEvent->sprite->image.priority < leader->sprite->image.priority) {
-      objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-      objectEvent->sprite->image.priority = leader->sprite->image.priority;
-      objectEvent->sprite->shadow.priority = leader->sprite->shadow.priority;
+  if (actor->y.fixed < leader->y.fixed) {
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    if (actor->sprite->image.priority < leader->sprite->image.priority) {
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      actor->sprite->image.priority = leader->sprite->image.priority;
+      actor->sprite->shadow.priority = leader->sprite->shadow.priority;
       hit = 1;
     }
   } else {
-    objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent->collisionFlags |= OBJ_EVENT_SOLID;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    actor->collisionFlags |= ACTOR_SOLID;
   }
   if (hit == 0) {
-    objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
+    actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
 #ifdef UBFIX
   return;
@@ -997,12 +995,12 @@ static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
 
 /// Sorts the four pillars by height and depth, carrying their saved cell state
 /// with them.
-static void CrossboneIsleSteppingStones_SortPillarObjectEvents(void) {
+static void CrossboneIsleSteppingStones_SortPillarActors(void) {
   u32 i;
   u32 j;
-  struct ObjectEvent *firstObjectEvent;
-  struct ObjectEvent *secondObjectEvent;
-  struct ObjectEvent savedObjectEvent;
+  struct Actor *firstActor;
+  struct Actor *secondActor;
+  struct Actor savedActor;
 #ifdef UBFIX
   struct PillarPlacement savedPlacement;
 #else
@@ -1012,26 +1010,26 @@ static void CrossboneIsleSteppingStones_SortPillarObjectEvents(void) {
 #endif
 
   for (i = 0; i <= 2; i++) {
-    firstObjectEvent = ObjectEvent_GetById(i + LOCALID_FIRST_PILLAR);
+    firstActor = Actor_GetById(i + ACTOR_FIRST_PILLAR);
     for (j = i; j <= 3; j++) {
-      secondObjectEvent = ObjectEvent_GetById(j + LOCALID_FIRST_PILLAR);
-      if (firstObjectEvent->y.fixed <= secondObjectEvent->y.fixed &&
-          firstObjectEvent->z.fixed < secondObjectEvent->z.fixed) {
+      secondActor = Actor_GetById(j + ACTOR_FIRST_PILLAR);
+      if (firstActor->y.fixed <= secondActor->y.fixed &&
+          firstActor->z.fixed < secondActor->z.fixed) {
         continue;
       }
-      Dma_Set(secondObjectEvent, &savedObjectEvent,
+      Dma_Set(secondActor, &savedActor,
               ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedObjectEvent) / sizeof(u32),
+                  sizeof(savedActor) / sizeof(u32),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
-      Dma_Set(firstObjectEvent, secondObjectEvent,
+      Dma_Set(firstActor, secondActor,
               ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedObjectEvent) / sizeof(u32),
+                  sizeof(savedActor) / sizeof(u32),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
-      Dma_Set(&savedObjectEvent, firstObjectEvent,
+      Dma_Set(&savedActor, firstActor,
               ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
-                  sizeof(savedObjectEvent) / sizeof(u32),
+                  sizeof(savedActor) / sizeof(u32),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
       Dma_Set(&sPillarSlots[j], &savedPlacement,
@@ -1066,99 +1064,94 @@ static void CrossboneIsleSteppingStones_SortPillarObjectEvents(void) {
 /// each push there: the pillars settle, and their footprints follow them.
 static void EventScript_MovePillar(void) {
   u32 id;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   u8 *flags;
   u32 i;
   u32 k;
-  struct ObjectEvent *other;
+  struct Actor *other;
   union CrossboneIslePillarCell cell;
 
-  for (id = LOCALID_FIRST_PILLAR; id <= LOCALID_FIRST_PILLAR + 3; id++) {
-    objectEvent = ObjectEvent_GetById(id);
-    objectEvent->layer = 2;
-    i = id - LOCALID_FIRST_PILLAR;
-    if ((objectEvent->x.fixed >> 20) == sPillarSlots[i].x &&
-        (objectEvent->z.fixed >> 20) == sPillarSlots[i].z &&
-        objectEvent->velocityY == 0) {
+  for (id = ACTOR_FIRST_PILLAR; id <= ACTOR_FIRST_PILLAR + 3; id++) {
+    actor = Actor_GetById(id);
+    actor->layer = 2;
+    i = id - ACTOR_FIRST_PILLAR;
+    if ((actor->x.fixed >> 20) == sPillarSlots[i].x &&
+        (actor->z.fixed >> 20) == sPillarSlots[i].z && actor->velocityY == 0) {
       continue;
     }
-    Dma_Set(&objectEvent->x, &sProbePosition,
+    Dma_Set(&actor->x, &sProbePosition,
             ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
                 sizeof(sProbePosition) / sizeof(u32),
             REG_DMA3);
     Dma_Wait(REG_DMA3);
-    if (FieldObject_CheckMovementCollision(objectEvent, &sProbePosition) ==
-        -1) {
-      objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    if (FieldObject_CheckMovementCollision(actor, &sProbePosition) == -1) {
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     }
-    flags = &objectEvent->motionFlags;
+    flags = &actor->motionFlags;
     CrossboneIsleSteppingStones_SetCellAttributes(
         0, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     CrossboneIsleSteppingStones_SetCellAttributes(
         2, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
-      if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
-                                        objectEvent->z.fixed) == 50) {
+      if (MapGrid_GetMetatileBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
+          50) {
         Sound_PlaySong(SE_STONE_GRIND);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
         // 265 instructions differ in tbs-en).
-        *(u8 *)&objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-        CrossboneIsleSteppingStones_LowerObjectEventToLedge(id, 1);
-        *(u8 *)&objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
-      } else if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
-                                               objectEvent->z.fixed) == 51) {
-        CrossboneIsleSteppingStones_StopAtGroundOrHeight(objectEvent, 0);
+        *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
+        *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+      } else if (MapGrid_GetMetatileBehaviorAt(2, actor->x.fixed,
+                                               actor->z.fixed) == 51) {
+        CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
         Sound_PlaySong(SE_STONE_GRIND);
-        objectEvent->y.fixed = 0;
-        objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+        actor->y.fixed = 0;
+        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_ShrinkPillar(id);
-        objectEvent->x.fixed = 0;
-        objectEvent->y.fixed = 0;
-        objectEvent->z.fixed = 0;
-        objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
+        actor->x.fixed = 0;
+        actor->y.fixed = 0;
+        actor->z.fixed = 0;
+        actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else {
-        CrossboneIsleSteppingStones_SettleObjectEventOnGround(objectEvent);
+        CrossboneIsleSteppingStones_SettleActorOnGround(actor);
       }
       *flags = 0;
     }
     // Save the new ground cell before applying the pillar's height attributes.
-    CrossboneIsleSteppingStones_ReadMapGridCell(0, objectEvent->x.fixed >> 20,
-                                                objectEvent->z.fixed >> 20,
-                                                &sPillarSlots[i].cell);
-    if (objectEvent->y.fixed >= 0) {
+    CrossboneIsleSteppingStones_ReadMapGridCell(
+        0, actor->x.fixed >> 20, actor->z.fixed >> 20, &sPillarSlots[i].cell);
+    if (actor->y.fixed >= 0) {
       CrossboneIsleSteppingStones_ReadMapGridCell(
-          0, 27, (objectEvent->y.fixed >> 20) + 6, &cell);
+          0, 27, (actor->y.fixed >> 20) + 6, &cell);
       CrossboneIsleSteppingStones_SetCellAttributes(
-          0, objectEvent->x.fixed >> 20, objectEvent->z.fixed >> 20, &cell);
+          0, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
-      // x and z read by their offsets: through ObjectEvent's single/group
-      // union, as objectEvent->x.fixed, a load moves.
+      // x and z read by their offsets: through Actor's single/group
+      // union, as actor->x.fixed, a load moves.
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2,
-          *(s32 *)((u8 *)objectEvent + offsetof(struct ObjectEvent, x)) >> 20,
-          *(s32 *)((u8 *)objectEvent + offsetof(struct ObjectEvent, z)) >> 20,
-          &cell);
+          2, *(s32 *)((u8 *)actor + offsetof(struct Actor, x)) >> 20,
+          *(s32 *)((u8 *)actor + offsetof(struct Actor, z)) >> 20, &cell);
     }
-    sPillarSlots[i].x = objectEvent->x.fixed >> 20;
-    sPillarSlots[i].y = objectEvent->y.fixed >> 20;
-    sPillarSlots[i].z = objectEvent->z.fixed >> 20;
+    sPillarSlots[i].x = actor->x.fixed >> 20;
+    sPillarSlots[i].y = actor->y.fixed >> 20;
+    sPillarSlots[i].z = actor->z.fixed >> 20;
     // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
         continue;
       }
       GameFlag_Clear(sPillarSlots[k].flag);
-      other = ObjectEvent_GetById(k + LOCALID_FIRST_PILLAR);
-      if ((objectEvent->x.fixed >> 20) == (other->x.fixed >> 20) &&
-          (objectEvent->z.fixed >> 20) == (other->z.fixed >> 20) &&
-          objectEvent->y.fixed > other->y.fixed) {
+      other = Actor_GetById(k + ACTOR_FIRST_PILLAR);
+      if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) &&
+          (actor->z.fixed >> 20) == (other->z.fixed >> 20) &&
+          actor->y.fixed > other->y.fixed) {
         GameFlag_Set(sPillarSlots[k].flag);
       }
     }
   }
-  CrossboneIsleSteppingStones_SortPillarObjectEvents();
+  CrossboneIsleSteppingStones_SortPillarActors();
 }
 
 /// Walking into a pillar in CrossboneIsleStackedPillars: jump across if
@@ -1166,22 +1159,20 @@ static void EventScript_MovePillar(void) {
 static void EventScript_JumpOrPushStackedPillar(void) {
   FieldScript_Start();
 #if TBS_PATCH_3
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = MapGrid_GetTerrainHeight(
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->layer,
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed,
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed);
+  Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed =
+      MapGrid_GetTerrainHeight(Actor_GetById(ACTOR_PARTY_LEADER)->layer,
+                               Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed,
+                               Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed);
 #endif
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0) {
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags &=
-        ~OBJ_EVENT_FOLLOWS_TERRAIN;
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
-        ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+    Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
+        ~ACTOR_PRIORITY_AUTOMATIC;
     PushedObject_AdvancePair();
     EventScript_MovePillar();
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags |=
-        OBJ_EVENT_FOLLOWS_TERRAIN;
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
-        OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
+    Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
+        ACTOR_PRIORITY_AUTOMATIC;
   }
   FieldScript_End();
 }
@@ -1192,7 +1183,7 @@ static void EventScript_ClimbUp(void) { Field_ClimbUp(); }
 /// Walking south at CrossboneIsleStackedPillars's ladder: push the pillar
 /// below, jump, or climb down.
 static void EventScript_PushOrClimbDown(void) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition position;
   struct FieldPosition *p = &position;
 
@@ -1206,22 +1197,22 @@ static void EventScript_PushOrClimbDown(void) {
   }
 }
 
-/// Stepping on coord event 40 in CrossboneIsleStackedPillars: the fade overlay
+/// Stepping on step trigger 40 in CrossboneIsleStackedPillars: the fade overlay
 /// follows the leader, and the leader's rise counter starts.
 static void EventScript_StartRising(void) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
-      ->objectEvent = leader;
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
+      leader;
   leader->riseCounter = 1;
 }
 
-/// Stepping on coord event 41 in CrossboneIsleStackedPillars: the overlay lets
+/// Stepping on step trigger 41 in CrossboneIsleStackedPillars: the overlay lets
 /// the leader go, and the rise counter stops.
 static void EventScript_StopRising(void) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
-      ->objectEvent = NULL;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
+      NULL;
   leader->riseCounter = 0;
 }
 
@@ -1231,20 +1222,20 @@ static void EventScript_StopRising(void) {
 /// Keeps the frozen puddle's underfoot flag consistent with the leader's height
 /// and depth.
 static void CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
 #else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
 static s32 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *ref = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *ref = Actor_GetById(ACTOR_PARTY_LEADER);
 
-  if (objectEvent->z.fixed > ref->z.fixed) {
-    objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
-    if (objectEvent->y.fixed < ref->y.fixed)
-      objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
+  if (actor->z.fixed > ref->z.fixed) {
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    if (actor->y.fixed < ref->y.fixed)
+      actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
 
 #ifdef UBFIX
@@ -1257,44 +1248,44 @@ static s32 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
 /// Remembers the frozen puddle, installs its priority callback, and starts its
 /// flicker script.
 static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(id);
+  actor = Actor_GetById(id);
   FieldScript_Start();
 #ifdef UBFIX
-  objectEvent->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
+  actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
+  actor->update = (void (*)(union ActorOrEffect *))
       CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
-  MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
-                             objectEvent->z.fixed >> 20);
+  MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
+                             actor->z.fixed >> 20);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + id -
-               LOCALID_FIRST_PUDDLE);
-  ObjectEvent_SetActionScript(id, gCrossboneIsleSteppingStones_ActionTable);
+               ACTOR_FIRST_PUDDLE);
+  Actor_SetActionScript(id, gCrossboneIsleSteppingStones_ActionTable);
   FieldScript_End();
 }
 
 /// Frost on the first puddle in CrossboneIsleDragonStatue: it freezes into a
 /// pillar of ice.
 static void EventScript_FreezeFirstPuddle(void) {
-  CrossboneIsleSteppingStones_FreezePuddle(LOCALID_FIRST_PUDDLE);
+  CrossboneIsleSteppingStones_FreezePuddle(ACTOR_FIRST_PUDDLE);
 }
 
 /// Frost on the second puddle in CrossboneIsleDragonStatue.
 static void EventScript_FreezeSecondPuddle(void) {
-  CrossboneIsleSteppingStones_FreezePuddle(LOCALID_SECOND_PUDDLE);
+  CrossboneIsleSteppingStones_FreezePuddle(ACTOR_SECOND_PUDDLE);
 }
 
 /// Frost begins on the third puddle in CrossboneIsleDragonStatue: note whether
 /// the leader stands on it.
 static void EventScript_FrostStartsOnThirdPuddle(void) {
-  struct ObjectEvent *leader;
-  struct ObjectEvent *puddle;
+  struct Actor *leader;
+  struct Actor *puddle;
   u8 *effects;
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  puddle = ObjectEvent_GetById(LOCALID_THIRD_PUDDLE);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  puddle = Actor_GetById(ACTOR_THIRD_PUDDLE);
   effects = gFieldEffectWork;
   if (puddle->x.fixed >> 20 == leader->x.fixed >> 20 &&
       puddle->z.fixed >> 20 == leader->z.fixed >> 20) {
@@ -1306,19 +1297,19 @@ static void EventScript_FrostStartsOnThirdPuddle(void) {
 }
 
 /// Later in the same Frost in CrossboneIsleDragonStatue: the third puddle
-/// shrinks back, and the pillar in it (LOCALID_RISING_PILLAR) rises 32 pixels.
+/// shrinks back, and the pillar in it (ACTOR_RISING_PILLAR) rises 32 pixels.
 static void EventScript_FrostRaisesPillar(void) {
-  struct ObjectEvent *pillar;
+  struct Actor *pillar;
 
-  pillar = ObjectEvent_GetById(LOCALID_RISING_PILLAR);
-  ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleX = Q16_ONE;
-  ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleY = Q16_ONE;
-  (ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->sprite)->image.priority = 2;
+  pillar = Actor_GetById(ACTOR_RISING_PILLAR);
+  Actor_GetById(ACTOR_THIRD_PUDDLE)->scaleX = Q16_ONE;
+  Actor_GetById(ACTOR_THIRD_PUDDLE)->scaleY = Q16_ONE;
+  (Actor_GetById(ACTOR_THIRD_PUDDLE)->sprite)->image.priority = 2;
   pillar->sprite->image.priority = 2;
   pillar->acceleration = PIXELS(2) / 5;
   pillar->speed = PIXELS(4) / 5;
   Object_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RISING_PILLAR);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
@@ -1366,13 +1357,13 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
 #ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
 static void CrossboneIsleSteppingStones_SpawnThawParticle(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
 #else
 /// Emits a randomized particle from the thawing puddle every eight frames.
 static s32 CrossboneIsleSteppingStones_SpawnThawParticle(
-    union ObjectEventOrEffect *fieldObject) {
+    union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+  struct Actor *actor = (struct Actor *)fieldObject;
   struct EffectOptions options;
   struct EffectOptions *settings;
   u32 phase = gFrameCount & 7;
@@ -1393,11 +1384,9 @@ static s32 CrossboneIsleSteppingStones_SpawnThawParticle(
   settings->startScaleX = 7 * Q16_ONE / 10;
   settings->startScaleY = 7 * Q16_ONE / 10;
 
-  x = objectEvent->x.fixed +
-      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  y = objectEvent->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
-  z = objectEvent->z.fixed +
-      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
+  x = actor->x.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
+  y = actor->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
+  z = actor->z.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
   scale = Math_Divide(
       (((u32)Import_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
@@ -1435,23 +1424,20 @@ static void EventScript_FreezeThirdPuddle(void) {
     if (Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                        1) != 0) {
 #ifdef UBFIX
-      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
+      Actor_GetById(ACTOR_SECOND_PUDDLE)->update =
           CrossboneIsleSteppingStones_SpawnThawParticle;
 #else
-      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
-          (void (*)(union ObjectEventOrEffect *))
-              CrossboneIsleSteppingStones_SpawnThawParticle;
+      Actor_GetById(ACTOR_SECOND_PUDDLE)->update = (void (*)(
+          union ActorOrEffect *))CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
-      Import_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE, 6);
-      ObjectMotion_WaitForAnimationChange(LOCALID_SECOND_PUDDLE);
-      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
-          (void (*)(union ObjectEventOrEffect *))set;
+      Import_ActorSetAnimation(ACTOR_SECOND_PUDDLE, 6);
+      ObjectMotion_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
+      Actor_GetById(ACTOR_SECOND_PUDDLE)->update =
+          (void (*)(union ActorOrEffect *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE,
-                                       SPRITE_COLOR_NORMAL);
-      ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
-                                   OBJ_EVENT_ACTION_IDLE);
+      Actor_ConfigureSpriteColor(ACTOR_SECOND_PUDDLE, SPRITE_COLOR_NORMAL);
+      Actor_SetBuiltinAction(ACTOR_SECOND_PUDDLE, ACTOR_ACTION_IDLE);
     } else {
       FieldScript_WaitFrames(60);
     }
@@ -1466,7 +1452,7 @@ static void EventScript_FreezeThirdPuddle(void) {
 /// Move begins on CrossboneIsleDragonStatue's sinking boulder: its cell is
 /// cleared.
 static void EventScript_StartMovingSinkingPillar(void) {
-  struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_SINKING_BOULDER);
+  struct Actor *pillar = Actor_GetById(ACTOR_SINKING_BOULDER);
   s32 x;
   s32 z;
 
@@ -1482,10 +1468,10 @@ static void EventScript_StartMovingSinkingPillar(void) {
 /// Move on CrossboneIsleDragonStatue's sinking boulder, and after each push:
 /// once it reaches column 16 it sinks two pixels into place for good.
 static void EventScript_MoveSinkingPillar(void) {
-  struct ObjectEvent *pillar;
+  struct Actor *pillar;
   s32 alreadyLowered;
 
-  pillar = ObjectEvent_GetById(LOCALID_SINKING_BOULDER);
+  pillar = Actor_GetById(ACTOR_SINKING_BOULDER);
   FieldScript_Start();
   PushedObject_FillGridAttributeRectangle(
       2, (pillar->x.fixed >> 20), (pillar->z.fixed >> 20), 1, 1, MB_WALL);
@@ -1511,7 +1497,7 @@ static void EventScript_PushSinkingPillar(void) {
 
   FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
-    ObjectEvent_MoveAndRedraw(probe);
+    Actor_MoveAndRedraw(probe);
   } else {
     EventScript_StartMovingSinkingPillar();
     PushedObject_AdvancePair();
@@ -1520,97 +1506,95 @@ static void EventScript_PushSinkingPillar(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesEvents;
+    return gCrossboneIsleSteppingStonesTriggers;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleIcePillarsEvents;
+    return gCrossboneIsleIcePillarsTriggers;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleFloodgateEvents;
+    return gCrossboneIsleFloodgateTriggers;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
-    return gCrossboneIsleStackedPillarsEvents;
+    return gCrossboneIsleStackedPillarsTriggers;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleDragonStatueEvents;
+    return gCrossboneIsleDragonStatueTriggers;
   }
-  return gCrossboneIsleSteppingStonesEventsOther;
+  return gCrossboneIsleSteppingStonesTriggersOther;
 }
 
-/// Prepares the lowered object event's collision and draw priority below the
+/// Prepares the lowered actor's collision and draw priority below the
 /// leader.
-static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
+static void CrossboneIsleSteppingStones_PrepLoweredActor(s32 id) {
+  struct Actor *actor = Actor_GetById(id);
 
-  objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
-  objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-  objectEvent->motionFlags = 0;
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  objectEvent->sprite->image.priority = 2;
+  actor->collisionFlags &= ~ACTOR_SOLID;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->motionFlags = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->sprite->image.priority = 2;
 }
 
 /// Restores a previously frozen pillar's mode, map cell, priority hook, and
 /// script.
-static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
-  struct ObjectEvent *objectEvent;
+static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(localId);
+  actor = Actor_GetById(actorId);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
-                   localId - LOCALID_FIRST_PUDDLE) != 0) {
-    Object_SelectAnimation(objectEvent, 5);
+                   actorId - ACTOR_FIRST_PUDDLE) != 0) {
+    Object_SelectAnimation(actor, 5);
 #ifdef UBFIX
-    objectEvent->update =
-        CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
+    actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-    objectEvent->update = (void (*)(union ObjectEventOrEffect *))
+    actor->update = (void (*)(union ActorOrEffect *))
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
-    MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
-                               objectEvent->z.fixed >> 20);
-    ObjectEvent_SetActionScript(localId,
-                                gCrossboneIsleSteppingStones_ActionTable);
+    MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
+                               actor->z.fixed >> 20);
+    Actor_SetActionScript(actorId, gCrossboneIsleSteppingStones_ActionTable);
   }
 }
 
 /// Uses layer 2 and installs the moving pillar's priority callback.
 static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  objectEvent->layer = 2;
-  objectEvent->motionFlags = 0;
+  actor->layer = 2;
+  actor->motionFlags = 0;
 #ifdef UBFIX
-  objectEvent->update = CrossboneIsleSteppingStones_UpdateObjectEventPriority;
+  actor->update = CrossboneIsleSteppingStones_UpdateActorPriority;
 #else
-  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
-      CrossboneIsleSteppingStones_UpdateObjectEventPriority;
+  actor->update = (void (*)(
+      union ActorOrEffect *))CrossboneIsleSteppingStones_UpdateActorPriority;
 #endif
 }
 
 /// Matches the leader's draw priority to a nearby pillar in front.
 static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
-  struct ObjectEvent *hero = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *hero = Actor_GetById(ACTOR_PARTY_LEADER);
   u32 selector;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  for (selector = LOCALID_FIRST_PILLAR; selector <= LOCALID_FIRST_PILLAR + 3;
+  for (selector = ACTOR_FIRST_PILLAR; selector <= ACTOR_FIRST_PILLAR + 3;
        selector++) {
-    objectEvent = ObjectEvent_GetById(selector);
-    if (hero->y.fixed / PIXELS(1) == objectEvent->y.fixed / PIXELS(1) &&
-        hero->z.fixed <= objectEvent->z.fixed - PIXELS(8) &&
-        hero->z.fixed > objectEvent->z.fixed - PIXELS(24)) {
-      if (hero->x.fixed - PIXELS(16) <= objectEvent->x.fixed &&
-          objectEvent->x.fixed < hero->x.fixed + PIXELS(16)) {
-        ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER,
-                                      objectEvent->sprite->image.priority);
+    actor = Actor_GetById(selector);
+    if (hero->y.fixed / PIXELS(1) == actor->y.fixed / PIXELS(1) &&
+        hero->z.fixed <= actor->z.fixed - PIXELS(8) &&
+        hero->z.fixed > actor->z.fixed - PIXELS(24)) {
+      if (hero->x.fixed - PIXELS(16) <= actor->x.fixed &&
+          actor->x.fixed < hero->x.fixed + PIXELS(16)) {
+        ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER,
+                                      actor->sprite->image.priority);
         return;
       }
     } else {
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
-          OBJ_EVENT_PRIORITY_AUTOMATIC;
+      Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
+          ACTOR_PRIORITY_AUTOMATIC;
     }
   }
 }
@@ -1618,7 +1602,7 @@ static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
 /// Restores each room's pillar footprints, water state, and persistent puzzle
 /// state.
 s32 Scene_Initialize(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   u32 i;
   u32 id;
   s32 x;
@@ -1626,23 +1610,23 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 2);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 3);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 4);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 1);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 2);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
   } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     // Rebuild the flooded room and float the logs again when the water stayed
     // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 3);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 4);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 5);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 6);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 7);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 3);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 4);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 5);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 6);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 7);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
         GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
@@ -1653,21 +1637,20 @@ s32 Scene_Initialize(void) {
     }
   } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
-    ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200),
-                                       SPRITE_CRATE);
+    Actor_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->riseCounter = 1;
+      Actor_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
     FieldEffect_StartFadeOverlay(0);
-    if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->riseCounter == 0) {
+    if (Actor_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
       EventScript_StopRising();
     }
-    CrossboneIsleSteppingStones_InitializePillarPriority(LOCALID_FIRST_PILLAR);
-    CrossboneIsleSteppingStones_InitializePillarPriority(LOCALID_FIRST_PILLAR +
+    CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR);
+    CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR +
                                                          1);
-    CrossboneIsleSteppingStones_InitializePillarPriority(LOCALID_FIRST_PILLAR +
+    CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR +
                                                          2);
-    CrossboneIsleSteppingStones_InitializePillarPriority(LOCALID_FIRST_PILLAR +
+    CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR +
                                                          3);
     {
       s32 *entry = (s32 *)sPillarSlots;
@@ -1686,11 +1669,11 @@ s32 Scene_Initialize(void) {
     FieldScheduler_AddCallback(CrossboneIsleSteppingStones_UpdateLeaderPriority,
                                TASK_PRIORITY_MAP);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-      for (id = LOCALID_FIRST_PILLAR; id < LOCALID_FIRST_PILLAR + 4; id++) {
-        objectEvent = ObjectEvent_GetById(id);
-        x = objectEvent->x.fixed >> 20;
+      for (id = ACTOR_FIRST_PILLAR; id < ACTOR_FIRST_PILLAR + 4; id++) {
+        actor = Actor_GetById(id);
+        x = actor->x.fixed >> 20;
         if (x == 37) {
-          z = objectEvent->z.fixed >> 20;
+          z = actor->z.fixed >> 20;
           if (z == 9) {
             MapGrid_CopyCellAttributes(27, 8, 1, 1, x, z);
             break;
@@ -1701,33 +1684,31 @@ s32 Scene_Initialize(void) {
   } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
-    Import_ObjectEventSetAnimation(LOCALID_SINKING_BOULDER, 2);
-    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER,
-                                     SPRITE_COLOR_GREY);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-    Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+    Import_ActorSetAnimation(ACTOR_SINKING_BOULDER, 2);
+    Actor_ConfigureSpriteColor(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 #if TBS_PATCH_1
-    ObjectEvent_GetById(LOCALID_FIRST_LOG)->motionFlags = 0;
-    ObjectEvent_GetById(LOCALID_FIRST_LOG + 1)->motionFlags = 0;
+    Actor_GetById(ACTOR_FIRST_LOG)->motionFlags = 0;
+    Actor_GetById(ACTOR_FIRST_LOG + 1)->motionFlags = 0;
 #endif
     EventScript_MoveSinkingPillar();
-    CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_FIRST_PUDDLE);
-    CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_SECOND_PUDDLE);
-    CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_THIRD_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(LOCALID_FIRST_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(LOCALID_SECOND_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(LOCALID_THIRD_PUDDLE);
-    objectEvent = ObjectEvent_GetById(LOCALID_THIRD_PUDDLE);
-    objectEvent->update = 0;
-    CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_RISING_PILLAR);
-    ObjectEvent_GetById(LOCALID_RISING_PILLAR)->collisionFlags |=
-        OBJ_EVENT_NOT_TARGETED;
+    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_FIRST_PUDDLE);
+    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_SECOND_PUDDLE);
+    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_THIRD_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_FIRST_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_SECOND_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_THIRD_PUDDLE);
+    actor = Actor_GetById(ACTOR_THIRD_PUDDLE);
+    actor->update = 0;
+    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_RISING_PILLAR);
+    Actor_GetById(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                      2) == 0) {
-      ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
-      ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
-      ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->sprite->image.priority = 3;
-      ObjectEvent_GetById(LOCALID_RISING_PILLAR)->sprite->image.priority = 3;
+      Actor_GetById(ACTOR_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
+      Actor_GetById(ACTOR_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
+      Actor_GetById(ACTOR_THIRD_PUDDLE)->sprite->image.priority = 3;
+      Actor_GetById(ACTOR_RISING_PILLAR)->sprite->image.priority = 3;
       MapGrid_CopyCellAttributes(26, 12, 1, 1, 22, 16);
     }
   }
@@ -1821,66 +1802,66 @@ u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
     MAPGRID_ANIMATION_STEP(75, 38, 2, 1, 4), MAPGRID_ANIMATION_STEP(77, 38, 2, 1, 6), MAPGRID_ANIMATION_STEP(79, 38, 2, 1, 8), MAPGRID_ANIMATION_STEP(65, 53, 2, 1, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapWarpDest gCrossboneIsleSteppingStonesWarpDestsOther[] = {
+struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleSteppingStonesWarpDests[] = {
+struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[] = {
     { CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST, CONDITION_ALWAYS, 712, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
     { CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST, CONDITION_ALWAYS, 600, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleIcePillarsWarpDests[] = {
+struct SceneEntrance gCrossboneIsleIcePillarsEntrances[] = {
     { CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST, CONDITION_ALWAYS, 216, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
     { CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleFloodgateWarpDests[] = {
+struct SceneEntrance gCrossboneIsleFloodgateEntrances[] = {
     { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST, CONDITION_ALWAYS, 64, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleStackedPillarsWarpDests[] = {
+struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[] = {
     { CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST, CONDITION_ALWAYS, 744, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
     { CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST, CONDITION_ALWAYS, 632, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleDragonStatueWarpDests[] = {
+struct SceneEntrance gCrossboneIsleDragonStatueEntrances[] = {
     { CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST, CONDITION_ALWAYS, 280, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
     { CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST, CONDITION_ALWAYS, 168, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-u32 gCrossboneIsleSteppingStonesWarps[] = {
-    MAP_WARPS(CrossboneIsleSteppingStones),
-    MAP_WARP(CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_EAST),
-    MAP_WARP(CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST),
-    MAP_WARPS(CrossboneIsleIcePillars),
-    MAP_WARP(CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_EAST),
-    MAP_WARP(CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_WEST),
-    MAP_WARPS(CrossboneIsleFloodgate),
-    MAP_WARP(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_EAST),
-    MAP_WARP(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_WEST),
-    MAP_WARPS(CrossboneIsleStackedPillars),
-    MAP_WARP(CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_EAST),
-    MAP_WARP(CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_WEST),
-    MAP_WARPS(CrossboneIsleDragonStatue),
-    MAP_WARP(CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_EAST),
-    MAP_WARP(CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_WEST),
-    MAP_WARPS_END,
+u32 gCrossboneIsleSteppingStonesExits[] = {
+    SCENE_EXITS(CrossboneIsleSteppingStones),
+    SCENE_EXIT(CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST),
+    SCENE_EXITS(CrossboneIsleIcePillars),
+    SCENE_EXIT(CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_ICE_PILLARS_WEST),
+    SCENE_EXITS(CrossboneIsleFloodgate),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FLOODGATE_WEST),
+    SCENE_EXITS(CrossboneIsleStackedPillars),
+    SCENE_EXIT(CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_STACKED_PILLARS_WEST),
+    SCENE_EXITS(CrossboneIsleDragonStatue),
+    SCENE_EXIT(CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_DRAGON_STATUE_WEST),
+    SCENE_EXITS_END,
 };
 
-/// Unused: an empty object event template table nothing returns.
-struct ObjectEventTemplate gCrossboneIsleSteppingStonesNoObjectEventTemplates[] = {
-    { MAP_TABLE_END },
+/// Unused: an empty actor template table nothing returns.
+struct ActorTemplate gCrossboneIsleSteppingStonesNoActorTemplates[] = {
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCrossboneIsleSteppingStonesObjectEventTemplates[] = {
+struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplates[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(744), 0, PIXELS(488), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1889,10 +1870,10 @@ struct ObjectEventTemplate gCrossboneIsleSteppingStonesObjectEventTemplates[] = 
         PIXELS(696), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(776), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCrossboneIsleIcePillarsObjectEventTemplates[] = {
+struct ActorTemplate gCrossboneIsleIcePillarsActorTemplates[] = {
     { 0x12a, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x12a, CONDITION_ALWAYS, 7,
@@ -1903,10 +1884,10 @@ struct ObjectEventTemplate gCrossboneIsleIcePillarsObjectEventTemplates[] = {
         PIXELS(280), 0, PIXELS(160), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x129, CONDITION_ALWAYS, 7,
         PIXELS(184), 0, PIXELS(240), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCrossboneIsleFloodgateObjectEventTemplates[] = {
+struct ActorTemplate gCrossboneIsleFloodgateActorTemplates[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1925,10 +1906,10 @@ struct ObjectEventTemplate gCrossboneIsleFloodgateObjectEventTemplates[] = {
         PIXELS(352), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xd6, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCrossboneIsleSteppingStonesObjectEventTemplatesOther[] = {
+struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplatesOther[] = {
     { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(184), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1937,10 +1918,10 @@ struct ObjectEventTemplate gCrossboneIsleSteppingStonesObjectEventTemplatesOther
         PIXELS(680), 0, PIXELS(392), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCrossboneIsleDragonStatueObjectEventTemplates[] = {
+struct ActorTemplate gCrossboneIsleDragonStatueActorTemplates[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1955,116 +1936,116 @@ struct ObjectEventTemplate gCrossboneIsleDragonStatueObjectEventTemplates[] = {
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x122, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapEvent gCrossboneIsleSteppingStonesEventsOther[] = {
-    { MAP_EVENTS_END },
+struct Trigger gCrossboneIsleSteppingStonesTriggersOther[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCrossboneIsleSteppingStonesEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushPillar) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_CROSSBONE_ISLE_STEPPING_STONES_111_COINS, FIND_COINS(111) },
-    { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, CONDITION_ALWAYS, 0 },
-    { MAP_EVENTS_END },
+struct Trigger gCrossboneIsleSteppingStonesTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_STEPPING_STONES_111_COINS, FIND_COINS(111) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 3, CONDITION_ALWAYS, 0 },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCrossboneIsleIcePillarsEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE, FIND_ITEM(ITEM_MYSTERY_BLADE) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS, FIND_COINS(222) },
-    { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
-    { MAP_EVENTS_END },
+struct Trigger gCrossboneIsleIcePillarsTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE, FIND_ITEM(ITEM_MYSTERY_BLADE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS, FIND_COINS(222) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCrossboneIsleFloodgateEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT_CHEST_FACING(FACING_EAST), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
-    { BG_EVENT_CHEST_FACING(FACING_NORTH), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
-    { BG_EVENT_CHEST_FACING(FACING_EAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT_CHEST_FACING(FACING_NORTHEAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOODGATE_POTION, FIND_ITEM(ITEM_POTION) },
-    { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB, FIND_ITEM(ITEM_NINJA_GARB) },
-    { BG_EVENT(BG_EVENT_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FlipWaterSwitch) },
-    { MAP_EVENTS_END },
+struct Trigger gCrossboneIsleFloodgateTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
+    { EXAMINE_CHEST_FACING(FACING_EAST), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
+    { EXAMINE_CHEST_FACING(FACING_NORTH), 100, FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS, FIND_COINS(555) },
+    { EXAMINE_CHEST_FACING(FACING_EAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_CHEST_FACING(FACING_NORTHEAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOODGATE_POTION, FIND_ITEM(ITEM_POTION) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB, FIND_ITEM(ITEM_NINJA_GARB) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FlipWaterSwitch) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCrossboneIsleStackedPillarsEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushStackedPillar) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbUp) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushOrClimbDown) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushStackedPillar) },
-    { MAP_EVENT_COORD, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartRising) },
-    { MAP_EVENT_COORD, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopRising) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS, FIND_COINS(777) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE, FIND_ITEM(ITEM_WICKED_MACE) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
-    { MAP_EVENTS_END },
+struct Trigger gCrossboneIsleStackedPillarsTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushStackedPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbUp) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushOrClimbDown) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushStackedPillar) },
+    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartRising) },
+    { TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopRising) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS, FIND_COINS(777) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE, FIND_ITEM(ITEM_WICKED_MACE) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { TRIGGERS_END },
 };
 // clang-format on
 
-struct MapEvent gCrossboneIsleDragonStatueEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+struct Trigger gCrossboneIsleDragonStatueTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushSinkingPillar)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS,
-     FIND_COINS(888)},
-    {BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION,
-     FIND_ITEM(ITEM_POTION)},
-    {BG_EVENT(BG_EVENT_CHEST), 102,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS, FIND_COINS(888)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 101,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION, FIND_ITEM(ITEM_POTION)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 102,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_CLERICS_RING,
      FIND_ITEM(ITEM_CLERICS_RING)},
-    {BG_EVENT(BG_EVENT_CHEST), 103,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 103,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB)},
-    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_SINKING_BOULDER, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_SINKING_BOULDER, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK,
      EVENT_SCRIPT(EventScript_StartMovingSinkingPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SINKING_BOULDER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_BOULDER,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK,
      EVENT_SCRIPT(EventScript_MoveSinkingPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_PUDDLE,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN,
      EVENT_SCRIPT(EventScript_FreezeFirstPuddle)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SECOND_PUDDLE,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1,
      EVENT_SCRIPT(EventScript_FreezeSecondPuddle)},
-    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_THIRD_PUDDLE,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_THIRD_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT_SCRIPT(EventScript_FrostStartsOnThirdPuddle)},
-    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS),
-     LOCALID_THIRD_PUDDLE,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS),
+     ACTOR_THIRD_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT_SCRIPT(EventScript_FrostRaisesPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT_SCRIPT(EventScript_FreezeThirdPuddle)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

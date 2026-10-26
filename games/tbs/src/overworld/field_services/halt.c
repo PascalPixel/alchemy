@@ -66,8 +66,7 @@ top:
 /// FieldEffect_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void FieldEffect_RunHaltOnTarget(s32 unused) {
-  struct ObjectEvent *target =
-      ((struct FieldEffectWork *)gFieldEffectWork)->child;
+  struct Actor *target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
 
   target->paused = 1;
   FieldEffect_RunHalt();
@@ -75,7 +74,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 
 /// Throws an object from the caster to the effect's position over 10 frames
 /// and scatters it into 16 particles. Halt's visible effect: called by
-/// FieldEffect_Run when no target with a talk event is near, and through
+/// FieldEffect_Run when no target with a talk trigger is near, and through
 /// FieldEffect_RunHaltOnTarget otherwise. Fills field effect sprites 0
 /// to 15 and sets effectWork->y to the caster's height.
 ///
@@ -164,7 +163,7 @@ void FieldEffect_RunHalt(void) {
 /// eight params at random. FieldEffect_PauseObject sets it, and
 /// FieldEffect_ResumeObject looks for it to know the object was paused this
 /// way.
-void FieldEffect_UpdatePausedObject(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdatePausedObject(union ActorOrEffect *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
@@ -179,51 +178,50 @@ void FieldEffect_UpdatePausedObject(union ObjectEventOrEffect *fieldObject) {
 /// fields, and stops its animation. gSaveBlock keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
-void FieldEffect_PauseObject(s32 localId) {
-  struct ObjectEvent *objectEvent;
+void FieldEffect_PauseObject(s32 actorId) {
+  struct Actor *actor;
   struct SpriteAnim *entry;
 
-  objectEvent = ObjectEvent_GetByLocalId(localId);
-  if (objectEvent != NULL) {
-    gSaveBlock.pausedUpdate = (u32)objectEvent->update;
+  actor = Actor_GetByActorId(actorId);
+  if (actor != NULL) {
+    gSaveBlock.pausedUpdate = (u32)actor->update;
     gSaveBlock.pausedPose = 0;
-    if (objectEvent->spriteStorageKind == 1) {
-      entry = objectEvent->sprite->entries[0];
+    if (actor->spriteStorageKind == 1) {
+      entry = actor->sprite->entries[0];
       if (entry != NULL) {
         gSaveBlock.pausedPose = entry->colorMode;
       }
     }
-    objectEvent->update = FieldEffect_UpdatePausedObject;
-    objectEvent->paused = 1;
-    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
+    actor->update = FieldEffect_UpdatePausedObject;
+    actor->paused = 1;
+    Object_SetAnimationSpeedFar((struct Object *)actor, 0);
   }
 }
 
 /// Resumes object id with the update and param kept by
 /// FieldEffect_PauseObject. Called for gSaveBlock.pausedObject by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind before Halt stops
-/// another object, and by Scene_TalkToObjectEvent after talking to the paused
-/// object event. Clears gSaveBlock.pausedUpdate and the object's paused field,
+/// another object, and by Scene_TalkToActor after talking to the paused
+/// actor. Clears gSaveBlock.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
-void FieldEffect_ResumeObject(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
-  if (objectEvent != 0) {
-    if (objectEvent->update == FieldEffect_UpdatePausedObject) {
+void FieldEffect_ResumeObject(s32 actorId) {
+  struct Actor *actor = Actor_GetByActorId(actorId);
+  if (actor != 0) {
+    if (actor->update == FieldEffect_UpdatePausedObject) {
       struct SaveBlock *state = &gSaveBlock;
-      objectEvent->update =
-          (void (*)(union ObjectEventOrEffect *))state->pausedUpdate;
+      actor->update = (void (*)(union ActorOrEffect *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Anim_ApplyChildValuesFar((struct Object *)objectEvent, state->pausedPose);
+      Anim_ApplyChildValuesFar((struct Object *)actor, state->pausedPose);
     }
-    objectEvent->paused = 0;
-    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
+    actor->paused = 0;
+    Object_SetAnimationSpeedFar((struct Object *)actor, 16);
   }
 }
 
-/// Returns id, or -1 (no target) when object event id's sprite has flags 0xff
+/// Returns id, or -1 (no target) when actor id's sprite has flags 0xff
 /// in gSpeakerDefinitions (Speaker_GetIdleFlags): the 20 rows before
 /// the default. Called by FieldEffect_Run on the nearest Halt target, so Halt
-/// does not stop those object events; an unlisted sprite takes the default
+/// does not stop those actors; an unlisted sprite takes the default
 /// row's flags 0.
 s32 FieldEffect_FilterObjectIdByFlags(s32 id) {
   if (Speaker_GetIdleFlags(id) == 0xff)

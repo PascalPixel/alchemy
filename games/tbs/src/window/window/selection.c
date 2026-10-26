@@ -1439,7 +1439,7 @@ s32 FieldMenu_Run(void) {
     // the trigger tile ahead of the leader (0xff for none) in searchCell.
     switch (selection) {
     case 0:
-      ret = ObjectEvent_GetTriggerTileAheadOfCurrentFar();
+      ret = Actor_GetTriggerTileAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
       ((struct FieldWork *)state)->searchCell = ret;
@@ -1460,7 +1460,7 @@ s32 FieldMenu_Run(void) {
         continue;
       break;
     case FIELD_MENU_STATUS:
-      ret = SummaryScreen_RunFar();
+      ret = StatusScreen_RunFar();
       if (ret == -1)
         continue;
       break;

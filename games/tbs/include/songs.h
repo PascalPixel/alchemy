@@ -31,7 +31,7 @@
 /// the party its mission.
 #define MUS_TOWN_IN_TROUBLE 2
 /// Field music of McCoy's Palace, Hammet Palace, the Colosseum's halls and
-/// Vale's inn from one warp destination; the debug link test plays it too
+/// Vale's inn from one entrance; the debug link test plays it too
 /// (SerialTest_Run).
 #define MUS_PALACE 3
 /// Field music of the Tret Tree and of Altin.
@@ -66,7 +66,7 @@
 /// Field music of Sol Sanctum's Elemental Star room, Mercury Lighthouse's
 /// aerie, the Lemurian ship, Venus Lighthouse's aerie once its second battle
 /// has begun (FLAG_AERIE_SECOND_BATTLE_BEGUN in venus_lighthouse_aerie.c), and
-/// the world map reached from one of its warp destinations.
+/// the world map reached from one of its entrances.
 #define MUS_ELEMENTAL_STARS 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
 /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
@@ -104,7 +104,7 @@
 /// nine or more tracks.
 #define MUS_UNUSED 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
-/// of its warp destinations.
+/// of its entrances.
 #define MUS_TOLBI_BOUND_SHIP 41
 /// Field music of the world map, and of Goma Cave's entrance, the Bilibin Cave
 /// entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage and the
@@ -188,7 +188,7 @@
 /// The main menu's music, and the field music of the Sanctum.
 #define MUS_MAIN_MENU 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-/// event on the world map, until a key is pressed (Title_Run's warp destination
+/// event on the world map, until a key is pressed (Title_Run's entrance
 /// 10). ★ Named from what the player sees: the Golden Sun logo after the
 /// ending's last event (its render)
 #define MUS_ENDING_LOGO 75
@@ -267,7 +267,7 @@
 /// and as the ground shakes under Hammet's caravan on the world map.
 /// It sounds like a low rumble held until it is stopped.
 #define SE_TREMOR 107
-/// The low triple tone: Halt freezing an object event, and the link session
+/// The low triple tone: Halt freezing an actor, and the link session
 /// countdown.
 #define SE_TRIPLE_TONE_LOW 108
 /// The high triple tone: Halt ending.
@@ -301,7 +301,7 @@
 #define SE_FOOTSTEP 118
 /// The guards throwing the leader out of Lunpa.
 #define SE_SCUFFLE 121
-/// Leaving a map through an ordinary warp.
+/// Leaving a map through an ordinary exit.
 #define SE_MAP_EXIT 123
 /// Played as a chest's lid lifts (TreasureSpot_OpenChest); also a Psynergy
 /// target reacting, the Fuchin Temple students' lessons, the Vault mayor's urn,
@@ -319,10 +319,10 @@
 /// A heavy landing: the leader thrown out of Lunpa, or hopping down a step in
 /// the Tunnel Ruins.
 #define SE_LANDING_THUD 127
-/// Climbing stairs: an WARP_STYLE_STAIRS_UP warp, and the stairs up in Vale's
+/// Climbing stairs: an EXIT_STYLE_STAIRS_UP exit, and the stairs up in Vale's
 /// inn and Isaac's house.
 #define SE_STAIRS_UP 128
-/// Going down stairs: an WARP_STYLE_STAIRS_DOWN warp, and the stairs
+/// Going down stairs: an EXIT_STYLE_STAIRS_DOWN exit, and the stairs
 /// down in Vale's inn and Isaac's house.
 #define SE_STAIRS_DOWN 129
 /// Carry, Cloak, Force, Lift, Mind Read and Ply beginning on the field, and a
@@ -414,7 +414,7 @@
 #define SE_UNUSED_DEFEAT_CRY 150
 /// Altmiller Cave's lights growing in, one by one, and a Venus Djinni caught.
 #define SE_LIGHT_APPEAR 151
-/// An object event jumps: ObjectMotion_Launch plays the high jump above 5
+/// An actor jumps: ObjectMotion_Launch plays the high jump above 5
 /// pixels a frame.
 #define SE_JUMP 152
 /// A high jump: ObjectMotion_Launch above 5 pixels a frame, Djinn leaping, and
@@ -434,9 +434,10 @@
 #define SE_GATE_MOVE 157
 /// A door opening as the leader goes through.
 #define SE_DOOR_OPEN 158
-/// The door behind the leader as a warp's arrival plays (Warp_PlayArrival), and
-/// a door shutting in Lalivero; also the Fuchin Temple, the Kalay docks, Altin
-/// Peak's cart, and the lady statues moved in the Tunnel Ruins.
+/// The door behind the leader as an exit's arrival plays
+/// (Entrance_PlayArrival), and a door shutting in Lalivero; also the Fuchin
+/// Temple, the Kalay docks, Altin Peak's cart, and the lady statues moved in
+/// the Tunnel Ruins.
 #define SE_DOOR_CLOSE 159
 /// Plays as Felix is unmasked, as Tret rejects the Hermes' Water, as Levitation
 /// is shown at the gate to Mt. Aleph, as Vale's roof is mended, at Venus
@@ -545,7 +546,7 @@
 /// The curse's sparkles at Kolima and Kolima Forest, Tret rejecting the party,
 /// and Sol Sanctum's statue opening its central hole.
 #define SE_SPARKLE_FALL 200
-/// The party rising to the Elemental Star room, and an object event raised and
+/// The party rising to the Elemental Star room, and an actor raised and
 /// shrunk in the eruption.
 #define SE_ASCEND 201
 /// On the stormy night, as Isaac and Dora hurry to the plaza, a flame flares up
@@ -575,7 +576,7 @@
 #define SE_POWER_UP 212
 /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the maps' pushed objects (ObjectEvent_MoveAndRedraw).
+/// and the maps' pushed objects (Actor_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -593,7 +594,7 @@
 /// about two seconds.
 #define SE_BURST 216
 /// Mercury Lighthouse's floor switches and gates, the Colosso's
-/// moving walkway, and an object event jumping down a ledge.
+/// moving walkway, and an actor jumping down a ledge.
 #define SE_FLOOR_SWITCH 217
 /// Mercury Lighthouse's fountain, and the storm carrying the party off in
 /// Suhalla Desert and dropping it on the world map.
@@ -604,8 +605,8 @@
 /// Temple's Reveal lesson, Mia in Imil and at Mercury Lighthouse, the curse on
 /// Kolima, and the Elemental Stars taken by Alex.
 #define SE_SHIMMER 220
-/// An object event lifted into a passage of Mercury Lighthouse amid sparks
-/// (MercuryLighthouse_RaiseObjectEventWithSparks).
+/// An actor lifted into a passage of Mercury Lighthouse amid sparks
+/// (MercuryLighthouse_RaiseActorWithSparks).
 #define SE_RISE_WITH_SPARKS 221
 /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
 /// ★ Named from what the player sees: the party riding Mercury Lighthouse's
@@ -683,7 +684,7 @@
 /// A Colosso warrior fading in (Colosso_FadeInWarrior).
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
-/// The first voice blip of a message: an object event's voice is 0x100 plus its
+/// The first voice blip of a message: an actor's voice is 0x100 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
 /// it plus the letter code's low two bits (TextPrinter_Step), so a voice is
 /// four blips. gSpeakerDefinitions gives each sprite one of eight voices; this

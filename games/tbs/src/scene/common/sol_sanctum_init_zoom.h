@@ -2,7 +2,7 @@
 /// The initialization that two rooms of Sol Sanctum share,
 /// SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor.
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "songs.h"
 #include "flags.h"
 

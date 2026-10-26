@@ -1,20 +1,20 @@
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "field_effect.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "fixed_math.h"
 
 // Vale and its home, storm and Babi maps, Sol Sanctum's eruption, the world
 // map and Venus Lighthouse's aerie: the pair of rising particles that
-// WorldMap_CreateLinkedEffects attaches to a glowing object event, each an
+// WorldMap_CreateLinkedEffects attaches to a glowing actor, each an
 // update hook that lives 32 frames.
 
-/// Rises beside the linked object event, expanding and shrinking over half a
+/// Rises beside the linked actor, expanding and shrinking over half a
 /// sine wave.
 static void
-FieldEffect_AnimateVerticalPositive(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *self = &fieldObject->objectEvent;
-  struct ObjectEvent *anchor;
+FieldEffect_AnimateVerticalPositive(union ActorOrEffect *fieldObject) {
+  struct Actor *self = &fieldObject->actor;
+  struct Actor *anchor;
   s32 frame;
   s32 amplitude;
 
@@ -23,7 +23,7 @@ FieldEffect_AnimateVerticalPositive(union ObjectEventOrEffect *fieldObject) {
   frame = self->timer;
 
   if (frame > 31) {
-    ObjectEvent_Release(self);
+    Actor_Release(self);
     return;
   }
 
@@ -35,12 +35,12 @@ FieldEffect_AnimateVerticalPositive(union ObjectEventOrEffect *fieldObject) {
   self->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + PIXELS(8);
 }
 
-/// Mirrors the rising particle vertically and passes behind the linked object
-/// event.
+/// Mirrors the rising particle vertically and passes behind the linked
+/// actor.
 static void
-FieldEffect_AnimateVerticalNegative(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *self = &fieldObject->objectEvent;
-  struct ObjectEvent *anchor;
+FieldEffect_AnimateVerticalNegative(union ActorOrEffect *fieldObject) {
+  struct Actor *self = &fieldObject->actor;
+  struct Actor *anchor;
   s32 frame;
   s32 amplitude;
 
@@ -49,7 +49,7 @@ FieldEffect_AnimateVerticalNegative(union ObjectEventOrEffect *fieldObject) {
   frame = self->timer;
 
   if (frame > 31) {
-    ObjectEvent_Release(self);
+    Actor_Release(self);
     return;
   }
 

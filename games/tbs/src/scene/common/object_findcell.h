@@ -1,18 +1,18 @@
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 
 // Bilibin, its cave, Kalay and Sol Sanctum's entrance.
 
-/// Returns the placed object event (8 to 65) standing on cell (x, z), or 0.
-static struct ObjectEvent *ObjectEvent_FindAtCell(s32 x, s32 z) {
-  struct ObjectEvent **objectEvents = gFieldWork->objectEvents;
+/// Returns the placed actor (8 to 65) standing on cell (x, z), or 0.
+static struct Actor *Actor_FindAtCell(s32 x, s32 z) {
+  struct Actor **actors = gFieldWork->actors;
   u32 i;
 
   for (i = 8; i <= 65; i++) {
-    struct ObjectEvent *objectEvent = objectEvents[i];
+    struct Actor *actor = actors[i];
 
-    if (x == objectEvent->x.fixed >> 20 && z == objectEvent->z.fixed >> 20) {
-      return objectEvent;
+    if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20) {
+      return actor;
     }
   }
   return 0;

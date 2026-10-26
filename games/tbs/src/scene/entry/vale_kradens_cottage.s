@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ValeKradensCottage_Initialize
-	overlay_veneer ValeKradensCottage_GetWarpDests
-	overlay_veneer ValeKradensCottage_GetWarps
-	overlay_veneer ValeKradensCottage_GetObjectEventTemplates
-	overlay_veneer ValeKradensCottage_GetEvents
+	overlay_veneer ValeKradensCottage_GetEntrances
+	overlay_veneer ValeKradensCottage_GetExits
+	overlay_veneer ValeKradensCottage_GetActorTemplates
+	overlay_veneer ValeKradensCottage_GetTriggers
 	overlay_veneer ValeKradensCottage_GetRegions

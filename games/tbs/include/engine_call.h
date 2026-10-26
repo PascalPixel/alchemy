@@ -26,7 +26,7 @@
 #include "unit/game/game.h"
 #include "unit/import.h"
 
-struct ObjectEvent;
+struct Actor;
 struct FieldPosition;
 struct MenuSprite;
 
@@ -58,15 +58,14 @@ static inline void Field_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   MapGrid_SetViewBounds(minX, minY, maxX, maxY);
 }
 
-static inline void FieldObjectEvent_JumpDownLedge(s32 localId, s32 mode,
-                                                  s32 action) {
-  ObjectEvent_JumpDownLedge(localId, mode, action);
+static inline void FieldActor_JumpDownLedge(s32 actorId, s32 mode, s32 action) {
+  Actor_JumpDownLedge(actorId, mode, action);
 }
 
 static inline s32
-FieldObject_CheckMovementCollision(struct ObjectEvent *objectEvent,
+FieldObject_CheckMovementCollision(struct Actor *actor,
                                    struct FieldPosition *position) {
-  return MapGrid_CheckCollision((struct Object *)objectEvent, position);
+  return MapGrid_CheckCollision((struct Object *)actor, position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {

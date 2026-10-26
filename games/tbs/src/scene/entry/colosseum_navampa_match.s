@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ColosseumNavampaMatch_Initialize
-	overlay_veneer ColosseumNavampaMatch_GetWarpDests
-	overlay_veneer ColosseumNavampaMatch_GetWarps
-	overlay_veneer ColosseumNavampaMatch_GetObjectEventTemplates
-	overlay_veneer ColosseumNavampaMatch_GetEvents
+	overlay_veneer ColosseumNavampaMatch_GetEntrances
+	overlay_veneer ColosseumNavampaMatch_GetExits
+	overlay_veneer ColosseumNavampaMatch_GetActorTemplates
+	overlay_veneer ColosseumNavampaMatch_GetTriggers
 	overlay_veneer ColosseumNavampaMatch_GetRegions

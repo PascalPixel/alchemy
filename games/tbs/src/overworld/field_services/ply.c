@@ -7,7 +7,7 @@
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
-void FieldEffect_SwayParticle(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_SwayParticle(union ActorOrEffect *fieldObject) {
   struct Object *obj = (struct Object *)fieldObject;
   s16 *phase;
 
@@ -21,9 +21,8 @@ void FieldEffect_SwayParticle(union ObjectEventOrEffect *fieldObject) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
 /// particles; each one's work holds its starting angle.
-void FieldEffect_UpdateShrinkingOrbitObject(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
+void FieldEffect_UpdateShrinkingOrbitObject(union ActorOrEffect *fieldObject) {
+  struct Actor *particle = (struct Actor *)fieldObject;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
   s16 remainingFrames;
@@ -56,7 +55,7 @@ void FieldEffect_UpdateShrinkingOrbitObject(
 /// as it slowly falls. With phase -1 it stays where it is. The update
 /// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
-void FieldEffect_RunSparkEmitter(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
   struct Object *emitter = (struct Object *)fieldObject;
   struct FieldEffectWork *effectWork;
   s16 *phase;
@@ -83,7 +82,7 @@ void FieldEffect_RunSparkEmitter(union ObjectEventOrEffect *fieldObject) {
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
-      spark->motionFlags = OBJ_EVENT_FALLS;
+      spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
       spark->action = Random16() >> 9;
       spark->targetX = spark->x;
@@ -115,8 +114,8 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// event's finishCallback.
 void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ObjectEvent *target = effectWork->mainObject;
-  struct ObjectEvent *objectEvent;
+  struct Actor *target = effectWork->mainObject;
+  struct Actor *actor;
   struct Sprite *last;
   u8 resourceSlot;
   s32 i;
@@ -126,16 +125,16 @@ void FieldEffect_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    objectEvent = (struct ObjectEvent *)Object_Spawn(
+    actor = (struct Actor *)Object_Spawn(
         233, target->x.fixed, target->y.fixed + 0x200000, target->z.fixed);
-    if (objectEvent != 0) {
-      objectEvent->scaleY = 0xb333; // 0.7
-      objectEvent->scaleX = 0xb333;
-      objectEvent->update = FieldEffect_UpdateShrinkingOrbitObject;
-      objectEvent->timer = 120;
-      objectEvent->work = i << 13;
-      objectEvent->motionFlags = OBJ_EVENT_FLOATS;
-      last = Sprite_ShareVramCacheEntry(objectEvent->sprite, last);
+    if (actor != 0) {
+      actor->scaleY = 0xb333; // 0.7
+      actor->scaleX = 0xb333;
+      actor->update = FieldEffect_UpdateShrinkingOrbitObject;
+      actor->timer = 120;
+      actor->work = i << 13;
+      actor->motionFlags = ACTOR_FLOATS;
+      last = Sprite_ShareVramCacheEntry(actor->sprite, last);
     }
     WaitFrames(1);
   }
@@ -143,7 +142,7 @@ void FieldEffect_RunPly(void) {
   // The particles share one sprite cache; keep its slot to free at the end.
   // last is read with no check that any particle spawned. It would be 0 only
   // with all 64 objects taken for eight frames, and a map places at most 60:
-  // the world map's 51 object event templates, the party's 8 and the camera.
+  // the world map's 51 actor templates, the party's 8 and the camera.
   resourceSlot = last->slot;
   Sound_PlaySongFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
@@ -151,15 +150,15 @@ void FieldEffect_RunPly(void) {
   WaitFrames(110);
 
   // The one in the centre.
-  target = (struct ObjectEvent *)Object_Spawn(233, 0, 0, 0);
-  objectEvent = target;
+  target = (struct Actor *)Object_Spawn(233, 0, 0, 0);
+  actor = target;
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
     target->x.fixed = effectWork->x;
     target->y.fixed = effectWork->y + 0x100000;
     target->z.fixed = effectWork->z;
-    target->motionFlags = OBJ_EVENT_FLOATS;
+    target->motionFlags = ACTOR_FLOATS;
     Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_WHITE);
   }
 
@@ -171,21 +170,20 @@ void FieldEffect_RunPly(void) {
       /* FAKEMATCH(temporary): a redundant copy keeps object as a second
        * register copy of the spark (r5 beside r6); without it, 129 of 177
        * instructions differ in tbs-en. */
-      target = objectEvent;
+      target = actor;
       if (i & 3)
-        Anim_ApplyChildValuesFar((struct Object *)objectEvent,
+        Anim_ApplyChildValuesFar((struct Object *)actor,
                                  SPRITE_COLOR_BLUE_TINT);
       else
-        Anim_ApplyChildValuesFar((struct Object *)objectEvent,
-                                 SPRITE_COLOR_RED_TINT);
+        Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_NORMAL);
   Sound_PlaySongFar(MUS_CURE);
-  if (objectEvent != 0) {
+  if (actor != 0) {
     target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldEffect_DispatchRequestKind),

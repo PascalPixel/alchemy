@@ -74,14 +74,14 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 // clang-format on
 #endif
 
-// The width in tiles of the summary screen's highlight on each status row
+// The width in tiles of the Status screen's highlight on each status row
 // (Down, Poison, Venom, Curse and Haunt).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-u8 gSummaryScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
+u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-u8 gSummaryScreen_CursorWidths[5] = {7, 5, 7, 6, 5};
+u8 gStatusScreen_CursorWidths[5] = {7, 5, 7, 6, 5};
 #else
-u8 gSummaryScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
+u8 gStatusScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
 #endif
 
 /// The sprites of the four Djinn DjinnFigures shows: a Venus, a Mercury,

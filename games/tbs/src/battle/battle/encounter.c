@@ -26,13 +26,13 @@
 /// after each round.
 ///
 /// Reached through its far stub from SequenceManager_Run's map switch
-/// (SEQUENCE_BATTLE, with the warp destination as enemyGroup), and from
+/// (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
 /// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
 /// party's battle state, sets gSaveBlock.battleType back to BATTLE_TYPE_NORMAL
 /// and releases heap block 10. A broken link also sets flag
-/// FLAG_MAPSEC_TEMP_E8, which the Battle Arena reads
+/// FLAG_AREA_TEMP_E8, which the Battle Arena reads
 /// (BattleArena_RunRoundResult).
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -334,14 +334,14 @@ won:
   goto finished;
 
 aborted:
-  // The link broke, or no actions could be gathered. Flag FLAG_MAPSEC_TEMP_E8
+  // The link broke, or no actions could be gathered. Flag FLAG_AREA_TEMP_E8
   // tells the Battle Arena (BattleArena_RunRoundResult) the battle did not
   // finish.
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
-  GameFlag_SetFar(FLAG_MAPSEC_TEMP_E8);
+  GameFlag_SetFar(FLAG_AREA_TEMP_E8);
   goto finished;
 
 party_lost:

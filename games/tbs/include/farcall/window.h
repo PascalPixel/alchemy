@@ -168,10 +168,10 @@ s32 FileMenu_SelectActionFar(void);
 /// and returns the choice, or -1 when cancelled.
 s32 IconMenu_ChooseSendOptionFar(s32 mode);
 /// Shows the area's name near the top of the screen for 90 frames, counted down
-/// by MapNamePopup_Update.
-void MapNamePopup_ShowFar();
+/// by AreaNameWindow_Update.
+void AreaNameWindow_ShowFar();
 /// Closes the area name at once, if it's shown.
-void MapNamePopup_HideFar(void);
+void AreaNameWindow_HideFar(void);
 /// Shows a message centred across the screen, yOffset tiles lower, waits until
 /// it's typed out and closes it.
 void FieldMessage_ShowCenteredFar(s32 message, s32 mode, s32 yOffset);
@@ -213,8 +213,8 @@ void Window_SetTilemapEntryFar(struct Window *window, s32 value, s32 x, s32 y,
 /// Debug: the map selector, returning nothing under UBFIX.
 void DebugMapSelect_RunFar(void);
 #else
-/// Debug: the map selector, where A warps to the chosen map and warp
-/// destination and B closes it. The field opens it from the Start menu with B
+/// Debug: the map selector, where An exits to the chosen map and
+/// entrance and B closes it. The field opens it from the Start menu with B
 /// held. Its result is undefined, and nothing reads it.
 s16 DebugMapSelect_RunFar(void);
 #endif
@@ -260,9 +260,9 @@ s32 Save_ProcessSelectedFileFar(void);
 /// are, plus 100 when every file has its send flag; it also decides whether
 /// Battle and Send are offered.
 s32 Save_ScanRecordFlagsFar(void);
-/// Runs the naming screen for member entry. Returns 0, or -1 when
+/// Runs the name entry screen for member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
-s32 NamingScreen_EditMemberNameFar(s32 entry);
+s32 NameEntry_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
 s32 DebugBrowser_IconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each

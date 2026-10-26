@@ -2,24 +2,24 @@
 #define ALCHEMY_UNIT_MAP_ROCK_ROOMS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-extern const struct MapWarpDest gInteriorWarpDests[];
-extern const u32 gInteriorWarps[];
-extern const struct ObjectEventTemplate gInteriorObjectEventTemplates[];
-extern const struct MapEvent gInteriorSealedEvents[];
-extern const struct MapEvent gInteriorReopenedEvents[];
-extern const struct MapEvent gGateToSuhallaEvents[];
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+extern const struct SceneEntrance gInteriorEntrances[];
+extern const u32 gInteriorExits[];
+extern const struct ActorTemplate gInteriorActorTemplates[];
+extern const struct Trigger gInteriorSealedTriggers[];
+extern const struct Trigger gInteriorReopenedTriggers[];
+extern const struct Trigger gGateToSuhallaTriggers[];
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 
 #endif

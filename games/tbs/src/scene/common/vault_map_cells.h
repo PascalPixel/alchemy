@@ -1,7 +1,7 @@
 /// @file
 /// Vault, before and after the thieves are caught: the doorway to the Sanctum,
 /// which opens in two frames as the leader walks into it facing north. Both
-/// maps number that warp 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
+/// maps number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
 /// so the shared code keeps the number.
 #include "battle.h"
 #include "debug.h"
@@ -13,7 +13,7 @@
 #include "sound.h"
 #include "system.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "songs.h"
 
 enum {
@@ -33,10 +33,10 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
 
 /// Walking north into MB_VAULT_SANCTUM_DOORWAY opens the doorway to the
 /// Sanctum.
-/// The leader passes behind the doorframe through the warp.
+/// The leader passes behind the doorframe through the exit.
 static void Vault_OpenDoorwayAndEnter(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct Sprite *sprite = objectEvent->sprite;
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_THUMP);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
@@ -44,7 +44,7 @@ static void Vault_OpenDoorwayAndEnter(void) {
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
   FieldScript_WaitFrames(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(64, 272, 11);
 }

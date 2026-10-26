@@ -68,13 +68,13 @@ running: its per-frame jobs, its screen effects and all the memory it
 borrowed. Then it works out which flags the new scene starts with, starts the
 scene's music (unless a flag asks to keep the music already playing), unpacks
 the scene's code and hands it to the scene manager, which draws its map and
-runs it. The scene runs until the party takes a [warp](glossary.md#warp), a
-way out, and the warp names the next scene and the place in it where the
+runs it. The scene runs until the party takes an [exit](glossary.md#exit), a
+way out, and the exit names the next scene and the place in it where the
 party appears.
 
 A battle or a minigame takes a scene's place in the loop. It has no code of
 its own to unpack, since its code is always loaded, and when it ends it
-reports a result rather than a warp. The game then goes back to the scene the
+reports a result rather than an exit. The game then goes back to the scene the
 battle started from, with everyone standing where they stood; after a defeat
 it goes to the place a [script](glossary.md#script) chose for losing that
 battle, or else to the last Sanctum. A random battle starts the same way as
@@ -86,9 +86,9 @@ any scene though the party never walks there.
 
 The loop is `SequenceManager_Run`; one pass through a scene is
 `Scene_ResetFlagsOnEnter`, `Scene_LoadOverlay`, `SceneManager_Run` and
-`Scene_TakeWarp`, and a battle's return is `Scene_ReturnFromSequence`.
+`Scene_TakeExit`, and a battle's return is `Scene_ReturnFromSequence`.
 [Running a scene](src/overworld/README.md) follows a scene from its arrival to
-its warp.
+its exit.
 
 The sequence manager is unlike most games' main loops. In most games, the
 Pokémon games among them, the main loop goes round once a frame, a sixtieth
@@ -113,35 +113,35 @@ and unpacked into the same 32 KB of memory over the scene before it. Overlays
 never call each other; code several scenes need is copied into each.
 
 The rest of the game knows a scene only through six questions it can ask the
-scene's code: set yourself up; where can the party arrive; where do your warps
+scene's code: set yourself up; where can the party arrive; where do your exits
 lead; who stands here; what happens when the player talks, searches or steps
-somewhere (the [map events](glossary.md#map-event)); and which areas of you
+somewhere (the [triggers](glossary.md#trigger)); and which areas of you
 lead out. Each answer is a function rather than a fixed table, so a scene can
 answer differently as the story moves on.
 
 The six questions are `struct SceneEntries`, at the start of every overlay.
 [Engine](engine.md#overlays) describes how an overlay is loaded and
-[Scenes](src/scene/README.md) how a map event is found.
+[Scenes](src/scene/README.md) how a trigger is found.
 
-## The scene table and map sections
+## The scene table and areas
 
 ![Isaac steps from the world map onto Vale's marker; the village's gate fades in with the name Vale in a small window at the top of the screen, and he walks up through the gate](https://alchemy.pascalpixel.com/guides/front/area-name.gif)
 
 Arriving at Vale from the world map shows the name "Vale" for a moment. The
-name belongs to Vale's [map section](glossary.md#map-section), the group of
+name belongs to Vale's [area](glossary.md#area), the group of
 scenes the village is made of: walking between Vale's houses shows nothing,
-because the party stays in the same section. A scene's code says what happens
-there; its map section chooses the music, the area name and which flags are
+because the party stays in the same area. A scene's code says what happens
+there; its area chooses the music, the area name and which flags are
 kept while the party stays inside. The two are chosen separately: the Bilibin
-Barricade runs on Bilibin's code but is a map section of its own. The name
+Barricade runs on Bilibin's code but is an area of its own. The name
 shows for 90 frames, a second and a half, and a few scenes hide it on purpose.
 
 Every scene is one row of the scene table, which names the scene's code, its
-map section, its map and its type. A town, or a room inside one, is a safer
+area, its map and its type. A town, or a room inside one, is a safer
 kind of scene: there the party regains no
 [PP](glossary.md#psynergy-and-pp) and recovers no
 [Djinn](glossary.md#djinn) as it walks, poison does no damage, Retreat (which
-takes the party back to where it entered the map section) doesn't work, and
+takes the party back to where it entered the area) doesn't work, and
 Avoid doesn't wear off.
 
 The table is `gSceneHeaders`, one `struct SceneHeader` a row; code names each
@@ -151,31 +151,31 @@ scene by its row's symbol, `SceneId_<Place>`.
 | --------------------------------------------------------- | ----- |
 | scenes                                                    | 201   |
 | overlays, the scenes' code, some shared by several scenes | 96    |
-| map sections                                              | 71    |
+| areas                                                     | 71    |
 
-## Warps and warp destinations
+## Exits and entrances
 
-![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the warp leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
+![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the exit leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
 
-The path down from Sol Sanctum's entrance is one warp, but where it leads
+The path down from Sol Sanctum's entrance is one exit, but where it leads
 depends on the story: to Vale, or, on the night Mt. Aleph erupts, to the
-village in flames. A warp only names where it goes. The scene's warp table
-turns that name into a scene and a [warp
-destination](glossary.md#warp-destination), the spot where the party appears
+village in flames. An exit only names where it goes. The scene's exit table
+turns that name into a scene and an
+[entrance](glossary.md#entrance), the spot where the party appears
 and the way it faces, and a row of the table can be made to count only until
 a certain flag is set. The game takes the first row that counts.
 
 The path in the recording has three rows: one to Vale that counts until the
 sanctum erupts, one to Vale erupting that counts until the party leaves the
 village, and one to Vale again for the rest of the game. A scene's set-up
-often looks at the warp destination too, to play the part of an event the
+often looks at the entrance too, to play the part of an event the
 last scene sent the party to.
 
-Every way between scenes has a name in [map_warps.h](include/map_warps.h).
-Destinations are named for where the party comes from
-(`VALE_PLAZA_FROM_SANCTUM`) and warps for where they lead
+Every way between scenes has a name in [scene_exits.h](include/scene_exits.h).
+Entrances are named for where the party comes from
+(`VALE_PLAZA_FROM_SANCTUM`) and exits for where they lead
 (`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides. The
-recording's rows are `gSolSanctumEntrance_Warps` in
+recording's rows are `gSolSanctumEntrance_Exits` in
 [sol_sanctum_entrance.c](src/scene/sol_sanctum_entrance.c).
 
 ## Game flags
@@ -183,7 +183,7 @@ recording's rows are `gSolSanctumEntrance_Warps` in
 ![In a small room of Sol Sanctum, Isaac searches the chest in front of him: a green Small Jewel rises out of it, he holds it over his head and a window reads "Isaac got a Small Jewel."](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
 The chest gives its Small Jewel once. Opening it sets a [game
-flag](glossary.md#game-flag), and the chest's row in the scene's event table
+flag](glossary.md#game-flag), and the chest's row in the scene's trigger table
 counts only while that flag is clear; from then on the chest is drawn open and
 searching it finds it empty. A scene keeps nothing of its own between visits:
 whatever the game must remember, a chest or the end of a chapter, is a flag
@@ -191,12 +191,12 @@ saved with the game.
 
 There are 4,096 flags, in a fixed order: the party and the Djinn first, then
 the ones the engine shares, then the story, then the chests and other finds,
-each map section's together. Two ranges are scratch space that a scene never
+each area's together. Two ranges are scratch space that a scene never
 has to tidy up. A scene's own 256 flags are cleared each time the party
 arrives, so a stone pillar pushed out of place is back where it was on the
-next visit; a map section's 256 are cleared only when the party enters
+next visit; an area's 256 are cleared only when the party enters
 another section. Neither is cleared when the party comes back from a battle,
-since it returns to the same moment. Entering a map section also sets the
+since it returns to the same moment. Entering an area also sets the
 flag that puts its marker on the world map screen, and eight flags in a row
 can be read together as a small number, which is how counters live among the
 flags.
@@ -224,13 +224,13 @@ order](glossary.md#the-places-in-story-order).
   turn: has the party reached Kalay, has it left Vale, has it just come out
   of the Sanctum, is this the stormy night? The first yes picks the people
   and events; with no yes it is an ordinary day
-  (`ValePlaza_GetEvents` in [vale_plaza.c](src/scene/vale_plaza.c)).
+  (`ValePlaza_GetTriggers` in [vale_plaza.c](src/scene/vale_plaza.c)).
 - **One scene per point in the story.** The prologue's stormy night elsewhere
   in Vale is a scene of its own, on its own map
   ([vale_stormy_night.c](src/scene/vale_stormy_night.c)). A place that changes
   completely gets a scene; a place whose people change reads the flags.
-- **A scene with no map events.** Vale while Mt. Aleph erupts plays its whole
-  event as it starts and leaves by its one warp
+- **A scene with no triggers.** Vale while Mt. Aleph erupts plays its whole
+  event as it starts and leaves by its one exit
   ([vale_eruption.c](src/scene/vale_eruption.c)).
 - **A row that lasts until its flag is set.** Each pedestal in the room of the
   Elemental Stars offers its star until that star's flag is set, so each star
@@ -260,7 +260,7 @@ whole of its map laid flat. The world is stored as squares 512 pixels on a
 side, and only the four squares around the party are unpacked at a time.
 
 Its code does three kinds of work. Each town or dungeon is a figure standing
-on the map, and touching one takes the warp into that place. It holds what
+on the map, and touching one takes the exit into that place. It holds what
 the party meets on the map itself: three Djinn and a storm. And it plays the
 story's moments between places, chosen by where the last scene sent the
 party. The code is [world_map.c](src/scene/world_map.c), and
@@ -284,7 +284,7 @@ The source's folders follow the cartridge:
 
 - The nine large banks each have a folder, in cartridge order: `runtime`,
   `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle` and
-  `battle_anim`. `overworld` runs a scene from arrival to warp; `field` moves
+  `battle_anim`. `overworld` runs a scene from arrival to exit; `field` moves
   and draws the objects.
 - The five small banks' code sits in the folder it belongs with.
 - `graphics`, `map`, `sound` and `system` are grouped by topic and linked
@@ -305,11 +305,11 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far calls,
   overlays and songs.
 - [Places](src/field/scene_headers.s): every scene in story order, with its
-  object event templates and map events.
+  actor templates and triggers.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.
 - [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, scripts
   and lines the game keeps but never plays, and why each never runs.
 - [Source](src/README.md): every file of the code, with its comments.
 - [Glossary](glossary.md): the words every page uses, from Psynergy and Djinn
-  to banks, overlays and bg events.
+  to banks, overlays and examine triggers.

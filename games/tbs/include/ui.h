@@ -2,14 +2,14 @@
 #define ALCHEMY_UI_H
 
 /// @file
-/// The summary screen's cursors and the party status window's flags.
+/// The Status screen's cursors and the party status window's flags.
 
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"
 #include "farcall.h"
 
-/// A cursor stop among the summary screen's stats: its help entry, where the
+/// A cursor stop among the Status screen's stats: its help entry, where the
 /// cursor points and the run of the row it highlights.
 struct BattleSummaryStatCursor {
   u8 entry;           ///< the help line shown while the cursor is here
@@ -21,7 +21,7 @@ struct BattleSummaryStatCursor {
   u8 reserved[2];     ///< 0 in every row
 };
 
-/// A cursor stop on the summary screen's equipment or statuses: its help
+/// A cursor stop on the Status screen's equipment or statuses: its help
 /// entry and where the cursor points.
 struct BattleSummaryCursor {
   u8 entry;    ///< the help line shown while the cursor is here
@@ -35,24 +35,24 @@ STATIC_ASSERT(sizeof(struct BattleSummaryCursor) == 4);
 
 /// The stat cursor stops: rows 0 to 8 for a character with Djinn, rows 9 to
 /// 15 for one without (window/windata.s).
-extern const struct BattleSummaryStatCursor gBattleSummaryScreen_StatCursors[];
+extern const struct BattleSummaryStatCursor gBattleStatusScreen_StatCursors[];
 /// The cursor stops of the screen's second group
 /// (STATUS_CURSOR_COMBAT_STATS): column 19, rows 1 to 4.
-extern const struct BattleSummaryCursor gBattleSummaryScreen_EquipmentCursors[];
+extern const struct BattleSummaryCursor gBattleStatusScreen_EquipmentCursors[];
 /// The eight status cursor stops, two tiles apart on row 0.
-extern const struct BattleSummaryCursor gBattleSummaryScreen_ConditionCursors[];
+extern const struct BattleSummaryCursor gBattleStatusScreen_ConditionCursors[];
 /// The level label: `Lv`, or `Niv` in French. The Spanish and Italian
-/// editions choose between it, gBattleSummaryScreen_NivString and
-/// gBattleSummaryScreen_NvString by System_GetLanguage.
-extern const u8 gBattleSummaryScreen_LevelString[];
-extern const u8 gBattleSummaryScreen_HpString[];
-extern const u8 gBattleSummaryScreen_SlashString[];
-extern const u8 gBattleSummaryScreen_PpString[];
+/// editions choose between it, gBattleStatusScreen_NivString and
+/// gBattleStatusScreen_NvString by System_GetLanguage.
+extern const u8 gBattleStatusScreen_LevelString[];
+extern const u8 gBattleStatusScreen_HpString[];
+extern const u8 gBattleStatusScreen_SlashString[];
+extern const u8 gBattleStatusScreen_PpString[];
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-extern const u8 gBattleSummaryScreen_NivString[];
-extern const u8 gBattleSummaryScreen_NvString[];
-extern const u8 gBattleSummaryScreen_KpString[];
-extern const u8 gBattleSummaryScreen_PvString[];
+extern const u8 gBattleStatusScreen_NivString[];
+extern const u8 gBattleStatusScreen_NvString[];
+extern const u8 gBattleStatusScreen_KpString[];
+extern const u8 gBattleStatusScreen_PvString[];
 #endif
 
 /// The party status window's flags (PartyStatus_Draw,

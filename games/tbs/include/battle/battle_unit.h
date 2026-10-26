@@ -219,7 +219,7 @@ struct AbilityDefinition {
   /// README's "How an ability resolves" gives the formulas.
   u16 power;
   /// The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for
-  /// none. The field effects branch on it, and the summary screen counts it as
+  /// none. The field effects branch on it, and the Status screen counts it as
   /// usable in the field.
   u8 fieldPsynergy;
   u8 reservedAfterType[3]; ///< 0 in every row
@@ -347,7 +347,7 @@ struct Unit {
   /// The curse: CurseFlag bits. Unit_Calculate rebuilds CURSE_BOUND and
   /// CURSE_ITEM from the equipment. A bound unit loses one action in
   /// four, except Defend (BattleTurn_Build); any bit set shows the curse
-  /// in the summary screens and lets the sanctum remove it.
+  /// in the Status screens and lets the sanctum remove it.
   s8 curse;
   s8 poison; ///< POISON_NORMAL or POISON_VENOM, 0 for none
   /// Each stat change: the turns it has left, and its stage (Unit_Calculate: an

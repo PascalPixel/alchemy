@@ -1,13 +1,13 @@
 #include "action_script.h"
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 
 // Tolbi's ship deck and Vale's storm.
 
-/// An object script call, each frame: every 60 to 149 frames the object event
+/// An object script call, each frame: every 60 to 149 frames the actor
 /// squashes and stretches back to its own shape over six frames.
 static s32 Scene_SquashAndStretch(struct Object *interpreter) {
-  struct ObjectEvent *state = (struct ObjectEvent *)interpreter;
+  struct Actor *state = (struct Actor *)interpreter;
   switch (state->timer) {
   case 6:
     state->scaleX -= 0x4000;

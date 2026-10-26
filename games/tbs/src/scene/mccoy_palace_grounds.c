@@ -8,7 +8,7 @@
 /// Talking to the east guard (EventScript_TalkToEastGuard) is the way in: on
 /// yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate) and the
 /// west guard goes in ahead (FLAG_MCCOY_PALACE_ADMITTED). Walking north into
-/// the gate (coord event 2, EventScript_EnterPalace) takes
+/// the gate (step trigger 2, EventScript_EnterPalace) takes
 /// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace. The guard's scolding
 /// for keeping McCoy waiting is unused (EventScript_TalkToEastGuard).
 ///
@@ -24,7 +24,7 @@
 /// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
 /// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
 /// foot of the cliff on the grounds' south edge, which the earlier editions
-/// show bare (renders of tbs-en and tbs-fr); no warp or map event answers that
+/// show bare (renders of tbs-en and tbs-fr); no exit or trigger answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "save_block.h"
@@ -50,7 +50,7 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
@@ -59,44 +59,43 @@
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared. Its use is tagged.
 #ifdef UBFIX
-#define MCCOY_GARDEN_SET_OBJ_EVENT_POSITION Import_ObjectEventSetPosition
+#define MCCOY_GARDEN_SET_ACTOR_POSITION Import_ActorSetPosition
 #else
-#define MCCOY_GARDEN_SET_OBJ_EVENT_POSITION                                    \
-  ((s32 (*)())Import_ObjectEventSetPosition)
+#define MCCOY_GARDEN_SET_ACTOR_POSITION ((s32 (*)())Import_ActorSetPosition)
 #endif
 
-/// The placed object events, numbered in the order of
-/// gMcCoyPalaceGroundsObjectEventTemplates.
-enum McCoyPalaceGroundsLocalId {
+/// The placed actors, numbered in the order of
+/// gMcCoyPalaceGroundsActorTemplates.
+enum McCoyPalaceGroundsActorId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
   /// ordered from
   /// Kolima disappeared..."
   /// ★ Named from the game: "We'd still be working if we hadn't tried building
   /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
-  LOCALID_WEST_WORKER = LOCALID_FIRST_PLACED,
+  ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
   /// The worker with a pickaxe who wanders by the new palace. "Have you seen
   /// the barricade
   /// we built on..."
   /// ★ Named from the game: "Have you seen the barricade we built on the road
   /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
-  LOCALID_NORTH_WORKER,
+  ACTOR_NORTH_WORKER,
   /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
   /// finished!"
   /// ★ Named from the game: "Lady McCoy" (MsgDebugGlyphName)
-  LOCALID_LADY_MCCOY,
+  ACTOR_LADY_MCCOY,
   /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
   /// "Lord McCoy is so upset about this curse that he can't even eat."
   /// ★ Named from what the player sees: the western of the two soldiers with
   /// spears at the palace door (its render)
-  LOCALID_WEST_GUARD,
+  ACTOR_WEST_GUARD,
   /// "The lord will only meet with brave..."
   /// ★ Named from what the player sees: the eastern of the two soldiers with
   /// spears at the palace door (its render)
-  LOCALID_EAST_GUARD,
+  ACTOR_EAST_GUARD,
   /// The Nut over the grounds, gone once Catch has taken it
   /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
   /// ★ Named from the game: "Nut" (MsgItemName)
-  LOCALID_FLOATING_NUT
+  ACTOR_FLOATING_NUT
 };
 
 /// The grounds' temporary flags.
@@ -109,11 +108,11 @@ enum {
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
-  /// has not yet entered the palace. The grounds are in another map section
+  /// has not yet entered the palace. The grounds are in another area
   /// than Bilibin, so entering them clears it before the guard can read it.
   /// ★ Named from the game: "The master can be quite cranky. Hurry along,
   /// now!" (MsgBilibinMasterQuiteCranky)
-  FLAG_KEEPING_MCCOY_WAITING = FLAG_MAPSEC_TEMP_04
+  FLAG_KEEPING_MCCOY_WAITING = FLAG_AREA_TEMP_04
 };
 
 static void McCoyPalaceGrounds_RestoreStory(void);
@@ -122,37 +121,35 @@ static void McCoyPalaceGrounds_OpenGate(void);
 
 #include "common/object_facing.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gMcCoyPalaceGroundsWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gMcCoyPalaceGroundsEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
+const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace. Once McCoy has turned the party away,
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
-      gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_EAST_GUARD -
-                                              LOCALID_FIRST_PLACED]
+      gMcCoyPalaceGroundsActorTemplates[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0)
-      gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_LADY_MCCOY -
-                                              LOCALID_FIRST_PLACED]
+      gMcCoyPalaceGroundsActorTemplates[ACTOR_LADY_MCCOY - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-    return gMcCoyPalaceGroundsObjectEventTemplates;
+    return gMcCoyPalaceGroundsActorTemplates;
   }
-  return gMcCoyPalaceGroundsNoObjectEventTemplates;
+  return gMcCoyPalaceGroundsNoActorTemplates;
 }
 
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.
 static void EventScript_CatchFloatingNut(void) {
   FieldScript_Start();
-  Import_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
+  Import_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -168,11 +165,11 @@ static void EventScript_SearchWell(void) {
 }
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
-    return gMcCoyPalaceGroundsEvents;
+    return gMcCoyPalaceGroundsTriggers;
   }
-  return gMcCoyPalaceGroundsNoEvents;
+  return gMcCoyPalaceGroundsNoTriggers;
 }
 
 /// McCoy's Palace, outside, before the curse is lifted: the north worker asks
@@ -180,7 +177,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 static void EventScript_TalkToNorthWorker(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinHaveYouSeenBarricadeWe);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_NORTH_WORKER, 0);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_NORTH_WORKER, 0);
   FieldScript_End();
 }
 
@@ -191,7 +188,7 @@ static void EventScript_TalkToNorthWorker(void) {
 static void EventScript_TalkToLadyMcCoy(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_LADY_MCCOY, 0);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_LADY_MCCOY, 0);
   FieldScript_End();
 }
 
@@ -200,7 +197,7 @@ static void EventScript_TalkToLadyMcCoy(void) {
 static void EventScript_TalkToWestGuard(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinDoThinkCanBecomeAs);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_WEST_GUARD, 0);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_WEST_GUARD, 0);
   FieldScript_End();
 }
 
@@ -220,104 +217,92 @@ static void EventScript_TalkToEastGuard(void) {
     if (GameFlag_Get(FLAG_KEEPING_MCCOY_WAITING) != 0) {
       if (Script_GetFlag(FLAG_GUARD_SCOLDED) == 0) {
         FieldScript_SetMessageId(MsgBilibinWhere);
-        FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
-        ObjectEvent_ShowEmote(LOCALID_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL,
-                              40);
-        FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
-        ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 2);
+        FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
+        Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+        FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
+        ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 2);
         GameFlag_Set(FLAG_GUARD_SCOLDED);
       }
       FieldScript_SetMessageId(MsgBilibinMasterQuiteCranky);
-      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
     } else {
       FieldScript_SetMessageId(MsgBilibinLordMccoyDifficult);
-      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
       goto guard;
     }
   } else {
     // On the first visit, the guards confer before opening the gate.
     FieldScript_SetMessageId(MsgBilibinLordOnlyMeet);
-    FieldMessage_ShowAtObject(LOCALID_EAST_GUARD, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
-        0) {
+    FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
-      FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
-      if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed < PIXELS(270)) {
-        ObjectEvent_SetSpeed(LOCALID_EAST_GUARD, 0xcccc, 0x6666);
-        ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 346, 274);
-        ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 282);
-        ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+      FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
+      if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
+        Actor_SetSpeed(ACTOR_EAST_GUARD, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 346, 274);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
       }
-      ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_EAST + FACING_STEP,
-                                0);
-      ObjectEvent_FaceDirection(LOCALID_EAST_GUARD,
-                                FACING_SOUTHWEST + FACING_STEP, 20);
-      ObjectEvent_ShowEmote(LOCALID_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE,
-                            20);
-      ObjectMotion_SetVariantCallback(LOCALID_WEST_GUARD, 1);
-      FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 10);
-      ObjectEvent_ShowEmote(LOCALID_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE,
-                            60);
-      ObjectMotion_SetVariantCallback(LOCALID_EAST_GUARD, 1);
-      FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 20);
-      Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
-      ObjectEvent_FaceDirection(LOCALID_WEST_GUARD,
-                                FACING_SOUTHEAST + FACING_STEP, 0);
-      ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP,
-                                10);
-      ObjectMotion_SetVariantCallback(LOCALID_WEST_GUARD, 1);
-      FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 20);
-      ObjectEvent_FaceDirection(LOCALID_WEST_GUARD,
-                                FACING_NORTHEAST + FACING_STEP, 0);
-      ObjectMotion_SetSpeedParameters(LOCALID_EAST_GUARD, 0x10000, 0x8000);
-      ObjectEvent_GetById(LOCALID_EAST_GUARD)->steeringFlags &=
-          ~OBJ_EVENT_FACES_MOTION;
-      ObjectEvent_WalkToAndWait(LOCALID_EAST_GUARD, 346, 263);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 20);
+      Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+      ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 1);
+      FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+      Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+      ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 1);
+      FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
+      Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
+      ObjectMotion_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+      ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 1);
+      FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHEAST + FACING_STEP, 0);
+      ObjectMotion_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+      Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
       FieldScript_WaitFrames(1);
-      ObjectEvent_GetById(LOCALID_EAST_GUARD)->steeringFlags |=
-          OBJ_EVENT_FACES_MOTION;
-      ObjectEvent_SetSpeed(LOCALID_WEST_GUARD, 0x9999, 0x4ccc);
-      ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 328, 263);
-      ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 328, 252);
-      ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_NORTH, 10);
+      Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+      Actor_SetSpeed(ACTOR_WEST_GUARD, 0x9999, 0x4ccc);
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       McCoyPalaceGrounds_OpenGate();
-      ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 328, 246);
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which loads the actor id after the two zeros; as a call by its
        * void declaration, 1 of 233 instructions differ in tbs-en. */
-      MCCOY_GARDEN_SET_OBJ_EVENT_POSITION(LOCALID_WEST_GUARD, 0, 0);
+      MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
       /* FAKEMATCH(one-pass): the block keeps r0 last among the call above's
          arguments; as a plain call, 1 of 233 instructions differ in tbs-en. */
       do {
         GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
-      Object_SetTargetAndCallback(
-          LOCALID_EAST_GUARD, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-          gGuardWatchesParty);
+      Object_SetTargetAndCallback(ACTOR_EAST_GUARD,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  gGuardWatchesParty);
     } else {
-      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
-      ObjectEvent_FaceDirection(LOCALID_EAST_GUARD,
-                                FACING_SOUTHEAST + FACING_STEP, 10);
+      FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
     }
   }
   FieldScript_End();
 }
 
-/// McCoy's Palace, outside, coord event 2: walking north into the palace gate
+/// McCoy's Palace, outside, step trigger 2: walking north into the palace gate
 /// opens it if it is still shut, and the leader walks into the palace.
 static void EventScript_EnterPalace(void) {
   FieldScript_Start();
   if (GameFlag_Get(FLAG_GATE_OPEN) == 0) {
     McCoyPalaceGrounds_OpenGate();
   }
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
+  Import_ScriptRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
   FieldScript_End();
 }
 
@@ -325,13 +310,13 @@ static void EventScript_EnterPalace(void) {
 /// front, and the guards, Lady McCoy and the arrest as the story stands.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_WEST_WORKER);
-  objectEvent->priorityFlags = 0;
-  objectEvent->sprite->image.priority = 1;
+  actor = Actor_GetById(ACTOR_WEST_WORKER);
+  actor->priorityFlags = 0;
+  actor->sprite->image.priority = 1;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
@@ -348,26 +333,25 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     GameFlag_Clear(FLAG_GATE_OPEN);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
-    Scene_FloatNut(LOCALID_FLOATING_NUT);
+    Scene_FloatNut(ACTOR_FLOATING_NUT);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
-    ObjectEvent_SetPosition(LOCALID_WEST_GUARD, PIXELS(308), PIXELS(263));
-    Import_ObjectEventSetPosition(LOCALID_EAST_GUARD, PIXELS(346), PIXELS(263));
+    Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
+    Import_ActorSetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-        Import_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
-        Object_SetTargetAndCallback(LOCALID_EAST_GUARD,
-                                    OBJ_EVENT_LINK_KEEP_MOTION |
-                                        LOCALID_PARTY_LEADER,
+        Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
+        Object_SetTargetAndCallback(ACTOR_EAST_GUARD,
+                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                     gGuardWatchesParty);
       }
     }
   }
   // Lady McCoy's new place and the arrest come only after the curse lifts.
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    ObjectEvent_SetPosition(LOCALID_LADY_MCCOY, PIXELS(224), PIXELS(292));
-    ObjectEvent_FaceDirection(LOCALID_LADY_MCCOY, FACING_SOUTH, 0);
-    ObjectMotion_ArmCallback(LOCALID_WEST_WORKER, FACING_EAST, 0);
+    Actor_SetPosition(ACTOR_LADY_MCCOY, PIXELS(224), PIXELS(292));
+    Actor_FaceDirection(ACTOR_LADY_MCCOY, FACING_SOUTH, 0);
+    ObjectMotion_ArmCallback(ACTOR_WEST_WORKER, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
       EventScript_GuardsArrestParty();
     }
@@ -385,91 +369,83 @@ static void EventScript_GuardsArrestParty(void) {
   FieldCamera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(320), PIXELS(372));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(320), PIXELS(372));
   FieldScript_StartScreenTransition();
   FieldCamera_SetSpeedParameters(0x3333, 0x666);
   FieldCamera_MoveWithinMapBounds(PIXELS(320), -1, PIXELS(290), 1);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x9999, 0x4ccc);
-  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 320, 310);
-  ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                            10);
-  ObjectMotion_SetVariantCallback(LOCALID_WEST_GUARD, 2);
-  ObjectEvent_ShowEmote(LOCALID_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                        60);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
+  ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 2);
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldScript_SetMessageId(MsgBilibinOhItS);
-  FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
-  ObjectMotion_SetVariantCallback(LOCALID_EAST_GUARD, 2);
-  ObjectEvent_ShowEmote(LOCALID_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                        60);
-  FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 20);
-  ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP,
-                            40);
-  ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 1);
-  FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 1);
-  FieldMessage_ShowAtObject(LOCALID_EAST_GUARD, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
+  FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 2);
+  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 1);
+  FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 1);
+  FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
-  while (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) != 0) {
-    FieldEffect_SpawnLinked(LOCALID_EAST_GUARD,
+  while (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
+    FieldEffect_SpawnLinked(ACTOR_EAST_GUARD,
                             EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     FieldScript_SetMessageId(MsgBilibinNotTrueWitnesses);
-    FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
-    ObjectMotion_SetVariantCallback(LOCALID_EAST_GUARD, 2);
-    FieldMessage_ShowAtObject(LOCALID_EAST_GUARD, 0);
+    FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
+    ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 2);
+    FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
   }
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
+  Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 1);
   FieldScript_SetMessageId(MsgBilibinUnderArrest);
-  FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 10);
-  ObjectEvent_SetSpeed(LOCALID_WEST_GUARD, 0x10000, 0x8000);
-  ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 314, 280);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  FieldScript_ShowMessageThenWait(LOCALID_WEST_GUARD, 0, 40);
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
+  FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0x10000, 0x8000);
+  Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
-    ObjectMotion_SetSpeedParameters(LOCALID_EAST_GUARD, 0x10000, 0x8000);
-    ObjectEvent_GetById(LOCALID_EAST_GUARD)->steeringFlags &=
-        ~OBJ_EVENT_FACES_MOTION;
-    ObjectMotion_SetPositionAndReset(LOCALID_EAST_GUARD, 346, 263);
+    ObjectMotion_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    ObjectMotion_SetPositionAndReset(ACTOR_EAST_GUARD, 346, 263);
     FieldScript_WaitFrames(1);
     {
-      struct ObjectEvent *guard = ObjectEvent_GetById(LOCALID_EAST_GUARD);
+      struct Actor *guard = Actor_GetById(ACTOR_EAST_GUARD);
 
-      guard->steeringFlags = OBJ_EVENT_FACES_MOTION | guard->steeringFlags;
+      guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
     }
   }
-  ObjectEvent_SetSpeed(LOCALID_WEST_GUARD, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0xcccc, 0x6666);
   // Escort Isaac through the opened gate before changing to the palace.
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  ObjectEvent_WalkTo(LOCALID_WEST_GUARD, 328, 262);
-  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 278);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
+  Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
   McCoyPalaceGrounds_OpenGate();
   FieldScript_WaitFrames(40);
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 328, 242);
-  ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 328, 242);
-  Import_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
+  Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
+  Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Import_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
+  Import_ScriptRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
   FieldScript_End();
 }
 
@@ -494,27 +470,27 @@ s32 gGuardWatchesParty[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gMcCoyPalaceGroundsWarpDests[] = {
+struct SceneEntrance gMcCoyPalaceGroundsEntrances[] = {
     { MCCOY_PALACE_GROUNDS_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-u32 gMcCoyPalaceGroundsWarps[] = {
-    MAP_WARPS(McCoyPalaceGrounds),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GROUNDS),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
-    MAP_WARPS_END,
+u32 gMcCoyPalaceGroundsExits[] = {
+    SCENE_EXITS(McCoyPalaceGrounds),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GROUNDS),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
+    SCENE_EXITS_END,
 };
 
 /// Unused: the getters return it for any map but SceneId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
-struct ObjectEventTemplate gMcCoyPalaceGroundsNoObjectEventTemplates[] = {
-    { MAP_TABLE_END },
+struct ActorTemplate gMcCoyPalaceGroundsNoActorTemplates[] = {
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gMcCoyPalaceGroundsObjectEventTemplates[] = {
+struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -531,44 +507,44 @@ struct ObjectEventTemplate gMcCoyPalaceGroundsObjectEventTemplates[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(388), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #endif
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-/// Unused, as gMcCoyPalaceGroundsNoObjectEventTemplates is.
-struct MapEvent gMcCoyPalaceGroundsNoEvents[] = {
-    { MAP_EVENTS_END },
+/// Unused, as gMcCoyPalaceGroundsNoActorTemplates is.
+struct Trigger gMcCoyPalaceGroundsNoTriggers[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gMcCoyPalaceGroundsEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPalace) },
-    { MAP_EVENT_TALK, LOCALID_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
-    { MAP_EVENT_TALK, LOCALID_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
-    { MAP_EVENT_TALK, LOCALID_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToNorthWorker) },
-    { MAP_EVENT_TALK, LOCALID_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
-    { MAP_EVENT_TALK, LOCALID_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToLadyMcCoy) },
-    { MAP_EVENT_TALK, LOCALID_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
-    { MAP_EVENT_TALK, LOCALID_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
-    { MAP_EVENT_TALK, LOCALID_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
-    { MAP_EVENT_TALK, LOCALID_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWestGuard) },
-    { MAP_EVENT_TALK, LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
-    { MAP_EVENT_TALK, LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
-    { MAP_EVENT_TALK, LOCALID_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThatWasCloseBuildingACursed) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinNoOneBelievedTheyWouldTurn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
-    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut) },
-    { MAP_EVENTS_END },
+struct Trigger gMcCoyPalaceGroundsTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPalace) },
+    { TRIGGER_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
+    { TRIGGER_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
+    { TRIGGER_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToNorthWorker) },
+    { TRIGGER_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
+    { TRIGGER_TALK, ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToLadyMcCoy) },
+    { TRIGGER_TALK, ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWestGuard) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThatWasCloseBuildingACursed) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinNoOneBelievedTheyWouldTurn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut) },
+    { TRIGGERS_END },
 };
 // clang-format on

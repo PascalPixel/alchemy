@@ -39,14 +39,14 @@
 #include "resource_ids.h"
 #include "speaker.h"
 #include "resource.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
 #include "heap_slots.h"
 #include "object.h"
 #include "animspr.h"
-#include "object_event.h"
+#include "actor.h"
 #include "object_dispatch.h"
 #include "script_layer.h"
 #include "heap.h"
@@ -104,9 +104,9 @@
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
 static inline void
-FieldEffect_MoveAfterimageHalfway(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *afterimage = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *target = afterimage->linkedObject;
+FieldEffect_MoveAfterimageHalfway(union ActorOrEffect *fieldObject) {
+  struct Actor *afterimage = (struct Actor *)fieldObject;
+  struct Actor *target = afterimage->linkedObject;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
   afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
@@ -134,7 +134,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// 0x3000 (3/16 of full size). step is negative: from full size the object
 /// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
-  void name(union ObjectEventOrEffect *fieldObject) {                          \
+  void name(union ActorOrEffect *fieldObject) {                                \
     void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
@@ -168,7 +168,7 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
   // Spawn and choose its position at the call site: combining the spawn here
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
-    fragment->motionFlags = OBJ_EVENT_FALLS;
+    fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = 0x1999;
     Object_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;

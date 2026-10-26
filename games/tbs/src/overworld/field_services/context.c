@@ -1,18 +1,18 @@
 /// @file
-/// An object event's screen position, the encounter transition, context
+/// An actor's screen position, the encounter transition, context
 /// effects.
 // Part of field_services.c.
 
 #include "../field_services_internal.h"
 
-/// Finds where an object event is on screen: position[0] and position[1]
+/// Finds where an actor is on screen: position[0] and position[1]
 /// receive its x and y in pixels, y at the top of its sprite. Returns 0, or -1
-/// if there is no such object event. Called by the message window code in
+/// if there is no such actor. Called by the message window code in
 /// messages.c to place a speaker's bubble, and through
-/// ObjectEvent_GetScreenPositionFar by the window frames to open a message
+/// Actor_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
-s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Object *object = ObjectEvent_GetByLocalId(objectId);
+s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
+  struct Object *object = Actor_GetByActorId(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -49,9 +49,9 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   return 0;
 }
 
-UNUSED void Warp_NoOp(void) {}
+UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and run_map.c ignores it; as void, the epilogue
+// UB: no value is returned, and run_scene.c ignores it; as void, the epilogue
 // changes.
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
@@ -100,18 +100,18 @@ s32 Field_StartEncounterTransition(s32 unused) {
   }
 }
 
-/// Starts the leader's animation for leaving through a warp: centres it on
+/// Starts the leader's animation for leaving through an exit: centres it on
 /// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by the two ObjectEffect_StartContextEffect functions below.
-void Warp_PrepareExitAnimation(s32 animation) {
+void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
   struct Object *object;
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
   context = object->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -126,39 +126,39 @@ void Warp_PrepareExitAnimation(s32 animation) {
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
-  object->targetX = OBJ_EVENT_NO_TARGET;
-  object->targetZ = OBJ_EVENT_NO_TARGET;
+  object->targetX = ACTOR_NO_TARGET;
+  object->targetZ = ACTOR_NO_TARGET;
   Object_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
 
-/// Leaves through a WARP_STYLE_STAIRS_UP warp (ANIM_LEADER_LEAVE);
-/// FLAG_WARP_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
-/// (Warp_PlayArrival). Called by the warp handling in
-/// overworld/events.c, after it plays SE_STAIRS_UP.
-void Warp_StartStairsUpExit(void) {
-  Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE);
-  GameFlag_SetFar(FLAG_WARP_ARRIVAL_STAIRS_UP);
+/// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
+/// FLAG_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
+/// (Entrance_PlayArrival). Called by the exit handling in
+/// overworld/triggers.c, after it plays SE_STAIRS_UP.
+void Exit_StartStairsUp(void) {
+  Exit_PrepareAnimation(ANIM_LEADER_LEAVE);
+  GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_UP);
 }
 
-/// Leaves through a WARP_STYLE_STAIRS_DOWN warp
+/// Leaves through a EXIT_STYLE_STAIRS_DOWN exit
 /// (ANIM_LEADER_LEAVE_ALTERNATE), recorded in
-/// FLAG_WARP_ARRIVAL_STAIRS_DOWN. Called by the warp handling in
-/// overworld/events.c, after it plays SE_STAIRS_DOWN.
-void Warp_StartStairsDownExit(void) {
-  Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
-  GameFlag_SetFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
+/// FLAG_ARRIVAL_STAIRS_DOWN. Called by the exit handling in
+/// overworld/triggers.c, after it plays SE_STAIRS_DOWN.
+void Exit_StartStairsDown(void) {
+  Exit_PrepareAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
+  GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_DOWN);
 }
 
-/// Plays the leader's arrival animation through a warp: centred on its cell
+/// Plays the leader's arrival animation through an exit: centred on its cell
 /// at the cell's north edge, the leader plays animation for 30 frames, loses
 /// the extra sprite part and walks 8 pixels south. Called by
-/// Warp_PlayArrival; frees the sprite part
-/// Warp_PrepareExitAnimation registered.
-void Warp_EndArrivalAnimation(s32 animation) {
+/// Entrance_PlayArrival; frees the sprite part
+/// Exit_PrepareAnimation registered.
+void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -184,25 +184,25 @@ void Warp_EndArrivalAnimation(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last map was left: through a
-/// WARP_STYLE_STAIRS_UP warp (FLAG_WARP_ARRIVAL_STAIRS_UP,
-/// ANIM_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
-/// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
+/// EXIT_STYLE_STAIRS_UP exit (FLAG_ARRIVAL_STAIRS_UP,
+/// ANIM_LEADER_ARRIVE, returns 1) or a EXIT_STYLE_STAIRS_DOWN one
+/// (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
 /// Returns 0 when there is nothing to play. Called by SceneManager_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
-s32 Warp_PlayArrival(void) {
+s32 Entrance_PlayArrival(void) {
   s32 result = 0;
-  s32 flag = FLAG_WARP_ARRIVAL_STAIRS_UP;
+  s32 flag = FLAG_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_GetFar(flag) != 0) {
-    Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
+    Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
     GameFlag_ClearFar(flag);
     result = 1;
   } else {
-    flag = FLAG_WARP_ARRIVAL_STAIRS_DOWN;
+    flag = FLAG_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_GetFar(flag) != 0) {
-      Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
+      Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearFar(flag);
       result = 2;
     } else {
@@ -212,8 +212,8 @@ s32 Warp_PlayArrival(void) {
         struct Object *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gSaveBlock.leaderLocalId;
-        leader = ObjectEvent_GetByLocalId(leaderId);
+        leaderId = gSaveBlock.leaderActorId;
+        leader = Actor_GetByActorId(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
@@ -227,7 +227,7 @@ s32 Warp_PlayArrival(void) {
         leader->y = leader->groundHeight;
         Object_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         FieldScript_WaitFrames(15);
-        FieldCamera_FollowObjectEvent(leaderId, 1);
+        FieldCamera_FollowActor(leaderId, 1);
         result = 3;
       }
     }

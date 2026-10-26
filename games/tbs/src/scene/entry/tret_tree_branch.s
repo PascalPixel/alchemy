@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer TretTreeBranch_Initialize
-	overlay_veneer TretTreeBranch_GetWarpDests
-	overlay_veneer TretTreeBranch_GetWarps
-	overlay_veneer TretTreeBranch_GetObjectEventTemplates
-	overlay_veneer TretTreeBranch_GetEvents
+	overlay_veneer TretTreeBranch_GetEntrances
+	overlay_veneer TretTreeBranch_GetExits
+	overlay_veneer TretTreeBranch_GetActorTemplates
+	overlay_veneer TretTreeBranch_GetTriggers
 	overlay_veneer TretTreeBranch_GetRegions

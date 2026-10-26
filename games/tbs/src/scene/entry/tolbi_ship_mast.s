@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer TolbiShipMast_Initialize
-	overlay_veneer TolbiShipMast_GetWarpDests
-	overlay_veneer TolbiShipMast_GetWarps
-	overlay_veneer TolbiShipMast_GetObjectEventTemplates
-	overlay_veneer TolbiShipMast_GetEvents
+	overlay_veneer TolbiShipMast_GetEntrances
+	overlay_veneer TolbiShipMast_GetExits
+	overlay_veneer TolbiShipMast_GetActorTemplates
+	overlay_veneer TolbiShipMast_GetTriggers
 	overlay_veneer TolbiShipMast_GetRegions

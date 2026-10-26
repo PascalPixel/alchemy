@@ -13,16 +13,16 @@
 #include "heap.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
-// in the room, object events in a row from the first the map passes, each
+// in the room, actors in a row from the first the map passes, each
 // pulsing and drifting on its own path from the tables gSolSanctumRing_* and
 // gSolSanctum_Ring*, by its index.
 
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
-/// One floating light: its object event, its drift and its pulsing scale, and
+/// One floating light: its actor, its drift and its pulsing scale, and
 /// where it is while hidden.
 struct SolSanctumRingEntry {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
@@ -56,7 +56,7 @@ static void SolSanctum_UpdateRing(void) {
 
   i = 0;
   while (i != list->count) {
-    struct ObjectEvent *objectEvent;
+    struct Actor *actor;
     s32 speedX;
     s32 speedY;
     s32 speedZ;
@@ -68,7 +68,7 @@ static void SolSanctum_UpdateRing(void) {
     s32 z;
     u8 hold;
 
-    objectEvent = entry->objectEvent;
+    actor = entry->actor;
     speedX = entry->speedX;
     speedY = entry->speedY;
     speedZ = entry->speedZ;
@@ -95,15 +95,15 @@ static void SolSanctum_UpdateRing(void) {
           step = gSolSanctumRing_ScaleSteps[i];
           scale = 0x1999;
           hold = 24;
-          x = objectEvent->x.fixed;
-          y = objectEvent->y.fixed;
-          z = objectEvent->z.fixed;
-          objectEvent->x.fixed = 0;
-          objectEvent->y.fixed = 0;
-          objectEvent->z.fixed = 0;
+          x = actor->x.fixed;
+          y = actor->y.fixed;
+          z = actor->z.fixed;
+          actor->x.fixed = 0;
+          actor->y.fixed = 0;
+          actor->z.fixed = 0;
         }
-        objectEvent->scaleX = scale;
-        objectEvent->scaleY = scale;
+        actor->scaleX = scale;
+        actor->scaleY = scale;
       }
       rx = (gSolSanctum_RingDrift[i][0] * (u32)Import_RandomNext()) >> 16;
       ry = (gSolSanctum_RingDrift[i][1] * (u32)Import_RandomNext()) >> 16;
@@ -139,24 +139,24 @@ static void SolSanctum_UpdateRing(void) {
           y += dy;
           z += dz;
           if (--hold == 0) {
-            objectEvent->x.fixed = x;
-            objectEvent->targetX = x;
+            actor->x.fixed = x;
+            actor->targetX = x;
             if (ry != 0) {
-              objectEvent->y.fixed = y;
-              objectEvent->targetY = y;
+              actor->y.fixed = y;
+              actor->targetY = y;
             }
-            objectEvent->z.fixed = z;
-            objectEvent->targetZ = z;
+            actor->z.fixed = z;
+            actor->targetZ = z;
           }
         } else {
-          objectEvent->x.fixed += dx;
-          objectEvent->targetX = objectEvent->x.fixed;
+          actor->x.fixed += dx;
+          actor->targetX = actor->x.fixed;
           if (ry != 0) {
-            objectEvent->y.fixed += dy;
-            objectEvent->targetY = objectEvent->y.fixed;
+            actor->y.fixed += dy;
+            actor->targetY = actor->y.fixed;
           }
-          objectEvent->z.fixed += dz;
-          objectEvent->targetZ = objectEvent->z.fixed;
+          actor->z.fixed += dz;
+          actor->targetZ = actor->z.fixed;
         }
       }
     }
@@ -175,13 +175,13 @@ static void SolSanctum_UpdateRing(void) {
   }
 }
 
-/// Starts the floating lights: count object events (at most 10) from first,
+/// Starts the floating lights: count actors (at most 10) from first,
 /// each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
-  // Each light is read here as FieldEffect, union ObjectEventOrEffect's effect
+  // Each light is read here as FieldEffect, union ActorOrEffect's effect
   // view of the same object, the plain-C form this site matches with
-  // (MATCHING.md): through ObjectEvent's sprite union, the sprite-flags address
-  // moves after the ring-entry store. The callback reads ObjectEvent.
+  // (MATCHING.md): through Actor's sprite union, the sprite-flags address
+  // moves after the ring-entry store. The callback reads Actor.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
   struct FieldEffect *light;
@@ -200,17 +200,15 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   if (count != 0) {
     cleared = none;
     do {
-      light =
-          &((union ObjectEventOrEffect *)ObjectEvent_GetById(first))->effect;
+      light = &((union ActorOrEffect *)Actor_GetById(first))->effect;
       {
         u8 *flags = &light->sprite->flags;
 
-        entry->objectEvent = (struct ObjectEvent *)light;
+        entry->actor = (struct Actor *)light;
         *flags = cleared;
       }
       light->motionFlags = cleared;
-      ObjectEvent_SetBlendMode(ObjectEvent_GetById(first),
-                               OBJECT_BLEND_TRANSLUCENT);
+      Actor_SetBlendMode(Actor_GetById(first), OBJECT_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];
       entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
       entry->timer = 3;

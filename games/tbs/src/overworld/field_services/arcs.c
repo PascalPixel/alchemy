@@ -8,12 +8,11 @@
 /// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
-void FieldEffect_UpdateScaledArcObjectA(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdateScaledArcObjectA(union ActorOrEffect *fieldObject) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
-  struct ObjectEvent *arc = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *anchor;
+  struct Actor *arc = (struct Actor *)fieldObject;
+  struct Actor *anchor;
   s32 frame;
   s32 scale;
 
@@ -34,10 +33,9 @@ void FieldEffect_UpdateScaledArcObjectA(
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 /// object and up to 5 pixels nearer while small.
-void FieldEffect_UpdateScaledArcObjectB(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *arc = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *anchor;
+void FieldEffect_UpdateScaledArcObjectB(union ActorOrEffect *fieldObject) {
+  struct Actor *arc = (struct Actor *)fieldObject;
+  struct Actor *anchor;
   s32 frame;
   s32 scale;
 
@@ -94,17 +92,17 @@ struct SpriteArcOamView {
 /// casting hooks below spawn them every 16 frames, and
 /// FieldEffect_End waits for the last to end (at most 30
 /// frames).
-void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
+void FieldEffect_SpawnScaledArcObjects(struct Actor *linked) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ObjectEvent *source = effectWork->mainObject;
-  struct ObjectEvent *arcs[2];
-  struct ObjectEvent *arc;
+  struct Actor *source = effectWork->mainObject;
+  struct Actor *arcs[2];
+  struct Actor *arc;
   struct SpriteArcOamView *sprite;
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    arc = (struct ObjectEvent *)Object_CreateFar(
-        SPRITE_GOLDEN_RINGS, linked->x.fixed, linked->y.fixed, linked->z.fixed);
+    arc = (struct Actor *)Object_CreateFar(SPRITE_GOLDEN_RINGS, linked->x.fixed,
+                                           linked->y.fixed, linked->z.fixed);
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;
@@ -135,21 +133,21 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
   arcs[0]->sprite->image.priority = 0;
   arcs[1]->update = FieldEffect_UpdateScaledArcObjectA;
   arcs[1]->sprite->image.priority = source->sprite->image.priority;
-  arcs[1]->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+  arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
-void FieldEffect_FlickerObjectAndTick(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+void FieldEffect_FlickerObjectAndTick(union ActorOrEffect *fieldObject) {
+  struct Actor *actor = (struct Actor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_WHITE);
   } else {
-    Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    FieldEffect_SpawnScaledArcObjects(objectEvent);
+    FieldEffect_SpawnScaledArcObjects(actor);
   }
 }
 
@@ -157,15 +155,14 @@ void FieldEffect_FlickerObjectAndTick(union ObjectEventOrEffect *fieldObject) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldEffect_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
-void FieldEffect_CycleObjectValueByCounter(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+void FieldEffect_CycleObjectValueByCounter(union ActorOrEffect *fieldObject) {
+  struct Actor *actor = (struct Actor *)fieldObject;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Anim_ApplyChildValuesFar((struct Object *)objectEvent, colorIndex);
+    Anim_ApplyChildValuesFar((struct Object *)actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
-    FieldEffect_SpawnScaledArcObjects(objectEvent);
+    FieldEffect_SpawnScaledArcObjects(actor);
   }
 }

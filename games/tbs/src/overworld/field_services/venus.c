@@ -10,7 +10,7 @@
 /// spiral down onto the leader from 120 pixels above
 /// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
-/// Djinni's object event slot. Uses all 24 field effect sprites, tints the
+/// Djinni's actor slot. Uses all 24 field effect sprites, tints the
 /// field palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct Object *leader;
@@ -22,8 +22,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s32 scale;
   struct Vector3 position;
 
-  leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  djinni = (struct Object *)ObjectEvent_GetById(djinniId);
+  leader = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  djinni = (struct Object *)Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -50,9 +50,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Object_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
                             ANIM_LEADER_ARMS_RAISED);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
@@ -133,7 +133,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   position.z = leader->z;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
-  // ObjectEvent.velocityY), falling, and freed after 8 frames; stop at the
+  // Actor.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
@@ -172,7 +172,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  source = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   statePointer = &effect->state;
   state = *statePointer;
 
@@ -224,6 +224,6 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
-void FieldEffect_HalveDistanceToTarget(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_HalveDistanceToTarget(union ActorOrEffect *fieldObject) {
   FieldEffect_MoveAfterimageHalfway(fieldObject);
 }

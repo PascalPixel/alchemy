@@ -9,14 +9,14 @@
 #include "sound.h"
 #include "system.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "types.h"
 #include "call.h"
 #include "animspr.h"
 #include "object.h"
-#include "object_event.h"
+#include "actor.h"
 #include "task.h"
 #include "vram_cache.h"
 #include "songs.h"
@@ -33,28 +33,28 @@
 /// Colosso_RestoreWarrior.
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct ObjectSystemWork *system;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct Sprite *sprite;
   s32 i;
 
   system = gObjectSystemWork;
-  objectEvent = ObjectEvent_GetById(id);
+  actor = Actor_GetById(id);
   system->edge = 1;
   system->fill = 4;
-  gColosso_WarriorStartX = objectEvent->x.fixed;
-  gColosso_WarriorStartZ = objectEvent->z.fixed;
-  sprite = (struct Sprite *)objectEvent->sprite;
-  gColosso_WarriorStartAngle = objectEvent->facing;
+  gColosso_WarriorStartX = actor->x.fixed;
+  gColosso_WarriorStartZ = actor->z.fixed;
+  sprite = (struct Sprite *)actor->sprite;
+  gColosso_WarriorStartAngle = actor->facing;
   ObjectMotion_SetActionVariant(id, 2);
-  objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
-  objectEvent->facing = FACING_SOUTH;
-  ObjectEvent_SetSpriteFlags(objectEvent, 3);
-  Object_SelectAnimation(objectEvent, 0);
-  Object_SelectAnimation(objectEvent, 1);
-  Import_ObjectEventSetPosition(id, x << 16, z << 16);
-  // BUG: FACING_SOUTH is passed where a local id belongs; no object event has
+  actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  actor->facing = FACING_SOUTH;
+  Actor_SetSpriteFlags(actor, 3);
+  Object_SelectAnimation(actor, 0);
+  Object_SelectAnimation(actor, 1);
+  Import_ActorSetPosition(id, x << 16, z << 16);
+  // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
@@ -63,19 +63,19 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   sprite->shadow.objectMode = 1;
   Sound_PlaySong(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
-    objectEvent->scaleX = (i << 12) + 0x1000;
-    objectEvent->scaleY = 0x1f000 - (i << 12);
+    actor->scaleX = (i << 12) + 0x1000;
+    actor->scaleY = 0x1f000 - (i << 12);
     // BLEND_ALPHA(i + 1, 15 - i), whose operand order compiles differently.
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
                         IO_WRITE_16);
     WaitFrames(1);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
-  objectEvent->scaleX = 0x11000;
-  objectEvent->scaleY = 0xf000;
+  actor->scaleX = 0x11000;
+  actor->scaleY = 0xf000;
   FieldScript_WaitFrames(1);
-  objectEvent->scaleX = 0x10000;
-  objectEvent->scaleY = 0x10000;
+  actor->scaleX = 0x10000;
+  actor->scaleY = 0x10000;
   FieldScript_WaitFrames(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
@@ -89,18 +89,18 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 /// the field's again (edge 15, fill 0).
 void Colosso_RestoreWarrior(s32 id) {
   struct ObjectSystemWork *system;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 zero;
   u8 *control;
 
   system = gObjectSystemWork;
-  objectEvent = ObjectEvent_GetById(id);
+  actor = Actor_GetById(id);
   if (gSaveBlock.movementMode == 1) {
     gSaveBlock.movementMode = 0;
-    Import_ObjectEventSetAnimation(id, 1);
+    Import_ActorSetAnimation(id, 1);
   } else {
-    ObjectEvent_FaceDirection(id, FACING_SOUTH, 30);
-    Import_ObjectEventSetAnimation(id, 3);
+    Actor_FaceDirection(id, FACING_SOUTH, 30);
+    Import_ActorSetAnimation(id, 3);
     FieldScript_WaitFrames(30);
   }
   zero = 0;
@@ -112,32 +112,32 @@ void Colosso_RestoreWarrior(s32 id) {
   control = (u8 *)system;
   control[offsetof(struct ObjectSystemWork, fill)] = zero;
   control[offsetof(struct ObjectSystemWork, edge)] = 15;
-  objectEvent->x.fixed = gColosso_WarriorStartX;
-  objectEvent->z.fixed = gColosso_WarriorStartZ;
-  objectEvent->facing = gColosso_WarriorStartAngle;
-  objectEvent->targetX = OBJ_EVENT_NO_TARGET;
-  objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
-  objectEvent->velocityX = zero;
-  objectEvent->velocityZ = zero;
-  objectEvent->motionFlags = 3;
-  objectEvent->layer = 0;
-  objectEvent->y.fixed = zero;
-  ((struct Object *)objectEvent)->groundHeight = zero;
-  ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
-  Object_SelectAnimation(objectEvent, 0);
-  Object_SelectAnimation(objectEvent, 1);
+  actor->x.fixed = gColosso_WarriorStartX;
+  actor->z.fixed = gColosso_WarriorStartZ;
+  actor->facing = gColosso_WarriorStartAngle;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
+  actor->velocityX = zero;
+  actor->velocityZ = zero;
+  actor->motionFlags = 3;
+  actor->layer = 0;
+  actor->y.fixed = zero;
+  ((struct Object *)actor)->groundHeight = zero;
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Object_SelectAnimation(actor, 0);
+  Object_SelectAnimation(actor, 1);
   WaitFrames(1);
 }
 
-/// Stops the object event where it is: no velocity and no destination.
-void ObjectEvent_ResetMotionFields(s32 localId) {
-  struct ObjectEvent *o = ObjectEvent_GetById(localId);
+/// Stops the actor where it is: no velocity and no destination.
+void Actor_ResetMotionFields(s32 actorId) {
+  struct Actor *o = Actor_GetById(actorId);
 
   Object_StartIdle((struct Object *)o);
   o->velocityX = 0;
   o->velocityZ = 0;
-  o->targetX = OBJ_EVENT_NO_TARGET;
-  o->targetZ = OBJ_EVENT_NO_TARGET;
+  o->targetX = ACTOR_NO_TARGET;
+  o->targetZ = ACTOR_NO_TARGET;
 }
 
 // The guide's pointer: one 16x16 sprite centred on a point of the screen,
@@ -254,42 +254,42 @@ void Colosso_HidePointer(void) {
   gColosso_MarkerSlot = -1;
 }
 
-/// Walks the object event at 2 pixels a frame towards pixel (x, z) and returns
+/// Walks the actor at 2 pixels a frame towards pixel (x, z) and returns
 /// at once.
-void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
+void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
+  struct Actor *actor = Actor_GetByActorId(actorId);
 
-  if (objectEvent != 0) {
+  if (actor != 0) {
     s32 speed = 0x20000;
     s32 zero = 0;
 
-    objectEvent->speed = speed;
-    objectEvent->acceleration = speed >> 1;
-    objectEvent->paused = zero;
-    Object_StartIdle((struct Object *)objectEvent);
-    Object_SelectAnimation(objectEvent, 5);
-    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
-                         objectEvent->y.fixed, z << 16);
+    actor->speed = speed;
+    actor->acceleration = speed >> 1;
+    actor->paused = zero;
+    Object_StartIdle((struct Object *)actor);
+    Object_SelectAnimation(actor, 5);
+    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
+                         z << 16);
   }
 }
 
-/// Walks the object event at 1.25 pixels a frame to pixel (x, z), waits until
+/// Walks the actor at 1.25 pixels a frame to pixel (x, z), waits until
 /// it arrives and stands it there.
-void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
+void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
+  struct Actor *actor = Actor_GetByActorId(actorId);
 
-  if (objectEvent != 0) {
+  if (actor != 0) {
     s32 speed = 0x14000;
     s32 zero = 0;
 
-    objectEvent->speed = speed;
-    objectEvent->acceleration = speed >> 1;
-    objectEvent->paused = zero;
-    Object_StartIdle((struct Object *)objectEvent);
-    Object_SelectAnimation(objectEvent, 5);
-    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
-                         objectEvent->y.fixed, z << 16);
-    Object_WaitForMove(objectEvent);
-    Object_SelectAnimation(objectEvent, 1);
+    actor->speed = speed;
+    actor->acceleration = speed >> 1;
+    actor->paused = zero;
+    Object_StartIdle((struct Object *)actor);
+    Object_SelectAnimation(actor, 5);
+    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
+                         z << 16);
+    Object_WaitForMove(actor);
+    Object_SelectAnimation(actor, 1);
   }
 }

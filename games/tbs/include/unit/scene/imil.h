@@ -2,17 +2,17 @@
 #define ALCHEMY_UNIT_MAP_IMIL_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
 
-const struct MapWarpDest *Imil_GetWarpDests(void);
-const struct MapWarpRegion *Imil_GetRegions(void);
-const u32 *Imil_GetWarps(void);
-const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void);
-const struct MapEvent *Imil_GetEvents(void);
+const struct SceneEntrance *Imil_GetEntrances(void);
+const struct SceneExitRegion *Imil_GetRegions(void);
+const u32 *Imil_GetExits(void);
+const struct ActorTemplate *Imil_GetActorTemplates(void);
+const struct Trigger *Imil_GetTriggers(void);
 s32 Imil_Initialize(void);
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
@@ -26,14 +26,14 @@ extern s32 gImil_MiaCheckRoomScript[];
 extern s32 gImil_MiaRunOutScript[];
 extern s32 gImil_FaceTargetScript[];
 extern s32 gImil_FollowMiaOutScript[];
-extern struct MapWarpDest gImil_TownWarpDests[];
-extern struct MapWarpDest gImil_InteriorWarpDests[];
-extern u32 gImil_Warps[];
-extern struct ObjectEventTemplate gImil_TownObjectEventTemplates[];
-extern struct ObjectEventTemplate gImil_TownObjectEventTemplatesCured[];
-extern struct ObjectEventTemplate gImil_InteriorObjectEventTemplates[];
-extern struct MapEvent gImil_TownEvents[];
-extern struct MapEvent gImil_InteriorEvents[];
+extern struct SceneEntrance gImil_TownEntrances[];
+extern struct SceneEntrance gImil_InteriorEntrances[];
+extern u32 gImil_Exits[];
+extern struct ActorTemplate gImil_TownActorTemplates[];
+extern struct ActorTemplate gImil_TownActorTemplatesCured[];
+extern struct ActorTemplate gImil_InteriorActorTemplates[];
+extern struct Trigger gImil_TownTriggers[];
+extern struct Trigger gImil_InteriorTriggers[];
 extern u16 gImil_SanctumDoorSteps[];
 extern u16 gImil_InteriorsEastDoorSteps[];
 extern u16 gImil_InnDoorSteps[];

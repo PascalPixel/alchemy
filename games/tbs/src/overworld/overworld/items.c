@@ -4,76 +4,75 @@
 
 #include "../overworld_internal.h"
 
-/// The function a map's item event may name instead of a message, called
+/// The function a map's item trigger may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
-typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
+typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
-/// Returns the map's item event (MAP_EVENT_ITEM) for item that applies to
+/// Returns the map's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
-/// names an object event (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a metatile behavior,
+/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a metatile behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
-/// a direction. Called by Field_UseItem, and by Scene_HasPsynergyEvent
+/// a direction. Called by Field_UseItem, and by Scene_HasPsynergyTrigger
 /// (psynergy.c) to test whether an item would do anything here.
-s32 Field_FindItemEvent(s32 item) {
+s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
-  const struct MapEvent *event = work->events;
+  const struct Trigger *trigger = work->triggers;
   s32 facing =
-      ((struct Object *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
-          ->facing;
-  s32 objectEventAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
+      ((struct Object *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+  s32 actorAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
   s32 tileAhead;
 
   item &= 0x1ff;
-  // Query both target forms once; matching events choose object event or cell
+  // Query both target forms once; matching events choose actor or cell
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
-  // trigger bits: 15..12 facing | 11 facing required | 7..0 object event or
-  // metatile behavior; control bits: 15..8 item | 4 on an object event | 3..0
+  // subject bits: 15..12 facing | 11 facing required | 7..0 actor or
+  // metatile behavior; control bits: 15..8 item | 4 on an actor | 3..0
   // kind.
-  while (event->kind != -1) {
-    s32 eventFacing = event->trigger & 0xf000;
-    s16 requiresFacing = event->trigger & 0x0800;
-    s32 eventTarget = event->trigger & 0xff;
+  while (trigger->kind != -1) {
+    s32 eventFacing = trigger->subject & 0xf000;
+    s16 requiresFacing = trigger->subject & 0x0800;
+    s32 eventTarget = trigger->subject & 0xff;
 
-    if ((event->kind & 0x0f) == MAP_EVENT_ITEM &&
-        GameFlag_IsConditionActive(event->condition) != 0 &&
+    if ((trigger->kind & 0x0f) == TRIGGER_ITEM &&
+        GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
-      u32 flags = event->kind;
-      s32 eventItem = ((const u8 *)&event->kind)[1];
+      u32 flags = trigger->kind;
+      s32 eventItem = ((const u8 *)&trigger->kind)[1];
 
       if (item == 0 || eventItem == item) {
-        if ((flags & MAP_EVENT_ITEM_ON_OBJ_EVENT) != 0) {
-          if (eventTarget == objectEventAhead)
-            return (s32)event;
+        if ((flags & TRIGGER_ITEM_ON_ACTOR) != 0) {
+          if (eventTarget == actorAhead)
+            return (s32)trigger;
         } else if (eventTarget == tileAhead) {
-          return (s32)event;
+          return (s32)trigger;
         }
       }
     }
-    event++;
+    trigger++;
   }
   return 0;
 }
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
-/// it); slot is its inventory slot. The map's item event for what the leader
+/// it); slot is its inventory slot. The map's item trigger for what the leader
 /// faces runs if there is one; otherwise an item with a field action uses it
 /// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
 /// item's own action included; SceneManager_Run ignores it.
 /// Called by SceneManager_Run for the item request (work->item and
-/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .warpDest to the
-/// Retreat point and raises work->warp.
+/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .entrance to the
+/// Retreat point and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
-  s32 localId;
+  s32 actorId;
   struct Unit *unit;
-  const struct MapEvent *event;
+  const struct Trigger *trigger;
   s32 inventorySlot;
   s32 partyIndex;
   s32 mostMatchingSlots;
@@ -83,7 +82,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   result = -1;
   itemId = packedItem & 0x3ff;
-  localId = (packedItem >> 10) & 0xf;
+  actorId = (packedItem >> 10) & 0xf;
   // Count the user's slots holding the item; with no user given, the user is
   // whoever holds it in the most slots, the earlier on a tie. Nobody holding
   // it ends the use at once.
@@ -91,8 +90,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     mostMatchingSlots = 0;
     partyCount = Party_CountMembersFar();
 
-    if (localId == 15) {
-      localId = 0;
+    if (actorId == 15) {
+      actorId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
         unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
         matchingSlots = 0;
@@ -103,11 +102,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          localId = gSaveBlock.party[partyIndex];
+          actorId = gSaveBlock.party[partyIndex];
         }
       }
     } else {
-      unit = Unit_GetFar(localId);
+      unit = Unit_GetFar(actorId);
       for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
         if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
           mostMatchingSlots++;
@@ -120,26 +119,26 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
   }
 
-  event = (const struct MapEvent *)Field_FindItemEvent(itemId);
-  if (event != 0 && event->value != 0) {
+  trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
+  if (trigger != 0 && trigger->value != 0) {
     // The map's event: a message, or a function. A value below 0x10000 is
     // a message number; anything else is a code address. Trigger bit 0x400
     // skips the "uses the item" message.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
-    if (!(event->trigger & 0x400)) {
-      MessageArgument_PushFar(localId, MESSAGE_ARGUMENT_ACTOR);
+    if (!(trigger->subject & 0x400)) {
+      MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
     }
-    if ((s32)event->value < 0x10000) {
-      s32 nearbyLocalId = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
+    if ((s32)trigger->value < 0x10000) {
+      s32 nearbyActorId = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
       FieldScript_Start();
-      FieldScript_SetMessageId(event->value);
-      FieldScript_ShowMessageAndWait(nearbyLocalId, 0);
+      FieldScript_SetMessageId(trigger->value);
+      FieldScript_ShowMessageAndWait(nearbyActorId, 0);
       FieldScript_End();
     } else {
-      ((BattleItemCallback)event->value)(itemId, localId, slot);
+      ((BattleItemCallback)trigger->value)(itemId, actorId, slot);
     }
     result = 0;
   } else {
@@ -171,11 +170,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
           return 0;
 
         gSaveBlock.sceneId = gSaveBlock.retreatScene;
-        gSaveBlock.warpDest = gSaveBlock.retreatWarpDest;
-        work->warp = WARP_RETREAT;
+        gSaveBlock.entrance = gSaveBlock.retreatEntrance;
+        work->exit = EXIT_RETREAT;
       }
 
-      MessageArgument_PushFar(localId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       // UB: this routine returns void; call it through its declared type.
@@ -200,58 +199,57 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS))
     FieldMessage_ShowFar(MsgNothingHappens, FIELD_MESSAGE_ZOOM);
   if (GameFlag_GetFar(FLAG_ITEM_USED_UP))
-    Inventory_RemoveFar(localId, slot);
+    Inventory_RemoveFar(actorId, slot);
   return result;
 }
 
-/// Returns the map's Psynergy event (MAP_EVENT_PSYNERGY) for Psynergy of the
+/// Returns the map's Psynergy trigger (TRIGGER_PSYNERGY) for Psynergy of the
 /// given group that applies to what the leader faces, or NULL; stores the
-/// object event the Psynergy would target in *target. eventFlags gives the
-/// event's phase and kind (PSYNERGY_EV_ANY for any phase). The event may apply
-/// to any target (MAP_EVENT_PSYNERGY_IN_AREA), to an object event
-/// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
+/// actor the Psynergy would target in *target. eventFlags gives the
+/// event's phase and kind (PSYNERGY_TRIGGER_ANY for any phase). The event may
+/// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
+/// (TRIGGER_PSYNERGY_ON_ACTOR) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (field_services/) for their own phases.
-void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
+void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
-  const struct MapEvent *event = work->events;
+  const struct Trigger *trigger = work->triggers;
   s32 facing =
-      ((struct Object *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
-          ->facing;
-  s32 objectEventAhead =
-      Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, group);
+      ((struct Object *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+  s32 actorAhead =
+      Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
-  *(s32 *)target = objectEventAhead;
+  *(s32 *)target = actorAhead;
   // The target output is filled even when no event ultimately matches.
   tileAhead = Field_GetCollisionAheadOfLeader();
-  if (eventFlags == PSYNERGY_EV_ANY)
+  if (eventFlags == PSYNERGY_TRIGGER_ANY)
     anyPhase = 1;
 
-  while (event->kind != -1) {
-    s32 eventFacing = event->trigger & 0xf000;
-    s16 requiresFacing = event->trigger & 0x0800;
-    s32 eventTarget = event->trigger & 0xff;
+  while (trigger->kind != -1) {
+    s32 eventFacing = trigger->subject & 0xf000;
+    s16 requiresFacing = trigger->subject & 0x0800;
+    s32 eventTarget = trigger->subject & 0xff;
 
-    if ((event->kind & 0x0f) == MAP_EVENT_PSYNERGY &&
-        GameFlag_IsConditionActive(event->condition) != 0 &&
+    if ((trigger->kind & 0x0f) == TRIGGER_PSYNERGY &&
+        GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
-        Ability_Get(((const u8 *)&event->kind)[1])->fieldPsynergy == group &&
-        (anyPhase || (event->kind & 0x7000000f) == eventFlags)) {
+        Ability_Get(((const u8 *)&trigger->kind)[1])->fieldPsynergy == group &&
+        (anyPhase || (trigger->kind & 0x7000000f) == eventFlags)) {
       // Any Psynergy of the same field kind (fieldPsynergy) as the event's
       // matches.
-      if ((event->kind & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
-        return (void *)event;
-      if ((event->kind & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
-        if (eventTarget == objectEventAhead)
-          return (void *)event;
+      if ((trigger->kind & TRIGGER_PSYNERGY_ANYWHERE) != 0)
+        return (void *)trigger;
+      if ((trigger->kind & TRIGGER_PSYNERGY_ON_ACTOR) != 0) {
+        if (eventTarget == actorAhead)
+          return (void *)trigger;
       } else if (eventTarget == tileAhead) {
-        return (void *)event;
+        return (void *)trigger;
       }
     }
-    event++;
+    trigger++;
   }
   return NULL;
 }
@@ -274,13 +272,13 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   userId = ((u32)packed >> 10) & 0xF;
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  beforeEvent = Scene_FindPsynergyEvent(
-      PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END), group, &target);
-  afterEvent = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
-                                       group, &target);
+  Actor_GetByActorId(gSaveBlock.leaderActorId);
+  beforeEvent = Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), group, &target);
+  afterEvent = Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, target);
+  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

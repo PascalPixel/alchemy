@@ -33,8 +33,8 @@
 /// Raises the spark while its scale follows a half-sine pulse.
 static s32
 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Object *interpreter) {
-  struct ObjectEvent *effect = (struct ObjectEvent *)interpreter;
-  struct ObjectEvent *anchor = effect->linkedObject;
+  struct Actor *effect = (struct Actor *)interpreter;
+  struct Actor *anchor = effect->linkedObject;
   s16 step = ++effect->timer;
   s32 scale;
 
@@ -53,37 +53,37 @@ MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Object *interpreter) {
 
 /// Grows the moving light over the first sixteen script frames.
 static s32 MercuryLighthouse_GrowLight(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  struct Actor *actor = (struct Actor *)interpreter;
   s16 frame;
 
-  frame = ++objectEvent->timer;
+  frame = ++actor->timer;
   if (frame > 16) {
     return 0;
   }
-  objectEvent->scaleX = (frame * 3) << 10;
-  objectEvent->scaleY = (frame * 3) << 10;
+  actor->scaleX = (frame * 3) << 10;
+  actor->scaleY = (frame * 3) << 10;
   return 1;
 }
 
 /// Expands the released light before its script removes it.
-static s32 ObjectEvent_AdvanceScaleCounter(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+static s32 Actor_AdvanceScaleCounter(struct Object *interpreter) {
+  struct Actor *actor = (struct Actor *)interpreter;
   s16 frame;
 
-  frame = ++objectEvent->timer;
+  frame = ++actor->timer;
   if (frame > 16) {
     return 0;
   }
-  objectEvent->scaleX = (frame << 11) + Q16_ONE;
-  objectEvent->scaleY = (frame << 11) + Q16_ONE;
+  actor->scaleX = (frame << 11) + Q16_ONE;
+  actor->scaleY = (frame << 11) + Q16_ONE;
   return 1;
 }
 
-/// Follows the linked object event and alternates the light's animation
+/// Follows the linked actor and alternates the light's animation
 /// parameter.
 static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  struct ObjectEvent *leader;
+  struct Actor *actor = (struct Actor *)interpreter;
+  struct Actor *leader;
   s32 targetZ;
   s32 targetX;
   s32 deltaX;
@@ -91,50 +91,49 @@ static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
   s32 distance;
   s32 moveDistance;
 
-  objectEvent->speed = PIXELS(2);
-  leader = objectEvent->linkedObject;
-  objectEvent->acceleration = PIXELS(1);
+  actor->speed = PIXELS(2);
+  leader = actor->linkedObject;
+  actor->acceleration = PIXELS(1);
   targetX = leader->x.fixed;
   targetZ = leader->z.fixed;
-  objectEvent->targetX = OBJ_EVENT_NO_TARGET;
-  objectEvent->targetY = OBJ_EVENT_NO_TARGET;
-  objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
 
   // Measure in whole pixels first; use fixed-point precision near the leader.
-  deltaX = (targetX - objectEvent->x.fixed) / PIXELS(1);
-  deltaZ = (targetZ - objectEvent->z.fixed) / PIXELS(1);
+  deltaX = (targetX - actor->x.fixed) / PIXELS(1);
+  deltaZ = (targetZ - actor->z.fixed) / PIXELS(1);
   distance = (u16)Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
-  deltaX = targetX - objectEvent->x.fixed;
-  deltaZ = targetZ - objectEvent->z.fixed;
+  deltaX = targetX - actor->x.fixed;
+  deltaZ = targetZ - actor->z.fixed;
   distance <<= 16;
   if (distance < PIXELS(64))
     distance =
         FixedSqrt(Iwram_MulQ16(deltaX, deltaX) + Iwram_MulQ16(deltaZ, deltaZ));
   moveDistance = distance / 8;
-  if (moveDistance > objectEvent->speed)
-    moveDistance = objectEvent->speed;
+  if (moveDistance > actor->speed)
+    moveDistance = actor->speed;
 
   // Snap within a quarter pixel; otherwise ease toward the leader.
   if (distance < PIXELS(1) / 4) {
-    objectEvent->x.fixed = targetX;
-    objectEvent->z.fixed = targetZ;
+    actor->x.fixed = targetX;
+    actor->z.fixed = targetZ;
   } else {
     if (distance > moveDistance) {
       deltaX = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaX), moveDistance);
       deltaZ = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaZ), moveDistance);
     }
-    objectEvent->x.fixed += deltaX;
-    objectEvent->z.fixed += deltaZ;
+    actor->x.fixed += deltaX;
+    actor->z.fixed += deltaZ;
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
   // The sprite slot is read by its offset, the plain-C form of
-  // objectEvent->sprite this site matches with (scene/README.md): through
-  // ObjectEvent's single/group union the movs r0, #1 and the sprite load swap.
+  // actor->sprite this site matches with (scene/README.md): through
+  // Actor's single/group union the movs r0, #1 and the sprite load swap.
   {
     struct Sprite *sprite =
-        *(struct Sprite **)((u8 *)objectEvent +
-                            offsetof(struct ObjectEvent, sprite));
+        *(struct Sprite **)((u8 *)actor + offsetof(struct Actor, sprite));
     struct SpriteAnim *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
@@ -143,19 +142,19 @@ static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
   return 1;
 }
 
-/// Places the two spark animations on the selected object event.
+/// Places the two spark animations on the selected actor.
 static void MercuryLighthouse_SpawnSparkPair(void) {
-  struct ObjectEvent *point;
-  struct ObjectEvent *spark;
+  struct Actor *point;
+  struct Actor *spark;
   struct Sprite *sprite;
 
-  point = gFieldWork->objectEvents[gSaveBlock.leaderLocalId];
-  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
-                             point->y.fixed, point->z.fixed);
+  point = gFieldWork->actors[gSaveBlock.leaderActorId];
+  spark = Actor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
+                       point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    ObjectEvent_SetScript(spark, gMercuryLighthouse_SparkScript);
+    Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedObject = point;
@@ -165,12 +164,12 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->image.priority = 1;
     }
   }
-  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
-                             point->y.fixed, point->z.fixed);
+  spark = Actor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
+                       point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    ObjectEvent_SetScript(spark, gMercuryLighthouse_SparkScript);
+    Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedObject = point;
@@ -186,46 +185,44 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
 /// MB_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of light
 /// appears over the leader if it is not there, and grows a stage with each pair
 /// of sparks, half a second apart, up to three lights. The column's cell is
-/// where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_MAPSEC is set
+/// where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_AREA is set
 /// while the leader has lights.
 void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
-  struct ObjectEvent *leader;
-  struct ObjectEvent *pillar;
-  struct ObjectEvent *objectEvent;
+  struct Actor *leader;
+  struct Actor *pillar;
+  struct Actor *actor;
   s32 step;
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   leader = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-               ->objectEvents[gSaveBlock.leaderLocalId];
+               ->actors[gSaveBlock.leaderActorId];
   if ((u32)state->levels > 2)
     return;
   FieldScript_Start();
   pillar = state->pillar;
   if (pillar == 0) {
-    objectEvent =
-        ObjectEvent_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-                           leader->y.fixed + 0x180000, leader->z.fixed);
-    if (objectEvent != 0) {
-      struct Sprite *sprite = objectEvent->sprite;
+    actor = Actor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                         leader->y.fixed + 0x180000, leader->z.fixed);
+    if (actor != 0) {
+      struct Sprite *sprite = actor->sprite;
 
-      objectEvent->groundHeight = leader->groundHeight;
-      ObjectEvent_SetScript(objectEvent, gMercuryLighthouse_PillarScript);
-      objectEvent->linkedObject = leader;
-      objectEvent->motionFlags = 4;
+      actor->groundHeight = leader->groundHeight;
+      Actor_SetScript(actor, gMercuryLighthouse_PillarScript);
+      actor->linkedObject = leader;
+      actor->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
       // this site matches with (scene/README.md): as the field, the sprite's
       // reload moves after the add and store.
-      *(s32 *)((u8 *)objectEvent + offsetof(struct ObjectEvent, y)) +=
-          -PIXELS(1) / 2;
+      *(s32 *)((u8 *)actor + offsetof(struct Actor, y)) += -PIXELS(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
         sprite->image.priority = 1;
       }
-      objectEvent->spriteStorageKind = 0;
-      state->pillar = objectEvent;
-      pillar = objectEvent;
+      actor->spriteStorageKind = 0;
+      state->pillar = actor;
+      pillar = actor;
     } else {
       pillar = state->pillar;
     }
@@ -239,7 +236,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
   state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
-  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
   FieldScript_End();
 }
 
@@ -251,19 +248,19 @@ void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
       *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
           HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  struct ObjectEvent *target;
+  struct Actor *target;
 
   if (state->levels == 0) {
     return;
   }
 
   state->levels = 0;
-  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
 
   target = state->pillar;
   if (target != 0) {
     target->timer = 0;
-    ObjectEvent_SetScript(target, gMercuryLighthouse_ScaleCounterScript);
+    Actor_SetScript(target, gMercuryLighthouse_ScaleCounterScript);
     Object_SelectAnimation(target, 7);
     state->pillar = NULL;
   }
@@ -280,9 +277,9 @@ void MercuryLighthouse_LoseLights(void) {
 void MercuryLighthouse_HopAcrossPool(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *source;
-  struct ObjectEvent *obj;
+  struct Actor *actor;
+  struct Actor *source;
+  struct Actor *obj;
   struct Sprite *sprite;
   struct MapGridCell *from;
   struct MapGridCell *to;
@@ -298,16 +295,16 @@ void MercuryLighthouse_HopAcrossPool(void) {
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-  flags = &objectEvent->motionFlags;
+  actor = work->actors[gSaveBlock.leaderActorId];
+  flags = &actor->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
   angle = gMercuryLighthouse_MoveAngles[(keys >> 4) & 15];
   if ((s16)gMercuryLighthouse_MoveAngles[(keys >> 4) & 15] == -1)
     return;
-  pos[0].fixed = (objectEvent->x.fixed & -0x100000) + 0x80000;
-  pos[1].fixed = objectEvent->groundHeight;
-  pos[2].fixed = (objectEvent->z.fixed & -0x100000) + 0x80000;
+  pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
+  pos[1].fixed = actor->groundHeight;
+  pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
   from =
       &MAPGRID_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
   Vector_AddPolarOffset(0x200000, angle, &pos[0].fixed);
@@ -317,24 +314,24 @@ void MercuryLighthouse_HopAcrossPool(void) {
     return;
 
   FieldScript_Start();
-  if (FieldObject_CheckMovementCollision(objectEvent,
-                                         (struct FieldPosition *)pos) != 0)
+  if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
+      0)
     return;
   obj = state->stepEffect;
   if (obj != NULL) {
     obj->timer = 0;
-    ObjectEvent_SetScript(obj, gMercuryLighthouse_ScaleCounterScript);
+    Actor_SetScript(obj, gMercuryLighthouse_ScaleCounterScript);
     Object_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
     source = state->pillar;
-    obj = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, source->x.fixed,
-                             source->y.fixed, source->z.fixed);
+    obj = Actor_Create(SPRITE_GOLDEN_RINGS, source->x.fixed, source->y.fixed,
+                       source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;
-      ObjectEvent_SetScript(obj, gMercuryLighthouse_RampScript);
+      Actor_SetScript(obj, gMercuryLighthouse_RampScript);
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = 2;
@@ -351,47 +348,47 @@ void MercuryLighthouse_HopAcrossPool(void) {
     n = state->levels - 1;
     state->levels = n;
     if (n == 0) {
-      ObjectEvent_Release(state->pillar);
+      Actor_Release(state->pillar);
       state->pillar = NULL;
-      GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+      GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     } else if (state->pillar != NULL) {
       Object_SelectAnimation(state->pillar, 6 - n);
     }
   }
-  Object_SelectAnimation(objectEvent, 6);
+  Object_SelectAnimation(actor, 6);
   WaitFrames(3);
   Sound_PlaySong(SE_JUMP);
-  Object_SelectAnimation(objectEvent, 7);
-  objectEvent->speed = 0x30000;
-  objectEvent->acceleration = 0x20000;
-  objectEvent->velocityY = 0x40000;
+  Object_SelectAnimation(actor, 7);
+  actor->speed = 0x30000;
+  actor->acceleration = 0x20000;
+  actor->velocityY = 0x40000;
   *flags &= 0x7e;
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, pos[0].part.pixel,
+  Actor_SetSpriteFlags(actor, 0);
+  ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER, pos[0].part.pixel,
                                     pos[2].part.pixel);
-  Object_SelectAnimation(objectEvent, 6);
+  Object_SelectAnimation(actor, 6);
   WaitFrames(2);
   if (to->behavior != state->poolBehavior)
-    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   else
     Sound_PlaySong(SE_SPLASH_SMALL);
   WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
-    Object_SelectAnimation(objectEvent, 18);
+    Object_SelectAnimation(actor, 18);
     Sound_PlaySong(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
-        MercuryLighthouse_SpawnRipple(objectEvent);
+        MercuryLighthouse_SpawnRipple(actor);
       if (i > 31 && gKeysPressed != 0)
         break;
       WaitFrames(1);
     }
     Sound_PlaySong(SE_STOP_ACTION_SE);
     WaitFrames(1);
-    objectEvent->x.fixed = state->targetX;
-    objectEvent->z.fixed = state->targetZ;
-    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    actor->x.fixed = state->targetX;
+    actor->z.fixed = state->targetZ;
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   }
   state->rippleTimer = 0;
   FieldScript_End();
@@ -402,12 +399,12 @@ void MercuryLighthouse_HopAcrossPool(void) {
 /// ripple spreads from him every 10 to 39 frames.
 void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;
-  struct ObjectEvent *point;
+  struct Actor *point;
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   point = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-              ->objectEvents[gSaveBlock.leaderLocalId];
+              ->actors[gSaveBlock.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {
@@ -416,13 +413,13 @@ void MercuryLighthouse_RippleAroundLeader(void) {
   }
 }
 
-/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
+/// Retreat (PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
 /// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published =
       AllocHeapSlotEwram(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
   struct MercuryLighthouseLights *state;
-  struct ObjectEvent *pillar;
+  struct Actor *pillar;
 
   if (published == NULL)
     return;
@@ -430,6 +427,6 @@ static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   pillar = state->pillar;
   if (pillar == NULL)
     return;
-  ObjectEvent_Release(pillar);
+  Actor_Release(pillar);
   state->pillar = NULL;
 }

@@ -2,18 +2,17 @@
 #define ALCHEMY_UNIT_MAP_MERCURY_LIGHTHOUSE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
 
-const struct MapWarpDest *MercuryLighthouse_GetWarpDests(void);
-const struct MapWarpRegion *MercuryLighthouse_GetRegions(void);
-const u32 *MercuryLighthouse_GetWarps(void);
-const struct ObjectEventTemplate *
-MercuryLighthouse_GetObjectEventTemplates(void);
-const struct MapEvent *MercuryLighthouse_GetEvents(void);
+const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
+const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);
+const u32 *MercuryLighthouse_GetExits(void);
+const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void);
+const struct Trigger *MercuryLighthouse_GetTriggers(void);
 s32 MercuryLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -41,21 +40,19 @@ extern u16 gMercuryLighthouse_GateCloseCells[];
 extern u16 gMercuryLighthouse_FloorSwitchCells[];
 extern u16 gMercuryLighthouse_FloorSwitchCloseCells[];
 extern u16 gMercuryLighthouse_ColumnCells[];
-extern struct MapWarpDest gMercuryLighthouseWarpDestsOther[];
-extern struct MapWarpDest gMercuryLighthouseMiddleWarpDests[];
-extern struct MapWarpDest gMercuryLighthouseUpperWarpDests[];
-extern struct MapWarpDest gMercuryLighthouseExteriorWarpDests[];
-extern u32 gMercuryLighthouse_Warps[];
-extern struct ObjectEventTemplate gMercuryLighthouseObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gMercuryLighthouseLowerObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gMercuryLighthouseMiddleObjectEventTemplates[];
-extern struct ObjectEventTemplate gMercuryLighthouseUpperObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gMercuryLighthouseExteriorObjectEventTemplates[];
-extern struct MapEvent gMercuryLighthouseLowerEvents[];
-extern struct MapEvent gMercuryLighthouseMiddleEvents[];
-extern struct MapEvent gMercuryLighthouseUpperEvents[];
-extern struct MapEvent gMercuryLighthouseEventsOther[];
+extern struct SceneEntrance gMercuryLighthouseEntrancesOther[];
+extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
+extern struct SceneEntrance gMercuryLighthouseUpperEntrances[];
+extern struct SceneEntrance gMercuryLighthouseExteriorEntrances[];
+extern u32 gMercuryLighthouse_Exits[];
+extern struct ActorTemplate gMercuryLighthouseActorTemplatesOther[];
+extern struct ActorTemplate gMercuryLighthouseLowerActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseUpperActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[];
+extern struct Trigger gMercuryLighthouseLowerTriggers[];
+extern struct Trigger gMercuryLighthouseMiddleTriggers[];
+extern struct Trigger gMercuryLighthouseUpperTriggers[];
+extern struct Trigger gMercuryLighthouseTriggersOther[];
 
 #endif

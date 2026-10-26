@@ -25,7 +25,7 @@
 	.endif
 	.set import.WindowSprite_RedrawSavedRect, 1
 	.set import.WindowSprite_ClearList, 1
-	.set import.NamingScreen_EditMemberName, 1
+	.set import.NameEntry_EditMemberName, 1
 	.set import.DebugBrowser_Icons, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1

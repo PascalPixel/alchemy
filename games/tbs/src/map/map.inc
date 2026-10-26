@@ -18,9 +18,9 @@
 	.endm
 
 @ A treasure spot (Field_PlaceTreasureSpots): its cell's column and row, and
-@ the trigger of the map event that says what is found there.
-	.macro treasure_spot column:req, row:req, trigger:req
-	.byte \column, \row, \trigger
+@ the subject of the trigger that says what is found there.
+	.macro treasure_spot column:req, row:req, subject:req
+	.byte \column, \row, \subject
 	.endm
 
 @ The end of a treasure spot list: column and row 255.

@@ -7,10 +7,10 @@
 
 #include "pushed_object.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 
-extern struct MapEvent gVale_EventsAfterKalay[];
+extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
 #include "heap_slots.h"

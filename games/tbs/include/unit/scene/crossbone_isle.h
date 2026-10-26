@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_CROSSBONE_ISLE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -23,22 +23,21 @@ extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern u16 gCrossboneIsle_EntranceCells[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gCrossboneIsle_IsleWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_CaveEntranceWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_FloatingLogsWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_PierWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_PirateShipWarpDests[];
-extern u32 gCrossboneIsleWarps[];
-extern struct ObjectEventTemplate gCrossboneIsle_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsle_IsleObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCrossboneIsle_FloatingLogsObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsle_CorridorObjectEventTemplates[];
-extern struct MapEvent gCrossboneIsle_CorridorEvents[];
-extern struct MapEvent gCrossboneIsle_CaveEntranceEvents[];
-extern struct MapEvent gCrossboneIsle_IsleEvents[];
-extern struct MapEvent gCrossboneIsle_FloatingLogsEvents[];
-extern struct MapEvent gCrossboneIsle_PierEvents[];
-extern struct MapEvent gCrossboneIsle_PirateShipEvents[];
+extern struct SceneEntrance gCrossboneIsle_IsleEntrances[];
+extern struct SceneEntrance gCrossboneIsle_CaveEntranceEntrances[];
+extern struct SceneEntrance gCrossboneIsle_FloatingLogsEntrances[];
+extern struct SceneEntrance gCrossboneIsle_PierEntrances[];
+extern struct SceneEntrance gCrossboneIsle_PirateShipEntrances[];
+extern u32 gCrossboneIsleExits[];
+extern struct ActorTemplate gCrossboneIsle_NoActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_IsleActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_CorridorActorTemplates[];
+extern struct Trigger gCrossboneIsle_CorridorTriggers[];
+extern struct Trigger gCrossboneIsle_CaveEntranceTriggers[];
+extern struct Trigger gCrossboneIsle_IsleTriggers[];
+extern struct Trigger gCrossboneIsle_FloatingLogsTriggers[];
+extern struct Trigger gCrossboneIsle_PierTriggers[];
+extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 
 #endif

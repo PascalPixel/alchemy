@@ -12,7 +12,7 @@
 #include "system.h"
 #include "save_block.h"
 #include "battle_unit.h"
-#include "object_event.h"
+#include "actor.h"
 #include "animspr.h"
 #include "text/msg_ids.h"
 
@@ -21,15 +21,15 @@
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
 //
-// Each match map defines its own two warps before including this file:
+// Each match map defines its own two exits before including this file:
 // COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
 // COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
 // Byte flags (eight flags each) holding where a friend cheers from: the cell
 // column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
 // COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
-#define COLOSSO_CHEER_COLUMN FLAG_MAPSEC_TEMP_70
-#define COLOSSO_CHEER_ROW FLAG_MAPSEC_TEMP_78
+#define COLOSSO_CHEER_COLUMN FLAG_AREA_TEMP_70
+#define COLOSSO_CHEER_ROW FLAG_AREA_TEMP_78
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)
 
 /// Map temp flags, by stage number: a friend cheers at the stage, and its
@@ -51,7 +51,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Import_ObjectEventSetPosition(LOCALID_GARET, x, y);
+    Import_ActorSetPosition(ACTOR_GARET, x, y);
   }
   {
     s32 x =
@@ -62,7 +62,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Import_ObjectEventSetPosition(LOCALID_IVAN, x, y);
+    Import_ActorSetPosition(ACTOR_IVAN, x, y);
   }
   {
     s32 x =
@@ -73,7 +73,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Import_ObjectEventSetPosition(LOCALID_MIA, x, y);
+    Import_ActorSetPosition(ACTOR_MIA, x, y);
   }
 }
 
@@ -91,8 +91,8 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_RemoveMember(3);
   Party_RemoveMember(5);
   Party_AddMember(id);
-  gSaveBlock.leaderLocalId = id;
-  FieldCamera_FollowObjectEvent(id, 0);
+  gSaveBlock.leaderActorId = id;
+  FieldCamera_FollowActor(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
   unit->pp = unit->ppMax;
@@ -124,10 +124,10 @@ void Colosso_ControlCharacterAlone(s32 id) {
 
 /// A map callback while a friend looks around the stages alone (the visit to
 /// lend a hand): when the Psynergy request names that friend and
-/// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
+/// FLAG_PSYNERGY_TARGET is set, raise trigger 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct FieldWork *work = gFieldWork;
-  s32 selection = gSaveBlock.leaderLocalId;
+  s32 selection = gSaveBlock.leaderActorId;
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
       GameFlag_Get(FLAG_PSYNERGY_TARGET) != 0) {
@@ -138,7 +138,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   }
 }
 
-/// Raised map event 99: the nearest object event with animation 165 level with
+/// Raised trigger 99: the nearest actor with animation 165 level with
 /// or below the friend on the map calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,
@@ -147,21 +147,21 @@ static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
-  s32 supporterId = gSaveBlock.leaderLocalId;
-  struct ObjectEvent *supporter = ObjectEvent_GetById(supporterId);
-  s32 localId;
+  s32 supporterId = gSaveBlock.leaderActorId;
+  struct Actor *supporter = Actor_GetById(supporterId);
+  s32 actorId;
   s32 *transition;
   s32 flagBase;
 
   FieldScript_Start();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
-  for (localId = 8; localId <= 66; localId++) {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+  for (actorId = 8; actorId <= 66; actorId++) {
+    struct Actor *actor = Actor_GetById(actorId);
 
-    if (objectEvent != 0 && objectEvent->spriteStorageKind == 1 &&
-        objectEvent->sprite->entries[0]->animationId == 165) {
-      s32 distanceX = (supporter->x.fixed - objectEvent->x.fixed) / PIXELS(1);
-      s32 distanceZ = (supporter->z.fixed - objectEvent->z.fixed) / PIXELS(1);
+    if (actor != 0 && actor->spriteStorageKind == 1 &&
+        actor->sprite->entries[0]->animationId == 165) {
+      s32 distanceX = (supporter->x.fixed - actor->x.fixed) / PIXELS(1);
+      s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / PIXELS(1);
 
       if (distanceZ <= 0) {
         s32 horizontalDistance = distanceX;
@@ -173,7 +173,7 @@ static void Colosso_TakePlaceForMatch(void) {
           distanceZ = -distanceZ;
         distance = horizontalDistance + distanceZ;
         if (distance < nearestDistance) {
-          speakerId = localId;
+          speakerId = actorId;
           nearestDistance = distance;
         }
       }
@@ -198,7 +198,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   supporterId++;
   if (supporterId > MIA) {
-    Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
+    Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
     GameFlag_Set(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
@@ -217,23 +217,23 @@ static void Colosso_TakePlaceForMatch(void) {
 void Colosso_AskDoneCheering(s32 id) {
   struct FieldWork *work;
   s32 slot;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 msg;
   s32 res;
 
   work = gFieldWork;
   // Look up the speaker twice and discard both results (two original calls).
-  ObjectEvent_GetById(id);
-  ObjectEvent_GetById(id);
-  slot = gSaveBlock.leaderLocalId;
-  objectEvent = ObjectEvent_GetById(slot);
+  Actor_GetById(id);
+  Actor_GetById(id);
+  slot = gSaveBlock.leaderActorId;
+  actor = Actor_GetById(slot);
   FieldScript_Start();
   msg = MsgColossoCheering;
   FieldScript_SetMessageId(msg);
   FieldMessage_ShowAtObject(id, 0);
   gFieldWork->choiceMessage = MsgColossoCheeringChoices;
   gFieldWork->choiceWidth = 4;
-  res = FieldScript_AskYesNoWithObjectEventAnimation(slot, 0);
+  res = FieldScript_AskYesNoWithActorAnimation(slot, 0);
   if (res == 0) {
     FieldScript_SetMessageId(msg + 1);
     FieldScript_ShowMessageAndWait(id, 0);
@@ -243,12 +243,12 @@ void Colosso_AskDoneCheering(s32 id) {
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
-                          objectEvent->x.fixed >> 20);
+                          actor->x.fixed >> 20);
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
-                          objectEvent->z.fixed >> 20);
+                          actor->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
-      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
+      Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
       GameFlag_Set(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
@@ -268,32 +268,32 @@ void Colosso_AskDoneCheering(s32 id) {
 /// guide steps aside, Isaac walks past and the party leaves for the Colosseum.
 /// Otherwise "Wait, shouldn't you decide where the best place to cheer for
 /// Isaac is?"
-static void Colosso_AskReadyToRace(s32 localId) {
-  struct ObjectEvent *objectEvent;
+static void Colosso_AskReadyToRace(s32 actorId) {
+  struct Actor *actor;
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(localId);
-  x = objectEvent->x.part.pixel;
-  z = objectEvent->z.part.pixel;
+  actor = Actor_GetById(actorId);
+  x = actor->x.part.pixel;
+  z = actor->z.part.pixel;
   FieldScript_Start();
 
   if (Party_CountMembers() <= 1) {
     FieldScript_SetMessageId(MsgColossoIsaacDidGetGoodLook);
-    if (FieldScript_AskYesNoAndShowResponse(localId, 0) == 0) {
-      InitializeObjectEventZero();
-      InitializeSelectedObjectEvent(localId);
-      ObjectMotion_ResetAndSetPositionInMode2(localId, x, z + 64);
+    if (FieldScript_AskYesNoAndShowResponse(actorId, 0) == 0) {
+      InitializeActorZero();
+      InitializeSelectedActor(actorId);
+      ObjectMotion_ResetAndSetPositionInMode2(actorId, x, z + 64);
       FieldScript_WaitFrames(15);
-      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z);
-      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z + 32);
+      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
+      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
-      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_COLOSSEUM);
+      Import_ScriptRequestExit(COLOSSO_SOLO_TO_COLOSSEUM);
     }
   } else {
     FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
   }
 
   FieldScript_End();
@@ -347,7 +347,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
   FieldScript_SetMessageId(MsgColossoWouldYouLikeHearDescription);
   FieldMessage_ShowAtObject(speaker, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
+  return FieldScript_AskYesNoWithActorAnimation(0, 0);
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
@@ -380,8 +380,8 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
 /// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
 /// you on, please let me know!"
 void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *leader;
+  struct Actor *actor;
+  struct Actor *leader;
   s32 guideX;
   s32 guideZ;
   s32 memberCount;
@@ -395,9 +395,9 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   s32 i;
   u8 members[8];
 
-  objectEvent = ObjectEvent_GetById(guide);
-  guideX = objectEvent->x.part.pixel;
-  guideZ = objectEvent->z.part.pixel;
+  actor = Actor_GetById(guide);
+  guideX = actor->x.part.pixel;
+  guideZ = actor->z.part.pixel;
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = Party_CountMembers();
     for (i = 0; i < memberCount; i++) {
@@ -419,7 +419,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
     } else {
       FieldScript_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
       Script_OpenMessage(guide, 0);
-      answer = FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
+      answer = FieldScript_AskYesNoWithActorAnimation(0, 0);
     }
     if (answer == 0) {
       if (answer < memberCount) {
@@ -451,37 +451,37 @@ L_main:
   MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
   FieldScript_SetMessageId(MsgColossoIsaacWillCheerForWay);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(friendId, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;
-  ObjectEvent_WalkToAndWait(friendId, guideX, frontZ);
+  Actor_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
-  ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, besideX, frontZ);
-  ObjectEvent_LinkPair(friendId, LOCALID_PARTY_LEADER, 30);
-  Import_ObjectEventSetAnimation(friendId, ANIM_NOD);
+  ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, besideX, frontZ);
+  Actor_LinkPair(friendId, ACTOR_PARTY_LEADER, 30);
+  Import_ActorSetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_WalkToAndWait(guide, guideX, behindZ);
   ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, friendId);
-  ObjectEvent_WalkToAndWait(friendId, guideX, behindZ);
-  Import_ObjectEventSetAnimation(guide, 1);
-  ObjectEvent_FaceDirection(guide, FACING_WEST, 0);
-  ObjectEvent_WalkToAndWait(friendId, guideX, guideZ - 48);
-  ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
-  ObjectEvent_WalkToAndWait(guide, guideX, guideZ);
+  Actor_LinkObjectAndSetCallback(ACTOR_PARTY_LEADER, friendId);
+  Actor_WalkToAndWait(friendId, guideX, behindZ);
+  Import_ActorSetAnimation(guide, 1);
+  Actor_FaceDirection(guide, FACING_WEST, 0);
+  Actor_WalkToAndWait(friendId, guideX, guideZ - 48);
+  Actor_WalkToAndWait(guide, guideX, behindZ);
+  Actor_WalkToAndWait(guide, guideX, guideZ);
   Party_RemoveMember(friendId);
   GameFlag_Set(stage + COLOSSO_STAGE_CHEERED);
-  objectEvent = ObjectEvent_GetById(friendId);
-  column = objectEvent->x.fixed >> 20;
+  actor = Actor_GetById(friendId);
+  column = actor->x.fixed >> 20;
   FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_COLUMN,
                         column);
-  row = objectEvent->z.fixed >> 20;
+  row = actor->z.fixed >> 20;
   FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_ROW, row);
 }
 

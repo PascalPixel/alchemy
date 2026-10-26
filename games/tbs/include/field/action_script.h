@@ -46,7 +46,7 @@ struct ScriptOperands {
   u32 riseBaseY;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
   u8 spriteStorageKind; ///< work value 0x19: 0 hidden, 1 one, 2 a group
-  u8 motionFlags;       ///< SW_MOTION, ObjectEventMotionFlag bits
+  u8 motionFlags;       ///< SW_MOTION, ActorMotionFlag bits
   u8 arrivalAxis;       ///< SW_ARRIVAL
   u8 conditionResult;   ///< SW_RESULT, the last test; every compare sets it
   u8 snapToTarget;      ///< SW_SNAP

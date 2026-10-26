@@ -4,9 +4,9 @@
 /// Tolbi, and Tolbi Sanctum, as the same map is named at STUCCO_ROOMS_B_SANCTUM
 /// and STUCCO_ROOMS_B_SANCTUM_NORTH.
 ///
-/// - Tolbi, the rooms behind the town's doors, which Tolbi's warps
+/// - Tolbi, the rooms behind the town's doors, which Tolbi's exits
 ///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this map's
-///   warps STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
+///   exits STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
 ///   STUCCO_ROOMS_B_TO_TOLBI_WEST lead back out. During the festival one
 ///   household lines up beds and becomes a makeshift inn, visitors have
 ///   rented another house, and the weapon, armor and item shops
@@ -22,8 +22,8 @@
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
 ///
 /// The rooms' talk follows Colosso in the same three stages as the town, each
-/// with its own event table (StuccoRoomsB_SelectEvents) and, after
-/// Colosso, an object event template table of its own. During the festival Babi
+/// with its own trigger table (StuccoRoomsB_SelectTriggers) and, after
+/// Colosso, an actor template table of its own. During the festival Babi
 /// is missing and the town is full of visitors, among them a tour group from
 /// Kalay that reserved only two rooms. On finals day (FLAG_BABI_SAVED) Babi
 /// has shown himself at the finals; the Spanish and Italian editions add a
@@ -40,9 +40,9 @@
 /// greets them, startled, and Mind Read hears her hope its owner will not ask
 /// for it back. In the southeast one stranded passengers argue that the
 /// captain will not sail although they agreed to do whatever it takes
-/// (StuccoRoomsB_WatchPassengersArgue, a map section flag). A man who rode
+/// (StuccoRoomsB_WatchPassengersArgue, an area flag). A man who rode
 /// the ship from Kalay with the party greets it as `the would-be warrior`, and
-/// he and LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN leave once the party has watched
+/// he and ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN leave once the party has watched
 /// the passengers confront the tour guide on the Tolbi docks
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
@@ -57,13 +57,13 @@
 #include "types.h"
 #include "ability_ids.h"
 #include "edition.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "songs.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 /// The stranded passengers' argument has played.
 /// ★ Named from the game: "He won't sail the ship"
@@ -86,12 +86,12 @@
 #define STUCCO_ROOMS_B_SOUTH_ROOM_CAMERA_MAX_Z 936
 #endif
 
-/// The shop rows used by the room event tables below.
+/// The shop rows used by the room trigger tables below.
 enum {
   STUCCO_ROOMS_B_WEAPON_SHOP = 26,
   STUCCO_ROOMS_B_ARMOR_SHOP = 27,
   STUCCO_ROOMS_B_ITEM_SHOP = 28,
-  STUCCO_ROOMS_B_OBJ_EVENT_SLOT_END = 66
+  STUCCO_ROOMS_B_ACTOR_SLOT_END = 66
 };
 
 /// Asks a yes/no question, then answers with the message after the question
@@ -99,7 +99,7 @@ enum {
 static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   FieldScript_SetMessageId(question);
   FieldMessage_ShowAtObject(speaker, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(question + 1);
   } else {
@@ -108,21 +108,20 @@ static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   FieldScript_ShowMessageAndWait(speaker, 0);
 }
 
-const struct MapWarpDest *StuccoRoomsB_GetWarpDests(void) {
-  return gStuccoRoomsBWarpDests;
+const struct SceneEntrance *StuccoRoomsB_GetEntrances(void) {
+  return gStuccoRoomsBEntrances;
 }
 
-const struct MapWarpRegion *StuccoRoomsB_GetRegions(void) { return 0; }
+const struct SceneExitRegion *StuccoRoomsB_GetRegions(void) { return 0; }
 
-const u32 *StuccoRoomsB_GetWarps(void) { return gStuccoRoomsBWarps; }
+const u32 *StuccoRoomsB_GetExits(void) { return gStuccoRoomsBExits; }
 
 /// After Colosso the rooms hold a different crowd.
-const struct ObjectEventTemplate *
-StuccoRoomsB_SelectObjectEventTemplates(void) {
+const struct ActorTemplate *StuccoRoomsB_SelectActorTemplates(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    return gStuccoRoomsBObjectEventTemplatesAfterColosso;
+    return gStuccoRoomsBActorTemplatesAfterColosso;
   }
-  return gStuccoRoomsBObjectEventTemplates;
+  return gStuccoRoomsBActorTemplates;
 }
 
 #if TBS_PATCH_4
@@ -135,15 +134,15 @@ static void StuccoRoomsB_AskWhetherBabiWasMissing(s32 speaker) {
 }
 #endif
 
-/// Picks the event table for the current point in the Colosso story.
-const struct MapEvent *StuccoRoomsB_SelectEvents(void) {
+/// Picks the trigger table for the current point in the Colosso story.
+const struct Trigger *StuccoRoomsB_SelectTriggers(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    return gStuccoRoomsBEventsAfterColosso;
+    return gStuccoRoomsBTriggersAfterColosso;
   }
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
-    return gStuccoRoomsBEventsFinalsDay;
+    return gStuccoRoomsBTriggersFinalsDay;
   }
-  return gStuccoRoomsBEventsFestival;
+  return gStuccoRoomsBTriggersFestival;
 }
 
 /// Unused: leaves through TRANSITION_WINDOW, a screen transition of 24
@@ -154,39 +153,39 @@ UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   work->transitionFrames = 24;
-  Import_ScriptRequestWarp();
+  Import_ScriptRequestExit();
 }
 
 /// In Tolbi, walking into one of the four doors at metatile behaviors 14 to 17:
-/// every placed object event stops, the door opens and the leader walks through
+/// every placed actor stops, the door opens and the leader walks through
 /// it.
 static void StuccoRoomsB_EnterDoor(void) {
-  u32 localId;
-  struct ObjectEvent *objectEvent;
+  u32 actorId;
+  struct Actor *actor;
   struct FieldWork *work;
   s16 *trigger;
   s32 doorIndex;
 
   work = gFieldWork;
-  // Stop the room's object events before animating the selected doorway.
-  for (localId = LOCALID_FIRST_PLACED;
-       localId < STUCCO_ROOMS_B_OBJ_EVENT_SLOT_END; localId++) {
-    objectEvent = ObjectEvent_GetById(localId);
-    if (objectEvent != 0) {
-      objectEvent->motionFlags = 0;
+  // Stop the room's actors before animating the selected doorway.
+  for (actorId = ACTOR_FIRST_PLACED; actorId < STUCCO_ROOMS_B_ACTOR_SLOT_END;
+       actorId++) {
+    actor = Actor_GetById(actorId);
+    if (actor != 0) {
+      actor->motionFlags = 0;
     }
   }
-  trigger = &work->coordEvent;
+  trigger = &work->stepTrigger;
   doorIndex = *trigger - MB_STUCCO_ROOMS_B_FIRST_DOOR;
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
                        gStuccoRoomsBDoors[doorIndex].x,
                        gStuccoRoomsBDoors[doorIndex].y);
-  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1) / 2,
+  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2,
                                   PIXELS(1) / 4);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Import_ScriptRequestWarp(*trigger);
+  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Import_ScriptRequestExit(*trigger);
 }
 
 /// In Tolbi after Colosso, entering the northeast guest room
@@ -195,81 +194,76 @@ static void StuccoRoomsB_EnterDoor(void) {
 /// the barrel behind the trash pile. "Hey, what's this?" The thing is a Lucky
 /// Medal, found later in that barrel.
 static void StuccoRoomsB_WatchWomanHideMedal(void) {
-  struct ObjectEvent *sparkle;
+  struct Actor *sparkle;
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgTolbiHeyWhatsThis);
 
   // A sparkle on the floor where she finds it.
   FieldScript_WaitFrames(40);
-  sparkle = ObjectEvent_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
-  ObjectEvent_SetSpriteFlags(sparkle, 0);
+  sparkle = Actor_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
+  Actor_SetSpriteFlags(sparkle, 0);
   Object_SelectAnimation(sparkle, 6);
   FieldScript_WaitFrames(10);
   Object_SelectAnimation(sparkle, 1);
   FieldScript_WaitFrames(40);
-  ObjectEvent_Release(sparkle);
+  Actor_Release(sparkle);
   FieldScript_WaitFrames(2);
 
   // She runs to it and picks it up.
-  ObjectEvent_ShowEmote(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  ObjectEvent_SetSpeed(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(1),
-                       PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 600, 848);
-  ObjectEvent_FaceDirection(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH,
-                            0);
+  Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 600, 848);
+  Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
-  Script_ShowMessage(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
+  Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   FieldScript_WaitFrames(30);
-  ObjectEvent_WalkToAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 568, 848);
-  ObjectEvent_FaceDirection(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH,
-                            0);
+  Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 568, 848);
+  Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
 
   // She notices the party.
-  ObjectEvent_ShowEmote(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                        EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
+                  EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, -16);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
+                      FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                        50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
+  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                                    ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                        EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Script_ShowMessage(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
+                  EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
 
   // She hides it and comes back, then leaves.
-  ObjectEvent_SetSpeed(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(7) / 5,
-                       PIXELS(7) / 10);
-  ObjectEvent_WalkByAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 16, 0);
-  ObjectEvent_WalkByAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 32);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(7) / 5,
+                 PIXELS(7) / 10);
+  Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 16, 0);
+  Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 32);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                                   ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
-  ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 16, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+  Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(9) / 5,
-                       PIXELS(9) / 10);
-  ObjectEvent_WalkByAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 48);
-  ObjectEvent_SetPosition(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 0);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(9) / 5,
+                 PIXELS(9) / 10);
+  Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 48);
+  Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 0);
   FieldScript_End();
 }
 
@@ -281,29 +275,29 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgTolbiHeWontSailShipEven);
   FieldScript_WaitFrames(30);
-  ObjectMotion_Launch(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
-  ObjectMotion_Launch(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
-  FieldScript_ShowMessageAndWait(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
+  ObjectMotion_Launch(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
+  ObjectMotion_Launch(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
+  FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   FieldScript_WaitFrames(10);
 
-  FieldEffect_SpawnLinked(LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE,
+  FieldEffect_SpawnLinked(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
                           EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE,
+  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
                                    ANIM_NOD);
   FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_STUCCO_ROOMS_B_THIRD_PASSENGER,
+  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
                                    ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(LOCALID_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE,
+  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
                                    ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_End();
@@ -312,34 +306,33 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
 /// Sets up the rooms on entry. After Colosso: a row of three map cells takes
 /// new metatile behaviors, two of the passengers are drawn at a fixed priority,
 /// the medal woman stands where she hid the medal, the two short events play
-/// once each on their warp destinations, and the passenger who rode the ship
-/// with the party and LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN have left once the
+/// once each on their entrances, and the passenger who rode the ship
+/// with the party and ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN have left once the
 /// party has seen the tour guide on the Tolbi docks tell a passenger his ticket
 /// was refunded.
 s32 StuccoRoomsB_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
-    objectEvent = ObjectEvent_GetById(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER);
+    actor = Actor_GetById(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
     // Stored as a plain byte: the field store allocates the zero differently.
-    *(u8 *)&objectEvent->priorityFlags = clearedPriorityFlags = 0;
-    objectEvent->sprite->image.priority = 2;
-    objectEvent = ObjectEvent_GetById(LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE);
-    objectEvent->priorityFlags = clearedPriorityFlags;
-    objectEvent->sprite->image.priority = 2;
+    *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
+    actor->sprite->image.priority = 2;
+    actor = Actor_GetById(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE);
+    actor->priorityFlags = clearedPriorityFlags;
+    actor->sprite->image.priority = 2;
     if (Script_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) != 0) {
-      ObjectEvent_SetPosition(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(560),
-                              PIXELS(680));
-      ObjectEvent_FaceDirection(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST,
-                                0);
+      Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(560),
+                        PIXELS(680));
+      Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST, 0);
     }
     // Each short event plays once, only when entering its room.
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
       if (Script_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN);
@@ -347,7 +340,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
         StuccoRoomsB_WatchWomanHideMedal();
       }
     }
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE) {
       if (Script_GetFlag(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN);
@@ -357,9 +350,8 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
     if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
-      Import_ObjectEventSetPosition(LOCALID_STUCCO_ROOMS_B_FELLOW_PASSENGER, 0,
-                                    0);
-      Import_ObjectEventSetPosition(LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN, 0, 0);
+      Import_ActorSetPosition(ACTOR_STUCCO_ROOMS_B_FELLOW_PASSENGER, 0, 0);
+      Import_ActorSetPosition(ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN, 0, 0);
     }
   }
   return 0;
@@ -369,7 +361,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
 /// west) opens STUCCO_ROOMS_B_ITEM_SHOP; from elsewhere talks about the
 /// finals.
 static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
     Shop_Run(STUCCO_ROOMS_B_ITEM_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -386,7 +378,7 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
 /// In Tolbi, the weapon merchant: across the counter (the leader facing
 /// north) opens the shop; otherwise talks about Colosso.
 static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_WEAPON_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -406,7 +398,7 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
 /// In Tolbi, the armor merchant: across the counter (the leader facing north)
 /// opens the shop; otherwise talks about the finals.
 static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_ARMOR_SHOP, speaker);
   } else {
@@ -475,7 +467,7 @@ static void StuccoRoomsB_ReadMedalWomanMind(void) {
   } else {
     FieldScript_SetMessageId(MsgTolbiThingFoundDefinitelySameAs);
   }
-  FieldScript_ShowMessageAndWait(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   FieldScript_End();
 }
 
@@ -484,8 +476,8 @@ static void StuccoRoomsB_ReadMedalWomanMind(void) {
 static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgTolbiGrrrScamWhyWontThey);
-  ObjectEvent_ShowEmote(LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER,
-                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Script_ShowMessage(speaker, 0);
   FieldScript_End();
 }
@@ -502,7 +494,7 @@ static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
 /// In Tolbi Sanctum, the healer: across the counter (the leader facing north)
 /// opens the sanctum; otherwise talks about the festival.
 static void StuccoRoomsB_TalkToHealer(s32 speaker) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
@@ -519,7 +511,7 @@ static void StuccoRoomsB_TalkToHealer(s32 speaker) {
   }
 }
 
-/// An object event that squashes and stretches twice, then rests 40 frames.
+/// An actor that squashes and stretches twice, then rests 40 frames.
 s32 gStuccoRoomsBSquashStretch[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
@@ -550,8 +542,8 @@ s32 gStuccoRoomsBSquashStretch[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gStuccoRoomsBWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gStuccoRoomsBEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {STUCCO_ROOMS_B_HOUSE_NORTHEAST, CONDITION_ALWAYS, 160, 0, 216,
      FACING_NORTH, 0, 0, 0, 256, 256, 0},
@@ -600,51 +592,52 @@ struct MapWarpDest gStuccoRoomsBWarpDests[] = {
 
     {STUCCO_ROOMS_B_SANCTUM_NORTH, CONDITION_ALWAYS, 824, 0, 352, FACING_NORTH,
      0, 688, 248, 944, 568, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
-u32 gStuccoRoomsBWarps[] = {
-    MAP_WARPS(StuccoRoomsB),
-    MAP_WARP(STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI, Tolbi,
-             TOLBI_FROM_HOUSE_NORTHWEST),
-    MAP_WARP(STUCCO_ROOMS_B_INN_TO_TOLBI, Tolbi, TOLBI_FROM_INN),
-    MAP_WARP(STUCCO_ROOMS_B_TO_TOLBI_EAST, Tolbi,
-             TOLBI_FROM_STUCCO_ROOMS_B_EAST),
-    MAP_WARP(STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI, Tolbi,
-             TOLBI_FROM_HOUSE_NORTHEAST),
-    MAP_WARP(STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI, Tolbi, TOLBI_FROM_HOUSE_EAST),
-    MAP_WARP(STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI, Tolbi,
-             TOLBI_FROM_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI, Tolbi,
-             TOLBI_FROM_HOUSE_SOUTHWEST),
-    MAP_WARP(STUCCO_ROOMS_B_SANCTUM_TO_TOLBI, Tolbi, TOLBI_FROM_SANCTUM),
-    MAP_WARP(STUCCO_ROOMS_B_TO_TOLBI_WEST, Tolbi,
-             TOLBI_FROM_STUCCO_ROOMS_B_WEST),
-    MAP_WARP(STUCCO_ROOMS_B_INN_TO_INN_PASSAGE, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_PASSAGE_FROM_INN),
-    MAP_WARP(STUCCO_ROOMS_B_INN_PASSAGE_TO_INN, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST, StuccoRoomsB,
-             STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST, StuccoRoomsB,
-             STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, StuccoRoomsB,
-             STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, StuccoRoomsB,
-             STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST),
-    MAP_WARP(STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST),
-    MAP_WARP(STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST),
-    MAP_WARP(STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE, StuccoRoomsB,
-             STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST),
-    MAP_WARPS_END,
+u32 gStuccoRoomsBExits[] = {
+    SCENE_EXITS(StuccoRoomsB),
+    SCENE_EXIT(STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI, Tolbi,
+               TOLBI_FROM_HOUSE_NORTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_TO_TOLBI, Tolbi, TOLBI_FROM_INN),
+    SCENE_EXIT(STUCCO_ROOMS_B_TO_TOLBI_EAST, Tolbi,
+               TOLBI_FROM_STUCCO_ROOMS_B_EAST),
+    SCENE_EXIT(STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI, Tolbi,
+               TOLBI_FROM_HOUSE_NORTHEAST),
+    SCENE_EXIT(STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI, Tolbi,
+               TOLBI_FROM_HOUSE_EAST),
+    SCENE_EXIT(STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI, Tolbi,
+               TOLBI_FROM_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI, Tolbi,
+               TOLBI_FROM_HOUSE_SOUTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_B_SANCTUM_TO_TOLBI, Tolbi, TOLBI_FROM_SANCTUM),
+    SCENE_EXIT(STUCCO_ROOMS_B_TO_TOLBI_WEST, Tolbi,
+               TOLBI_FROM_STUCCO_ROOMS_B_WEST),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_TO_INN_PASSAGE, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_PASSAGE_FROM_INN),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_PASSAGE_TO_INN, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST, StuccoRoomsB,
+               STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST, StuccoRoomsB,
+               STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, StuccoRoomsB,
+               STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, StuccoRoomsB,
+               STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST),
+    SCENE_EXIT(STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE, StuccoRoomsB,
+               STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplates[] = {
+struct ActorTemplate gStuccoRoomsBActorTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -691,10 +684,10 @@ struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplates[] = {
         PIXELS(848), 0, PIXELS(864), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(824), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplatesAfterColosso[] = {
+struct ActorTemplate gStuccoRoomsBActorTemplatesAfterColosso[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -753,248 +746,248 @@ struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplatesAfterColosso[] = {
         PIXELS(440), 0, PIXELS(864), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(416), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct MapEvent gStuccoRoomsBEventsFestival[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHost) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICouldntSleepAtAllLast) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrowdsAtTheColosseumMade) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWePaidGoodMoneyToRent) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIReallyWantToSeeColosso) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWahhhIWantToSeeColosso) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfTheyReallyCant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsATourGroupCameFromKalay) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeArentGoingToGetTo) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImNotVeryInterestedInColosso) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOhNoWeBarelyMadeIt) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWedGottenHereJustA) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceColossoStartsWereGoingTo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsTooLateToStartLooking) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfICouldHaveSleptLast) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhUhCrowdsAreADefinite) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeGetToStayHereUntil) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasStubbornISaidIm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIKeepOnCryingButDaddy) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeThatBabisSoldiersAre) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeBabiLovesColossoBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeJustTakesACutOf) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNamingTheLighthouseHeBuiltAfter) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGuessINeverWouldHave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheyHaveSomeNiceThingsFor) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiChoosesColossosVictorsToBe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTourGroupIsFeelingCramped) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeCantHandleTooManyMore) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToGoToThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentEnoughBedsForThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheInnkeeperToldMeToCook) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHaveAHeadacheJustThinking) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenThoughICantEnterColosso) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
-    { MAP_EVENTS_END },
+struct Trigger gStuccoRoomsBTriggersFestival[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
+    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
+    { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHost) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICouldntSleepAtAllLast) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrowdsAtTheColosseumMade) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWePaidGoodMoneyToRent) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIReallyWantToSeeColosso) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWahhhIWantToSeeColosso) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfTheyReallyCant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsATourGroupCameFromKalay) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeArentGoingToGetTo) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImNotVeryInterestedInColosso) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOhNoWeBarelyMadeIt) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWedGottenHereJustA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceColossoStartsWereGoingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsTooLateToStartLooking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfICouldHaveSleptLast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhUhCrowdsAreADefinite) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeGetToStayHereUntil) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasStubbornISaidIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIKeepOnCryingButDaddy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeThatBabisSoldiersAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeBabiLovesColossoBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeJustTakesACutOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNamingTheLighthouseHeBuiltAfter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGuessINeverWouldHave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheyHaveSomeNiceThingsFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiChoosesColossosVictorsToBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTourGroupIsFeelingCramped) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeCantHandleTooManyMore) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToGoToThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentEnoughBedsForThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheInnkeeperToldMeToCook) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHaveAHeadacheJustThinking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenThoughICantEnterColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gStuccoRoomsBEventsFinalsDay[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheFestivalScheduleWasDelayedFor) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatsStrangeIWonderWhatHappened) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIJustSawBabiTheTowns) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHereIAmInTolbiFor) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToWatchTheFinals) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHoorayWereGoingToColossoNow) },
+struct Trigger gStuccoRoomsBTriggersFinalsDay[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
+    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
+    { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheFestivalScheduleWasDelayedFor) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatsStrangeIWonderWhatHappened) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIJustSawBabiTheTowns) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHereIAmInTolbiFor) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToWatchTheFinals) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHoorayWereGoingToColossoNow) },
 #if TBS_PATCH_4
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_AskWhetherBabiWasMissing) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiDecidedShowUpForFinals) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_AskWhetherBabiWasMissing) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiDecidedShowUpForFinals) },
 #else
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWellIGuessSoSinceHes) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhThenTheyFoundHimIn) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWellIGuessSoSinceHes) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhThenTheyFoundHimIn) },
 #endif
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHmmIThoughtAllMenLoved) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheMomentIHearTheFinals) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoIsEndingSoonIts) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheColossoFinalsAreStartingSoon) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeIllDoSomeResearchOn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsAreWeMakingMoreMoneyNow) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoTheyDidExtendTheFestival) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICantAffordToStayHere) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheAirInTheColosseumIs) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfSomebodyElseWouldWatchThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsAlreadyAtTheFinals) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceWeDidntGetToSee) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoWhatWereBabisSoldiersDoing) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeWatchingTheTrialsIsToo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBeforeHeStartedTheLighthouseBabi) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiHasBeenMakingStrangeReferences) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAllBuyWeaponsAnd) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouCouldSayTheWarriorsIn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomFindsOutIWent) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImTheOneWhoReallyWants) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThingsSettleDownImSure) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfTheMasterSlipsOutThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeWomenAreTheOnlyOnes) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHasntTheMasterGoneToColosso) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIDontHaveAnyParticularInterest) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWantToSeeTheFinals) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
-    { MAP_EVENTS_END },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHmmIThoughtAllMenLoved) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheMomentIHearTheFinals) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoIsEndingSoonIts) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheColossoFinalsAreStartingSoon) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeIllDoSomeResearchOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsAreWeMakingMoreMoneyNow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoTheyDidExtendTheFestival) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICantAffordToStayHere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheAirInTheColosseumIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfSomebodyElseWouldWatchThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsAlreadyAtTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceWeDidntGetToSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoWhatWereBabisSoldiersDoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeWatchingTheTrialsIsToo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBeforeHeStartedTheLighthouseBabi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiHasBeenMakingStrangeReferences) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAllBuyWeaponsAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouCouldSayTheWarriorsIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomFindsOutIWent) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImTheOneWhoReallyWants) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThingsSettleDownImSure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfTheMasterSlipsOutThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeWomenAreTheOnlyOnes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHasntTheMasterGoneToColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIDontHaveAnyParticularInterest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWantToSeeTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gStuccoRoomsBEventsAfterColosso[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
-    { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeHadALotOfGuests) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIRentedMyHouseToA) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAreAllInA) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasSoMovedByThis) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatLittleGuyJumpedStraightInto) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidYouKnowMtAlephErupted) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToMedalWoman) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToChef) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWaitress) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSighMakingTheBedsHasWorn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIdLoveAVacationButWhere) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheShipsStartSailingAgain) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardOfACaveThat) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsWhoFoughtInThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDaringAndBraveryAreNiceAnd) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSparklingStonesThatRainedFrom) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIllBetTheMonstersWereFrightened) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItBothersMeABitThat) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentManyMerchantsAtThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenWithoutTheShipsICould) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidAllTheWarriorsWhoFought) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGonnaWatchTheFinalsNext) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceTheShipsArentSailingThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeeHeeItsGreatTheInns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEveryoneIsWorkingOnBabiLighthouse) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_ReadMedalWomanMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsGrrrIDidntGetToSee) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeyChefSoWhatIfYou) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsITriedGoingToTheEastern) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToAngryPassenger) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_BORED_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_ANGRY_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoureSayingIfWeRowWe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_BORED_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_FELLOW_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToFellowPassenger) },
-    { MAP_EVENT_TALK, LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_FELLOW_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
-    { BG_EVENT(BG_EVENT_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
-    { BG_EVENT(BG_EVENT_BARREL), MB_STUCCO_ROOMS_B_HIDDEN_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENTS_END },
+struct Trigger gStuccoRoomsBTriggersAfterColosso[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_TOLBI },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_EAST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI },
+    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_B_SANCTUM_TO_TOLBI },
+    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_B_TO_TOLBI_WEST },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
+    { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_EnterDoor) },
+    { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
+    { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeHadALotOfGuests) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIRentedMyHouseToA) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAreAllInA) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasSoMovedByThis) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatLittleGuyJumpedStraightInto) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidYouKnowMtAlephErupted) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToMedalWoman) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToChef) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToWaitress) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSighMakingTheBedsHasWorn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIdLoveAVacationButWhere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheShipsStartSailingAgain) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardOfACaveThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsWhoFoughtInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDaringAndBraveryAreNiceAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSparklingStonesThatRainedFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIllBetTheMonstersWereFrightened) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItBothersMeABitThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentManyMerchantsAtThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenWithoutTheShipsICould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidAllTheWarriorsWhoFought) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGonnaWatchTheFinalsNext) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceTheShipsArentSailingThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeeHeeItsGreatTheInns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEveryoneIsWorkingOnBabiLighthouse) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_ReadMedalWomanMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsGrrrIDidntGetToSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeyChefSoWhatIfYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsITriedGoingToTheEastern) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToAngryPassenger) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_BORED_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoureSayingIfWeRowWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_BORED_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_FELLOW_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(StuccoRoomsB_TalkToFellowPassenger) },
+    { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_FELLOW_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_VIAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+    { EXAMINE_TRIGGER(EXAMINE_OVEN), MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_STUCCO_ROOMS_B_INN_SIGN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_STUCCO_ROOMS_B_HIDDEN_MEDAL_BARREL, FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { TRIGGERS_END },
 };
 // clang-format on
 

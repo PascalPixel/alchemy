@@ -13,16 +13,16 @@
 /// on, pushing against or searching the cell does.
 enum MetatileBehavior {
   MB_NORMAL = 0, ///< open ground: nothing happens there
-  /// 1 to 239: the map's own events, coord event or warp when stepped on
-  /// (Scene_RunCoordEventOrWarp), bg event when the player presses A facing the
-  /// cell.
+  /// 1 to 239: the map's own events, step trigger or exit when stepped on
+  /// (Scene_RunStepTriggerOrExit), examine trigger when the player presses A
+  /// facing the cell.
   MB_EVENT_FIRST = 1,
   MB_EVENT_LAST = 239,
   /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
   MB_ENCOUNTER_GROUND_1 = 240,
   MB_ENCOUNTER_GROUND_2 = 241,
-  /// 242 to 247: bg events with lines of their own, the same on every map
-  /// (Field_SearchCell, gField_BgEventMessageOffsets).
+  /// 242 to 247: examine triggers with lines of their own, the same on every
+  /// map (Field_SearchCell, gField_ExamineTriggerMessageOffsets).
   MB_JAR = 242,
   MB_BARREL = 243,
   MB_WOODEN_BOX = 244,
@@ -84,16 +84,15 @@ struct TilesetAnim {
 };
 
 /// A layout's three layers, by what they hold. Most layouts give them
-/// priorities 3, 2 and 1. An object event takes its sprite's priority from the
-/// cell under it (OBJ_EVENT_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
+/// priorities 3, 2 and 1. An actor takes its sprite's priority from the
+/// cell under it (ACTOR_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
 /// 2 on open ground, which puts it over the middle layer and under the overhead
 /// one, and 3 where the cells put it behind a building. Each layer shows on its
 /// own background: `BG3`, `BG2` and `BG1`.
 enum MapGridLayerIndex {
-  MAPGRID_LAYER_GROUND = 0, ///< `BG3`: the ground, at the back
-  MAPGRID_LAYER_MIDDLE = 1, ///< `BG2`: walls and edges, under the object events
-  MAPGRID_LAYER_OVERHEAD =
-      2, ///< `BG1`: roofs and tree tops, over the object events
+  MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
+  MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
+  MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
   MAPGRID_LAYER_COUNT = 3
 };
 

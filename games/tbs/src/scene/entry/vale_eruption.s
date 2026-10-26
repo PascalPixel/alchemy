@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ValeEruption_Initialize
-	overlay_veneer ValeEruption_GetWarpDests
-	overlay_veneer ValeEruption_GetWarps
-	overlay_veneer ValeEruption_GetObjectEventTemplates
-	overlay_veneer ValeEruption_GetEvents
+	overlay_veneer ValeEruption_GetEntrances
+	overlay_veneer ValeEruption_GetExits
+	overlay_veneer ValeEruption_GetActorTemplates
+	overlay_veneer ValeEruption_GetTriggers
 	overlay_veneer ValeEruption_GetRegions

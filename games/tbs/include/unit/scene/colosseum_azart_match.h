@@ -2,14 +2,13 @@
 #define ALCHEMY_UNIT_MAP_COLOSSEUM_AZART_MATCH_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *ColosseumAzartMatch_GetWarpDests(void);
-const struct MapWarpRegion *ColosseumAzartMatch_GetRegions(void);
-const u32 *ColosseumAzartMatch_GetWarps(void);
-const struct ObjectEventTemplate *
-ColosseumAzartMatch_GetObjectEventTemplates(void);
-const struct MapEvent *ColosseumAzartMatch_GetEvents(void);
+const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void);
+const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void);
+const u32 *ColosseumAzartMatch_GetExits(void);
+const struct ActorTemplate *ColosseumAzartMatch_GetActorTemplates(void);
+const struct Trigger *ColosseumAzartMatch_GetTriggers(void);
 s32 ColosseumAzartMatch_Initialize(void);
 extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColosseumAzartMatch_LetteringDigit[];
@@ -18,11 +17,11 @@ extern char gHexDigits[20];
 extern s32 gColosseumAzartMatch_ScriptA[];
 extern s32 gColosseumAzartMatch_ScriptB[];
 extern u32 gColosseumAzartMatch_DirectionSteps[];
-extern struct MapWarpDest gColosseumAzartMatch_WarpDests[];
-extern u32 gColosseumAzartMatch_Warps[];
-extern struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[];
+extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
+extern u32 gColosseumAzartMatch_Exits[];
+extern struct ActorTemplate gColosseumAzartMatch_ActorTemplates[];
 extern s32 gColosseumAzartMatch_Countdown;
-extern struct MapEvent gColosseumAzartMatch_Events[];
+extern struct Trigger gColosseumAzartMatch_Triggers[];
 extern s16 gColosso_LetteringSlot;
 extern s16 gColosseumAzartMatch_LetteringTitle[];
 extern s16 gColosseumAzartMatch_LetteringGo[];

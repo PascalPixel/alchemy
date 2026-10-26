@@ -5,7 +5,7 @@
 
 #include "../screens_internal.h"
 
-/// Schedules the debug map and warp destination selector;
+/// Schedules the debug map and entrance selector;
 /// TASK_PRIORITY_MAIN_LOOP is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 UNUSED void DebugMapSelect_Schedule(void) {
@@ -16,28 +16,28 @@ UNUSED void DebugMapSelect_Schedule(void) {
 #endif
 }
 
-/// Draws the debug map and warp destination numbers with their category/area
+/// Draws the debug map and entrance numbers with their category/area
 /// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
-/// beside it, the area its warp destination leads to (MsgDebugEntryName +
+/// beside it, the area its entrance leads to (MsgDebugEntryName +
 /// area); the numbers, three digits each, go under them.
 void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
-                            const s16 *warpDest) {
+                            const s16 *entrance) {
   s16 mapIndex = sceneId;
-  s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
+  s32 label = Area_GetNameIndexFar(mapIndex, *entrance) + MsgDebugEntryName;
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(mapIndex, 3, window, 0, 14);
-  Text_DrawNumber(*warpDest, 3, window, MENU_LABEL_X, 14);
+  Text_DrawNumber(*entrance, 3, window, MENU_LABEL_X, 14);
   Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
   Text_DrawMessage(mapIndex + MsgDebugCategoryName, window, 0, 0);
   Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
-// The debug map selector: a map and a warp destination number, starting from
-// the map being run (DebugMapSelect_HandleRowInput has the keys). A warps
+// The debug map selector: a map and an entrance number, starting from
+// the map being run (DebugMapSelect_HandleRowInput has the keys). An exits
 // there (FieldScript_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
-// settings) is opened with B held (overworld/overworld/run_map.c).
+// settings) is opened with B held (overworld/overworld/run_scene.c).
 // The task runner and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders FieldScript_SetDestinationFar's argument setup.
@@ -48,7 +48,7 @@ s16 DebugMapSelect_Run(void) {
 #endif
   s32 cursorSlot;
   s16 selectedField;
-  s16 warpDest;
+  s16 entrance;
   struct MenuSprite cursor;
   s16 sceneId;
   struct Window *window;
@@ -57,9 +57,9 @@ s16 DebugMapSelect_Run(void) {
   window = 0;
   selectedField = 0;
   sceneId = gSaveBlock.defaultScene;
-  warpDest = gSaveBlock.defaultWarpDest;
+  entrance = gSaveBlock.defaultEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
-  DebugMapSelect_DrawRow(window, sceneId, &warpDest);
+  DebugMapSelect_DrawRow(window, sceneId, &entrance);
   MenuArrow_Create(&cursor, &cursorSlot);
 
   // Wait for the keys that opened it to be let go.
@@ -67,12 +67,12 @@ s16 DebugMapSelect_Run(void) {
     WaitFrames(1);
 
   for (;;) {
-    result = DebugMapSelect_HandleRowInput(window, sceneId, &warpDest,
+    result = DebugMapSelect_HandleRowInput(window, sceneId, &entrance,
                                            &selectedField);
     if (result == -1) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
-      FieldScript_SetDestinationFar(sceneId, warpDest);
+      FieldScript_SetDestinationFar(sceneId, entrance);
 #ifdef UBFIX
       return;
 #else
@@ -96,16 +96,16 @@ s16 DebugMapSelect_Run(void) {
   }
 }
 
-/// Edits the debug map or warp destination, returning -1 to warp and -2 to
-/// cancel. Shoulder buttons step by ten; it keeps the original 99-step warp
-/// destination wrap. Otherwise it returns the map after this frame's keys. Up
-/// and Down switch the field (`selectedField`: 0 map, 1 warp destination), Left
-/// and Right step by one, wrapping maps 0 to 200 and warp destinations 0 to 99.
-/// R and L step a map by ten, setting the warp destination to 0, and past
-/// either end go to the other (195 + 10 gives 0); they step a warp destination
+/// Edits the debug map or entrance, returning -1 to exit and -2 to
+/// cancel. Shoulder buttons step by ten; it keeps the original 99-step
+/// entrance wrap. Otherwise it returns the map after this frame's keys. Up
+/// and Down switch the field (`selectedField`: 0 map, 1 entrance), Left
+/// and Right step by one, wrapping maps 0 to 200 and entrances 0 to 99.
+/// R and L step a map by ten, setting the entrance to 0, and past
+/// either end go to the other (195 + 10 gives 0); they step an entrance
 /// by ten, wrapping by 99 (95 + 10 gives 6).
 s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
-                                  s16 *warpDest, s16 *selectedField) {
+                                  s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
     return -1;
   if (gKeysRepeat & KEY_B)
@@ -118,48 +118,48 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
     if (*selectedField == 0) {
       sceneId++;
     } else {
-      (*warpDest)++;
-      if (*warpDest > 99)
-        *warpDest = 0;
+      (*entrance)++;
+      if (*entrance > 99)
+        *entrance = 0;
     }
     if (sceneId > 200)
       sceneId = 0;
-    DebugMapSelect_DrawRow(window, sceneId, warpDest);
+    DebugMapSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*selectedField == 0) {
       sceneId--;
     } else {
-      (*warpDest)--;
-      if (*warpDest < 0)
-        *warpDest = 99;
+      (*entrance)--;
+      if (*entrance < 0)
+        *entrance = 99;
     }
     if (sceneId < 0)
       sceneId = 200;
-    DebugMapSelect_DrawRow(window, sceneId, warpDest);
+    DebugMapSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
-      *warpDest = 0;
+      *entrance = 0;
       sceneId += 10;
     } else {
-      *warpDest += 10;
-      if (*warpDest > 99)
-        *warpDest -= 99;
+      *entrance += 10;
+      if (*entrance > 99)
+        *entrance -= 99;
     }
     if (sceneId > 200)
       sceneId = 0;
-    DebugMapSelect_DrawRow(window, sceneId, warpDest);
+    DebugMapSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
-      *warpDest = 0;
+      *entrance = 0;
       sceneId -= 10;
     } else {
-      *warpDest -= 10;
-      if (*warpDest < 0)
-        *warpDest += 99;
+      *entrance -= 10;
+      if (*entrance < 0)
+        *entrance += 99;
     }
     if (sceneId < 0)
       sceneId = 200;
-    DebugMapSelect_DrawRow(window, sceneId, warpDest);
+    DebugMapSelect_DrawRow(window, sceneId, entrance);
   }
   return sceneId;
 }
@@ -168,7 +168,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
 /// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
 /// flags 0x800 to 0x8ff (DebugFlagEditor_HandleInput has the keys). The field
 /// opens it in debug mode when the main menu (Psynergy, Djinn, Item, Status)
-/// is opened with B and Select held (overworld/overworld/run_map.c).
+/// is opened with B and Select held (overworld/overworld/run_scene.c).
 s32 DebugFlagEditor_Run(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
@@ -324,7 +324,7 @@ void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
 /// Handles Save, Sleep and Options from the pause menu. A cancelled save
 /// or option menu reopens the pause menu; cancelling the pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
-/// 0. The field reaches it by far call (overworld/overworld/run_map.c).
+/// 0. The field reaches it by far call (overworld/overworld/run_scene.c).
 s32 PauseMenu_Run(void) {
   s32 result;
 

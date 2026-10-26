@@ -27,12 +27,12 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
+	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
@@ -43,7 +43,7 @@
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.ObjectEvent_Snapshot, 1
+	.set import.Actor_Snapshot, 1
 	.set import.Sound_WaitForFanfare, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

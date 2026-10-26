@@ -2,14 +2,13 @@
 #define ALCHEMY_UNIT_MAP_MERCURY_LIGHTHOUSE_ENTRANCE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *MercuryLighthouseEntrance_GetWarpDests(void);
-const struct MapWarpRegion *MercuryLighthouseEntrance_GetRegions(void);
-const u32 *MercuryLighthouseEntrance_GetWarps(void);
-const struct ObjectEventTemplate *
-MercuryLighthouseEntrance_GetObjectEventTemplates(void);
-const struct MapEvent *MercuryLighthouseEntrance_GetEvents(void);
+const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void);
+const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void);
+const u32 *MercuryLighthouseEntrance_GetExits(void);
+const struct ActorTemplate *MercuryLighthouseEntrance_GetActorTemplates(void);
+const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void);
 s32 MercuryLighthouseEntrance_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -30,11 +29,10 @@ extern s32 gMercuryLighthouseEntrance_LizardManStepEast[];
 extern s32 gPaletteCycleRed;
 extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
-extern struct MapWarpDest gMercuryLighthouseEntrance_WarpDests[];
-extern u32 gMercuryLighthouseEntrance_Warps[];
-extern struct ObjectEventTemplate
-    gMercuryLighthouseEntrance_ObjectEventTemplates[];
-extern struct MapEvent gMercuryLighthouseEntrance_Events[];
+extern struct SceneEntrance gMercuryLighthouseEntrance_Entrances[];
+extern u32 gMercuryLighthouseEntrance_Exits[];
+extern struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[];
+extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
 extern s32 gMercuryLighthouseEntrance_SparkBurstScript[];
 
 #endif

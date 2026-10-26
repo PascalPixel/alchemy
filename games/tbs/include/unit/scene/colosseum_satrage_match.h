@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_COLOSSEUM_SATRAGE_MATCH_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 ColosseumSatrageMatch_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
 #ifdef UBFIX
@@ -29,12 +29,12 @@ extern char gHexDigits[20];
 extern s32 gColosseumSatrageMatch_SparkScript[];
 extern s32 gColosseumSatrageMatch_RaiseScript[];
 extern u32 gColosseumSatrageMatch_DirectionSteps[];
-extern struct MapWarpDest gColosseumSatrageMatchWarpDests[];
-extern u32 gColosseumSatrageMatchWarps[];
-extern struct ObjectEventTemplate gColosseumSatrageMatchObjectEventTemplates[];
+extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
+extern u32 gColosseumSatrageMatchExits[];
+extern struct ActorTemplate gColosseumSatrageMatchActorTemplates[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
-extern struct MapEvent gColosseumSatrageMatchEvents[];
+extern struct Trigger gColosseumSatrageMatchTriggers[];
 extern s16 gColosso_LetteringSlot;
 extern s16 gColosseumSatrageMatch_LetteringTitle[];
 extern s16 gColosseumSatrageMatch_LetteringGo[];

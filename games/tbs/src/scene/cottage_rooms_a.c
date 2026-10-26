@@ -1,9 +1,9 @@
 /// @file
 /// Cottage rooms A (SceneId_CottageRoomsA), a sheet of rooms drawn as cottages:
 /// the game packs rooms that share a tile style onto one map, and every room on
-/// this one is Vale's. Each room is a warp destination with a camera box of its
-/// own, named for the door it is entered by, and its door takes the warp of the
-/// same number back out. In story order, by the warps that lead in:
+/// this one is Vale's. Each room is an entrance with a camera box of its
+/// own, named for the door it is entered by, and its door takes the exit of the
+/// same number back out. In story order, by the exits that lead in:
 ///
 /// - From the village (SceneId_Vale, and on the stormy night
 ///   SceneId_ValeStormyNight): the house of Garet's family
@@ -19,14 +19,14 @@
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH and
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
 /// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
-///   warp destination gives, so no door leads in.
+///   entrance gives, so no door leads in.
 ///
-/// The object event templates and map events follow the story:
+/// The actor templates and triggers follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetWarps).
+///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetExits).
 ///   The jars and the barrel are empty, and six more bookcases than by day can
 ///   be read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -46,7 +46,7 @@
 ///   pacing. The villagers now worry about Dora, ill since Isaac left.
 ///
 /// While Garet's grandfather dozes in EventScript_GaretComesHome, three letters
-/// Z (LOCALID_FIRST_SLEEP_Z and the two after it) rise from him, one at each of
+/// Z (ACTOR_FIRST_SLEEP_Z and the two after it) rise from him, one at each of
 /// frames 10, 20 and 30 of every 180 (CottageRoomsA_SpawnSleepZ): each
 /// starts 24 pixels above him at two fifths of its size and grows a fortieth
 /// a frame as it climbs ever more slowly and drifts right ever faster
@@ -61,7 +61,7 @@
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "fxblend.h"
 #include "script_layer.h"
@@ -69,7 +69,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
@@ -77,91 +77,91 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The placed object events, numbered in the order of the object event template
+/// The placed actors, numbered in the order of the actor template
 /// tables, which all place them alike;
-/// gCottageRoomsA_ObjectEventTemplatesAfterKalay adds Garet, Ivan and Mia,
+/// gCottageRoomsA_ActorTemplatesAfterKalay adds Garet, Ivan and Mia,
 /// who keep their characters' ids, and the drifting sprites. The villagers'
 /// notes quote what they say on the day the story begins.
-enum CottageRoomsALocalId {
+enum CottageRoomsAActorId {
   /// Garet's grandfather, the mayor, an old man with white hair and a cane
   /// ("your grandpa's the mayor", vale.c). "Isaac, please take care of my
   /// grandson, Garet."
   /// ★ Named from the game: "please take care of my grandson"
   /// (MsgValeIsaacPleaseTakeCareOfMy)
-  LOCALID_GARETS_GRANDFATHER = LOCALID_FIRST_PLACED,
+  ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED,
   /// Garet's grandmother, an old woman with white hair. "Grandma! What's the
   /// matter? Are you choking?"
   /// ★ Named from the game: "Are you choking" (MsgValeHey2)
-  LOCALID_GARETS_GRANDMOTHER,
+  ACTOR_GARETS_GRANDMOTHER,
   /// Garet's father, a man with brown hair in a teal shirt.
   /// "I'm proud of you, Garet. My own son...on such an important quest!"
   /// ★ Named from the game: "My own son" (MsgValeImProudOfYouGaretMy)
-  LOCALID_GARETS_FATHER,
+  ACTOR_GARETS_FATHER,
   /// Garet's mother, a woman with orange hair under a green headscarf. "As
   /// mothers, Dora and I will always worry about you."
   /// ★ Named from the game: "he is my son" (MsgValeIAmConcernedForGaretBut)
-  LOCALID_GARETS_MOTHER,
+  ACTOR_GARETS_MOTHER,
   /// Jenna's grandfather, a bent old man with a white beard and a cane. "My
   /// granddaughter, Jenna, is finally happy again..."
   /// ★ Named from the game: "My granddaughter,"
   /// (MsgValeMyGranddaughterJennaIsFinallyHappy)
-  LOCALID_JENNAS_GRANDFATHER,
+  ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother, an old woman with white hair. "Please return my
   /// precious granddaughter, Jenna, to me." Once Jenna is taken,
-  /// LOCALID_WOMAN_ON_THE_SPITTING_IMAGE says she "grew sick with despair", and
+  /// ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she "grew sick with despair", and
   /// she lies in bed.
   /// ★ Named from the game: "Please return my precious granddaughter"
   /// (MsgValePleaseReturnMyPreciousGranddaughterJenna)
-  LOCALID_JENNAS_GRANDMOTHER,
+  ACTOR_JENNAS_GRANDMOTHER,
   /// A woman in a green dress in Jenna's grandparents' house. "Jenna is the
   /// spitting image of her mother, whom we lost that day..."
   /// ★ Named from the game: "is the spitting image of her mother"
   /// (MsgValeJennaIsTheSpittingImageOf)
-  LOCALID_WOMAN_ON_THE_SPITTING_IMAGE,
+  ACTOR_WOMAN_ON_THE_SPITTING_IMAGE,
   /// A burly grey-haired man: "So Kraden came to Vale to study Mt. Aleph,
   /// right?"
   /// ★ Named from the game: "It's because Kraden was studying Alchemy..."
   /// (MsgValeItsBecauseKradenWasStudyingAlchemy)
-  LOCALID_MAN_ON_KRADENS_STUDIES,
+  ACTOR_MAN_ON_KRADENS_STUDIES,
   /// A woman in a green dress: "If there are visitors in town, we can't use our
   /// Psynergy."
   /// ★ Named from the game: "If there are visitors in town, we can't use our
   /// Psynergy." (MsgValeIfThereAreVisitorsInTown)
-  LOCALID_WOMAN_ON_VISITORS_IN_TOWN,
+  ACTOR_WOMAN_ON_VISITORS_IN_TOWN,
   /// A young man with brown hair: "Do you ever dream of seeing the world
   /// outside the village?"
   /// ★ Named from the game: "Do you ever dream of seeing the world outside
   /// the village?" (MsgValeDoYouEverDreamOfSeeing)
-  LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING,
+  ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING,
   /// A woman with fair hair: "Few people outside of Vale possess the power of
   /// Psynergy. That's why we need permission to leave the village..."
   /// ★ Named from the game: "we need permission to leave the village"
   /// (MsgValeFewPeopleOutsideOfValePossess)
-  LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE,
+  ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE,
   /// A strongman: "I hear old man Kraden's got some visitors. Let's go use our
   /// Psynergy to scare 'em!"
   /// ★ Named from the game: "Let's go use our"
   /// (MsgValeLetsScareKradensVisitors)
-  LOCALID_STRONGMAN_SCARING_VISITORS,
+  ACTOR_STRONGMAN_SCARING_VISITORS,
   /// ★ Named from what the player sees: a young woman with a brown ponytail
   /// who opens the item shop across its counter, beneath the shelves of jars
   /// (its render)
-  LOCALID_ITEM_MERCHANT,
+  ACTOR_ITEM_MERCHANT,
   /// A bald man in a red tunic.
   /// ★ Named from the game: "Good weapons aren't just sharp."
   /// (MsgValeGoodWeaponsDrawOutStrength)
-  LOCALID_WEAPON_MERCHANT,
+  ACTOR_WEAPON_MERCHANT,
   /// A young man with brown hair in a green shirt.
   /// ★ Named from the game: "Good armor isn't just sturdy."
   /// (MsgValeGoodArmorDrawsOutStrength)
-  LOCALID_ARMOR_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
   /// Three letters Z that drift up from Garet's grandfather as he sleeps.
   /// ★ Named from what the player sees: a white letter Z,
   /// spr_280.png (its render)
-  LOCALID_FIRST_SLEEP_Z
+  ACTOR_FIRST_SLEEP_Z
 };
 
-/// Animations of the houses' sprites beyond enum ObjectEventAnimation, as their
+/// Animations of the houses' sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum CottageRoomsAAnimation {
   /// Garet's grandfather standing with his eyes shut, asleep (spr_117.png).
@@ -181,89 +181,88 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gCottageRoomsA_SleepZScript; the object event's
+/// Called each frame by gCottageRoomsA_SleepZScript; the actor's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
 /// CottageRoomsA_SpawnSleepZ.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  struct Actor *actor = (struct Actor *)interpreter;
 
-  objectEvent->x.fixed += (s16)objectEvent->timer * 256;
-  objectEvent->y.fixed += (s16)objectEvent->work * 256;
-  objectEvent->scaleX += Q16_ONE / 40;
-  objectEvent->scaleY += Q16_ONE / 40;
-  objectEvent->timer += 5;
-  objectEvent->work = (s16)objectEvent->work - 1;
+  actor->x.fixed += (s16)actor->timer * 256;
+  actor->y.fixed += (s16)actor->work * 256;
+  actor->scaleX += Q16_ONE / 40;
+  actor->scaleY += Q16_ONE / 40;
+  actor->timer += 5;
+  actor->work = (s16)actor->work - 1;
   return 0;
 }
 
-const struct MapWarpDest *CottageRoomsA_GetWarpDests(void) {
-  return gCottageRoomsA_WarpDests;
+const struct SceneEntrance *CottageRoomsA_GetEntrances(void) {
+  return gCottageRoomsA_Entrances;
 }
 
-const struct MapWarpRegion *CottageRoomsA_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *CottageRoomsA_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-const u32 *CottageRoomsA_GetWarps(void) {
+const u32 *CottageRoomsA_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
-    return gCottageRoomsA_StormWarps;
-  return gCottageRoomsA_Warps;
+    return gCottageRoomsA_StormExits;
+  return gCottageRoomsA_Exits;
 }
 
-/// Selects the object event templates for the day the story begins, after the
+/// Selects the actor templates for the day the story begins, after the
 /// party has left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay
-/// (FLAG_KALAY_REACHED), and marks which of their object events are in view.
-const struct ObjectEventTemplate *CottageRoomsA_GetObjectEventTemplates(void) {
-  struct ObjectEventTemplate *table;
+/// (FLAG_KALAY_REACHED), and marks which of their actors are in view.
+const struct ActorTemplate *CottageRoomsA_GetActorTemplates(void) {
+  struct ActorTemplate *table;
 
   if (GameFlag_Get(FLAG_KALAY_REACHED)) {
-    table = gCottageRoomsA_ObjectEventTemplatesAfterKalay;
+    table = gCottageRoomsA_ActorTemplatesAfterKalay;
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT)) {
-    table = gCottageRoomsA_ObjectEventTemplatesAfterLeaving;
+    table = gCottageRoomsA_ActorTemplatesAfterLeaving;
   } else {
-    table = gCottageRoomsA_ObjectEventTemplates;
+    table = gCottageRoomsA_ActorTemplates;
   }
   Scene_AssignViewFlags(table);
   return table;
 }
 
-/// Selects the map events for the current visit to Vale: the stormy night's
+/// Selects the triggers for the current visit to Vale: the stormy night's
 /// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
 /// story begins.
-const struct MapEvent *CottageRoomsA_GetEvents(void) {
+const struct Trigger *CottageRoomsA_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
-    return gCottageRoomsA_StormEvents;
+    return gCottageRoomsA_StormTriggers;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
-    return gCottageRoomsA_EventsAfterKalay;
+    return gCottageRoomsA_TriggersAfterKalay;
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
-    return gCottageRoomsA_EventsAfterLeaving;
-  return gCottageRoomsA_Events;
+    return gCottageRoomsA_TriggersAfterLeaving;
+  return gCottageRoomsA_Triggers;
 }
 
 /// A burly grey-haired man asks whether Isaac knew why Kraden came to Vale.
 /// He stands in a house of Vale on the day the story begins. Kraden came to
 /// study Mt. Aleph.
 ///
-/// Reached by talking to LOCALID_MAN_ON_KRADENS_STUDIES on the day the story
+/// Reached by talking to ACTOR_MAN_ON_KRADENS_STUDIES on the day the story
 /// begins.
 static void EventScript_AskAboutKradensStudies(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeKradenCameToStudyMt);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_MAN_ON_KRADENS_STUDIES, 6);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_ON_KRADENS_STUDIES, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES, 6);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
   FieldScript_End();
 }
 
 /// A strongman asks Isaac to help scare Kraden's visitors with Psynergy. He
 /// stands in a house of Vale on the day the story begins.
 ///
-/// Reached by talking to LOCALID_STRONGMAN_SCARING_VISITORS on the day the
+/// Reached by talking to ACTOR_STRONGMAN_SCARING_VISITORS on the day the
 /// story begins.
 static void EventScript_AskToScareVisitors(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeLetsScareKradensVisitors);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_STRONGMAN_SCARING_VISITORS,
-                       6);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_STRONGMAN_SCARING_VISITORS, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_SCARING_VISITORS, 6);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
   FieldScript_End();
 }
 
@@ -280,15 +279,14 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   FieldScript_Start();
   if (Script_GetFlag(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     FieldScript_SetMessageId(MsgValeYouMustSaveJenna);
-    Script_ShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    Object_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
-                                OBJ_EVENT_LINK_KEEP_MOTION |
-                                    LOCALID_PARTY_LEADER,
+    Script_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+    Object_SetTargetAndCallback(ACTOR_ITEM_MERCHANT,
+                                ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                 gCottageRoomsA_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     FieldScript_SetMessageId(gift);
-    Script_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0, 20);
+    Script_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0, 20);
     FieldMessage_Show((gift + 1), 1);
     PartyInventory_GiveItem(ITEM_HERB, 0);
     GameFlag_Set(FLAG_VALE_FAREWELL_HERB_RECEIVED);
@@ -299,12 +297,12 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
 /// A woman in a green dress asks whether the people who caused the eruption
 /// had strange powers, in a house of Vale after the party has left.
 ///
-/// Reached by talking to LOCALID_WOMAN_ON_VISITORS_IN_TOWN after the party has
+/// Reached by talking to ACTOR_WOMAN_ON_VISITORS_IN_TOWN after the party has
 /// left Vale.
 static void EventScript_AskAboutStrangePowers(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeTheCulpritsHadStrangePowers);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_WOMAN_ON_VISITORS_IN_TOWN, 0);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
   FieldScript_End();
 }
 
@@ -315,7 +313,7 @@ static void EventScript_AskAboutStrangePowers(void) {
 static void EventScript_AskAboutDora(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeDidYouHearAboutDora);
-  FieldScript_AskYesNoAndShowResponse(LOCALID_GARETS_FATHER, 0);
+  FieldScript_AskYesNoAndShowResponse(ACTOR_GARETS_FATHER, 0);
   FieldScript_End();
 }
 
@@ -326,14 +324,13 @@ static void EventScript_AskAboutDora(void) {
 static void EventScript_WorryAboutTravelersHealth(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeHopeDidntGet);
-  FieldScript_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_GARETS_MOTHER,
-                                 0);
+  FieldScript_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
   FieldScript_End();
 }
 
-/// Leaves a house through its door: the warp sound plays and the screen
+/// Leaves a house through its door: the exit sound plays and the screen
 /// closes, stopping the lightning first on the stormy night.
-static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
+static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_PlaySong(SE_MAP_EXIT);
@@ -342,62 +339,62 @@ static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 // The rooms' doors: stepping on a door's cell, whose metatile behavior is its
-// warp's number, takes that warp back out, in every table. On the stormy night
-// the warps to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
+// exit's number, takes that exit back out, in every table. On the stormy night
+// the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
 /// from COTTAGE_ROOMS_A_FROM_VALE_WEST, where
-/// LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
+/// ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
 static void EventScript_LeaveToValeWest(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_WEST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_WEST);
 }
 
 /// Leaves Jenna's grandparents' house.
 static void EventScript_LeaveToValeNorth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_NORTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_NORTH);
 }
 
 /// Leaves the empty house. It's the room entered from
-/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no object event template
+/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no actor template
 /// table puts anyone in.
 static void EventScript_LeaveToValePlazaWest(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
 }
 
 /// Leaves Vale's shops.
 static void EventScript_LeaveToValePlazaSouth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
 }
 
 /// Leaves the house where villagers talk of Kraden and his visitors. It's the
 /// room entered from COTTAGE_ROOMS_A_FROM_VALE_SOUTH, where
-/// LOCALID_MAN_ON_KRADENS_STUDIES and LOCALID_WOMAN_ON_VISITORS_IN_TOWN stand.
+/// ACTOR_MAN_ON_KRADENS_STUDIES and ACTOR_WOMAN_ON_VISITORS_IN_TOWN stand.
 static void EventScript_LeaveToValeSouth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
 }
 
 /// Leaves Garet's house.
 static void EventScript_LeaveToValeEast(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_EAST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_EAST);
 }
 
 /// Leaves the house where a strongman plans to scare Kraden's visitors. It's
 /// the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, where
-/// LOCALID_STRONGMAN_SCARING_VISITORS stands.
+/// ACTOR_STRONGMAN_SCARING_VISITORS stands.
 static void EventScript_LeaveToValePlazaEast(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
 }
 
 /// Leaves the house where a woman talks of permission to leave. It's the room
 /// entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, where
-/// LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE stands.
+/// ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE stands.
 static void EventScript_LeaveToValePlazaNorth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
 }
 
 /// Arriving in a house of Vale: on the stormy night the residents are gone and
@@ -409,28 +406,28 @@ static void EventScript_LeaveToValePlazaNorth(void) {
 /// is set. From COTTAGE_ROOMS_A_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 CottageRoomsA_Initialize(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct FieldWork **eventSlot = &gFieldWork;
 
   (*eventSlot)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDMOTHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_GARETS_FATHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_GARETS_MOTHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDFATHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_MAN_ON_KRADENS_STUDIES, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_STRONGMAN_SCARING_VISITORS, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_ITEM_MERCHANT, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_WEAPON_MERCHANT, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_ARMOR_MERCHANT, 0, 0);
+    Import_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_GARETS_GRANDMOTHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_GARETS_FATHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_GARETS_MOTHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_JENNAS_GRANDFATHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, 0, 0);
+    Import_ActorSetPosition(ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
+    Import_ActorSetPosition(ACTOR_MAN_ON_KRADENS_STUDIES, 0, 0);
+    Import_ActorSetPosition(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
+    Import_ActorSetPosition(ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
+    Import_ActorSetPosition(ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
+    Import_ActorSetPosition(ACTOR_STRONGMAN_SCARING_VISITORS, 0, 0);
+    Import_ActorSetPosition(ACTOR_ITEM_MERCHANT, 0, 0);
+    Import_ActorSetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
+    Import_ActorSetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
     (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
         ->loud = 1;
@@ -442,22 +439,22 @@ s32 CottageRoomsA_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gSaveBlock.warpDest == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
+    if (gSaveBlock.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         EventScript_GaretComesHome();
       }
     }
-    ObjectEvent_GetById(LOCALID_GARETS_FATHER)->collisionFlags |= 0x80;
+    Actor_GetById(ACTOR_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gSaveBlock.warpDest == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
+  if (gSaveBlock.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
-                                    PIXELS(150));
-      objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_GRANDMOTHER);
-      ObjectEvent_SetSpriteFlags(objectEvent, 0);
-      Import_ObjectEventSetAnimation(LOCALID_JENNAS_GRANDMOTHER,
-                                     ANIM_GRANDMOTHER_IN_BED);
+      Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
+                              PIXELS(150));
+      actor = Actor_GetById(ACTOR_JENNAS_GRANDMOTHER);
+      Actor_SetSpriteFlags(actor, 0);
+      Import_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER,
+                               ANIM_GRANDMOTHER_IN_BED);
       TilesetAnim_Resume(4);
     }
   }
@@ -471,26 +468,26 @@ s32 CottageRoomsA_Initialize(void) {
 /// night's. Facing north, across the counter, opens shop 1; else the
 /// merchant's line follows the story.
 static void EventScript_TalkToWeaponMerchant(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if (FACING_IS_NORTH(leader->facing)) {
-    Shop_Run(1, LOCALID_WEAPON_MERCHANT);
+    Shop_Run(1, ACTOR_WEAPON_MERCHANT);
     return;
   }
 
   FieldScript_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     FieldScript_SetMessageId(MsgValeYouCameBack);
-    FieldScript_AskYesNoAndShowResponse(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_AskYesNoAndShowResponse(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       FieldScript_SetMessageId(MsgValeValeFeelsEmpty);
     } else {
       FieldScript_SetMessageId(MsgValeGoodWeaponsDrawOutStrength);
     }
-    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
   }
   FieldScript_End();
 }
@@ -501,11 +498,11 @@ static void EventScript_TalkToWeaponMerchant(void) {
 /// Reached by talking to the armor merchant in every table but the stormy
 /// night's; opens shop 2 when facing north.
 static void EventScript_TalkToArmorMerchant(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (FACING_IS_NORTH(objectEvent->facing)) {
-    Shop_Run(2, LOCALID_ARMOR_MERCHANT);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (FACING_IS_NORTH(actor->facing)) {
+    Shop_Run(2, ACTOR_ARMOR_MERCHANT);
   } else {
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -517,7 +514,7 @@ static void EventScript_TalkToArmorMerchant(void) {
         FieldScript_SetMessageId(MsgValeGoodArmorDrawsOutStrength);
       }
     }
-    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
     FieldScript_End();
   }
 }
@@ -529,16 +526,16 @@ static void EventScript_TalkToArmorMerchant(void) {
 /// night's; opens shop 3 when facing north. After the party has left and
 /// before Kalay, CottageRoomsA_GiveFarewellHerb speaks instead.
 static void EventScript_TalkToItemMerchant(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (FACING_IS_NORTH(objectEvent->facing)) {
-    Shop_Run(3, LOCALID_ITEM_MERCHANT);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (FACING_IS_NORTH(actor->facing)) {
+    Shop_Run(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeWhenDidYouComeBack);
-      FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
       FieldScript_End();
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -546,7 +543,7 @@ static void EventScript_TalkToItemMerchant(void) {
       } else {
         FieldScript_Start();
         FieldScript_SetMessageId(MsgValeAWiseManFleesWhen);
-        FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+        FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
         FieldScript_End();
       }
     }
@@ -555,17 +552,17 @@ static void EventScript_TalkToItemMerchant(void) {
 
 /// Garet's grandparents and father nod.
 static inline void CottageRoomsA_FamilyNods(void) {
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
 /// Starts the repeated motion before waiting for the requested animation.
-static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 localId,
+static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
                                                               s32 animation) {
-  ObjectMotion_SetVariantCallback(localId, 1);
-  ObjectMotion_SetAnimationAndWait(localId, animation);
+  ObjectMotion_SetVariantCallback(actorId, 1);
+  ObjectMotion_SetAnimationAndWait(actorId, animation);
 }
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home: his
@@ -579,8 +576,8 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 localId,
 /// is set; sets it. Adds and removes the callback
 /// CottageRoomsA_SpawnSleepZ, and leaves the father pacing.
 static void EventScript_GaretComesHome(void) {
-  struct ObjectEvent *sleepZ;
-  struct ObjectEvent *objectEvent;
+  struct Actor *sleepZ;
+  struct Actor *actor;
   s32 motionFlags;
   TaskFunc timedUpdate;
   const s32 *partyScript;
@@ -590,65 +587,61 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(LOCALID_MIA, 1);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER,
-                                 ANIM_GRANDFATHER_ASLEEP);
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 808, 508);
-  sleepZ = ObjectEvent_Get(LOCALID_FIRST_SLEEP_Z);
-  ObjectEvent_SetSpriteFlags(sleepZ, 0);
-  sleepZ = ObjectEvent_Get(LOCALID_FIRST_SLEEP_Z + 1);
-  ObjectEvent_SetSpriteFlags(sleepZ, 0);
-  sleepZ = ObjectEvent_Get(LOCALID_FIRST_SLEEP_Z + 2);
-  ObjectEvent_SetSpriteFlags(sleepZ, 0);
+  ObjectMotion_SetActionVariant(ACTOR_MIA, 1);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
+  Actor_SetSpriteFlags(sleepZ, 0);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 1);
+  Actor_SetSpriteFlags(sleepZ, 0);
+  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
+  Actor_SetSpriteFlags(sleepZ, 0);
   motionFlags = 0;
-  ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z)->motionFlags = motionFlags;
-  ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
-  ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
+  Actor_GetById(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
+  Actor_GetById(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
+  Actor_GetById(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
   timedUpdate = CottageRoomsA_SpawnSleepZ;
   FieldScheduler_AddCallback(timedUpdate, TASK_PRIORITY_MAP);
   WaitFrames(1);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
-                            objectEvent->z.fixed);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
-  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
-                            objectEvent->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
-  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
-                            objectEvent->z.fixed);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
-  ObjectEvent_WalkTo(LOCALID_GARET, 792, 512);
-  ObjectEvent_WalkTo(LOCALID_IVAN, 824, 504);
-  ObjectEvent_WalkToAndWait(LOCALID_MIA, 818, 524);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Actor_WalkTo(ACTOR_GARET, 792, 512);
+  Actor_WalkTo(ACTOR_IVAN, 824, 504);
+  Actor_WalkToAndWait(ACTOR_MIA, 818, 524);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
-  Object_SetTargetAndCallback(
-      LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(
-      LOCALID_GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(
-      LOCALID_IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(
-      LOCALID_MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gCottageRoomsA_FaceTargetScript);
+  Object_SetTargetAndCallback(ACTOR_PARTY_LEADER,
+                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                              gCottageRoomsA_FaceTargetScript);
+  Object_SetTargetAndCallback(ACTOR_GARET,
+                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                              gCottageRoomsA_FaceTargetScript);
+  Object_SetTargetAndCallback(ACTOR_IVAN,
+                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                              gCottageRoomsA_FaceTargetScript);
+  Object_SetTargetAndCallback(ACTOR_MIA,
+                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                              gCottageRoomsA_FaceTargetScript);
   FieldScript_WaitFrames(300);
   FieldCamera_GetScriptObject()->motionFlags = motionFlags;
   // The camera pans slowly up to Garet's parents. His father, pacing, asks
@@ -657,280 +650,249 @@ static void EventScript_GaretComesHome(void) {
   FieldCamera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
   FieldCamera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   FieldScript_WaitFrames(240);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARETS_FATHER);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                        80);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_FATHER, 819, 405);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_GARETS_FATHER);
+  Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_WalkToAndWait(ACTOR_GARETS_FATHER, 819, 405);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_NORTH + FACING_STEP,
-                            20);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 20);
   FieldScript_SetMessageId(MsgValeHey2);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
-                                LOCALID_GARETS_FATHER,
+                                ACTOR_GARETS_FATHER,
                             0, 20);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_IVAN);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_MIA);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_PARTY_LEADER);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_GARET);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_IVAN);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_MIA);
+  Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
-                                LOCALID_GARETS_FATHER,
+                                ACTOR_GARETS_FATHER,
                             0, 10);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_SOUTH + FACING_STEP,
-                            10);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
+  Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 10);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
-                                LOCALID_GARETS_FATHER,
+                                ACTOR_GARETS_FATHER,
                             0, 20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER,
-                        EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             40);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_FATHER, 2);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                        20);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_FATHER, 2);
+  Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
-                                LOCALID_GARETS_FATHER,
+                                ACTOR_GARETS_FATHER,
                             0, 10);
-  CottageRoomsA_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
+  CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  CottageRoomsA_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
+  CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
                                              ANIM_SHAKE_HEAD);
-  CottageRoomsA_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
-  CottageRoomsA_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
+  CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_NOD);
+  CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
                                              ANIM_SHAKE_HEAD);
   // Garet's grandmother sees him and chokes on her words; his mother asks if
   // she is choking, his father thinks she misses Garet too.
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDMOTHER,
-                        EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDMOTHER, 1);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDMOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
-                            FACING_EAST + FACING_STEP, 40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDMOTHER, 2);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 40);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 2);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDMOTHER, 3);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 3);
   FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER,
-                            0, 40);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_STILL);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_MOTHER, 2);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
-                            10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDMOTHER, 2);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER,
-                            0, 10);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_SOUTH + FACING_STEP,
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                             40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_FATHER, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_FATHER, 0,
+  Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_MOTHER, 2);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             10);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 2);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
+                            10);
+  Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 40);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0, 10);
   // No, it really is Garet: both parents turn and call his name together.
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
-                            FACING_NORTH + FACING_STEP, 10);
-  ObjectMotion_Launch(LOCALID_GARETS_GRANDMOTHER, 2, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER,
-                            0, 10);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                        0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                        40);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_NORTH + FACING_STEP,
-                            80);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_SOUTH + FACING_STEP,
-                            60);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_FATHER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_MOTHER, 2);
-  Script_ShowTwoMessagesAndWait(LOCALID_GARETS_FATHER, 11, 6, 6, 6,
-                                LOCALID_GARETS_MOTHER, 12, 1, 7, 1, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
+  ObjectMotion_Launch(ACTOR_GARETS_GRANDMOTHER, 2, 0);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
+                            10);
+  Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 80);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 60);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_FATHER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_MOTHER, 2);
+  Script_ShowTwoMessagesAndWait(ACTOR_GARETS_FATHER, 11, 6, 6, 6,
+                                ACTOR_GARETS_MOTHER, 12, 1, 7, 1, 0);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 2);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 2);
   // His grandfather wakes, and the sleep stops drifting.
   Task_Remove(timedUpdate);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER,
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
                                    ANIM_GRANDFATHER_LOOK_ABOUT);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER,
-                            0, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
+                            20);
   // The grandfather looks about, then jumps up with Garet's name.
   FieldCamera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_SOUTH + FACING_STEP,
-                            10);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_EAST + FACING_STEP, 40);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_EAST + FACING_STEP, 20);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_SOUTHEAST + FACING_STEP, 40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER,
+  Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 40);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  40);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
+                      20);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
+                      40);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
                                    ANIM_GRANDFATHER_LOOK_ABOUT);
   FieldScript_WaitFrames(60);
-  ObjectMotion_Launch(LOCALID_GARETS_GRANDFATHER, 6, 0);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER,
-                            0, 20);
+  ObjectMotion_Launch(ACTOR_GARETS_GRANDFATHER, 6, 0);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
+                            20);
   // Garet goes to him; the grandfather asks whether the Wise One's mission
   // is done, and a no skips one line of Garet's father.
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 789, 473);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_EAST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
-  Script_OpenMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_FATHER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
-                            FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST + FACING_STEP, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(ACTOR_GARET, 789, 473);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Script_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST + FACING_STEP, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 2);
-  Script_ShowMessage(LOCALID_GARETS_FATHER, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
+  Script_ShowMessage(ACTOR_GARETS_FATHER, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   // His mother knows he is leaving again soon; his grandparents are glad to
   // see him well.
   FieldScript_SetMessageId(MsgValeYoureLeavingAgainSoon);
-  Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0);
+  Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
-                            FACING_NORTH + FACING_STEP, 10);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
-                            FACING_EAST + FACING_STEP, 10);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 10);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 10);
+  Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // Garet introduces his new friends.
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0, 20);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 40);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Ivan, then Mia, step forward and introduce themselves; the family nods.
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 819, 489);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_IVAN, 819, 489);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 40);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   CottageRoomsA_FamilyNods();
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(LOCALID_MIA, 1);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_MIA, 794, 520);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_WalkToAndWait(LOCALID_MIA, 784, 496);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST + FACING_STEP, 10);
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |=
-      OBJ_EVENT_PRIORITY_AUTOMATIC;
-  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(ACTOR_MIA, 1);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_MIA, 794, 520);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_MIA, 784, 496);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST + FACING_STEP, 10);
+  Actor_GetById(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
   CottageRoomsA_FamilyNods();
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   FieldScript_WaitFrames(20);
   // Garet's mother comes forward and asks them to look after young Garet.
-  ObjectEvent_SetSpeed(LOCALID_GARETS_MOTHER, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_MOTHER, 835, 388);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_SMILE,
-                        40);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
+  Actor_SetSpeed(ACTOR_GARETS_MOTHER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 835, 388);
+  Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST + FACING_STEP, 40);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 20);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 20);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // His father: enough chit-chat, relax and enjoy your stay.
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 1);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
-  Script_ShowMessageAndWait(LOCALID_GARETS_FATHER, 0, 20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 40);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Script_ShowMessageAndWait(ACTOR_GARETS_FATHER, 0, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 40);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   partyScript = gCottageRoomsA_PartyLeavesScript;
-  ObjectEvent_SetActionScript(LOCALID_GARET, partyScript);
-  ObjectEvent_SetActionScript(LOCALID_IVAN, partyScript);
-  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, partyScript);
-  ObjectEvent_SetActionScript(LOCALID_GARETS_FATHER,
-                              gCottageRoomsA_FatherPacingScript);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_MOTHER, 837, 376);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_NORTH + FACING_STEP,
-                            20);
+  Actor_SetActionScript(ACTOR_GARET, partyScript);
+  Actor_SetActionScript(ACTOR_IVAN, partyScript);
+  Actor_RunActionScriptAndWait(ACTOR_MIA, partyScript);
+  Actor_SetActionScript(ACTOR_GARETS_FATHER, gCottageRoomsA_FatherPacingScript);
+  Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 837, 376);
+  Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_NORTH + FACING_STEP, 20);
   GameFlag_Set(FLAG_GARET_CAME_HOME);
   FieldScript_End();
 }
@@ -940,46 +902,46 @@ static void EventScript_GaretComesHome(void) {
 ///
 /// A callback EventScript_GaretComesHome adds while the grandfather dozes.
 static void CottageRoomsA_SpawnSleepZ(void) {
-  s32 localId;
+  s32 actorId;
   u32 cycleFrame;
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *origin;
+  struct Actor *actor;
+  struct Actor *origin;
 
   cycleFrame = gFrameCount % 180;
-  localId = LOCALID_FIRST_SLEEP_Z;
+  actorId = ACTOR_FIRST_SLEEP_Z;
   switch (cycleFrame) {
   case 10:
     break;
   case 20:
-    localId = LOCALID_FIRST_SLEEP_Z + 1;
+    actorId = ACTOR_FIRST_SLEEP_Z + 1;
     break;
   case 30:
-    localId = LOCALID_FIRST_SLEEP_Z + 2;
+    actorId = ACTOR_FIRST_SLEEP_Z + 2;
     break;
   default:
     return;
   }
-  objectEvent = ObjectEvent_GetById(localId);
-  if (objectEvent == NULL) {
+  actor = Actor_GetById(actorId);
+  if (actor == NULL) {
     return;
   }
-  origin = ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER);
+  origin = Actor_GetById(ACTOR_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Import_ObjectEventSetPosition(localId, origin->x.fixed, origin->z.fixed);
+    Import_ActorSetPosition(actorId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
-  objectEvent->scaleX = 2 * Q16_ONE / 5;
-  objectEvent->scaleY = 2 * Q16_ONE / 5;
+  actor->scaleX = 2 * Q16_ONE / 5;
+  actor->scaleY = 2 * Q16_ONE / 5;
   {
-    s32 height = objectEvent->y.fixed + PIXELS(24);
+    s32 height = actor->y.fixed + PIXELS(24);
 
-    objectEvent->y.fixed = height;
-    objectEvent->targetY = height;
+    actor->y.fixed = height;
+    actor->targetY = height;
     // The drifting script consumes these two work fields as signed 8.8 steps.
-    objectEvent->timer = 25; // 25/256 pixel per frame.
-    objectEvent->work = 128; // 1/2 pixel per frame.
+    actor->timer = 25; // 25/256 pixel per frame.
+    actor->work = 128; // 1/2 pixel per frame.
   }
-  ObjectEvent_SetActionScript(localId, gCottageRoomsA_SleepZScript);
+  Actor_SetActionScript(actorId, gCottageRoomsA_SleepZScript);
 }
 
 s32 gCottageRoomsA_FaceTargetScript[] = {
@@ -1035,8 +997,8 @@ s32 gCottageRoomsA_SleepZScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gCottageRoomsA_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gCottageRoomsA_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222, FACING_NORTH,
      0, 4, 4, 244, 292, 0},
@@ -1054,53 +1016,53 @@ struct MapWarpDest gCottageRoomsA_WarpDests[] = {
      FACING_NORTH, 0, 324, 604, 588, 884, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 769, 0, 857,
      FACING_NORTH, 0, 580, 628, 852, 884, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
-u32 gCottageRoomsA_Warps[] = {
-    MAP_WARPS(CottageRoomsA),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_WEST, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_NORTH, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_SOUTH, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_EAST, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARPS_END,
+u32 gCottageRoomsA_Exits[] = {
+    SCENE_EXITS(CottageRoomsA),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXITS_END,
 };
 
-u32 gCottageRoomsA_StormWarps[] = {
-    MAP_WARPS(CottageRoomsA),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_WEST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_EAST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARPS_END,
+u32 gCottageRoomsA_StormExits[] = {
+    SCENE_EXITS(CottageRoomsA),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplates[] = {
+struct ActorTemplate gCottageRoomsA_ActorTemplates[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1131,10 +1093,10 @@ struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplates[] = {
         PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplatesAfterLeaving[] = {
+struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1165,15 +1127,15 @@ struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplatesAfterLeaving[] = {
         PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplatesAfterKalay[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
@@ -1208,183 +1170,183 @@ struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplatesAfterKalay[] = {
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SCENE_TABLE_END },
 };
 
-struct MapEvent gCottageRoomsA_StormEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
-    { BG_EVENT(BG_EVENT_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
-    { BG_EVENT(BG_EVENT_JAR), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
-    { BG_EVENT(BG_EVENT_JAR), 103, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
-    { BG_EVENT(BG_EVENT_JAR), 104, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
-    { MAP_EVENTS_END },
+struct Trigger gCottageRoomsA_StormTriggers[] = {
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 103, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 104, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCottageRoomsA_Events[] = {
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeAtTheVeryLeastVisitorsShould) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeYouAndGaretAreOlderNow) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
-    { MAP_EVENT_TALK, LOCALID_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutKradensStudies) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
-    { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
-    { MAP_EVENT_TALK, LOCALID_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskToScareVisitors) },
-    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
-    { MAP_EVENTS_END },
+struct Trigger gCottageRoomsA_Triggers[] = {
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeAtTheVeryLeastVisitorsShould) },
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
+    { TRIGGER_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
+    { TRIGGER_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeYouAndGaretAreOlderNow) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
+    { TRIGGER_TALK, ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutKradensStudies) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskToScareVisitors) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCottageRoomsA_EventsAfterLeaving[] = {
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacPleaseTakeCareOfMy) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeAsMothersDoraAndIWill) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
-    { MAP_EVENT_TALK, LOCALID_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutStrangePowers) },
-    { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
-    { MAP_EVENT_TALK, LOCALID_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
-    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItsHardLettingMyPreciousGaret) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeTheWiseOneChoseGaretHimself) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIAmConcernedForGaretBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { MAP_EVENTS_END },
+struct Trigger gCottageRoomsA_TriggersAfterLeaving[] = {
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacPleaseTakeCareOfMy) },
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
+    { TRIGGER_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
+    { TRIGGER_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeAsMothersDoraAndIWill) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
+    { TRIGGER_TALK, ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutStrangePowers) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItsHardLettingMyPreciousGaret) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeTheWiseOneChoseGaretHimself) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIAmConcernedForGaretBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gCottageRoomsA_EventsAfterKalay[] = {
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutDora) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WorryAboutTravelersHealth) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
-    { MAP_EVENT_TALK, LOCALID_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
-    { MAP_EVENT_TALK, LOCALID_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
-    { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
-    { MAP_EVENT_TALK, LOCALID_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
-    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItMustBeNiceToBe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeHisNewFriendsAreAllSo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeItWasntTooSmartToTalk) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretSeemsToHaveGrownUp) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeWeveSeenManyMonstersLatelyAnd) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { MAP_EVENTS_END },
+struct Trigger gCottageRoomsA_TriggersAfterKalay[] = {
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
+    { TRIGGER_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutDora) },
+    { TRIGGER_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WorryAboutTravelersHealth) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
+    { TRIGGER_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
+    { TRIGGER_TALK, ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItMustBeNiceToBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeHisNewFriendsAreAllSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeItWasntTooSmartToTalk) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretSeemsToHaveGrownUp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeWeveSeenManyMonstersLatelyAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_SCARING_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaSouth) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeSouth) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_COTTAGE_ROOMS_A_JAR_6_COINS, FIND_COINS(6) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_COTTAGE_ROOMS_A_JAR_2_COINS, FIND_COINS(2) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 103, FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 104, FLAG_COTTAGE_ROOMS_A_JAR_3_COINS, FIND_COINS(3) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { TRIGGERS_END },
 };
 // clang-format on

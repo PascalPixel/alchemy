@@ -13,11 +13,11 @@ game; [the Djinn room](#the-djinn-room) shows one whole.
 
 ## How the rooms are reached
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and A warps there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and An exits there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
 The debug scene selector is a one-line window that names a scene and an arrival
 point by number; Left and Right step the number, R and L step it by ten, and
-A warps there. It reaches every scene, the test rooms included, but the field
+An exits there. It reaches every scene, the test rooms included, but the field
 opens it only in debug mode, when Start is pressed with B held, and the
 released game never turns debug mode on.
 
@@ -71,13 +71,13 @@ clear. Talking to one runs a two-step script: give the party that
 capture the game uses everywhere (the Djinni goes to the member with the
 fewest), then clear the Djinni's flag again. Those two calls are all the room
 needs from the rest of the game, so its import table holds just the two. Each
-Djinni is one row of the room's event table, which says: when the player
+Djinni is one row of the room's trigger table, which says: when the player
 talks to Flint, always, run Flint's script.
 
 The room answers the field's six questions with `TestRoom_Initialize`,
-`TestRoom_GetWarpDests`, `TestRoom_GetWarps`,
-`TestRoom_GetObjectEventTemplates`, `TestRoom_GetEvents` and
-`Scene_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
+`TestRoom_GetEntrances`, `TestRoom_GetExits`,
+`TestRoom_GetActorTemplates`, `TestRoom_GetTriggers` and
+`Scene_GetExitRegions` (none). The events are `gTestRoom_Triggers`, and each
 script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
@@ -101,20 +101,20 @@ test in Japanese and shows the character-set captions elsewhere.
 
 The browsers are in [level.c](level.c), such as
 `IncreaseItemAndLevel_SelectItem`; the room's events are
-`gIncreaseItemAndLevel_Events`.
+`gIncreaseItemAndLevel_Triggers`.
 
 ## The menu test room
 
 ![In the menu test room Isaac talks to Felix from below him: a window with a weapon seller's portrait reads "Come in! Welcome! Take a look at our fine weapons." Talked to again from above, the same Felix answers "Welcome, weary wanderers. What aid do you seek?", the Sanctum's greeting](https://alchemy.pascalpixel.com/guides/debug/felix-facing.gif)
 
 Felix answers with a different keeper's lines depending on the side he
-is talked to from: a map event can ask which way the leader is facing, and the
+is talked to from: a trigger can ask which way the leader is facing, and the
 room uses that to fit four message tests into one person. The other people
 run the shop, message and inventory tests with the ready-made party.
 
 Garet raises the four to level 10, then 20 on the next talk, and so on, which
 changes nothing until the target passes the 30 set on entry. Jenna hands out
-test equipment, Ivan items to use, and Mia opens the naming screen for Isaac.
+test equipment, Ivan items to use, and Mia opens the name entry screen for Isaac.
 The other people open the screen for choosing an item to give up when the
 bags are full, give out Djinn and treasure, wound and afflict Isaac and
 Garet, and run a ready-made shop with 200,000 coins, broken equipment and
@@ -129,7 +129,7 @@ or the Sanctum, and the second Felix the Warrior's shops in the same way.
 Facing the second Felix from above has no row in English; in the other four
 international editions it shows one line from Vale with no speaker.
 
-The facing a row asks for is carried in its first word, as `gMenuTest_Events`
+The facing a row asks for is carried in its first word, as `gMenuTest_Triggers`
 shows; the browsers are `MenuTest_BrowseWeaponShopMessages` and its kin, and
 the shop `Shop_OpenDebugShop`.
 
@@ -139,7 +139,7 @@ The palette editor's swatch, `swatch.png`, belongs to no room: it is placed
 in the [main image](../../glossary.md#main-image) for the palette editor,
 which opens with L on the pause menu in debug mode
 (`PaletteEditor_Run`). Each room's functions take the room's prefix, except
-the set-up and warp region entries, which take the scene overlays' names.
+the set-up and exit region entries, which take the scene overlays' names.
 
 ## How it fits with the rest of the game
 

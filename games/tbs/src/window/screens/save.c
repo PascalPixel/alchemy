@@ -185,15 +185,14 @@ u32 Save_BuildFileSummary(void) {
   }
   gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gSaveBlock.leaderLocalId);
+  leader = Unit_GetFar(gSaveBlock.leaderActorId);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gSaveBlock.playTime;
-  summary->area =
-      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest);
+  summary->area = Area_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.entrance);
   summary->classId = leader->classId;
   summary->coins = gSaveBlock.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -254,7 +253,7 @@ u32 Save_BuildFileSummary(void) {
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
 /// Save_ToChosenFile it asks nothing and does not capture the object
-/// table first (Save_CaptureObjectEventsFar).
+/// table first (Save_CaptureActorsFar).
 s16 Save_WriteCurrentFile(void) {
   s16 file;
   s16 result;
@@ -797,8 +796,8 @@ void FileMenu_DrawSummary(struct Window *window,
     Window_DrawDividerLine(window, 0, 4, 13, 4);
     Text_DrawStringAtOffset(summary->name, window, 0, 0);
     y = 0;
-    SUMMARY_DRAW_LEVEL(gSummaryScreen_LevelLetterString, window,
-                       SUMMARY_LEVEL_X, 0);
+    SUMMARY_DRAW_LEVEL(gStatusScreen_LevelLetterString, window, SUMMARY_LEVEL_X,
+                       0);
     Text_DrawNumberAtOffset(summary->level, 2, window, 80, y);
     Text_DrawMessageAsTiles(summary->classId + MsgClassName, window, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -1239,7 +1238,7 @@ s32 Save_ToChosenFile(void) {
         WaitFrames(1);
       }
       Save_BuildFileSummary();
-      Save_CaptureObjectEventsFar();
+      Save_CaptureActorsFar();
       error = Save_WriteRecord(file, gSaveBuffer);
       error |= Save_WriteRecord(file + SAVE_FILE_COUNT,
                                 gSaveBuffer + SAVE_RECORD_BYTES);

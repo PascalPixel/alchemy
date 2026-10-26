@@ -105,9 +105,9 @@ An overlay meets the rest of the game at two tables:
 - At its start, the
   [entry table](../../glossary.md#entry-table-and-import-table): the six
   questions the field asks a scene, for its set-up and for its
-  [warp destinations](../../glossary.md#warp-destination),
-  [warps](../../glossary.md#warp), [object events](../../glossary.md#object-event),
-  [map events](../../glossary.md#map-event) and warp regions (the areas of the
+  [entrances](../../glossary.md#entrance),
+  [exits](../../glossary.md#exit), [actors](../../glossary.md#actor),
+  [triggers](../../glossary.md#trigger) and exit regions (the areas of the
   scene that lead out).
 - At its end, the import table: one entrance for each function of the main
   image the overlay calls. The overlay area is too far from the cartridge for

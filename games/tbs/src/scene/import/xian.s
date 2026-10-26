@@ -19,10 +19,10 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Actor_RefreshSelectorById, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
@@ -30,13 +30,13 @@
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_ConfigureSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
@@ -44,7 +44,7 @@
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_QueueMusic, 1
 	.set import.Scene_PlayQueuedMusic, 1

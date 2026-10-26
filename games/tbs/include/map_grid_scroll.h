@@ -27,7 +27,7 @@ struct MapGridLayerScroll {
 /// field map with a layout starts, and the next map change frees it.
 struct MapGridScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;
-  /// FieldCamera_FollowObjectEvent points it at the camera's position.
+  /// FieldCamera_FollowActor points it at the camera's position.
   s32 *origin;
   /// Screen shake amplitudes in 16.16 fixed-point pixels, and the 16.16
   /// factor that scales them each frame.

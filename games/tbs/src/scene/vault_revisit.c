@@ -8,7 +8,7 @@
 ///
 /// The thieves the party caught have broken out of jail, and most townspeople
 /// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
-/// through scripts that remember who has spoken in map section flags
+/// through scripts that remember who has spoken in area flags
 /// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED to
 /// FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL), so that a Mind Read on one not yet
 /// spoken to plays the conversation first. The old man's praise also sets
@@ -44,10 +44,10 @@
 #include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -67,84 +67,84 @@
 #include "songs.h"
 
 /// The townspeople, the dog and Sap, numbering
-/// gVaultRevisit_ObjectEventTemplates' rows from LOCALID_FIRST_PLACED.
-enum VaultRevisitLocalId {
+/// gVaultRevisit_ActorTemplates' rows from ACTOR_FIRST_PLACED.
+enum VaultRevisitActorId {
   /// vault.c's welcoming young man, who recognizes the party.
   /// ★ Named from the game: "You've returned to Vault!"
   /// (MsgVaultWarriorsWhoCaptured)
-  LOCALID_WELCOMING_YOUNG_MAN = LOCALID_FIRST_PLACED,
+  ACTOR_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED,
   /// A woman with fair hair who brings the news from Kalay.
   /// ★ Named from the game: "You've probably already heard, but the bridge to
   /// Kalay has been fixed." (MsgVaultYouveProbablyAlreadyHeardButThe)
-  LOCALID_WOMAN_ON_THE_FIXED_BRIDGE,
+  ACTOR_WOMAN_ON_THE_FIXED_BRIDGE,
   /// A burly grey-haired man who worries about Hammet.
   /// ★ Named from the game: "I wonder what happened to Hammet when he went to
   /// Lunpa..." (MsgVaultIWonderWhatHappenedToHammet)
-  LOCALID_VILLAGER_WONDERING_ABOUT_HAMMET,
+  ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET,
   /// A woman.
   /// ★ Named from the game: "There have been rumors of thieves from Lunpa
   /// running wild" (MsgVaultRumorsThievesLunpa)
-  LOCALID_WOMAN_ON_LUNPAS_THIEVES,
+  ACTOR_WOMAN_ON_LUNPAS_THIEVES,
   /// An old man with a cane who has talked with the mayor.
   /// ★ Named from the game: "I was just talking about you with our mayor"
   /// (MsgVaultTalkingMayorStrong)
-  LOCALID_MAYORS_VISITOR,
+  ACTOR_MAYORS_VISITOR,
   /// An old woman.
   /// ★ Named from the game: "If the volcano stays calm and the southern bridge
   /// stays fixed, we won't have any worries at all." (MsgVaultVolcanoStaysCalm)
-  LOCALID_OLD_WOMAN_ON_THE_VOLCANO,
+  ACTOR_OLD_WOMAN_ON_THE_VOLCANO,
   /// vault.c's two children, walking round the well again; the boy greets the
   /// party. "Hey, it's that warrior guy!"
   /// ★ Named from what the player sees: a blond boy walking round the well
   /// (its render)
-  LOCALID_BOY_ROUND_THE_WELL,
+  ACTOR_BOY_ROUND_THE_WELL,
   /// Speaks of the grown-ups. "Grown-ups always get so scared"
   /// ★ Named from what the player sees: a girl with orange hair walking round
   /// the well (its render)
-  LOCALID_GIRL_ROUND_THE_WELL,
+  ACTOR_GIRL_ROUND_THE_WELL,
   /// vault.c's strongman on watch. "Did you guys check out the jail?"
   /// ★ Named from the game: "Nobody's stealing anything on my watch!"
   /// (MsgVaultNobodysStealingAnything)
-  LOCALID_STRONGMAN_ON_WATCH,
+  ACTOR_STRONGMAN_ON_WATCH,
   /// A bearded man in a long robe who takes the thieves' escape calmly.
   /// ★ Named from the game: "The thieves escaped, but I think it's all right.
   /// It's all part of a divine plan." (MsgVaultTheThievesEscapedButIThink)
-  LOCALID_VILLAGER_DIVINE_PLAN,
+  ACTOR_VILLAGER_DIVINE_PLAN,
   /// ★ Named from what the player sees: a white dog sitting among the graves
   /// (its render)
-  LOCALID_VAULT_DOG,
+  ACTOR_VAULT_DOG,
   /// vault.c's young man fixing the roof, standing where he did there, his work
   /// done.
   /// ★ Named from the game: "There, you see? The roof repairs are all
   /// finished." (MsgVaultThereYouSeeTheRoofRepairs)
-  LOCALID_YOUNG_MAN_FIXING_THE_ROOF,
+  ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
   /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
   /// sprite 0xf8 placed at 0, 0, is never referred to.
   /// ★ Named from the game: "Sap" (MsgDjinnName)
-  LOCALID_SAP = LOCALID_FIRST_PLACED + 13
+  ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
 enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 
-/// Map section flags, kept while the party stays in Vault's maps: what the
+/// Area flags, kept while the party stays in Vault's maps: what the
 /// townspeople have already said. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
   /// ★ Named from the game: "Hey, it's that warrior guy!"
   /// (MsgVaultWarriorGuy)
-  FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_MAPSEC_TEMP_00,
+  FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_AREA_TEMP_00,
   /// ★ Named from the game: "You're the warriors who captured the thieves"
   /// (MsgVaultWarriorsWhoCaptured)
-  FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_MAPSEC_TEMP_05,
+  FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_AREA_TEMP_05,
   /// ★ Named from the game: "You're all really strong"
   /// (MsgVaultTalkingMayorStrong)
-  FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_MAPSEC_TEMP_06,
+  FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_AREA_TEMP_06,
   /// ★ Named from the game: "I'm so glad you came back to Vault!"
   /// (MsgVaultWarriorGuy)
-  FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_MAPSEC_TEMP_07,
+  FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_AREA_TEMP_07,
   /// ★ Named from the game: "did you guys check out the jail?"
   /// (MsgVaultGuysCheckJail)
-  FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_MAPSEC_TEMP_08
+  FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_AREA_TEMP_08
 };
 
 // Shared effect and proximity routines precede the map's entry points.
@@ -154,24 +154,24 @@ enum {
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gVaultRevisit_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gVaultRevisit_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gVaultRevisit_Warps; }
+const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
-/// Returns the villagers, dog, and Djinni object event templates.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  return gVaultRevisit_ObjectEventTemplates;
+/// Returns the villagers, dog, and Djinni actor templates.
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
+  return gVaultRevisit_ActorTemplates;
 }
 
-/// Stands the object event still while showing the message already selected.
-static void VaultRevisit_ShowStandingObjectEventMessage(s32 localId) {
+/// Stands the actor still while showing the message already selected.
+static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
-  FieldScript_ShowMessageAndWait(localId, 0);
+  Import_ActorSetAnimation(actorId, ANIM_STAND);
+  FieldScript_ShowMessageAndWait(actorId, 0);
   FieldScript_End();
 }
 
@@ -179,11 +179,10 @@ static void VaultRevisit_ShowStandingObjectEventMessage(s32 localId) {
 /// while back, aren't you? You've returned to Vault!"
 static void EventScript_RecognizeThiefCatchers(void) {
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
-                              2);
+  ObjectMotion_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
-  FieldScript_ShowMessageAndWait(LOCALID_WELCOMING_YOUNG_MAN, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_WELCOMING_YOUNG_MAN, 0);
   FieldScript_End();
 }
 
@@ -192,9 +191,8 @@ static void EventScript_RecognizeThiefCatchers(void) {
 static void EventScript_TalkOfLunpaThieves(void) {
 
   FieldScript_SetMessageId(MsgVaultRumorsThievesLunpa);
-  ObjectEvent_LinkPair(LOCALID_WOMAN_ON_LUNPAS_THIEVES, LOCALID_PARTY_LEADER,
-                       2);
-  VaultRevisit_ShowStandingObjectEventMessage(LOCALID_WOMAN_ON_LUNPAS_THIEVES);
+  Actor_LinkPair(ACTOR_WOMAN_ON_LUNPAS_THIEVES, ACTOR_PARTY_LEADER, 2);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
 }
 
 /// The old man was just talking about the party with the mayor: they are so
@@ -203,11 +201,11 @@ static void EventScript_TalkOfLunpaThieves(void) {
 static void EventScript_PraisePartyStrength(void) {
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
-  FieldScript_ShowMessageAndWait(LOCALID_MAYORS_VISITOR, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_MAYORS_VISITOR, 0);
   FieldScript_End();
 }
 
@@ -216,9 +214,8 @@ static void EventScript_PraisePartyStrength(void) {
 static void EventScript_HopeVolcanoStaysCalm(void) {
 
   FieldScript_SetMessageId(MsgVaultVolcanoStaysCalm);
-  ObjectEvent_LinkPair(LOCALID_OLD_WOMAN_ON_THE_VOLCANO, LOCALID_PARTY_LEADER,
-                       2);
-  VaultRevisit_ShowStandingObjectEventMessage(LOCALID_OLD_WOMAN_ON_THE_VOLCANO);
+  Actor_LinkPair(ACTOR_OLD_WOMAN_ON_THE_VOLCANO, ACTOR_PARTY_LEADER, 2);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
 }
 
 /// The boy round the well stops circling. "Hey, it's that warrior guy!" and
@@ -227,49 +224,49 @@ static void EventScript_HopeVolcanoStaysCalm(void) {
 /// Vault!" Bit 1 of the boy's timer keeps Vault_UpdateWalkingVillager from
 /// moving it while it talks.
 static void EventScript_GreetWarriorGuy(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL);
-  u16 facing = objectEvent->facing;
+  struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
+  u16 facing = actor->facing;
   s32 text;
 
-  objectEvent->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+  actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
   text = MsgVaultWarriorGuy;
   FieldScript_SetMessageId(text);
-  Import_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
-  ObjectEvent_LinkPair(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
+  Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_LinkPair(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (Script_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
-    ObjectEvent_ShowEmote(LOCALID_BOY_ROUND_THE_WELL,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
-    Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
+    Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
+                    EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    Script_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+    Script_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     GameFlag_Set(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED);
   }
   FieldScript_SetMessageId(text + 2);
-  Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
-  objectEvent->facing = facing;
+  Script_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+  actor->facing = facing;
   WaitFrames(1);
   FieldScript_End();
-  objectEvent->timer = 1;
+  actor->timer = 1;
   GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 }
 
 /// The girl round the well stops. "I wish Vault's elders were as brave as you!"
 static void EventScript_WishEldersWereBrave(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s16 originalFacing;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL);
-  originalFacing = objectEvent->facing;
-  objectEvent->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+  actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  originalFacing = actor->facing;
+  actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultWishVaultsElders);
-  Import_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
-  ObjectEvent_LinkPair(LOCALID_GIRL_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
-  FieldScript_ShowMessageThenWait(LOCALID_GIRL_ROUND_THE_WELL, 0, 10);
-  objectEvent->facing = originalFacing;
+  Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_LinkPair(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
+  FieldScript_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);
+  actor->facing = originalFacing;
   WaitFrames(1);
   FieldScript_End();
-  objectEvent->timer = 0;
+  actor->timer = 0;
 }
 
 /// The strongman on watch asks about the jail. "Did you guys check out the
@@ -278,13 +275,12 @@ static void EventScript_WishEldersWereBrave(void) {
 static void EventScript_AskAboutJailbreak(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultGuysCheckJail);
-  ObjectEvent_LinkPair(LOCALID_STRONGMAN_ON_WATCH, LOCALID_PARTY_LEADER, 2);
-  FieldMessage_ShowAtObject(LOCALID_STRONGMAN_ON_WATCH, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) !=
-      0) {
+  Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+  FieldMessage_ShowAtObject(ACTOR_STRONGMAN_ON_WATCH, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message += 1;
   }
-  FieldScript_ShowMessageAndWait(LOCALID_STRONGMAN_ON_WATCH, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_STRONGMAN_ON_WATCH, 0);
   GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   FieldScript_End();
 }
@@ -293,13 +289,13 @@ static void EventScript_AskAboutJailbreak(void) {
 /// recognizes the party.
 static void EventScript_ReadMindAndRecognizeThiefCatchers(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WELCOMING_YOUNG_MAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WELCOMING_YOUNG_MAN, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
+  ObjectMotion_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER,
                               20);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
-  FieldScript_ShowMessageThenWait(LOCALID_WELCOMING_YOUNG_MAN, 0, 20);
+  FieldScript_ShowMessageThenWait(ACTOR_WELCOMING_YOUNG_MAN, 0, 20);
   FieldScript_End();
 }
 
@@ -308,21 +304,21 @@ static void EventScript_ReadMindAndRecognizeThiefCatchers(void) {
 /// they are so quiet.
 static void EventScript_ReadMindOnDodonpa(void) {
   FieldScript_SetMessageId(MsgVaultOnceDodonpaTook);
-  ObjectEvent_GetById(LOCALID_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
-  VaultRevisit_ShowStandingObjectEventMessage(LOCALID_WOMAN_ON_LUNPAS_THIEVES);
-  ObjectEvent_GetById(LOCALID_WOMAN_ON_LUNPAS_THIEVES)->paused = 0;
+  Actor_GetById(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
+  VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
+  Actor_GetById(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 0;
 }
 
 /// Mind Read before the old man has spoken: he turns and praises the party.
 static void EventScript_ReadMindAndPraisePartyStrength(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MAYORS_VISITOR, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MAYORS_VISITOR, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 20);
+  ObjectMotion_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
-  FieldScript_ShowMessageThenWait(LOCALID_MAYORS_VISITOR, 0, 20);
+  FieldScript_ShowMessageThenWait(ACTOR_MAYORS_VISITOR, 0, 20);
   FieldScript_End();
 }
 
@@ -330,44 +326,41 @@ static void EventScript_ReadMindAndPraisePartyStrength(void) {
 /// winter.
 static void EventScript_ReadMindOnWinter(void) {
   FieldScript_SetMessageId(MsgVaultGreatEverythingSolved);
-  ObjectEvent_GetById(LOCALID_OLD_WOMAN_ON_THE_VOLCANO)->paused = 1;
-  VaultRevisit_ShowStandingObjectEventMessage(LOCALID_OLD_WOMAN_ON_THE_VOLCANO);
-  ObjectEvent_GetById(LOCALID_OLD_WOMAN_ON_THE_VOLCANO)->paused = 0;
+  Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 1;
+  VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
+  Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 0;
 }
 
 /// Mind Read on the boy round the well: watching the party makes one feel
 /// brave, or, before the boy has spoken, the greeting.
 static void EventScript_ReadMindOnFeelingBrave(void) {
-  ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL)->timer |=
-      VAULT_PROXIMITY_REACTION_PAUSED;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
   if (Script_GetFlag(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE) != 0) {
     FieldScript_SetMessageId(MsgVaultWatchingGuysMakes);
-    VaultRevisit_ShowStandingObjectEventMessage(LOCALID_BOY_ROUND_THE_WELL);
+    VaultRevisit_ShowStandingActorMessage(ACTOR_BOY_ROUND_THE_WELL);
   } else {
     EventScript_GreetWarriorGuy();
     GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
   }
   FieldScript_End();
-  ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL)->timer = 1;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
 }
 
 /// Mind Read on the girl round the well: grown-ups always get so scared.
 static void EventScript_ReadMindOnScaredGrownUps(void) {
   {
-    struct ObjectEvent *objectEvent =
-        ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL);
-    objectEvent->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+    struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+    actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   }
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultGrownUpsAlways);
-  VaultRevisit_ShowStandingObjectEventMessage(LOCALID_GIRL_ROUND_THE_WELL);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_GIRL_ROUND_THE_WELL);
   FieldScript_End();
   {
     s32 clear = 0;
-    struct ObjectEvent *objectEvent =
-        ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL);
-    objectEvent->timer = clear;
+    struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+    actor->timer = clear;
   }
 }
 
@@ -380,51 +373,50 @@ static void EventScript_ReadMindOnJailKey(void) {
   requestHeard = Script_GetFlag(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
     FieldScript_Start();
-    ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
-    Import_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_STRONGMAN_ON_WATCH, 1);
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
+    Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_STRONGMAN_ON_WATCH, 1);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgVaultGuysCheckJail);
-    ObjectEvent_LinkPair(LOCALID_STRONGMAN_ON_WATCH, LOCALID_PARTY_LEADER, 2);
-    Script_OpenMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) !=
-        0) {
+    Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+    Script_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       gFieldWork->message++;
     }
-    Script_ShowMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
-    ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = requestHeard;
-    ObjectEvent_SetBuiltinAction(LOCALID_STRONGMAN_ON_WATCH, 2);
+    Script_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = requestHeard;
+    Actor_SetBuiltinAction(ACTOR_STRONGMAN_ON_WATCH, 2);
     FieldScript_End();
     GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   } else {
     FieldScript_SetMessageId(MsgVaultNotLikeEasy);
-    ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
-    VaultRevisit_ShowStandingObjectEventMessage(LOCALID_STRONGMAN_ON_WATCH);
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
+    VaultRevisit_ShowStandingActorMessage(ACTOR_STRONGMAN_ON_WATCH);
     unpaused = 0;
-    ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = unpaused;
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = unpaused;
   }
 }
 
-/// Gives the object event vertical velocity, moves it, and waits briefly for it
+/// Gives the actor vertical velocity, moves it, and waits briefly for it
 /// to settle.
-static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
-                                                  int velocityY) {
-  struct ObjectEvent *jumpingObjectEvent = ObjectEvent_GetById(localId);
+static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
+                                            int velocityY) {
+  struct Actor *jumpingActor = Actor_GetById(actorId);
   int frames;
-  ObjectMotion_SetSpeedParameters(localId, PIXELS(3), PIXELS(3) / 2);
-  jumpingObjectEvent->gravity = PIXELS(1) / 2;
-  jumpingObjectEvent->bounce = 0;
-  jumpingObjectEvent->velocityY = velocityY;
-  ObjectEvent_SetSpriteFlags(jumpingObjectEvent, 0);
-  ObjectMotion_SetPositionAndCommit(localId, x, z);
-  Import_ObjectEventSetPosition(localId, x << 16, z << 16);
+  ObjectMotion_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
+  jumpingActor->gravity = PIXELS(1) / 2;
+  jumpingActor->bounce = 0;
+  jumpingActor->velocityY = velocityY;
+  Actor_SetSpriteFlags(jumpingActor, 0);
+  ObjectMotion_SetPositionAndCommit(actorId, x, z);
+  Import_ActorSetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     WaitFrames(1);
-    if ((s16)((u32)jumpingObjectEvent->velocityY >> 16) == 0)
+    if ((s16)((u32)jumpingActor->velocityY >> 16) == 0)
       break;
   }
-  ObjectEvent_SetSpriteFlags(jumpingObjectEvent, 1);
-  jumpingObjectEvent->gravity = PIXELS(1);
+  Actor_SetSpriteFlags(jumpingActor, 1);
+  jumpingActor->gravity = PIXELS(1);
 }
 
 /// Searching the bell rings it (SE_BELL). The first ring since the party came
@@ -435,30 +427,30 @@ static void EventScript_RingBell(void) {
   Script_PlaySong(SE_BELL);
   FieldScript_WaitFrames(40);
   if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
-    ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-    ObjectMotion_Launch(LOCALID_SAP, 4, 0);
+    Actor_SetAttachedEffect(ACTOR_SAP,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(12);
-    ObjectMotion_Launch(LOCALID_SAP, 4, 0);
+    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(20);
     // Let the Djinni leap from hiding before it walks to the bell.
-    VaultRevisit_JumpObjectEventToAndWait(LOCALID_SAP, 392, 104, PIXELS(7));
+    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
     FieldScript_WaitFrames(20);
-    ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 104);
-    ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 120);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
   }
   FieldScript_End();
 }
 
-/// Walks the leader into a doorway during the sixteen-frame warp delay.
-static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
-  s32 leaderId = LOCALID_PARTY_LEADER;
+/// Walks the leader into a doorway during the sixteen-frame exit delay.
+static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
+  s32 leaderId = ACTOR_PARTY_LEADER;
 
-  ObjectEvent_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_WalkTo(leaderId, x, z);
+  Actor_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkTo(leaderId, x, z);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
@@ -495,13 +487,13 @@ static void EventScript_EnterInn(void) {
 /// and the jail, and the metatile behavior of the doorway, a column of three
 /// cells at (23, 12), is replaced so he can pass.
 static void EventScript_EnterItemShop(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct Sprite *sprite = objectEvent->sprite;
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVaultRevisit_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(376, 224, VAULT_REVISIT_TO_LOG_ROOMS_B_EAST);
 }
@@ -510,14 +502,14 @@ static void EventScript_EnterItemShop(void) {
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, drawn like the item
 /// shop's.
 static void EventScript_EnterWeaponAndArmorShop(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct Sprite *sprite = objectEvent->sprite;
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVaultRevisit_WeaponAndArmorShopDoorCells,
                                    49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(296, 176, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH);
 }
@@ -540,13 +532,13 @@ static void EventScript_EnterMayorsHouse(void) {
 /// It's drawn behind the doorway as it goes in, to
 /// STONE_ROOMS_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void EventScript_EnterJail(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct Sprite *sprite = objectEvent->sprite;
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVaultRevisit_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(72, 160, VAULT_REVISIT_TO_STONE_ROOMS);
 }
@@ -556,12 +548,12 @@ static void EventScript_EnterJail(void) {
 
 /// Talking to Sap, a Venus Djinni: it joins the party.
 static void EventScript_SapJoins(void) {
-  Djinn_JoinParty(LOCALID_SAP, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
+  Djinn_JoinParty(ACTOR_SAP, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
 }
 
 /// Jumps at the hidden passage, then pauses so the party can see the clue.
 static inline void VaultRevisit_DogJumpAtPassage(void) {
-  ObjectMotion_Launch(LOCALID_VAULT_DOG, 6, 0);
+  ObjectMotion_Launch(ACTOR_VAULT_DOG, 6, 0);
   FieldScript_WaitFrames(30);
 }
 
@@ -573,18 +565,18 @@ static void EventScript_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   FieldScript_Start();
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_VAULT_DOG, 2);
-  ObjectEvent_SetSpeed(LOCALID_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(LOCALID_VAULT_DOG, 216, 408);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_VAULT_DOG, 2);
+  Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_VAULT_DOG, FACING_SOUTH, 20);
+  Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   // Repeat the clue at the concealed passage, then step back.
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
-  ObjectEvent_WalkToAndWait(LOCALID_VAULT_DOG, 216, 392);
+  Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 392);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_VAULT_DOG, FACING_SOUTH, 20);
+  Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
   FieldScript_End();
 }
@@ -611,11 +603,11 @@ static void EventScript_RevealPassage(void) {
 static void EventScript_TalkToDog(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultRuffRrruff2);
-  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
-  ObjectEvent_LinkPair(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 0);
+  Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
+  Actor_LinkPair(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(2);
-  FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
-  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
+  FieldScript_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
@@ -634,7 +626,7 @@ static void EventScript_PeerIntoWell(void) {
 }
 
 /// Returns the town's talk, bg, Psynergy, and doorway events.
-const struct MapEvent *Scene_GetEvents(void) { return gVaultRevisit_Events; }
+const struct Trigger *Scene_GetTriggers(void) { return gVaultRevisit_Triggers; }
 
 /// Patched editions keep Sap by the bell when the party keeps its position,
 /// as on a return from battle.
@@ -652,17 +644,17 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// that shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and hooks the two children round the well to
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
-/// shown it. Coming in by a gate (WARP_DEST_DEFAULT to
+/// shown it. Coming in by a gate (ENTRANCE_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
 /// clears FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
-/// FLAG_WARP_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
+/// FLAG_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
 /// play.
 s32 Scene_Initialize(void) {
 
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 mode;
 
   // Keep the bridge deck after a battle, and mend the inn's roof.
@@ -671,46 +663,43 @@ s32 Scene_Initialize(void) {
   // A still object on the well that shows nothing. XXX (no evidence): what it
   // was meant to show; its tiles in video memory are blank and nothing refers
   // to it.
-  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
+  Actor_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   WaitFrames(1);
   // Resume the two walking villagers' proximity reactions.
-  objectEvent = ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL);
+  actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
 #ifdef UBFIX
-  objectEvent->update = Vault_UpdateWalkingVillager;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  objectEvent->update =
-      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
 #endif
   {
-    struct ObjectEvent *objectEvent =
-        ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL);
+    struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
     s32 mode = 1;
-    objectEvent->timer = mode;
+    actor->timer = mode;
   }
   mode = 0;
-  objectEvent = ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL);
+  actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
 #ifdef UBFIX
-  objectEvent->update = Vault_UpdateWalkingVillager;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  objectEvent->update =
-      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
 #endif
-  ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer = mode;
+  Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
-    ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gSaveBlock.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
+    Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
+  if (gSaveBlock.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
-    ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
-  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_SANCTUM)
+    Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
+  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
-    GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_UP);
+  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+    GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }
 
@@ -786,8 +775,8 @@ s32 gVaultRevisit_GirlRoundTheWellScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gVaultRevisit_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gVaultRevisit_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
@@ -813,39 +802,39 @@ struct MapWarpDest gVaultRevisit_WarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH, CONDITION_ALWAYS, 420, 0, 136,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
-u32 gVaultRevisit_Warps[] = {
-    MAP_WARPS(VaultRevisit),
-    MAP_WARP(VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap,
-             WORLD_MAP_FROM_VAULT_SOUTH),
-    MAP_WARP(VAULT_REVISIT_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_VAULT_NORTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST),
-    MAP_WARP(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_STONE_ROOMS, StoneRooms,
-             STONE_ROOMS_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
-             VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,
-             VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT),
-    MAP_WARPS_END,
+u32 gVaultRevisit_Exits[] = {
+    SCENE_EXITS(VaultRevisit),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_SOUTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_NORTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST),
+    SCENE_EXIT(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_STONE_ROOMS, StoneRooms,
+               STONE_ROOMS_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
+               VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,
+               VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gVaultRevisit_ObjectEventTemplates[] = {
+struct ActorTemplate gVaultRevisit_ActorTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -874,7 +863,7 @@ struct ObjectEventTemplate gVaultRevisit_ObjectEventTemplates[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0x5a, 0x34, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u16 gVaultRevisit_GemOwnersHouseDoorCells[] = {
@@ -905,57 +894,57 @@ u16 gVaultRevisit_JailDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapEvent gVaultRevisit_Events[] = {
-    { MAP_EVENT_WARP, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_WARP, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, MB_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
-    { MAP_EVENT_WARP, MB_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
-    { MAP_EVENT_COORD, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
-    { MAP_EVENT_COORD, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGemOwnersHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterChildsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterInn) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterItemShop) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWeaponAndArmorShop) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterMayorsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJail) },
-    { MAP_EVENT_TALK, LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RecognizeThiefCatchers) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
-    { MAP_EVENT_TALK, LOCALID_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
-    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkOfLunpaThieves) },
-    { MAP_EVENT_TALK, LOCALID_MAYORS_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PraisePartyStrength) },
-    { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopeVolcanoStaysCalm) },
-    { MAP_EVENT_TALK, LOCALID_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GreetWarriorGuy) },
-    { MAP_EVENT_TALK, LOCALID_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WishEldersWereBrave) },
-    { MAP_EVENT_TALK, LOCALID_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutJailbreak) },
-    { MAP_EVENT_TALK, LOCALID_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
-    { MAP_EVENT_TALK, LOCALID_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDog) },
-    { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
-    { MAP_EVENT_TALK, LOCALID_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SapJoins) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnDodonpa) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAYORS_VISITOR, FLAG_VAULT_REVISIT_PARTY_PRAISED, EVENT_SCRIPT(EventScript_ReadMindAndPraisePartyStrength) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYORS_VISITOR, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnWinter) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_BOY_ROUND_THE_WELL, FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnScaredGrownUps) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_STRONGMAN_ON_WATCH, FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
-    { BG_EVENT(BG_EVENT_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
-    { USE_ITEM_ON_OBJ_EVENT(ITEM_BONE), LOCALID_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(EventScript_GiveBoneToDog) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePassage) },
-    { MAP_EVENTS_END },
+struct Trigger gVaultRevisit_Triggers[] = {
+    { TRIGGER_EXIT, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
+    { TRIGGER_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, MB_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
+    { TRIGGER_EXIT, MB_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
+    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
+    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGemOwnersHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterChildsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterInn) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterItemShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWeaponAndArmorShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterMayorsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJail) },
+    { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RecognizeThiefCatchers) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkOfLunpaThieves) },
+    { TRIGGER_TALK, ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PraisePartyStrength) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopeVolcanoStaysCalm) },
+    { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GreetWarriorGuy) },
+    { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WishEldersWereBrave) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutJailbreak) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
+    { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDog) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
+    { TRIGGER_TALK, ACTOR_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SapJoins) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnDodonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYORS_VISITOR, FLAG_VAULT_REVISIT_PARTY_PRAISED, EVENT_SCRIPT(EventScript_ReadMindAndPraisePartyStrength) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnWinter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_BOY_ROUND_THE_WELL, FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnScaredGrownUps) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_STRONGMAN_ON_WATCH, FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnJailKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
+    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
+    { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(EventScript_GiveBoneToDog) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPassage) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePassage) },
+    { TRIGGERS_END },
 };
 // clang-format on

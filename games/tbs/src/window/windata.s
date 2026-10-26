@@ -37,8 +37,8 @@ gWindow_PartyColumnOffsets:
 	.endif
 	.endif
 	.endif
-	.global gSummaryScreen_LevelLetterString
-gSummaryScreen_LevelLetterString:
+	.global gStatusScreen_LevelLetterString
+gStatusScreen_LevelLetterString:
 	.ifdef TBS_EDITION_DE
 	.asciz "L"
 	.balign 4, 0
@@ -55,47 +55,47 @@ gSummaryScreen_LevelLetterString:
 	.endif
 @ The ranges of kana (first and last, ending in 0) that take the voiced
 @ mark, then those that take the semi-voiced mark
-	.global gNamingScreen_VoicedMarkRanges
-gNamingScreen_VoicedMarkRanges:
+	.global gNameEntry_VoicedMarkRanges
+gNameEntry_VoicedMarkRanges:
 	.byte 0xb6, 0xc4, 0xca, 0xce, 0x96, 0x9f, 0xe0, 0xe4, 0xea, 0xee, 0x93, 0x93, 0xb3, 0xb3, 0x00
-	.global gNamingScreen_SemivoicedMarkRanges
-gNamingScreen_SemivoicedMarkRanges:
+	.global gNameEntry_SemivoicedMarkRanges
+gNameEntry_SemivoicedMarkRanges:
 	.byte 0xca, 0xce, 0xea, 0xee, 0x00
-	.global gNamingScreen_CaretWave
-gNamingScreen_CaretWave:
+	.global gNameEntry_CaretWave
+gNameEntry_CaretWave:
 	.byte 0, 1, 2, 3, 3, 2, 1, 0
 	.ifdef TBS_EDITION_DE
-	.global gNamingScreen_DeleteKeyLabel
-gNamingScreen_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "ENT"
 	.else
 	.ifdef TBS_EDITION_ES
-	.global gNamingScreen_DeleteKeyLabel
-gNamingScreen_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "SUP"
 	.else
 	.ifdef TBS_EDITION_FR
-	.global gNamingScreen_DeleteKeyLabel
-gNamingScreen_DeleteKeyLabel:
+	.global gNameEntry_DeleteKeyLabel
+gNameEntry_DeleteKeyLabel:
 	.asciz "EFF"
 	.else
 	.endif
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.global gNamingScreen_EndKeyLabel
-gNamingScreen_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "ENDE"
 	.space 1
 	.else
 	.ifdef TBS_EDITION_ES
-	.global gNamingScreen_EndKeyLabel
-gNamingScreen_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "FIN"
 	.else
 	.ifdef TBS_EDITION_FR
-	.global gNamingScreen_EndKeyLabel
-gNamingScreen_EndKeyLabel:
+	.global gNameEntry_EndKeyLabel
+gNameEntry_EndKeyLabel:
 	.asciz "FIN"
 	.else
 	.endif
@@ -164,8 +164,8 @@ gDjinnMenu_BlinkTile:
 	.incbin "games/tbs/src/menu/djinn/blink.4bpp"
 @ Each cursor stop: item, column, row, highlight column, highlight row,
 @ highlight width
-	.global gBattleSummaryScreen_StatCursors
-gBattleSummaryScreen_StatCursors:
+	.global gBattleStatusScreen_StatCursors
+gBattleStatusScreen_StatCursors:
 	.byte 0, 2, 0, 0, 0, 12, 0, 0
 	.byte 2, 8, 1, 0, 1, 13, 0, 0
 	.byte 3, 12, 3, 5, 3, 11, 0, 0
@@ -182,14 +182,14 @@ gBattleSummaryScreen_StatCursors:
 	.byte 7, 13, 10, 0, 10, 20, 0, 0
 	.byte 8, 13, 11, 0, 11, 20, 0, 0
 	.byte 9, 13, 12, 0, 12, 20, 0, 0
-	.global gBattleSummaryScreen_EquipmentCursors
-gBattleSummaryScreen_EquipmentCursors:
+	.global gBattleStatusScreen_EquipmentCursors
+gBattleStatusScreen_EquipmentCursors:
 	.byte 10, 19, 1, 0
 	.byte 11, 19, 2, 0
 	.byte 12, 19, 3, 0
 	.byte 13, 19, 4, 0
-	.global gBattleSummaryScreen_ConditionCursors
-gBattleSummaryScreen_ConditionCursors:
+	.global gBattleStatusScreen_ConditionCursors
+gBattleStatusScreen_ConditionCursors:
 	.byte 14, 13, 0, 0
 	.byte 15, 15, 0, 0
 	.byte 16, 17, 0, 0
@@ -199,110 +199,110 @@ gBattleSummaryScreen_ConditionCursors:
 	.byte 20, 25, 0, 0
 	.byte 21, 27, 0, 0
 	.ifdef TBS_EDITION_ES
-	.global gBattleSummaryScreen_NivString
-gBattleSummaryScreen_NivString:
+	.global gBattleStatusScreen_NivString
+gBattleStatusScreen_NivString:
 	.asciz "Niv"
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gBattleSummaryScreen_NivString
-gBattleSummaryScreen_NivString:
+	.global gBattleStatusScreen_NivString
+gBattleStatusScreen_NivString:
 	.asciz "Niv"
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global gBattleSummaryScreen_NvString
-gBattleSummaryScreen_NvString:
+	.global gBattleStatusScreen_NvString
+gBattleStatusScreen_NvString:
 	.asciz "Nv."
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gBattleSummaryScreen_NvString
-gBattleSummaryScreen_NvString:
+	.global gBattleStatusScreen_NvString
+gBattleStatusScreen_NvString:
 	.asciz "Nv."
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_FR
-	.global gBattleSummaryScreen_LevelString
-gBattleSummaryScreen_LevelString:
+	.global gBattleStatusScreen_LevelString
+gBattleStatusScreen_LevelString:
 	.asciz "Niv"
 	.else
-	.global gBattleSummaryScreen_LevelString
-gBattleSummaryScreen_LevelString:
+	.global gBattleStatusScreen_LevelString
+gBattleStatusScreen_LevelString:
 	.asciz "Lv"
 	.balign 4, 0
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global gBattleSummaryScreen_KpString
-gBattleSummaryScreen_KpString:
+	.global gBattleStatusScreen_KpString
+gBattleStatusScreen_KpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gBattleSummaryScreen_KpString
-gBattleSummaryScreen_KpString:
+	.global gBattleStatusScreen_KpString
+gBattleStatusScreen_KpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_ES
-	.global gBattleSummaryScreen_PvString
-gBattleSummaryScreen_PvString:
+	.global gBattleStatusScreen_PvString
+gBattleStatusScreen_PvString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gBattleSummaryScreen_PvString
-gBattleSummaryScreen_PvString:
+	.global gBattleStatusScreen_PvString
+gBattleStatusScreen_PvString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.endif
 	.endif
 	.ifdef TBS_EDITION_DE
-	.global gBattleSummaryScreen_HpString
-gBattleSummaryScreen_HpString:
+	.global gBattleStatusScreen_HpString
+gBattleStatusScreen_HpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_ES
-	.global gBattleSummaryScreen_HpString
-gBattleSummaryScreen_HpString:
+	.global gBattleStatusScreen_HpString
+gBattleStatusScreen_HpString:
 	.asciz "PS"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_FR
-	.global gBattleSummaryScreen_HpString
-gBattleSummaryScreen_HpString:
+	.global gBattleStatusScreen_HpString
+gBattleStatusScreen_HpString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gBattleSummaryScreen_HpString
-gBattleSummaryScreen_HpString:
+	.global gBattleStatusScreen_HpString
+gBattleStatusScreen_HpString:
 	.asciz "PS"
 	.balign 4, 0
 	.else
-	.global gBattleSummaryScreen_HpString
-gBattleSummaryScreen_HpString:
+	.global gBattleStatusScreen_HpString
+gBattleStatusScreen_HpString:
 	.asciz "HP"
 	.balign 4, 0
 	.endif
 	.endif
 	.endif
 	.endif
-	.global gBattleSummaryScreen_SlashString
-gBattleSummaryScreen_SlashString:
+	.global gBattleStatusScreen_SlashString
+gBattleStatusScreen_SlashString:
 	.asciz "/"
 	.balign 4, 0
 	.if EDITION_INTERNATIONAL
-	.global gBattleSummaryScreen_PpString
-gBattleSummaryScreen_PpString:
+	.global gBattleStatusScreen_PpString
+gBattleStatusScreen_PpString:
 	.asciz "PP"
 	.else
-	.global gBattleSummaryScreen_PpString
-gBattleSummaryScreen_PpString:
+	.global gBattleStatusScreen_PpString
+gBattleStatusScreen_PpString:
 	.asciz "EP"
 	.endif
 	.global gDjinnMenu_ElementXOffsets

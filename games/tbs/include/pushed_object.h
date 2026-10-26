@@ -5,18 +5,18 @@
 /// The pushed objects' movement probes and footprint bounds.
 
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "scene_header.h"
 #include "static_assert.h"
 
 /// Where a pushed object ahead of the leader would roll to: its footprint, its
-/// object event, that position, and a callback during the leader's
+/// actor, that position, and a callback during the leader's
 /// follow-through.
 struct PushedObjectProbe {
   /// The large thing's row in gPushedObject_FootprintKinds and
   /// gPushedObject_FootprintBounds, 0 to 5.
   s32 footprintIndex;
-  s32 objectEventSlot; ///< the large thing's local id, 8 to 65
+  s32 actorSlot; ///< the large thing's actor id, 8 to 65
   /// 16.16 pixels while moving; converted to cells by footprint redraws.
   struct FieldPosition position;
   /// Run as the leader follows the rolling thing, when not null; the probe

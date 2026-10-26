@@ -10,7 +10,7 @@ letters, icons, portraits and the page arrow.
 
 It also builds the screens made directly from windows: the field menu's row of
 icons, the pause menu and its option menu, the file menu that saves the game,
-the naming screen, the [party](../../glossary.md#the-party) status window, the
+the name entry screen, the [party](../../glossary.md#the-party) status window, the
 battle menus and the debug menus.
 [Menus, windows and shops](../../menus.md#windows) gives the whole layer in
 brief; the field menu's four screens are in [Menus](../menu/README.md), and
@@ -183,12 +183,12 @@ Arriving in a new area, the player sees its name in a small window near the
 top of the screen for a second and a half. Opening the field menu hides it at
 once.
 
-`MapNamePopup_Show` draws the name and `MapNamePopup_Update` closes it when its
+`AreaNameWindow_Show` draws the name and `AreaNameWindow_Update` closes it when its
 time is up.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_NAME_POPUP_FRAMES` | 90 | frames the area's name shows |
+| `AREA_NAME_WINDOW_FRAMES` | 90 | frames the area's name shows |
 
 ## The pause menu
 
@@ -236,18 +236,18 @@ of them until then.
 `OptionMenu_Run` (`window/window/options.c`) runs it, and `WindowColor_Apply`
 recolours every window from a hue and a brightness.
 
-## The naming screen
+## The name entry screen
 
 ![A new game with no save file: a keyboard window comes up under Isaac's portrait and the name `Isaac`; B takes off two letters, the hand moves to `a` and then `c` and puts them back, Start jumps to End, and A ends the name.](https://alchemy.pascalpixel.com/guides/window/naming-screen.gif)
 
-A new game opens on the naming screen with the leader's name already in it.
+A new game opens on the name entry screen with the leader's name already in it.
 The player moves the hand over a keyboard: A puts a letter on, B or Del takes
 the last one off, and End (or Start, which jumps there) keeps the name. A
 name has at most five letters, and an empty one keeps the old name. Two hidden
 button codes on the main menu add more names to enter: the first Garet, Ivan
 and Mia, the second Felix, Jenna and Sheba as well.
 
-`NamingScreen_EditMemberName` (`window/screens/name_entry.c`) runs it; the main
+`NameEntry_EditMemberName` (`window/screens/name_entry.c`) runs it; the main
 menu (`menu/main_menu.c`) calls it for each name.
 
 | Name | Value | Meaning |

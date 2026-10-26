@@ -2,19 +2,19 @@
 #define ALCHEMY_UNIT_MAP_COTTAGE_ROOMS_C_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *CottageRoomsC_GetWarpDests(void);
-const struct MapWarpRegion *CottageRoomsC_GetRegions(void);
-const u32 *CottageRoomsC_GetWarps(void);
-const struct ObjectEventTemplate *CottageRoomsC_GetObjectEventTemplates(void);
-const struct MapEvent *CottageRoomsC_GetEvents(void);
+const struct SceneEntrance *CottageRoomsC_GetEntrances(void);
+const struct SceneExitRegion *CottageRoomsC_GetRegions(void);
+const u32 *CottageRoomsC_GetExits(void);
+const struct ActorTemplate *CottageRoomsC_GetActorTemplates(void);
+const struct Trigger *CottageRoomsC_GetTriggers(void);
 s32 CottageRoomsC_Initialize(void);
-extern struct MapWarpDest gCottageRoomsCWarpDests[];
-extern u32 gCottageRoomsCWarps[];
-extern struct ObjectEventTemplate gCottageRoomsCObjectEventTemplates[];
-extern struct MapEvent gCottageRoomsCEvents[];
+extern struct SceneEntrance gCottageRoomsCEntrances[];
+extern u32 gCottageRoomsCExits[];
+extern struct ActorTemplate gCottageRoomsCActorTemplates[];
+extern struct Trigger gCottageRoomsCTriggers[];
 
 #endif

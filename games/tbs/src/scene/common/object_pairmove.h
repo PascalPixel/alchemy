@@ -1,31 +1,31 @@
 #include "unit/field/field.h"
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "save_block.h"
 
 // Imil and Fuchin Falls, and Vale's cave.
 
-/// Moves the character the player controls (in animation 27) and object event
+/// Moves the character the player controls (in animation 27) and actor
 /// id together by (dx, dz) pixels to the centres of their cells, at a pixel a
-/// frame, as when pushing it; the object event faces the way it goes.
-static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *other;
+/// frame, as when pushing it; the actor faces the way it goes.
+static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
+  struct Actor *actor;
+  struct Actor *other;
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  other = ObjectEvent_GetById(id);
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  other = Actor_GetById(id);
   FieldScript_Start();
   {
-    x = ((objectEvent->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-    z = ((objectEvent->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-    objectEvent->speed = 0x10000;
-    objectEvent->acceleration = 0x8000;
-    Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
+    actor->speed = 0x10000;
+    actor->acceleration = 0x8000;
+    Object_SetPosition(actor, x, actor->y.fixed, z);
   }
-  Object_SelectAnimation(objectEvent, 27);
+  Object_SelectAnimation(actor, 27);
   {
     x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
@@ -39,6 +39,6 @@ static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   } else {
     Object_SelectAnimation(other, 3);
   }
-  Object_WaitForMove(objectEvent);
+  Object_WaitForMove(actor);
   FieldScript_End();
 }

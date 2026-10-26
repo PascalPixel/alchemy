@@ -3,18 +3,18 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Kalay_GetWarpDests(void);
-const struct MapWarpRegion *Kalay_GetRegions(void);
-const u32 *Kalay_GetWarps(void);
-const struct ObjectEventTemplate *Kalay_GetObjectEventTemplates(void);
-const struct MapEvent *Kalay_GetEvents(void);
+const struct SceneEntrance *Kalay_GetEntrances(void);
+const struct SceneExitRegion *Kalay_GetRegions(void);
+const u32 *Kalay_GetExits(void);
+const struct ActorTemplate *Kalay_GetActorTemplates(void);
+const struct Trigger *Kalay_GetTriggers(void);
 s32 Kalay_Initialize(void);
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];
@@ -29,27 +29,27 @@ extern s32 gKalay_SecondGuideReturnScript[];
 extern s32 gKalay_PartyFidgetScript[];
 extern s32 gKalay_PartyGatherScript[];
 extern s32 gKalay_FrostGrowScript[];
-extern struct MapWarpDest gKalay_NoWarpDests[];
-extern struct MapWarpDest gKalay_TownWarpDests[];
-extern struct MapWarpDest gKalay_HammetPalaceWarpDests[];
-extern struct MapWarpDest gKalay_TunnelEntranceWarpDests[];
-extern struct MapWarpDest gKalay_TunnelCaveWarpDests[];
-extern struct MapWarpDest gKalay_TunnelPassageWarpDests[];
-extern struct MapWarpDest gKalay_TunnelWarpDests[];
-extern u32 gKalay_Warps[];
-extern struct ObjectEventTemplate gKalay_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TownObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TourGroupObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_HammetPalaceObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TunnelEntranceObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TunnelObjectEventTemplates[];
-extern struct MapEvent gKalay_NoEvents[];
-extern struct MapEvent gKalay_TownEvents[];
-extern struct MapEvent gKalay_HammetPalaceEvents[];
-extern struct MapEvent gKalay_TunnelEntranceEvents[];
-extern struct MapEvent gKalay_TunnelCaveEvents[];
-extern struct MapEvent gKalay_TunnelPassageEvents[];
-extern struct MapEvent gKalay_TunnelEvents[];
+extern struct SceneEntrance gKalay_NoEntrances[];
+extern struct SceneEntrance gKalay_TownEntrances[];
+extern struct SceneEntrance gKalay_HammetPalaceEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntranceEntrances[];
+extern struct SceneEntrance gKalay_TunnelCaveEntrances[];
+extern struct SceneEntrance gKalay_TunnelPassageEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntrances[];
+extern u32 gKalay_Exits[];
+extern struct ActorTemplate gKalay_NoActorTemplates[];
+extern struct ActorTemplate gKalay_TownActorTemplates[];
+extern struct ActorTemplate gKalay_TourGroupActorTemplates[];
+extern struct ActorTemplate gKalay_HammetPalaceActorTemplates[];
+extern struct ActorTemplate gKalay_TunnelEntranceActorTemplates[];
+extern struct ActorTemplate gKalay_TunnelActorTemplates[];
+extern struct Trigger gKalay_NoTriggers[];
+extern struct Trigger gKalay_TownTriggers[];
+extern struct Trigger gKalay_HammetPalaceTriggers[];
+extern struct Trigger gKalay_TunnelEntranceTriggers[];
+extern struct Trigger gKalay_TunnelCaveTriggers[];
+extern struct Trigger gKalay_TunnelPassageTriggers[];
+extern struct Trigger gKalay_TunnelTriggers[];
 extern u16 gKalay_DoorCellSteps[];
 extern struct MapGridCellAnimation gKalay_DoorCells[];
 extern s32 gKalay_TunnelParticleScript[];

@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_SOL_SANCTUM_CORRIDOR_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
-extern struct MapWarpDest gSolSanctumCorridorWarpDests[];
-extern u32 gSolSanctumCorridorWarps[];
-extern struct ObjectEventTemplate gSolSanctumCorridorObjectEventTemplates[];
-extern struct MapEvent gSolSanctumCorridorEvents[];
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
+extern struct SceneEntrance gSolSanctumCorridorEntrances[];
+extern u32 gSolSanctumCorridorExits[];
+extern struct ActorTemplate gSolSanctumCorridorActorTemplates[];
+extern struct Trigger gSolSanctumCorridorTriggers[];
 
 #endif

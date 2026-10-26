@@ -2,26 +2,25 @@
 #define ALCHEMY_UNIT_MAP_LALIVERO_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Lalivero_GetWarpDests(void);
-const struct MapWarpRegion *Lalivero_GetRegions(void);
-const u32 *Lalivero_GetWarps(void);
-const struct ObjectEventTemplate *Lalivero_GetObjectEventTemplates(void);
-const struct MapEvent *Lalivero_GetEvents(void);
+const struct SceneEntrance *Lalivero_GetEntrances(void);
+const struct SceneExitRegion *Lalivero_GetRegions(void);
+const u32 *Lalivero_GetExits(void);
+const struct ActorTemplate *Lalivero_GetActorTemplates(void);
+const struct Trigger *Lalivero_GetTriggers(void);
 s32 Lalivero_Initialize(void);
 extern s32 gLalivero_CryingScript[];
-extern struct MapWarpDest gLaliveroWarpDests[];
-extern u32 gLaliveroWarps[];
-extern struct ObjectEventTemplate gLaliveroObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gLaliveroObjectEventTemplatesAfterLighthouse[];
+extern struct SceneEntrance gLaliveroEntrances[];
+extern u32 gLaliveroExits[];
+extern struct ActorTemplate gLaliveroActorTemplates[];
+extern struct ActorTemplate gLaliveroActorTemplatesAfterLighthouse[];
 extern s16 gLaliveroDoorCells[][2];
 extern u16 gLaliveroDoorOpenSteps[];
 extern u16 gLaliveroGateOpenSteps[];
-extern struct MapEvent gLaliveroEvents[];
-extern struct MapEvent gLaliveroEventsAfterLighthouse[];
+extern struct Trigger gLaliveroTriggers[];
+extern struct Trigger gLaliveroTriggersAfterLighthouse[];
 
 #endif

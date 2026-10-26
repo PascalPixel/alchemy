@@ -60,7 +60,7 @@ the requests themselves.
 Everything on the field that moves or changes by itself is an
 [object](../../glossary.md#object), and each one runs a small script. The
 party, the people and things a scene places (its
-[object events](../../glossary.md#object-event)), the camera and each
+[actors](../../glossary.md#actor)), the camera and each
 footprint share 64 places. Every frame each object runs the steps of its
 script until one says to wait. The leader's script is "move by the pad, wait
 a frame, repeat", the camera's "follow the leader, wait a frame, repeat", and
@@ -277,8 +277,8 @@ gives the scripts' format.
 | Name | Value | Background | Meaning |
 | --- | --- | --- | --- |
 | `MAPGRID_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
-| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the object events |
-| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the object events |
+| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
+| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
 ## The world map in perspective
 
@@ -317,7 +317,7 @@ is in [Maps](../map/README.md#the-world-maps-data).
 All 64 objects are the same 112 bytes, and the engine reads them as
 `struct Object`: the script commands, the motion loop, the cameras, the
 battle and the field effects all take one. Scenes read the same object as
-`struct ObjectEvent`, and an effect as `struct FieldEffect`, with their fields
+`struct Actor`, and an effect as `struct FieldEffect`, with their fields
 in the same places. A few more views remain where
 [matching](../../glossary.md#matching-decompilation) needs them, each a
 field-for-field copy that differs only where its reader does, as
@@ -354,7 +354,7 @@ one family of functions ends and the next begins.
 ## How the field fits with the rest of the game
 
 [Running a scene](../overworld/README.md) owns the scene loop: it starts the
-objects, loads the map and the overlay, places the object events and
+objects, loads the map and the overlay, places the actors and
 handles requests, and this engine supplies the objects, scripts and ground
 checks it uses. Overlays reach the engine through their
 [import tables](../../glossary.md#entry-table-and-import-table): nine scenes
@@ -375,8 +375,8 @@ differences from this one.
 ## Words used here
 
 - An **object** is one of the 64 places of `gObjects`, 112 bytes each, as the
-  [glossary](../../glossary.md#object) defines it; a scene knows its object
-  events among them by [local id](../../glossary.md#local-id). A place with no
+  [glossary](../../glossary.md#object) defines it; a scene knows its
+  actors among them by [actor id](../../glossary.md#actor-id). A place with no
   script is free.
 - A **sprite** is one of the 64 `struct Sprite`s: an image and a shadow, two
   entries of OAM (the hardware's sprite list), and up to four **sprite anims**

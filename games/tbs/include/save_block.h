@@ -36,7 +36,7 @@ enum HazardMode {
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
-  /// (overworld/overworld/events.c) and the travelers' fight in Vale
+  /// (overworld/overworld/triggers.c) and the travelers' fight in Vale
   /// (ValePlaza_FightTravelers, scene/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
@@ -86,19 +86,19 @@ struct SaveBlock {
   /// The scene being played: its index in gSceneHeaders (a SceneId_
   /// symbol), or SEQUENCE_BATTLE or another number above the field scenes.
   s16 sceneId;
-  s16 warpDest;        ///< the warp destination taken; in SEQUENCE_BATTLE, the
+  s16 entrance;        ///< the entrance taken; in SEQUENCE_BATTLE, the
                        ///< formation
   s16 restartScene;    ///< where the party restarts: the last Sanctum, usually
-  s16 restartWarpDest; ///< the restart point's warp destination
+  s16 restartEntrance; ///< the restart point's entrance
   s16 defaultScene;    ///< the scene being run, kept as it starts
-  s16 defaultWarpDest; ///< the warp destination it was entered by
-  s16 mapSec; ///< the current scene's map section; a new one resets its flags
-  s16 nextScene;      ///< where the script sends the party next; -1 for none
-  s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
-  s16 defeatScene;    ///< where a defeat returns to; -1 for none
-  s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
-  s16 special;        ///< the battle background chosen for the scene or
-                      ///< battle environment
+  s16 defaultEntrance; ///< the entrance it was entered by
+  s16 area;            ///< the current scene's area; a new one resets its flags
+  s16 nextScene;       ///< where the script sends the party next; -1 for none
+  s16 nextEntrance;    ///< where the script sends the party next; -1 for none
+  s16 defeatScene;     ///< where a defeat returns to; -1 for none
+  s16 defeatEntrance;  ///< where a defeat returns to; -1 for none
+  s16 special;         ///< the battle background chosen for the scene or
+                       ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
   /// The scene header's map (mapIndex); the world map's is 1, which the
   /// code compares as (s32)&SceneId_MainMenu.
@@ -111,8 +111,8 @@ struct SaveBlock {
   s16 battleMusic;         ///< the battle music chosen for the encounter
   s16 sceneMusic;          ///< the current scene's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
-  s32 leaderLocalId;       ///< the leader: its unit and its object event
+  u8 paddingAfterMovement; ///< up to the word leaderActorId starts on
+  s32 leaderActorId;       ///< the leader: its unit and its actor
   u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
   u8 windowColor[2];       ///< window hue (0 to 23), brightness (0 to 14)
@@ -158,19 +158,19 @@ struct SaveBlock {
   s16 hazardMode;  ///< an enum HazardMode
   /// bits: 8 the amount is a percentage of maximum HP | 7..0 the amount
   s16 hazardDamage;
-  s16 hazardSteps; ///< reset on entering a new map section
+  s16 hazardSteps; ///< reset on entering a new area
   ///@}
   /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
   /// flags in bits 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
   s16 runResult;      ///< the last battle's result; -1 for a defeat
-  s32 encounterSteps; ///< the encounter count, reset with a new map section
+  s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its header
-  s16 retreatScene;   ///< where Retreat goes; the map section's first warp
-                      ///< destination
-  s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
-                           ///< destination
+  s16 retreatScene;   ///< where Retreat goes; the area's first
+                      ///< entrance
+  s16 retreatEntrance;     ///< where Retreat goes; the area's first
+                           ///< entrance
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
   s8 pausedPose;           ///< Halt: the stopped object's first animation param
@@ -198,14 +198,14 @@ STATIC_ASSERT(offsetof(struct SaveBlock, shopGifts) == 0x11c);
 STATIC_ASSERT(offsetof(struct SaveBlock, units) == 0x2c0);
 STATIC_ASSERT(sizeof(struct SaveBlock) == 0xd20);
 STATIC_ASSERT(offsetof(struct SaveBlock, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct SaveBlock, mapSec) == 0x1cc);
+STATIC_ASSERT(offsetof(struct SaveBlock, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct SaveBlock, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct SaveBlock, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct SaveBlock, warpDest) == 0x1c2);
+STATIC_ASSERT(offsetof(struct SaveBlock, entrance) == 0x1c2);
 STATIC_ASSERT(offsetof(struct SaveBlock, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct SaveBlock, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct SaveBlock, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct SaveBlock, leaderLocalId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct SaveBlock, leaderActorId) == 0x1f4);
 STATIC_ASSERT(offsetof(struct SaveBlock, party) == 0x1f8);
 STATIC_ASSERT(offsetof(struct SaveBlock, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct SaveBlock, messageSpeed) == 0x20c);
@@ -213,7 +213,7 @@ STATIC_ASSERT(offsetof(struct SaveBlock, aKeys) == 0x210);
 STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcutKeys) == 0x218);
 STATIC_ASSERT(offsetof(struct SaveBlock, secondShortcutKeys) == 0x21a);
 STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct SaveBlock, retreatWarpDest) == 0x242);
+STATIC_ASSERT(offsetof(struct SaveBlock, retreatEntrance) == 0x242);
 STATIC_ASSERT(offsetof(struct SaveBlock, cloaked) == 0x24c);
 STATIC_ASSERT(offsetof(struct SaveBlock, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct SaveBlock, startStamp) == 0x2b8);

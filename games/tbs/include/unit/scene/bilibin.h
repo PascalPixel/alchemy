@@ -2,34 +2,34 @@
 #define ALCHEMY_UNIT_MAP_BILIBIN_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Bilibin_GetWarpDests(void);
-const struct MapWarpRegion *Bilibin_GetRegions(void);
-const u32 *Bilibin_GetWarps(void);
-const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void);
-const struct MapEvent *Bilibin_GetEvents(void);
+const struct SceneEntrance *Bilibin_GetEntrances(void);
+const struct SceneExitRegion *Bilibin_GetRegions(void);
+const u32 *Bilibin_GetExits(void);
+const struct ActorTemplate *Bilibin_GetActorTemplates(void);
+const struct Trigger *Bilibin_GetTriggers(void);
 s32 Bilibin_Initialize(void);
 extern s32 gBilibin_FaceLeaderScript[];
-extern u16 gBilibinWarpDestsOther[];
-extern struct MapWarpDest gBilibinWarpDests[];
-extern struct MapWarpDest gBilibinBarricadeWarpDests[];
-extern struct MapWarpDest gBilibinTreasuryWarpDests[];
+extern u16 gBilibinEntrancesOther[];
+extern struct SceneEntrance gBilibinEntrances[];
+extern struct SceneEntrance gBilibinBarricadeEntrances[];
+extern struct SceneEntrance gBilibinTreasuryEntrances[];
 extern s16 gBilibinTreasuryRegions[];
-extern u32 gBilibinWarps[];
-extern struct ObjectEventTemplate gBilibinObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gBilibinObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinBarricadeObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinTreasuryObjectEventTemplates[];
-extern struct MapEvent gBilibinEventsOther[];
-extern struct MapEvent gBilibinEvents[];
-extern struct MapEvent gBilibinBarricadeEvents[];
-extern struct MapEvent gBilibinTreasuryEvents[];
+extern u32 gBilibinExits[];
+extern struct ActorTemplate gBilibinActorTemplatesOther[];
+extern struct ActorTemplate gBilibinActorTemplates[];
+extern struct ActorTemplate gBilibinBarricadeActorTemplates[];
+extern struct ActorTemplate gBilibinTreasuryActorTemplates[];
+extern struct Trigger gBilibinTriggersOther[];
+extern struct Trigger gBilibinTriggers[];
+extern struct Trigger gBilibinBarricadeTriggers[];
+extern struct Trigger gBilibinTreasuryTriggers[];
 extern u16 gBilibin_SanctumDoorSteps[];
 extern u16 gBilibin_ItemShopDoorSteps[];
 extern u16 gBilibin_WeaponAndArmorShopDoorSteps[];

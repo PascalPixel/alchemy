@@ -1,5 +1,5 @@
 /// @file
-/// Field requests and each step of the leader: warps, encounters, damage.
+/// Field requests and each step of the leader: exits, encounters, damage.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -23,9 +23,9 @@ void Field_ClearRequests(void) {
   struct FieldWork *work;
   noRequest = 0;
   work = gFieldWork;
-  work->coordEvent = noRequest;
+  work->stepTrigger = noRequest;
   work->pushCell = 0;
-  work->warp = 0;
+  work->exit = 0;
   work->menu = 0;
   work->examine = 0;
   work->start = 0;
@@ -46,16 +46,16 @@ s32 Field_CountRequests(void) {
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
   // FIELD_RAISED_EVENT_PARTY_FELL (-1) on the frame a member falls to poison,
-  // and the action request is the cell's metatile behavior, 1 on coord event
+  // and the action request is the cell's metatile behavior, 1 on step trigger
   // 1's cells (154 maps have them); together they sum to 0, and both wait until
   // another request breaks the tie, by which time a later cell's behavior may
   // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->coordEvent | work->pushCell | work->warp | work->menu |
+  return work->stepTrigger | work->pushCell | work->exit | work->menu |
          work->examine | work->start | (s16)work->talk | work->searchCell |
          work->battle | work->psynergy | work->item | work->raisedEvent;
 #else
-  return work->coordEvent + work->pushCell + work->warp + work->menu +
+  return work->stepTrigger + work->pushCell + work->exit + work->menu +
          work->examine + work->start + (s16)work->talk + work->searchCell +
          (s16)work->talk + work->battle + work->psynergy + work->item +
          work->raisedEvent;
@@ -65,8 +65,8 @@ s32 Field_CountRequests(void) {
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader (a world map metatile on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and Scene_FindPsynergyEvent (items.c),
-/// which match an item or Psynergy event to the cell the leader faces.
+/// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
+/// which match an item or Psynergy trigger to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Object *leader;
@@ -77,7 +77,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = (struct Object *)work->objectEvents[gSaveBlock.leaderLocalId];
+  leader = (struct Object *)work->actors[gSaveBlock.leaderActorId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -127,18 +127,18 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return tile[2];
 }
 
-/// Takes the warp of the first of the map's warp regions that contains the
+/// Takes the exit of the first of the map's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's warp value for SceneManager_Run, plays the warp sound and starts
+/// region's exit value for SceneManager_Run, plays the exit sound and starts
 /// leaving the map. A region's bounds are whole pixels, its maxima
-/// exclusive; a table whose first minX is -1, or no table, has no warps.
+/// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
 /// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
-/// metatile behavior. Sets work->warp and stops the leader.
-void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
+/// metatile behavior. Sets work->exit and stops the leader.
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
-  s32 warpValue;
+  s32 exitValue;
   struct FieldWork *work;
   s32 fixedZ;
   s32 fixedY;
@@ -150,7 +150,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 maxZ;
   s16 maxX;
   s16 minX;
-  const struct MapWarpRegion *region;
+  const struct SceneExitRegion *region;
 
   fixedX = positionX;
   fixedY = positionY;
@@ -164,12 +164,12 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
     maxY = region->maxY;
     maxZ = region->maxZ;
     condition = region->condition;
-    warpValue = region->value;
+    exitValue = region->value;
     if (GameFlag_IsConditionActive(condition) != 0 &&
         fixedY >= REGION_FIXED(minY) && fixedY < REGION_FIXED(maxY) &&
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
-      work->warp = warpValue;
+      work->exit = exitValue;
       Sound_PlaySongFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
@@ -183,7 +183,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 }
 
 /// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// grid layer: records coord events and push cells, takes warps, and while
+/// grid layer: records step triggers and push cells, takes exits, and while
 /// walking advances the encounter counter, regenerates PP, hurts the party with
 /// poison and hazardous ground, and wears Avoid off. When this hurts the party,
 /// the leader flinches and characters who fall are listed in the field work.
@@ -199,8 +199,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gSaveBlock.leaderLocalId;
-  struct Object *leader = (struct Object *)work->objectEvents[leaderId];
+  s32 leaderId = gSaveBlock.leaderActorId;
+  struct Object *leader = (struct Object *)work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
@@ -243,18 +243,18 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   event = tile->behavior;
   work->previousCell = work->currentCell;
   work->currentCell = tile;
-  // Warp regions are checked on any marked cell; the behavior then picks the
+  // Exit regions are checked on any marked cell; the behavior then picks the
   // request it raises.
   if (event != 0)
-    Field_CheckWarpRegions(x, y, z);
+    Field_CheckExitRegions(x, y, z);
   if (event >= MB_EVENT_FIRST && event <= MB_EVENT_LAST)
-    work->coordEvent = event;
+    work->stepTrigger = event;
   if (event >= MB_LEDGE && event <= MB_JUMP_FORWARD)
     work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
-      leader->targetX != OBJ_EVENT_NO_TARGET) {
+      leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the world map's encounter region and
     // battle environment, or from the ground the leader stands on.
     // FLAG_LURE_CAP doubles the speed the roll counts.

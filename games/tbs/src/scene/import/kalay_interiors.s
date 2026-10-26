@@ -7,16 +7,16 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
-	.set import.ObjectEvent_GetById, 1
-	.set import.ObjectEvent_DestroyById, 1
+	.set import.Actor_GetById, 1
+	.set import.Actor_DestroyById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_CenterOnColumn, 1
-	.set import.Import_ObjectEventSetAnimation, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
+	.set import.Import_ActorSetAnimation, 1
+	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1

@@ -130,9 +130,9 @@ only once some save file has found a Djinni.
 
 Eight flags in a row, read together as a byte, also hold small counters, such
 as the Battle Arena's win count. Two ranges are scratch space for the scene
-code: a scene's own flags, cleared every time the party enters a scene, and a map
-section's, cleared when it enters another
-[map section](../../glossary.md#map-section)
+code: a scene's own flags, cleared every time the party enters a scene, and an
+area's, cleared when it enters another
+[area](../../glossary.md#area)
 ([the front page](../../README.md#game-flags) gives the ranges).
 
 The flags are `gGameFlagBytes`, read and written by the functions in

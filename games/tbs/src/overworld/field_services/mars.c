@@ -9,20 +9,20 @@
 /// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera and
 /// plays ANIM_LEADER_ARMS_RAISED, the sparks swarm the leader, who pulses for
 /// 100 frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars
-/// Djinni, which then clears the Djinni's object event slot. Uses all 24 field
+/// Djinni, which then clears the Djinni's actor slot. Uses all 24 field
 /// effect sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   s32 scale;
   s32 remaining;
-  struct ObjectEvent *djinni;
+  struct Actor *djinni;
   struct FieldEffectWork *effectWork;
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   struct FieldEffectSprite *effect;
   s8 *slotState;
 
-  djinni = ObjectEvent_GetById(djinniId);
-  leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  djinni = Actor_GetById(djinniId);
+  leader = Actor_GetById(gSaveBlock.leaderActorId);
   if (djinni == NULL)
     return;
 
@@ -76,9 +76,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
                             ANIM_LEADER_ARMS_RAISED);
 
   // Every spark still in use stops its fountain. The cursor walks
@@ -143,8 +143,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
-void FieldEffect_UpdateDescendingOrbitObject(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdateDescendingOrbitObject(union ActorOrEffect *fieldObject) {
   struct Object *mote = (struct Object *)fieldObject;
   struct Vector3 position;
   struct Object *leader;
@@ -152,7 +151,7 @@ void FieldEffect_UpdateDescendingOrbitObject(
   s16 frames;
   s32 y;
 
-  leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  leader = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   timer = mote->orbitFrames - 1;
   mote->orbitFrames = timer;
   frames = mote->orbitFrames;
@@ -181,7 +180,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   s32 state;
   u32 random;
 
-  source = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  source = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {

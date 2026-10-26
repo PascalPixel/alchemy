@@ -107,7 +107,7 @@ void UpdateLinkSessionCountdown(void) {
     if (timer < 0)
       return;
 
-    // The window opens the first frame the summary screen is not up.
+    // The window opens the first frame the Status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = (s32)Link_CreateCountdownLabelWindow();

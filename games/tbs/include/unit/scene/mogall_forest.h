@@ -2,17 +2,17 @@
 #define ALCHEMY_UNIT_MAP_MOGALL_FOREST_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
 
-const struct MapWarpDest *MogallForest_GetWarpDests(void);
-const struct MapWarpRegion *MogallForest_GetRegions(void);
-const u32 *MogallForest_GetWarps(void);
-const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void);
-const struct MapEvent *MogallForest_GetEvents(void);
+const struct SceneEntrance *MogallForest_GetEntrances(void);
+const struct SceneExitRegion *MogallForest_GetRegions(void);
+const u32 *MogallForest_GetExits(void);
+const struct ActorTemplate *MogallForest_GetActorTemplates(void);
+const struct Trigger *MogallForest_GetTriggers(void);
 s32 MogallForest_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -22,20 +22,20 @@ extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gMogallForest_RockScript[];
-extern s32 gMogallForest_ObjectEventScript[];
+extern s32 gMogallForest_ActorScript[];
 extern s32 gMogallForest_HidingPlaceScript[];
-extern struct MapWarpDest gMogallForestSign_WarpDests[];
-extern struct MapWarpDest gMogallForestQuartz_WarpDests[];
-extern struct MapWarpDest gMogallForestKillerApe_WarpDests[];
-extern struct MapWarpDest gMogallForestSidePaths_WarpDests[];
-extern u32 gMogallForest_Warps[];
-extern struct ObjectEventTemplate gMogallForestSign_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gMogallForestQuartz_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gMogallForestKillerApe_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gMogallForestSidePaths_ObjectEventTemplates[];
-extern struct MapEvent gMogallForestSign_Events[];
-extern struct MapEvent gMogallForestQuartz_Events[];
-extern struct MapEvent gMogallForestKillerApe_Events[];
-extern struct MapEvent gMogallForestSidePaths_Events[];
+extern struct SceneEntrance gMogallForestSign_Entrances[];
+extern struct SceneEntrance gMogallForestQuartz_Entrances[];
+extern struct SceneEntrance gMogallForestKillerApe_Entrances[];
+extern struct SceneEntrance gMogallForestSidePaths_Entrances[];
+extern u32 gMogallForest_Exits[];
+extern struct ActorTemplate gMogallForestSign_ActorTemplates[];
+extern struct ActorTemplate gMogallForestQuartz_ActorTemplates[];
+extern struct ActorTemplate gMogallForestKillerApe_ActorTemplates[];
+extern struct ActorTemplate gMogallForestSidePaths_ActorTemplates[];
+extern struct Trigger gMogallForestSign_Triggers[];
+extern struct Trigger gMogallForestQuartz_Triggers[];
+extern struct Trigger gMogallForestKillerApe_Triggers[];
+extern struct Trigger gMogallForestSidePaths_Triggers[];
 
 #endif

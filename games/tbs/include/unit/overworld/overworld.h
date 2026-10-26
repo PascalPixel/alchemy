@@ -7,23 +7,23 @@
 struct SpeakerDefinition;
 struct Object;
 struct ScreenTransitionState;
-struct ObjectEventDouseView;
-struct MapEventView;
+struct ActorDouseView;
+struct TriggerView;
 struct FieldEffectSprite;
 struct Vector3;
-struct ObjectEvent;
+struct Actor;
 struct OrbitEffect;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct Window;
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
-/// The warp request whose destination is already in gSaveBlock.sceneId and
-/// .warpDest, so that Scene_TakeWarp leaves them as they are. Random battles,
+/// The exit request whose destination is already in gSaveBlock.sceneId and
+/// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
 /// (FieldScript_SetDestination) raise it, and SceneManager_Run returns it when
-/// the whole party falls; Scene_TakeWarp also uses it for "no warp found"
-/// (map.c, run_map.c).
-#define WARP_NONE 999
+/// the whole party falls; Scene_TakeExit also uses it for "no exit found"
+/// (map.c, run_scene.c).
+#define EXIT_NONE 999
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (SceneManager_Run).
@@ -102,9 +102,9 @@ enum EncounterZoneId {
   ENCOUNTER_ZONE_JUPITER_DJINN = 103
 };
 
-void Scene_TakeWarp(s32 warpId);
+void Scene_TakeExit(s32 exitId);
 void Scene_ReturnFromSequence(s32 result);
-s32 Scene_GetMapSec(s32 sceneId);
+s32 Scene_GetArea(s32 sceneId);
 void SequenceManager_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
@@ -117,7 +117,7 @@ s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
-s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest);
+s32 Area_GetNameIndex(s32 sceneId, s32 entrance);
 void Scene_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);
@@ -131,24 +131,22 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkObjectAndDestroySlow(
-    union ObjectEventOrEffect *fieldObject);
-void FieldEffect_ShrinkObjectAndDestroyFast(
-    union ObjectEventOrEffect *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroySlow(union ActorOrEffect *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroyFast(union ActorOrEffect *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
-/// One of the map's events (the same 12 bytes as struct MapEvent).
-struct MapEventView {
-  s32 flags; ///< the low 4 bits are the kind (MapEventKind; 7 talks to
-             ///< the object event the party stopped)
-  u8 value;  ///< the target (a local id or a metatile behavior)
+/// One of the map's events (the same 12 bytes as struct Trigger).
+struct TriggerView {
+  s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
+             ///< the actor the party stopped)
+  u8 value;  ///< the target (an actor id or a metatile behavior)
   u8 unused05;
   s16 condition; ///< as for GameFlag_IsConditionActive
   s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
-#define OBJECT_LAST 66 ///< the last object event slot searched
+#define OBJECT_LAST 66 ///< the last actor slot searched
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
@@ -157,60 +155,59 @@ struct MapEventView {
 
 s32 Party_RemapCharacterIdByFlags(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
-void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
-                                           s32 slot);
-void ObjectEvent_DestroyAtIndex(s32 objectEventIndex);
-void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table);
-s32 ObjectEvent_FindLastActiveId(void);
-void *ObjectEvent_GetSlotAddress(u32 objectEventIndex);
-void Scene_AssignViewFlags(struct ObjectEventTemplate *entry);
-void ObjectEvent_ClearOutOfBounds(void);
-void ObjectEvent_Respawn(void);
-void ObjectEvent_ClearAll(void);
-void *ObjectEvent_GetByLocalId(u32 objectEventIndex);
-void ObjectEvent_Snapshot(void);
-void ObjectEvent_Restore(void);
+void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot);
+void Actor_DestroyAtIndex(s32 actorIndex);
+void Actor_ResetForObject(struct ActorTemplate *table);
+s32 Actor_FindLastActiveId(void);
+void *Actor_GetSlotAddress(u32 actorIndex);
+void Scene_AssignViewFlags(struct ActorTemplate *entry);
+void Actor_ClearOutOfBounds(void);
+void Actor_Respawn(void);
+void Actor_ClearAll(void);
+void *Actor_GetByActorId(u32 actorIndex);
+void Actor_Snapshot(void);
+void Actor_Restore(void);
 
 void Field_ClearRequests(void);
 s32 Field_CountRequests(void);
 s32 Field_GetCollisionAheadOfLeader(void);
-void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ);
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_StartScript(void);
 void WorldMap_EndScript(void);
-s32 SceneManager_Run(s32 warpDest);
-s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void);
-void Scene_ApplyWarpDest(void);
+s32 SceneManager_Run(s32 entrance);
+s32 Actor_GetTriggerTileAheadOfCurrent(void);
+void Scene_ApplyEntrance(void);
 void PaletteEditor_Run(void);
 
-struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id);
+struct ActorTemplate *Scene_FindActorTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
-u32 Scene_BgEventIgnoresCondition(s32 flags, s32 result);
-struct MapEventView *Scene_FindEvent(s32 kind, s32 target);
+u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result);
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
 void Overlay_CallInitialize(void);
-s32 Scene_FindObjectEventTalkEvent(s32 id);
-s32 Scene_TalkToObjectEvent(s32 id);
+s32 Scene_FindActorTalkTrigger(s32 id);
+s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 value);
-s32 Scene_RunCoordEventOrWarp(s32 value);
+s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCellEvent(s32 behavior);
 s32 Field_SearchCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId);
 void Anim_ApplyChildPalette(struct Object *object, s32 palette);
 void Field_EndBusyAndReveal(void);
-s32 Field_FindItemEvent(s32 item);
+s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
-void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target);
+void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 Scene_HasFieldPsynergyEvent(s32 group);
-u32 Scene_HasPsynergyEvent(u16 item);
+s32 Scene_HasFieldPsynergyTrigger(s32 group);
+u32 Scene_HasPsynergyTrigger(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
 void Field_PlaceTreasureSpots(void);
@@ -220,19 +217,19 @@ void TreasureSpot_CloseChest(s32 id);
 void TreasureSpot_LaunchMimic(s32 id);
 void TreasureSpot_OpenChest(s32 id);
 void TreasureSpot_ShowOpened(s32 id);
-struct Object *TreasureSpot_GetObjectEvent(s32 id);
+struct Object *TreasureSpot_GetActor(s32 id);
 void TreasureSpot_Hide(s32 id);
-void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z);
+void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
-void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject);
-struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item);
+void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject);
+struct Object *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
-void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject);
+void Reveal_EmitSparkles(union ActorOrEffect *fieldObject);
 s32 Field_IsRevealActive(struct Object *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 

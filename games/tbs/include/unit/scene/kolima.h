@@ -2,19 +2,19 @@
 #define ALCHEMY_UNIT_MAP_KOLIMA_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Kolima_GetWarpDests(void);
-const struct MapWarpRegion *Kolima_GetRegions(void);
-const u32 *Kolima_GetWarps(void);
-const struct ObjectEventTemplate *Kolima_GetObjectEventTemplates(void);
-const struct MapEvent *Kolima_GetEvents(void);
+const struct SceneEntrance *Kolima_GetEntrances(void);
+const struct SceneExitRegion *Kolima_GetRegions(void);
+const u32 *Kolima_GetExits(void);
+const struct ActorTemplate *Kolima_GetActorTemplates(void);
+const struct Trigger *Kolima_GetTriggers(void);
 s32 Kolima_Initialize(void);
 extern s32 gKolima_GaretWalksIn[];
 extern s32 gKolima_IvanWalksIn[];
@@ -27,17 +27,17 @@ extern s32 gKolima_EntryActions[];
 extern s32 gKolima_DebrisScript[];
 extern s32 gKolima_FaceLeaderScript[];
 extern u16 gKolima_DoorCells[];
-extern struct MapWarpDest gKolimaWarpDests[];
-extern struct MapWarpDest gKolimaBridgeWarpDests[];
-extern struct MapWarpDest gKolimaTunnelWarpDests[];
-extern struct MapWarpRegion gKolimaTunnelRegions[];
-extern u32 gKolimaWarps[];
-extern struct ObjectEventTemplate gKolimaTunnelObjectEventTemplates[];
-extern struct ObjectEventTemplate gKolimaObjectEventTemplates[];
-extern struct ObjectEventTemplate gKolima_EntryScript[];
-extern struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[];
-extern struct MapEvent gKolimaEvents[];
-extern struct MapEvent gKolimaBridgeEvents[];
+extern struct SceneEntrance gKolimaEntrances[];
+extern struct SceneEntrance gKolimaBridgeEntrances[];
+extern struct SceneEntrance gKolimaTunnelEntrances[];
+extern struct SceneExitRegion gKolimaTunnelRegions[];
+extern u32 gKolimaExits[];
+extern struct ActorTemplate gKolimaTunnelActorTemplates[];
+extern struct ActorTemplate gKolimaActorTemplates[];
+extern struct ActorTemplate gKolima_EntryScript[];
+extern struct ActorTemplate gKolimaBridgeActorTemplates[];
+extern struct Trigger gKolimaTriggers[];
+extern struct Trigger gKolimaBridgeTriggers[];
 extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_RegionScript[];
 extern s32 gFallingEffectScript[];

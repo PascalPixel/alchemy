@@ -2,15 +2,15 @@
 #define ALCHEMY_CURSOR_H
 
 /// @file
-/// The cursor that approaches its target, shared by shops, the naming
-/// screen and the option menu.
+/// The cursor that approaches its target, shared by shops, the
+/// name entry screen and the option menu.
 
 #include "types.h"
 #include "static_assert.h"
 #include "render_input.h"
 
-/// Cursor that approaches its target, shared by shops, naming screen and option
-/// menu.
+/// Cursor that approaches its target, shared by shops, name entry screen and
+/// option menu.
 struct MenuCursor {
   struct WindowSprite *anchor; ///< the cursor's sprite, moved with its OAM
   u16 x;       ///< screen pixels: where the current move started

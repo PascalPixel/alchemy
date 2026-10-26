@@ -19,20 +19,20 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_LinkPair, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
@@ -40,7 +40,7 @@
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.FieldEffect_SpawnLinked, 1
 	.set import.FieldEffect_ConfigureLinkedObject, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

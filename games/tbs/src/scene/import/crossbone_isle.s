@@ -28,23 +28,23 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
-	.set import.TreasureSpot_SetObjectEventPosition, 1
+	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

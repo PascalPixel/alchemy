@@ -10,7 +10,7 @@
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device. The script.h commands
 /// and field_service.h are written over it. A map's script reads
-/// `SCRIPT_START(); ObjectEvent_Stop(9); OBJECT_FACE(9, LOCALID_PARTY_LEADER,
+/// `SCRIPT_START(); Actor_Stop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER,
 /// 0); SCRIPT_END();`.
 
 #include "unit/overworld/overworld.h"
@@ -54,15 +54,15 @@ extern u8 *gColossoWork;
 
 #include "frame.h"
 
-#include "object_event.h"
+#include "actor.h"
 
 /// The main loop pass's task priority, as TASK_PRIORITY_MAIN_LOOP: a map's
 /// per-frame callbacks run once a frame with the field's own.
 enum { TASK_PRIORITY_MAP = 3200 };
 
-/// Animation numbers of an object event's sprite, for
-/// Import_ObjectEventSetAnimation.
-enum ObjectEventAnimation {
+/// Animation numbers of an actor's sprite, for
+/// Import_ActorSetAnimation.
+enum ActorAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
   /// blinks and small gestures of ANIM_STAND.
   ANIM_STILL = 0,
@@ -104,7 +104,7 @@ enum ObjectEventAnimation {
   /// number to such a pose (spr_000.png to spr_003.png).
   ANIM_COLLAPSE = 19,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
-  /// The arrivals and leavings of the animated warps (enum WarpStyle), each
+  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
@@ -126,7 +126,7 @@ enum ObjectEventAnimation {
   ANIM_LEADER_CROUCH = 35
 };
 
-// Speaker bits, above the local id in the low 12 bits of a message command's
+// Speaker bits, above the actor id in the low 12 bits of a message command's
 // speaker, as FieldMessage_ShowAtObject reads them.
 #define SPEAKER_PORTRAIT_LEFT 0x1000  ///< the portrait left of the speaker
 #define SPEAKER_PORTRAIT_RIGHT 0x2000 ///< the portrait right of the speaker
@@ -152,26 +152,26 @@ struct MapGridCellAnimation {
 
 // The imports below keep a name of their own, prefixed Import_: the maps' calls
 // of these routines were compiled against declarations that differ from the
-// routines' own, as the bytes measure. Import_ScriptRequestWarp,
-// Import_ObjectEventSetPosition, Import_ObjectEventSetAnimation and
+// routines' own, as the bytes measure. Import_ScriptRequestExit,
+// Import_ActorSetPosition, Import_ActorSetAnimation and
 // Import_RandomNext are called with differing argument counts, so they keep
-// old-style declarations; FieldScript_SetWarpRequest also takes a u16 and
+// old-style declarations; FieldScript_SetExitRequest also takes a u16 and
 // Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other map's match through GameFlag_Set itself, and the maps pass
 // FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Import_ScriptShowTwoMessagesAndWait).
-/// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
-/// gSaveBlock's map and warp destination.
-void Import_ScriptRequestWarp();
-/// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
+/// Sets the field's exit request (FieldScript_SetExitRequest); 999 leaves for
+/// gSaveBlock's map and entrance.
+void Import_ScriptRequestExit();
+/// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
 /// (ObjectMotion_SetHorizontalPositionWithTerrain).
-void Import_ObjectEventSetPosition();
-/// Switches an object event's sprite to an ObjectEventAnimation
-/// (ObjectEvent_SetModeById).
-void Import_ObjectEventSetAnimation();
+void Import_ActorSetPosition();
+/// Switches an actor's sprite to an ActorAnimation
+/// (Actor_SetModeById).
+void Import_ActorSetAnimation();
 /// Sets a game flag (GameFlag_Set), for the two maps whose calls compile only
 /// as calls of a void routine.
 void Import_GameFlagSet(s32 flag);
@@ -187,23 +187,23 @@ s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void FreeHeapSlot(s32 slot);
 /// The engine encodes either a built-in action or an action-script address.
-static inline void ObjectEvent_SetActionScript(s32 localId, const s32 *script) {
-  ObjectMotion_EnableActionAndSetCallback(localId, (s32)script);
+static inline void Actor_SetActionScript(s32 actorId, const s32 *script) {
+  ObjectMotion_EnableActionAndSetCallback(actorId, (s32)script);
 }
 
 /// Runs a script, waiting at most 300 frames for its final command.
-static inline void ObjectEvent_RunActionScriptAndWait(s32 localId,
-                                                      const s32 *script) {
-  ObjectEvent_SetActionCallbackAndRefreshById(localId, (s32)script);
+static inline void Actor_RunActionScriptAndWait(s32 actorId,
+                                                const s32 *script) {
+  Actor_SetActionCallbackAndRefreshById(actorId, (s32)script);
 }
 
-/// Starts one of the engine's own actions on an object event, an enum
-/// MovementType, where ObjectEvent_SetActionScript gives it a map's script.
-static inline void ObjectEvent_SetBuiltinAction(s32 localId, s32 action) {
-  ObjectMotion_EnableActionAndSetCallback(localId, action);
+/// Starts one of the engine's own actions on an actor, an enum
+/// MovementType, where Actor_SetActionScript gives it a map's script.
+static inline void Actor_SetBuiltinAction(s32 actorId, s32 action) {
+  ObjectMotion_EnableActionAndSetCallback(actorId, action);
 }
 
-/// Two object events speak at once, each message and portrait at its own tile
+/// Two actors speak at once, each message and portrait at its own tile
 /// position, until A, B, L or R closes both
 /// (FieldScript_ShowTwoMessagesAndWait). The routine takes ten arguments and
 /// never reads flags.
@@ -212,8 +212,8 @@ void Import_ScriptShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                          s32 otherX, s32 other_y, s32 other_arg,
                                          s32 other_extra, s32 flags);
 
-#ifdef FIELD_STAGED_OBJ_EVENT_IMPORTS
-/// Declared for the maps that define FIELD_STAGED_OBJ_EVENT_IMPORTS in place
+#ifdef FIELD_STAGED_ACTOR_IMPORTS
+/// Declared for the maps that define FIELD_STAGED_ACTOR_IMPORTS in place
 /// of Script_PlaySong. Nothing calls it and no import resolves it: those maps
 /// call Sound_PlaySong.
 void Audio_PlayCue(s32 cue);
@@ -245,73 +245,68 @@ static inline s32 Script_AskYesNo(s32 speaker, s32 flags) {
   return FieldScript_AskYesNoAndShowResponse(speaker, flags);
 }
 
-/// Looks up an object event for a script, NULL when it doesn't exist
-/// (ObjectEvent_GetById).
-static inline struct ObjectEvent *ObjectEvent_Get(s32 localId) {
-  return ObjectEvent_GetById(localId);
+/// Looks up an actor for a script, NULL when it doesn't exist
+/// (Actor_GetById).
+static inline struct Actor *Actor_Get(s32 actorId) {
+  return Actor_GetById(actorId);
 }
 
-/// Places an object event at a point at once, without walking it there.
-static inline void ObjectEvent_SetPosition(s32 localId, s32 fixed_x,
-                                           s32 fixed_z) {
-  Import_ObjectEventSetPosition(localId, fixed_x, fixed_z);
+/// Places an actor at a point at once, without walking it there.
+static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z) {
+  Import_ActorSetPosition(actorId, fixed_x, fixed_z);
 }
 
-/// Sets how fast an object event moves, and how quickly it gets up to speed,
+/// Sets how fast an actor moves, and how quickly it gets up to speed,
 /// for the script's next moves.
-static inline void ObjectEvent_SetSpeed(s32 localId, s32 speed,
-                                        s32 acceleration) {
-  ObjectMotion_SetSpeedParameters(localId, speed, acceleration);
+static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
+  ObjectMotion_SetSpeedParameters(actorId, speed, acceleration);
 }
 
-/// Moves an object event to a point in the pose it has, without walking; the
+/// Moves an actor to a point in the pose it has, without walking; the
 /// script carries on meanwhile.
-static inline void ObjectEvent_SetDestination(s32 localId, s32 x, s32 z) {
-  ObjectMotion_ResetAndSetPosition(localId, x, z);
+static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
+  ObjectMotion_ResetAndSetPosition(actorId, x, z);
 }
 
-#ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
-/// Moves an object event some distance from where it stands, without waiting
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
+/// Moves an actor some distance from where it stands, without waiting
 /// for it.
-static inline void ObjectEvent_SetDestinationOffset(s32 localId, s32 dx,
-                                                    s32 dz) {
-  ObjectMotion_OffsetPositionAndResetMotion(localId, dx, dz);
+static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
+  ObjectMotion_OffsetPositionAndResetMotion(actorId, dx, dz);
 }
 #endif
 
-/// Walks an object event to a point; the script goes on while it walks.
-static inline void ObjectEvent_WalkTo(s32 localId, s32 x, s32 z) {
-  ObjectMotion_ResetAndSetPositionInMode2(localId, x, z);
+/// Walks an actor to a point; the script goes on while it walks.
+static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
+  ObjectMotion_ResetAndSetPositionInMode2(actorId, x, z);
 }
 
-/// Walks an object event some distance from where it stands, without waiting
+/// Walks an actor some distance from where it stands, without waiting
 /// for it to get there.
-static inline void ObjectEvent_WalkBy(s32 localId, s32 dx, s32 dz) {
-  ObjectMotion_OffsetPositionAndReset(localId, dx, dz);
+static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
+  ObjectMotion_OffsetPositionAndReset(actorId, dx, dz);
 }
 
-/// Turns an object event to a direction and holds the script for a few frames.
-static inline void ObjectEvent_FaceDirection(s32 localId, s32 facing,
-                                             s32 frames) {
-  ObjectMotion_ArmCallback(localId, facing, frames);
+/// Turns an actor to a direction and holds the script for a few frames.
+static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
+  ObjectMotion_ArmCallback(actorId, facing, frames);
 }
 
-/// Has one object event look at another at once, then pauses the script.
-static inline void ObjectEvent_FaceObjectEvent(s32 localId, s32 target,
-                                               s32 frames) {
-  ObjectMotion_SetAngleToward(localId, target, frames);
+/// Has one actor look at another at once, then pauses the script.
+static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
+  ObjectMotion_SetAngleToward(actorId, target, frames);
 }
 
-/// Pops an emote bubble up over an object event, then lets frames pass before
+/// Pops an emote bubble up over an actor, then lets frames pass before
 /// the script goes on.
-static inline void ObjectEvent_ShowEmote(s32 localId, s32 emote, s32 frames) {
-  FieldEffect_SpawnLinked(localId, emote, frames);
+static inline void Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
+  FieldEffect_SpawnLinked(actorId, emote, frames);
 }
 
-/// Attaches an effect object to an object event, takes it off, or plays one
+/// Attaches an effect object to an actor, takes it off, or plays one
 /// over it once.
-static inline void ObjectEvent_SetAttachedEffect(s32 localId, s32 effect) {
-  FieldEffect_ConfigureLinkedObject(localId, effect);
+static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
+  FieldEffect_ConfigureLinkedObject(actorId, effect);
 }
 
 /// Sets how fast the camera pans for the script's next camera moves.
@@ -365,7 +360,7 @@ static inline void Script_SetFlag(s32 flag) { GameFlag_Set(flag); }
 /// GameFlag_Clear, from a script.
 static inline void Script_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
-#ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Plays a sound effect or music from a script: the SE command of script.h.
 static inline void Script_PlaySong(s32 cue) { Sound_PlaySong(cue); }
 #endif
@@ -379,47 +374,43 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 }
 
 // The main image reads an object through struct Object, where the maps read the
-// same object through struct ObjectEvent; these inlines pass a map's object
-// event to it.
+// same object through struct Actor; these inlines pass a map's
+// actor to it.
 
-/// Turns a one-sprite object event's shadow on or off, bit 0 of its sprite's
+/// Turns a one-sprite actor's shadow on or off, bit 0 of its sprite's
 /// flags.
-static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
-                                              s32 flags) {
-  Object_SetSpriteFlags((struct Object *)objectEvent, flags);
+static inline void Actor_SetSpriteFlags(struct Actor *actor, s32 flags) {
+  Object_SetSpriteFlags((struct Object *)actor, flags);
 }
 
 /// Sends an object toward a point, where it coasts to a stop.
-static inline void Object_SetPosition(struct ObjectEvent *objectEvent,
-                                      s32 fixed_x, s32 fixed_y, s32 fixed_z) {
-  Object_SetMoveTarget((struct Object *)objectEvent, fixed_x, fixed_y, fixed_z);
+static inline void Object_SetPosition(struct Actor *actor, s32 fixed_x,
+                                      s32 fixed_y, s32 fixed_z) {
+  Object_SetMoveTarget((struct Object *)actor, fixed_x, fixed_y, fixed_z);
 }
 
 /// Releases an object and its sprites, and empties its place in the object
 /// table.
-static inline void ObjectEvent_Release(struct ObjectEvent *objectEvent) {
-  Object_Release((struct Object *)objectEvent);
+static inline void Actor_Release(struct Actor *actor) {
+  Object_Release((struct Object *)actor);
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden.
-static inline void ObjectEvent_SetColorMode(struct ObjectEvent *objectEvent,
-                                            s32 mode) {
-  Anim_ApplyChildValues((struct Object *)objectEvent, mode);
+static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
+  Anim_ApplyChildValues((struct Object *)actor, mode);
 }
 
-/// Creates a free object in the room, outside the object event table, or
+/// Creates a free object in the room, outside the actor table, or
 /// returns NULL when every object is taken.
-static inline struct ObjectEvent *ObjectEvent_Create(s32 type, s32 fixed_x,
-                                                     s32 fixed_y, s32 fixed_z) {
-  return (struct ObjectEvent *)Object_CreateField(type, fixed_x, fixed_y,
-                                                  fixed_z);
+static inline struct Actor *Actor_Create(s32 type, s32 fixed_x, s32 fixed_y,
+                                         s32 fixed_z) {
+  return (struct Actor *)Object_CreateField(type, fixed_x, fixed_y, fixed_z);
 }
 
 /// Starts an object on a sprite script from its first command.
-static inline void ObjectEvent_SetScript(struct ObjectEvent *objectEvent,
-                                         const s32 *script) {
-  Object_Initialize((struct Object *)objectEvent, script);
+static inline void Actor_SetScript(struct Actor *actor, const s32 *script) {
+  Object_Initialize((struct Object *)actor, script);
 }
 
 /// OAM blend modes for Object_SetSpriteBlendMode:
@@ -427,9 +418,8 @@ static inline void ObjectEvent_SetScript(struct ObjectEvent *objectEvent,
 enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode.
-static inline void ObjectEvent_SetBlendMode(struct ObjectEvent *objectEvent,
-                                            s32 mode) {
-  Object_SetSpriteBlendMode((struct Object *)objectEvent, mode);
+static inline void Actor_SetBlendMode(struct Actor *actor, s32 mode) {
+  Object_SetSpriteBlendMode((struct Object *)actor, mode);
 }
 
 /// Plays a cell animation, such as a door opening, and holds the script until
@@ -439,22 +429,21 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
   MapGrid_PlayMetatileCopySequence((u16 *)steps, destinationX, destinationY);
 }
 
-/// Moves a treasure spot's object event to a point on the ground.
+/// Moves a treasure spot's actor to a point on the ground.
 static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
                                             s32 fixed_z) {
-  TreasureSpot_SetObjectEventPosition(object, fixed_x, fixed_z);
+  TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
 }
 
-/// Lines an object event up with the middle of its column, then walks it
+/// Lines an actor up with the middle of its column, then walks it
 /// straight along z.
-static inline void ObjectEvent_CenterAndWalk(s32 localId, s32 priority,
-                                             s32 dz) {
-  ObjectMotion_CenterOnColumn(localId, priority, dz);
+static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
+  ObjectMotion_CenterOnColumn(actorId, priority, dz);
 }
 
-/// Walks an object event some distance and waits until it is there.
-static inline void ObjectEvent_WalkByAndWait(s32 localId, s32 dx, s32 dz) {
-  ObjectMotion_CommitPositionAndActivate(localId, dx, dz);
+/// Walks an actor some distance and waits until it is there.
+static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
+  ObjectMotion_CommitPositionAndActivate(actorId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the script goes on.
@@ -463,10 +452,10 @@ static inline void Script_ShowMessageAndWait(s32 speaker, s32 flags,
   FieldScript_ShowMessageThenWait(speaker, flags, frames);
 }
 
-/// Sets a sprite param on every part of an object event's sprite, or makes it
+/// Sets a sprite param on every part of an actor's sprite, or makes it
 /// blink.
-static inline void ObjectEvent_SetSpriteColorById(s32 localId, s32 value) {
-  ObjectEvent_ConfigureSpriteColor(localId, value);
+static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
+  Actor_ConfigureSpriteColor(actorId, value);
 }
 
 /// Not used in TBS.
@@ -500,17 +489,17 @@ static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
   PaletteFade_SetTarget(value, mode);
 }
 
-/// Moves an object event to a point in the pose it has and waits for it.
-static inline void ObjectEvent_MoveToAndWait(s32 localId, s32 x, s32 z) {
-  ObjectMotion_SetPositionAndCommit(localId, x, z);
+/// Moves an actor to a point in the pose it has and waits for it.
+static inline void Actor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
+  ObjectMotion_SetPositionAndCommit(actorId, x, z);
 }
 
-/// Walks an object event to a point and waits for it, then stands it still.
-static inline void ObjectEvent_WalkToAndWait(s32 localId, s32 x, s32 z) {
-  ObjectMotion_SetPositionAndReset(localId, x, z);
+/// Walks an actor to a point and waits for it, then stands it still.
+static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
+  ObjectMotion_SetPositionAndReset(actorId, x, z);
 }
 
-/// Has two object events speak at once, each window placed by the script.
+/// Has two actors speak at once, each window placed by the script.
 static inline void Script_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
                                                  s32 arg, s32 extra,
                                                  s32 otherSpeaker, s32 otherX,

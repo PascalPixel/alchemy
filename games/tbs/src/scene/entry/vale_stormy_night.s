@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ValeStormyNight_Initialize
-	overlay_veneer ValeStormyNight_GetWarpDests
-	overlay_veneer ValeStormyNight_GetWarps
-	overlay_veneer ValeStormyNight_GetObjectEventTemplates
-	overlay_veneer ValeStormyNight_GetEvents
+	overlay_veneer ValeStormyNight_GetEntrances
+	overlay_veneer ValeStormyNight_GetExits
+	overlay_veneer ValeStormyNight_GetActorTemplates
+	overlay_veneer ValeStormyNight_GetTriggers
 	overlay_veneer ValeStormyNight_GetRegions

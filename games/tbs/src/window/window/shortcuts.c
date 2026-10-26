@@ -15,9 +15,9 @@ struct TimedNoticeWork {
 /// Shows the area's name in a window near the top of the screen for 90 frames.
 /// The field work owns the window and countdown until a task closes it.
 /// The window is centred across the screen and in its top 10 rows, and opens
-/// at once; MapNamePopup_Update counts it down each frame in the main loop's
+/// at once; AreaNameWindow_Update counts it down each frame in the main loop's
 /// pass.
-void MapNamePopup_Show(void) {
+void AreaNameWindow_Show(void) {
   struct TimedNoticeWork *notice;
   s32 height;
   s32 width;
@@ -29,21 +29,20 @@ void MapNamePopup_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage =
-      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest) +
-      RENDER_RESOURCE_BASE;
+  areaMessage = Area_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.entrance) +
+                RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
   nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   notice->window = nameWindow;
   Text_DrawMessage(areaMessage, nameWindow, 0, 0);
-  notice->countdown = MAP_NAME_POPUP_FRAMES;
-  Task_Add(MapNamePopup_Update, TASK_PRIORITY_MAIN_LOOP);
+  notice->countdown = AREA_NAME_WINDOW_FRAMES;
+  Task_Add(AreaNameWindow_Update, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Counts the area name down, and closes it at 0.
-void MapNamePopup_Update(void) {
+void AreaNameWindow_Update(void) {
   struct TimedNoticeWork *notice;
   u16 framesLeft;
 
@@ -52,18 +51,18 @@ void MapNamePopup_Update(void) {
   notice->countdown = (framesLeft = notice->countdown + 0xffff);
   if ((framesLeft << 16) == 0) {
     Window_Close(notice->window, 2);
-    Task_Remove(MapNamePopup_Update);
+    Task_Remove(AreaNameWindow_Update);
   }
 }
 
 /// Closes the area name at once, if it is shown.
-void MapNamePopup_Hide(void) {
+void AreaNameWindow_Hide(void) {
   struct Window *window;
 
   window = ((struct TimedNoticeWork *)gFieldWork)->window;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, 2);
-    Task_Remove(MapNamePopup_Update);
+    Task_Remove(AreaNameWindow_Update);
   }
 }
 

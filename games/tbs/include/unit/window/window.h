@@ -400,9 +400,9 @@ enum TilemapEntryMode {
   /// the selected row or page.
   TILEMAP_ENTRY_HIGHLIGHT,
   TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
-  /// In palette 1, which the summary screen and the party rearranging fill
+  /// In palette 1, which the Status screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
-  /// (SummaryScreen_Run, MemberChooser_RunRearrange).
+  /// (StatusScreen_Run, MemberChooser_RunRearrange).
   TILEMAP_ENTRY_ICON
 };
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
@@ -529,9 +529,9 @@ void PartyStatus_CloseWithMenu(void);
 void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 
-void MapNamePopup_Show(void);
-void MapNamePopup_Update(void);
-void MapNamePopup_Hide(void);
+void AreaNameWindow_Show(void);
+void AreaNameWindow_Update(void);
+void AreaNameWindow_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
 void OptionMenu_StepWindowHue(s32 keys);

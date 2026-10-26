@@ -15,7 +15,7 @@
 void FieldEffect_RunLiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
   struct Object *caster;
-  struct ObjectEvent *target;
+  struct Actor *target;
   struct Object *pair[2];
   s32 pos[3];
   s32 x, y, z;
@@ -57,7 +57,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   Object_WaitForMoveFar(pair[0]);
   target->update = Object_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_START);
-  target->motionFlags = OBJ_EVENT_FLOATS;
+  target->motionFlags = ACTOR_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;

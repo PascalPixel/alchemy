@@ -7,8 +7,8 @@
 /// Ivan and Mia help from the stages. The stages, by their attendants'
 /// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
-/// own warp destination, and ColosseumAzartMatch_Initialize blocks Retreat and
-/// sets up the visit that warp destination stands for after restoring the
+/// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and
+/// sets up the visit that entrance stands for after restoring the
 /// stages from their temporary flags (FLAG_PIPES_MOVED,
 /// FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PLANT_GROWN and the rock's column in
 /// FLAG_SECOND_ROCK_COLUMN), so that what the friends changed stays changed for
@@ -92,7 +92,7 @@
 #include "task.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "pushed_object.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
@@ -103,7 +103,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "object_event.h"
+#include "actor.h"
 #include "heap.h"
 #include "scene_header.h"
 #include "fixed_math.h"
@@ -118,7 +118,7 @@
 #ifdef UBFIX
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION ObjectMotion_ArmCallback
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
-  ColosseumAzartMatch_MoveObjectEventPairByOffset
+  ColosseumAzartMatch_MoveActorPairByOffset
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
   ColosseumAzartMatch_SelectPresentationScript
 #define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
@@ -126,7 +126,7 @@
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION                                   \
   ((s32 (*)())ObjectMotion_ArmCallback)
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
-  ((s32 (*)())ColosseumAzartMatch_MoveObjectEventPairByOffset)
+  ((s32 (*)())ColosseumAzartMatch_MoveActorPairByOffset)
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
   ((s32 (*)())ColosseumAzartMatch_SelectPresentationScript)
 #define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES                       \
@@ -143,7 +143,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void);
 
 typedef void (*MapTask)(void);
 
-/// The first finals match's object events, by the guide's and attendants'
+/// The first finals match's actors, by the guide's and attendants'
 /// explanations: four stages (the Rock Challenge, the Pipeworks, the Broken
 /// Bridge and the Lumber Water Crossing Area) lead to the arena where the two
 /// warriors fight.
@@ -151,71 +151,71 @@ enum {
   /// Azart, racing Isaac to the arena.
   /// ★ Named from the game: "The name's Azart."
   /// (MsgColosseumImRatedAsSecondBest)
-  LOCALID_OPPONENT = 8,
+  ACTOR_OPPONENT = 8,
   /// The Rock Challenge's three rocks, stone pillars the party moves to clear
   /// a path.
   /// ★ Named from the game: "Moving such a huge rock must be a real workout."
   /// (MsgColossoRiverMovingSuchAHugeRockMust)
-  LOCALID_ROCK_A = 9,
+  ACTOR_ROCK_A = 9,
   /// ★ Named from the game: "Moving such a huge rock must be a real workout."
   /// (MsgColossoRiverMovingSuchAHugeRockMust)
-  LOCALID_ROCK_B = 10,
+  ACTOR_ROCK_B = 10,
   /// ★ Named from the game: "Moving such a huge rock must be a real workout."
   /// (MsgColossoRiverMovingSuchAHugeRockMust)
-  LOCALID_ROCK_C = 11,
+  ACTOR_ROCK_C = 11,
   /// Pushed west to let water into the Pipeworks. A pipe section, drawn as
-  /// mercury_lighthouse.c's LOCALID_THIRD_PIPE.
+  /// mercury_lighthouse.c's ACTOR_THIRD_PIPE.
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
-  LOCALID_PIPEWORKS_PIPE = 12,
+  ACTOR_PIPEWORKS_PIPE = 12,
   /// The Pipeworks' two pipes, which rise and sink against each other as
   /// water fills one, like scales.
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
-  LOCALID_PIPE_WEST = 13,
+  ACTOR_PIPE_WEST = 13,
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
-  LOCALID_PIPE_EAST = 14,
+  ACTOR_PIPE_EAST = 14,
   /// The plant Growth grows into a vine before the Broken Bridge.
   /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
   /// ground before the Broken Bridge (its render)
-  LOCALID_GROWTH_PLANT = 15,
+  ACTOR_GROWTH_PLANT = 15,
   /// A young man with fair hair who works the Broken Bridge.
   /// ★ Named from the game: "The operator of the bridge will also cheer for
   /// you in this stage." (MsgColossoOperatorBridgeWillAlsoCheer)
-  LOCALID_BRIDGE_OPERATOR = 16,
+  ACTOR_BRIDGE_OPERATOR = 16,
   /// The Lumber Water Crossing Area's two floating logs.
   /// ★ Named from the game: "The logs are the key to clearing this stage."
   /// (MsgColossoLogsKeyClearingStage)
-  LOCALID_LOG_NORTH_SOUTH = 17,
+  ACTOR_LOG_NORTH_SOUTH = 17,
   /// ★ Named from the game: "The logs are the key to clearing this stage."
   /// (MsgColossoLogsKeyClearingStage)
-  LOCALID_LOG_EAST_WEST = 18,
+  ACTOR_LOG_EAST_WEST = 18,
   /// A soldier who explains the finals.
   /// ★ Named from the game: "Ask the attendants for explanations of the
   /// stages." (MsgColossoAskAttendantsForExplanationsStages)
-  LOCALID_GUIDE = 19,
+  ACTOR_GUIDE = 19,
   /// The stages' attendants, young men with fair hair in white tunics.
   /// ★ Named from the game: "They call this the Rock Challenge."
   /// (MsgColossoCallRockChallenge)
-  LOCALID_ROCK_ATTENDANT = 20,
+  ACTOR_ROCK_ATTENDANT = 20,
   /// ★ Named from the game: "This area is called the Pipeworks."
   /// (MsgColossoAreaCalledPipeworks)
-  LOCALID_PIPEWORKS_ATTENDANT = 21,
+  ACTOR_PIPEWORKS_ATTENDANT = 21,
   /// ★ Named from the game: "They call this the Broken Bridge."
   /// (MsgColossoTheyCallBrokenBridge)
-  LOCALID_BRIDGE_ATTENDANT = 22,
+  ACTOR_BRIDGE_ATTENDANT = 22,
   /// ★ Named from the game: "This place is normally called the Lumber Water
   /// Crossing Area." (MsgColossoPlaceNormallyCalledLumberWater)
-  LOCALID_LUMBER_ATTENDANT = 23,
-  /// The arena's prizes, drawn as item icons at two blank object events
+  ACTOR_LUMBER_ATTENDANT = 23,
+  /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
   /// ★ Named from what the player sees: the Iron Shield's icon at the arena's
   /// finish, taken by whoever reaches it first (its render)
-  LOCALID_PRIZE_A = 24,
+  ACTOR_PRIZE_A = 24,
   /// ★ Named from what the player sees: the Padded Gloves' icon at the arena's
   /// finish, taken by whoever reaches it second (its render)
-  LOCALID_PRIZE_B = 25
+  ACTOR_PRIZE_B = 25
 };
 
 /// The temporary flags that keep what the friends changed on the stages, for
@@ -224,36 +224,34 @@ enum {
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPES_MOVED =
-      FLAG_MAPSEC_TEMP_01, ///< the Pipeworks' pipes, as water filled them
+      FLAG_AREA_TEMP_01, ///< the Pipeworks' pipes, as water filled them
   /// ★ Named from the game: "This area is called the Pipeworks."
   /// (MsgColossoAreaCalledPipeworks)
-  FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_MAPSEC_TEMP_02,
+  FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_AREA_TEMP_02,
   /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_PLANT_GROWN =
-      FLAG_MAPSEC_TEMP_03, ///< by Growth, before the Broken Bridge
+  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
   /// ★ Named from the game: "They call this the Rock Challenge."
   /// (MsgColossoCallRockChallenge)
-  FLAG_SECOND_ROCK_COLUMN = FLAG_MAPSEC_TEMP_10,
+  FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10,
   /// Someone has reached the arena (ColosseumAzartMatch_CollectFinishItem).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-const struct MapWarpDest *ColosseumAzartMatch_GetWarpDests(void) {
-  return gColosseumAzartMatch_WarpDests;
+const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void) {
+  return gColosseumAzartMatch_Entrances;
 }
 
-const struct MapWarpRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
+const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
 
-const u32 *ColosseumAzartMatch_GetWarps(void) {
-  return gColosseumAzartMatch_Warps;
+const u32 *ColosseumAzartMatch_GetExits(void) {
+  return gColosseumAzartMatch_Exits;
 }
 
-const struct ObjectEventTemplate *
-ColosseumAzartMatch_GetObjectEventTemplates(void) {
-  return gColosseumAzartMatch_ObjectEventTemplates;
+const struct ActorTemplate *ColosseumAzartMatch_GetActorTemplates(void) {
+  return gColosseumAzartMatch_ActorTemplates;
 }
 
 /// Advances the bridge animation and the metatile behaviors that make it
@@ -263,23 +261,23 @@ static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   case 66:
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
+    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
     break;
   case 60:
     MapGrid_CopyCellIndexRect(92, 33, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 33, 2, 2, 54, 38);
     MapGrid_CopyCellAttributes(50, 25, 6, 1, 50, 12);
-    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 11);
+    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 11);
     break;
   case 6:
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
+    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
     break;
   case 0:
     MapGrid_CopyCellIndexRect(92, 29, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 29, 2, 2, 54, 38);
-    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 12);
+    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
     gColosseumAzartMatch_Countdown = 120;
     break;
@@ -326,32 +324,31 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
 /// flags from FLAG_SECOND_ROCK_COLUMN).
 static void EventScript_SettleRocks(void) {
 
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 blocked;
 
   MapGrid_CopyCellAttributes(27, 13, 3, 1, 23, 12);
-  objectEvent = ObjectEvent_GetById(LOCALID_ROCK_A);
-  blocked =
-      MapGrid_GetTerrainHeight(0, objectEvent->x.fixed, objectEvent->z.fixed);
-  if (objectEvent->y.fixed == 0 && blocked == 0) {
-    objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_ROCK_A);
+  blocked = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+  if (actor->y.fixed == 0 && blocked == 0) {
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    actor->motionFlags = 0;
     {
-      s32 x = objectEvent->x.fixed >> 20;
-      s32 y = objectEvent->z.fixed >> 20;
+      s32 x = actor->x.fixed >> 20;
+      s32 y = actor->z.fixed >> 20;
 
       MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_ROCK_B);
+  actor = Actor_GetById(ACTOR_ROCK_B);
   {
-    s32 x = objectEvent->x.fixed >> 20;
+    s32 x = actor->x.fixed >> 20;
 
     FieldGameFlag_SetByte(FLAG_SECOND_ROCK_COLUMN, x);
   }
   {
-    s32 x = objectEvent->x.fixed >> 20;
-    s32 y = objectEvent->z.fixed >> 20;
+    s32 x = actor->x.fixed >> 20;
+    s32 y = actor->z.fixed >> 20;
 
     MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
   }
@@ -377,44 +374,42 @@ static void EventScript_GrowPlant(void) {
 /// Douse on the Pipeworks' west pipe: the camera turns to the Pipeworks and the
 /// two pipes move as it fills (FLAG_PIPES_MOVED).
 static void EventScript_DousePipe(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 none;
 
   GameFlag_Set(FLAG_PIPES_MOVED);
-  objectEvent = ObjectEvent_GetById(LOCALID_PIPE_WEST);
+  actor = Actor_GetById(ACTOR_PIPE_WEST);
   FieldScript_Start();
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
-  Object_SelectAnimation(objectEvent, 3);
+  Object_SelectAnimation(actor, 3);
   FieldCamera_WaitForArrival();
   none = 0;
-  objectEvent->motionFlags = none;
-  objectEvent->acceleration = PIXELS(2) / 5;
-  objectEvent->speed = PIXELS(4) / 5;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(8),
-                     objectEvent->z.fixed);
-  objectEvent = ObjectEvent_Get(LOCALID_PIPE_EAST);
-  objectEvent->motionFlags = none;
-  objectEvent->acceleration = PIXELS(2) / 5;
-  objectEvent->speed = PIXELS(4) / 5;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(32),
-                     objectEvent->z.fixed);
-  Object_WaitForMove(objectEvent);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Object_SetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
+  actor = Actor_Get(ACTOR_PIPE_EAST);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Object_SetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
+  Object_WaitForMove(actor);
   FieldScript_WaitFrames(45);
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   FieldScript_End();
 }
 
 /// Moves the leader and a stage object together between cell centers.
-static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
-                                                            s32 dz) {
-  struct ObjectEvent *leader;
-  struct ObjectEvent *objectEvent;
+static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
+                                                      s32 dz) {
+  struct Actor *leader;
+  struct Actor *actor;
   s32 x;
   s32 z;
 
-  leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  objectEvent = ObjectEvent_GetById(localId);
+  leader = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(actorId);
   FieldScript_Start();
   {
     x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
@@ -426,21 +421,21 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
   }
   Object_SelectAnimation(leader, 27);
   {
-    x = ((objectEvent->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
-    z = ((objectEvent->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
+    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
+    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    objectEvent->speed = PIXELS(1);
-    objectEvent->acceleration = PIXELS(1) / 2;
-    Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
+    actor->speed = PIXELS(1);
+    actor->acceleration = PIXELS(1) / 2;
+    Object_SetPosition(actor, x, actor->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    Object_SelectAnimation(objectEvent, 4);
+    Object_SelectAnimation(actor, 4);
   } else {
-    Object_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(actor, 3);
   }
   Sound_PlaySong(SE_LOG_PUSH);
   Object_WaitForMove(leader);
-  Object_SelectAnimation(objectEvent, 2);
+  Object_SelectAnimation(actor, 2);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_End();
 }
@@ -449,21 +444,20 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
 /// Water Crossing Area's north-south log, and walking into it rolls it, with
 /// the leader, across.
 static void EventScript_RollLogNorthSouth(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 row;
   s32 offset;
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  row = objectEvent->z.fixed >> 20;
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  row = actor->z.fixed >> 20;
   offset = -48;
   if (row <= 8) {
     offset = 48;
   }
   MapGrid_CopyCellAttributes(67, 8, 3, 1, 64, row);
-  ColosseumAzartMatch_MoveObjectEventPairByOffset(LOCALID_LOG_NORTH_SOUTH, 0,
-                                                  offset);
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_NORTH_SOUTH);
-  row = objectEvent->z.fixed >> 20;
+  ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, offset);
+  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  row = actor->z.fixed >> 20;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
@@ -471,21 +465,21 @@ static void EventScript_RollLogNorthSouth(void) {
 /// Lumber Water Crossing Area's east-west log, and walking into it rolls it,
 /// with the leader.
 static void EventScript_RollLogEastWest(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 column;
   s32 offset;
   s32 direction;
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  column = objectEvent->x.fixed >> 20;
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  column = actor->x.fixed >> 20;
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
   }
   if ((gKeysHeld & KEY_RIGHT) != 0) {
     direction = 1;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_NORTH_SOUTH);
-  offset = objectEvent->z.fixed >> 20;
+  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  offset = actor->z.fixed >> 20;
   if (column == 63) {
     if (offset == 11) {
       return;
@@ -505,10 +499,9 @@ static void EventScript_RollLogEastWest(void) {
     offset = -offset;
   }
   MapGrid_CopyCellAttributes(72, 9, 1, 3, column, 9);
-  ColosseumAzartMatch_MoveObjectEventPairByOffset(LOCALID_LOG_EAST_WEST, offset,
-                                                  0);
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_EAST_WEST);
-  column = objectEvent->x.fixed >> 20;
+  ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
+  actor = Actor_GetById(ACTOR_LOG_EAST_WEST);
+  column = actor->x.fixed >> 20;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
@@ -530,36 +523,35 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
 /// FLAG_PIPES_MOVED).
 static void EventScript_PushPipeworksPillar(void) {
   s32 leaderId;
-  struct ObjectEvent *leader;
-  struct ObjectEvent *objectEvent;
+  struct Actor *leader;
+  struct Actor *actor;
   s32 none;
 
-  leaderId = gSaveBlock.leaderLocalId;
-  leader = ObjectEvent_GetById(leaderId);
-  objectEvent = ObjectEvent_GetById(LOCALID_PIPEWORKS_PIPE);
+  leaderId = gSaveBlock.leaderActorId;
+  leader = Actor_GetById(leaderId);
+  actor = Actor_GetById(ACTOR_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(leaderId, ANIM_PUSH);
+  Import_ActorSetAnimation(leaderId, ANIM_PUSH);
   FieldScript_WaitFrames(6);
-  objectEvent->speed = PIXELS(1) / 2;
-  objectEvent->acceleration = PIXELS(1) / 5;
+  actor->speed = PIXELS(1) / 2;
+  actor->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
-  Object_SelectAnimation(objectEvent, 2);
-  Object_SetPosition(objectEvent, objectEvent->x.fixed - PIXELS(48), 0,
-                     objectEvent->z.fixed);
+  Object_SelectAnimation(actor, 2);
+  Object_SetPosition(actor, actor->x.fixed - PIXELS(48), 0, actor->z.fixed);
   FieldScript_WaitFrames(6);
-  Import_ObjectEventSetAnimation(leaderId, ANIM_WALK);
+  Import_ActorSetAnimation(leaderId, ANIM_WALK);
   Object_StartCamera(
       (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
-      (s32)objectEvent);
-  ObjectEvent_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
+      (s32)actor);
+  Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
   Object_SetPosition(leader, leader->x.fixed - PIXELS(24), 0, leader->z.fixed);
   ObjectMotion_CommitCurrentPositionAndActivate(leaderId);
-  Import_ObjectEventSetAnimation(leaderId, ANIM_STAND);
-  Object_WaitForMove(objectEvent);
-  Object_SelectAnimation(objectEvent, 1);
+  Import_ActorSetAnimation(leaderId, ANIM_STAND);
+  Object_WaitForMove(actor);
+  Object_SelectAnimation(actor, 1);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
@@ -582,38 +574,36 @@ static void EventScript_PushPipeworksPillar(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
-  objectEvent = ObjectEvent_GetById(LOCALID_PIPE_WEST);
-  objectEvent->motionFlags = none;
-  objectEvent->acceleration = PIXELS(2) / 5;
-  objectEvent->speed = PIXELS(4) / 5;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(8),
-                     objectEvent->z.fixed);
-  Object_SelectAnimation(objectEvent, 3);
+  actor = Actor_GetById(ACTOR_PIPE_WEST);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Object_SetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
+  Object_SelectAnimation(actor, 3);
   ColosseumAzartMatch_AnimatePipeworksWater();
-  objectEvent = ObjectEvent_GetById(LOCALID_PIPE_EAST);
-  objectEvent->motionFlags = none;
-  objectEvent->acceleration = PIXELS(2) / 5;
-  objectEvent->speed = PIXELS(4) / 5;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(32),
-                     objectEvent->z.fixed);
-  Object_WaitForMove(objectEvent);
+  actor = Actor_GetById(ACTOR_PIPE_EAST);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Object_SetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
+  Object_WaitForMove(actor);
   FieldScript_WaitFrames(15);
   FieldScript_End();
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Unused: sets FLAG_MAPSEC_TEMP_00; nothing calls it.
+/// Unused: sets FLAG_AREA_TEMP_00; nothing calls it.
 UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
-  GameFlag_Set(FLAG_MAPSEC_TEMP_00);
+  GameFlag_Set(FLAG_AREA_TEMP_00);
 }
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield. The arena's coord
-/// event row, in all three finals stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED
-/// being clear, and nothing in the game sets it: no map code, no object script
-/// (none uses SC_FLAG_ON) and none of the main image's flag writers reaches it,
-/// so the arena is never closed.
+/// fight; the battle's group follows who took the shield. The arena's
+/// step trigger row, in all three finals stages, waits on
+/// FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in the game sets it: no
+/// map code, no object script (none uses SC_FLAG_ON) and none of the main
+/// image's flag writers reaches it, so the arena is never closed.
 static void EventScript_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -627,26 +617,25 @@ static void EventScript_ReachArena(void) {
   ColosseumAzartMatch_WaitForStageReady();
   n = 9;
   do {
-    ObjectEvent_RefreshSelectorById(LOCALID_OPPONENT);
+    Actor_RefreshSelectorById(ACTOR_OPPONENT);
     n = n - 1;
   } while (n >= 0);
-  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkTo(LOCALID_OPPONENT, 1320, 192);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1288, 192);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
+  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(ACTOR_OPPONENT, 1320, 192);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 1296, 192);
-  ObjectEvent_WalkToAndWait(LOCALID_OPPONENT, 1312, 192);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                 WARRIOR_ANIMATION_FIGHTING_STANCE);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
+  Actor_WalkToAndWait(ACTOR_OPPONENT, 1312, 192);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   FieldScript_WaitFrames(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
@@ -660,50 +649,47 @@ static void EventScript_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something in the Rock Challenge (coord event 90): a rock is
+/// Walking into something in the Rock Challenge (step trigger 90): a rock is
 /// pushed, anything else is checked.
 static void EventScript_PushRockOrCheckAhead(void) {
 
-  if (Colosso_FindObjectEventAhead() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
     EventScript_PushRock();
   }
 }
 
-const struct MapEvent *ColosseumAzartMatch_GetEvents(void) {
-  return gColosseumAzartMatch_Events;
+const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
+  return gColosseumAzartMatch_Triggers;
 }
 
 /// Back from the battle (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST): Isaac
 /// and Azart stand in the arena as the result is shown.
 static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
 
-  ObjectEvent_DestroyById(LOCALID_PRIZE_A);
-  ObjectEvent_DestroyById(LOCALID_PRIZE_B);
+  Actor_DestroyById(ACTOR_PRIZE_A);
+  Actor_DestroyById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
   FieldScript_Start();
-  ObjectEvent_SetPosition(LOCALID_OPPONENT, PIXELS(1320), PIXELS(192));
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(1288), PIXELS(192));
-  // BUG: FACING_SOUTH is passed where ObjectEvent_FaceObjectEvent takes a
-  // local id; ObjectEvent_GetByLocalId has no object event past 0xbf, so
+  Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1320), PIXELS(192));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
+  // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
+  // actor id; Actor_GetByActorId has no actor past 0xbf, so
   // neither turns.
 #ifdef BUGFIX
-  ObjectEvent_FaceDirection(LOCALID_OPPONENT, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_OPPONENT, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, FACING_SOUTH, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceActor(ACTOR_OPPONENT, FACING_SOUTH, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 #endif
   if (result < 0) {
-    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                   WARRIOR_ANIMATION_ARMS_RAISED);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
+    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
-    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                   WARRIOR_ANIMATION_DEFEATED);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIM_LEADER_ARMS_RAISED);
+    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
@@ -711,13 +697,13 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   FieldScript_End();
 }
 
-/// Marks object events standing in the stages' finish terrain.
-static void ColosseumAzartMatch_MarkFinishTerrain(s32 localId) {
-  struct ObjectEvent *target;
+/// Marks actors standing in the stages' finish terrain.
+static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
+  struct Actor *target;
   s32 column;
   s32 row;
 
-  target = ObjectEvent_GetById(localId);
+  target = Actor_GetById(actorId);
   if (target != 0) {
     column = target->x.fixed >> 19;
     row = target->z.fixed >> 19;
@@ -734,7 +720,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 localId) {
 /// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON) or lost
 /// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumAzartMatch_Initialize(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 hit;
   s32 x;
   u8 zero;
@@ -742,95 +728,94 @@ s32 ColosseumAzartMatch_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  objectEvent = ObjectEvent_GetById(LOCALID_ROCK_A);
-  hit = MapGrid_GetTerrainHeight(0, objectEvent->x.fixed, objectEvent->z.fixed);
-  if (objectEvent->y.fixed == 0 && hit == 0) {
-    objectEvent->priorityFlags = 2;
-    objectEvent->motionFlags = hit;
-    MapGrid_CopyCellAttributes(14, 13, 1, 1, objectEvent->x.fixed >> 20,
-                               objectEvent->z.fixed >> 20);
+  actor = Actor_GetById(ACTOR_ROCK_A);
+  hit = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+  if (actor->y.fixed == 0 && hit == 0) {
+    actor->priorityFlags = 2;
+    actor->motionFlags = hit;
+    MapGrid_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20,
+                               actor->z.fixed >> 20);
   }
   x = FieldGameFlag_GetByte(FLAG_SECOND_ROCK_COLUMN);
   if (x == 0) {
     x = 25;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_ROCK_B);
-  objectEvent->x.fixed = (x << 20) + PIXELS(8);
-  objectEvent->motionFlags = 0;
-  objectEvent->priorityFlags = 2;
+  actor = Actor_GetById(ACTOR_ROCK_B);
+  actor->x.fixed = (x << 20) + PIXELS(8);
+  actor->motionFlags = 0;
+  actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
   FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge,
                              TASK_PRIORITY_MAP);
-  objectEvent = ObjectEvent_GetById(LOCALID_GROWTH_PLANT);
-  objectEvent->layer = 1;
+  actor = Actor_GetById(ACTOR_GROWTH_PLANT);
+  actor->layer = 1;
   zero = 0;
   if (GameFlag_Get(FLAG_PLANT_GROWN)) {
-    Object_SelectAnimation(objectEvent, 4);
-    ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    objectEvent->collisionFlags = zero;
-    objectEvent->priorityFlags = 3;
+    Object_SelectAnimation(actor, 4);
+    Actor_SetSpriteFlags(actor, 0);
+    actor->collisionFlags = zero;
+    actor->priorityFlags = 3;
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_NORTH_SOUTH);
-  col = objectEvent->z.fixed >> 20;
-  objectEvent->motionFlags = zero;
-  objectEvent->priorityFlags = 2;
+  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  col = actor->z.fixed >> 20;
+  actor->motionFlags = zero;
+  actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_EAST_WEST);
-  col = objectEvent->x.fixed >> 20;
-  objectEvent->motionFlags = zero;
-  objectEvent->priorityFlags = 2;
+  actor = Actor_GetById(ACTOR_LOG_EAST_WEST);
+  col = actor->x.fixed >> 20;
+  actor->motionFlags = zero;
+  actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
   if (GameFlag_Get(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
     MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_PIPE_WEST);
+  actor = Actor_GetById(ACTOR_PIPE_WEST);
   if (GameFlag_Get(FLAG_PIPES_MOVED)) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
-    objectEvent->motionFlags = zero;
-    objectEvent->acceleration = PIXELS(2) / 5;
-    objectEvent->speed = PIXELS(4) / 5;
-    objectEvent->y.fixed = PIXELS(8);
-    Object_SelectAnimation(objectEvent, 3);
+    actor->motionFlags = zero;
+    actor->acceleration = PIXELS(2) / 5;
+    actor->speed = PIXELS(4) / 5;
+    actor->y.fixed = PIXELS(8);
+    Object_SelectAnimation(actor, 3);
   } else {
-    Object_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(actor, 2);
   }
-  ObjectEvent_GetById(LOCALID_PIPE_EAST)->priorityFlags = 2;
-  Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_IRON_SHIELD);
-  Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_PADDED_GLOVES);
+  Actor_GetById(ACTOR_PIPE_EAST)->priorityFlags = 2;
+  Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
+  Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
-    Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 4,
-                           PIXELS(1304), PIXELS(192), LOCALID_PRIZE_A,
-                           LOCALID_PRIZE_B);
+    Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, PIXELS(1304),
+                           PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 19, 2);
-    ObjectEvent_DestroyById(LOCALID_GUIDE);
-    ObjectEvent_DestroyById(LOCALID_ROCK_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_PIPEWORKS_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_BRIDGE_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_LUMBER_ATTENDANT);
+    Actor_DestroyById(ACTOR_GUIDE);
+    Actor_DestroyById(ACTOR_ROCK_ATTENDANT);
+    Actor_DestroyById(ACTOR_PIPEWORKS_ATTENDANT);
+    Actor_DestroyById(ACTOR_BRIDGE_ATTENDANT);
+    Actor_DestroyById(ACTOR_LUMBER_ATTENDANT);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_GARET);
-      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_IVAN);
-      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_MIA);
+      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_GARET);
+      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_IVAN);
+      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_MIA);
       ColosseumAzartMatch_ShowRoundIntroduction(1);
     }
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
                                TASK_PRIORITY_MAP);
-    ObjectEvent_DestroyById(LOCALID_PRIZE_A);
-    ObjectEvent_DestroyById(LOCALID_PRIZE_B);
+    Actor_DestroyById(ACTOR_PRIZE_A);
+    Actor_DestroyById(ACTOR_PRIZE_B);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
@@ -839,17 +824,17 @@ s32 ColosseumAzartMatch_Initialize(void) {
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM:
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      ColosseumAzartMatch_ExplainFinalsRules(LOCALID_GUIDE);
+      ColosseumAzartMatch_ExplainFinalsRules(ACTOR_GUIDE);
       Colosso_ClearCheeringSpots();
     }
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON:
     ColosseumAzartMatch_RestoreMatchResult(1);
-    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
+    Import_ScriptRequestExit(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST:
     ColosseumAzartMatch_RestoreMatchResult(-1);
-    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
+    Import_ScriptRequestExit(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
     break;
   }
   return 0;
@@ -860,63 +845,61 @@ s32 ColosseumAzartMatch_Initialize(void) {
 /// the stages to the arena, the prizes there, and that the companions choose
 /// where to cheer from.
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(guide);
-  x = objectEvent->x.part.pixel;
-  z = objectEvent->z.part.pixel;
+  actor = Actor_GetById(guide);
+  x = actor->x.part.pixel;
+  z = actor->z.part.pixel;
   FieldScript_Start();
-  ObjectEvent_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, x << 16,
-                                (z << 16) - PIXELS(48));
-  ObjectEvent_SetPosition(LOCALID_GARET, (x << 16) - PIXELS(16),
-                          (z << 16) - PIXELS(40));
-  ObjectEvent_SetPosition(LOCALID_IVAN, (x << 16) + PIXELS(16),
-                          (z << 16) - PIXELS(40));
-  ObjectEvent_SetPosition(LOCALID_MIA, x << 16, (z << 16) - PIXELS(32));
-  ObjectEvent_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->facing = FACING_NORTH;
-  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Import_ActorSetPosition(ACTOR_PARTY_LEADER, x << 16, (z << 16) - PIXELS(48));
+  Actor_SetPosition(ACTOR_GARET, (x << 16) - PIXELS(16),
+                    (z << 16) - PIXELS(40));
+  Actor_SetPosition(ACTOR_IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
+  Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - PIXELS(32));
+  Actor_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = FACING_NORTH;
+  FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoSiteFirstFinalsBattle);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(LOCALID_MIA, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(ACTOR_MIA, 0);
   ObjectMotion_SetVariantCallback(guide, 3);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(guide, LOCALID_IVAN, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceActor(guide, ACTOR_IVAN, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(guide, ANIM_NOD);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectEvent_ShowEmote(guide, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Actor_ShowEmote(guide, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Pan over each stage while the guide explains the finals rules.
   if (Script_AskYesNo(guide, 0) == 0) {
     do {
       FieldScript_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
-      Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+      Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+      Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+      Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
       FieldScript_WaitFrames(1);
-      ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+      ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(guide, ANIM_NOD);
       Script_ShowMessage(guide, 0);
-      ObjectEvent_FaceDirection(guide, FACING_NORTHWEST, 0);
+      Actor_FaceDirection(guide, FACING_NORTHWEST, 0);
       FieldScript_WaitFrames(20);
       Script_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -931,17 +914,17 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      // BUG: FACING_SOUTHWEST is passed where a local id belongs; no object
-      // event has it, so the guide does not turn.
-      ObjectEvent_FaceObjectEvent(guide, FACING_SOUTHWEST, 0);
+      // BUG: FACING_SOUTHWEST is passed where an actor id belongs; no
+      // actor has it, so the guide does not turn.
+      Actor_FaceActor(guide, FACING_SOUTHWEST, 0);
       Script_ShowMessage(guide, 0);
       FieldCamera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      ObjectEvent_FaceObjectEvent(guide, LOCALID_PARTY_LEADER, 0);
+      Actor_FaceActor(guide, ACTOR_PARTY_LEADER, 0);
       Script_ShowMessage(guide, 0);
       Script_ShowMessage(guide, 0);
       Script_ShowMessage(guide, 0);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       ObjectMotion_SetVarCbAndRefresh(guide, 2);
     } while (Script_AskYesNo(guide, 0) != 0);
     ObjectMotion_SetVarCbAndRefresh(guide, 2);
@@ -952,48 +935,45 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   FieldScript_SetMessageId(MsgColossoIsaacYoureContestantInFinals);
   ObjectMotion_SetVarCbAndRefresh(guide, 2);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(1);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(2);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(1);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
-                               objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
-                               objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectEvent_SetDestination(LOCALID_MIA, objectEvent->x.part.pixel,
-                               objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
-  ObjectEvent_WalkToAndWait(guide, x - 16, z - 64);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  ObjectEvent_WalkToAndWait(guide, x - 16, z - 16);
-  ObjectEvent_WalkToAndWait(guide, x, z);
-  ObjectEvent_FaceDirection(guide, FACING_NORTH, 10);
+  Actor_WalkToAndWait(guide, x - 16, z - 64);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Actor_WalkToAndWait(guide, x - 16, z - 16);
+  Actor_WalkToAndWait(guide, x, z);
+  Actor_FaceDirection(guide, FACING_NORTH, 10);
   FieldScript_End();
 }
 
@@ -1002,74 +982,72 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 /// objective, and a place for a friend to cheer. With a friend alone on the
 /// stages (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) he asks whether they are
 /// done cheering instead.
-static void EventScript_TalkToRockAttendant(s32 localId) {
+static void EventScript_TalkToRockAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(localId);
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+    Colosso_AskDoneCheering(actorId);
   } else {
     FieldScript_Start();
-    path = Colosso_GreetAtStage(localId, 1);
+    path = Colosso_GreetAtStage(actorId, 1);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       FieldScript_SetMessageId(MsgColossoCallRockChallenge);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_ShowMessageAndWait(localId, 0);
-      Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 280, 200);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 360, 200);
+      FieldScript_ShowMessageAndWait(actorId, 0);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       FieldScript_WaitFrames(30);
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                            60);
-      FieldScript_ShowMessageAndWait(localId, 0);
-      ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 200);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      FieldScript_ShowMessageAndWait(actorId, 0);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
       FieldScript_WaitFrames(30);
-      ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                            EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 296, 184);
-      Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 296, 152);
-      Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 312, 152);
-      ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 15);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
+                      60);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 184);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 152);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
       ColosseumAzartMatch_PushObjectAhead();
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       ColosseumAzartMatch_PushObjectAhead();
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 304, 184);
-      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 296, 192);
-      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 296, 200);
-      ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 15);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
+      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 296, 192);
+      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 296, 200);
+      ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 15);
       ColosseumAzartMatch_PushObjectAhead();
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       ColosseumAzartMatch_PushObjectAhead();
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-      FieldScript_ShowMessageAndWait(localId, 0);
-      Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-      ObjectEvent_SetPosition(LOCALID_ROCK_A, PIXELS(312), PIXELS(168));
-      Colosso_RepeatStageNumber(localId, 1);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      FieldScript_ShowMessageAndWait(actorId, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
+      Actor_SetPosition(ACTOR_ROCK_A, PIXELS(312), PIXELS(168));
+      Colosso_RepeatStageNumber(actorId, 1);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoObjectiveStageClear);
-      FieldScript_ShowMessageAndWait(localId, 0);
+      FieldScript_ShowMessageAndWait(actorId, 0);
     }
-    Colosso_OfferCheeringSpot(path, localId, 1);
+    Colosso_OfferCheeringSpot(path, actorId, 1);
     FieldScript_End();
   }
 }
 
-/// Moves a Pipeworks object event with the speed used throughout its
+/// Moves a Pipeworks actor with the speed used throughout its
 /// demonstration.
-static inline void
-ColosseumAzartMatch_SetPipeHeight(struct ObjectEvent *objectEvent, s32 height) {
-  objectEvent->motionFlags = 0;
-  objectEvent->acceleration = PIXELS(2) / 5;
-  objectEvent->speed = PIXELS(4) / 5;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, height,
-                     objectEvent->z.fixed);
+static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
+                                                     s32 height) {
+  actor->motionFlags = 0;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Object_SetPosition(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
 /// The Pipeworks' attendant, stage 2 of Colosseum Final 1: the first time, a
@@ -1077,10 +1055,10 @@ ColosseumAzartMatch_SetPipeHeight(struct ObjectEvent *objectEvent, s32 height) {
 /// and a place for a friend to cheer.
 static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
-  struct ObjectEvent *second;
-  struct ObjectEvent *first;
+  struct Actor *second;
+  struct Actor *first;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1102,15 +1080,15 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
       FieldScript_ShowMessageAndWait(attendant, 0);
       Colosso_HidePointer();
       WaitFrames(2);
-      first = ObjectEvent_GetById(LOCALID_PIPE_WEST);
+      first = Actor_GetById(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(8));
-      second = ObjectEvent_GetById(LOCALID_PIPE_EAST);
+      second = Actor_GetById(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, PIXELS(32));
       Object_WaitForMove(second);
       FieldScript_WaitFrames(45);
-      first = ObjectEvent_GetById(LOCALID_PIPE_WEST);
+      first = Actor_GetById(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(24));
-      second = ObjectEvent_Get(LOCALID_PIPE_EAST);
+      second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Object_WaitForMove(second);
       FieldScript_WaitFrames(15);
@@ -1124,7 +1102,7 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
       FieldScript_ShowMessageAndWait(attendant, 0);
       Colosso_HidePointer();
       WaitFrames(2);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoObjectiveMakeGood);
@@ -1138,44 +1116,43 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
 /// The Broken Bridge's attendant, stage 3 of Colosseum Final 1: the first time,
 /// Isaac appears and times his crossing; then that the bridge's operator will
 /// cheer for him, and a place for a friend to cheer.
-static void EventScript_TalkToBridgeAttendant(s32 localId) {
+static void EventScript_TalkToBridgeAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(localId);
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+    Colosso_AskDoneCheering(actorId);
   } else {
     FieldScript_Start();
-    path = Colosso_GreetAtStage(localId, 3);
+    path = Colosso_GreetAtStage(actorId, 3);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       FieldScript_SetMessageId(MsgColossoTheyCallBrokenBridge);
       ColosseumAzartMatch_ResetBrokenBridge();
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
       FieldCamera_WaitForArrival();
-      Script_ShowMessage(localId, 0);
+      Script_ShowMessage(actorId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
       FieldScript_WaitFrames(60);
-      Script_ShowMessage(localId, 0);
-      Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 736, 200);
+      Script_ShowMessage(actorId, 0);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
        * differ in tbs-en. */
-      COLOSSEUM_AZART_MATCH_FACE_DIRECTION(LOCALID_PARTY_LEADER, 0, 0);
+      COLOSSEUM_AZART_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumAzartMatch_WaitForBridgeOpening();
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 816, 200);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       FieldScript_WaitFrames(30);
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                            EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-      Script_ShowMessage(localId, 0);
-      Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(localId, 3);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+      Script_ShowMessage(actorId, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
+      Colosso_RepeatStageNumber(actorId, 3);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoOperatorBridgeWillAlsoCheer);
-      Script_ShowMessage(localId, 0);
+      Script_ShowMessage(actorId, 0);
     }
-    Colosso_OfferCheeringSpot(path, localId, 3);
+    Colosso_OfferCheeringSpot(path, actorId, 3);
     FieldScript_End();
   }
 }
@@ -1183,71 +1160,68 @@ static void EventScript_TalkToBridgeAttendant(s32 localId) {
 /// The Lumber Water Crossing Area's attendant, stage 4 of Colosseum Final 1:
 /// the first time, a pointer shows the water tank and Isaac appears and rolls a
 /// log across; then the objective, and a place for a friend to cheer.
-static void EventScript_TalkToLumberAttendant(s32 localId) {
+static void EventScript_TalkToLumberAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(localId);
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+    Colosso_AskDoneCheering(actorId);
     return;
   }
   FieldScript_Start();
-  path = Colosso_GreetAtStage(localId, 4);
+  path = Colosso_GreetAtStage(actorId, 4);
   if (path == COLOSSO_GUIDE_DESCRIBE) {
     FieldScript_SetMessageId(MsgColossoPlaceNormallyCalledLumberWater);
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     FieldCamera_WaitForArrival();
-    Script_ShowMessage(localId, 0);
+    Script_ShowMessage(actorId, 0);
     Colosso_ShowPointer(120, 72, 0);
-    Script_ShowMessage(localId, 0);
+    Script_ShowMessage(actorId, 0);
     Colosso_HidePointer();
     FieldScript_WaitFrames(15);
-    Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 984, 200);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 10);
-    Script_ShowMessage(localId, 0);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 30);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                          EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 1000, 192);
-    Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 1000, 176);
-    Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 1016, 168);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 200);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
+    Script_ShowMessage(actorId, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 192);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
     FieldScript_WaitFrames(15);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r0 last; as a direct call, 1 of 167 instructions differ
      * in tbs-en. */
-    COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(LOCALID_LOG_EAST_WEST, 160, 0);
+    COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     FieldScript_WaitFrames(10);
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1192, 168);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 30);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          60);
-    Script_ShowMessage(localId, 0);
-    Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-    FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_SetPosition(LOCALID_LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
-    Colosso_RepeatStageNumber(localId, 4);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    Script_ShowMessage(actorId, 0);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+    FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
+    Actor_SetPosition(ACTOR_LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
+    Colosso_RepeatStageNumber(actorId, 4);
   } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     FieldScript_SetMessageId(MsgColossoLogsKeyClearingStage);
-    Script_ShowMessage(localId, 0);
+    Script_ShowMessage(actorId, 0);
   }
-  Colosso_OfferCheeringSpot(path, localId, 4);
+  Colosso_OfferCheeringSpot(path, actorId, 4);
   FieldScript_End();
 }
 
 /// Sets the leader's movement speed for the shared Colosso dialogue.
-static inline void InitializeObjectEventZero(void) {
-  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1),
-                                  PIXELS(1) / 2);
+static inline void InitializeActorZero(void) {
+  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Sets an attendant's movement speed for the shared Colosso dialogue.
-static inline void InitializeSelectedObjectEvent(s32 localId) {
-  ObjectMotion_SetSpeedParameters(localId, PIXELS(1), PIXELS(1) / 2);
+static inline void InitializeSelectedActor(s32 actorId) {
+  ObjectMotion_SetSpeedParameters(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Advances to the next message in the current explanation.
@@ -1255,7 +1229,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
-// This map's warps for colosso_solo.h.
+// This map's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
 #include "common/colosso_solo.h"
@@ -1362,7 +1336,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
      * differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 1);
     FieldScript_WaitFrames(-result * 60 + 60);
-    loser = LOCALID_PARTY_LEADER;
+    loser = ACTOR_PARTY_LEADER;
   } else {
     FieldScript_WaitFrames(30);
     Sound_PlaySong(result + 90);
@@ -1371,7 +1345,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 0);
     FieldScript_WaitFrames(result * 60 + 60);
-    loser = LOCALID_OPPONENT;
+    loser = ACTOR_OPPONENT;
   }
   FieldEffect_SpawnLinked(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (Sound_GetBgmRestoreDelay() != 0) {
@@ -1424,22 +1398,21 @@ static void ColosseumAzartMatch_WaitForStageReady(void) {
 
 /// Occasionally spawns an animated effect around the finish item.
 static void
-ColosseumAzartMatch_SpawnRandomEffect(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+ColosseumAzartMatch_SpawnRandomEffect(union ActorOrEffect *fieldObject) {
+  struct Actor *actor = (struct Actor *)fieldObject;
   s32 position[3];
   u32 chance;
 
-  if (objectEvent->velocityY >= -255 && objectEvent->velocityY <= 255) {
-    objectEvent->motionFlags = 0;
+  if (actor->velocityY >= -255 && actor->velocityY <= 255) {
+    actor->motionFlags = 0;
   }
   chance = Import_RandomNext();
   if (chance * 100 >> 16 <= 9) {
-    struct ObjectEvent *effect;
+    struct Actor *effect;
     s32 radius;
     s32 angle;
 
-    SET_VECTOR(position, objectEvent->x.fixed, objectEvent->y.fixed,
-               objectEvent->z.fixed);
+    SET_VECTOR(position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     radius = Import_RandomNext();
     angle = Import_RandomNext();
     Vector_AddPolarOffset(radius << 4, angle, position);
@@ -1448,12 +1421,12 @@ ColosseumAzartMatch_SpawnRandomEffect(union ObjectEventOrEffect *fieldObject) {
       s32 y = position[1];
       s32 z = position[2];
 
-      effect = ObjectEvent_Create(SPRITE_SPARKLE, x, y, z);
+      effect = Actor_Create(SPRITE_SPARKLE, x, y, z);
     }
     if (effect != 0) {
       effect->motionFlags = 0;
-      ObjectEvent_SetSpriteFlags(effect, 0);
-      ObjectEvent_SetScript(effect, gColosseumAzartMatch_ScriptA);
+      Actor_SetSpriteFlags(effect, 0);
+      Actor_SetScript(effect, gColosseumAzartMatch_ScriptA);
       Object_SelectAnimation(effect, 1);
       Object_SelectAnimation(effect, 0);
     }
@@ -1461,15 +1434,15 @@ ColosseumAzartMatch_SpawnRandomEffect(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// Presents the collected item above its collector and signals completion.
-static s32 ColosseumAzartMatch_PlaceFinishItemAboveObjectEvent(
-    struct Object *interpreter) {
-  struct ObjectEvent *collector = (struct ObjectEvent *)interpreter;
-  struct ObjectEvent *itemObjectEvent = ObjectEvent_GetById(collector->timer);
+static s32
+ColosseumAzartMatch_PlaceFinishItemAboveActor(struct Object *interpreter) {
+  struct Actor *collector = (struct Actor *)interpreter;
+  struct Actor *itemActor = Actor_GetById(collector->timer);
 
-  Object_SetPosition(itemObjectEvent, collector->x.fixed,
+  Object_SetPosition(itemActor, collector->x.fixed,
                      collector->y.fixed + PIXELS(36), collector->z.fixed);
-  itemObjectEvent->motionFlags = 0;
-  ObjectEvent_SetScript(itemObjectEvent, gColosseumAzartMatch_ScriptB);
+  itemActor->motionFlags = 0;
+  Actor_SetScript(itemActor, gColosseumAzartMatch_ScriptB);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   collector->timer = 0;
   return 0;
@@ -1480,18 +1453,18 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
                                                  s32 secondItem) {
 
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 flag;
   s32 x;
   s32 z;
-  u16 *itemLocalId;
-  s16 *pendingItemLocalId;
+  u16 *itemActorId;
+  s16 *pendingItemActorId;
 
   flag = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
 
-  if (gauge->finishX < objectEvent->x.fixed) {
+  if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
     x = gauge->finishX - PIXELS(12);
@@ -1499,22 +1472,22 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   if (flag != 0) {
     z = gauge->finishZ + PIXELS(16);
-    itemLocalId = &gauge->finishItemLocalIdB;
+    itemActorId = &gauge->finishItemActorIdB;
   } else {
     z = gauge->finishZ - PIXELS(16);
-    itemLocalId = &gauge->finishItemLocalIdA;
+    itemActorId = &gauge->finishItemActorIdA;
   }
 
-  pendingItemLocalId = &objectEvent->timer;
-  *pendingItemLocalId = *itemLocalId;
-  objectEvent->acceleration = PIXELS(1) / 4;
-  objectEvent->speed = PIXELS(1);
+  pendingItemActorId = &actor->timer;
+  *pendingItemActorId = *itemActorId;
+  actor->acceleration = PIXELS(1) / 4;
+  actor->speed = PIXELS(1);
 
-  Object_SetPosition(objectEvent, x, 0, z);
+  Object_SetPosition(actor, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
-  ObjectEvent_SetScript(objectEvent, gColosseumAzartMatch_ApproachScript);
+  Actor_SetScript(actor, gColosseumAzartMatch_ApproachScript);
 
-  while (*pendingItemLocalId != 0) {
+  while (*pendingItemActorId != 0) {
     WaitFrames(1);
   }
 
@@ -1531,9 +1504,9 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
     MessageArgument_Push(secondItem, 2);
   }
 
-  MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
+  MessageArgument_Push(gSaveBlock.leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  Object_WaitForScriptEnd(objectEvent);
+  Object_WaitForScriptEnd(actor);
 
   return flag;
 }
@@ -1546,17 +1519,17 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 /// Checks the next cell and pushes its object one step if clear.
 static void ColosseumAzartMatch_PushObjectAhead(void) {
 
-  struct ObjectEvent *subject;
-  struct ObjectEvent *target;
-  struct ObjectEvent *blocker;
+  struct Actor *subject;
+  struct Actor *target;
+  struct Actor *blocker;
   u32 packedStep;
   u32 direction;
   struct FieldPosition position;
   s32 zero;
-  s32 localId;
+  s32 actorId;
 
-  localId = gSaveBlock.leaderLocalId;
-  subject = ObjectEvent_GetById(localId);
+  actorId = gSaveBlock.leaderActorId;
+  subject = Actor_GetById(actorId);
 
   direction = subject->facing >> 12;
 
@@ -1566,7 +1539,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   packedStep <<= 16;
   position.z = subject->z.fixed + packedStep;
 
-  target = ObjectEvent_FindAtPosition(&position, subject);
+  target = Actor_FindAtPosition(&position, subject);
   if (target == 0) {
     return;
   }
@@ -1577,7 +1550,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   packedStep <<= 16;
   position.z = target->z.fixed + packedStep;
 
-  blocker = ObjectEvent_FindAtPosition(&position, target);
+  blocker = Actor_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1586,7 +1559,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   position.y = target->y.fixed + PIXELS(16);
   position.z = target->z.fixed;
 
-  blocker = ObjectEvent_FindAtPosition(&position, target);
+  blocker = Actor_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1629,13 +1602,13 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
 #include "common/colosso_occupant.h"
 
-/// Closes the arena's coord event; nothing in the game sets it.
+/// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
 /// ★ Named from the game: "Oil Drop" (MsgItemName)
-#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09
+#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 
 // clang-format off
 const u8 gColosso_LetteringPaletteOffsets[] = {
@@ -1729,29 +1702,29 @@ u32 gColosseumAzartMatch_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct MapWarpDest gColosseumAzartMatch_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
-u32 gColosseumAzartMatch_Warps[] = {
-    MAP_WARPS(ColosseumAzartMatch),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE, ColosseumAzartMatch, COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
-    MAP_WARPS_END,
+u32 gColosseumAzartMatch_Exits[] = {
+    SCENE_EXITS(ColosseumAzartMatch),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE, ColosseumAzartMatch, COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
+    SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[] = {
+struct ActorTemplate gColosseumAzartMatch_ActorTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
@@ -1789,41 +1762,41 @@ struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[] = {
         PIXELS(1304), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1304), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 s32 gColosseumAzartMatch_Countdown = 0;
 
-struct MapEvent gColosseumAzartMatch_Events[] = {
-    { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRockOrCheckAhead) },
-    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { COORD_EVENT_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT_SCRIPT(EventScript_PushPipeworksPillar) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MAPSEC_TEMP_08, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_0A, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_PIPE_WEST, FLAG_PIPES_MOVED, EVENT_SCRIPT(EventScript_DousePipe) },
-    { MAP_EVENT_TALK, LOCALID_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, LOCALID_ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockAttendant) },
-    { MAP_EVENT_TALK, LOCALID_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToPipeworksAttendant) },
-    { MAP_EVENT_TALK, LOCALID_BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBridgeAttendant) },
-    { MAP_EVENT_TALK, LOCALID_LUMBER_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLumberAttendant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROCK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverMovingSuchAHugeRockMust) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverTheresOnlyOneFinalAndThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BRIDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverDidYouSeeHisMovesOut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LUMBER_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverHowManyWarriorsHaveSwallowedTheir) },
-    { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
-    { MAP_EVENTS_END },
+struct Trigger gColosseumAzartMatch_Triggers[] = {
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRockOrCheckAhead) },
+    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
+    { STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT_SCRIPT(EventScript_PushPipeworksPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_PIPE_WEST, FLAG_PIPES_MOVED, EVENT_SCRIPT(EventScript_DousePipe) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockAttendant) },
+    { TRIGGER_TALK, ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToPipeworksAttendant) },
+    { TRIGGER_TALK, ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBridgeAttendant) },
+    { TRIGGER_TALK, ACTOR_LUMBER_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLumberAttendant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverMovingSuchAHugeRockMust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverTheresOnlyOneFinalAndThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverDidYouSeeHisMovesOut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBER_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverHowManyWarriorsHaveSwallowedTheir) },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGERS_END },
 };
 
 s16 gColosso_LetteringSlot = -1;
@@ -1888,7 +1861,7 @@ s32 gColosso_OpponentFinishScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(6),
-    SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveObjectEvent),
+    SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ANIMATION(10),
     SC_WAIT(150),
@@ -1902,7 +1875,7 @@ s32 gColosseumAzartMatch_ApproachScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(6),
-    SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveObjectEvent),
+    SC_CALL(ColosseumAzartMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ANIMATION(28),
     SC_WAIT(150),

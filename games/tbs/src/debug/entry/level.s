@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer IncreaseItemAndLevel_Initialize
-	overlay_veneer IncreaseItemAndLevel_GetWarpDests
-	overlay_veneer IncreaseItemAndLevel_GetWarps
-	overlay_veneer IncreaseItemAndLevel_GetObjectEventTemplates
-	overlay_veneer IncreaseItemAndLevel_GetEvents
-	overlay_veneer Scene_GetWarpRegions
+	overlay_veneer IncreaseItemAndLevel_GetEntrances
+	overlay_veneer IncreaseItemAndLevel_GetExits
+	overlay_veneer IncreaseItemAndLevel_GetActorTemplates
+	overlay_veneer IncreaseItemAndLevel_GetTriggers
+	overlay_veneer Scene_GetExitRegions

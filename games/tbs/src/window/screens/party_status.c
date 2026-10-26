@@ -76,7 +76,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 /// it; the tilemap upload is held back (holdTilemapUpload) while it is drawn. A
 /// battle opens it with flags 9, which lays it out with the PP row and leaves
 /// it erased until the battle draws it (Battle_Run); the field opens it with
-/// flags 1 (overworld/overworld/events.c).
+/// flags 1 (overworld/overworld/triggers.c).
 void PartyStatus_CreateWindow(s32 flags) {
   s32 zero;
   struct PartyStatusWindow *layout;

@@ -35,7 +35,7 @@ struct ScreenPoint;
 struct FieldEffectSprite;
 struct Vector3;
 struct EnemyDefinition;
-struct ObjectEvent;
+struct Actor;
 struct FieldPosition;
 struct BattleAnimObject;
 struct ItemDefinition;
@@ -44,8 +44,8 @@ struct MenuSprite;
 struct PolarOffsetOutput;
 struct GlyphRect;
 struct WindowSprite;
-struct MapEvent;
-struct ObjectEventTemplate;
+struct Trigger;
+struct ActorTemplate;
 struct MenuCursor;
 struct SpritePlacement;
 struct SpriteScale;
@@ -57,9 +57,9 @@ struct WorldPosition;
 // Entries have their target's parameters. Seven keep empty parameter lists
 // (no prototype): their callers pass different arguments than the target
 // takes, which C89 accepts with no prototype in scope. They are the
-// blank-display runners (the warp destination in r0), Unit_LearnPsynergyFar
+// blank-display runners (the entrance in r0), Unit_LearnPsynergyFar
 // (called with none), Party_ShowJoinedMessageFar (two),
-// MapNamePopup_ShowFar, PauseMenu_RunFar and
+// AreaNameWindow_ShowFar, PauseMenu_RunFar and
 // BuildStamp_GetTimeFar (one each). The near call Text_ResetStyle
 // is declared the same way in unit/window/window.h (Window_Create passes it
 // one).

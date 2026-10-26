@@ -16,12 +16,12 @@ struct BattleTurn;
 struct Unit;
 struct Object;
 struct FieldEffectSprite;
-struct MapSecNameRule;
+struct AreaNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
-/// Read as a halfword by ObjectEvent_SetOthersPaused: the local id of the
+/// Read as a halfword by Actor_SetOthersPaused: the actor id of the
 /// player's object, which it leaves alone.
 extern u8 gPlayerObjectId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
@@ -45,10 +45,10 @@ struct BattleTurn;
 struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
-struct MapEventView;
+struct TriggerView;
 struct FieldEffectSprite;
 struct EnemyDefinition;
-struct ObjectEvent;
+struct Actor;
 struct BattleAnimObject;
 struct SpriteScale;
 struct ItemBreakFragmentSource;
@@ -158,11 +158,11 @@ extern u32 gRandomSeed;
 /// background's display mode.
 extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
-/// SC_FACE_LINK every frame, forever: the script of an object event told to
+/// SC_FACE_LINK every frame, forever: the script of an actor told to
 /// keep facing its linked object.
 extern const u8 gObjectMotion_LinkedActionScript[];
-/// Where the party returns after a defeat: {map, warp destination (-1 any),
-/// return map, return warp destination} rows, ended by map -1
+/// Where the party returns after a defeat: {map, entrance (-1 any),
+/// return map, return entrance} rows, ended by map -1
 /// (Scene_SetDefeatReturnPoint).
 extern const s16 gDefeatReturnPoints[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
@@ -175,15 +175,15 @@ extern s32 gBattleBackground_Maps[];
 /// (battle_anim_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
-/// (Message_SetVoiceFromObjectEvent). The same values as
+/// (Message_SetVoiceFromActor). The same values as
 /// gMessageSpeed_VoiceGaps, which the text printer reads, in a copy of its own.
 extern u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
-/// The world map's map section markers, {tile << 16 | flag, map section} for
-/// each map section's local id from 11, ended by -1; a zero row reserves a
-/// local id with no marker.
-extern const s32 gRegionMap_MapSecMarkers[];
+/// The world map's area markers, {tile << 16 | flag, area} for
+/// each area's actor id from 11, ended by -1; a zero row reserves an
+/// actor id with no marker.
+extern const s32 gWorldPicture_AreaMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);

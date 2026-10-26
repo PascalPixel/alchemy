@@ -9,8 +9,8 @@
 #include "field_work.h"
 #include "heap_slots.h"
 
-void Import_ObjectEventSetAnimation();
-void Import_ObjectEventSetPosition(u32 localId, s32 x, s32 z);
-void Import_ScriptRequestWarp();
+void Import_ActorSetAnimation();
+void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
+void Import_ScriptRequestExit();
 
 #endif

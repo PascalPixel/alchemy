@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_LAMAKAN_DESERT_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *LamakanDesert_GetWarpDests(void);
-const struct MapWarpRegion *LamakanDesert_GetRegions(void);
-const u32 *LamakanDesert_GetWarps(void);
-const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void);
-const struct MapEvent *LamakanDesert_GetEvents(void);
+const struct SceneEntrance *LamakanDesert_GetEntrances(void);
+const struct SceneExitRegion *LamakanDesert_GetRegions(void);
+const u32 *LamakanDesert_GetExits(void);
+const struct ActorTemplate *LamakanDesert_GetActorTemplates(void);
+const struct Trigger *LamakanDesert_GetTriggers(void);
 s32 LamakanDesert_Initialize(void);
 void HeatGauge_Start(void);
 extern const s32 gFieldEffect_ShortScript[];
@@ -23,17 +23,17 @@ extern const s32 gLamakanDesertEast_Oases[];
 extern const s32 gLamakanDesertSmog_Oases[];
 extern const s32 gLamakanDesertOasesOther[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gLamakanDesertWarpDestsOther[];
-extern struct MapWarpDest gLamakanDesertEastWarpDests[];
-extern struct MapWarpDest gLamakanDesertSmogWarpDests[];
-extern struct MapWarpDest gLamakanDesertManticoreWarpDests[];
-extern struct MapWarpDest gLamakanDesertCaveWarpDests[];
-extern u32 gLamakanDesertWarps[];
-extern struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[];
-extern struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[];
-extern struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[];
-extern struct MapEvent gLamakanDesertEvents[];
+extern struct SceneEntrance gLamakanDesertEntrancesOther[];
+extern struct SceneEntrance gLamakanDesertEastEntrances[];
+extern struct SceneEntrance gLamakanDesertSmogEntrances[];
+extern struct SceneEntrance gLamakanDesertManticoreEntrances[];
+extern struct SceneEntrance gLamakanDesertCaveEntrances[];
+extern u32 gLamakanDesertExits[];
+extern struct ActorTemplate gLamakanDesertActorTemplatesOther[];
+extern struct ActorTemplate gLamakanDesertEastActorTemplates[];
+extern struct ActorTemplate gLamakanDesertSmogActorTemplates[];
+extern struct ActorTemplate gLamakanDesertManticoreActorTemplates[];
+extern struct Trigger gLamakanDesertTriggers[];
 extern s16 gHeatGaugeLevel;
 extern s16 gHeatGaugeSlide;
 extern s16 gHeatGaugeFlash;

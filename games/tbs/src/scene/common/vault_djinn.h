@@ -2,7 +2,7 @@
 /// Vault and its interiors: Ivan hands back Isaac's Djinni before he leaves
 /// the party. "Oh, wait, I don't want to take your Djinni."
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 #include "songs.h"
 

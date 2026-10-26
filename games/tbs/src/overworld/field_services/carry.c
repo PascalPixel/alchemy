@@ -10,7 +10,7 @@ STATIC_ASSERT(sizeof(struct Vector3) == 0x0c);
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
-  struct ObjectEvent *liftedObject;
+  struct Actor *liftedObject;
   struct Vector3 position;
   struct Object *fragment;
   u32 radius;
@@ -34,7 +34,7 @@ void FieldEffect_SpawnFallingParticles(void) {
 /// carried target passes over ground up to 24 pixels above its own (a step
 /// allows 8). Restores the height before returning the collision result.
 static __inline__ s32
-FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
+FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
                                        struct Vector3 *position) {
   s32 collision;
 
@@ -54,13 +54,13 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
   struct FieldEffectWork *effectWork;
-  struct ObjectEvent *src;
-  struct ObjectEvent *target;
-  struct ObjectEvent *shards[CARRY_SHARD_MAX];
+  struct Actor *src;
+  struct Actor *target;
+  struct Actor *shards[CARRY_SHARD_MAX];
   struct Vector3 pos;
-  struct ObjectEvent *hands[2];
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *right;
+  struct Actor *hands[2];
+  struct Actor *actor;
+  struct Actor *right;
   s32 i;
   s32 angle;
   s32 dist;
@@ -81,11 +81,11 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
    * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
   SET_POSITION(p, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
-  objectEvent = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
+  actor = (struct Actor *)FieldEffect_SpawnItemBreakMode1(
       p->x + (32 << 16), p->y, p->z, FACING_WEST);
-  hands[0] = objectEvent;
-  right = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
-      p->x - (32 << 16), p->y, p->z, 0);
+  hands[0] = actor;
+  right = (struct Actor *)FieldEffect_SpawnItemBreakMode1(p->x - (32 << 16),
+                                                          p->y, p->z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
     FieldEffect_FadeFromEffectColor();
@@ -94,14 +94,14 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Object_SetMoveTargetFar((struct Object *)objectEvent, p->x + (16 << 16), p->y,
+  Object_SetMoveTargetFar((struct Object *)actor, p->x + (16 << 16), p->y,
                           p->z);
   Object_SetMoveTargetFar((struct Object *)right, p->x - (16 << 16), p->y,
                           p->z);
-  Object_WaitForMoveFar(objectEvent);
+  Object_WaitForMoveFar(actor);
   Object_WaitForMoveFar(right);
-  objectEvent->x.fixed = p->x + (16 << 16);
-  objectEvent->velocityX = 0;
+  actor->x.fixed = p->x + (16 << 16);
+  actor->velocityX = 0;
   right->x.fixed = p->x - (16 << 16);
   right->velocityX = 0;
 
@@ -114,7 +114,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   Object_SetSpriteFlagsFar((struct Object *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= 24 << 16) {
-      objectEvent->y.fixed += 0x6000;
+      actor->y.fixed += 0x6000;
       right->y.fixed += 0x6000;
       target->y.fixed += 0x6000;
       WaitFrames(1);
@@ -185,7 +185,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     }
     // The way is free: move the target there.
     {
-      struct ObjectEvent *second;
+      struct Actor *second;
       s32 x;
       s32 z;
 
@@ -234,22 +234,21 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   {
-    struct ObjectEvent **walk = shards;
+    struct Actor **walk = shards;
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      objectEvent =
-          (struct ObjectEvent *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
-      *walk++ = objectEvent;
-      if (objectEvent != NULL) {
-        Object_InitializeFar((struct Object *)objectEvent,
+      actor = (struct Actor *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
+      *walk++ = actor;
+      if (actor != NULL) {
+        Object_InitializeFar((struct Object *)actor,
                              gFieldEffect_FragmentScript);
-        objectEvent->speed = Random16() + (2 << 16);
-        objectEvent->acceleration = 2 << 16;
-        objectEvent->motionFlags = 0;
+        actor->speed = Random16() + (2 << 16);
+        actor->acceleration = 2 << 16;
+        actor->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        ObjectMotion_SetTargetPositionFromMagnitudeAngle(
-            (struct Object *)objectEvent, dist, Random16());
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)actor,
+                                                         dist, Random16());
       }
     }
   }

@@ -161,7 +161,7 @@ s32 Djinn_GetAbilityIdFar(u32 group, u32 index);
 /// Raises a character a level at a time up to `lv`, then recomputes its stats.
 void Unit_LevelUpToFar(s32 unit, s32 lv);
 /// Returns the unit's whole element level in one element, 0 for ELEMENT_NONE;
-/// the summary screens show it.
+/// the Status screens show it.
 s32 Unit_GetElementLevelFar(s32 owner, s32 index);
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSetFar(s32 owner, s32 index, s32 bit);

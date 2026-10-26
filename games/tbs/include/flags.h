@@ -28,7 +28,7 @@
 #define FLAG_DJINN_HIDING_FIRST 128
 /// Set while `djinni` is hiding, its DjinniId counting from
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePendingEvent sets it after a lost or
-/// fled Djinni battle, and the Djinni's object event stays away until the map
+/// fled Djinni battle, and the Djinni's actor stays away until the map
 /// is entered normally again, which clears it.
 /// ★ Named from the game: "It must be hiding somewhere again"
 /// (MsgVaultHmmmItMustBeHidingSomewhere)
@@ -48,7 +48,7 @@
 /// walks (SceneManager_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
-/// Set while the field menu is open; maps hold their moving object events
+/// Set while the field menu is open; maps hold their moving actors
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
@@ -59,7 +59,7 @@
 // Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
 // PP faster (units.c). Each lighthouse's maps set its flag on every arrival,
 // and Scene_ResetFlagsOnEnter clears all four when the party enters another
-// map section, so a flag is set only while the party is inside.
+// area, so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse, which is lit.
 /// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
@@ -80,14 +80,14 @@
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
-/// The leader left through an WARP_STYLE_STAIRS_UP warp; the next map plays
-/// the leader's arrival (Warp_PlayArrival), unless its setup
+/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next map plays
+/// the leader's arrival (Entrance_PlayArrival), unless its setup
 /// clears this first.
-#define FLAG_WARP_ARRIVAL_STAIRS_UP 0x120
-/// As FLAG_WARP_ARRIVAL_STAIRS_UP, for an WARP_STYLE_STAIRS_DOWN warp.
-#define FLAG_WARP_ARRIVAL_STAIRS_DOWN 0x121
+#define FLAG_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
+#define FLAG_ARRIVAL_STAIRS_DOWN 0x121
 /// The leader falls into the next map from 160 pixels above
-/// (Warp_PlayArrival), as when the world map's airborne
+/// (Entrance_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town (SCENE_TYPE_TOWN); the map loader sets and
@@ -103,14 +103,14 @@
 /// wish to try to recover from a Sanctum?".
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
-/// clears it when the after event has trigger bit 0x400 and plays its own; the
-/// before event's script may clear it too.
+/// clears it when the after trigger has subject bit 0x400 and plays its own;
+/// the before event's script may clear it too.
 #define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the object event ahead (FieldEffect_DispatchRequestKind)
+/// Aim the effect at the actor ahead (FieldEffect_DispatchRequestKind)
 /// rather than run the kind's untargeted body (FieldEffect_Run, where Halt
-/// still stops the nearest object event when it has a talk event, and Force and
+/// still stops the nearest actor when it has a talk trigger, and Force and
 /// Reveal run their PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps
-/// it set only when a map event applies to what the leader faces.
+/// it set only when a trigger applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says so. A script that acts clears it.
@@ -124,16 +124,16 @@
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
-/// unless flag 0x15f is set; debug warp destinations set it.
+/// unless flag 0x15f is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
-/// No random battles until the party enters another map section: Venus
-/// Lighthouse sets it on its Reveal path, the world map's debug warp
-/// destination too, and Scene_ResetFlagsOnEnter clears it with a new map
-/// section.
-#define FLAG_NO_ENCOUNTERS_IN_MAPSEC 0x161
+/// No random battles until the party enters another area: Venus
+/// Lighthouse sets it on its Reveal path, the world map's debug
+/// entrance too, and Scene_ResetFlagsOnEnter clears it with a new
+/// area.
+#define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// In debug mode, steps on the field are not processed (SceneManager_Run) and
-/// the world map's places do not react to the leader; debug warp destinations
+/// the world map's places do not react to the leader; debug entrances
 /// set it.
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
@@ -166,7 +166,7 @@
 /// resource blocks are free.
 #define FLAG_DEBUG_RESOURCE_BEEP 350
 /// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
-/// FLAG_NO_ENCOUNTERS_IN_MAPSEC, a zone of 0 or Cloak would stop them
+/// FLAG_NO_ENCOUNTERS_IN_AREA, a zone of 0 or Cloak would stop them
 /// (Encounter_CountStepsAndSelectFormation).
 #define FLAG_IGNORE_ENCOUNTER_CHECKS 351
 /// Flint's lesson on Djinn, after he joins on the world map: in its battle the
@@ -215,19 +215,19 @@
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
 /// (Object_UpdateLeaderControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
-/// The map sections the party has visited, one flag for each, set by
+/// The areas the party has visited, one flag for each, set by
 /// Scene_ResetFlagsOnEnter as the party enters the section; the world map
 /// screen shows a marker for each.
-#define FLAG_MAPSEC_VISITED(group) (0x180 + (group))
+#define FLAG_AREA_VISITED(group) (0x180 + (group))
 /// A map's own flags, cleared on every ordinary entry
 /// (Scene_ResetFlagsOnEnter): puzzles reset when the party walks back in.
 #define FLAG_SCENE_TEMP_FIRST 0x200
 #define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the map's 256 flags
-/// A map section's flags, kept while the party moves between the maps of one
+/// An area's flags, kept while the party moves between the maps of one
 /// section and cleared when it enters another. Each section uses the numbers
 /// for its own, so the maps name them; the next two are the Battle Arena's.
-#define FLAG_MAPSEC_TEMP_FIRST 0x300
-#define FLAG_MAPSEC_TEMP_LAST 0x3ff ///< the last of the map section's 256 flags
+#define FLAG_AREA_TEMP_FIRST 0x300
+#define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
 // Byte flags, read and written eight at a time.
 #define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
@@ -244,13 +244,13 @@
 /// equipment." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field map starts where the party was, as after a battle: the
-/// map's flags are not reset, the object events come back from their snapshot,
+/// map's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gSaveBlock.returnMusic resumes if there is one (a
 /// random battle clears it, so the map's own music plays). SceneManager_Run
 /// clears it once the map starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
-/// The map shows its map section's name once it is on screen; entering a new
-/// map section sets it.
+/// The map shows its area's name once it is on screen; entering a new
+/// area sets it.
 #define FLAG_SHOW_LOCATION_NAME 0x12f
 /// The next layout keeps the palette and tiles already loaded, once.
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
@@ -424,7 +424,7 @@
 /// GondowanCave's stone pillar has dropped into its place for good.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
-// GondowanCaveRiver's two chests, whose bg events every map of the
+// GondowanCaveRiver's two chests, whose examine triggers every map of the
 // overlay carries.
 /// ★ Named from the game: "Apple" (MsgItemName)
 #define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
@@ -513,7 +513,7 @@
 /// AltinPeakPool's chest, a Mimic (FIND_MIMIC).
 /// ★ Named from the game: "really a Mimic!" (MsgChestWasMimic)
 #define FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN 0xef2
-/// Unused: the Herb chest in AltinPeakSecondWaterBeast's map event table, past
+/// Unused: the Herb chest in AltinPeakSecondWaterBeast's trigger table, past
 /// its end marker, where no lookup reaches. ★ Named from the game: "Herb"
 /// (MsgItemName)
 #define FLAG_ALTIN_PEAK_UNUSED_HERB 0xf05
@@ -546,8 +546,8 @@
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
-/// Arrival through room 2's warp destination 10 changes its metatiles and
-/// behaviors; warp destinations 10 and 11 restore those changes on later
+/// Arrival through room 2's entrance 10 changes its metatiles and
+/// behaviors; entrances 10 and 11 restore those changes on later
 /// visits. ★ Named from the game: "they opened the stone door"
 /// (MsgBabiYoureSureTheyWentThrough)
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980
@@ -1066,7 +1066,7 @@
 #define FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED 0x875
 /// All three small stone pillars on the lighthouse's lower floor are in place,
 /// the water runs, and it carries the party down to the ground floor. Moving
-/// one out again clears it. The ground floor's warp destinations from the lower
+/// one out again clears it. The ground floor's entrances from the lower
 /// floor place the party by whether it is set. ★ Named from its area name:
 /// Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
@@ -1241,7 +1241,7 @@
 /// (MsgTolbiShipReachedIslandRowers)
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
 /// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's map section plays MUS_CONFRONTATION, the monsters' theme, instead of
+/// ship's area plays MUS_CONFRONTATION, the monsters' theme, instead of
 /// MUS_TOLBI_BOUND_SHIP. It is cleared when the party fights them on the rowing
 /// deck. ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
@@ -1452,7 +1452,7 @@
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
 
 // Vale on the stormy night, the paths outside
-/// The first of the four rocks that fall across the paths (local ids 11 to 14).
+/// The first of the four rocks that fall across the paths (actor ids 11 to 14).
 /// ★ Named from the game: "We can't get around this rock!"
 /// (MsgValeCantGetAroundThisRock)
 #define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
@@ -1520,7 +1520,7 @@
 /// with Jenna to show the way.
 /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
 #define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
-/// Whirlwind blew away the first of the three clumps of ivy (local ids 8 to 10)
+/// Whirlwind blew away the first of the three clumps of ivy (actor ids 8 to 10)
 /// in the village.
 /// ★ Named from what the player sees: ivy growing on the cliff above a house,
 /// which Whirlwind blows away (its render)
@@ -2432,266 +2432,266 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-// Map section flags, FLAG_MAPSEC_TEMP_00 to FLAG_MAPSEC_TEMP_FF:
+// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF:
 // Scene_ResetFlagsOnEnter clears them whenever the party enters a different
-// map section, so they keep what should last while the party is
-// anywhere inside one map section, such as where Fuchin Falls Cave's logs
+// area, so they keep what should last while the party is
+// anywhere inside one area, such as where Fuchin Falls Cave's logs
 // float. A map says beside its uses what each one holds there.
-#define FLAG_MAPSEC_TEMP_00 0x300
-#define FLAG_MAPSEC_TEMP_01 0x301
-#define FLAG_MAPSEC_TEMP_02 0x302
-#define FLAG_MAPSEC_TEMP_03 0x303
-#define FLAG_MAPSEC_TEMP_04 0x304
-#define FLAG_MAPSEC_TEMP_05 0x305
-#define FLAG_MAPSEC_TEMP_06 0x306
-#define FLAG_MAPSEC_TEMP_07 0x307
-#define FLAG_MAPSEC_TEMP_08 0x308
-#define FLAG_MAPSEC_TEMP_09 0x309
-#define FLAG_MAPSEC_TEMP_0A 0x30a
-#define FLAG_MAPSEC_TEMP_0B 0x30b
-#define FLAG_MAPSEC_TEMP_0C 0x30c
-#define FLAG_MAPSEC_TEMP_0D 0x30d
-#define FLAG_MAPSEC_TEMP_0E 0x30e
-#define FLAG_MAPSEC_TEMP_0F 0x30f
-#define FLAG_MAPSEC_TEMP_10 0x310
-#define FLAG_MAPSEC_TEMP_11 0x311
-#define FLAG_MAPSEC_TEMP_12 0x312
-#define FLAG_MAPSEC_TEMP_13 0x313
-#define FLAG_MAPSEC_TEMP_14 0x314
-#define FLAG_MAPSEC_TEMP_15 0x315
-#define FLAG_MAPSEC_TEMP_16 0x316
-#define FLAG_MAPSEC_TEMP_17 0x317
-#define FLAG_MAPSEC_TEMP_18 0x318
-#define FLAG_MAPSEC_TEMP_19 0x319
-#define FLAG_MAPSEC_TEMP_1A 0x31a
-#define FLAG_MAPSEC_TEMP_1B 0x31b
-#define FLAG_MAPSEC_TEMP_1C 0x31c
-#define FLAG_MAPSEC_TEMP_1D 0x31d
-#define FLAG_MAPSEC_TEMP_1E 0x31e
-#define FLAG_MAPSEC_TEMP_1F 0x31f
-#define FLAG_MAPSEC_TEMP_20 0x320
-#define FLAG_MAPSEC_TEMP_21 0x321
-#define FLAG_MAPSEC_TEMP_22 0x322
-#define FLAG_MAPSEC_TEMP_23 0x323
-#define FLAG_MAPSEC_TEMP_24 0x324
-#define FLAG_MAPSEC_TEMP_25 0x325
-#define FLAG_MAPSEC_TEMP_26 0x326
-#define FLAG_MAPSEC_TEMP_27 0x327
-#define FLAG_MAPSEC_TEMP_28 0x328
-#define FLAG_MAPSEC_TEMP_29 0x329
-#define FLAG_MAPSEC_TEMP_2A 0x32a
-#define FLAG_MAPSEC_TEMP_2B 0x32b
-#define FLAG_MAPSEC_TEMP_2C 0x32c
-#define FLAG_MAPSEC_TEMP_2D 0x32d
-#define FLAG_MAPSEC_TEMP_2E 0x32e
-#define FLAG_MAPSEC_TEMP_2F 0x32f
-#define FLAG_MAPSEC_TEMP_30 0x330
-#define FLAG_MAPSEC_TEMP_31 0x331
-#define FLAG_MAPSEC_TEMP_32 0x332
-#define FLAG_MAPSEC_TEMP_33 0x333
-#define FLAG_MAPSEC_TEMP_34 0x334
-#define FLAG_MAPSEC_TEMP_35 0x335
-#define FLAG_MAPSEC_TEMP_36 0x336
-#define FLAG_MAPSEC_TEMP_37 0x337
-#define FLAG_MAPSEC_TEMP_38 0x338
-#define FLAG_MAPSEC_TEMP_39 0x339
-#define FLAG_MAPSEC_TEMP_3A 0x33a
-#define FLAG_MAPSEC_TEMP_3B 0x33b
-#define FLAG_MAPSEC_TEMP_3C 0x33c
-#define FLAG_MAPSEC_TEMP_3D 0x33d
-#define FLAG_MAPSEC_TEMP_3E 0x33e
-#define FLAG_MAPSEC_TEMP_3F 0x33f
-#define FLAG_MAPSEC_TEMP_40 0x340
-#define FLAG_MAPSEC_TEMP_41 0x341
-#define FLAG_MAPSEC_TEMP_42 0x342
-#define FLAG_MAPSEC_TEMP_43 0x343
-#define FLAG_MAPSEC_TEMP_44 0x344
-#define FLAG_MAPSEC_TEMP_45 0x345
-#define FLAG_MAPSEC_TEMP_46 0x346
-#define FLAG_MAPSEC_TEMP_47 0x347
-#define FLAG_MAPSEC_TEMP_48 0x348
-#define FLAG_MAPSEC_TEMP_49 0x349
-#define FLAG_MAPSEC_TEMP_4A 0x34a
-#define FLAG_MAPSEC_TEMP_4B 0x34b
-#define FLAG_MAPSEC_TEMP_4C 0x34c
-#define FLAG_MAPSEC_TEMP_4D 0x34d
-#define FLAG_MAPSEC_TEMP_4E 0x34e
-#define FLAG_MAPSEC_TEMP_4F 0x34f
-#define FLAG_MAPSEC_TEMP_50 0x350
-#define FLAG_MAPSEC_TEMP_51 0x351
-#define FLAG_MAPSEC_TEMP_52 0x352
-#define FLAG_MAPSEC_TEMP_53 0x353
-#define FLAG_MAPSEC_TEMP_54 0x354
-#define FLAG_MAPSEC_TEMP_55 0x355
-#define FLAG_MAPSEC_TEMP_56 0x356
-#define FLAG_MAPSEC_TEMP_57 0x357
-#define FLAG_MAPSEC_TEMP_58 0x358
-#define FLAG_MAPSEC_TEMP_59 0x359
-#define FLAG_MAPSEC_TEMP_5A 0x35a
-#define FLAG_MAPSEC_TEMP_5B 0x35b
-#define FLAG_MAPSEC_TEMP_5C 0x35c
-#define FLAG_MAPSEC_TEMP_5D 0x35d
-#define FLAG_MAPSEC_TEMP_5E 0x35e
-#define FLAG_MAPSEC_TEMP_5F 0x35f
-#define FLAG_MAPSEC_TEMP_60 0x360
-#define FLAG_MAPSEC_TEMP_61 0x361
-#define FLAG_MAPSEC_TEMP_62 0x362
-#define FLAG_MAPSEC_TEMP_63 0x363
-#define FLAG_MAPSEC_TEMP_64 0x364
-#define FLAG_MAPSEC_TEMP_65 0x365
-#define FLAG_MAPSEC_TEMP_66 0x366
-#define FLAG_MAPSEC_TEMP_67 0x367
-#define FLAG_MAPSEC_TEMP_68 0x368
-#define FLAG_MAPSEC_TEMP_69 0x369
-#define FLAG_MAPSEC_TEMP_6A 0x36a
-#define FLAG_MAPSEC_TEMP_6B 0x36b
-#define FLAG_MAPSEC_TEMP_6C 0x36c
-#define FLAG_MAPSEC_TEMP_6D 0x36d
-#define FLAG_MAPSEC_TEMP_6E 0x36e
-#define FLAG_MAPSEC_TEMP_6F 0x36f
-#define FLAG_MAPSEC_TEMP_70 0x370
-#define FLAG_MAPSEC_TEMP_71 0x371
-#define FLAG_MAPSEC_TEMP_72 0x372
-#define FLAG_MAPSEC_TEMP_73 0x373
-#define FLAG_MAPSEC_TEMP_74 0x374
-#define FLAG_MAPSEC_TEMP_75 0x375
-#define FLAG_MAPSEC_TEMP_76 0x376
-#define FLAG_MAPSEC_TEMP_77 0x377
-#define FLAG_MAPSEC_TEMP_78 0x378
-#define FLAG_MAPSEC_TEMP_79 0x379
-#define FLAG_MAPSEC_TEMP_7A 0x37a
-#define FLAG_MAPSEC_TEMP_7B 0x37b
-#define FLAG_MAPSEC_TEMP_7C 0x37c
-#define FLAG_MAPSEC_TEMP_7D 0x37d
-#define FLAG_MAPSEC_TEMP_7E 0x37e
-#define FLAG_MAPSEC_TEMP_7F 0x37f
-#define FLAG_MAPSEC_TEMP_80 0x380
-#define FLAG_MAPSEC_TEMP_81 0x381
-#define FLAG_MAPSEC_TEMP_82 0x382
-#define FLAG_MAPSEC_TEMP_83 0x383
-#define FLAG_MAPSEC_TEMP_84 0x384
-#define FLAG_MAPSEC_TEMP_85 0x385
-#define FLAG_MAPSEC_TEMP_86 0x386
-#define FLAG_MAPSEC_TEMP_87 0x387
-#define FLAG_MAPSEC_TEMP_88 0x388
-#define FLAG_MAPSEC_TEMP_89 0x389
-#define FLAG_MAPSEC_TEMP_8A 0x38a
-#define FLAG_MAPSEC_TEMP_8B 0x38b
-#define FLAG_MAPSEC_TEMP_8C 0x38c
-#define FLAG_MAPSEC_TEMP_8D 0x38d
-#define FLAG_MAPSEC_TEMP_8E 0x38e
-#define FLAG_MAPSEC_TEMP_8F 0x38f
-#define FLAG_MAPSEC_TEMP_90 0x390
-#define FLAG_MAPSEC_TEMP_91 0x391
-#define FLAG_MAPSEC_TEMP_92 0x392
-#define FLAG_MAPSEC_TEMP_93 0x393
-#define FLAG_MAPSEC_TEMP_94 0x394
-#define FLAG_MAPSEC_TEMP_95 0x395
-#define FLAG_MAPSEC_TEMP_96 0x396
-#define FLAG_MAPSEC_TEMP_97 0x397
-#define FLAG_MAPSEC_TEMP_98 0x398
-#define FLAG_MAPSEC_TEMP_99 0x399
-#define FLAG_MAPSEC_TEMP_9A 0x39a
-#define FLAG_MAPSEC_TEMP_9B 0x39b
-#define FLAG_MAPSEC_TEMP_9C 0x39c
-#define FLAG_MAPSEC_TEMP_9D 0x39d
-#define FLAG_MAPSEC_TEMP_9E 0x39e
-#define FLAG_MAPSEC_TEMP_9F 0x39f
-#define FLAG_MAPSEC_TEMP_A0 0x3a0
-#define FLAG_MAPSEC_TEMP_A1 0x3a1
-#define FLAG_MAPSEC_TEMP_A2 0x3a2
-#define FLAG_MAPSEC_TEMP_A3 0x3a3
-#define FLAG_MAPSEC_TEMP_A4 0x3a4
-#define FLAG_MAPSEC_TEMP_A5 0x3a5
-#define FLAG_MAPSEC_TEMP_A6 0x3a6
-#define FLAG_MAPSEC_TEMP_A7 0x3a7
-#define FLAG_MAPSEC_TEMP_A8 0x3a8
-#define FLAG_MAPSEC_TEMP_A9 0x3a9
-#define FLAG_MAPSEC_TEMP_AA 0x3aa
-#define FLAG_MAPSEC_TEMP_AB 0x3ab
-#define FLAG_MAPSEC_TEMP_AC 0x3ac
-#define FLAG_MAPSEC_TEMP_AD 0x3ad
-#define FLAG_MAPSEC_TEMP_AE 0x3ae
-#define FLAG_MAPSEC_TEMP_AF 0x3af
-#define FLAG_MAPSEC_TEMP_B0 0x3b0
-#define FLAG_MAPSEC_TEMP_B1 0x3b1
-#define FLAG_MAPSEC_TEMP_B2 0x3b2
-#define FLAG_MAPSEC_TEMP_B3 0x3b3
-#define FLAG_MAPSEC_TEMP_B4 0x3b4
-#define FLAG_MAPSEC_TEMP_B5 0x3b5
-#define FLAG_MAPSEC_TEMP_B6 0x3b6
-#define FLAG_MAPSEC_TEMP_B7 0x3b7
-#define FLAG_MAPSEC_TEMP_B8 0x3b8
-#define FLAG_MAPSEC_TEMP_B9 0x3b9
-#define FLAG_MAPSEC_TEMP_BA 0x3ba
-#define FLAG_MAPSEC_TEMP_BB 0x3bb
-#define FLAG_MAPSEC_TEMP_BC 0x3bc
-#define FLAG_MAPSEC_TEMP_BD 0x3bd
-#define FLAG_MAPSEC_TEMP_BE 0x3be
-#define FLAG_MAPSEC_TEMP_BF 0x3bf
-#define FLAG_MAPSEC_TEMP_C0 0x3c0
-#define FLAG_MAPSEC_TEMP_C1 0x3c1
-#define FLAG_MAPSEC_TEMP_C2 0x3c2
-#define FLAG_MAPSEC_TEMP_C3 0x3c3
-#define FLAG_MAPSEC_TEMP_C4 0x3c4
-#define FLAG_MAPSEC_TEMP_C5 0x3c5
-#define FLAG_MAPSEC_TEMP_C6 0x3c6
-#define FLAG_MAPSEC_TEMP_C7 0x3c7
-#define FLAG_MAPSEC_TEMP_C8 0x3c8
-#define FLAG_MAPSEC_TEMP_C9 0x3c9
-#define FLAG_MAPSEC_TEMP_CA 0x3ca
-#define FLAG_MAPSEC_TEMP_CB 0x3cb
-#define FLAG_MAPSEC_TEMP_CC 0x3cc
-#define FLAG_MAPSEC_TEMP_CD 0x3cd
-#define FLAG_MAPSEC_TEMP_CE 0x3ce
-#define FLAG_MAPSEC_TEMP_CF 0x3cf
-#define FLAG_MAPSEC_TEMP_D0 0x3d0
-#define FLAG_MAPSEC_TEMP_D1 0x3d1
-#define FLAG_MAPSEC_TEMP_D2 0x3d2
-#define FLAG_MAPSEC_TEMP_D3 0x3d3
-#define FLAG_MAPSEC_TEMP_D4 0x3d4
-#define FLAG_MAPSEC_TEMP_D5 0x3d5
-#define FLAG_MAPSEC_TEMP_D6 0x3d6
-#define FLAG_MAPSEC_TEMP_D7 0x3d7
-#define FLAG_MAPSEC_TEMP_D8 0x3d8
-#define FLAG_MAPSEC_TEMP_D9 0x3d9
-#define FLAG_MAPSEC_TEMP_DA 0x3da
-#define FLAG_MAPSEC_TEMP_DB 0x3db
-#define FLAG_MAPSEC_TEMP_DC 0x3dc
-#define FLAG_MAPSEC_TEMP_DD 0x3dd
-#define FLAG_MAPSEC_TEMP_DE 0x3de
-#define FLAG_MAPSEC_TEMP_DF 0x3df
-#define FLAG_MAPSEC_TEMP_E0 0x3e0
-#define FLAG_MAPSEC_TEMP_E1 0x3e1
-#define FLAG_MAPSEC_TEMP_E2 0x3e2
-#define FLAG_MAPSEC_TEMP_E3 0x3e3
-#define FLAG_MAPSEC_TEMP_E4 0x3e4
-#define FLAG_MAPSEC_TEMP_E5 0x3e5
-#define FLAG_MAPSEC_TEMP_E6 0x3e6
-#define FLAG_MAPSEC_TEMP_E7 0x3e7
-#define FLAG_MAPSEC_TEMP_E8 0x3e8
-#define FLAG_MAPSEC_TEMP_E9 0x3e9
-#define FLAG_MAPSEC_TEMP_EA 0x3ea
-#define FLAG_MAPSEC_TEMP_EB 0x3eb
-#define FLAG_MAPSEC_TEMP_EC 0x3ec
-#define FLAG_MAPSEC_TEMP_ED 0x3ed
-#define FLAG_MAPSEC_TEMP_EE 0x3ee
-#define FLAG_MAPSEC_TEMP_EF 0x3ef
-#define FLAG_MAPSEC_TEMP_F0 0x3f0
-#define FLAG_MAPSEC_TEMP_F1 0x3f1
-#define FLAG_MAPSEC_TEMP_F2 0x3f2
-#define FLAG_MAPSEC_TEMP_F3 0x3f3
-#define FLAG_MAPSEC_TEMP_F4 0x3f4
-#define FLAG_MAPSEC_TEMP_F5 0x3f5
-#define FLAG_MAPSEC_TEMP_F6 0x3f6
-#define FLAG_MAPSEC_TEMP_F7 0x3f7
-#define FLAG_MAPSEC_TEMP_F8 0x3f8
-#define FLAG_MAPSEC_TEMP_F9 0x3f9
-#define FLAG_MAPSEC_TEMP_FA 0x3fa
-#define FLAG_MAPSEC_TEMP_FB 0x3fb
-#define FLAG_MAPSEC_TEMP_FC 0x3fc
-#define FLAG_MAPSEC_TEMP_FD 0x3fd
-#define FLAG_MAPSEC_TEMP_FE 0x3fe
-#define FLAG_MAPSEC_TEMP_FF 0x3ff
+#define FLAG_AREA_TEMP_00 0x300
+#define FLAG_AREA_TEMP_01 0x301
+#define FLAG_AREA_TEMP_02 0x302
+#define FLAG_AREA_TEMP_03 0x303
+#define FLAG_AREA_TEMP_04 0x304
+#define FLAG_AREA_TEMP_05 0x305
+#define FLAG_AREA_TEMP_06 0x306
+#define FLAG_AREA_TEMP_07 0x307
+#define FLAG_AREA_TEMP_08 0x308
+#define FLAG_AREA_TEMP_09 0x309
+#define FLAG_AREA_TEMP_0A 0x30a
+#define FLAG_AREA_TEMP_0B 0x30b
+#define FLAG_AREA_TEMP_0C 0x30c
+#define FLAG_AREA_TEMP_0D 0x30d
+#define FLAG_AREA_TEMP_0E 0x30e
+#define FLAG_AREA_TEMP_0F 0x30f
+#define FLAG_AREA_TEMP_10 0x310
+#define FLAG_AREA_TEMP_11 0x311
+#define FLAG_AREA_TEMP_12 0x312
+#define FLAG_AREA_TEMP_13 0x313
+#define FLAG_AREA_TEMP_14 0x314
+#define FLAG_AREA_TEMP_15 0x315
+#define FLAG_AREA_TEMP_16 0x316
+#define FLAG_AREA_TEMP_17 0x317
+#define FLAG_AREA_TEMP_18 0x318
+#define FLAG_AREA_TEMP_19 0x319
+#define FLAG_AREA_TEMP_1A 0x31a
+#define FLAG_AREA_TEMP_1B 0x31b
+#define FLAG_AREA_TEMP_1C 0x31c
+#define FLAG_AREA_TEMP_1D 0x31d
+#define FLAG_AREA_TEMP_1E 0x31e
+#define FLAG_AREA_TEMP_1F 0x31f
+#define FLAG_AREA_TEMP_20 0x320
+#define FLAG_AREA_TEMP_21 0x321
+#define FLAG_AREA_TEMP_22 0x322
+#define FLAG_AREA_TEMP_23 0x323
+#define FLAG_AREA_TEMP_24 0x324
+#define FLAG_AREA_TEMP_25 0x325
+#define FLAG_AREA_TEMP_26 0x326
+#define FLAG_AREA_TEMP_27 0x327
+#define FLAG_AREA_TEMP_28 0x328
+#define FLAG_AREA_TEMP_29 0x329
+#define FLAG_AREA_TEMP_2A 0x32a
+#define FLAG_AREA_TEMP_2B 0x32b
+#define FLAG_AREA_TEMP_2C 0x32c
+#define FLAG_AREA_TEMP_2D 0x32d
+#define FLAG_AREA_TEMP_2E 0x32e
+#define FLAG_AREA_TEMP_2F 0x32f
+#define FLAG_AREA_TEMP_30 0x330
+#define FLAG_AREA_TEMP_31 0x331
+#define FLAG_AREA_TEMP_32 0x332
+#define FLAG_AREA_TEMP_33 0x333
+#define FLAG_AREA_TEMP_34 0x334
+#define FLAG_AREA_TEMP_35 0x335
+#define FLAG_AREA_TEMP_36 0x336
+#define FLAG_AREA_TEMP_37 0x337
+#define FLAG_AREA_TEMP_38 0x338
+#define FLAG_AREA_TEMP_39 0x339
+#define FLAG_AREA_TEMP_3A 0x33a
+#define FLAG_AREA_TEMP_3B 0x33b
+#define FLAG_AREA_TEMP_3C 0x33c
+#define FLAG_AREA_TEMP_3D 0x33d
+#define FLAG_AREA_TEMP_3E 0x33e
+#define FLAG_AREA_TEMP_3F 0x33f
+#define FLAG_AREA_TEMP_40 0x340
+#define FLAG_AREA_TEMP_41 0x341
+#define FLAG_AREA_TEMP_42 0x342
+#define FLAG_AREA_TEMP_43 0x343
+#define FLAG_AREA_TEMP_44 0x344
+#define FLAG_AREA_TEMP_45 0x345
+#define FLAG_AREA_TEMP_46 0x346
+#define FLAG_AREA_TEMP_47 0x347
+#define FLAG_AREA_TEMP_48 0x348
+#define FLAG_AREA_TEMP_49 0x349
+#define FLAG_AREA_TEMP_4A 0x34a
+#define FLAG_AREA_TEMP_4B 0x34b
+#define FLAG_AREA_TEMP_4C 0x34c
+#define FLAG_AREA_TEMP_4D 0x34d
+#define FLAG_AREA_TEMP_4E 0x34e
+#define FLAG_AREA_TEMP_4F 0x34f
+#define FLAG_AREA_TEMP_50 0x350
+#define FLAG_AREA_TEMP_51 0x351
+#define FLAG_AREA_TEMP_52 0x352
+#define FLAG_AREA_TEMP_53 0x353
+#define FLAG_AREA_TEMP_54 0x354
+#define FLAG_AREA_TEMP_55 0x355
+#define FLAG_AREA_TEMP_56 0x356
+#define FLAG_AREA_TEMP_57 0x357
+#define FLAG_AREA_TEMP_58 0x358
+#define FLAG_AREA_TEMP_59 0x359
+#define FLAG_AREA_TEMP_5A 0x35a
+#define FLAG_AREA_TEMP_5B 0x35b
+#define FLAG_AREA_TEMP_5C 0x35c
+#define FLAG_AREA_TEMP_5D 0x35d
+#define FLAG_AREA_TEMP_5E 0x35e
+#define FLAG_AREA_TEMP_5F 0x35f
+#define FLAG_AREA_TEMP_60 0x360
+#define FLAG_AREA_TEMP_61 0x361
+#define FLAG_AREA_TEMP_62 0x362
+#define FLAG_AREA_TEMP_63 0x363
+#define FLAG_AREA_TEMP_64 0x364
+#define FLAG_AREA_TEMP_65 0x365
+#define FLAG_AREA_TEMP_66 0x366
+#define FLAG_AREA_TEMP_67 0x367
+#define FLAG_AREA_TEMP_68 0x368
+#define FLAG_AREA_TEMP_69 0x369
+#define FLAG_AREA_TEMP_6A 0x36a
+#define FLAG_AREA_TEMP_6B 0x36b
+#define FLAG_AREA_TEMP_6C 0x36c
+#define FLAG_AREA_TEMP_6D 0x36d
+#define FLAG_AREA_TEMP_6E 0x36e
+#define FLAG_AREA_TEMP_6F 0x36f
+#define FLAG_AREA_TEMP_70 0x370
+#define FLAG_AREA_TEMP_71 0x371
+#define FLAG_AREA_TEMP_72 0x372
+#define FLAG_AREA_TEMP_73 0x373
+#define FLAG_AREA_TEMP_74 0x374
+#define FLAG_AREA_TEMP_75 0x375
+#define FLAG_AREA_TEMP_76 0x376
+#define FLAG_AREA_TEMP_77 0x377
+#define FLAG_AREA_TEMP_78 0x378
+#define FLAG_AREA_TEMP_79 0x379
+#define FLAG_AREA_TEMP_7A 0x37a
+#define FLAG_AREA_TEMP_7B 0x37b
+#define FLAG_AREA_TEMP_7C 0x37c
+#define FLAG_AREA_TEMP_7D 0x37d
+#define FLAG_AREA_TEMP_7E 0x37e
+#define FLAG_AREA_TEMP_7F 0x37f
+#define FLAG_AREA_TEMP_80 0x380
+#define FLAG_AREA_TEMP_81 0x381
+#define FLAG_AREA_TEMP_82 0x382
+#define FLAG_AREA_TEMP_83 0x383
+#define FLAG_AREA_TEMP_84 0x384
+#define FLAG_AREA_TEMP_85 0x385
+#define FLAG_AREA_TEMP_86 0x386
+#define FLAG_AREA_TEMP_87 0x387
+#define FLAG_AREA_TEMP_88 0x388
+#define FLAG_AREA_TEMP_89 0x389
+#define FLAG_AREA_TEMP_8A 0x38a
+#define FLAG_AREA_TEMP_8B 0x38b
+#define FLAG_AREA_TEMP_8C 0x38c
+#define FLAG_AREA_TEMP_8D 0x38d
+#define FLAG_AREA_TEMP_8E 0x38e
+#define FLAG_AREA_TEMP_8F 0x38f
+#define FLAG_AREA_TEMP_90 0x390
+#define FLAG_AREA_TEMP_91 0x391
+#define FLAG_AREA_TEMP_92 0x392
+#define FLAG_AREA_TEMP_93 0x393
+#define FLAG_AREA_TEMP_94 0x394
+#define FLAG_AREA_TEMP_95 0x395
+#define FLAG_AREA_TEMP_96 0x396
+#define FLAG_AREA_TEMP_97 0x397
+#define FLAG_AREA_TEMP_98 0x398
+#define FLAG_AREA_TEMP_99 0x399
+#define FLAG_AREA_TEMP_9A 0x39a
+#define FLAG_AREA_TEMP_9B 0x39b
+#define FLAG_AREA_TEMP_9C 0x39c
+#define FLAG_AREA_TEMP_9D 0x39d
+#define FLAG_AREA_TEMP_9E 0x39e
+#define FLAG_AREA_TEMP_9F 0x39f
+#define FLAG_AREA_TEMP_A0 0x3a0
+#define FLAG_AREA_TEMP_A1 0x3a1
+#define FLAG_AREA_TEMP_A2 0x3a2
+#define FLAG_AREA_TEMP_A3 0x3a3
+#define FLAG_AREA_TEMP_A4 0x3a4
+#define FLAG_AREA_TEMP_A5 0x3a5
+#define FLAG_AREA_TEMP_A6 0x3a6
+#define FLAG_AREA_TEMP_A7 0x3a7
+#define FLAG_AREA_TEMP_A8 0x3a8
+#define FLAG_AREA_TEMP_A9 0x3a9
+#define FLAG_AREA_TEMP_AA 0x3aa
+#define FLAG_AREA_TEMP_AB 0x3ab
+#define FLAG_AREA_TEMP_AC 0x3ac
+#define FLAG_AREA_TEMP_AD 0x3ad
+#define FLAG_AREA_TEMP_AE 0x3ae
+#define FLAG_AREA_TEMP_AF 0x3af
+#define FLAG_AREA_TEMP_B0 0x3b0
+#define FLAG_AREA_TEMP_B1 0x3b1
+#define FLAG_AREA_TEMP_B2 0x3b2
+#define FLAG_AREA_TEMP_B3 0x3b3
+#define FLAG_AREA_TEMP_B4 0x3b4
+#define FLAG_AREA_TEMP_B5 0x3b5
+#define FLAG_AREA_TEMP_B6 0x3b6
+#define FLAG_AREA_TEMP_B7 0x3b7
+#define FLAG_AREA_TEMP_B8 0x3b8
+#define FLAG_AREA_TEMP_B9 0x3b9
+#define FLAG_AREA_TEMP_BA 0x3ba
+#define FLAG_AREA_TEMP_BB 0x3bb
+#define FLAG_AREA_TEMP_BC 0x3bc
+#define FLAG_AREA_TEMP_BD 0x3bd
+#define FLAG_AREA_TEMP_BE 0x3be
+#define FLAG_AREA_TEMP_BF 0x3bf
+#define FLAG_AREA_TEMP_C0 0x3c0
+#define FLAG_AREA_TEMP_C1 0x3c1
+#define FLAG_AREA_TEMP_C2 0x3c2
+#define FLAG_AREA_TEMP_C3 0x3c3
+#define FLAG_AREA_TEMP_C4 0x3c4
+#define FLAG_AREA_TEMP_C5 0x3c5
+#define FLAG_AREA_TEMP_C6 0x3c6
+#define FLAG_AREA_TEMP_C7 0x3c7
+#define FLAG_AREA_TEMP_C8 0x3c8
+#define FLAG_AREA_TEMP_C9 0x3c9
+#define FLAG_AREA_TEMP_CA 0x3ca
+#define FLAG_AREA_TEMP_CB 0x3cb
+#define FLAG_AREA_TEMP_CC 0x3cc
+#define FLAG_AREA_TEMP_CD 0x3cd
+#define FLAG_AREA_TEMP_CE 0x3ce
+#define FLAG_AREA_TEMP_CF 0x3cf
+#define FLAG_AREA_TEMP_D0 0x3d0
+#define FLAG_AREA_TEMP_D1 0x3d1
+#define FLAG_AREA_TEMP_D2 0x3d2
+#define FLAG_AREA_TEMP_D3 0x3d3
+#define FLAG_AREA_TEMP_D4 0x3d4
+#define FLAG_AREA_TEMP_D5 0x3d5
+#define FLAG_AREA_TEMP_D6 0x3d6
+#define FLAG_AREA_TEMP_D7 0x3d7
+#define FLAG_AREA_TEMP_D8 0x3d8
+#define FLAG_AREA_TEMP_D9 0x3d9
+#define FLAG_AREA_TEMP_DA 0x3da
+#define FLAG_AREA_TEMP_DB 0x3db
+#define FLAG_AREA_TEMP_DC 0x3dc
+#define FLAG_AREA_TEMP_DD 0x3dd
+#define FLAG_AREA_TEMP_DE 0x3de
+#define FLAG_AREA_TEMP_DF 0x3df
+#define FLAG_AREA_TEMP_E0 0x3e0
+#define FLAG_AREA_TEMP_E1 0x3e1
+#define FLAG_AREA_TEMP_E2 0x3e2
+#define FLAG_AREA_TEMP_E3 0x3e3
+#define FLAG_AREA_TEMP_E4 0x3e4
+#define FLAG_AREA_TEMP_E5 0x3e5
+#define FLAG_AREA_TEMP_E6 0x3e6
+#define FLAG_AREA_TEMP_E7 0x3e7
+#define FLAG_AREA_TEMP_E8 0x3e8
+#define FLAG_AREA_TEMP_E9 0x3e9
+#define FLAG_AREA_TEMP_EA 0x3ea
+#define FLAG_AREA_TEMP_EB 0x3eb
+#define FLAG_AREA_TEMP_EC 0x3ec
+#define FLAG_AREA_TEMP_ED 0x3ed
+#define FLAG_AREA_TEMP_EE 0x3ee
+#define FLAG_AREA_TEMP_EF 0x3ef
+#define FLAG_AREA_TEMP_F0 0x3f0
+#define FLAG_AREA_TEMP_F1 0x3f1
+#define FLAG_AREA_TEMP_F2 0x3f2
+#define FLAG_AREA_TEMP_F3 0x3f3
+#define FLAG_AREA_TEMP_F4 0x3f4
+#define FLAG_AREA_TEMP_F5 0x3f5
+#define FLAG_AREA_TEMP_F6 0x3f6
+#define FLAG_AREA_TEMP_F7 0x3f7
+#define FLAG_AREA_TEMP_F8 0x3f8
+#define FLAG_AREA_TEMP_F9 0x3f9
+#define FLAG_AREA_TEMP_FA 0x3fa
+#define FLAG_AREA_TEMP_FB 0x3fb
+#define FLAG_AREA_TEMP_FC 0x3fc
+#define FLAG_AREA_TEMP_FD 0x3fd
+#define FLAG_AREA_TEMP_FE 0x3fe
+#define FLAG_AREA_TEMP_FF 0x3ff
 
 #endif

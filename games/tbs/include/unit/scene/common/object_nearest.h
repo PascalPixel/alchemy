@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-s32 ObjectEvent_FindNearestFloatingPlatform(void);
+s32 Actor_FindNearestFloatingPlatform(void);
 
 #endif

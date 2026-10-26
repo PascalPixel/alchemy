@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer SolSanctumEruption_Initialize
-	overlay_veneer SolSanctumEruption_GetWarpDests
-	overlay_veneer SolSanctumEruption_GetWarps
-	overlay_veneer SolSanctumEruption_GetObjectEventTemplates
-	overlay_veneer SolSanctumEruption_GetEvents
+	overlay_veneer SolSanctumEruption_GetEntrances
+	overlay_veneer SolSanctumEruption_GetExits
+	overlay_veneer SolSanctumEruption_GetActorTemplates
+	overlay_veneer SolSanctumEruption_GetTriggers
 	overlay_veneer SolSanctumEruption_GetRegions

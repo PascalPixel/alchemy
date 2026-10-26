@@ -2,24 +2,24 @@
 #define ALCHEMY_UNIT_MAP_SUHALLA_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
-extern struct MapWarpDest gSuhallaWarpDests[];
-extern u32 gSuhallaWarps[];
-extern struct ObjectEventTemplate gSuhallaObjectEventTemplates[];
-extern struct ObjectEventTemplate gSuhallaObjectEventTemplatesLater[];
+extern struct SceneEntrance gSuhallaEntrances[];
+extern u32 gSuhallaExits[];
+extern struct ActorTemplate gSuhallaActorTemplates[];
+extern struct ActorTemplate gSuhallaActorTemplatesLater[];
 extern s16 gSuhallaDoorCells[][2];
 extern u16 gSuhallaDoorOpenSteps[];
 extern u16 gSuhallaWideDoorOpenSteps[];
-extern struct MapEvent gSuhallaEvents[];
-extern struct MapEvent gSuhallaEventsLater[];
+extern struct Trigger gSuhallaTriggers[];
+extern struct Trigger gSuhallaTriggersLater[];
 
 #endif

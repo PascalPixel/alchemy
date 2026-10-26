@@ -1,5 +1,5 @@
 /// @file
-/// The fade overlay drawn on the ground beside an object event.
+/// The fade overlay drawn on the ground beside an actor.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -13,9 +13,9 @@ struct MapGridScrollCameraView {
 };
 #endif
 
-/// Each frame of the fade overlay: on each of the two cells beside the object
-/// event (left and right of it), where the ground one or two cells south rises
-/// above the object event's floor, draws a semi-transparent 16-pixel-wide
+/// Each frame of the fade overlay: on each of the two cells beside the
+/// actor (left and right of it), where the ground one or two cells south rises
+/// above the actor's floor, draws a semi-transparent 16-pixel-wide
 /// sprite of colour 1 at the height of that ground. Added as a task by
 /// FieldEffect_StartFadeOverlay; reads the work in
 /// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
@@ -28,7 +28,7 @@ void FadeOverlay_DrawMarks(void) {
 #else
   // UB: the legacy halfword overlay aliases the map's s32 coordinates.
   // Named-member high halves keep 0x1da bytes but change load scheduling
-  // from .text+0x6cce in English; the object event's named fields match
+  // from .text+0x6cce in English; the actor's named fields match
   // plainly.
   s16 *camera =
       ((struct MapGridScrollCameraView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))
@@ -37,7 +37,7 @@ void FadeOverlay_DrawMarks(void) {
   s32 cameraZ = camera[3];
 #endif
   struct AnimationSpritePart *mark = work->marks;
-  struct ObjectEvent *objectEvent = work->objectEvent;
+  struct Actor *actor = work->actor;
   s32 x;
   s32 z;
   s32 terrainFloor;
@@ -51,16 +51,16 @@ void FadeOverlay_DrawMarks(void) {
    * tbs-en. */
   UNUSED s16 unused[2];
 
-  if (objectEvent == 0)
+  if (actor == 0)
     return;
-  x = objectEvent->x.fixed;
-  z = objectEvent->z.fixed;
-  terrainFloor = objectEvent->groundHeight >> 16;
-  terrainLayer = objectEvent->layer;
+  x = actor->x.fixed;
+  z = actor->z.fixed;
+  terrainFloor = actor->groundHeight >> 16;
+  terrainLayer = actor->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
   tile = gVramCacheEntries[94].offset >> 5;
-  // The left cell, 8 pixels left of the object event. The ground is read one
+  // The left cell, 8 pixels left of the actor. The ground is read one
   // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
   // lower, and the higher of the two is used.
   x -= 0x80000;
@@ -85,7 +85,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepth(mark, 0);
   }
-  // The right cell, 8 pixels right of the object event, read the same way.
+  // The right cell, 8 pixels right of the actor, read the same way.
   x += 0x100000;
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
@@ -113,7 +113,7 @@ void FadeOverlay_DrawMarks(void) {
 /// FadeOverlay_DrawMarks. Called by seven map overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no
+/// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no
 /// named caller): the work and the callback last until the next map change
 /// resets the heap and the task table (SequenceManager_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
@@ -136,8 +136,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  work->objectEvent = object;
+    object = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  work->actor = object;
 }
 
 /// Stops drawing the fade overlay, keeping its work. Reached only through a

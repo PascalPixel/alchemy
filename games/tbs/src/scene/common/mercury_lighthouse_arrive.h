@@ -2,7 +2,7 @@
 /// Mercury Lighthouse and its entrance: arriving on a floor through one of its
 /// sparkling passages.
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 #include "flags.h"
 #include "songs.h"
@@ -11,42 +11,41 @@
 /// of the entrance, hidden, as the screen opens, then comes south with the
 /// trail of sparks and is drawn again on the way.
 static void MercuryLighthouse_ArriveWithSparks(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 flag;
-  struct ObjectEvent *record;
+  struct Actor *record;
   struct Sprite *sprite;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
   flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     FieldScript_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    objectEvent->motionFlags = 0;
-    Import_ObjectEventSetPosition(0, objectEvent->x.part.pixel << 16,
-                                  (objectEvent->z.part.pixel << 16) +
-                                      -0x100000);
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-    record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-    ObjectEvent_SetSpriteFlags(record, 0);
+    actor->motionFlags = 0;
+    Import_ActorSetPosition(0, actor->x.part.pixel << 16,
+                            (actor->z.part.pixel << 16) + -0x100000);
+    Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_SetSpriteFlags(record, 0);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
-    objectEvent->update = MercuryLighthouse_TrailSparks;
+    actor->update = MercuryLighthouse_TrailSparks;
 #else
-    objectEvent->update =
-        (void (*)(union ObjectEventOrEffect *))MercuryLighthouse_TrailSparks;
+    actor->update =
+        (void (*)(union ActorOrEffect *))MercuryLighthouse_TrailSparks;
 #endif
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x6666, 0x3333);
-    ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-    record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-    ObjectEvent_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
-    sprite = objectEvent->sprite;
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
+    Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+    sprite = actor->sprite;
     sprite->image.priority = 1;
-    ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 10);
-    objectEvent->motionFlags = 3;
-    objectEvent->update = NULL;
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
+    actor->motionFlags = 3;
+    actor->update = NULL;
     Scene_PlayQueuedMusic();
     FieldScript_End();
   }

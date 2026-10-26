@@ -1,39 +1,37 @@
 #include "types.h"
-#include "object_event.h"
-#include "map_tables.h"
+#include "actor.h"
+#include "scene_tables.h"
 
 // Mercury and Venus Lighthouses' aeries.
 
-/// Returns the placed object event drawn as SPRITE_FLOATING_PLATFORM nearest
+/// Returns the placed actor drawn as SPRITE_FLOATING_PLATFORM nearest
 /// the leader, within 640 pixels, or 0.
-s32 ObjectEvent_FindNearestFloatingPlatform(void) {
+s32 Actor_FindNearestFloatingPlatform(void) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent **slot;
-  struct ObjectEvent *origin;
-  s32 nearestLocalId = 0;
+  struct Actor **slot;
+  struct Actor *origin;
+  s32 nearestActorId = 0;
   s32 minDist;
-  u32 localId;
+  u32 actorId;
 
   minDist = 640;
-  origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  localId = LOCALID_FIRST_PLACED;
-  slot = &work->objectEvents[LOCALID_FIRST_PLACED];
+  origin = Actor_GetById(ACTOR_PARTY_LEADER);
+  actorId = ACTOR_FIRST_PLACED;
+  slot = &work->actors[ACTOR_FIRST_PLACED];
   do {
-    struct ObjectEvent *objectEvent = *slot++;
-    if (objectEvent != 0) {
-      if (objectEvent->sprite->entries[0]->animationId ==
-          SPRITE_FLOATING_PLATFORM) {
-        s32 dist = FixedPoint_Distance(
-            (const u8 *)origin + offsetof(struct ObjectEvent, x),
-            (const u8 *)objectEvent + offsetof(struct ObjectEvent, x));
+    struct Actor *actor = *slot++;
+    if (actor != 0) {
+      if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
+        s32 dist =
+            FixedPoint_Distance((const u8 *)origin + offsetof(struct Actor, x),
+                                (const u8 *)actor + offsetof(struct Actor, x));
         if (dist < minDist) {
           minDist = dist;
-          nearestLocalId = localId;
+          nearestActorId = actorId;
         }
       }
     }
-    localId++;
-  } while (localId <
-           sizeof(work->objectEvents) / sizeof(work->objectEvents[0]));
-  return nearestLocalId;
+    actorId++;
+  } while (actorId < sizeof(work->actors) / sizeof(work->actors[0]));
+  return nearestActorId;
 }

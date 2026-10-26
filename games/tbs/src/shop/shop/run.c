@@ -125,7 +125,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     shop->warriorShop = 1;
   if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
-  shop->keeperGraphics = ((struct Object *)ObjectEvent_GetByIdFar(keeperId))
+  shop->keeperGraphics = ((struct Object *)Actor_GetByIdFar(keeperId))
                              ->sprite->entries[0]
                              ->animationId;
   // The shopkeeper's portrait window, or an empty one off the left edge when

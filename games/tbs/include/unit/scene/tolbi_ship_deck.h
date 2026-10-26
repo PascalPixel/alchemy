@@ -2,14 +2,14 @@
 #define ALCHEMY_UNIT_MAP_TOLBI_SHIP_DECK_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_header.h"
 
-const struct MapWarpDest *TolbiShipDeck_GetWarpDests(void);
-const struct MapWarpRegion *TolbiShipDeck_GetRegions(void);
-const u32 *TolbiShipDeck_GetWarps(void);
-const struct ObjectEventTemplate *TolbiShipDeck_GetObjectEventTemplates(void);
-const struct MapEvent *TolbiShipDeck_GetEvents(void);
+const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);
+const struct SceneExitRegion *TolbiShipDeck_GetRegions(void);
+const u32 *TolbiShipDeck_GetExits(void);
+const struct ActorTemplate *TolbiShipDeck_GetActorTemplates(void);
+const struct Trigger *TolbiShipDeck_GetTriggers(void);
 s32 TolbiShipDeck_Initialize(void);
 extern const s32 gTolbiShipDeck_KajaLeavesActions[];
 extern const s32 gTolbiShipDeck_CaptainStepsAsideActions[];
@@ -29,38 +29,28 @@ extern const s32 gTolbiShipDeck_HopActions[];
 extern const s32 gTolbiShipDeck_RowerLeavesActions[];
 extern const s32 gTolbiShipDeck_GoBelowActions[];
 extern const s32 gTolbiShipDeck_SeanLooksAboutActions[];
-extern const struct MapWarpDest gTolbiShipDeckWarpDests[];
-extern const struct MapWarpRegion gTolbiShipDeckRegions[];
-extern const u32 gTolbiShipDeckWarps[];
-extern const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplates[];
+extern const struct SceneEntrance gTolbiShipDeckEntrances[];
+extern const struct SceneExitRegion gTolbiShipDeckRegions[];
+extern const u32 gTolbiShipDeckExits[];
+extern const struct ActorTemplate gTolbiShipDeckActorTemplates[];
 #ifdef UBFIX
-extern struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesWaiting[];
+extern struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[];
 #else
-extern const struct ObjectEventTemplate
-    gTolbiShipDeckObjectEventTemplatesWaiting[];
+extern const struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[];
 #endif
-extern const struct ObjectEventTemplate
-    gTolbiShipDeckObjectEventTemplatesRowing[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeckObjectEventTemplatesAtSea[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_CrewObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_TourGuideObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_MonstersBoardObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_SecondAttackObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_ThirdAttackObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeck_KrakenObjectEventTemplates[];
-extern const struct ObjectEventTemplate
-    gTolbiShipDeckObjectEventTemplatesArrived[];
-extern const struct MapEvent gTolbiShipDeckEvents[];
-extern const struct MapEvent gTolbiShipDeckEventsAtSea[];
-extern const struct MapEvent gTolbiShipDeckEventsArrived[];
-extern const struct MapEvent gTolbiShipDeckEventsAtIsland[];
+extern const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[];
+extern const struct ActorTemplate gTolbiShipDeckActorTemplatesAtSea[];
+extern const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeck_TourGuideActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeck_MonstersBoardActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[];
+extern const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[];
+extern const struct Trigger gTolbiShipDeckTriggers[];
+extern const struct Trigger gTolbiShipDeckTriggersAtSea[];
+extern const struct Trigger gTolbiShipDeckTriggersArrived[];
+extern const struct Trigger gTolbiShipDeckTriggersAtIsland[];
 extern const s32 gTolbiShipDeckRowerStrokes[];
 
 #endif

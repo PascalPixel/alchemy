@@ -13,8 +13,8 @@
 
 struct FieldPosition;
 struct Object;
-struct MapEvent;
-struct ObjectEventTemplate;
+struct Trigger;
+struct ActorTemplate;
 struct Window;
 
 #endif

@@ -4,17 +4,17 @@
 /// stretches as it travels.
 #include "action_script.h"
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 
 /// An object script call: widen the object by 3/25 of its size a frame, and
 /// release it once it has reached its destination.
 static s32 FieldEffect_StretchUntilArrived(struct Object *interpreter) {
-  struct ObjectEvent *streak = (struct ObjectEvent *)interpreter;
+  struct Actor *streak = (struct Actor *)interpreter;
   streak->scaleX += 3 * Q16_ONE / 25;
-  if (streak->targetX == OBJ_EVENT_NO_TARGET &&
-      streak->targetY == OBJ_EVENT_NO_TARGET &&
-      streak->targetZ == OBJ_EVENT_NO_TARGET) {
-    ObjectEvent_Release(streak);
+  if (streak->targetX == ACTOR_NO_TARGET &&
+      streak->targetY == ACTOR_NO_TARGET &&
+      streak->targetZ == ACTOR_NO_TARGET) {
+    Actor_Release(streak);
   }
   return 1;
 }

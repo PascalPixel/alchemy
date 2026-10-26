@@ -2,37 +2,37 @@
 #define ALCHEMY_UNIT_MAP_CROSSBONE_ISLE_KEYS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-struct MapWarpDest;
-struct MapEvent;
-struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneEntrance;
+struct Trigger;
+struct ActorTemplate;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[];
-extern struct MapWarpDest gCrossboneIsleKeysWarpDestsOther[];
-extern struct MapWarpDest gCrossboneIsleKeysRoomWarpDests[];
-extern struct MapWarpDest gCrossboneIsleStatuesWarpDests[];
-extern struct MapWarpDest gCrossboneIsleBaneWarpDests[];
-extern u32 gCrossboneIsleKeysWarps[];
-extern struct ObjectEventTemplate gCrossboneIsleKeysObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gCrossboneIsleKeysRoomObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsleStatuesObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsleBaneObjectEventTemplates[];
-extern struct MapEvent gCrossboneIsleKeysEventsOther[];
-extern struct MapEvent gCrossboneIsleKeysRoomEvents[];
-extern struct MapEvent gCrossboneIsleStatuesEvents[];
-extern struct MapEvent gCrossboneIsleBaneEvents[];
+extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];
+extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
+extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];
+extern struct SceneEntrance gCrossboneIsleBaneEntrances[];
+extern u32 gCrossboneIsleKeysExits[];
+extern struct ActorTemplate gCrossboneIsleKeysActorTemplatesOther[];
+extern struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleStatuesActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleBaneActorTemplates[];
+extern struct Trigger gCrossboneIsleKeysTriggersOther[];
+extern struct Trigger gCrossboneIsleKeysRoomTriggers[];
+extern struct Trigger gCrossboneIsleStatuesTriggers[];
+extern struct Trigger gCrossboneIsleBaneTriggers[];
 extern u32 gCrossboneIsleKeys_SlotColumns[];
 extern s32 gCrossboneIsleKeys_IconTimer;
 

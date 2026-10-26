@@ -53,7 +53,7 @@ symbol (`MsgGameSaved`).
 
 ## The field menu
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the summary screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 Pressing A with nothing in front of the leader (or Select) opens a row of
 icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first
@@ -88,7 +88,7 @@ The watcher is `Menu_CancelSoundTick`, and the flag
 Psynergy or an item used on a party member works inside the screen, but
 Psynergy meant for the world, such as Move, is cast by the field after the
 menu has closed. Only the running scene knows what the leader is facing and
-what its own [map events](glossary.md#map-event) do with it, so the screen
+what its own [triggers](glossary.md#trigger) do with it, so the screen
 writes down what was chosen and closes, and the scene decides what Move does to
 that pillar.
 

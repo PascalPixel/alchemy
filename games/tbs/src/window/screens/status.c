@@ -1,5 +1,5 @@
 /// @file
-/// The summary screen.
+/// The Status screen.
 // Part of screens.c.
 
 #include "../screens_internal.h"
@@ -19,7 +19,7 @@
   (MsgOwnerStatusExp - OWNER_STATUS_LABEL_EXP + (row))
 #endif
 
-/// The summary screen's labels, in their message order from
+/// The Status screen's labels, in their message order from
 /// MsgOwnerStatusAttack (OWNER_STATUS_LABEL).
 enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_ATTACK = 0,
@@ -35,7 +35,7 @@ enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_EXP = 10 ///< MsgOwnerStatusExp
 };
 
-/// The summary screen's help lines, from MsgOwnerStatusEntryHelp, which the
+/// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in windata.s name; the status icons' places follow.
 enum BattleSummaryHelp {
   /// The name, whose help says how to switch members with L and R.
@@ -59,7 +59,7 @@ enum BattleSummaryHelp {
   OWNER_STATUS_HELP_LAST_CONDITION = 21 ///< the eighth icon's place
 };
 
-/// A status the summary screen shows as an icon, which picks both the icon
+/// A status the Status screen shows as an icon, which picks both the icon
 /// and its help (MsgOwnerStatusConditionHelp + condition).
 enum BattleSummaryStatus {
   OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
@@ -84,19 +84,19 @@ enum BattleSummaryStatus {
   OWNER_CONDITION_AGILITY_DOWN = 18
 };
 
-/// What the summary screen redraws on its next frame.
+/// What the Status screen redraws on its next frame.
 #define OWNER_STATUS_REDRAW_ALL 1  ///< on opening, and on L or R
 #define OWNER_STATUS_REDRAW_HELP 2 ///< only the help line
 
-// The summary screen's cursor groups, each with its table of cursor stops.
+// The Status screen's cursor groups, each with its table of cursor stops.
 /// The name, experience, HP, PP, class, Djinn and element rows
-/// (gBattleSummaryScreen_StatCursors).
+/// (gBattleStatusScreen_StatCursors).
 #define STATUS_CURSOR_GENERAL 0
-/// Attack, Defense, Agility and Luck (gBattleSummaryScreen_EquipmentCursors).
+/// Attack, Defense, Agility and Luck (gBattleStatusScreen_EquipmentCursors).
 #define STATUS_CURSOR_COMBAT_STATS 1
 #define STATUS_CURSOR_CONDITIONS 2 ///< the status icons
 
-/// The summary screen's cursor: its place in each group, the help entry it
+/// The Status screen's cursor: its place in each group, the help entry it
 /// shows and where it points.
 struct StatusCursor {
   /// The cursor's place in each group. [3] is written for the one frame
@@ -112,7 +112,7 @@ struct StatusCursor {
   s32 row;            ///< tiles
 };
 
-/// Runs the summary screen for party member `member` until B is pressed or
+/// Runs the Status screen for party member `member` until B is pressed or
 /// the link battle's time runs out: the member's level, experience, HP and
 /// PP, class, stats, Djinn, elements and statuses, with a help line for
 /// the item under the cursor. With `listCount` nonzero, L and R step through
@@ -121,7 +121,7 @@ struct StatusCursor {
 /// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
 /// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
 /// command and from L or R in a member's command row.
-s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
+s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
   s32 statusSlots[11];
@@ -333,7 +333,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
       if (hasDjinn == 0) {
         k += 9;
       }
-      cursorStop = &gBattleSummaryScreen_StatCursors[k];
+      cursorStop = &gBattleStatusScreen_StatCursors[k];
       cursor.helpEntry = cursorStop->entry;
       cursor.column = cursorStop->column;
       cursor.row = cursorStop->row;
@@ -341,23 +341,23 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
                            statusWindow->y + cursorStop->highlightRow + 1,
                            cursorStop->highlightWidth, 1, HIGHLIGHT_PALETTE);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
-      cursor.helpEntry = gBattleSummaryScreen_EquipmentCursors
+      cursor.helpEntry = gBattleStatusScreen_EquipmentCursors
                              [cursor.groupPositions[cursor.group]]
                                  .entry;
-      cursor.column = gBattleSummaryScreen_EquipmentCursors
+      cursor.column = gBattleStatusScreen_EquipmentCursors
                           [cursor.groupPositions[cursor.group]]
                               .column;
-      cursor.row = gBattleSummaryScreen_EquipmentCursors
+      cursor.row = gBattleStatusScreen_EquipmentCursors
                        [cursor.groupPositions[cursor.group]]
                            .row;
     } else if (cursor.group == STATUS_CURSOR_CONDITIONS) {
-      cursor.helpEntry = gBattleSummaryScreen_ConditionCursors
+      cursor.helpEntry = gBattleStatusScreen_ConditionCursors
                              [cursor.groupPositions[cursor.group]]
                                  .entry;
-      cursor.column = gBattleSummaryScreen_ConditionCursors
+      cursor.column = gBattleStatusScreen_ConditionCursors
                           [cursor.groupPositions[cursor.group]]
                               .column;
-      cursor.row = gBattleSummaryScreen_ConditionCursors
+      cursor.row = gBattleStatusScreen_ConditionCursors
                        [cursor.groupPositions[cursor.group]]
                            .row;
     }
@@ -425,26 +425,26 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_FRENCH:
           Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_NivString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_NivString,
                                   statusWindow, 51, 0);
           Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         case CARTRIDGE_LANGUAGE_SPANISH:
           Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_NvString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_NvString,
                                   statusWindow, 56, 0);
           Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         default:
           Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_LevelString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_LevelString,
                                   statusWindow, 56, 0);
           Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         }
 #else
         Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_LevelString,
+        Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_LevelString,
                                 statusWindow, OWNER_STATUS_LEVEL_X, 0);
         Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
 #endif
@@ -454,34 +454,34 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_GERMAN:
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_KpString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_KpString,
                                   statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_FRENCH:
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PvString,
                                   statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_SPANISH:
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PvString,
                                   statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_ITALIAN:
-          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+          Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_HpString,
                                   statusWindow, 40, 24);
           break;
         }
 #else
-        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+        Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_HpString,
                                 statusWindow, 40, 24);
 #endif
         Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
-        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+        Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_SlashString,
                                 statusWindow, 88, 24);
         Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
-        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PpString,
+        Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PpString,
                                 statusWindow, 40, 32);
         Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
-        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+        Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_SlashString,
                                 statusWindow, 88, 32);
         Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
 
@@ -528,7 +528,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
           if (hasDjinn != 0) {
             Text_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
                                     40 + j * 32, 72);
-            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+            Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_SlashString,
                                     statusWindow, 48 + j * 32, 72);
             Text_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
                                     48 + j * 32 + 8, 72);

@@ -69,7 +69,7 @@ extern u8 *gItemIcons[];
 /// The end of gItemIcons, so Icon_CountItemIcons can count
 /// them.
 extern u8 *gItemIconsEnd[];
-/// The other compressed icons, among them the summary screen's status
+/// The other compressed icons, among them the Status screen's status
 /// icons.
 extern u8 *gIcon_MiscIconPointers[];
 /// The compressed Psynergy icons, drawn over the shared icon frame.
@@ -185,24 +185,24 @@ extern struct Sprite *gSprites;
 /// its left-pointing twin.
 extern const u8 gMenu_CursorObjectTiles[];
 #endif
-/// The Japanese naming screen's second keyboard, which Select switches to.
-extern const u8 gNamingScreen_AlternateKeyboardTilemap[];
-/// Eight offsets, 0 to 3 and back, that make the naming screen's caret circle:
-/// the x offset leads the y offset by five steps.
-extern s8 gNamingScreen_CaretWave[];
+/// The Japanese name entry screen's second keyboard, which Select switches to.
+extern const u8 gNameEntry_AlternateKeyboardTilemap[];
+/// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
+/// circle: the x offset leads the y offset by five steps.
+extern s8 gNameEntry_CaretWave[];
 /// The kana that take the voiced mark, as first and last pairs ended by 0.
-extern const u8 gNamingScreen_VoicedMarkRanges[];
-/// The Delete key's label on the German, Spanish and French naming screen
+extern const u8 gNameEntry_VoicedMarkRanges[];
+/// The Delete key's label on the German, Spanish and French name entry screen
 /// keyboards ("ENT", "SUP", "EFF").
-extern u8 gNamingScreen_DeleteKeyLabel[];
+extern u8 gNameEntry_DeleteKeyLabel[];
 /// The End key's label on the German, Spanish and French keyboards ("ENDE",
 /// "FIN", "FIN").
-extern u8 gNamingScreen_EndKeyLabel[];
+extern u8 gNameEntry_EndKeyLabel[];
 /// The kana that take the semi-voiced mark, in the same pairs.
-extern const u8 gNamingScreen_SemivoicedMarkRanges[];
-/// The naming screen keyboard's compressed tilemap, the Spanish edition's with
-/// its own letters.
-extern const u8 gNamingScreen_KeyboardTilemap[];
+extern const u8 gNameEntry_SemivoicedMarkRanges[];
+/// The name entry screen keyboard's compressed tilemap, the Spanish edition's
+/// with its own letters.
+extern const u8 gNameEntry_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
 extern const u8 gRender_DecodeFrameEnd[];
@@ -225,10 +225,10 @@ extern u8 Decompress_TaggedLzCodeSize[];
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
-/// naming screen and the talk choices.
+/// name entry screen and the talk choices.
 extern u8 gPointingHandTiles[];
-/// The 16x16 sprite the naming screen shows as its name caret.
-extern const u8 gNamingScreen_CaretTiles[];
+/// The 16x16 sprite the name entry screen shows as its name caret.
+extern const u8 gNameEntry_CaretTiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
 /// copied.

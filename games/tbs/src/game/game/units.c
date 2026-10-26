@@ -536,20 +536,20 @@ u32 BuildStamp_GetTime(void) {
 /// A view of EWRAM from gSceneLocalState on, which SaveBlock_InitializeDefaults
 /// writes one byte through. gSceneLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
-/// of gObjectEventSnapshot.
+/// of gActorSnapshot.
 struct MapLocalStateSnapshotView {
   u8 mapAndInventory[0x100]; ///< gSceneLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
-  /// gObjectEventSnapshot.slots[0]: set to 0xff, OBJECT_EVENT_SNAPSHOT_EMPTY,
-  /// so a new game holds no saved object events.
+  /// gActorSnapshot.slots[0]: set to 0xff, ACTOR_SNAPSHOT_EMPTY,
+  /// so a new game holds no saved actors.
   u8 firstSnapshotSlot;
 };
 
 /// Clears the game-state header, the map state with the Colosso's inventory
-/// snapshot and the object event snapshot after it, the flags and most of the
+/// snapshot and the actor snapshot after it, the flags and most of the
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the main menu's new game, by
@@ -560,7 +560,7 @@ void SaveBlock_InitializeDefaults(void) {
   // Clear the state header, map state, flags and save metadata in DMA order:
   // 0xb0 words are gSaveBlock up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
-  // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
+  // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
   START_DMA(&zero, &gSaveBlock,
@@ -588,7 +588,7 @@ void SaveBlock_InitializeDefaults(void) {
   gSaveBlock.dashKeys = KEY_B;
   gSaveBlock.firstShortcut = 0;
   gSaveBlock.secondShortcut = 0;
-  gSaveBlock.leaderLocalId = 0;
+  gSaveBlock.leaderActorId = 0;
   Party_AddMember(0);
   gSaveBlock.coins = 0;
   gSaveBlock.messageSpeed = 1;

@@ -1,5 +1,5 @@
 /// @file
-/// Running a scene until the party leaves it, and its warp destination.
+/// Running a scene until the party leaves it, and its entrance.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -15,24 +15,24 @@ struct ObjectSystemSuspendView {
   u16 wait;
 };
 
-/// Runs the current scene, which the party entered by warpDest, until it
-/// leaves; returns the warp kind it left by, for Scene_TakeWarp, or WARP_NONE
+/// Runs the current scene, which the party entered by entrance, until it
+/// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
 /// when the next scene is already in gSaveBlock: a random battle, a
 /// party that fell outside battle, Retreat or a script's destination. Sets the
-/// scene up (map, object events, encounters, return points), runs its
+/// scene up (map, actors, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
 /// Called by SequenceManager_Run for every scene, which
-/// passes the result to Scene_TakeWarp. Allocates the field work in
+/// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gSaveBlock's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
 /// has started, FLAG_KEEP_PARTY_POSITION.
-s32 SceneManager_Run(s32 warpDest) {
+s32 SceneManager_Run(s32 entrance) {
   struct FieldWork *work;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 mode;
   s32 result = 0;
   s32 code;
@@ -42,11 +42,11 @@ s32 SceneManager_Run(s32 warpDest) {
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
   gSaveBlock.defaultScene = gSaveBlock.sceneId;
-  gSaveBlock.defaultWarpDest = gSaveBlock.warpDest;
+  gSaveBlock.defaultEntrance = gSaveBlock.entrance;
   gSaveBlock.nextScene = -1;
-  gSaveBlock.nextWarpDest = -1;
+  gSaveBlock.nextEntrance = -1;
   gSaveBlock.defeatScene = -1;
-  gSaveBlock.defeatWarpDest = -1;
+  gSaveBlock.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePendingEvent(0);
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
@@ -63,14 +63,13 @@ s32 SceneManager_Run(s32 warpDest) {
   ObjectSystem_InitializeFar(mode);
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
-  work->events = gOverlayArea.events();
-  Scene_ApplyWarpDest();
-  ObjectEvent_ResetForObject(
-      (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
+  work->triggers = gOverlayArea.triggers();
+  Scene_ApplyEntrance();
+  Actor_ResetForObject((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
-    ObjectEvent_Restore();
+    Actor_Restore();
   if (gSaveBlock.pendingDjinnEvent != 0)
-    ObjectEvent_PlaceMapObjectEvents();
+    Actor_PlaceMapActors();
   if (mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gSaveBlock.x, gSaveBlock.z);
@@ -97,7 +96,7 @@ s32 SceneManager_Run(s32 warpDest) {
   }
   work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
-  // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
+  // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetDefeatReturnPoint();
     gSaveBlock.hazardLimit = 16;
@@ -110,11 +109,11 @@ s32 SceneManager_Run(s32 warpDest) {
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
-  // The scene's initialization may already have taken a warp.
-  code = work->warp;
+  // The scene's initialization may already have taken an exit.
+  code = work->exit;
   if (code != 0) {
     result = code;
-    work->warp = 0;
+    work->exit = 0;
   } else {
     GameFlag_ClearFar(FLAG_KEEP_PARTY_POSITION);
     // Fade in, show the area name and give what was left pending.
@@ -124,14 +123,14 @@ s32 SceneManager_Run(s32 warpDest) {
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
         // An arrival the last scene asked for
-        // (Warp_PlayArrival) plays through the fade; with none,
+        // (Entrance_PlayArrival) plays through the fade; with none,
         // wait out half of it.
-        if (Warp_PlayArrival() == 0)
+        if (Entrance_PlayArrival() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
       if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
-        MapNamePopup_ShowFar(gSaveBlock.sceneId);
+        AreaNameWindow_ShowFar(gSaveBlock.sceneId);
       }
       if (gSaveBlock.pendingDjinnEvent != 0) {
         Djinn_ResolvePendingEvent(gSaveBlock.pendingDjinnEvent, 1);
@@ -149,21 +148,21 @@ s32 SceneManager_Run(s32 warpDest) {
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      Object_StartIdleFar((struct Object *)objectEvent);
-      gSaveBlock.x = objectEvent->x.fixed;
+      actor = work->actors[gSaveBlock.leaderActorId];
+      Object_StartIdleFar((struct Object *)actor);
+      gSaveBlock.x = actor->x.fixed;
       gSaveBlock.y = 0;
-      gSaveBlock.z = objectEvent->z.fixed;
-      gSaveBlock.heading = objectEvent->facing;
-      gSaveBlock.turn = objectEvent->layer;
+      gSaveBlock.z = actor->z.fixed;
+      gSaveBlock.heading = actor->facing;
+      gSaveBlock.turn = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
-        s32 next = work->warp;
+        s32 next = work->exit;
 
         if (next != 0) {
           result = next;
-          work->warp = 0;
+          work->exit = 0;
           goto done;
         }
         if (work->raisedEvent != 0) {
@@ -175,7 +174,7 @@ s32 SceneManager_Run(s32 warpDest) {
             Leader_StopMoving();
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
-              Object_SelectAnimationFar(objectEvent, ANIM_LEADER_LEAN_BACK);
+              Object_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
               MessageArgument_PushFar(work->fallenOwners[i],
                                       MESSAGE_ARGUMENT_ACTOR);
               FieldMessage_ShowFar(MsgFieldStrengthExhausted,
@@ -185,30 +184,30 @@ s32 SceneManager_Run(s32 warpDest) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct Unit *vitals;
 
-              if (gSaveBlock.leaderLocalId == 0) {
+              if (gSaveBlock.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  Object_SelectAnimationFar(objectEvent, 21);
+                  Object_SelectAnimationFar(actor, 21);
                 else
-                  Object_SelectAnimationFar(objectEvent, 37);
+                  Object_SelectAnimationFar(actor, 37);
               } else {
-                Object_SelectAnimationFar(objectEvent, ANIM_COLLAPSE);
+                Object_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
-              vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
+              vitals = Unit_GetFar(gSaveBlock.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gSaveBlock.sceneId = gSaveBlock.restartScene;
-              gSaveBlock.warpDest = gSaveBlock.restartWarpDest;
+              gSaveBlock.entrance = gSaveBlock.restartEntrance;
               WorldMap_EndScript();
-              result = WARP_NONE;
+              result = EXIT_NONE;
               goto done;
             }
             WorldMap_EndScript();
-          } else if (work->raisedEvent == FIELD_RAISED_EVENT_REGION_MAP) {
+          } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_PICTURE) {
             Leader_StopMoving();
-            RegionMap_Show((s32)&ResourceId_WorldMapPicture);
+            WorldPicture_Show((s32)&ResourceId_WorldMapPicture);
           } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             FieldEffect_RunVisibilityTransition();
@@ -218,45 +217,45 @@ s32 SceneManager_Run(s32 warpDest) {
           work->busy = 0;
           work->raisedEvent = 0;
         } else if (work->battle != 0) {
-          // A random encounter: save the object events and go to the battle.
+          // A random encounter: save the actors and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
           // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
-          ObjectEvent_Snapshot();
+          Actor_Snapshot();
           gSaveBlock.returnMusic = -1;
           gSaveBlock.sceneId = SEQUENCE_BATTLE;
-          gSaveBlock.warpDest = work->battle;
-          work->warp = WARP_NONE;
+          gSaveBlock.entrance = work->battle;
+          work->exit = EXIT_NONE;
           Field_StartEncounterTransition(work->battle);
           work->encounterBias = 0;
           work->battle = 0;
           gSaveBlock.encounterSteps = 0;
-        } else if (work->coordEvent != 0) {
+        } else if (work->stepTrigger != 0) {
           work->busy = 1;
-          Scene_RunCoordEventOrWarp(work->coordEvent);
+          Scene_RunStepTriggerOrExit(work->stepTrigger);
           work->busy = 0;
-          work->coordEvent = 0;
+          work->stepTrigger = 0;
         } else if (work->pushCell != 0) {
           Field_RunPushCellEvent(work->pushCell);
           work->pushCell = 0;
         } else if (work->examine != 0) {
-          // Examine the object event or cell ahead, or open the menu if neither
+          // Examine the actor or cell ahead, or open the menu if neither
           // has an event.
           s32 object;
 
-          MapNamePopup_HideFar();
-          object = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
+          AreaNameWindow_HideFar();
+          object = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
           mode = 0;
           if (object != -1) {
-            mode = Scene_FindObjectEventTalkEvent(object) != 0;
+            mode = Scene_FindActorTalkTrigger(object) != 0;
           }
           if (mode != 0) {
-            // 0x1000 keeps object event 0's request non-zero; the handler
+            // 0x1000 keeps actor 0's request non-zero; the handler
             // masks it.
             work->talk = object | 0x1000;
             work->menu = 0;
           } else {
-            mode = ObjectEvent_GetTriggerTileAheadOfCurrent();
+            mode = Actor_GetTriggerTileAheadOfCurrent();
             if (mode != 0) {
               work->searchCell = mode;
               work->menu = 0;
@@ -267,7 +266,7 @@ s32 SceneManager_Run(s32 warpDest) {
           work->examine = 0;
         } else if (work->menu != 0) {
           // The main menu (B + Select in debug mode opens the debug menu).
-          MapNamePopup_HideFar();
+          AreaNameWindow_HideFar();
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           WorldMap_StartScript();
@@ -288,7 +287,7 @@ s32 SceneManager_Run(s32 warpDest) {
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
           WorldMap_StartScript();
-          Scene_TalkToObjectEvent(work->talk & 0xfff);
+          Scene_TalkToActor(work->talk & 0xfff);
           WorldMap_EndScript();
           work->talk = 0;
         } else if (work->searchCell != 0) {
@@ -297,7 +296,7 @@ s32 SceneManager_Run(s32 warpDest) {
           WorldMap_EndScript();
           work->searchCell = 0;
         } else if (work->psynergy != 0) {
-          MapNamePopup_HideFar();
+          AreaNameWindow_HideFar();
           WorldMap_StartScript();
           Field_UsePsynergy(work->psynergy);
           WorldMap_EndScript();
@@ -328,7 +327,7 @@ s32 SceneManager_Run(s32 warpDest) {
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
-            MapNamePopup_HideFar();
+            AreaNameWindow_HideFar();
             gSaveBlock.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
@@ -366,23 +365,23 @@ s32 SceneManager_Run(s32 warpDest) {
       // air (only a key check runs), on the world map or walking, and step
       // until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      if (objectEvent != NULL) {
+      actor = work->actors[gSaveBlock.leaderActorId];
+      if (actor != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          Object_StartKeyCheckFar((struct Object *)objectEvent);
+          Object_StartKeyCheckFar((struct Object *)actor);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          Object_StartMoveByKeysFar((struct Object *)objectEvent);
+          Object_StartMoveByKeysFar((struct Object *)actor);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          Object_StartWorldMapControlFar((struct Object *)objectEvent);
+          Object_StartWorldMapControlFar((struct Object *)actor);
         else
-          Object_StartPlayerControlFar((struct Object *)objectEvent);
+          Object_StartPlayerControlFar((struct Object *)actor);
       }
       do {
         WaitFrames(1);
-        objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
+        actor = work->actors[gSaveBlock.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
-          Field_ProcessStep(objectEvent->layer, objectEvent->x.fixed,
-                            objectEvent->y.fixed, objectEvent->z.fixed);
+          Field_ProcessStep(actor->layer, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
       } while (Field_CountRequests() == 0);
     }
   }
@@ -400,13 +399,13 @@ done:
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
 /// (MB_JAR to MB_WELL) whose ground is level with the leader or up
-/// to 64 pixels above it, or a behavior the scene has a bg event for. Returns 0
-/// otherwise.
+/// to 64 pixels above it, or a behavior the scene has an examine trigger for.
+/// Returns 0 otherwise.
 ///
 /// Called by SceneManager_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
-/// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
-s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
+/// entry through Actor_GetTriggerTileAheadOfCurrentFar. Changes nothing.
+s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
   struct Object *leader;
@@ -418,7 +417,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
@@ -448,54 +447,54 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
       if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
         result = behavior;
       }
-    } else if (Scene_FindEvent(MAP_EVENT_BG, behavior) != 0) {
+    } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {
       result = behavior;
     }
   }
   return result;
 }
 
-/// Places the party at the warp destination it came in by (the first matching
+/// Places the party at the entrance it came in by (the first matching
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
 /// Called by SceneManager_Run once the scene's events are set. Writes
 /// gSaveBlock's position, heading and turn, and the scene's minX to maxY.
-void Scene_ApplyWarpDest(void) {
+void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 warpDest = gSaveBlock.warpDest;
-  const struct MapWarpDest *warpDestEntry = gOverlayArea.warpDests();
-  s32 foundWarpDest = 0;
+  s32 entrance = gSaveBlock.entrance;
+  const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
+  s32 foundEntrance = 0;
 
-  while (warpDestEntry->warpDest != -1) {
-    if (warpDestEntry->warpDest == warpDest &&
-        (warpDestEntry->requiredFlag == -1 ||
-         GameFlag_GetFar(warpDestEntry->requiredFlag))) {
-      foundWarpDest = 1;
+  while (entranceEntry->entrance != -1) {
+    if (entranceEntry->entrance == entrance &&
+        (entranceEntry->requiredFlag == -1 ||
+         GameFlag_GetFar(entranceEntry->requiredFlag))) {
+      foundEntrance = 1;
       break;
     }
-    warpDestEntry++;
+    entranceEntry++;
   }
-  if (!foundWarpDest)
-    warpDestEntry = gOverlayArea.warpDests();
+  if (!foundEntrance)
+    entranceEntry = gOverlayArea.entrances();
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gSaveBlock.x = REGION_FIXED(warpDestEntry->x);
-    gSaveBlock.y = REGION_FIXED(warpDestEntry->y);
-    gSaveBlock.z = REGION_FIXED(warpDestEntry->z);
-    gSaveBlock.heading = warpDestEntry->facing;
+    gSaveBlock.x = REGION_FIXED(entranceEntry->x);
+    gSaveBlock.y = REGION_FIXED(entranceEntry->y);
+    gSaveBlock.z = REGION_FIXED(entranceEntry->z);
+    gSaveBlock.heading = entranceEntry->facing;
     gSaveBlock.turn = 0;
   }
 
-  if (warpDestEntry->cameraLeft != -1)
-    grid->minX = REGION_FIXED(warpDestEntry->cameraLeft);
-  if (warpDestEntry->cameraTop != -1)
-    grid->minY = REGION_FIXED(warpDestEntry->cameraTop);
-  if (warpDestEntry->cameraRight != -1)
-    grid->maxX = REGION_FIXED(warpDestEntry->cameraRight);
-  if (warpDestEntry->cameraBottom != -1)
-    grid->maxY = REGION_FIXED(warpDestEntry->cameraBottom);
+  if (entranceEntry->cameraLeft != -1)
+    grid->minX = REGION_FIXED(entranceEntry->cameraLeft);
+  if (entranceEntry->cameraTop != -1)
+    grid->minY = REGION_FIXED(entranceEntry->cameraTop);
+  if (entranceEntry->cameraRight != -1)
+    grid->maxX = REGION_FIXED(entranceEntry->cameraRight);
+  if (entranceEntry->cameraBottom != -1)
+    grid->maxY = REGION_FIXED(entranceEntry->cameraBottom);
 
   if (grid->minX + (DISPLAY_WIDTH << 16) > grid->maxX)
     grid->minX = grid->maxX - (DISPLAY_WIDTH << 16);

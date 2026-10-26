@@ -202,8 +202,8 @@ Scenes open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
 of the program through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
-other screens: its hand cursor also moves in the option menu, the naming
-screen and the file menu; the Item screen draws its quantity bar with the
+other screens: its hand cursor also moves in the option menu, the
+name entry screen and the file menu; the Item screen draws its quantity bar with the
 shop's; and the colour fade a sanctum plays first also runs before a
 [Djinni](../../glossary.md#djinn) joins the party and before the wall in
 Altmiller Cave bursts.
@@ -251,7 +251,7 @@ three members standing.
 Inn row 9 is taken to be Tolbi's by three facts:
 
 - The inn rows follow the order of the towns' area names in
-  `gMapSec_NameRules`: Vale 3, Vault 5, and so on up to Lunpa 34, Suhalla 51
+  `gArea_NameRules`: Vale 3, Vault 5, and so on up to Lunpa 34, Suhalla 51
   and Lalivero 55.
 - In that order row 9 falls between Lunpa and Suhalla, where Tolbi (40) is.
 - Tolbi is the one town with an inn door and no inn opened, since its inns

@@ -1,5 +1,5 @@
 /// @file
-/// The view bounds, zoom transitions and objects linked to an object event.
+/// The view bounds, zoom transitions and objects linked to an actor.
 // Part of field_services.c.
 
 #include "../field_services_internal.h"
@@ -110,59 +110,56 @@ void FieldScript_WaitForZoomTransition(void) {
   }
 }
 
-// Per-frame update of a riding object: keeps it on the object event it rides
-// (its linked object), raised by the object event's sprite height (its
-// metadata's boxX) and 8 pixels. Its work holds the object event's id. The hook
+// Per-frame update of a riding object: keeps it on the actor it rides
+// (its linked object), raised by the actor's sprite height (its
+// metadata's boxX) and 8 pixels. Its work holds the actor's id. The hook
 // consumer ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedObjectPosition(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
 #else
-s32 FieldEffect_CopyLinkedObjectPosition(
-    union ObjectEventOrEffect *fieldObject) {
+s32 FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
-  struct ObjectEvent *objectEvent = self;
-  struct ObjectEvent *host;
+  struct Actor *actor = self;
+  struct Actor *host;
 
-  host = objectEvent->linkedObject;
+  host = actor->linkedObject;
   if (host != NULL) {
-    objectEvent->motionFlags = 0;
-    objectEvent->x.fixed = host->x.fixed;
-    objectEvent->y.fixed =
+    actor->motionFlags = 0;
+    actor->x.fixed = host->x.fixed;
+    actor->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Scene_FindObjectEventTemplate(*(s16 *)&objectEvent->work)
-                 ->sprite)
+             (s16)Scene_FindActorTemplate(*(s16 *)&actor->work)->sprite)
              ->boxX
          << 16) +
         (8 << 16);
-    objectEvent->groundHeight = host->groundHeight;
-    objectEvent->z.fixed = host->z.fixed;
+    actor->groundHeight = host->groundHeight;
+    actor->z.fixed = host->z.fixed;
   }
 #ifndef UBFIX
   return 0;
 #endif
 }
 
-/// The script command "object event show emote": shows an emote bubble (object
-/// 21) over an object event, then waits wait frames. The low 4 bits of emote
+/// The script command "actor show emote": shows an emote bubble (object
+/// 21) over an actor, then waits wait frames. The low 4 bits of emote
 /// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
-/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the object
-/// event's. The bubble rides the object event and frees itself after 46 frames
+/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
+/// actor's. The bubble rides the actor and frees itself after 46 frames
 /// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
-void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
-  struct ObjectEvent *target;
+void FieldEffect_SpawnLinked(s32 actorId, s32 emote, s32 wait) {
+  struct Actor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     Sound_PlaySongFar(SE_CHIME);
   }
 
-  target = ObjectEvent_GetByLocalId(localId);
+  target = Actor_GetByActorId(actorId);
   if (target != 0) {
-    struct ObjectEvent *bubble = (struct ObjectEvent *)Object_CreateFar(
+    struct Actor *bubble = (struct Actor *)Object_CreateFar(
         21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
@@ -173,19 +170,19 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
       Object_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
-      bubble->work = localId;
+      bubble->work = actorId;
       sprite = bubble->sprite;
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-      bubble->update = (void (*)(
-          union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
+      bubble->update =
+          (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedObject = target;
 
-      // Replace the bubble's priority bits (2 and 3) with 1 or the object
-      // event's.
+      // Replace the bubble's priority bits (2 and 3) with 1 or the
+      // actor's.
       if ((emote & EMOTE_IN_FRONT) != 0) {
         s32 mask = 13;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
@@ -212,38 +209,38 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
   }
 }
 
-/// The script command "object event set attached effect", by enum
-/// AttachedEffectFlag: removes the object attached to an object event, attaches
+/// The script command "actor set attached effect", by enum
+/// AttachedEffectFlag: removes the object attached to an actor, attaches
 /// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
 /// 2) that ends by itself (gObjectMotion_WaitScript, 40 frames). The attached
-/// object is kept as the object event's linkedObject, so ATTACHED_EFFECT_ATTACH
-/// does nothing while the object event has one, and ATTACHED_EFFECT_REMOVE
+/// object is kept as the actor's linkedObject, so ATTACHED_EFFECT_ATTACH
+/// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (overworld/step.c).
-void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
-  struct ObjectEvent *effect;
+void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
+  struct Actor *actor = Actor_GetByActorId(actorId);
+  struct Actor *effect;
   struct Sprite *visual;
   s32 mode;
 
   effect = 0;
   visual = 0;
 
-  if (objectEvent == 0)
+  if (actor == 0)
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == ATTACHED_EFFECT_ONCE || objectEvent->linkedObject == 0) {
-      effect = (struct ObjectEvent *)Object_CreateFar(
-          SPRITE_ATTACHED_EFFECT, objectEvent->x.fixed, objectEvent->y.fixed,
-          objectEvent->z.fixed);
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->linkedObject == 0) {
+      effect = (struct Actor *)Object_CreateFar(SPRITE_ATTACHED_EFFECT,
+                                                actor->x.fixed, actor->y.fixed,
+                                                actor->z.fixed);
     }
   } else {
-    effect = objectEvent->linkedObject;
+    effect = actor->linkedObject;
     if (effect == 0)
       return;
     Object_ReleaseFar((struct Object *)effect);
-    objectEvent->linkedObject = 0;
+    actor->linkedObject = 0;
     return;
   }
 
@@ -254,7 +251,7 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Object_SelectAnimationFar(effect, 1);
-    objectEvent->linkedObject = effect;
+    actor->linkedObject = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
@@ -265,19 +262,19 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
     break;
   }
 
-  effect->work = localId;
+  effect->work = actorId;
   effect->motionFlags = 0;
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-  effect->update = (void (*)(
-      union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
+  effect->update =
+      (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;
-  effect->linkedObject = objectEvent;
+  effect->linkedObject = actor;
 
-  // Replace the effect's priority bits (2 and 3) with 1 or the object event's.
+  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = 13;
     u8 attr = SPRITE_ATTR2_HIGH(visual);
@@ -288,7 +285,7 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
     SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
     s32 priority = 12;
-    u8 src = SPRITE_ATTR2_HIGH(objectEvent->sprite);
+    u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
     u8 dst;
     s32 mask = 13;
 

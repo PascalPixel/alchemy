@@ -2,18 +2,18 @@
 #define ALCHEMY_UNIT_MAP_TRET_TREE_BRANCH_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *TretTreeBranch_GetWarpDests(void);
-const struct MapWarpRegion *TretTreeBranch_GetRegions(void);
-const u32 *TretTreeBranch_GetWarps(void);
-const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void);
-const struct MapEvent *TretTreeBranch_GetEvents(void);
+const struct SceneEntrance *TretTreeBranch_GetEntrances(void);
+const struct SceneExitRegion *TretTreeBranch_GetRegions(void);
+const u32 *TretTreeBranch_GetExits(void);
+const struct ActorTemplate *TretTreeBranch_GetActorTemplates(void);
+const struct Trigger *TretTreeBranch_GetTriggers(void);
 s32 TretTreeBranch_Initialize(void);
-extern struct MapWarpDest gTretTreeBranch_WarpDests[];
-extern u32 gTretTreeBranch_Warps[];
-extern struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[];
-extern struct MapEvent gTretTreeBranch_Events[];
+extern struct SceneEntrance gTretTreeBranch_Entrances[];
+extern u32 gTretTreeBranch_Exits[];
+extern struct ActorTemplate gTretTreeBranch_ActorTemplates[];
+extern struct Trigger gTretTreeBranch_Triggers[];
 extern u16 gTretTreeBranch_UnusedCellSteps[];
 
 #endif

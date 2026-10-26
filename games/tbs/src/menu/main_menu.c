@@ -34,7 +34,7 @@
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "serial_runtime.h"
 #include "mem.h"
 #include "window.h"
@@ -135,20 +135,18 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
-/// The main menu overlay's map tables, for the map loader: one warp
-/// destination, the warp, and no object event templates or map events.
-u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
+/// The main menu overlay's map tables, for the map loader: one
+/// entrance, the exit, and no actor templates or triggers.
+u8 *MainMenu_GetEntrances(void) { return (u8 *)gMainMenu_Entrances; }
 
-/// The warp regions entry: the main menu has no warp boxes.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The exit regions entry: the main menu has no exit boxes.
+s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
+u8 *MainMenu_GetExits(void) { return (u8 *)gMainMenu_Exits; }
 
-u8 *MainMenu_GetObjectEventTemplates(void) {
-  return (u8 *)gMainMenu_ObjectEventTemplates;
-}
+u8 *MainMenu_GetActorTemplates(void) { return (u8 *)gMainMenu_ActorTemplates; }
 
-u8 *MainMenu_GetEvents(void) { return (u8 *)gMainMenu_Events; }
+u8 *MainMenu_GetTriggers(void) { return (u8 *)gMainMenu_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion. MainMenu_Run calls it first.
@@ -193,9 +191,9 @@ static void MainMenu_LoadBackground(void) {
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   {
-    struct ObjectEvent *leader;
+    struct Actor *leader;
 
-    leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+    leader = Actor_GetById(gSaveBlock.leaderActorId);
     leader->motionFlags = 0;
   }
 }
@@ -306,7 +304,7 @@ static void MainMenu_CheckButtonCodes(void) {
 /// hiragana, the last 18 with the voiced mark. The six left out are the three
 /// pairs that look alike (I, l and 1; O, o and 0), so a password copied by hand
 /// reads back one way.
-static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
+static void MainMenu_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -404,7 +402,7 @@ struct SaveLinkGreeting {
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// The overlay's initialize entry: the main menu. At warp destination
+/// The overlay's initialize entry: the main menu. At entrance
 /// 2, after the credits, it offers to save the cleared game and goes on to the
 /// world map. Otherwise it loops on the start menu until the player starts a
 /// new game, continues a file or enters the Battle Arena; copying, erasing
@@ -451,7 +449,7 @@ s32 MainMenu_Run(void) {
   // MAIN_MENU_FROM_TITLE, after the credits (Title_Run): save the cleared game,
   // then WORLD_MAP_FROM_MAIN_MENU. Cancelling the file choice asks
   // again.
-  if (gSaveBlock.warpDest == MAIN_MENU_FROM_TITLE) {
+  if (gSaveBlock.entrance == MAIN_MENU_FROM_TITLE) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
@@ -518,7 +516,7 @@ menu_top:;
     v7 = 0;
     for (;;) {
       WaitFrames(6);
-      v6 = NamingScreen_EditMemberName(v7);
+      v6 = NameEntry_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
           goto menu_top;
@@ -538,7 +536,7 @@ menu_top:;
     }
     Party_StartChildhood();
     gSaveBlock.sceneId = (s32)&SceneId_CottageRoomsB;
-    gSaveBlock.warpDest = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
+    gSaveBlock.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
@@ -558,7 +556,7 @@ menu_top:;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
       state->sceneId = state->restartScene;
-      state->warpDest = state->restartWarpDest;
+      state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
@@ -567,7 +565,7 @@ menu_top:;
         goto menu_top;
       }
       state->sceneId = state->restartScene;
-      state->warpDest = state->restartWarpDest;
+      state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
@@ -591,7 +589,7 @@ menu_top:;
         goto menu_top;
       }
       state->sceneId = state->restartScene;
-      state->warpDest = state->restartWarpDest;
+      state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RECOVERED_AT_SANCTUM);
     }
@@ -614,7 +612,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gSaveBlock.leaderLocalId = 0;
+    gSaveBlock.leaderActorId = 0;
     if (Script_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
@@ -903,8 +901,8 @@ menu_top:;
              * glyph's address as the ROM does; without it, 98 of 921
              * instructions differ in tbs-en. */
             do {
-              MainMenu_NamingScreenCharacter(
-                  password[v7] & PASSWORD_SYMBOL_MASK, glyph);
+              MainMenu_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
+                                          glyph);
             } while (0);
             passwordColumn = (v7 % 10);
             if (passwordColumn > 4) {
@@ -935,7 +933,7 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gFieldWork->warp = 0x3e7;
+  gFieldWork->exit = 0x3e7;
   FieldScript_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_FinishScreenTransition();
@@ -1350,21 +1348,21 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct MapWarpDest gMainMenu_WarpDests[] = {
+struct SceneEntrance gMainMenu_Entrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
-u32 gMainMenu_Warps[] = {
-    MAP_WARPS_END,
+u32 gMainMenu_Exits[] = {
+    SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gMainMenu_ObjectEventTemplates[] = {
-    {MAP_TABLE_END},
+struct ActorTemplate gMainMenu_ActorTemplates[] = {
+    {SCENE_TABLE_END},
 };
 
-struct MapEvent gMainMenu_Events[] = {
-    {MAP_EVENTS_END},
+struct Trigger gMainMenu_Triggers[] = {
+    {TRIGGERS_END},
 };
 
 /// Frames since MainMenu_UpdateBlend began; the blend level is half of it.

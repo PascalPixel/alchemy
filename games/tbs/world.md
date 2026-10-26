@@ -21,7 +21,7 @@ someone or a random battle starting does not act at once: it only raises a
 flag of its own, a request. The walk then stops, the game deals with the
 requests one at a time in a fixed order, and the walk starts again. Each kind
 of request has one flag, so at most one of each can wait. Leaving the scene
-comes first, so an event that ends by taking a [warp](glossary.md#warp),
+comes first, so an event that ends by taking an [exit](glossary.md#exit),
 like this door, simply ends the scene.
 
 A random battle is a way out of the scene too: the game remembers where
@@ -39,41 +39,41 @@ all twelve requests in the order they are handled.
 
 The engine knows nothing about any one scene. It asks the scene's code six
 questions: what can happen here, where the party arrives, who stands where,
-whether anything needs setting up, whether the leader stands in a warp area,
-and where a warp leads. Each answer comes from a function, so a scene can answer
+whether anything needs setting up, whether the leader stands in an exit area,
+and where an exit leads. Each answer comes from a function, so a scene can answer
 differently as the story moves on without the engine knowing any story: Vault
 gives one list of what can happen before its thieves are jailed and another
 after.
 
-What can happen is a table of [map events](glossary.md#map-event). Each row
+What can happen is a table of [triggers](glossary.md#trigger). Each row
 says what starts it (talking to someone, stepping on a spot, searching,
 using Psynergy), whom or where it answers, when it holds, and what it runs.
 This is the row for the young man above:
 
 ```c
-{ MAP_EVENT_TALK, LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
+{ TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
 ```
 
 The game runs the first row that fits, so a scene lists its rows from the
 latest point in the story down to the default.
 
 The six questions are `struct SceneEntries` at the start of every
-overlay, and the rows are `struct MapEvent`. [Scenes](src/scene/README.md#the-entry-table)
+overlay, and the rows are `struct Trigger`. [Scenes](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
 page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
 and [Places](src/field/scene_headers.s) lists every scene in
 [story order](glossary.md#the-places-in-story-order).
 
-## Scene and map section flags
+## Scene and area flags
 
 A scene never undoes what it changed. The game keeps two ranges of
 [game flags](glossary.md#game-flag) for scenes to use and clears them as the
 party moves on: scene flags whenever the party enters a scene, and
-[map section](glossary.md#map-section) flags when it enters another map
-section. Neither is cleared on a return from battle. A pushed stone pillar
+[area](glossary.md#area) flags when it enters another
+area. Neither is cleared on a return from battle. A pushed stone pillar
 kept in a scene flag is back in place the next time the party comes in; logs
-floated in one room of a cave, kept in map section flags, stay floated while
+floated in one room of a cave, kept in area flags, stay floated while
 the party moves between the cave's rooms. [The front
 page](README.md#game-flags) gives the ranges, and
 [Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene uses
@@ -129,8 +129,8 @@ of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-g
 A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
 cell says three things: what is drawn there, how high its ground is, and what
 standing there does. That last part, its [metatile
-behavior](glossary.md#metatile-behavior), is a number that walls and map
-events are keyed on. Most numbers belong to the scene, whose event table says
+behavior](glossary.md#metatile-behavior), is a number that walls and
+triggers are keyed on. Most numbers belong to the scene, whose trigger table says
 what each one does, so the same number is a door in one town and a chest in
 another. A few mean the same in every scene: the jars, barrels and wooden boxes
 anyone can search, as in the recording, ledges, the desert's sand and walls.
@@ -221,12 +221,12 @@ covers every moment a scene can answer and each Psynergy's effect.
 ## Limits
 
 - 64 objects, and 64 sprites sharing 64 sprite anims, up to four each.
-- 66 object event places in the field work, the party's 8 and then 58 for
-  the scene's object event templates, though only 64 objects exist to fill them.
+- 66 actor places in the field work, the party's 8 and then 58 for
+  the scene's actor templates, though only 64 objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
-- 256 scene flags and 256 map section flags, each range reused by every scene or
-  map section.
+- 256 scene flags and 256 area flags, each range reused by every scene or
+  area.
 - 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds only
   a label within the first 1,024 words of its script.
-- A battle snapshot keeps up to 32 object events.
+- A battle snapshot keeps up to 32 actors.

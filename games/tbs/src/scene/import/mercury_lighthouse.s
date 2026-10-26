@@ -43,28 +43,28 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.FieldScript_PrepareObjectAndApplyValue, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Actor_RefreshSelectorById, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectEvent_JumpDownLedge, 1
+	.set import.Actor_JumpDownLedge, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_LinkPair, 1
+	.set import.Actor_ConfigureSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
@@ -75,7 +75,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.FieldCamera_GetScriptObject, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
@@ -84,7 +84,7 @@
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
-	.set import.ObjectEvent_GetByLocalId, 1
+	.set import.Actor_GetByActorId, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Field_DispatchTypeHandler, 1
 	.set import.FieldEffect_LoadActionEffectResources, 1

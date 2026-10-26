@@ -33,7 +33,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
@@ -41,13 +41,13 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_ConfigureSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_SpawnLinked, 1
@@ -55,8 +55,8 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Actor_PlaceCurrentWithinCameraBounds, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.PaletteFade_SetTarget, 1
@@ -65,7 +65,7 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.ObjectEvent_GetByLocalId, 1
+	.set import.Actor_GetByActorId, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.Scene_QueueMusic, 1

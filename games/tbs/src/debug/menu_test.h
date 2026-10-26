@@ -6,7 +6,7 @@
 #include "unit.h"
 #include "save_block.h"
 #include "fx_work.h"
-#include "object_event.h"
+#include "actor.h"
 #include "text/msg_ids.h"
 
 #include "character.h"

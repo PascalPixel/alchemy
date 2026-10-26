@@ -111,8 +111,9 @@ not Camelot's version numbers.
 ### pret
 
 The group behind the Pokémon decompilations, whose conventions Alchemy follows
-where they settle a question: naming, the `BUG` and `BUGFIX` markers, and the
-words for places, from pokeemerald.
+where they settle a question: the shape of names, the `BUG` and `BUGFIX`
+markers and the sound driver's routines. Alchemy's words for things are the
+game's own, not pret's; the entries below say where pret uses another word.
 
 ### The compilers
 
@@ -233,9 +234,10 @@ from 80 the fanfares, and from 100 the sound effects
 
 ## Scenes and maps
 
-The words for places are mostly pret's, from pokeemerald, so a reader of that
-project finds them in the same sense; pret has no word for the scene or the
-sequence, because its games have no such unit.
+The words for places are the game's own where it has one (its area names, its
+menus, its debug names), else a word of the game's time, else a plain
+description of the thing. A reader coming from pret's decompilations, such as
+pokeemerald, finds each entry saying what pret calls the nearest thing.
 
 ### Sequence
 
@@ -249,11 +251,13 @@ One row of the scene table: a room, a town, a dungeon floor, the world map,
 or a screen such as the title or the main menu, 201 in all, each running an
 overlay's code and drawn on a map ([The front page](README.md#scenes-and-overlays)).
 
-### Map section
+### Area
 
 A group of scenes, 71 in all, sharing their music, their area name and one
 range of [scratch flags](#game-flag)
-([The front page](README.md#the-scene-table-and-map-sections)).
+([The front page](README.md#the-scene-table-and-areas)). The game names each
+by its area name, the one the debug menu lists and the area name window shows;
+pret calls the nearest thing a map section.
 
 ### Map
 
@@ -263,7 +267,7 @@ under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md))
 ### Sheet of rooms
 
 A map that packs indoor rooms drawn in one tile style side by side, each its
-own scene with a camera box its warp destination chooses; its rooms may belong
+own scene with a camera box its entrance chooses; its rooms may belong
 to different places, so it is named for the style they are drawn in, as
 Cottage rooms or Stucco rooms ([Scenes](src/scene/README.md#design)).
 
@@ -281,7 +285,7 @@ The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 
 The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
-scene's own event table says
+scene's own trigger table says
 ([World](world.md#cells-and-metatile-behaviors)).
 
 ### Object
@@ -290,53 +294,52 @@ One of the 64 slots of `gObjects` (`struct Object`): anything in a scene that
 acts on its own, from the party and the townspeople to the camera and the
 footprints in snow ([World](world.md#objects-and-their-scripts)).
 
-### Object event
+### Actor
 
-A person or thing a scene knows by its local id: the party, and everyone its
-object event templates place. The camera and the footprints are objects but
-not object events ([Scenes](src/scene/README.md#who-stands-where)).
+A person or thing a scene knows by its actor id: the party, and everyone its
+actor templates place. The camera and the footprints are objects but
+not actors ([Scenes](src/scene/README.md#who-stands-where)). pret calls an
+actor an object event, and its template an object event template.
 
-### Local id
+### Actor id
 
-An object event's number in its scene: 0 to 7 the party, the leader at 0, and
-from 8 (`LOCALID_FIRST_PLACED`) the object event templates' rows in order; each
-scene names its own in an enum.
-
-### Map event
-
-A row of a scene's event table (`struct MapEvent`): a kind, a trigger, a
-condition and the event it runs. When the player talks, searches, steps on a
-marked cell or uses Psynergy, the first row that fits runs
-([Scenes](src/scene/README.md#what-a-map-event-row-says)).
+An actor's number in its scene: 0 to 7 the party, the leader at 0, and
+from 8 (`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each
+scene names its own in an enum. pret calls it a local id.
 
 ### Trigger
 
-What a map event row answers: an object event's local id for talking, a
-metatile behavior for a cell, or a value the scene's code raises. Object,
-coord and bg events are the triggers.
+A row of a scene's trigger table (`struct Trigger`): a kind, the subject it
+answers, a condition and the event it runs. The subject is an actor id for
+talking, a metatile behavior for a cell, a treasure spot, or a value the
+scene's code raises. When the player talks, searches, steps on a marked cell or
+uses Psynergy, the first row that fits runs
+([Scenes](src/scene/README.md#what-a-trigger-row-says)). pret calls a row a
+map event.
 
-### Coord event
+### Step trigger
 
-A map event that runs when the leader steps onto, or walks into, a cell with a
-given metatile behavior: a doorstep, a ladder, the edge of a path.
+A trigger that runs when the leader steps onto, or walks into, a cell with a
+given metatile behavior: a doorstep, a ladder, the edge of a path. pret calls
+it a coord event.
 
-### Bg event
+### Examine trigger
 
-A map event that runs when the player presses A facing a cell: a jar, a chest,
-a bookcase. "Bg" is pret's word and has nothing to do with the background
-layers.
+A trigger that runs when the player presses A facing a cell: a jar, a chest,
+a bookcase. pret calls it a bg event.
 
-### Warp
+### Exit
 
 A way out of a scene, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
-first row for it in the scene's warp table whose condition holds gives the next
-scene and warp destination
-([The front page](README.md#warps-and-warp-destinations)).
+first row for it in the scene's exit table whose condition holds gives the next
+scene and entrance
+([The front page](README.md#exits-and-entrances)). pret calls it a warp.
 
-### Warp destination
+### Entrance
 
 Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits.
+pret calls it a warp destination.
 
 ### Event
 
@@ -346,7 +349,7 @@ draws no line between them, so each is an event, and its code an event script.
 
 ### Script
 
-A function a map event names (`EventScript_EnterIsaacsHouse`), written one step
+A function a trigger names (`EventScript_EnterIsaacsHouse`), written one step
 to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
 an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).
@@ -354,5 +357,5 @@ an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).
 ### Game flag
 
 One of the 4,096 yes-or-no facts saved with the game, such as a chest being
-open; two ranges are scratch space, cleared as the party enters scenes and map
-sections ([The front page](README.md#game-flags)).
+open; two ranges are scratch space, cleared as the party enters scenes and
+areas ([The front page](README.md#game-flags)).

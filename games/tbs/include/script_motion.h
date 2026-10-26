@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
 // UB: scripts have variable lengths, so a one-word member cannot describe
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
@@ -35,14 +35,14 @@ struct ObjectArmView {
   s32 y;                           ///< 16.16 fixed-point pixels
   s32 z;                           ///< 16.16 fixed-point pixels
   s32 groundHeight;                ///< 16.16 fixed-point pixels
-  /// ObjectEvent's scales and radius; not named here.
+  /// Actor's scales and radius; not named here.
   ///@{
   s32 scaleX;
   s32 scaleY;
   u16 radius;
   ///@}
   u8 layer;         ///< the map layer whose ground height it follows
-  u8 priorityFlags; ///< ObjectEvent's; not named here
+  u8 priorityFlags; ///< Actor's; not named here
   s32 velocityX;    ///< 16.16 fixed-point pixels per frame
   s32 velocityY;    ///< 16.16 fixed-point pixels per frame
   s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
@@ -62,7 +62,7 @@ struct ObjectArmView {
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
   /// pixels per frame; also scales a floating object's bob.
   s32 gravity;
-  /// ObjectEvent's riseBaseY, sprite and sprite kind; not named here.
+  /// Actor's riseBaseY, sprite and sprite kind; not named here.
   ///@{
   s32 riseBaseY;
   void *sprite;
@@ -77,7 +77,7 @@ struct ObjectArmView {
   u8 collisionFlags;  ///< bit 7: a solid object refuses its move
   u8 steeringFlags;   ///< bit 0: turns toward its velocity, 1/16 turn a frame
   u8 paused;          ///< nonzero skips its script and motion, not its hook
-  /// ObjectEvent's flag that keeps its sprite's VRAM, and the object script's
+  /// Actor's flag that keeps its sprite's VRAM, and the object script's
   /// SC_LOOP count; not named here.
   ///@{
   u8 retainSpriteCache;
@@ -86,7 +86,7 @@ struct ObjectArmView {
   s16 wait;   ///< frames left before its script runs again
   u8 refused; ///< frames in a row a solid object refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// ObjectEvent's two bytes map code uses and Object's action
+  /// Actor's two bytes map code uses and Object's action
   /// parameter, footprint side and linked object; not named here.
   ///@{
   u8 riseCounter;
@@ -96,7 +96,7 @@ struct ObjectArmView {
   struct ObjectArmView *linkedObject;
   ///@}
   /// Called each frame before its script.
-  void (*update)(union ObjectEventOrEffect *fieldObject);
+  void (*update)(union ActorOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct ObjectArmView) == 0x70);

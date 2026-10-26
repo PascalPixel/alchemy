@@ -9,7 +9,7 @@ s32 ItemMenu_RunFar(void);
 s32 PsynergyMenu_RunFar(void);
 /// Runs the field menu's Status screen, which puts back the palettes and window
 /// tiles it draws over. -1 reopens the field menu.
-s32 SummaryScreen_RunFar(void);
+s32 StatusScreen_RunFar(void);
 /// Lets the player pick one party member over the field, as Colosso does.
 /// Returns the member's id, or -1 when the player backs out.
 s32 MemberChooser_OpenFar(void);

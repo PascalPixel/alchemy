@@ -3,22 +3,22 @@
 /// the race gauge at the top of the screen and the opponent running a recorded
 /// path (colosso_path_opponent.h).
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 #include "flags.h"
 
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
-/// Isaac and the opponent as playerLocalId and opponentLocalId, a bar
+/// Isaac and the opponent as playerActorId and opponentActorId, a bar
 /// of segments pieces either side, and the finish at pixel (finishX, finishZ)
-/// in 16.16, where the two item object events stand. Unless the party returns
+/// in 16.16, where the two item actors stand. Unless the party returns
 /// to where it was, the opponent is put opposite Isaac across x = finishX.
-void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
+void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
                             s32 segments, s32 finishX, s32 finishZ,
-                            s32 finishItemLocalIdA, s32 finishItemLocalIdB) {
+                            s32 finishItemActorIdA, s32 finishItemActorIdB) {
 
   struct ColossoRaceWork *work;
-  struct ObjectEvent *player;
-  struct ObjectEvent *opponent;
+  struct Actor *player;
+  struct Actor *opponent;
   s32 handle;
   s32 pal;
 
@@ -26,16 +26,16 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
                             sizeof(struct ColossoRaceWork));
   handle = (s32)AllocEwram(512);
 
-  work->gauge.playerLocalId = playerLocalId;
-  work->gauge.opponentLocalId = opponentLocalId;
-  work->gauge.finishItemLocalIdA = finishItemLocalIdA;
-  work->gauge.finishItemLocalIdB = finishItemLocalIdB;
+  work->gauge.playerActorId = playerActorId;
+  work->gauge.opponentActorId = opponentActorId;
+  work->gauge.finishItemActorIdA = finishItemActorIdA;
+  work->gauge.finishItemActorIdB = finishItemActorIdB;
   work->gauge.segments = segments;
   work->gauge.finishX = finishX;
   work->gauge.finishZ = finishZ;
 
-  player = ObjectEvent_GetById(playerLocalId);
-  opponent = ObjectEvent_GetById(opponentLocalId);
+  player = Actor_GetById(playerActorId);
+  opponent = Actor_GetById(opponentActorId);
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - player->x.fixed;
@@ -75,7 +75,7 @@ void Colosso_StartOpponent(s32 resource) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->localId = work->gauge.opponentLocalId;
+    recorder->actorId = work->gauge.opponentActorId;
     recorder->still = 0;
     recorder->pathIndex = 0;
   }

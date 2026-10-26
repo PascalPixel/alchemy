@@ -5,8 +5,8 @@
 /// The metatile behaviors of Vault's layout, which SceneId_Vault (vault.c) and
 /// SceneId_VaultRevisit (vault_revisit.c) both draw and answer.
 
-/// The metatile behaviors Vault's coord and bg events answer; the warps have
-/// behaviors of their own.
+/// The metatile behaviors Vault's coord and examine triggers answer; the exits
+/// have behaviors of their own.
 enum VaultMetatileBehavior {
   /// Either end of the rope bridge in the town's south-east, where stepping
   /// on raises the path that runs under the bridge to the bridge's deck
@@ -31,9 +31,9 @@ enum VaultMetatileBehavior {
   MB_VAULT_DOOR_TO_JAIL = 12,
   /// The doorless way into the room with the crate.
   MB_VAULT_WEST_ENTRANCE = 13,
-  /// Before the south gate's warp (VAULT_TO_WORLD_MAP_SOUTH).
+  /// Before the south gate's exit (VAULT_TO_WORLD_MAP_SOUTH).
   MB_VAULT_SOUTH_GATE = 20,
-  /// Before the north gate's warp (VAULT_TO_WORLD_MAP_NORTH).
+  /// Before the north gate's exit (VAULT_TO_WORLD_MAP_NORTH).
   MB_VAULT_NORTH_GATE = 21,
   MB_VAULT_BELL = 30,
   /// The hidden passage down into Vault Cave, which Reveal shows

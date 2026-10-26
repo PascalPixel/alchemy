@@ -251,7 +251,7 @@ s32 Task_SetFlags(TaskFunc callback, u32 mask) {
 
 /// Resumes the task running `callback`, or every task when `callback` is
 /// null, by clearing bit 0 of its priority's high byte. Called by the map
-/// animation and object event code. Returns the last index changed, or -1.
+/// animation and actor code. Returns the last index changed, or -1.
 s32 Task_ResumeAll(TaskFunc callback) {
   struct Task *task;
   u32 savedInterruptMaster;

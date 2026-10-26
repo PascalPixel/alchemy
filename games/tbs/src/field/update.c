@@ -59,7 +59,7 @@ void Object_UpdateAll(void) {
     if (object->script == NULL)
       continue;
     if (object->update != NULL)
-      object->update((union ObjectEventOrEffect *)object);
+      object->update((union ActorOrEffect *)object);
     if (object->script == NULL)
       continue;
     if (object->paused != 0)

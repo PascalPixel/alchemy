@@ -1,33 +1,33 @@
 /// @file
-/// The naming screen.
+/// The name entry screen.
 // Part of screens.c.
 
 #include "../screens_internal.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-/// The international naming screen has no voicing marks: where the Japanese
+/// The international name entry screen has no voicing marks: where the Japanese
 /// edition checks a mark against the letter before it, this edition keeps a
 /// function that accepts every character. Nothing calls it.
-UNUSED s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) { return 1; }
+UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
-// The kana voicing marks of the Japanese naming screen, which join the letter
-// before them.
+// The kana voicing marks of the Japanese name entry screen, which join the
+// letter before them.
 #define NAME_VOICED_MARK 0xde     ///< dakuten
 #define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
 
 /// Returns whether `mark` may follow `letter` in a Japanese name: any
 /// character but a voicing mark may, and a voicing mark only after a letter
 /// in its table of ranges (pairs of first and last letter, ended by 0).
-s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) {
+s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   const u8 *range;
 
   if (mark < NAME_VOICED_MARK || mark > NAME_SEMIVOICED_MARK)
     return 1;
   if (mark == NAME_VOICED_MARK)
-    range = gNamingScreen_VoicedMarkRanges;
+    range = gNameEntry_VoicedMarkRanges;
   else
-    range = gNamingScreen_SemivoicedMarkRanges;
+    range = gNameEntry_SemivoicedMarkRanges;
   for (; *range != 0; range += 2) {
     if (letter >= range[0] && letter <= range[1])
       return 1;
@@ -37,7 +37,7 @@ s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) {
 
 /// Returns how many letters the Japanese name `name` has, not counting the
 /// voicing marks.
-s32 NamingScreen_CountLetters(const u8 *name) {
+s32 NameEntry_CountLetters(const u8 *name) {
   s32 count;
 
   count = 0;
@@ -85,8 +85,8 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
 /// Like Window_SetTextTileBitRect, but ORs all of `palette` into the
 /// palette number of each entry (bits 12-15) after clearing only its lowest
 /// bit. On entries of WINDOW_PALETTE or HIGHLIGHT_PALETTE that sets them to
-/// `palette`, either 14: the naming screen's key and the Colosso choice under
-/// the cursor flash this way.
+/// `palette`, either 14: the name entry screen's key and the Colosso choice
+/// under the cursor flash this way.
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
@@ -130,16 +130,16 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 }
 
 /// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
-void NamingScreen_LoadPointingHandTiles(s32 slot) {
+void NameEntry_LoadPointingHandTiles(s32 slot) {
   VramCache_Load(slot, 0x80, gPointingHandTiles);
 }
 
-/// Loads the 16x16 sprite gNamingScreen_CaretTiles into VRAM slot `slot`.
-void NamingScreen_LoadCaretTiles(s32 slot) {
-  VramCache_Load(slot, 0x80, gNamingScreen_CaretTiles);
+/// Loads the 16x16 sprite gNameEntry_CaretTiles into VRAM slot `slot`.
+void NameEntry_LoadCaretTiles(s32 slot) {
+  VramCache_Load(slot, 0x80, gNameEntry_CaretTiles);
 }
 
-// The naming screen: a keyboard window of letter keys, with a column of
+// The name entry screen: a keyboard window of letter keys, with a column of
 // command keys on its right (Delete and End, and in Japanese the keyboard
 // switch), the name above it and the character's portrait.
 #define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
@@ -228,7 +228,7 @@ void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-/// The naming screen for party member `member`: the player types a name
+/// The name entry screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
@@ -239,7 +239,7 @@ void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and
 /// End (row 5).
-s32 NamingScreen_EditMemberName(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 originalLength = 0;
@@ -265,11 +265,10 @@ s32 NamingScreen_EditMemberName(s32 member) {
   nameWindow = (struct Window *)Window_Create(8, 3, NAME_LABEL_WIDTH, 3,
                                               WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
-  Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
-  Text_DrawStringInWindow(gNamingScreen_DeleteKeyLabel, keyboardWindow, 144,
-                          32);
-  Text_DrawStringInWindow(gNamingScreen_EndKeyLabel, keyboardWindow, 144, 40);
+  Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
+  Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
   work->dirty = textDirty;
@@ -308,7 +307,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gNamingScreen_CaretTiles);
+    VramCache_Load(vramSlot, 128, gNameEntry_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
@@ -358,8 +357,8 @@ s32 NamingScreen_EditMemberName(s32 member) {
       u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
-      sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
-      sprite->oam.y = sprite->y + gNamingScreen_CaretWave[(frame + 5) & 7];
+      sprite->oam.x = sprite->x + gNameEntry_CaretWave[frame];
+      sprite->oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -509,7 +508,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
 }
 #else
 
-/// The naming screen for party member `member`: the player types a name
+/// The name entry screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
@@ -519,7 +518,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, on rows 0 to 4 and 6 to 10; column 18 holds the
 /// keyboard switch (row 0, or Select), Delete (row 8) and End (row 10).
-s32 NamingScreen_EditMemberName(s32 member) {
+s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
   s32 keyboard = 0;
@@ -545,11 +544,11 @@ s32 NamingScreen_EditMemberName(s32 member) {
       (struct Window *)Window_Create(3, 6, 24, 13, WINDOW_FLAG_INSTANT);
   nameWindow = (struct Window *)Window_Create(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
-  Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
   work->dirty = textDirty;
   // A zero byte before editedName: the letter before the first, which
-  // NamingScreen_AcceptsMark reads when a voicing mark is entered first.
+  // NameEntry_AcceptsMark reads when a voicing mark is entered first.
   text[0] = result;
   {
     s32 i;
@@ -582,14 +581,14 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gNamingScreen_CaretTiles);
+    VramCache_Load(vramSlot, 128, gNameEntry_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
     sprite->sentinel = 255;
     sprite->oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
-    x = 72 + NamingScreen_CountLetters(editedName) * 10;
+    x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
   // The key under the cursor flashes between WINDOW_PALETTE and
@@ -624,7 +623,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     }
     if (textDirty) {
       textDirty = 0;
-      x = 72 + NamingScreen_CountLetters(editedName) * 10;
+      x = 72 + NameEntry_CountLetters(editedName) * 10;
       MenuCursor_SetFar(&nameCaret.cursor, x, 22, 3);
     }
     MenuCursor_AdvanceFar(&keyCursor.cursor);
@@ -633,8 +632,8 @@ s32 NamingScreen_EditMemberName(s32 member) {
       u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
-      sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
-      sprite->oam.y = sprite->y + gNamingScreen_CaretWave[(frame + 5) & 7];
+      sprite->oam.x = sprite->x + gNameEntry_CaretWave[frame];
+      sprite->oam.y = sprite->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -716,9 +715,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
       keyboard ^= 1;
       if (keyboard)
         Window_CopyTilemapRegion(keyboardWindow,
-                                 gNamingScreen_AlternateKeyboardTilemap);
+                                 gNameEntry_AlternateKeyboardTilemap);
       else
-        Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
       Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
       work->dirty = 1;
       continue;
@@ -811,7 +810,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
           (u8)(letter - NAME_VOICED_MARK) > 1)
         continue;
       dst = editedName + bytes;
-      if (!NamingScreen_AcceptsMark(letter, editedName[bytes - 1])) {
+      if (!NameEntry_AcceptsMark(letter, editedName[bytes - 1])) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
         continue;
       }

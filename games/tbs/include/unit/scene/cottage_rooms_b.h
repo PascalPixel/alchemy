@@ -2,13 +2,13 @@
 #define ALCHEMY_UNIT_MAP_COTTAGE_ROOMS_B_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *CottageRoomsB_GetWarpDests(void);
-const struct MapWarpRegion *CottageRoomsB_GetRegions(void);
-const u32 *CottageRoomsB_GetWarps(void);
-const struct ObjectEventTemplate *CottageRoomsB_GetObjectEventTemplates(void);
-const struct MapEvent *CottageRoomsB_GetEvents(void);
+const struct SceneEntrance *CottageRoomsB_GetEntrances(void);
+const struct SceneExitRegion *CottageRoomsB_GetRegions(void);
+const u32 *CottageRoomsB_GetExits(void);
+const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void);
+const struct Trigger *CottageRoomsB_GetTriggers(void);
 s32 CottageRoomsB_Initialize(void);
 extern s32 gCottageRoomsB_LeaveHouseScript[];
 extern s32 gCottageRoomsB_DoraLeavesScript[];
@@ -23,21 +23,18 @@ extern s32 gCottageRoomsB_FlameRisesScript[];
 extern s32 gCottageRoomsB_DoraFacesIsaacScript[];
 extern s32 gCottageRoomsB_MythrilBagRisesScript[];
 extern s32 gCottageRoomsB_MythrilBagWobblesScript[];
-extern struct MapWarpDest gCottageRoomsB_WarpDests[];
-extern u32 gCottageRoomsB_Warps[];
-extern u32 gCottageRoomsB_StormWarps[];
-extern struct ObjectEventTemplate gCottageRoomsB_ObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_ObjectEventTemplatesAfterLeaving[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_ObjectEventTemplatesAfterKalay[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_BabiScholarsObjectEventTemplates[];
-extern struct MapEvent gCottageRoomsB_StormEvents[];
-extern struct MapEvent gCottageRoomsB_Events[];
-extern struct MapEvent gCottageRoomsB_EventsAfterLeaving[];
-extern struct MapEvent gCottageRoomsB_EventsAfterKalay[];
-extern struct MapEvent gCottageRoomsB_BabiScholarsEvents[];
-extern struct MapEvent gCottageRoomsB_BabiScholarsLaterEvents[];
+extern struct SceneEntrance gCottageRoomsB_Entrances[];
+extern u32 gCottageRoomsB_Exits[];
+extern u32 gCottageRoomsB_StormExits[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplates[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[];
+extern struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[];
+extern struct Trigger gCottageRoomsB_StormTriggers[];
+extern struct Trigger gCottageRoomsB_Triggers[];
+extern struct Trigger gCottageRoomsB_TriggersAfterLeaving[];
+extern struct Trigger gCottageRoomsB_TriggersAfterKalay[];
+extern struct Trigger gCottageRoomsB_BabiScholarsTriggers[];
+extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
 
 #endif

@@ -3,23 +3,22 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *StuccoRoomsB_GetWarpDests(void);
-const struct MapWarpRegion *StuccoRoomsB_GetRegions(void);
-const u32 *StuccoRoomsB_GetWarps(void);
-const struct ObjectEventTemplate *StuccoRoomsB_SelectObjectEventTemplates(void);
-const struct MapEvent *StuccoRoomsB_SelectEvents(void);
+const struct SceneEntrance *StuccoRoomsB_GetEntrances(void);
+const struct SceneExitRegion *StuccoRoomsB_GetRegions(void);
+const u32 *StuccoRoomsB_GetExits(void);
+const struct ActorTemplate *StuccoRoomsB_SelectActorTemplates(void);
+const struct Trigger *StuccoRoomsB_SelectTriggers(void);
 s32 StuccoRoomsB_ApplyEntryState(void);
 extern s32 gStuccoRoomsBSquashStretch[];
-extern struct MapWarpDest gStuccoRoomsBWarpDests[];
-extern u32 gStuccoRoomsBWarps[];
-extern struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gStuccoRoomsBObjectEventTemplatesAfterColosso[];
-extern struct MapEvent gStuccoRoomsBEventsFestival[];
-extern struct MapEvent gStuccoRoomsBEventsFinalsDay[];
-extern struct MapEvent gStuccoRoomsBEventsAfterColosso[];
+extern struct SceneEntrance gStuccoRoomsBEntrances[];
+extern u32 gStuccoRoomsBExits[];
+extern struct ActorTemplate gStuccoRoomsBActorTemplates[];
+extern struct ActorTemplate gStuccoRoomsBActorTemplatesAfterColosso[];
+extern struct Trigger gStuccoRoomsBTriggersFestival[];
+extern struct Trigger gStuccoRoomsBTriggersFinalsDay[];
+extern struct Trigger gStuccoRoomsBTriggersAfterColosso[];
 extern u16 gStuccoRoomsBDoorOpening[];
 extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
 

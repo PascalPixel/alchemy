@@ -23,12 +23,12 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
   return entry;
 }
 
-/// Returns the sprite id stored by a live object event's animated sprite, or 0
-/// when that object event has no animated sprite or its sprite-id pointer is
-/// absent. The object event must exist: a NULL from ObjectEvent_GetByLocalId is
+/// Returns the sprite id stored by a live actor's animated sprite, or 0
+/// when that actor has no animated sprite or its sprite-id pointer is
+/// absent. The actor must exist: a NULL from Actor_GetByActorId is
 /// read through. Called by Speaker_GetIdleFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct Object *object = ObjectEvent_GetByLocalId(id);
+  struct Object *object = Actor_GetByActorId(id);
   struct SpeakerSprite *sprite;
 
   if (object->spriteStorageKind != OBJECT_SPRITE_ONE ||
@@ -43,7 +43,7 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 /// sounds, 0x100 plus its definition's value, or 0 for none (value 0xff) or
 /// with the Speech option off (gSaveBlock.speech). Message_OpenWindowFar
 /// takes it in the high half of its last argument and
-/// Message_SetVoiceFromObjectEvent as the window's voiceSound
+/// Message_SetVoiceFromActor as the window's voiceSound
 /// (field_services/messages.c); the shops ask it for their keepers.
 s32 Speaker_GetVoice(u32 id) {
   u8 portraitId;
@@ -55,10 +55,10 @@ s32 Speaker_GetVoice(u32 id) {
   return portraitId + 0x100;
 }
 
-/// Returns the definition flags of object event id's sprite, which choose its
-/// line when it has nothing to say: Scene_TalkToObjectEvent picks a Halted
-/// object event's pair of lines with them, and Halt cast with no map event
-/// (FieldEffect_Run) stops nothing when the nearest object event's flags are
+/// Returns the definition flags of actor id's sprite, which choose its
+/// line when it has nothing to say: Scene_TalkToActor picks a Halted
+/// actor's pair of lines with them, and Halt cast with no trigger
+/// (FieldEffect_Run) stops nothing when the nearest actor's flags are
 /// 0xff (FieldEffect_FilterObjectIdByFlags).
 s32 Speaker_GetIdleFlags(s32 id) {
   return Speaker_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;

@@ -160,7 +160,7 @@ void Shop_RestoreFieldPalette(void) {
 /// Moves the cursor from its saved position toward its target, in a straight
 /// line over `kind` frames, one frame a call; `active` counts the frames and
 /// both go back to 0 on arrival. Runs every frame from MenuCursor_Step, and
-/// from the option menu's, naming screen's and file menu's cursor tasks.
+/// from the option menu's, name entry screen's and file menu's cursor tasks.
 void MenuCursor_Advance(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 durationFrames;
@@ -190,7 +190,8 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
 }
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
-/// one-pixel step. Called each frame by the option menu and the naming screen.
+/// one-pixel step. Called each frame by the option menu and the name entry
+/// screen.
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 delta;
@@ -238,7 +239,7 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
 
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
 /// `kind` frames, for MenuCursor_Advance to run. Called by MenuCursor_Place
-/// and, through SHOP.S, by the naming screen and the Colosso choice.
+/// and, through SHOP.S, by the name entry screen and the Colosso choice.
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind) {
   struct WindowSprite *anchor = cursor->anchor;
@@ -253,7 +254,7 @@ void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
 
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
 /// that has already arrived. Called when a counter, the option and pause
-/// menus or the naming screen opens.
+/// menus or the name entry screen opens.
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 
   {

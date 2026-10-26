@@ -1,18 +1,18 @@
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 
 // Babi Lighthouse and Venus Lighthouse.
 
 /// Waits until the object stops rising or falling, a second at most.
-static void ObjectEvent_WaitUntilIdle(struct ObjectEvent *objectEvent) {
+static void Actor_WaitUntilIdle(struct Actor *actor) {
   s32 cnt;
   s32 busy;
 
   cnt = 60;
   while (cnt != 0) {
     WaitFrames(1);
-    busy = objectEvent->velocityY;
+    busy = actor->velocityY;
     cnt--;
     if (busy == 0)
       break;

@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer MenuTest_Initialize
-	overlay_veneer MenuTest_GetWarpDests
-	overlay_veneer MenuTest_GetWarps
-	overlay_veneer MenuTest_GetObjectEventTemplates
-	overlay_veneer MenuTest_GetEvents
-	overlay_veneer Scene_GetWarpRegions
+	overlay_veneer MenuTest_GetEntrances
+	overlay_veneer MenuTest_GetExits
+	overlay_veneer MenuTest_GetActorTemplates
+	overlay_veneer MenuTest_GetTriggers
+	overlay_veneer Scene_GetExitRegions

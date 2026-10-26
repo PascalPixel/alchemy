@@ -2,21 +2,20 @@
 #define ALCHEMY_UNIT_MAP_KOLIMA_FOREST_CLIFF_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
-const struct MapWarpDest *KolimaForestCliff_GetWarpDests(void);
-const struct MapWarpRegion *KolimaForestCliff_GetRegions(void);
-const u32 *KolimaForestCliff_GetWarps(void);
-const struct ObjectEventTemplate *
-KolimaForestCliff_GetObjectEventTemplates(void);
-const struct MapEvent *KolimaForestCliff_GetEvents(void);
+const struct SceneEntrance *KolimaForestCliff_GetEntrances(void);
+const struct SceneExitRegion *KolimaForestCliff_GetRegions(void);
+const u32 *KolimaForestCliff_GetExits(void);
+const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void);
+const struct Trigger *KolimaForestCliff_GetTriggers(void);
 s32 KolimaForestCliff_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
-extern struct MapWarpDest gKolimaForestCliffWarpDests[];
-extern u32 gKolimaForestCliffWarps[];
-extern struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[];
-extern struct MapEvent gKolimaForestCliffEvents[];
+extern struct SceneEntrance gKolimaForestCliffEntrances[];
+extern u32 gKolimaForestCliffExits[];
+extern struct ActorTemplate gKolimaForestCliffActorTemplates[];
+extern struct Trigger gKolimaForestCliffTriggers[];
 
 #endif

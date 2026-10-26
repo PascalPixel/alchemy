@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_OBJECT_EVENT_H
-#define ALCHEMY_OBJECT_EVENT_H
+#ifndef ALCHEMY_ACTOR_H
+#define ALCHEMY_ACTOR_H
 
 /// @file
-/// Objects and object events, and the map transition styles.
+/// Objects and actors, and the map transition styles.
 
 #include "types.h"
 #include "static_assert.h"
@@ -30,11 +30,11 @@ enum MapTransitionStyle {
 
 #include "animspr.h"
 
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
-/// An object event: a person or thing on the field with a position, motion
+/// An actor: a person or thing on the field with a position, motion
 /// toward a target, sprites and an update callback.
-struct ObjectEvent {
+struct Actor {
   const s32 *script;       ///< the object script it runs; null when it is free
   u16 scriptCursor;        ///< in words (Object.scriptCursor)
   u16 facing;              ///< 1/65536 turns
@@ -51,7 +51,7 @@ struct ObjectEvent {
   /// scrolling camera updates from the cell under it; the fixed camera passes
   /// it as the sprite's draw slot.
   u8 layer;
-  /// ObjectEventPriorityFlag bits, read by the scrolling camera.
+  /// ActorPriorityFlag bits, read by the scrolling camera.
   u8 priorityFlags;
   s32 velocityX; ///< 16.16 fixed-point pixels per frame
   s32 velocityY; ///< 16.16 fixed-point pixels per frame
@@ -60,9 +60,9 @@ struct ObjectEvent {
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame; 0x10000 when created.
   s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; OBJ_EVENT_NO_TARGET when unset
-  s32 targetY; ///< 16.16 fixed-point pixels; OBJ_EVENT_NO_TARGET when unset
-  s32 targetZ; ///< 16.16 fixed-point pixels; OBJ_EVENT_NO_TARGET when unset
+  s32 targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  s32 targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
   /// fixed point (0x4000 when created); a floating object's phase instead.
   s32 bounce;
@@ -81,16 +81,16 @@ struct ObjectEvent {
   /// The engine reads the low four bits; SC_SHOW_SPRITE and SC_HIDE_SPRITES set
   /// 1 and 0.
   u8 spriteStorageKind;
-  /// ObjectEventMotionFlag bits; none is free flight in 3D, and
-  /// OBJ_EVENT_FOLLOWS_TERRAIN and OBJ_EVENT_FALLS are set on creation.
+  /// ActorMotionFlag bits; none is free flight in 3D, and
+  /// ACTOR_FOLLOWS_TERRAIN and ACTOR_FALLS are set on creation.
   u8 motionFlags;
   u8 arrivalAxis; ///< the ARRIVAL_AXIS_* watched for arrival
   /// The object script's last flag test (Object.conditionResult).
   u8 conditionResult;
   u8 snapToTarget; ///< nonzero lands it exactly on its target on arrival
-  /// ObjectEventCollisionFlag bits.
+  /// ActorCollisionFlag bits.
   u8 collisionFlags;
-  u8 steeringFlags; ///< ObjectEventSteeringFlag bits
+  u8 steeringFlags; ///< ActorSteeringFlag bits
   u8 paused;        ///< nonzero skips its script and motion, not its update
   /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
   /// or it is off screen (ObjectSystem_PlaceSprites).
@@ -112,81 +112,80 @@ struct ObjectEvent {
   /// scratch.
   u16 work;
   /// The object its action script follows or faces.
-  struct ObjectEvent *linkedObject;
+  struct Actor *linkedObject;
   /// Called each frame before the object's script, while the object is live.
-  void (*update)(union ObjectEventOrEffect *fieldObject);
+  void (*update)(union ActorOrEffect *fieldObject);
 };
 
-STATIC_ASSERT(offsetof(struct ObjectEvent, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct ObjectEvent, x) == 0x08);
-STATIC_ASSERT(offsetof(struct ObjectEvent, z) == 0x10);
-STATIC_ASSERT(offsetof(struct ObjectEvent, groundHeight) == 0x14);
-STATIC_ASSERT(offsetof(struct ObjectEvent, scaleY) == 0x1c);
-STATIC_ASSERT(offsetof(struct ObjectEvent, priorityFlags) == 0x23);
-STATIC_ASSERT(offsetof(struct ObjectEvent, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct ObjectEvent, collisionFlags) == 0x59);
-STATIC_ASSERT(offsetof(struct ObjectEvent, steeringFlags) == 0x5a);
-STATIC_ASSERT(offsetof(struct ObjectEvent, paused) == 0x5b);
-STATIC_ASSERT(offsetof(struct ObjectEvent, retainSpriteCache) == 0x5c);
-STATIC_ASSERT(offsetof(struct ObjectEvent, repeatCount) == 0x5d);
-STATIC_ASSERT(offsetof(struct ObjectEvent, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ObjectEvent, refused) == 0x60);
-STATIC_ASSERT(offsetof(struct ObjectEvent, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct ObjectEvent, riseEnabled) == 0x63);
-STATIC_ASSERT(offsetof(struct ObjectEvent, bounce) == 0x44);
-STATIC_ASSERT(offsetof(struct ObjectEvent, gravity) == 0x48);
-STATIC_ASSERT(offsetof(struct ObjectEvent, riseBaseY) == 0x4c);
-STATIC_ASSERT(offsetof(struct ObjectEvent, velocityY) == 0x28);
-STATIC_ASSERT(offsetof(struct ObjectEvent, speed) == 0x30);
-STATIC_ASSERT(offsetof(struct ObjectEvent, targetX) == 0x38);
-STATIC_ASSERT(offsetof(struct ObjectEvent, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct ObjectEvent, update) == 0x6c);
+STATIC_ASSERT(offsetof(struct Actor, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct Actor, x) == 0x08);
+STATIC_ASSERT(offsetof(struct Actor, z) == 0x10);
+STATIC_ASSERT(offsetof(struct Actor, groundHeight) == 0x14);
+STATIC_ASSERT(offsetof(struct Actor, scaleY) == 0x1c);
+STATIC_ASSERT(offsetof(struct Actor, priorityFlags) == 0x23);
+STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 0x55);
+STATIC_ASSERT(offsetof(struct Actor, collisionFlags) == 0x59);
+STATIC_ASSERT(offsetof(struct Actor, steeringFlags) == 0x5a);
+STATIC_ASSERT(offsetof(struct Actor, paused) == 0x5b);
+STATIC_ASSERT(offsetof(struct Actor, retainSpriteCache) == 0x5c);
+STATIC_ASSERT(offsetof(struct Actor, repeatCount) == 0x5d);
+STATIC_ASSERT(offsetof(struct Actor, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct Actor, refused) == 0x60);
+STATIC_ASSERT(offsetof(struct Actor, frozen) == 0x61);
+STATIC_ASSERT(offsetof(struct Actor, riseEnabled) == 0x63);
+STATIC_ASSERT(offsetof(struct Actor, bounce) == 0x44);
+STATIC_ASSERT(offsetof(struct Actor, gravity) == 0x48);
+STATIC_ASSERT(offsetof(struct Actor, riseBaseY) == 0x4c);
+STATIC_ASSERT(offsetof(struct Actor, velocityY) == 0x28);
+STATIC_ASSERT(offsetof(struct Actor, speed) == 0x30);
+STATIC_ASSERT(offsetof(struct Actor, targetX) == 0x38);
+STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
+STATIC_ASSERT(offsetof(struct Actor, update) == 0x6c);
 
-/// The values of ObjectEvent.targetX, targetY and targetZ that are not
+/// The values of Actor.targetX, targetY and targetZ that are not
 /// coordinates.
-enum ObjectEventTarget {
+enum ActorTarget {
   /// A target coordinate that is not set: the object has no target.
-  OBJ_EVENT_NO_TARGET = (s32)0x80000000
+  ACTOR_NO_TARGET = (s32)0x80000000
 };
 
 /// Preserves the current action and motion when assigning a linked target.
-enum ObjectEventLinkFlag { OBJ_EVENT_LINK_KEEP_MOTION = 0x10000 };
+enum ActorLinkFlag { ACTOR_LINK_KEEP_MOTION = 0x10000 };
 
-/// ObjectEvent.priorityFlags bits.
-enum ObjectEventPriorityFlag {
+/// Actor.priorityFlags bits.
+enum ActorPriorityFlag {
   /// The sprite takes its priority from the map cell under it.
-  OBJ_EVENT_PRIORITY_AUTOMATIC = 0x01,
+  ACTOR_PRIORITY_AUTOMATIC = 0x01,
   /// The depth sort treats it as 320 pixels higher on the screen.
-  OBJ_EVENT_PRIORITY_UNDERFOOT = 0x02,
+  ACTOR_PRIORITY_UNDERFOOT = 0x02,
   /// The depth sort treats it as 320 pixels lower on the screen.
-  OBJ_EVENT_PRIORITY_OVERHEAD = 0x04
+  ACTOR_PRIORITY_OVERHEAD = 0x04
 };
 
-/// ObjectEvent.motionFlags bits.
-enum ObjectEventMotionFlag {
-  OBJ_EVENT_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
-  OBJ_EVENT_FALLS = 0x02,           ///< falls by its gravity and bounces
-  OBJ_EVENT_FLOATS = 0x04,          ///< bobs up and down by its gravity
-  OBJ_EVENT_FLOATS_HIGH = 0x08, ///< with OBJ_EVENT_FLOATS, four times as far
+/// Actor.motionFlags bits.
+enum ActorMotionFlag {
+  ACTOR_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
+  ACTOR_FALLS = 0x02,           ///< falls by its gravity and bounces
+  ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
+  ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
   /// Keeps its speed on slopes, which slow others down.
-  OBJ_EVENT_KEEPS_SPEED_ON_SLOPES = 0x10
+  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10
 };
 
-/// ObjectEvent.collisionFlags bits.
-enum ObjectEventCollisionFlag {
-  OBJ_EVENT_SOLID = 0x01,         ///< blocks other objects and the player
-  OBJ_EVENT_PUSHABLE = 0x02,      ///< the player pushes it
-  OBJ_EVENT_NEAR_TALK = 0x04,     ///< nearer to talk to
-  OBJ_EVENT_NOT_TARGETED = 0x08,  ///< never a talk or Psynergy target
-  OBJ_EVENT_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
-  /// Refuses to move into a solid object (ObjectEvent.refused).
-  OBJ_EVENT_BLOCKED_BY_SOLID = 0x80
+/// Actor.collisionFlags bits.
+enum ActorCollisionFlag {
+  ACTOR_SOLID = 0x01,         ///< blocks other objects and the player
+  ACTOR_PUSHABLE = 0x02,      ///< the player pushes it
+  ACTOR_NEAR_TALK = 0x04,     ///< nearer to talk to
+  ACTOR_NOT_TARGETED = 0x08,  ///< never a talk or Psynergy target
+  ACTOR_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
+  /// Refuses to move into a solid object (Actor.refused).
+  ACTOR_BLOCKED_BY_SOLID = 0x80
 };
 
-/// ObjectEvent.steeringFlags bits.
-enum ObjectEventSteeringFlag {
-  OBJ_EVENT_FACES_MOTION =
-      0x01 ///< turns toward its velocity, 1/16 turn a frame
+/// Actor.steeringFlags bits.
+enum ActorSteeringFlag {
+  ACTOR_FACES_MOTION = 0x01 ///< turns toward its velocity, 1/16 turn a frame
 };
 
 #endif

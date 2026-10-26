@@ -1,12 +1,3 @@
-// Near miss, differ 10 of 95 (2026-10-15). Starts a field effect that animates
-// sixteen tiles of its own: takes a 0x10e4-byte work block at heap offset 164
-// (worka0.h's WorkA4 lies there), clears it, decodes four 256-byte tile frames
-// into a scratch buffer (one set for kind 372, another for the rest; the second
-// set repeats one frame), loads them into a VRAM slot and schedules the
-// two per-frame routines Func_080daab0 and Func_080dacb8.
-// Left: order only. For five of the eight decodes the native sets the
-// destination (r1) before it loads the source (r0) from the pool; this
-// loads the source first.
 #include "types.h"
 #include "dma.h"
 
@@ -34,6 +25,12 @@ struct TileEffectWork {
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first frame set
 #define FRAME_SIZE 0x100
 
+/// Starts a field effect that animates sixteen tiles of its own: takes a
+/// 0x10e4-byte work block at heap offset 164 (worka0.h's WorkA4 lies there),
+/// clears it, decodes four 256-byte tile frames into a scratch buffer (one set
+/// for kind 372, another for the rest; the second set repeats one frame), loads
+/// them into a VRAM slot and schedules the two per-frame routines Func_080daab0
+/// and Func_080dacb8.
 struct TileEffectWork *Func_080da9a8(s32 kind) {
   struct TileEffectWork *work;
   u8 *frames;
@@ -50,14 +47,26 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Resource_DecodeType01(Data_080f0cb8, frames + 2 * FRAME_SIZE);
     Resource_DecodeType01(Data_080f0d07, frames + 3 * FRAME_SIZE);
     VramCache_Load(work->vramEntry, size, frames);
+    /* FAKEMATCH(barrier): the empty asm closes the branch, so each decode
+     * sets its destination before loading its source; as plain statements, 4
+     * of 95 instructions differ in tla-en. */
+    asm("");
   } else {
     Resource_DecodeType01(Data_080f0d5e, frames);
     Resource_DecodeType01(Data_080f0dbb, frames + FRAME_SIZE);
     Resource_DecodeType01(Data_080f0dbb, frames + 2 * FRAME_SIZE);
     Resource_DecodeType01(Data_080f0e00, frames + 3 * FRAME_SIZE);
     VramCache_Load(work->vramEntry, size, frames);
+    /* FAKEMATCH(barrier): the empty asm closes the branch, so each decode
+     * sets its destination before loading its source; as plain statements, 4
+     * of 95 instructions differ in tla-en. */
+    asm("");
   }
-  Scheduler_AddOrUpdateCallback(Func_080daab0, 0x480);
+  {
+    s32 priority = 0x480;
+
+    Scheduler_AddOrUpdateCallback(Func_080daab0, priority);
+  }
   Scheduler_AddOrUpdateCallback(Func_080dacb8, 0x48f);
   MemFree(frames);
   return work;

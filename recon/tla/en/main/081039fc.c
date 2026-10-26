@@ -1,4 +1,16 @@
-// Near miss, differ 148 (2026-10-26, statements reordered).
+// Near miss, differ 38 of 1244 (2026-10-26; 148 before), instruction order
+// only. What changed, each from the twin's shape: the page row marked through
+// UiRender_MarkRow (136); Start's cue played before result = -2, so its tail
+// joins the other cancel's (the listing's jump into it); row cleared before
+// the pair entries are read and set to 1, scaled at the call, so jump.c keeps
+// the branch rather than a store-flag sequence (90; the row = 8 device is
+// gone); the message window declared in each tutorial case (60) and the saved
+// tilemap's size in a variable (52), as the twin has them; the twin's tagged
+// one-pass blocks around the cursor's stores (38). Left: about nine pairs of
+// a load or constant one slot from the native (the prologue's mode spill, the
+// cursor store at entry, the first pass's cleared element and index, the
+// tutorial's timer offsets). A greedy search of empty asm barriers lowers it
+// by 2 per barrier (four: 28), so none is kept.
 // First draft of Func_081039fc, the Djinn change preview, the twin of The
 // Broken Seal's PsynergyList_RunCompareLoop
 // (games/tbs/src/menu/menu/djinn_preview.c). mode is 0 for a trade, 1 for a
@@ -7,18 +19,15 @@
 // Func_08101a54 and keeps the window work's tilemap 8 bytes in.
 // Reached from Func_0810106c. The message names are The Broken Seal's; this
 // game's text has no symbols for them yet.
-// Differ 160 of 1244 (2026-10-25): the structure is the listing's; left are
-// instruction order and register choice (the backdrop and the result swap r6
-// and r7 in the loop, entry1 and row r7 and r8). Devices so far: the two
-// wrappers around the frame tile's copy and fill, as menu/cancel.c has them
-// (each orders the pool loads; 8 more differ without), and row set to 8
-// rather than 1 and scaled at its use (the native keeps the branch where 1
-// becomes a store-flag sequence; 44 more differ).
+// Differ 160 of 1244 (2026-10-25). Devices: the two wrappers around the frame
+// tile's copy and fill, as menu/cancel.c has them (each orders the pool
+// loads; 8 more differ without), and the tutorial's one-pass blocks.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "party_state.h"
 #include "iwram_call.h"
+#include "uiwindow.h"
 
 struct DjinnMenuBackdrop {
   u16 ids[8][10];
@@ -309,14 +318,14 @@ s32 Func_081039fc(u32 mode) {
     UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareGive, help, 128, 0);
     UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   }
+  row = 0;
   entry0 = menu->pairEntries[0];
   entry1 = menu->pairEntries[1];
-  row = 0;
   if (mode == 1)
-    row = 8;
+    row = 1;
   if ((entry0 & 0x8000) == 0)
     UiWork_SetParamNibbleFar(2);
-  Func_08101a54(help, 40, row, entry0);
+  Func_08101a54(help, 40, row * 8, entry0);
   if (mode == 0) {
     if ((entry1 & 0x8000) == 0)
       UiWork_SetParamNibbleFar(2);
@@ -338,9 +347,10 @@ s32 Func_081039fc(u32 mode) {
     repeat = gInput.repeat;
     if (backdrop->tutorialStep != 0) {
       u8 *saved;
-      s32 window;
+      s32 size;
 
-      saved = Runtime_BumpAllocateAlternatePool(0x200);
+      size = 0x200;
+      saved = Runtime_BumpAllocateAlternatePool(size);
       pressed = 0;
       repeat = 0;
       backdrop->tutorialTimer++;
@@ -357,43 +367,67 @@ s32 Func_081039fc(u32 mode) {
         break;
       case 10:
         if (backdrop->tutorialTimer == 60) {
-          Iwram_CopyWords(saved, work->tilemap, 0x200);
+          s32 window;
+
+          Iwram_CopyWords(saved, work->tilemap, size);
           window = UiText_OpenMessageWindowFar(Menu_GetDjinnGiveMessage() + 3,
                                                8, 0, 1);
-          menu->cursor->active = 1;
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+           * Broken Seal's twin has it; as a plain statement (both cases), 46 of
+           * 1244 instructions differ in tla-en rather than 38. */
+          do {
+            menu->cursor->active = 1;
+          } while (0);
           Func_080f8ab4(2, 96);
           gPartyState.eventMode = 1;
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
           UiWork_FinalizeFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, 0x200);
+          Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          menu->cursor->active = 13;
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+           * Broken Seal's twin has it; as a plain statement (both cases), 44 of
+           * 1244 instructions differ in tla-en rather than 38. */
+          do {
+            menu->cursor->active = 13;
+          } while (0);
         }
         break;
       case 11:
         if (backdrop->tutorialTimer == 60) {
-          Iwram_CopyWords(saved, work->tilemap, 0x200);
+          s32 window;
+
+          Iwram_CopyWords(saved, work->tilemap, size);
           window = UiText_OpenMessageWindowFar(Menu_GetDjinnGiveMessage() + 2,
                                                8, 0, 1);
-          menu->cursor->active = 1;
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+           * Broken Seal's twin has it; as a plain statement (both cases), 46 of
+           * 1244 instructions differ in tla-en rather than 38. */
+          do {
+            menu->cursor->active = 1;
+          } while (0);
           Func_080f8ab4(106, 56);
           gPartyState.eventMode = 1;
           while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
           UiWork_FinalizeFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, 0x200);
+          Iwram_CopyWords(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
           WaitFrames(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          menu->cursor->active = 13;
+          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+           * Broken Seal's twin has it; as a plain statement (both cases), 44 of
+           * 1244 instructions differ in tla-en rather than 38. */
+          do {
+            menu->cursor->active = 13;
+          } while (0);
         }
         break;
       }
@@ -470,7 +504,7 @@ s32 Func_081039fc(u32 mode) {
         UiWindow_SetTilemapEntryFar((s32)list, 0xf128,
                                     list->width - pageCounts[page] - 3, -1, 0);
         UiWindow_SetTilemapEntryFar((s32)list, 0xf129, list->width - 2, -1, 0);
-        work->dirty |= 2 << (list->y >> 2);
+        UiRender_MarkRow(work, list->y);
       }
     }
 
@@ -521,8 +555,8 @@ s32 Func_081039fc(u32 mode) {
       break;
     }
     if ((pressed & 8) != 0) {
-      result = -2;
       Audio_PlayCue(113);
+      result = -2;
       break;
     } else if ((pressed & 2) != 0) {
       Audio_PlayCue(113);

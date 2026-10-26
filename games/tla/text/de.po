@@ -21073,7 +21073,7 @@ msgctxt "message"
 msgid "05168"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgPriceHeading"
 msgid "05169"
 msgstr "Preis"
 
@@ -21101,11 +21101,11 @@ msgctxt "MsgNotBroken"
 msgid "05175"
 msgstr "Nicht beschädigt."
 
-msgctxt "message"
+msgctxt "MsgCannotDrop"
 msgid "05176"
 msgstr "Wichtiges Item!"
 
-msgctxt "message"
+msgctxt "MsgCannotRemove"
 msgid "05177"
 msgstr "Nicht ablegbar."
 

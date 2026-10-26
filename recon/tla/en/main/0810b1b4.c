@@ -1,3 +1,6 @@
+// 2026-10-26: read through typed structs as The Broken Seal's twin is (the
+// shop work's icons, positions, action, burst member and its 24 sparks, each
+// a 0x48-byte field effect sprite); differ unchanged at 18.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 18 of 194 in tla-en. First difference: this issues `ldr r2, [r1, #0]` earlier
 // (row 25) than the native does (row 27).
@@ -27,27 +30,11 @@ struct ShopCursor {
   s8 kind;
 };
 
-// The shop work block, as this function reads it.
-struct ShopRuntime {
-  u8 unk000[0xf8];
-  s32 partyMemberIcons[8];
-  u8 unk118[0x3c4];
-  struct ShopCursor cursor;
-  u8 unk4ec[0x1b];
-  u8 partyAction;
-};
-extern u8 gData_03001f2c[];
-
 struct Position {
   s32 x, y, z;
 };
 struct Effect_080b2f4c {
   u8 filler[0x48];
-};
-struct ShopBurstRuntime {
-  u8 unk000[0x118];
-  s16 memberX[8];
-  s16 memberZ[8];
 };
 
 u32 Random16(void);
@@ -71,85 +58,118 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_0810cf28[];
 
+struct BurstSprite {
+  s32 object;
+  s32 x, z, targetX, targetZ, originX, originZ, speed, speedMax, acceleration;
+  s32 scaleX;
+  s32 scaleY;
+  u16 heading;
+  s16 turnStepMax;
+  void *callback;
+  u16 age;
+  s16 callbackDelay;
+  s16 orbitRadius;
+  s16 orbitAngle;
+  s8 state;
+  s8 stopAtTarget;
+  s8 turnStepLimited;
+  s8 updateMotion;
+  s8 render;
+  s8 active;
+};
+
+struct BurstShop {
+  u8 unk000[0xf8];
+  s32 partyMemberIcons[8];
+  s16 partyMemberX[8];
+  s16 partyMemberY[8];
+  u8 unk138[0x4dc - 0x138];
+  struct ShopCursor cursor;
+  u8 unk4ec[0x507 - 0x4ec];
+  s8 action;
+  s8 burstMember;
+  u8 unk509[3];
+  struct BurstSprite effects[24];
+};
+
 void Func_0810b1b4(s32 member) {
-  struct ShopRuntime *shop;
-  struct ShopBurstRuntime *burst;
-  s8 savedKind;
+  struct BurstShop *shop;
+  s8 savedCursorMode;
   struct Position position;
-  struct Effect_080b2f4c *effect;
-  s32 callbackFlags;
-  s32 i;
+  struct BurstSprite *effect;
+  s32 callbackPriority;
+  s32 effectIndex;
 
   shop = Ram_HeapSlots->menuRuntime;
-  burst = (struct ShopBurstRuntime *)shop;
-  savedKind = shop->cursor.anchor->active;
-  *(u8 *)((u8 *)shop + 0x508) = 0xff;
+  savedCursorMode = shop->cursor.anchor->active;
+  shop->burstMember = -1;
   shop->cursor.anchor->active = 13;
-  Audio_PlayCue(Data_0810cf28[(s8)shop->partyAction]);
+  Audio_PlayCue(Data_0810cf28[shop->action]);
   Shop_RestoreSceneTiles(0x00202108);
-  Func_08009280((s32)shop->partyMemberIcons[member], 0);
+  Func_08009280(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  callbackFlags = 0x480;
-  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackFlags);
+  callbackPriority = 0x480;
+  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
 
-  position.x = (s32)burst->memberX[member] << 16;
-  position.z = ((s32)burst->memberZ[member] << 16) + (s32)0xfff40000;
+  position.x = shop->partyMemberX[member] << 16;
+  position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
 
-  i = 0;
-  effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x50c);
+  effectIndex = 0;
+  effect = shop->effects;
   do {
-    Func_0808a528(effect, 0x2a0, position.x, position.z);
-    Func_0808a520(effect, BattleEffect_UpdateRadialMotion);
-    Func_0808a518(effect, 7);
-    Func_08009248(*(s32 *)((u8 *)effect + 0), (Random16() * 7) >> 16);
-    *(s32 *)((u8 *)effect + 44) = 0xb333;
-    *(s32 *)((u8 *)effect + 40) = 0xb333;
+    Func_0808a528((struct Effect_080b2f4c *)effect, 0x2a0, position.x,
+                  position.z);
+    Func_0808a520((struct Effect_080b2f4c *)effect,
+                  BattleEffect_UpdateRadialMotion);
+    Func_0808a518((struct Effect_080b2f4c *)effect, 7);
+    Func_08009248(effect->object, (Random16() * 7) >> 16);
+    effect->scaleY = 0xb333;
+    effect->scaleX = 0xb333;
     WaitFrames(3);
-    if (i == 5) {
-      *(u8 *)((u8 *)shop + 0x508) = (u8)member;
+    if (effectIndex == 5) {
+      shop->burstMember = member;
     }
-    i++;
-    effect = (struct Effect_080b2f4c *)((u8 *)effect + 0x48);
-  } while (i <= 17);
+    effectIndex++;
+    effect++;
+  } while (effectIndex <= 17);
 
   AudioCommand_WaitForStateByteClear();
   {
     u8 activeMode = 2;
-    u8 *entry = (u8 *)shop + 0x54c;
-    for (i = 23; i >= 0; i--) {
+    u8 *entry = (u8 *)&shop->effects[0].state;
+    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       if (*(s8 *)(entry + 5) != 0) {
-        *(u8 *)(entry + 0) = activeMode;
+        *entry = activeMode;
       }
-      entry += 0x48;
+      entry += sizeof(struct BurstSprite);
     }
   }
 
   WaitFrames(20);
   Audio_PlayCue(126);
-  *(u8 *)((u8 *)shop + 0x508) = 0xff;
+  shop->burstMember = -1;
   Func_08009248(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
 
   {
-    u8 *flagEntry = (u8 *)shop + 0x551;
-    struct Effect_080b2f4c *entry2 =
-        (struct Effect_080b2f4c *)((u8 *)shop + 0x50c);
-    for (i = 23; i >= 0; i--) {
+    u8 *flagEntry = (u8 *)&shop->effects[0].active;
+    struct BurstSprite *effectSlot = shop->effects;
+    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       s32 flag = *flagEntry;
 
       flag <<= 24;
 
       flagEntry += 0x48;
       if (flag != 0) {
-        Func_0808a530(entry2);
+        Func_0808a530((struct Effect_080b2f4c *)effectSlot);
       }
-      entry2 = (struct Effect_080b2f4c *)((u8 *)entry2 + 0x48);
+      effectSlot++;
     }
   }
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
-  Func_08009280((s32)shop->partyMemberIcons[member], 16);
+  Func_08009280(shop->partyMemberIcons[member], 16);
   Shop_InitializeEffect();
   WaitFrames(30);
-  shop->cursor.anchor->active = savedKind;
+  shop->cursor.anchor->active = savedCursorMode;
 }

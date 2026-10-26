@@ -1,3 +1,3 @@
-anim	06 15 f1 00
-anim	00 06 03 06 06 15 f1 00
-anim	00 15 f1 00
+anim	frame 6 21, hold
+anim	frame 0 6, frame 3 6, frame 6 21, hold
+anim	frame 0 21, hold

@@ -1,4 +1,4 @@
-@ C2: svc 42 is a BIOS software interrupt.
+@ Why assembly: svc 42 is a BIOS software interrupt.
 .syntax unified
 	.thumb
 	.global Bios_SoundGetJumpList

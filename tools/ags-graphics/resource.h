@@ -13,6 +13,8 @@ Strings linesOf(const Buffer *input);
 Buffer table(const Buffer *input);
 Buffer plane(const Buffer *input);
 Buffer grid(const Buffer *input);
+Buffer tilemap(const Buffer *input, size_t *width);
+Buffer collision(const Buffer *input);
 Buffer script(const Buffer *input);
 Buffer blocks(const Buffer *input);
 Buffer imageForm(const char *input, const char *form, const Buffer *data);

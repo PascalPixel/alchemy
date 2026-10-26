@@ -177,7 +177,6 @@ s32 TreasureSpot_FindSlot(s32 id) {
   return matchingSlot;
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void TreasureSpot_ReservedNoOp(void) {}
 
 /// Gives the object of treasure spot id animation, plays sound and waits 12

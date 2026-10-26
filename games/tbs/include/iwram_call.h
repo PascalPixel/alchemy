@@ -7,7 +7,7 @@
 /// through.
 ///
 /// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device (AGENTS.md S2). Code writes `Iwram_Sqrt(value)` or
+/// compiler-steering device. Code writes `Iwram_Sqrt(value)` or
 /// `Iwram_SignedDivide(dividend, divisor)`, and the inline calls the routine at
 /// its fixed address.
 

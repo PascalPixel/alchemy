@@ -1,6 +1,0 @@
-	.section .rodata
-	.global BattleAnim_RockSpireSheet
-BattleAnim_RockSpireSheet:
-	.incbin "games/tbs/src/graphics/battle_anims/rock_spire.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/rock_spire.bitmap.lz"
-	.byte 0xa0, 0x20, 0x72	@ PACKER: left in the buffer by BattleAnim_FirePillarSheetB+0x7a1

@@ -1,7 +1,7 @@
-@ C2: IwramMulQ16ReturnIp:
+@ Why IwramMulQ16ReturnIp is assembly:
 @ Unpaired live smull halves r2/r0; add ip,#1 and bx ip return through a
 @ non-procedure-standard register.
-@ C2: IwramMulQ16:
+@ Why IwramMulQ16 is assembly:
 @ smull r2, r0, r1, r0 puts the low half in r2 and the high half in r0.
 @ mulsidi3 writes a DI register pair, RdHi = RdLo + 1, earlyclobbered and so
 @ apart from both inputs; here RdHi is r0, not r3, and is also an input. So
@@ -11,30 +11,30 @@
 @ This proves a hand-written multiply sequence, not by itself a hand-written
 @ file. The routine has no other tell: its four instructions are a frameless
 @ leaf that reuses the argument registers, as compiled code also may.
-@ C2: IwramRatioMulQ14:
+@ Why IwramRatioMulQ14 is assembly:
 @ Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
 @ multiply patterns require consecutive halves, highpart patterns discard low
 @ half.
-@ C2: IwramClearWords to IwramFillWords:
+@ Why IwramClearWords to IwramFillWords are assembly:
 @ push saves r5-r9 without lr and computed add pc enters the unrolled store
 @ body.
-@ C2: IwramSqrt:
+@ Why IwramSqrt is assembly:
 @ movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
 @ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
 @ with a shift.
 @ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
 @ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
 @ copy-and-test never has.
-@ C2: IwramExpandBitRuns:
+@ Why IwramExpandBitRuns is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-@ C2: IwramTransformVector to IwramTransformMatrix:
+@ Why IwramTransformVector to IwramTransformMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
 @ arithmetic-transformed vectors, not compiler block-copy data.
-@ C2: IwramSignedDivide to IwramUnsignedDivide:
+@ Why IwramSignedDivide to IwramUnsignedDivide are assembly:
 @ signed wrappers use unshifted movs and return through ip. The core
 @ returns quotient in r0 and remainder in r1; the remainder wrappers read
 @ that second result, a custom internal linkage.
-@ C2: IwramDecompress:
+@ Why IwramDecompress is assembly:
 @ push saves r5/r6/r7 without lr.
 .syntax unified
 	.arm

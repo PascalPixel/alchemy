@@ -12,7 +12,7 @@
 @ commands (expand.s) for wherever the copy landed.
 @
 @ Why assembly:
-@ C2: Vector_DotProduct:
+@ Why Vector_DotProduct is assembly:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
@@ -25,7 +25,7 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
-@ C2: Credits_DecodeBackground:
+@ Why Credits_DecodeBackground is assembly:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified

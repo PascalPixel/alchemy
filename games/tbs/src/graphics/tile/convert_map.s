@@ -1,6 +1,6 @@
-@ C2: Tile_ConvertMapGrid:
+@ Why Tile_ConvertMapGrid is assembly:
 @ push saves r5-r8 without lr.
-@ C2: Tile_CopyStrided:
+@ Why Tile_CopyStrided is assembly:
 @ push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm

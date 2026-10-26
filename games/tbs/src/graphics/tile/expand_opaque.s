@@ -1,4 +1,4 @@
-@ C2: push saves r5-r9/sl without lr.
+@ Why assembly: push saves r5-r9/sl without lr.
 .syntax unified
 .text
 	.arm
@@ -35,3 +35,9 @@ Tile_ExpandOpaque:
 	bne .Lline
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
+.syntax unified
+	.section .rodata,"a",%progbits
+	.arm
+	.4byte 0x00ff00ff
+	.4byte 0x0000ffff
+	.4byte 0x11111111

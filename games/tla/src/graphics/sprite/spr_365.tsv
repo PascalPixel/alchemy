@@ -1,6 +1,6 @@
-anim	00 05 f1 00
-anim	00 05 01 05 02 05 03 05 04 05 fd 00
-anim	00 05 01 05 02 05 03 05 04 05 fd 00
-anim	05 05 06 05 07 05 08 05 09 05 fd 00
-anim	0a 05 0b 05 0c 05 0d 05 0e 05 fd 00
-anim	0f 05 10 05 11 05 12 05 13 05 fd 00
+anim	frame 0 5, hold
+anim	frame 0 5, frame 1 5, frame 2 5, frame 3 5, frame 4 5, loop
+anim	frame 0 5, frame 1 5, frame 2 5, frame 3 5, frame 4 5, loop
+anim	frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 9 5, loop
+anim	frame 10 5, frame 11 5, frame 12 5, frame 13 5, frame 14 5, loop
+anim	frame 15 5, frame 16 5, frame 17 5, frame 18 5, frame 19 5, loop

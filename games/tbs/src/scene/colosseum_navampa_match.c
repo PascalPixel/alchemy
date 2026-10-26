@@ -897,7 +897,6 @@ static void EventScript_PassSouthWallOpening(void) {
   FieldObjectEvent_JumpDownLedge(*localId, 6, 0);
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 
 // XXX (no evidence): which lines this question was written for; in the

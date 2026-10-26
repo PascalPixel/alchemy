@@ -2443,7 +2443,6 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   Sound_PlaySong(SE_DOOR_CLOSE);
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The cart turns a quarter turn right around the corner it reaches.

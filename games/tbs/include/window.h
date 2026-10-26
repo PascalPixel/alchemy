@@ -85,7 +85,7 @@ STATIC_ASSERT(offsetof(struct TextPrinter, transition) == 0x1c);
 STATIC_ASSERT(offsetof(struct TextPrinter, flags) == 0x24);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
-// A statement macro (S2: a layer, 10 sites): the dirty-row store stays where it
+// A statement macro (10 sites): the dirty-row store stays where it
 // is written at every use; as a plain expression, tbs-en differs.
 #define Window_MarkTilemapRow(render, y)                                       \
   do {                                                                         \

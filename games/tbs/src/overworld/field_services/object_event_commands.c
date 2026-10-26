@@ -721,7 +721,6 @@ void ObjectEvent_DestroyById(s32 index) {
   }
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void ObjectEvent_DestroyNoOp(void) {}
 
 /// The script command "set object event sprite param": gives every sprite part
@@ -918,7 +917,6 @@ void ObjectEvent_CopyGraphics(u32 targetId, u32 sourceId) {
   sprite->image.tile = tile;
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void ObjectEvent_ReservedNoOp(void) {}
 
 /// The script command "set message": the number of the script's next message,

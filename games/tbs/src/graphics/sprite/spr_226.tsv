@@ -1,23 +1,23 @@
-anim	00 02 f1 00
-anim	00 02 fd 00
-anim	1e 06 05 06 0a 06 0f 06 14 06 19 06 fd 00
-anim	fe 01
-anim	fe 01
-anim	1e 03 05 04 0a 03 0f 03 14 04 19 03 fd 00
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
+anim	frame 0 2, hold
+anim	frame 0 2, loop
+anim	frame 30 6, frame 5 6, frame 10 6, frame 15 6, frame 20 6, frame 25 6, loop
+anim	play 1
+anim	play 1
+anim	frame 30 3, frame 5 4, frame 10 3, frame 15 3, frame 20 4, frame 25 3, loop
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1

@@ -727,7 +727,6 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-/// Nothing calls it.
 UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
 /// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.

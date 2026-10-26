@@ -1,6 +1,6 @@
-@ C2: Text_DecodeSymbol:
+@ Why Text_DecodeSymbol is assembly:
 @ rrx and conditional rrxs consume the bit reader's shift carry.
-@ C2: Message_FindArm:
+@ Why Message_FindArm is assembly:
 @ rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text

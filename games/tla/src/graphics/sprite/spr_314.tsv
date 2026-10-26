@@ -1,4 +1,4 @@
-anim	00 0b f1 00
-anim	00 0b f1 00
-anim	01 0b f1 00
-anim	02 0b f1 00
+anim	frame 0 11, hold
+anim	frame 0 11, hold
+anim	frame 1 11, hold
+anim	frame 2 11, hold

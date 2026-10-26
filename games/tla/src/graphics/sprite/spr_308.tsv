@@ -1,2 +1,2 @@
-anim	00 0b f1 00
-anim	00 09 01 09 02 09 03 09 04 09 05 09 fd 00
+anim	frame 0 11, hold
+anim	frame 0 9, frame 1 9, frame 2 9, frame 3 9, frame 4 9, frame 5 9, loop

@@ -1,4 +1,4 @@
-@ C2: Three independent ARM functions share one trailing literal pool;
+@ Why assembly: three independent ARM functions share one trailing literal pool;
 @ its references cross their boundaries, which GCC's per-function pool
 @ flushing cannot emit. Complete handwritten extent: 36 bytes
 @ (24 instruction bytes and 12 literal bytes).

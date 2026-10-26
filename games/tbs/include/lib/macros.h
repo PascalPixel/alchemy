@@ -6,7 +6,7 @@
 /// bounds.
 // The multi-part ones are comma expressions or a plain block, not
 // do { } while (0): a do-while (0) compiles differently at some of their sites
-// (see AGENTS.md, S2).
+// (games/tbs/src/MATCHING.md, "Macros and their expansions").
 
 /// Sets the x, y and z of a three-part vector: a position about to be
 /// projected, a per-frame step, a camera point or a scale.

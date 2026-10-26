@@ -157,7 +157,7 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 0xe0);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
 
 /// Restores the previous selection: page, row and return row.
-// A statement macro (S2: a layer, 4 sites): the three cursor reads stay
+// A statement macro (4 sites): the three cursor reads stay
 // together at every use; as a plain block, tbs-en differs.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \

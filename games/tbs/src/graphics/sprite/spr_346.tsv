@@ -1,1 +1,1 @@
-anim	00 08 01 08 02 08 03 08 04 08 fd 00
+anim	frame 0 8, frame 1 8, frame 2 8, frame 3 8, frame 4 8, loop

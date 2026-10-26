@@ -77,7 +77,6 @@ typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
 /// Unused: gives each map cell whose metatile number is 0xfff (a placeholder) a
 /// number of its own, counting up from 0 in map order.
-/// Nothing calls it.
 UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
   u32 *cell = (u32 *)gMapGridCellBuffer;
   u32 remaining = 128 << 7;

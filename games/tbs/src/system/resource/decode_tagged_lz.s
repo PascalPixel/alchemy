@@ -1,15 +1,15 @@
-@ C2: Decompress_TaggedLzArm:
+@ Why Decompress_TaggedLzArm is assembly:
 @ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
-@ C2: Decompress_MoveToFrontLzCommands:
+@ Why Decompress_MoveToFrontLzCommands is assembly:
 @ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
 @ relative to pc, including r11/fp as ordinary decoder state.
-@ C2: Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits:
+@ Why Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits are assembly:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
-@ C2: Resource_ExecuteTransfer:
+@ Why Resource_ExecuteTransfer is assembly:
 @ stmfd sp! saves callee-saved r5 without lr.
-@ C2: Resource_PatchThumbBranch:
+@ Why Resource_PatchThumbBranch is assembly:
 @ push saves callee-saved r5/r6 without lr; body also edits branch
 @ instructions.
 .syntax unified

@@ -224,7 +224,7 @@ extern struct SaveBlock gSaveBlock;
 #endif
 
 /// Sets the battle type.
-// A statement macro (S2: a layer, 34 sites): written as one, its store stays in
+// A statement macro (34 sites): written as one, its store stays in
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \

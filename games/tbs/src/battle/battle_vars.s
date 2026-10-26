@@ -31,5 +31,9 @@ gBattleTransition_CurtainVariants:
 	.global gBattleTransition_CurtainTiles
 gBattleTransition_CurtainTiles:
 	.incbin "games/tbs/src/battle/presentation/curtain.4bpp"
-	.include "games/tbs/src/battle/presentation/highlight_ramp.s"
+@ BLDY values, the same in both games.
+	.global gBattleHighlight_BlendRamp
+gBattleHighlight_BlendRamp:
+	.byte 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+	.byte 4, 6, 7, 8, 8, 8, 8, 8, 4, 2, 1, 0, 0, 0, 0, 0
 	.4byte 1, 27

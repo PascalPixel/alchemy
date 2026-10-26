@@ -350,149 +350,108 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 // are alike, on one web, and keep their numbers 1 to 9 in the order of their
 // coord events and landing warp destinations, 21 to 29.
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon1(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon2(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 65, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon3(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 66, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon4(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 67, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon5(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 68, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon6(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 69, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon7(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 70, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon8(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 71, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnSecondFloorCocoon9(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 72, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnThirdFloorWestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 73, 35,
                          TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnThirdFloorEastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 74, 35,
                          TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorCenterCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN, 79, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorNorthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 75,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorNorthCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN, 76, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorNortheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 77,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorWestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN, 78, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorEastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN, 80, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below. Cocoon 56 lands at the same spot as cocoon 54: their warp
+/// Cocoon 56 lands at the same spot as cocoon 54: their warp
 /// destinations agree.
 static void EventScript_StepOnFifthFloorSouthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorSouthCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN, 82, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorSoutheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 83,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
 }
 
-/// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below.
 static void EventScript_StepOnFifthFloorFarSoutheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN,
                          84, 35,

@@ -1,4 +1,4 @@
-@ C2: Thumb entry switches to ARM within its body; mixed-mode blocks also use
+@ Why assembly: Thumb entry switches to ARM within its body; mixed-mode blocks also use
 @ fp as a volume accumulator.
 .syntax unified
 	.thumb

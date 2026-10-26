@@ -1511,7 +1511,6 @@ void ItemMenu_RefreshMember(s32 memberId, s32 mode) {
     Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
-/// Nothing calls it.
 UNUSED void ItemMenu_NoOp(void) {}
 
 /// Shows in the status panel what the item in member's inventory slot would
@@ -2838,10 +2837,8 @@ s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
   return 1;
 }
 
-/// Nothing calls it.
 UNUSED s32 ItemMenu_ItemNamePageReturnTrue(void) { return 1; }
 
-/// Nothing calls it.
 UNUSED void ItemMenu_ItemNamePageNoOp(void) {}
 
 /// The item list of the member in sideIndex (0: the holder, 1: the receiver of

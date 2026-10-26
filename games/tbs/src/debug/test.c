@@ -221,7 +221,6 @@ static void MenuTest_RunMessageTest(void) {
 /// equipment and afflicted members (Shop_OpenDebugShop).
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void MenuTest_NoOp(void) {}
 
 /// Opens the shop inventory selector and discards its selected member and slot.

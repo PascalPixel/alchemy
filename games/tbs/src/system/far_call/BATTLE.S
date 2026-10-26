@@ -1,6 +1,4 @@
 @ Battle state, unit motion and presentation services.
-@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
-@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_BattleTable
 FarCall_BattleTable:

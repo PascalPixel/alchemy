@@ -1,15 +1,15 @@
-@ C2: System_Entry:
+@ Why System_Entry is assembly:
 @ msr CPSR_fc selects IRQ and system modes before their stack setup.
-@ C2: IwramSoundReverbCodes:
+@ Why IwramSoundReverbCodes is assembly:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
 @ pointer.
-@ C2: IwramCodeRecord1:
+@ Why IwramCodeRecord1 is assembly:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
 @ pointer.
-@ C2: IwramCodeRecord2:
+@ Why IwramCodeRecord2 is assembly:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
 @ pointer.
-@ C2: IwramSoundReverbCodesEnd:
+@ Why IwramSoundReverbCodesEnd is assembly:
 @ this unused packed-sample arithmetic suffix uses fp (r11) as an
 @ arithmetic and rotate operand, not a frame pointer.
 @ The final 152-byte reverb code begins in the preceding object with

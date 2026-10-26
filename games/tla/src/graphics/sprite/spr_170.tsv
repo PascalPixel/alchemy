@@ -1,5 +1,5 @@
-anim	00 09 f1 00
-anim	f0 11 00 24 01 24 02 24 fd 00
-anim	00 09 f1 00
-anim	00 09 f1 00
-anim	00 09 f1 00
+anim	frame 0 9, hold
+anim	kind 17, frame 0 36, frame 1 36, frame 2 36, loop
+anim	frame 0 9, hold
+anim	frame 0 9, hold
+anim	frame 0 9, hold

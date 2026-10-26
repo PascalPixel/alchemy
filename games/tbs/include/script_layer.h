@@ -8,7 +8,7 @@
 /// rest), whose declarations it includes.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
-/// layer, not a compiler-steering device (AGENTS.md S2). The script.h commands
+/// layer, not a compiler-steering device. The script.h commands
 /// and field_service.h are written over it. A map's script reads
 /// `SCRIPT_START(); ObjectEvent_Stop(9); OBJECT_FACE(9, LOCALID_PARTY_LEADER,
 /// 0); SCRIPT_END();`.

@@ -227,6 +227,39 @@ graphics(void)
 	RUN("graphics", true, "redrawn.png", "redrawn.4bpp16x16");
 	Buffer redrawn = readFile("redrawn.4bpp16x16");
 	equal(&tiles, &redrawn, "redrawing preserves the tile stream");
+	textFile("list.tsv", "TILES\t4bpp\n");
+	RUN("graphics", true, "list.tsv", "list.parts");
+	Buffer listed = readFile("list.parts"),
+		   rules = readFile("list.parts.d");
+	equal(&tiles, &listed, "a part list writes its parts in turn");
+	check(!strcmp((char *) rules.data, "list.parts: tiles.png\ntiles.png:\n"),
+		  "a part list names its parts as prerequisites");
+	check(!exists("tiles.4bpp.d"), "a single source needs no dependency file");
+	free(listed.data);
+	free(rules.data);
+	Buffer frameRun = {0};
+	for (unsigned frame = 0; frame < 2; frame++)
+	{
+		Image picture = {.width = frame + 1, .height = 2, .depth = 8};
+		for (unsigned i = 0; i < 256; i++)
+			for (unsigned c = 0; c < 3; c++)
+				byte(&picture.palette, i);
+		for (unsigned i = 0; i < picture.width * 2; i++)
+			byte(&picture.pixels, frame * 16 + i);
+		append(&frameRun, picture.pixels.data, picture.pixels.len);
+		Buffer framePng = writeImage(&picture);
+		char *name = formatString("run_%02u.png", frame);
+		writeFile(name, &framePng);
+		free(name);
+		free(framePng.data);
+		freeImage(&picture);
+	}
+	RUN("graphics", true, "run_00.png", "run.bitmaps");
+	Buffer frames = readFile("run.bitmaps");
+	equal(&frameRun, &frames, "a frame run writes each frame's pixels in turn");
+	RUN("graphics", false, "run_01.png", "run.bitmaps");
+	free(frames.data);
+	free(frameRun.data);
 	textFile("map.tsv", "cell:u8\tgrid:2x3\tat:0,0\tfill:ff\n01 02\n\n03 04\n");
 	RUN("graphics", true, "map.tsv", "map.plane");
 	Buffer plane = readFile("map.plane");
@@ -240,6 +273,29 @@ graphics(void)
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, metatiles");
 	free(grid.data);
+	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
+	RUN("graphics", true, "screen.txt", "screen.tilemap");
+	Buffer screen = readFile("screen.tilemap");
+	uint8_t screenBytes[] = {0x80, 0xe0, 0xff, 0xe7, 1, 0xe8, 2, 0xec};
+	Buffer screenReference = {screenBytes, sizeof(screenBytes), 0};
+	equal(&screen, &screenReference, "a tile map writes tile, flips, palette");
+	free(screen.data);
+	textFile("ragged.txt", "palette:0\n1 2\n3\n");
+	RUN("graphics", false, "ragged.txt", "ragged.tilemap");
+	textFile("walls.txt", "0123 4567\n89ab cdef\n0000 1111\n2222 3333\n\n"
+						  "ffff ffff\nffff ffff\nffff ffff\nffff ffff\n");
+	RUN("graphics", true, "walls.txt", "walls.collision");
+	Buffer walls = readFile("walls.collision");
+	check(walls.len == 32, "four collision tiles of eight bytes");
+	uint8_t wallBytes[] = {0x10, 0x32, 0x98, 0xba, 0, 0, 0x22, 0x22,
+						   0x54, 0x76, 0xdc, 0xfe, 0x11, 0x11, 0x33, 0x33};
+	Buffer wallReference = {wallBytes, sizeof(wallBytes), 0};
+	walls.len = sizeof(wallBytes);
+	equal(&walls, &wallReference,
+		  "collision tiles run across, rows down, left value low");
+	free(walls.data);
+	textFile("short.txt", "0123\n0123\n0123\n");
+	RUN("graphics", false, "short.txt", "short.collision");
 	textFile("records.tsv", "kind:u8\tvalue:u16\tname\n1\t0x203\tQuake\n2\t4\tSpire\n");
 	RUN("graphics", true, "records.tsv", "records.table");
 	Buffer records = readFile("records.table");
@@ -331,6 +387,41 @@ tileLayouts(void)
 			free(form);
 			free(output);
 		}
+}
+
+/* Sprite animations are named commands; each packs as a command byte and its
+ * argument, with a jump counted in commands and written as a byte offset. */
+static void
+spriteAnimations(void)
+{
+	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
+						 "adjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n"
+						 "Walker\t8\t8\t0x100\t0\t0\t0\t0\t0\t0\t-\tWalker\n");
+	textFile("Walker.tsv",
+			 "anim\tframe 3 6, wait 2, kind 17, jump 1\n"
+			 "anim\tblank 4, command 242 10, play 0, hold 1, end\n"
+			 "anim\tframe 0 1, loop\n");
+	RUN("graphics", true, "bank.tsv", "bank.sprites");
+	Buffer bank = readFile("bank.sprites");
+	const char *scripts[] = {
+		"Sprite_Walker_Animation0:\n"
+		"\t.byte 0x03, 0x06, 0xf5, 0x02, 0xf0, 0x11, 0xfd, 0x02\n",
+		"Sprite_Walker_Animation1:\n"
+		"\t.byte 0xff, 0x04, 0xf2, 0x0a, 0xfe, 0x00, 0xf1, 0x01, 0xef, 0x00\n",
+		"Sprite_Walker_Animation2:\n\t.byte 0x00, 0x01, 0xfd, 0x00\n"};
+	for (size_t i = 0; i < sizeof(scripts) / sizeof(*scripts); i++)
+		check(strstr((char *) bank.data, scripts[i]) != NULL,
+			  "animation commands pack as command and argument bytes");
+	free(bank.data);
+	const char *rejected[] = {"anim\tframe 0 1, jump 0\n",
+							  "anim\tframe 0 1, jump 2\n",
+							  "anim\tframe 239 1\n", "anim\tcommand 253 0\n",
+							  "anim\tframe 0\n", "anim\tplay\n"};
+	for (size_t i = 0; i < sizeof(rejected) / sizeof(*rejected); i++)
+	{
+		textFile("Walker.tsv", rejected[i]);
+		RUN("graphics", false, "bank.tsv", "bank.sprites");
+	}
 }
 
 static void
@@ -583,6 +674,8 @@ buildFiles(void)
 	check(strstr((char *) deps.data,
 				 "out/obj/a.o: a.h b.h out/text/messages.inc") != NULL,
 		  "include cycles terminate and generated dependencies remain");
+	check(strstr((char *) deps.data, "DEPENDENCIES := a.h b.h\n") != NULL,
+		  "the scan lists the sources it found, not generated files");
 	free(deps.data);
 	textFile("cycle.c", "#include \"b.h\"\n");
 	textFile("extra.h", "");
@@ -733,6 +826,7 @@ main(int argc, char **argv)
 	assembly();
 	graphics();
 	tileLayouts();
+	spriteAnimations();
 	audio();
 	music();
 	catalog();

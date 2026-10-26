@@ -199,7 +199,6 @@ static void EventScript_PushWestPillar(void) {
   FieldScript_End();
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 
 /// Unused: a second empty function nothing calls.

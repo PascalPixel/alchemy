@@ -1,5 +1,5 @@
-anim	ff 64 f1 00
-anim	00 04 01 04 02 04 03 0e 04 05 05 05 06 05 fe 00
-anim	00 5a fe 00
-anim	03 5a fd 00
-anim	06 06 fd 00
+anim	blank 100, hold
+anim	frame 0 4, frame 1 4, frame 2 4, frame 3 14, frame 4 5, frame 5 5, frame 6 5, play 0
+anim	frame 0 90, play 0
+anim	frame 3 90, loop
+anim	frame 6 6, loop

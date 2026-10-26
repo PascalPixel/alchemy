@@ -7,7 +7,7 @@
 /// (ObjectEvent_Jump calls ObjectMotion_Launch).
 ///
 /// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device (AGENTS.md S2). A map writes
+/// compiler-steering device. A map writes
 /// `ObjectEvent_Jump(LOCALID_VENUS_DJINNI, 4, 30);` and the inline makes the
 /// call.
 

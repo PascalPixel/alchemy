@@ -1,6 +1,6 @@
-@ C2: Render_DecodeFrame:
+@ Why Render_DecodeFrame is assembly:
 @ Computed add pc dispatch into code; a later block saves r5-r9 without lr.
-@ C2: TileMap_DrawRows:
+@ Why TileMap_DrawRows is assembly:
 @ r4 (0xffa00038) is at once two packed loop counters and an AND mask.
 @ subs r4, r4, #0x01000000 / bpl counts the inner loop in its top byte, reset
 @ by add r4, r4, #0x1e000000; sub r4, r4, #0x10000 with tst r4, #0x70000 and
@@ -8,7 +8,7 @@
 @ and sl, r4, r8, lsr #20 uses the same register as the mask, of which only
 @ the low 0x38 can meet the 12 shifted bits. A compiler keeps two counters
 @ and a constant mask as separate values.
-@ C2: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a frame.
+@ Why assembly: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a frame.
 .syntax unified
 	.arm
 	.global Render_DecodeFrame

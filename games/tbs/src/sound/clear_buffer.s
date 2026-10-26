@@ -1,12 +1,12 @@
-@ C2: SoundMainBTM:
+@ Why SoundMainBTM is assembly:
 @ Four stmia r0! of zero registers have no paired load/copy; r4 is saved
 @ through ip.
-@ C2: RealClearChain to ply_fine:
+@ Why RealClearChain to ply_fine are assembly:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: RealClearChain,
 @ with ply_fine after it). Credited on library provenance, not on a
 @ handwritten-instruction claim: both routines are ordinary Thumb, and neither
 @ carries an instruction-level tell.
-@ C2: MPlayJumpTableCopy to ply_port:
+@ Why MPlayJumpTableCopy to ply_port are assembly:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: ply_pend and the
 @ command family around it). ply_pend is ordinary Thumb, credited on library
 @ provenance, not on a handwritten-instruction claim.
@@ -17,33 +17,33 @@
 @ r3 and preserves r0 with push {r0} / pop {r0}. The names are pret's; pret
 @ leaves ld_r3_tp_adr_i's second entry, ld_r3_tp_adr_i_r2 (ply_port enters it
 @ with the address already in r2), unnamed.
-@ C2: m4aSoundVSync to call_r3:
+@ Why m4aSoundVSync to call_r3 are assembly:
 @ DMA timer branches on carry from lsls; MPlayMain's library
 @ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
 @ module.
-@ C2: TrackStop:
+@ Why TrackStop is assembly:
 @ Nintendo MusicPlayer2000 TrackStop, checked against pret's public
 @ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
 @ handwritten game code.
-@ C2: ChnVolSetAsm:
+@ Why ChnVolSetAsm is assembly:
 @ Caller supplies the channel in r4 and track in r5; the routine reads them
 @ without an argument move or save. Equivalent Nintendo MusicPlayer2000
 @ ChnVolSetAsm is public in pret m4a_1.s.
-@ C2: ply_note:
+@ Why ply_note is assembly:
 @ Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
 @ The frame and r8-r11 save/restore match the library; this is library
 @ provenance rather than a handwritten game-code assertion.
-@ C2: ply_endtie:
+@ Why ply_endtie is assembly:
 @ push saves r4/r5 without lr; Nintendo library ply_endtie.
-@ C2: clear_modM:
+@ Why clear_modM is assembly:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: clear_modM).
 @ Credited on library provenance, not on a handwritten-instruction claim:
 @ the routine is ordinary Thumb, and it is the only one in this file.
-@ C2: ld_r3_tp_adr_i_unchecked:
+@ Why ld_r3_tp_adr_i_unchecked is assembly:
 @ MusicPlayer2000's ld_r3_tp_adr_i_unchecked takes track in r1 and returns
 @ the decoded byte in r3 while updating r2/r3, rather than a standard r0
 @ return.
-@ C2: ply_lfos to ply_mod:
+@ Why ply_lfos to ply_mod are assembly:
 @ Both nested-call entries return through ip saved from lr rather than a
 @ procedure-standard return.
 .syntax unified

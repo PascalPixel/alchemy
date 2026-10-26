@@ -386,7 +386,6 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
 /// in WindowWork.textBuffer.
-/// Nothing calls it.
 UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
                                            const struct Window *window,
                                            s32 offsetX, s32 offsetY) {

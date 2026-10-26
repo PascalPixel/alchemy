@@ -1,4 +1,4 @@
-@ C2: smull r12, r0, r1, r0 and both smlal r12, r0, r2, r3 keep the 64-bit sum
+@ Why assembly: smull r12, r0, r1, r0 and both smlal r12, r0, r2, r3 keep the 64-bit sum
 @ with its low half in r12 and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
 @ and so apart from the inputs; a pair whose low half is r12 would put its

@@ -1,7 +1,7 @@
-@ C2: IwramSoundRenderFrame to IwramSoundSynthWave:
+@ Why IwramSoundRenderFrame to IwramSoundSynthWave are assembly:
 @ Sound synthesis uses fp as packed volume/sample arithmetic and writes
 @ computed mixed words with stmia r5! without a matching block-copy source.
-@ C2: IwramCopyWords:
+@ Why IwramCopyWords is assembly:
 @ Computed add pc enters the unrolled copy body; r5-r9 are saved without
 @ lr.
 .syntax unified

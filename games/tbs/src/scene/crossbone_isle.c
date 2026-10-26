@@ -230,7 +230,6 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 const struct MapWarpDest *Scene_GetWarpDests(void) {

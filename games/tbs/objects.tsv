@@ -8,9 +8,7 @@ main	iwram_runtime	games/tbs/src/system/runtime
 main	iwram_runtime	games/tbs/src/system/runtime_irq_table
 main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip	.text .data .text.runtime_divide
 main	iwram_runtime	games/tbs/src/system/sound_mixer
-main	iwram_runtime	games/tbs/src/system/sound_mixer_state
 main	iwram_runtime	games/tbs/src/system/sound_mixer_interpolate	.text .data .text.sound_mixer_channel
-main	iwram_runtime	games/tbs/src/system/sound_mixer_mask
 main	iwram_runtime	games/tbs/src/system/sound_mixer_render	.text .data .text.runtime_copy_words
 main	iwram	games/tbs/src/system/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz
@@ -61,9 +59,7 @@ main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/window/glyph_arm	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
-main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
-main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/window/window	.text
 main	rom_main_02	games/tbs/src/window/screens	.text
 main	rom_main_02	games/tbs/src/window/slider	.rodata
@@ -75,7 +71,6 @@ main	rom_main_02	games/tbs/src/graphics/font/text	.rodata
 main	rom_main_02	games/tbs/src/window/articles	.rodata
 main	rom_main_02	games/tbs/src/window/cursor	.rodata
 main	rom_main_02	games/tbs/src/window/scales	.rodata
-main	rom_main_02	games/tbs/src/window/cursor_frame	.rodata
 main	rom_main_02	games/tbs/src/window/windata	.rodata
 main	rom_main_02	games/tbs/text/messages	.rodata
 main	rom_main_02	games/tbs/src/graphics/text/genders	.rodata	en de es fr it
@@ -124,7 +119,6 @@ main	rom_main_07	games/tbs/src/battle/battle
 main	rom_main_07	games/tbs/src/battle/battle_data
 main	rom_main_07	games/tbs/src/battle/ability_staging
 main	rom_main_07	games/tbs/src/battle/battle_data_tail
-main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/debug_presets
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_07	games/tbs/src/battle/formations

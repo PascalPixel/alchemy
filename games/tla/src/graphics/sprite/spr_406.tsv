@@ -1,8 +1,8 @@
-anim	00 07 f1 00
-anim	00 29 f1 00
-anim	01 0e f1 00
-anim	02 1f f1 02
-anim	03 1f f1 00
-anim	04 1f f1 02
-anim	05 1f f1 00
-anim	06 07 f1 00
+anim	frame 0 7, hold
+anim	frame 0 41, hold
+anim	frame 1 14, hold
+anim	frame 2 31, hold 2
+anim	frame 3 31, hold
+anim	frame 4 31, hold 2
+anim	frame 5 31, hold
+anim	frame 6 7, hold

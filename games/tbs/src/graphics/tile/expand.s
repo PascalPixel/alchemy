@@ -5,7 +5,7 @@
 @ r5 value, r11 the mask 7) and have no frames of their own.
 @
 @ Why assembly:
-@ C2: Credits_DecodeBackgroundRead:
+@ Why Credits_DecodeBackgroundRead is assembly:
 @ Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
 @ fp as a mask. ldr pc jumps into those commands, below in this file
 @ and in its .text.battle_effect_expand_commands section.
@@ -15,7 +15,7 @@
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next
 @ object.
-@ C2: Credits_DecodeBackgroundCase2 to Credits_DecodeBackgroundCase10:
+@ Why Credits_DecodeBackgroundCase2 to Credits_DecodeBackgroundCase10 are assembly:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified

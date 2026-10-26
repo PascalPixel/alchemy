@@ -1,7 +1,7 @@
-anim	00 0a f1 00
-anim	00 5b 03 09 00 88 03 0b 00 79 03 09 00 78 09 b4 00 1e fd 00
-anim	0f 07 12 07 15 07 18 07 1b 07 1e 07 fd 00
-anim	06 15 fe 01
-anim	00 06 09 08 00 06 0c 08 00 06 09 08 00 06 0c 08 00 0b fe 01
-anim	f0 11 21 14 22 0a 21 09 22 0a 21 0f 22 0a 21 09 22 0a fd 00
-anim	f0 11 f3 fd f2 0c 23 08 24 0a 25 08 24 0a fd 00
+anim	frame 0 10, hold
+anim	frame 0 91, frame 3 9, frame 0 136, frame 3 11, frame 0 121, frame 3 9, frame 0 120, frame 9 180, frame 0 30, loop
+anim	frame 15 7, frame 18 7, frame 21 7, frame 24 7, frame 27 7, frame 30 7, loop
+anim	frame 6 21, play 1
+anim	frame 0 6, frame 9 8, frame 0 6, frame 12 8, frame 0 6, frame 9 8, frame 0 6, frame 12 8, frame 0 11, play 1
+anim	kind 17, frame 33 20, frame 34 10, frame 33 9, frame 34 10, frame 33 15, frame 34 10, frame 33 9, frame 34 10, loop
+anim	kind 17, command 243 253, command 242 12, frame 35 8, frame 36 10, frame 37 8, frame 36 10, loop

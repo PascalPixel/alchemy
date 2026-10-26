@@ -128,7 +128,6 @@ void FieldScript_End(void) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Unused: an empty function nothing calls.
 UNUSED void FieldScript_NoOpHookA(void) {}
 
 /// An empty hook; it does nothing in the released game. Only

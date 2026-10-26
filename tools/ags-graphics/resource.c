@@ -53,6 +53,7 @@ dataForm(const char *form)
 {
 	return !strncmp(form, "delta", 5) || !strcmp(form, "table") ||
 		   !strcmp(form, "plane") || !strcmp(form, "grid") || !strcmp(form, "parts") ||
+		   !strcmp(form, "tilemap") || !strcmp(form, "collision") ||
 		   !strcmp(form, "icons4") || !strcmp(form, "blocks") ||
 		   !strcmp(form, "script") || !strcmp(form, "sprites") ||
 		   !strcmp(form, "spriteblocks");
@@ -79,12 +80,13 @@ parts(const char *input, const Buffer *data, unsigned depth)
 		if (f.len < 2)
 			fail("part needs a name and form");
 		const char *form = f.items[1];
+		bool map = !strcmp(form, "tilemap");
 		if ((dataForm(form) && strcmp(form, "table") &&
-			 strcmp(form, "plane")) ||
+			 strcmp(form, "plane") && !map) ||
 			!strcmp(form, "font"))
-			fail("part must be an image or table");
-		char *name = formatString("%s.%s", f.items[0],
-								  dataForm(form) ? "tsv" : "png"),
+			fail("part must be an image, table or tile map");
+		const char *ext = map ? "txt" : dataForm(form) ? "tsv" : "png";
+		char *name = formatString("%s.%s", f.items[0], ext),
 			 *path = sibling(input, name);
 		free(name);
 		Buffer part = f.len == 2 ? buildResource(path, form, NULL, depth + 1)
@@ -95,6 +97,34 @@ parts(const char *input, const Buffer *data, unsigned depth)
 		freeStrings(&f);
 	}
 	freeStrings(&lines);
+	return out;
+}
+
+/*
+ * A run of frames, NAME_00.png, NAME_01.png and on: each frame's pixels in
+ * turn, for an animation whose frames differ in size and so share no sheet.
+ */
+static Buffer
+frameRun(const char *input)
+{
+	size_t stem = strlen(input);
+	if (stem < 7 || strcmp(input + stem - 7, "_00.png"))
+		fail("a frame run starts at NAME_00.png");
+	stem -= 7;
+	Buffer out = {0};
+	for (unsigned i = 0; i < 100; i++)
+	{
+		char *path = formatString("%.*s_%02u.png", (int) stem, input, i);
+		if (!exists(path))
+		{
+			free(path);
+			break;
+		}
+		Image image = readImageFile(path);
+		append(&out, image.pixels.data, image.pixels.len);
+		freeImage(&image);
+		free(path);
+	}
 	return out;
 }
 
@@ -206,6 +236,10 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = plane(&data);
 	else if (!strcmp(form, "grid"))
 		raw = grid(&data);
+	else if (!strcmp(form, "tilemap"))
+		raw = tilemap(&data, NULL);
+	else if (!strcmp(form, "collision"))
+		raw = collision(&data);
 	else if (!strcmp(form, "script"))
 		raw = script(&data);
 	else if (!strcmp(form, "blocks"))
@@ -214,6 +248,8 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = parts(input, &data, depth);
 	else if (!strcmp(form, "icons4"))
 		raw = iconBank(input, &data);
+	else if (!strcmp(form, "bitmaps"))
+		raw = frameRun(input);
 	else if (!strcmp(form, "sprites") || !strcmp(form, "spriteblocks"))
 		raw = spriteSource(input, !strcmp(form, "spriteblocks"));
 	else if (!strncmp(form, "delta", 5))
@@ -234,7 +270,12 @@ buildResource(const char *input, const char *form, const char *codec,
 		out = compressHalfwords(&raw);
 	else
 	{
-		Buffer pack = patched(input, &raw);
+		/* A frame run's patch is NAME_patch.tsv, not NAME_00's. */
+		char *name = !strcmp(form, "bitmaps")
+						 ? formatString("%.*s.png", (int) (strlen(input) - 7), input)
+						 : copyString(input);
+		Buffer pack = patched(name, &raw);
+		free(name);
 		out = compressLz(&raw, &pack, codec, packer);
 		free(pack.data);
 	}

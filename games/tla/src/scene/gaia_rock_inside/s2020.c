@@ -1,12 +1,3 @@
-// Draft of overlay 681's Func_02002020, translated from its listing: differ 6
-// of 228. Left: instruction order around
-//   movs r0, #1
-//   bl
-//   + movs r3, #150
-//   - movs r3, #44
-//   adds r5, #1
-// (- the listing, + this draft). Tried: Call, Value and direct forms of each
-// call, empty asms and one-pass blocks between statements.
 #include "types.h"
 #include "party_state.h"
 #include "call.h"
@@ -96,20 +87,13 @@ L_0200a10a:
   v_r6 = v_r7;
   v_r6 = (v_r6 + 86);
   v_r5 = 0;
-  if (FIELD_AT(v_r6, u8, 0) == 0)
-    goto L_0200a18a;
-L_0200a166:
-  t34 = Value0((s32 (*)())Random16Far);
-  FIELD_AT(v_r7, s32, 40) = t34;
-  t35 = Value0((s32 (*)())Random16Far);
-  FIELD_AT(v_r8, s32, 40) = t35;
-  Call1((void (*)())WaitFrames, 1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 0x12b)
-    goto L_0200a18a;
-  if (FIELD_AT(v_r6, u8, 0) != 0)
-    goto L_0200a166;
-L_0200a18a:
+  for (; v_r5 < 300 && FIELD_AT(v_r6, u8, 0) != 0; v_r5++) {
+    t34 = Value0((s32 (*)())Random16Far);
+    FIELD_AT(v_r7, s32, 40) = t34;
+    t35 = Value0((s32 (*)())Random16Far);
+    FIELD_AT(v_r8, s32, 40) = t35;
+    Call1((void (*)())WaitFrames, 1);
+  }
   v_r5 = 9;
 L_0200a18c:
   t37 = Value0((s32 (*)())Random16Far);

@@ -75,7 +75,9 @@ void Func_02001db8(struct PushEvent *event) {
     object->y += -0x9999;
     WaitFrames(1);
   }
-  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  do {
+    Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  } while (0);
   event->busy = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

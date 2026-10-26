@@ -55,7 +55,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s1f68.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1f84.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1fa0.o"(.text)
-        "*/resource_681_overlay.o"(.text.x0200a020)
+        "*/games/tla/src/scene/gaia_rock_inside/s2020.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s225c.o"(.text)
         "*/resource_681_overlay.o"(.text.x0200a974)
         "*/games/tla/src/scene/gaia_rock_inside/s2a14.o"(.text)

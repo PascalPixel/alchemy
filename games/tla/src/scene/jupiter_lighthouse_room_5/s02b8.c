@@ -1,17 +1,3 @@
-// Draft, differ 30 of 395: Jupiter Lighthouse room 5's event when the leader
-// stands on cell (42, 41): sets flag 2560, turns the leader (Func_02002940),
-// plays its hooks and sounds 220 and 178, starts the spark ring from above the
-// leader to (680, 0, 574) (Func_02001718) and a pulse callback (Func_02000294)
-// that quickens over 20 steps, sounds 390 and 144 with the screen shaking,
-// objects 23 and 24 brought in on their action scripts, flashes, the room's
-// cells copied open (Func_02002860) and Func_02000d80(2); then the callbacks
-// stop, objects 13 to 16 rise 2 pixels a frame for 16 frames, take their next
-// state (Func_02000e04) and sound 80 plays. The shake, flash and cell-copy
-// calls go through the call layer (CSE shared 0x10000 across them), and the
-// quickening pulse and the final rise are goto loops (the native builds the
-// pulse's address, its zero and 0x20000 again on every pass). Left: the pulse's
-// address and the zero kept from its first pass swap high registers (the native
-// has the address in r9 and the zero in r11).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -66,8 +52,18 @@ static __inline__ void Bring(s32 id) {
   ObjectMotion_EnableActionAndSetCallback(id, gData_02002f70);
 }
 
+/// The event when the leader stands on cell (42, 41): sets flag 2560, turns the
+/// leader (Func_02002940), plays its hooks and sounds 220 and 178, starts the
+/// spark ring from above the leader to (680, 0, 574) (Func_02001718) and a
+/// pulse callback (Func_02000294) that quickens over 20 steps, sounds 390 and
+/// 144 with the screen shaking, objects 23 and 24 brought in on their action
+/// scripts, flashes, the room's cells copied open (Func_02002860) and
+/// Func_02000d80(2); then the callbacks stop, objects 13 to 16 rise 2 pixels a
+/// frame for 16 frames, take their next state (Func_02000e04) and sound 80
+/// plays.
 void Func_020002b8(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  u32 pulseState;
   struct ObjectRuntime *a = Object_GetById(13);
   struct ObjectRuntime *b = Object_GetById(14);
   struct ObjectRuntime *c = Object_GetById(15);
@@ -81,6 +77,10 @@ void Func_020002b8(void) {
   GameFlag_SetBit(2560);
   Func_020029a8(0);
   Func_02002940(gPartyState.currentOwner, 0xc000);
+  /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
+   * register spans the quickening loop and the pulse's address and zero take
+   * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
+  pulseState = 3;
   FieldEvent_WaitFrames(30);
   leader->update = Func_02000120;
   FieldEvent_WaitFrames(30);
@@ -114,7 +114,7 @@ quicken:
   gData_02003274 = 1;
   FieldEvent_WaitFrames(90);
   Call3((void (*)())Func_02002870, 0x30000, 0x30000, 0x10000);
-  gData_02003274 = 3;
+  gData_02003274 = pulseState;
   gData_02003278 = 0;
   FieldEvent_WaitFrames(40);
   Bring(23);

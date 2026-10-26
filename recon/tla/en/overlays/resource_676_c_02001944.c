@@ -1,14 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 30 of 367; left: as recorded
-// below (the wait loop's address recomputed in the native is the same GCSE
-// hoist as overlay 698's landing burst).
-// Draft, differ 30 of 367: a scene in Yallam (message MsgHereLetMe on): actors
+// Draft, differ 16 of 367: a scene in Yallam (message MsgHereLetMe on): actors
 // 9 and 10 run off, actor 5 walks to the controlled character, the party is
 // placed, Func_02001688 is scheduled and actor 8 is walked through three steps
 // (its action count reaching 34, 42 and 108, its phase 1, 2 and 3), then actor
 // 8 asks a yes-or-no question: yes runs Func_02001d14, no fades out and plays
-// cue 123. Left: the native computes the action field's address in r6 inside
-// the first wait loop and keeps the phase field's address in r5; this draft
-// computes both before the loop and swaps them.
+// cue 123. The first wait reads the action count through a pointer taken
+// before the leader is fetched (30 read from actor): it gives the action
+// field's address r6 as the native has it. Left: the native computes that
+// address inside the first wait loop (the GCSE hoist seen in overlay 698's
+// landing burst) and orders a few loads around it differently.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -66,6 +65,7 @@ void Func_02001944(void) {
   struct ObjectRuntime *actor =
       (struct ObjectRuntime *)Value1(Object_GetById, 8);
   struct ObjectRuntime *leader;
+  s16 *count;
   Call1(Func_02002520, MsgHereLetMe);
   Call2(Func_02002538, 8, 0);
   Call1(ObjectMotion_EnableActionAndResetMotion, 9);
@@ -105,6 +105,7 @@ void Func_02001944(void) {
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
   Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
   Call2(Object_SetModeById, 5, 2);
+  count = &actor->action;
   leader =
       (struct ObjectRuntime *)Value1(Object_GetById, gPartyState.currentOwner);
   if (leader != 0)
@@ -136,7 +137,7 @@ void Func_02001944(void) {
   actor->unk66 = 1;
 wait1:
   Call1(WaitFrames, 1);
-  if (actor->action != 34)
+  if (*count != 34)
     goto wait1;
   actor->unk66 = 2;
   Call1(WaitFrames, 1);

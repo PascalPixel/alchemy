@@ -1,14 +1,15 @@
-// Near miss: differ 14 (listing 83 instructions, draft 83). In the copy loop
-// the native reloads the colour table's address from the pool and indexes it
-// by an offset that starts at 4; the draft hoists the address plus 4 and the
-// stack buffer out of the loop. The bytes read as if the address and the
-// buffer pointer were hoisted but got no register (reload rematerialises
-// them in the loop, and the buffer's r7 reaches the DMA after it) while the
-// induction variable is the offset alone: strength reduction left the table
-// out of the giv. Goto loops lose the reduction (39); volatile views, inner
-// blocks, temporaries and empty asm in the body stay at 12 to 25; permute 15
-// minutes reached 12 with the buffer's address taken into a pointer before
-// the test and passed to the DMA, which explains nothing.
+// Near miss: differ 6 of 83. A palette cycle: every fourth call rotates five
+// colours of the table into palette offset 0x184, unless an event holds it.
+// The table is read by a byte offset in a goto loop (as a for loop, loop.c
+// hoists the table's address and strength reduction folds it into the
+// offset: 14), and the colours' address goes through p, set after the event
+// checks, so it takes r7 as the native's does. Left: the native builds that
+// address (mov r7, sp) inside the loop, before the __modsi3 call, where
+// gcse's PRE hoists it out of the loop here (as p = colors inside the loop,
+// too), and it loads the table word as [table, offset] where this has
+// [offset, table], however the sum is written. Tried: register and volatile
+// views of p and the colours, the counters set before the event checks;
+// permute 12 minutes found nothing under 6.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -18,6 +19,8 @@ void Func_0200079c(void) {
   u16 colors[16];
   s32 phase = (gData_02003314 / 4) % 5;
   s32 i;
+  s32 offset;
+  u16 *p;
 
   if (gData_02003318 != 0) {
     u8 *work = Ram_HeapSlots->eventWork;
@@ -30,8 +33,15 @@ void Func_0200079c(void) {
     if (*(s16 *)(work + 350) != 0)
       return;
   }
-  for (i = 0; i <= 4; i++)
-    colors[(phase + i) % 5] = gData_02003340[i + 2];
-  Dma_Set(colors, (void *)0x05000184, 0x84000002, REG_DMA3);
+  p = colors;
+  i = 0;
+  offset = 4;
+next:
+  colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02003340 + offset);
+  i++;
+  offset += 2;
+  if (i <= 4)
+    goto next;
+  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
   gData_02003314++;
 }

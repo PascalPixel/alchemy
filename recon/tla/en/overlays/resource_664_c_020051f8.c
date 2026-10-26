@@ -1,4 +1,4 @@
-// Draft, differ 161 of 1091: Air's Rock's map setup, by room: sets the screen
+// Draft, differ 147 of 1091: Air's Rock's map setup, by room: sets the screen
 // effect, the leader's priority bit 5 and flags 0x300 and 0x89f, then
 // places what each room's flags have moved: the pushed pillars
 // (Func_02005e6c, then Func_02005f6c with the room's pillar table), the
@@ -12,6 +12,7 @@
 // for each later entrance test in Ov664Room1, where the draft keeps it in r5
 // across the calls (saving r7 and r8 too) and shares the tests' loads; the rest
 // is branch offsets.
+// Rooms 3 and 8 pass 245 to Func_02005f4c (Func_080c8688 through its veneer).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -46,7 +47,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
 void Func_0200505c(void);
 void Func_02004cc8(void);
-void Func_02005f4c(void);
+void Func_02005f4c(s32 id);
 void Func_02005f54(void);
 void Func_02005f5c(s32 slot, s32 a, s32 b);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
@@ -129,7 +130,7 @@ s32 Func_020051f8(void) {
       Func_02004cc8();
   } else if (gPartyState.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
-    Func_02005f4c();
+    Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Scheduler_AddOrUpdateCallback(Func_02001690, 0x480);
@@ -249,7 +250,7 @@ s32 Func_020051f8(void) {
       Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
     }
   } else if (gPartyState.scene == (s32)&SceneId_Ov664Room8) {
-    Func_02005f4c();
+    Func_02005f4c(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Scheduler_AddOrUpdateCallback(Func_02001690, 0x480);

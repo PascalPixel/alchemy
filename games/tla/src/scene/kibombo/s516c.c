@@ -1,20 +1,9 @@
-// Draft, differ 35 of 218 (was 45): Kibombo's setup: unless flag 265 is set,
-// places actor 11 and, arriving by entrance 19 with unit 7 in the party (flag
-// 7), restores unit 7's HP and PP, sets their gauges, clears two of its bytes,
-// sets flag 0x92f, clears 0x92e and removes it from the party; then saves four
-// palette colours, frees actors 30 to 35, sets flags 0x202 and 0x20b, places
-// actor 29, places actors 21 and 26 to 28 when flag 0x8fd is set, sets flag
-// 0x86b and fades in with Func_02002c34 scheduled. Measured: the gauge clamp
-// builds its zero before the sign test when the result starts at 0 and takes
-// the gauge only when it is not negative (45 to 35; a ternary in either order
-// or an if-else chain does not). Left: the minimum gauge 1 is a halfword
-// constant this draft loads from the literal pool where the native has movs
-// (u16 or s16 stores alike), and that pool word moves the first literal pool
-// inside the guarded block, so the guard needs a long branch and every later
-// pc offset shifts.
+/// @file
+/// Kibombo's setup.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "call.h"
 
 extern u16 gData_02007948[4];
 struct ObjectRuntime *Object_GetById(u32 id);
@@ -51,6 +40,13 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
   return result;
 }
 
+/// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
+/// unit 7 in the party (flag 7), restores unit 7's HP and PP, sets their
+/// gauges, clears two of its bytes, sets flag 0x92f, clears 0x92e and removes
+/// it from the party; then saves four palette colours, frees actors 30 to 35,
+/// sets flags 0x202 and 0x209, places actor 29, places actors 21 and 26 to 28
+/// when flag 0x8fd is set, sets flag 0x86b and fades in with Func_02002c34
+/// scheduled.
 void Func_0200516c(void) {
   struct ObjectRuntime *actor = Object_GetById(11);
   u8 *unit;
@@ -69,14 +65,28 @@ void Func_0200516c(void) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);
+      /* FAKEMATCH(barrier): both copies stored before the gauge's argument
+       * is extended; without it, 2 of 218 instructions differ in tla-en. */
+      asm("");
       *(u16 *)(unit + 0x14) =
           Gauge(*(s16 *)(unit + 0x38), *(s16 *)(unit + 0x34));
-      if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0)
-        *(s16 *)(unit + 0x14) = 1;
+      if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0) {
+        /* FAKEMATCH(temporary): the 1 built with movs as a word; as a halfword
+         * constant it loads from the pool and 23 of 218 instructions differ in
+         * tla-en. */
+        s32 one = 1;
+
+        *(s16 *)(unit + 0x14) = one;
+      }
       *(u16 *)(unit + 0x16) =
           Gauge(*(s16 *)(unit + 0x3a), *(s16 *)(unit + 0x36));
-      if (*(u16 *)(unit + 0x16) == 0 && *(s16 *)(unit + 0x3a) != 0)
-        *(s16 *)(unit + 0x16) = 1;
+      if (*(u16 *)(unit + 0x16) == 0 && *(s16 *)(unit + 0x3a) != 0) {
+        /* FAKEMATCH(temporary): as for the HP gauge; as a halfword constant, 19
+         * of 218 instructions differ in tla-en. */
+        s32 one = 1;
+
+        *(s16 *)(unit + 0x16) = one;
+      }
       unit[0x131] = 0;
       unit[0x140] = 0;
       GameFlag_SetBit(0x92f);
@@ -96,7 +106,7 @@ void Func_0200516c(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(33), 0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(34), 0);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(35), 0);
-  GameFlag_SetBit(0x20b);
+  GameFlag_SetBit(0x209);
   actor = Object_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
@@ -106,11 +116,17 @@ void Func_0200516c(void) {
     Func_02005b0c(26, 0, 0);
     Func_02005b0c(27, 0, 0);
     Func_02005b0c(28, 0, 0);
-    Func_02005b0c(21, 0x12e0000, 0xac0000);
+    Call3((void (*)())Func_02005b0c, 21, 0x12e0000, 0xac0000);
   }
   GameFlag_SetBit(0x86b);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Scheduler_AddOrUpdateCallback(Func_02002c34, 0x480);
+  {
+    /* FAKEMATCH(temporary): the priority built before the callback's address;
+     * as a plain argument, 2 of 218 instructions differ in tla-en. */
+    s32 priority = 0x480;
+
+    Scheduler_AddOrUpdateCallback(Func_02002c34, priority);
+  }
   Func_02005aa4();
 }

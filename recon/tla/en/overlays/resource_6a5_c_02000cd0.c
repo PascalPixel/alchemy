@@ -1,5 +1,10 @@
 // Draft of overlay 6a5's Func_02000cd0, translated from its listing: differ
-// 128 of 691. Left: its shape: 693 instructions against the listing's 691.
+// 105 of 691. The first camera move goes through Call4 (as a direct call CSE
+// shares its -1 with later calls) and the two walks share their facing
+// 0xc000 through a variable, as the native keeps it in r5. Left: its shape (696
+// instructions against the listing's 691), and several calls whose constant
+// arguments load in another order (Object_SetModeById's r0 after r1 here,
+// whether called directly, through Call2, prototyped or not).
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -54,13 +59,14 @@ void Func_02000cd0(void) {
   s32 v_r7, v_r5, v_r6, t2, t4, t75, t77, t78, t79, t80;
   s32 t91, t92, t93, t96, t97, t101, t102, t105, t106, t112;
   s32 t113, t118, t119, t129, t135, t139, t140, t143, t144;
+  s32 facing;
 
   Func_02005814();
   Call1((void (*)())Func_02005984, 0);
   t2 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t2, s32, 428) = 0x100;
   FIELD_AT(t2, s32, 436) = 120;
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   t4 = Value0((s32 (*)())Func_0200592c);
   FIELD_AT(t4, u8, 85) = 0;
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0xf00000,
@@ -69,8 +75,8 @@ void Func_02000cd0(void) {
   Func_0200577c();
   Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_020058c4, (s32)MsgWeHaveIgnited);
-  Call4((void (*)())Func_0200588c, 4, 0x1fc0000, 0x1160000, 0xc000);
-  Call4((void (*)())Func_0200588c, 7, 0x2140000, 0x1160000, 0xc000);
+  Call4((void (*)())Func_0200588c, 4, 0x1fc0000, 0x1160000, facing = 0xc000);
+  Call4((void (*)())Func_0200588c, 7, 0x2140000, 0x1160000, facing);
   Call1((void (*)())Func_020059f4, 141);
   Call3((void (*)())Func_020057ac, 0x40000, 0x40000, 0x10000);
   Event_StartScreenTransition();

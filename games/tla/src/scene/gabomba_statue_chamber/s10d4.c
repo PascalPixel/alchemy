@@ -1,13 +1,6 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 36 of 640; left: as recorded
-// below.
-// Draft, differ 36 of 640: the scene after the statue is lifted in the Gabomba
-// Statue's chamber: the party is placed around the statue object (its sprite
-// reloaded with item 242's picture), the statue rises and moves while the
-// camera follows, actor 12 asks a yes-or-no question (both answers count up the
-// event work's halfword 0x1c4), actors 5 and 12 leave with their action scripts
-// and flag 265 is set. Left: the native builds the first turn constant (0xe000,
-// kept in r8 for later) among the first call's arguments and the second in r9,
-// and its literal pool holds one word fewer.
+/// @file
+/// The scene after the statue is lifted in the Gabomba Statue's chamber.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -61,11 +54,17 @@ void Event_FinishScreenTransition(void);
 void GameFlag_SetBit();
 void Func_02001eb0();
 
+/// Places the party around the statue object (its sprite reloaded with item
+/// 242's picture), raises and moves the statue while the camera follows, has
+/// actor 12 ask a yes-or-no question (both answers count up the event work's
+/// halfword 0x1c4), sends actors 5 and 12 off with their action scripts and
+/// sets flag 265.
 void Func_020010d4(void) {
   struct ObjectRuntime *statue = (struct ObjectRuntime *)Object_GetById(13);
   struct FieldSprite *sprite;
   u8 *block;
   s32 turnA, turnB;
+  s32 owner;
 
   Func_02001da0();
   Call1(Func_02001ee8, 0);
@@ -73,8 +72,11 @@ void Func_020010d4(void) {
   Call4(Object_SetPositionAndResetMotion, Value1(Object_GetById, 13), 0x1880000,
         0, 0x10c0000);
   Call1(WaitFrames, 1);
-  Call4(Func_02001e18, gPartyState.currentOwner, 0x1680000, 0xb80000,
-        turnA = 0xe000);
+  /* FAKEMATCH(temporary): the leader read before the first turn is built; as
+   * gPartyState.currentOwner in the call, 34 of 640 instructions differ in
+   * tla-en. */
+  owner = gPartyState.currentOwner;
+  Call4(Func_02001e18, owner, 0x1680000, 0xb80000, turnA = 0xe000);
   Call4(Func_02001e18, 7, 0x1780000, 0xb80000, turnA);
   Call4(Func_02001e18, 11, 0x1680000, 0xa80000, turnA);
   Call4(Func_02001e18, 6, 0x1a70000, 0xa80000, turnB = 0xa000);
@@ -166,7 +168,12 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 0x400b, 0);
   Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
   Call1(Func_02001f10, 0);
-  Call4(Func_02001e18, 12, 0x1900000, 0x1400000, 0xd000);
+  {
+    /* FAKEMATCH(temporary): the turn built before the other arguments; as a
+     * plain 0xd000 argument, 2 of 640 instructions differ in tla-en. */
+    s32 turn = 0xd000;
+    Call4(Func_02001e18, 12, 0x1900000, 0x1400000, turn);
+  }
   Call1(WaitFrames, 1);
   Call2(Func_02001e60, 12, 0);
   Call2(Object_SetModeById, 6, 1);

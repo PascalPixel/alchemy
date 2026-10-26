@@ -1,9 +1,3 @@
-// Draft, differ 17 of 85: overlay 68a's rising object. The calls match through
-// the call.h forwarders (each keeps its own constant and the native argument
-// order). Left, in the loop: the native reads the scale again after the test
-// (ldr r3, [r5, #24] at the join) where this stores the register, and loads it
-// between the two halves of the limit 0xffff (movs r2, #255; ldr r3; lsls r2,
-// #8). An empty one-pass block after the test does not bring the reload.
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -38,9 +32,14 @@ void Func_020019fc(s32 value);
 void Func_02001a0c(s32 id, s32 a, s32 b, s32 c);
 void Func_02001a2c(s32 value);
 
+/// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
+/// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
+/// frame for 24 frames while it grows back to full size, then leaves it facing
+/// 0x3000.
 void Func_02000468(void) {
   struct ObjectRuntime *object;
   s32 i;
+  struct ObjectRuntime *p;
 
   if (Value1(GameFlag_Test, 0x96d))
     return;
@@ -58,14 +57,24 @@ void Func_02000468(void) {
   Call3(ObjectMotion_SetSpeedParameters, 12, 0x23333, 0x11999);
   Call3(ObjectMotion_ResetAndSetPositionInMode2, 12, 312, 184);
   for (i = 23; i >= 0; i--) {
-    object->angle += 0x2000;
-    if (object->scaleX <= 0xffff)
-      object->scaleX += 0xa00;
-    object->scaleY = object->scaleX;
+    {
+      /* FAKEMATCH(temporary): the turn in its own register; as a plain
+       * 0x2000, 24 of 85 instructions differ in tla-en. */
+      s32 turn = 0x2000;
+
+      object->angle += turn;
+    }
+    /* FAKEMATCH(temporary): the object read again through p after the
+     * turn, so the scale is reloaded after its test; as object throughout, 13
+     * of 85 instructions differ in tla-en. */
+    p = object;
+    if (p->scaleX <= 0xffff)
+      p->scaleX += 0xa00;
+    p->scaleY = p->scaleX;
     WaitFrames(1);
   }
-  object->angle = 0x3000;
-  object->scaleY = 0x10000;
-  object->scaleX = 0x10000;
+  p->angle = 0x3000;
+  p->scaleY = 0x10000;
+  p->scaleX = 0x10000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
 }

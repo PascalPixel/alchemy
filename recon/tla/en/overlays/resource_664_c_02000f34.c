@@ -1,6 +1,6 @@
-// Draft, differ 107 of 153: overlay 664's copy of overlay 663's Func_02001b54
-// (the same listing, with Func_02000d48 as its shots' update), whose draft
-// holds its notes.
+// Draft, differ 63 of 153 (was 107): overlay 664's copy of overlay 663's
+// Func_02001b54 (the same listing, with Func_02000d48 as its shots' update),
+// whose draft holds its notes.
 #include "types.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"
@@ -31,18 +31,21 @@ void Func_02000f34(struct ObjectRuntime *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->action == 240) {
+    struct Vector3 *pos = &position;
+    struct EffectOptions *opt = &options;
+
     if (!GameFlag_Test(0x250))
       Func_02005f8c(object, 202);
     if (object->angle == 0xc000) {
-      position.x = object->x;
-      position.z = object->z;
+      pos->x = object->x;
+      pos->z = object->z;
     } else {
-      position.x =
+      pos->x =
           object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
-      position.z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
+      pos->z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
     }
-    shot = (struct ObjectRuntime *)Engine_ObjectCreate(280, position.x,
-                                                       object->y, position.z);
+    shot = (struct ObjectRuntime *)Engine_ObjectCreate(280, pos->x,
+                                                       object->y, pos->z);
     Func_02005d5c(shot, 2);
     ObjectDispatch_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->animation)->priority = 1;
@@ -53,10 +56,10 @@ void Func_02000f34(struct ObjectRuntime *object) {
     shot->update = Func_02000d48;
     shot->linkedObject = object;
     object->action = 0;
-    options.priority = 1;
-    options.palette = 7;
-    Func_020002f4(position.x, object->y, position.z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    opt->priority = 1;
+    opt->palette = 7;
+    Func_020002f4(pos->x, object->y, pos->z - 0x60000, 0, 0, 0,
+                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, opt);
   }
   object->action++;
 }

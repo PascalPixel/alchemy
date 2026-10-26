@@ -1,7 +1,10 @@
-// Draft, differ 407 of 493: steps onto a listed cell in rooms 1, 2, 3 and
-// 5 (SceneId_Ov655Room1 to Room5): either falls through to exit work->exit
-// or opens the cell and sets its flag. Left: register allocation and the
-// tables the native loads into one register for a shared call tail.
+// Draft, differ 358 of 493 (was 407): steps onto a listed cell in rooms 1,
+// 2, 3 and 5 (SceneId_Ov655Room1 to Room5): either falls through to exit
+// work->exit or opens the cell and sets its flag. The first test of flag
+// 0x1c1 goes through Value1, as the native builds 0x1c1 afresh. Left:
+// register allocation (the native keeps cellX in r8, the leader in r9, the
+// record in r6 and the flag in r11, and spills cellZ) and the tables the
+// native loads into one register for a shared call tail.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -167,7 +170,7 @@ void Func_02001a30(void) {
       Func_02003be0(gData_02004032[index * 2], gData_02004032[index * 2 + 1],
                     toX, toZ, 1, 2);
     } else if (scene == SCENE(Ov655Room5)) {
-      if ((n == 0 && GameFlag_Test(0x1c1)) || (n == 11 && GameFlag_Test(0x24c)))
+      if ((n == 0 && Value1((s32 (*)())GameFlag_Test, 0x1c1)) || (n == 11 && GameFlag_Test(0x24c)))
         Func_02003be0(gData_02004052[8], gData_02004052[9], toX, toZ, 1, 2);
       else
         Func_02003be0(gData_02004052[index * 2], gData_02004052[index * 2 + 1],

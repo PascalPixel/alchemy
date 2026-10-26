@@ -104,7 +104,8 @@ PICTURE_FORMS := 1bpp 4bpp 4bpp16x16 4bpp16x32 4bpp32x8 4bpp32x16 4bpp32x32 4bpp
 TABLE_FORMS   := blocks delta0 delta1 delta2 icons4 parts plane script spriteblocks sprites table
 CODECS        := lz plz mtf d7 hlz
 FORMS         := $(PICTURE_FORMS) $(TABLE_FORMS)
-ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) bin grid.lz
+ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) \
+                  $(addprefix bitmaps.,$(CODECS)) bin grid.lz
 
 # Every file an encoder reads is a prerequisite: a compressed asset's packer
 # patch (NAME_patch.tsv, W3) where it has one, and whatever else a recipe
@@ -117,6 +118,12 @@ $(foreach form,$(PICTURE_FORMS),$(eval %.$(form): %.png $$(AGSGFX) ; $$(AGSGFX) 
 $(foreach form,$(PICTURE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.png $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
 $(foreach form,$(TABLE_FORMS),$(eval %.$(form): %.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
 $(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.tsv $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
+
+# An animation whose frames differ in size, so that no one sheet holds them:
+# NAME.bitmaps.CODEC from NAME_00.png, NAME_01.png and on, each frame's
+# pixels in turn.
+FRAME_RUN := $$$$(wildcard $$$$(basename $$$$(basename $$$$@))_[0-9][0-9].png)
+$(foreach codec,$(CODECS),$(eval %.bitmaps.$(codec): %_00.png $(FRAME_RUN) $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
 
 # A map's grid: map.txt, one cell per square, builds the three planes the
 # game reads.

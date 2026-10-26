@@ -99,6 +99,34 @@ parts(const char *input, const Buffer *data, unsigned depth)
 }
 
 /*
+ * A run of frames, NAME_00.png, NAME_01.png and on: each frame's pixels in
+ * turn, for an animation whose frames differ in size and so share no sheet.
+ */
+static Buffer
+frameRun(const char *input)
+{
+	size_t stem = strlen(input);
+	if (stem < 7 || strcmp(input + stem - 7, "_00.png"))
+		fail("a frame run starts at NAME_00.png");
+	stem -= 7;
+	Buffer out = {0};
+	for (unsigned i = 0; i < 100; i++)
+	{
+		char *path = formatString("%.*s_%02u.png", (int) stem, input, i);
+		if (!exists(path))
+		{
+			free(path);
+			break;
+		}
+		Image image = readImageFile(path);
+		append(&out, image.pixels.data, image.pixels.len);
+		freeImage(&image);
+		free(path);
+	}
+	return out;
+}
+
+/*
  * Absent slots retain zero offsets; present slots include their own palette.
  */
 static Buffer
@@ -214,6 +242,8 @@ buildResource(const char *input, const char *form, const char *codec,
 		raw = parts(input, &data, depth);
 	else if (!strcmp(form, "icons4"))
 		raw = iconBank(input, &data);
+	else if (!strcmp(form, "bitmaps"))
+		raw = frameRun(input);
 	else if (!strcmp(form, "sprites") || !strcmp(form, "spriteblocks"))
 		raw = spriteSource(input, !strcmp(form, "spriteblocks"));
 	else if (!strncmp(form, "delta", 5))
@@ -234,7 +264,12 @@ buildResource(const char *input, const char *form, const char *codec,
 		out = compressHalfwords(&raw);
 	else
 	{
-		Buffer pack = patched(input, &raw);
+		/* A frame run's patch is NAME_patch.tsv, not NAME_00's. */
+		char *name = !strcmp(form, "bitmaps")
+						 ? formatString("%.*s.png", (int) (strlen(input) - 7), input)
+						 : copyString(input);
+		Buffer pack = patched(name, &raw);
+		free(name);
 		out = compressLz(&raw, &pack, codec, packer);
 		free(pack.data);
 	}

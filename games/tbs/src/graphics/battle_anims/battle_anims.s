@@ -63,7 +63,7 @@ BattleAnim_FlameBladeSheet:
 	.global BattleAnim_IceTileSheet
 BattleAnim_IceTileSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/ice_tile_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/ice_tile.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/ice_tile.bitmaps.lz"
 	.byte 0x00, 0x01	@ PACKER: left in the buffer by BattleAnim_CyanSparkSheet+0x106a
 	.global BattleAnim_FiveModeImage
 BattleAnim_FiveModeImage:
@@ -106,7 +106,7 @@ BattleAnim_FireBurstSheet:
 	.include "games/tbs/src/graphics/battle_anims/blue_crescent.s"
 	.global BattleAnim_OverlayImageA
 BattleAnim_OverlayImageA:
-	.incbin "games/tbs/src/graphics/battle_anims/overlay_a.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/overlay_a.bitmaps.lz"
 	.byte 0x88	@ PACKER: left in the buffer by BattleAnim_FireBurstSheet+0x43b
 	.global BattleAnim_VioletMoteSheet
 BattleAnim_VioletMoteSheet:
@@ -115,7 +115,7 @@ BattleAnim_VioletMoteSheet:
 	.byte 0x28, 0x41, 0x42	@ PACKER: left in the buffer by BattleAnim_OverlayImageA+0x111
 	.global BattleAnim_OverlayImageB
 BattleAnim_OverlayImageB:
-	.incbin "games/tbs/src/graphics/battle_anims/overlay_b.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/overlay_b.bitmaps.lz"
 	.global BattleAnim_FireballSheet
 BattleAnim_FireballSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/fireball.gbapal"
@@ -139,22 +139,22 @@ BattleAnim_TargetBurstImage:
 	.include "games/tbs/src/graphics/battle_anims/magenta_tail.s"
 	.global BattleAnim_ParticleSpritesA
 BattleAnim_ParticleSpritesA:
-	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_a.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_a.bitmaps.lz"
 	.byte 0x0c, 0x40, 0x08	@ PACKER: left in the buffer by BattleAnim_MagentaTailSheet+0x299
 	.global BattleAnim_ParticleSpritesB
 BattleAnim_ParticleSpritesB:
-	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_b.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_b.bitmaps.lz"
 	.byte 0x94	@ PACKER: left in the buffer by BattleAnim_ParticleSpritesA+0x1bb
 	.include "games/tbs/src/graphics/battle_anims/dot_cells_c.s"
 	.global BattleAnim_ParticleSpritesD
 BattleAnim_ParticleSpritesD:
-	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_d.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/dot_cells_d.bitmaps.lz"
 	.byte 0x0c	@ PACKER: left in the buffer by BattleAnim_ParticleSpritesC+0x417
 	.include "games/tbs/src/graphics/battle_anims/green_palette.s"
 	.global BattleAnim_SwordSlashSheet
 BattleAnim_SwordSlashSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/sword_slash_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/sword_slash.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/sword_slash.bitmaps.lz"
 	.byte 0x02	@ PACKER: left in the buffer by BattleAnim_ParticleSpritesC+0x4c7
 	.include "games/tbs/src/graphics/battle_anims/rune.s"
 	.include "games/tbs/src/graphics/battle_anims/flame_column.s"
@@ -178,7 +178,7 @@ BattleAnim_SwordSlashSheet:
 	.global BattleAnim_StarDotSheet
 BattleAnim_StarDotSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/star_dot_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/star_dot.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/star_dot.bitmaps.lz"
 	.byte 0x01, 0xba	@ PACKER: left in the buffer by BattleAnim_RockWallSheet+0x89e
 	.include "games/tbs/src/graphics/battle_anims/mars_djinn.s"
 	.include "games/tbs/src/graphics/battle_anims/mars_djinn_small.s"
@@ -199,7 +199,7 @@ BattleAnim_StarDotSheet:
 	.include "games/tbs/src/graphics/battle_anims/dagger.s"
 	.global BattleAnim_PaletteRampImage
 BattleAnim_PaletteRampImage:
-	.incbin "games/tbs/src/graphics/battle_anims/spark_cells.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/spark_cells.bitmaps.lz"
 	.byte 0x01, 0x0d	@ PACKER: left in the buffer by BattleAnim_DaggerSheet+0x196
 	.global BattleAnim_SmokeSheet
 BattleAnim_SmokeSheet:
@@ -217,7 +217,7 @@ BattleAnim_SmokeSheet:
 	.global BattleAnim_PortalSheet
 BattleAnim_PortalSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/portal_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/portal.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/portal.bitmaps.lz"
 	.byte 0x3f, 0x10	@ PACKER: left in the buffer by BattleAnim_WispSheet+0x622
 	.global BattleAnim_SheepSheet
 BattleAnim_SheepSheet:
@@ -230,7 +230,7 @@ BattleAnim_SheepSheet:
 	.global BattleAnim_RedCrescentSheetA
 BattleAnim_RedCrescentSheetA:
 	.incbin "games/tbs/src/graphics/battle_anims/red_crescent_a_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/red_crescent_a.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/red_crescent_a.bitmaps.lz"
 	.byte 0x34	@ PACKER: left in the buffer by BattleAnim_CounterRevealSheet+0x49b
 	.include "games/tbs/src/graphics/battle_anims/blue_beast.s"
 	.include "games/tbs/src/graphics/battle_anims/red_crescent_b.s"
@@ -240,12 +240,12 @@ BattleAnim_RedCrescentSheetA:
 	.global BattleAnim_ThornVineSheet
 BattleAnim_ThornVineSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/thorn_vine_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/thorn_vine.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/thorn_vine.bitmaps.lz"
 	.byte 0x1e, 0x99, 0x03	@ PACKER: left in the buffer by BattleAnim_VioletStreakSheet+0x691
 	.global BattleAnim_IceShardSheet
 BattleAnim_IceShardSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/ice_shard_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/ice_shard.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/ice_shard.bitmaps.lz"
 	.byte 0x3e	@ PACKER: left in the buffer by BattleAnim_VioletStreakSheet+0xa33
 	.include "games/tbs/src/graphics/battle_anims/ember_streak.s"
 	.include "games/tbs/src/graphics/battle_anims/blue_arc_a.s"
@@ -254,16 +254,16 @@ BattleAnim_IceShardSheet:
 	.global BattleAnim_IceChipSheet
 BattleAnim_IceChipSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/ice_chip_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/ice_chip.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/ice_chip.bitmaps.lz"
 	.byte 0x04	@ PACKER: left in the buffer by BattleAnim_GlowOrbSheet+0x63f
 	.global BattleAnim_IceBlockSheet
 BattleAnim_IceBlockSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/ice_block_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/ice_block.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/ice_block.bitmaps.lz"
 	.byte 0x30, 0xae	@ PACKER: left in the buffer by BattleAnim_BlueBeastSheet+0x1586
 	.global BattleAnim_SparkleDots
 BattleAnim_SparkleDots:
-	.incbin "games/tbs/src/graphics/battle_anims/sparkle_dots.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/sparkle_dots.bitmaps.lz"
 	.byte 0x63, 0x34, 0x77	@ PACKER: left in the buffer by BattleAnim_IceBlockSheet+0x61
 	.include "games/tbs/src/graphics/battle_anims/pink_burst.s"
 	.include "games/tbs/src/graphics/battle_anims/light_fan.s"
@@ -277,7 +277,7 @@ BattleAnim_BlueBurstSheet:
 	.global BattleAnim_GoldShellSheet
 BattleAnim_GoldShellSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/gold_shell_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/gold_shell.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/gold_shell.bitmaps.lz"
 	.byte 0x15, 0xb2	@ PACKER: left in the buffer by BattleAnim_IceBlockSheet+0x1016
 	.include "games/tbs/src/graphics/battle_anims/blast.s"
 	.include "games/tbs/src/graphics/battle_anims/flame_b.s"
@@ -290,7 +290,7 @@ BattleAnim_FirePillarSheetB:
 	.include "games/tbs/src/graphics/battle_anims/lightning_bolt.s"
 	.global BattleAnim_BeamSequenceImage
 BattleAnim_BeamSequenceImage:
-	.incbin "games/tbs/src/graphics/battle_anims/beam_sequence.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/beam_sequence.bitmaps.lz"
 	.byte 0x5f	@ PACKER: left in the buffer by BattleAnim_LightningBoltSheet+0x37b
 	.global BattleAnim_TwelveModeImage
 BattleAnim_TwelveModeImage:
@@ -304,22 +304,22 @@ BattleAnim_TwelveModeImage:
 	.global BattleAnim_BlueBeamSheet
 BattleAnim_BlueBeamSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/blue_beam_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/blue_beam.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/blue_beam.bitmaps.lz"
 	.byte 0x01, 0x53, 0x33	@ PACKER: left in the buffer by BattleAnim_WindStreakSheet+0x6b5
 	.global BattleAnim_VortexSheet
 BattleAnim_VortexSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/vortex_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/vortex.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/vortex.bitmaps.lz"
 	.byte 0xdd, 0x20	@ PACKER: left in the buffer by BattleAnim_WindStreakSheet+0x912
 	.global BattleAnim_TornadoSheet
 BattleAnim_TornadoSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/tornado_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/tornado.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/tornado.bitmaps.lz"
 	.byte 0x7f, 0x02	@ PACKER: left in the buffer by BattleAnim_FireBurstSheet+0x1b32
 	.global BattleAnim_CrystalSheet
 BattleAnim_CrystalSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/crystal_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/crystal.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/crystal.bitmaps.lz"
 	.byte 0x13, 0x42, 0x03	@ PACKER: left in the buffer by BattleAnim_TornadoSheet+0x104d
 	.global BattleAnim_WaterSparkleSheet
 BattleAnim_WaterSparkleSheet:

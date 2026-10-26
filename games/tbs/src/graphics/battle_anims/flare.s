@@ -3,7 +3,7 @@
 	.global BattleAnim_FlareSheet
 BattleAnim_FlareSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/flare_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/flare.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/flare.bitmaps.lz"
 	.ifdef TBS_EDITION_ES
 	.byte 0x10, 0xb6	@ PACKER: left in the buffer by LuckyDice_Sprites+0x1d86
 	.else

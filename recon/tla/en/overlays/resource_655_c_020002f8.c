@@ -1,6 +1,12 @@
-// Draft, differ 68 of 158: the push or strike of a listed actor the leader
-// faces, set by its two flags. The list walk is a goto loop, as the native
-// has no loop notes there. Left: register choice.
+// Draft, differ 64 of 158 (was 68): the push or strike of a listed actor the
+// leader faces, set by its two flags. The list walk is a goto loop, as the
+// native has no loop notes there, inside the test that the leader faces an
+// actor, which gives the native's branches. Left: register choice: the
+// native keeps the leader in r6, the actor id in r7 and the faced actor in
+// r8; here the leader takes r8, the faced actor r7 and the id r6. A
+// permuter form that enters the walk when nothing is faced (not the same
+// behaviour) gets the native's registers (differ 5), so the allocation turns
+// on that edge.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -34,8 +40,7 @@ void Func_020002f8(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   target = Func_02003dd8(position, 0);
-  if (target == NULL)
-    return;
+  if (target != NULL) {
   goto test;
 next:
   {
@@ -94,4 +99,5 @@ next:
 test:
   if (*list != 0xffff)
     goto next;
+  }
 }

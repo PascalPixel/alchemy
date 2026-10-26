@@ -1,7 +1,11 @@
-// Draft, differ 69 of 199: the leader and actor 14: Func_02001340 lines
-// them up, flag 0x230 is set, a burst of 17 effects plays and actor 14
-// sinks. Left: register choice (the native keeps the leader in r10 and the
-// options in r8) and the frame.
+// Draft, differ 24 of 199 (was 69): the leader and actor 14: Func_02001340
+// lines them up, flag 0x230 is set, a burst of 17 effects plays and actor 14
+// sinks. The sinking loop's 0x200 turn is a variable set before it (found by
+// a permute search; a temporary device on adoption, though the native still
+// builds 0x200 in the loop). Left: register choice: the native keeps the
+// leader in r10 and the options' address in r8, here the other way round,
+// and forms the velocity's address after the cosine call. A barrier after
+// the turn gives 22.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "call.h"
 
@@ -41,6 +45,7 @@ void Func_02001474(void) {
   struct ShrineOfTheSeaGodSprite *sprite = stone->sprite;
   struct EffectOptions options;
   u32 i;
+  s32 spin;
 
   Func_020039d8();
   Func_02003b08(0);
@@ -80,8 +85,9 @@ void Func_02001474(void) {
   WaitFrames(2);
   Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
   Scheduler_RemoveCallbackFar(Func_02001464);
+  spin = 0x200;
   for (i = 0; i <= 7;) {
-    sprite->rotation += 0x200;
+    sprite->rotation += spin;
     stone->z += 0x10000;
     i++;
     WaitFrames(1);

@@ -2625,8 +2625,6 @@ MenuIcon_UpdateTransforms:
 	.thumb_func
 Func_081051a8:
 	.incbin "baserom.gba", 0x0010b2f4, 0x000000c4
-	.section .rom.0010b4f4, "ax"
-	.incbin "baserom.gba", 0x0010b4f4, 0x000000c0
 	.section .rom.0010b62c, "ax"
 	.incbin "baserom.gba", 0x0010b62c, 0x000000a0
 	.section .rom.0010cb70, "ax"
@@ -2702,12 +2700,6 @@ Func_0810b7b4:
 	.thumb_func
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010fe08, 0x00000048
-	.section .rom.0010fed0, "ax"
-	.global Func_0810bebc
-	.type Func_0810bebc, %function
-	.thumb_func
-Func_0810bebc:
-	.incbin "baserom.gba", 0x0010fed0, 0x000000dc
 	.section .rom.00118058, "ax"
 	.global Summon_IsEntrySecondaryFlaggedFar
 	.type Summon_IsEntrySecondaryFlaggedFar, %function

@@ -1,10 +1,5 @@
 #include "ankohl_ruins.h"
 
-struct AnkohlRuinsEventWork {
-  u8 unk000[0x16a];
-  s16 alarm;
-};
-
 extern s16 gData_02003782;
 extern s16 gData_02003784;
 extern s32 gData_0200378c;

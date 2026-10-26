@@ -1,13 +1,15 @@
-// Draft, differ 22 of 237: rewritten from the listing. Sets the blend in rooms
-// 2 to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
+// Draft, differ 4 of 237: rewritten from the listing. Sets the blend in rooms 2
+// to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
 // cells for its entrances, and under flag 0xa30 loads the room's palette as
 // Mars Lighthouse entrance's Func_02001930 does. Func_02000058 is declared
 // returning s32 (it returns nothing; as void, its arguments are set r0 first:
-// 36), which would be a signature device. Left: GCSE shares room 6's id between
-// the two tests, so reload puts it in r2 where the native has r3 (permute only
-// fixed it with a dead store between them), the blend's stack arguments are
-// built in another order even through a forwarding inline, and the closing
-// palette call takes its pool loads in another order.
+// 36), which would be a signature device; an empty asm with a memory clobber
+// between the two scene tests stops GCSE sharing room 6's id between them (22
+// without), and a volatile asm on the callback's priority builds it before the
+// callback's pool load (6 without). Left: the native's pool holds
+// SceneId_Ov6ACRoom3 twice, once for the first test and once for the palette,
+// where this compile shares one entry, so the closing loads differ and the pool
+// is a word short; a different symbol for one of them would explain it.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 extern char SceneId_Ov6a8Room2;
@@ -48,6 +50,7 @@ s32 Func_02000e84(void) {
     Func_020032b0(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
+  __asm__("" : : : "memory");
   if (scene == (s32)&SceneId_Ov6ACRoom6) {
     switch (entrance) {
     case 1:
@@ -88,7 +91,12 @@ s32 Func_02000e84(void) {
         Func_02003178(64, 64, 4, 3, 76, 12);
       }
       Func_02000934(entrance);
-      Scheduler_AddOrUpdateCallback(Func_020003c4, 0x480);
+      {
+        s32 priority = 0x480;
+
+        asm volatile("" : "+l"(priority));
+        Scheduler_AddOrUpdateCallback(Func_020003c4, priority);
+      }
       Func_02000058(12, 4);
       Func_02000058(13, 5);
       Func_02000058(14, 2);

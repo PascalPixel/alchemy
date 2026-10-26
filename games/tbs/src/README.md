@@ -198,8 +198,7 @@ cartridge and why some of the C is written as it is.
 
 Code stays assembly only where its instructions show that none of those
 compilers wrote it. Each such file states that proof in comment lines at
-its top that begin `@ C2:`, after the project's counting rule, under which
-assembly counts as source only with a proof
+its top that begin `@ Why`; assembly counts as source only with a proof
 ([Matching](MATCHING.md#the-other-markers)). The proofs are instructions
 the compilers never emit: a
 branch on a shift's carry (`runtime/trig.s`,

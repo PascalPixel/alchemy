@@ -7,7 +7,7 @@
 /// call of them goes through it.
 ///
 /// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device (AGENTS.md S2). An overlay writes
+/// compiler-steering device. An overlay writes
 /// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAP)` and the inline
 /// calls Task_Add, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the

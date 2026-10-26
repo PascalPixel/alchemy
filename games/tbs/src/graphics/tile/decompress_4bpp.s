@@ -1,8 +1,8 @@
-@ C2: Tile_Decompress4bpp:
+@ Why Tile_Decompress4bpp is assembly:
 @ push saves r5/r6 without lr and rrx consumes reader carry.
-@ C2: Tile_Decompress4bppLoop:
+@ Why Tile_Decompress4bppLoop is assembly:
 @ Conditional rrxs consumes the shift carry in the bit reader.
-@ C2: Tile_ExpandMasked:
+@ Why Tile_ExpandMasked is assembly:
 @ push saves r5-r9/sl without lr.
 .syntax unified
 .text

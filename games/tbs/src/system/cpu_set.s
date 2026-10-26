@@ -1,6 +1,6 @@
-@ C2: Bios_CpuSet to Bios_SoundBiasOff:
+@ Why Bios_CpuSet to Bios_SoundBiasOff are assembly:
 @ svc 11 and svc 25 are BIOS software interrupts.
-@ C2: Bios_SoundBiasOn:
+@ Why Bios_SoundBiasOn is assembly:
 @ svc 25 is a BIOS software interrupt.
 .syntax unified
 	.thumb

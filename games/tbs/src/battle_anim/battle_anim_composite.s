@@ -15,7 +15,7 @@
 @ word it rewrites is marked, and parts/blitter.c describes its blocks.
 @
 @ Why assembly:
-@ S1: r11 (fp) as an ordinary register: it holds a row counter
+@ r11 (fp) as an ordinary register: it holds a row counter
 @ (rsb fp, ip, #16; mov lr, fp), not a frame.
 @ The preceding entries also share unsaved r5/r9 state with the main body.
 .syntax unified

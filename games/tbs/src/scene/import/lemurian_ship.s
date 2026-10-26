@@ -1,4 +1,3 @@
-@ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Math_DivideUnsigned, 1
 	.set import.WaitFrames, 1

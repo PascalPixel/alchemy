@@ -1,7 +1,7 @@
-@ C2: IwramSoundMixInterpolated to IwramSoundMixDone:
+@ Why IwramSoundMixInterpolated to IwramSoundMixDone are assembly:
 @ fp is the sample multiplier in mla; addne pc,lr,#8 skips into the shared
 @ caller continuation.
-@ C2: IwramSoundEndChannel to IwramSoundNormalizeChannels:
+@ Why IwramSoundEndChannel to IwramSoundNormalizeChannels are assembly:
 @ Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
 @ switch instruction mode; normalize-channel code stores the clip mask
 @ through pc, into gSoundMixerClipped, the word linked right after it.

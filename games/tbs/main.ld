@@ -1,6 +1,6 @@
 /* The Broken Seal, all six editions. Object order is objects.tsv: the build
    writes each place's objects for the edition it links into <place>.ld.
-   Camelot's far-call banks start at addresses each edition chose (W3); the
+   Camelot's far-call banks start at addresses each edition chose; the
    build names the edition with --defsym TBS_EDITION_<LANG>=1. An address is
    written once for the editions that share it, and the last address of each
    placement is that of the editions it does not name: English and Italian,

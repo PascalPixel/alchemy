@@ -1,25 +1,25 @@
-@ C2: Decompress_ByteLzArm:
+@ Why Decompress_ByteLzArm is assembly:
 @ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
 @ Its return pops the r1 saved at entry into r0.
-@ C2: Oam_BuildBufferKernel:
+@ Why Oam_BuildBufferKernel is assembly:
 @ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
 @ a four-register list outside the block-copy patterns.
-@ C2: PaletteFade_ScaleThreeQuartersKernel to PaletteFade_HalveKernel:
+@ Why PaletteFade_ScaleThreeQuartersKernel to PaletteFade_HalveKernel are assembly:
 @ both kernels save callee-saved r5/r6 without lr, and write modified
 @ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
-@ C2: PaletteFade_DarkenKernel to PaletteFade_BackupKernelsEnd:
+@ Why PaletteFade_DarkenKernel to PaletteFade_BackupKernelsEnd are assembly:
 @ stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
-@ C2: PaletteFade_BrightenKernel to PaletteFade_HalveNonzeroKernel:
+@ Why PaletteFade_BrightenKernel to PaletteFade_HalveNonzeroKernel are assembly:
 @ all three kernels save callee-saved r5/r6 (and further registers in
 @ BrightenKernel) without saving lr.
-@ C2: PaletteFade_DarkenPartialKernel:
+@ Why PaletteFade_DarkenPartialKernel is assembly:
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
 @ four-register list starting at r4. GCC 2.95.2's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ C2: PaletteFade_BrightenPartialKernel to PaletteFade_KernelsEnd:
+@ Why PaletteFade_BrightenPartialKernel to PaletteFade_KernelsEnd are assembly:
 @ push {r5-r9} saves callee-saved registers without lr.
-@ C2: Decompress_HalfwordLz:
+@ Why Decompress_HalfwordLz is assembly:
 @ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm

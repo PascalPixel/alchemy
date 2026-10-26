@@ -139,15 +139,16 @@ ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
 An assembly file in `games/` has to show why it is assembly at all: that no
 C compiler of the project's set could produce it. Each one opens with that
 proof, written as comment lines (`@` starts a comment in assembly) that begin
-`@ C2:`. C2 is the project's counting rule, which measures how much of each
-game is rebuilt from source; under it, assembly counts only with such a
-proof. In a handwritten file the
-proof names the instruction, frame or pattern alchemy-gcc can't emit. The
-[far-call](../glossary.md#far-call) tables, such as the `entry/` and `import/` files of the debug rooms,
-the menus and the [scenes](../glossary.md#scene), carry one too. Each of their entries is a [veneer](../glossary.md#veneer),
-a tiny piece of code that only jumps on: 8 bytes holding an `ldr r4` (load
-the target's address), a `bx r4` (jump to it) and that address, which the
-`overlay_veneer` macro writes out whole.
+`@ Why assembly:`, or `@ Why <routine> is assembly:` where a file holds
+several; assembly counts as rebuilt source only with such a proof. In a
+handwritten file the proof names the instruction, frame or pattern
+alchemy-gcc can't emit. The [far-call](../glossary.md#far-call) tables,
+such as the `entry/` and `import/` files of the debug rooms, the menus and
+the [scenes](../glossary.md#scene), are proven once, where their entries
+are made: each is a [veneer](../glossary.md#veneer), a tiny piece of code
+that only jumps on: 8 bytes holding an `ldr r4` (load the target's
+address), a `bx r4` (jump to it) and that address, which the
+`overlay_veneer` macro in `system/overlay.s` writes out whole.
 
 ## Spellings that match at different sites
 

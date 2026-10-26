@@ -1,4 +1,4 @@
-@ C2: Trig_SinOnAxis to Trig_Sin:
+@ Why Trig_SinOnAxis to Trig_Sin are assembly:
 @ Trig_SinOnAxis and Trig_Sin branch on lsrs carry; Trig_Cos falls
 @ through directly into Trig_Sin's entry.
 .syntax unified

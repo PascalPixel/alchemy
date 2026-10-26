@@ -1,7 +1,7 @@
-@ C2: BitDecoder_DecodeImage:
+@ Why BitDecoder_DecodeImage is assembly:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
-@ C2: Model_DispatchBitCommand:
+@ Why Model_DispatchBitCommand is assembly:
 @ Dispatcher enters Model_BitCommands' shared r0/r2/r3 decoder linkage;
 @ bit_commands.s documents its unsaved r5 and ordinary fp mask.
 @ In this file itself: it is a two-instruction fragment of that decoder, with
@@ -10,7 +10,7 @@
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next
 @ object.
-@ C2: Model_BitCommands to Model_SetBitValue:
+@ Why Model_BitCommands to Model_SetBitValue are assembly:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified

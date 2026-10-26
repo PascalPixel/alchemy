@@ -1,4 +1,4 @@
-@ C2: IwramEntry emits aligned 8-byte Thumb ldr r3/bx r3/target-word stubs.
+@ Why assembly: IwramEntry emits aligned 8-byte Thumb ldr r3/bx r3/target-word stubs.
 .syntax unified
 	.thumb
 

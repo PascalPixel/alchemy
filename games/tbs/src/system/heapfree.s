@@ -1,6 +1,6 @@
-@ C2: FreeHeapSlot branches on lsrs flags without cmp/cmn;
+@ Why assembly: FreeHeapSlot branches on lsrs flags without cmp/cmn;
 @ agscc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
-@ C2: FreeHeapSlot and Free share the one trailing literal
+@ Why assembly: FreeHeapSlot and Free share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
 @ Free's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
 @ ordinary Thumb with no tell of their own. Its proof is that pool alone: the
@@ -46,7 +46,7 @@ Free:
 .L_heap_heads:
 	.4byte	gHeapSlots
 
-@ C2: Irq_StopOnGamePakRemoved has a reachable exit with no return or
+@ Why assembly: Irq_StopOnGamePakRemoved has a reachable exit with no return or
 @ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls
 @ straight into Thumb System_Initialize while the CPU is still in ARM mode.
 @ Neither a procedure return nor a tail call can have this linkage.

@@ -91,7 +91,7 @@
 #include "scene_tables.h"
 #include "task.h"
 #include "call.h"
-#include "object.h"
+#include "actor.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "songs.h"
@@ -383,10 +383,10 @@ static void VaultCave_PushPillarAhead(void) {
   Object_SelectAnimation(leader, ANIM_PUSH);
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH_STEP);
-  pillar->speed = 0x3333;
+  pillar->speedLimit = 0x3333;
   pillar->acceleration = 0x3333;
   Object_SetPosition(pillar, destination.x, destination.y, destination.z);
-  leader->speed = 0x3333;
+  leader->speedLimit = 0x3333;
   leader->acceleration = 0x3333;
   Object_SetPosition(leader, destination.x, destination.y, destination.z);
   Object_WaitForMove(pillar);
@@ -926,7 +926,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->scaleX = 0x8ccc;
     puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -0x10000;
-    puff->speed = Import_RandomNext() + 0xcccc;
+    puff->speedLimit = Import_RandomNext() + 0xcccc;
     puff->collisionFlags = 1;
     VaultCave_OffsetActorRadially(puff, 0x200000, Import_RandomNext());
     {

@@ -29,7 +29,7 @@ struct BattleAnimArgs;
 struct AbilityDefinition;
 struct BattleObject;
 struct Unit;
-struct Object;
+struct Actor;
 struct EffectLaunch;
 struct ScreenPoint;
 struct FieldEffectSprite;

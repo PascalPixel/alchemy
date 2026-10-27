@@ -497,7 +497,7 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(leader, 7);
-    leader->speed = PIXELS(3);
+    leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 126;
@@ -602,7 +602,7 @@ static void EventScript_KiteKeepsAway(void) {
       routeIndex = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_KITE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
-      djinni->speed = leader->speed;
+      djinni->speedLimit = leader->speedLimit;
       djinni = Actor_GetById(ACTOR_KITE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;

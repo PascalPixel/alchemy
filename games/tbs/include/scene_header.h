@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "object.h"
+#include "actor.h"
 #include "scene_tables.h"
 #include "field_work.h"
 

@@ -47,7 +47,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   struct Unit *unit;
   BlitterPair draw;
   DrawRectangle *slots;
-  struct Object *target;
+  struct Actor *target;
   void *colors = (void *)BG_PLTT;
   s32 half;
   s32 frame;
@@ -161,7 +161,8 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &work->particles[i];
 
-    SET_POSITION(spark, target->x, target->y + half, target->z);
+    SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
+                 target->z.fixed);
     SET_VELOCITY(spark, (Random16() & 255) << 10,
                  ((Random16() & 255) - 32) << 10,
                  ((Random16() & 255) - 127) << 10);
@@ -300,8 +301,8 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   s32 strength;
   BlitterPair draw;
   DrawRectangle *slots;
-  struct Object *object;
-  struct Object *target;
+  struct Actor *object;
+  struct Actor *target;
   u16 *background;
   void *colors = (void *)BG_PLTT;
   s32 canvasBytes = CANVAS_BYTES;
@@ -382,7 +383,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    Object_SetAnimationSpeedFar((struct Object *)object, 0);
+    Object_SetAnimationSpeedFar(object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -428,7 +429,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       ANIM_PRESENT_FRAME(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Object_SetAnimationSpeedFar((struct Object *)object, 16);
+    Object_SetAnimationSpeedFar(object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
     object->gravity = strength;
@@ -460,7 +461,8 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &work->particles[i];
 
-    SET_POSITION(spark, target->x, target->y + half, target->z);
+    SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
+                 target->z.fixed);
     SET_VELOCITY(spark, (Random16() & 255) << 10, (Random16() & 255) << 10,
                  ((Random16() & 255) - 127) << 10);
     if (spark->x > 0)

@@ -236,8 +236,8 @@ static void FuchinTemple_AnimateRevealLesson(void);
 /// Clears the scripted actor's sprite flags and completes the script
 /// command.
 static s32
-FuchinTemple_ClearScriptedActorSpriteFlags(struct Object *interpreter) {
-  Actor_SetSpriteFlags((struct Actor *)interpreter, 0);
+FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
+  Actor_SetSpriteFlags(interpreter, 0);
   return 0;
 }
 

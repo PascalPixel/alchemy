@@ -120,7 +120,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
     actor->groundHeight = groundHeight;
   }
 
-  actor = (struct Actor *)state->camera;
+  actor = state->camera;
   if (actor != 0) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;

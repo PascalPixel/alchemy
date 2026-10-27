@@ -6,13 +6,13 @@
 
 #include "types.h"
 #include "edition.h"
-#include "object.h"
+#include "actor.h"
 #include "scene_header.h"
 #include "scene_tables.h"
 #include "menu_list.h"
 #include "farcall.h"
 
-struct Object;
+struct Actor;
 struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
@@ -102,7 +102,7 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gObjects
 /// Heap slot 5: the 64 objects, 0x70 bytes each.
-extern struct Object *gObjects;
+extern struct Actor *gObjects;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
 /// vertex update rebuilds them when it changes.

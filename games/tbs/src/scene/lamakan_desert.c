@@ -700,7 +700,7 @@ static void HeatGauge_CountStep(void) {
   if (work->stepTrigger == MB_LAMAKAN_DESERT_SLOPE) {
     return;
   }
-  if (actor->speed <= 0x10000) {
+  if (actor->speedLimit <= 0x10000) {
     if ((gFrameCount & 15) != 0) {
       return;
     }
@@ -835,7 +835,7 @@ static void LamakanDesert_SlideDownDune(void) {
     struct FieldWork *work = gFieldWork;
 
     id = gSaveBlock.leaderActorId;
-    center = (struct Actor *)work->camera;
+    center = work->camera;
   }
   actor = Actor_GetById(id);
   // First check for a ledge immediately below the sliding actor.

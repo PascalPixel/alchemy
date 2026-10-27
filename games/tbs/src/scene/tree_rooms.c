@@ -1051,7 +1051,7 @@ static void TreeRooms_UpdateSwirlSpark(union ActorOrEffect *fieldObject) {
     position.y = spark->targetY;
     position.z = spark->targetZ;
     {
-      s32 initialAngle = (s16)spark->work;
+      s32 initialAngle = (s16)spark->userValue;
 
       Vector_AddPolarOffset(frame << 16, ((frame * 3) << 8) + initialAngle,
                             &position);
@@ -1101,11 +1101,11 @@ static void TreeRooms_SpawnSwirlSparks(void) {
         Actor_SetSpriteFlags(spark, 0);
         Object_SelectAnimation(spark, 1);
         spark->timer = 0;
-        spark->work = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
+        spark->userValue = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
         spark->targetX = sSparkOrigin.x;
         spark->targetY = sSparkOrigin.y;
         spark->targetZ = sSparkOrigin.z;
-        spark->speed = 0x19999;
+        spark->speedLimit = 0x19999;
         spark->update = TreeRooms_UpdateSwirlSpark;
       }
     }

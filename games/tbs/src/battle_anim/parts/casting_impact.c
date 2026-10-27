@@ -270,12 +270,12 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   s32 savedVelocityZ;
   s32 savedAcceleration;
   s32 savedVerticalStrength;
-  struct Object *targetActor;
+  struct Actor *targetActor;
   struct FixedPointPosition *motion;
   s32 kindFromTwo;
   s32 kindFromFour;
   struct FixedPointPosition *position;
-  struct Object *casterActor;
+  struct Actor *casterActor;
   struct Particle *particle;
   s32 pairX;
   s32 stripX;
@@ -457,10 +457,10 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  Object_SetAnimationSpeedFar((struct Object *)casterActor, 0);
+  Object_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
-  SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
-               casterActor->z);
+  SET_POSITION(position, casterActor->x.fixed, casterActor->y.fixed + 0x500000,
+               casterActor->z.fixed);
   savedVelocityX = casterActor->velocityX;
   savedVelocityY = casterActor->velocityY;
   savedVelocityZ = casterActor->velocityZ;
@@ -597,7 +597,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
-  Object_SetAnimationSpeedFar((struct Object *)casterActor, 16);
+  Object_SetAnimationSpeedFar(casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->gravity = savedVerticalStrength;
@@ -615,9 +615,9 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   // frames.
   targetActor = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   motion = &velocity;
-  SET_POSITION(motion, (targetActor->x - position->x) / 6,
-               (targetActor->y - position->y + 0x1e0000) / 6,
-               (targetActor->z - position->z) / 6);
+  SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
+               (targetActor->y.fixed - position->y + 0x1e0000) / 6,
+               (targetActor->z.fixed - position->z) / 6);
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &work->particles[i];
     particle->variant = 0;
@@ -629,7 +629,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->targets[0]) / 2;
     for (i = 0; i != 32; i++) {
       particle = &work->particles[i];
-      SET_POSITION(particle, targetActor->x, height, targetActor->z);
+      SET_POSITION(particle, targetActor->x.fixed, height,
+                   targetActor->z.fixed);
       if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
         SET_VELOCITY(particle, ((Random16() & 255) - 127) << 12,
                      ((Random16() & 255) - 64) << 10,
@@ -671,7 +672,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       height = 0x140000;
     for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
       particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
-      SET_POSITION(particle, targetActor->x, height, targetActor->z);
+      SET_POSITION(particle, targetActor->x.fixed, height,
+                   targetActor->z.fixed);
       if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
           mode == CASTING_IMPACT_IMPACT_BARRAGE) {
         SET_VELOCITY(particle, ((Random16() & 255) - 127) << 11,
@@ -886,7 +888,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         particle = CASTING_IMPACT_IMPACT_PARTICLES;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT;
              i++, particle++) {
-          SET_POSITION(particle, targetActor->x, 0x140000, targetActor->z);
+          SET_POSITION(particle, targetActor->x.fixed, 0x140000,
+                       targetActor->z.fixed);
           SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
                        ((Random16() & 255) - 128) << 10,
                        ((Random16() & 255) - 128) << 10);
@@ -895,7 +898,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       }
       if (frame > 11) {
         struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-        struct Object *caster;
+        struct Actor *caster;
         s32 height;
         caster = GetBattleObjectSlotFar(work->effect->user)->object;
         height = BattleUnit_GetEffectHeightFar(work->effect->user) / 2;
@@ -909,9 +912,9 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
                         size * 2);
             Particle_AdvanceWithGravity3D(step, 62, 0);
             if (frame > i + 22) {
-              s32 dx = (caster->x - step->x) >> 8;
-              s32 dy = (caster->y + height - step->y) >> 8;
-              s32 dz = (caster->z - step->z) >> 8;
+              s32 dx = (caster->x.fixed - step->x) >> 8;
+              s32 dy = (caster->y.fixed + height - step->y) >> 8;
+              s32 dz = (caster->z.fixed - step->z) >> 8;
               step->velocityX += dx;
               step->velocityY += dy;
               step->velocityZ += dz;
@@ -1023,7 +1026,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
           struct Particle *step;
           for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
             if ((step = &work->particles[i])->variant == 0) {
-              SET_POSITION(step, targetActor->x, 0x140000, targetActor->z);
+              SET_POSITION(step, targetActor->x.fixed, 0x140000,
+                           targetActor->z.fixed);
               SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
                            ((Random16() & 255) - 64) << 10,
                            ((Random16() & 255) - 127) << 12);

@@ -327,7 +327,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speed = PIXELS(3);
+    leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     jumpMotionFlags = 0x7e;
@@ -347,15 +347,15 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
 }
 
 /// Script command: draws the actor in the colour mode its timer holds.
-static s32 MogallForest_CopyTimerToChild(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 MogallForest_CopyTimerToChild(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, actor->timer);
   return 0;
 }
 
 /// Clears the actor's sprite flags when its script requests it.
-static s32 MogallForest_ClearActorSpriteFlags(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 MogallForest_ClearActorSpriteFlags(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }

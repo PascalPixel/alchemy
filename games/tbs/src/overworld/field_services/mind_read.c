@@ -59,9 +59,8 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gMindReadWork);
   FieldEffect_RestoreMindReadPalette();
   Task_Remove(FieldEffect_UpdateMindReadWave);
-  Anim_ApplyChildPalette(
-      (struct Object *)Actor_GetById(((struct MindReadWork *)work)->sourceId),
-      1);
+  Anim_ApplyChildPalette(Actor_GetById(((struct MindReadWork *)work)->sourceId),
+                         1);
   FieldEffect_FadeFromEffectColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
@@ -103,7 +102,7 @@ void FieldEffect_UpdateMindReadWave(void) {
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
-  Anim_ApplyChildPalette((struct Object *)Actor_GetById(work->sourceId), 0);
+  Anim_ApplyChildPalette(Actor_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
@@ -122,19 +121,18 @@ void FieldEffect_UpdateMindReadWave(void) {
           (s16)Scene_FindActorTemplate(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = (struct Actor *)Object_CreateFar(281, to.x, to.y, to.z);
+      particle = Object_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
-        particle->speed = 0xa3d7; // 0.64 pixels a frame
+        particle->speedLimit = 0xa3d7; // 0.64 pixels a frame
         particle->acceleration = 0xa3d7;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
         particle->update = FieldEffect_SetCallbackWhenTargetUnset;
         // No shadow or outline, sprite priority 1.
         sprite->flags = 0;
         sprite->priority = 1;
-        Object_SetMoveTargetFar((struct Object *)particle, from.x, from.y,
-                                from.z);
+        Object_SetMoveTargetFar(particle, from.x, from.y, from.z);
       }
     }
   }
@@ -240,7 +238,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
-  struct Object *object = (struct Object *)fieldObject;
+  struct Actor *object = (struct Actor *)fieldObject;
   s32 targetY;
   s32 targetX;
 
@@ -249,8 +247,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
-      Object_InitializeFar((struct Object *)object,
-                           gFieldEffect_UntargetedObjectScript);
+      Object_InitializeFar(object, gFieldEffect_UntargetedObjectScript);
     }
   }
 }

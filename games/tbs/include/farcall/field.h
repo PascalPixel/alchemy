@@ -44,34 +44,34 @@ void ObjectSystem_InitializeFar(s32 mode);
 /// `no`.
 void Object_SelectAnimationFar(void *raw, s32 no);
 /// Sets the timer step of every sprite of an object (16 is normal speed).
-void Object_SetAnimationSpeedFar(struct Object *object, s32 val);
+void Object_SetAnimationSpeedFar(struct Actor *object, s32 val);
 /// Gives an object `script` and runs it from the top, clearing the cursor, the
 /// pause, the loop count and the last flag test.
-void Object_InitializeFar(struct Object *object, const s32 *script);
+void Object_InitializeFar(struct Actor *object, const s32 *script);
 /// Hands an object to the player's control on a layered map (SC_PLAYER).
-void Object_StartPlayerControlFar(struct Object *object);
+void Object_StartPlayerControlFar(struct Actor *object);
 /// Hands an object to the player's control on the world map (SC_WORLD).
-void Object_StartWorldMapControlFar(struct Object *object);
+void Object_StartWorldMapControlFar(struct Actor *object);
 /// Runs the script that walks an object wherever the keys point (SC_KEYS),
 /// which the leader gets when gSaveBlock.movementMode is 1.
-void Object_StartMoveByKeysFar(struct Object *object);
+void Object_StartMoveByKeysFar(struct Actor *object);
 /// Runs SC_KEY_COUNT on an object every frame, which the leader gets when
 /// gSaveBlock.movementMode is 2.
-void Object_StartKeyCheckFar(struct Object *object);
+void Object_StartKeyCheckFar(struct Actor *object);
 #ifndef OWN_Object_CreateFar
 /// Creates an object at (x, y, z) in 16.16 pixels, or returns 0 when none
 /// is free (Object_CreateField). `id / 4096` is its enum ObjectCreateKind and
 /// the low 12 bits its sprite's animation id.
-struct Object *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
+struct Actor *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
 #endif
 /// Releases an object's sprites and zeroes it, so it can be handed out again.
-void Object_ReleaseFar(struct Object *object);
+void Object_ReleaseFar(struct Actor *object);
 /// Puts an object on the camera script (SC_CAMERA); following a leader, it
 /// moves at most 4 pixels a frame.
-void Object_StartCameraFar(struct Object *object, s32 arg);
+void Object_StartCameraFar(struct Actor *object, s32 arg);
 /// Places an object at (x, y, z) in 16.16 pixels and stops it, clearing its
 /// movement target.
-void Object_SetPositionAndResetMotionFar(struct Object *object, s32 x, s32 y,
+void Object_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                          s32 z);
 /// Clears one step of a sprite's pixel-by-pixel dissolve in its OBJ VRAM tiles
 /// (SpriteDissolve_Step); `pos` is the step, 0 to 127.
@@ -99,14 +99,14 @@ void WorldMap_UpdateCurrentTileBlockFar(void);
 /// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 /// Leaves an object standing still on the idle script, a lone SC_END.
-void Object_StartIdleFar(struct Object *object);
+void Object_StartIdleFar(struct Actor *object);
 /// Waits until an object's script reaches SC_END, giving up after 300 frames
 /// (five seconds).
 void Object_WaitForScriptEndFar(void *raw);
 #ifndef OWN_Object_SetMoveTargetFar
 /// Sends an object towards (x, y, z) in 16.16 pixels, pulling the target in so
 /// it coasts to a stop there; within a pixel it arrives at once.
-void Object_SetMoveTargetFar(struct Object *object, s32 x, s32 y, s32 z);
+void Object_SetMoveTargetFar(struct Actor *object, s32 x, s32 y, s32 z);
 #endif
 /// Waits until an object reaches its target, giving up after 600 frames
 /// (ten seconds) with the object still moving.
@@ -156,13 +156,13 @@ void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
 void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
 /// Returns whether an object can step to `position`, as an enum
 /// Collision: a wall there, or ground too high or too low for one step.
-s32 MapGrid_CheckCollisionFar(struct Object *object,
+s32 MapGrid_CheckCollisionFar(struct Actor *object,
                               struct FieldPosition *position);
 /// Sets the flags of a one-sprite object's sprite (bit 0 draws its shadow).
-void Object_SetSpriteFlagsFar(struct Object *object, u32 flags);
+void Object_SetSpriteFlagsFar(struct Actor *object, u32 flags);
 /// Sets the OAM blend mode of a one-sprite object's sprite; an object with high
 /// kind bits set is left alone.
-void Object_SetSpriteBlendModeFar(struct Object *object, u32 mode);
+void Object_SetSpriteBlendModeFar(struct Actor *object, u32 mode);
 /// Changes the screen shake, leaving alone an axis whose argument is negative.
 /// Amplitudes are in 16.16 pixels, the decay a 16.16 factor per frame.
 void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 shakeDecay);
@@ -180,7 +180,7 @@ void ObjectSystem_ResumeProjectionAndHideLayersFar(void);
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
 /// Adds a sprite anim playing animation `no` to a one-sprite object's sprite; a
 /// negative `no` does nothing.
-void Object_RegisterSpriteMetadataFar(struct Object *object, s32 no);
+void Object_RegisterSpriteMetadataFar(struct Actor *object, s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or script can use the window and VBlank.
 void WorldMap_StartStillViewFar(void);
@@ -189,13 +189,13 @@ void WorldMap_StartStillViewFar(void);
 void WorldMap_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's sprite
 /// anims, except hidden ones.
-void Anim_ApplyChildValuesFar(struct Object *object, u32 val);
+void Anim_ApplyChildValuesFar(struct Actor *object, u32 val);
 /// Sets every sprite anim of a sprite to colour mode `value`, skipping those
 /// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an object at `values` would overlap a solid object
 /// (ACTOR_SOLID), each radius less 2 pixels, else 0.
-s32 ObjectScript_CheckOverlapFar(struct Object *object, s32 *values);
+s32 ObjectScript_CheckOverlapFar(struct Actor *object, s32 *values);
 /// Sets which of BG1 to BG3 the map shows, in bits 9 to 11 of its display
 /// flags as REG_DISPCNT lays them out.
 void MapGrid_SetShownLayersFar(u32 v);
@@ -227,8 +227,8 @@ void TilesetAnim_ResumeAllFar(void);
 /// Returns the first solid object an object at `values` would overlap, as
 /// ObjectScript_CheckOverlapFar tests, or NULL; the Move effect uses it to see
 /// what stands in the way of the stone pillar it pushes.
-struct Object *ObjectScript_FindOverlappingEntryFar(struct Object *object,
-                                                    s32 *values);
+struct Actor *ObjectScript_FindOverlappingEntryFar(struct Actor *object,
+                                                   s32 *values);
 /// Returns the terrain kind (the low four bits of the first collision byte) of
 /// layer `index`'s cell under (x, y), given in 16.16 pixels.
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 index, s32 x, s32 y);

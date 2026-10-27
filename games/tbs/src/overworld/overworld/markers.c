@@ -7,11 +7,11 @@
 /// Sets an object's y and groundHeight to the map's height at its x and z.
 /// Called by Field_PlaceTreasureSpots for each treasure spot it places.
 void ObjectMotion_SnapToTerrain(void *object) {
-  struct Object *actor = object;
+  struct Actor *actor = object;
   s32 groundHeight;
 
-  groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x, actor->z);
-  actor->y = groundHeight;
+  groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+  actor->y.fixed = groundHeight;
   actor->groundHeight = groundHeight;
 }
 
@@ -64,7 +64,7 @@ void Field_PlaceTreasureSpots(void) {
   u8 *list = grid->markers;
   struct TreasureSpot *marker = work->treasureSpots;
   const struct Trigger *trigger;
-  struct Object *markerActor;
+  struct Actor *markerActor;
   u32 column;
   u32 row;
 
@@ -88,32 +88,33 @@ void Field_PlaceTreasureSpots(void) {
         if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
-          markerActor = (struct Object *)Object_CreateFar(
-              TREASURE_SPOT_CHEST_SPRITE, (column << 20) + 0x80000, 0,
-              (row << 20) + 0x80000);
+          markerActor = Object_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
+                                         (column << 20) + 0x80000, 0,
+                                         (row << 20) + 0x80000);
           if (markerActor == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerActor);
-          Object_SetSpriteFlagsFar((struct Object *)markerActor, 0);
+          Object_SetSpriteFlagsFar(markerActor, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePending).
           if (GameFlag_GetFar(trigger->condition)) {
             if ((trigger->value & 0xfff00000) == 0x500000) {
-              Object_ReleaseFar((struct Object *)markerActor);
+              Object_ReleaseFar(markerActor);
               continue;
             }
             Object_SelectAnimationFar(markerActor, TREASURE_SPOT_CHEST_OPEN);
           }
-          Object_StartIdleFar((struct Object *)markerActor);
-          markerActor->homeX = markerActor->x / Q16_ONE;
-          markerActor->homeZ = markerActor->z / Q16_ONE;
+          Object_StartIdleFar(markerActor);
+          markerActor->homeX = markerActor->x.fixed / Q16_ONE;
+          markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->priorityFlags = 1;
           markerActor->collisionFlags = 1;
           marker->id = trigger->subject;
-          marker->object = (struct Object *)markerActor;
-          marker->column = markerActor->x / 0x100000;
-          marker->row = markerActor->z / 0x100000;
+          marker->object = markerActor;
+          // Plain words: through .fixed, the union moves the store above.
+          marker->column = *(s32 *)&markerActor->x / 0x100000;
+          marker->row = *(s32 *)&markerActor->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -124,23 +125,24 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           if (GameFlag_GetFar(trigger->condition))
             continue;
-          markerActor = (struct Object *)Object_CreateFar(
-              TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
-              (row << 20) + 0x80000);
+          markerActor = Object_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
+                                         (column << 20) + 0x80000, 0,
+                                         (row << 20) + 0x80000);
           if (markerActor == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerActor);
-          Object_SetSpriteFlagsFar((struct Object *)markerActor, 0);
-          Object_StartIdleFar((struct Object *)markerActor);
+          Object_SetSpriteFlagsFar(markerActor, 0);
+          Object_StartIdleFar(markerActor);
           Object_SelectAnimationFar(markerActor, 1);
-          markerActor->homeX = markerActor->x / Q16_ONE;
-          markerActor->homeZ = markerActor->z / Q16_ONE;
+          markerActor->homeX = markerActor->x.fixed / Q16_ONE;
+          markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->collisionFlags = 1;
           markerActor->priorityFlags = 1;
-          marker->object = (struct Object *)markerActor;
+          marker->object = markerActor;
           marker->id = trigger->subject;
-          marker->column = markerActor->x / 0x100000;
-          marker->row = markerActor->z / 0x100000;
+          // Plain words: through .fixed, the union moves the store above.
+          marker->column = *(s32 *)&markerActor->x / 0x100000;
+          marker->row = *(s32 *)&markerActor->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -184,7 +186,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Object *object;
+  struct Actor *object;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
@@ -210,7 +212,7 @@ void TreasureSpot_CloseChest(s32 id) {
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Object *object;
+  struct Actor *object;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
@@ -222,7 +224,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
     Sound_PlaySongFar(SE_ENEMY_CRY);
     if (object != NULL) {
       object->velocityY = 8 << 16;
-      Object_SetSpriteFlagsFar((struct Object *)object, 1);
+      Object_SetSpriteFlagsFar(object, 1);
     }
   }
 }
@@ -239,7 +241,7 @@ void TreasureSpot_OpenChest(s32 id) {
 void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Object *object;
+  struct Actor *object;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
@@ -253,7 +255,7 @@ void TreasureSpot_ShowOpened(s32 id) {
 /// Returns the object of treasure spot id, or NULL when no slot has it. Called
 /// by Field_ExamineCell, and by Reveal's marks (field_fx.c) to skip a treasure
 /// spot already placed.
-struct Object *TreasureSpot_GetActor(s32 id) {
+struct Actor *TreasureSpot_GetActor(s32 id) {
   s32 slotIndex = TreasureSpot_FindSlot(id);
   struct TreasureSpot *marker;
 
@@ -269,7 +271,7 @@ struct Object *TreasureSpot_GetActor(s32 id) {
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Object *object;
+  struct Actor *object;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
@@ -288,7 +290,7 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 objectX;
   s32 objectZ;
   struct TreasureSpot *marker;
-  struct Object *object;
+  struct Actor *object;
 
   objectZ = z;
   objectX = x;
@@ -301,11 +303,11 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
         objectX = (marker->column << 20) + 0x80000;
       if (objectZ == -1)
         objectZ = (marker->row << 20) + 0x80000;
-      object->x = objectX;
-      object->z = objectZ;
+      object->x.fixed = objectX;
+      object->z.fixed = objectZ;
       groundHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
       object->groundHeight = groundHeight;
-      object->y = groundHeight;
+      object->y.fixed = groundHeight;
     }
   }
 }

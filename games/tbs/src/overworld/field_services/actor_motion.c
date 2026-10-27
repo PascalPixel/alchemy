@@ -9,7 +9,7 @@
 /// once (gMovementType_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   Object_SetSpriteFlagsFar(obj, 0);
-  ((struct Object *)obj)->collisionFlags = 0;
+  ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
@@ -18,9 +18,9 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
 /// runs it again every frame until the actor's script is replaced.
-s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
+s32 ObjectMotion_MoveTowardTarget(struct Actor *object) {
   s32 step;
-  struct Object *target;
+  struct Actor *target;
   s32 deltaX;
   s32 deltaZ;
   s32 pixelsX;
@@ -29,26 +29,26 @@ s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
   s32 newZ;
   s32 distance;
 
-  target = object->linkedObject;
+  target = object->linkedActor;
   if (target != 0) {
     // Whole pixels, rounded toward zero as a division by 0x10000 would.
-    deltaX = target->x - object->x;
+    deltaX = target->x.fixed - object->x.fixed;
     if (deltaX < 0)
       deltaX += 0xffff;
     pixelsX = deltaX >> 16;
-    deltaZ = target->z - object->z;
+    deltaZ = target->z.fixed - object->z.fixed;
     if (deltaZ < 0)
       deltaZ += 0xffff;
     pixelsZ = deltaZ >> 16;
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
-    step = object->action;
+    step = object->timer;
     if (distance >= step) {
       // << 20 is 16 pixels in 16.16 per pixel of distance. Offsets can be
       // negative: shift their word representation before reading it as a
       // signed displacement, rather than shifting a negative.
-      newX = object->x + (s32)((u32)pixelsX << 20) / step;
-      newZ = object->z + (s32)((u32)pixelsZ << 20) / step;
-      Object_SetMoveTargetFar(object, newX, object->y, newZ);
+      newX = object->x.fixed + (s32)((u32)pixelsX << 20) / step;
+      newZ = object->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      Object_SetMoveTargetFar(object, newX, object->y.fixed, newZ);
       Object_SelectAnimationFar(object, 2);
     } else {
       Object_SelectAnimationFar(object, 1);
@@ -60,17 +60,18 @@ s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
 /// the actor's script is replaced.
-s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
+s32 ObjectMotion_TurnTowardLinkedTarget(struct Actor *object) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
-  struct Object *target;
+  struct Actor *target;
 
-  target = object->linkedObject;
+  target = object->linkedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     object->steeringFlags &= 0xfe;
-    targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
+    targetAngle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
+                               target->x.fixed - object->x.fixed);
     currentAngle = object->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
@@ -90,7 +91,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
 /// (overworld/actors.c), from Scene_TalkToActor after a talk
 /// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.
-void Actor_SetMovementType(struct Object *object, s32 action) {
+void Actor_SetMovementType(struct Actor *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
     action = (s32)gMovementType_StandScript;
@@ -108,8 +109,7 @@ void Actor_SetMovementType(struct Object *object, s32 action) {
     action = (s32)gMovementType_FollowLinkedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    object->linkedObject =
-        (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+    object->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
@@ -118,7 +118,7 @@ void Actor_SetMovementType(struct Object *object, s32 action) {
   default:
     break;
   }
-  Object_InitializeFar((struct Object *)object, (const s32 *)action);
+  Object_InitializeFar(object, (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of
@@ -128,9 +128,9 @@ void Actor_SetMovementType(struct Object *object, s32 action) {
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
 /// asks it for a log, SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH, where the
 /// leader lands.
-struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
-  struct Object *entry;
-  struct Object *found;
+struct Actor *Object_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
+  struct Actor *entry;
+  struct Actor *found;
   s32 slotIndex;
   s32 nearestDistance;
   s32 heightDifference;
@@ -151,20 +151,21 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
     if (entry->spriteStorageKind != OBJECT_SPRITE_ONE)
       continue;
     // 0x2fffff: under 48 pixels apart in height, either way.
-    heightDifference = entry->y - self->y;
+    heightDifference = entry->y.fixed - self->y.fixed;
     if (heightDifference >= 0) {
       if (heightDifference > 0x2fffff)
         continue;
     } else {
-      if (self->y - entry->y > 0x2fffff)
+      if (self->y.fixed - entry->y.fixed > 0x2fffff)
         continue;
     }
-    pixelX = (entry->x - self->x) / Q16_ONE;
-    pixelZ = (entry->z - self->z) / Q16_ONE;
+    pixelX = (entry->x.fixed - self->x.fixed) / Q16_ONE;
+    pixelZ = (entry->z.fixed - self->z.fixed) / Q16_ONE;
     distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ);
     if (distance >= nearestDistance)
       continue;
-    angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
+    angle = (u16)ArcTan2(entry->z.fixed - self->z.fixed,
+                         entry->x.fixed - self->x.fixed);
     if (distance > 23) {
       angleDifference = (s16)(angle - self->facing);
       if (angleDifference < -0x2fff)

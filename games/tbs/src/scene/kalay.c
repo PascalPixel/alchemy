@@ -348,12 +348,12 @@ static void Kalay_ScorchJoins(void) {
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
 /// or turns.
-static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   u32 action;
   u32 nextTimer;
 
-  if ((s16)actor->work == 0) {
+  if ((s16)actor->userValue == 0) {
     action = (u32)(Import_RandomNext() * 8) >> 0x10;
     switch (action) {
     case 0:
@@ -368,10 +368,10 @@ static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
       break;
     }
     nextTimer = (u32)(Import_RandomNext() * 0x50) >> 0x10;
-    actor->work = nextTimer;
+    actor->userValue = nextTimer;
   }
-  if ((s16)actor->work != 0) {
-    actor->work = (s16)actor->work - 1;
+  if ((s16)actor->userValue != 0) {
+    actor->userValue = (s16)actor->userValue - 1;
   }
   return 1;
 }
@@ -1529,7 +1529,7 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
   actor = Actor_GetById(actorId);
   actor->timer = actorId;
   random = Import_RandomNext();
-  actor->work = (random * 5) >> 12;
+  actor->userValue = (random * 5) >> 12;
   Actor_SetScript(actor, gKalay_TouristFidgetScript);
 }
 
@@ -1837,7 +1837,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   random = Random_Next();
   motionPhase = random * 5;
   motionActions = gKalay_PartyFidgetScript;
-  leaderPhase += offsetof(struct Actor, work);
+  leaderPhase += offsetof(struct Actor, userValue);
   *(u16 *)leaderPhase = motionPhase >> 12;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, motionActions);
   ObjectMotion_Launch(ACTOR_BUNZA, 2, 20);
@@ -1870,15 +1870,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   leaderPhase = (u8 *)Actor_Get(ACTOR_GARET);
   random = Random_Next();
-  leaderPhase += offsetof(struct Actor, work);
+  leaderPhase += offsetof(struct Actor, userValue);
   *(u16 *)leaderPhase = (random * 5) >> 12;
   leaderPhase = (u8 *)Actor_Get(ACTOR_IVAN);
   random = Random_Next();
-  leaderPhase += offsetof(struct Actor, work);
+  leaderPhase += offsetof(struct Actor, userValue);
   *(u16 *)leaderPhase = (random * 5) >> 12;
   leaderPhase = (u8 *)Actor_Get(ACTOR_MIA);
   random = Random_Next();
-  leaderPhase += offsetof(struct Actor, work);
+  leaderPhase += offsetof(struct Actor, userValue);
   *(u16 *)leaderPhase = (random * 5) >> 12;
   Actor_SetActionScript(ACTOR_GARET, motionActions);
   Actor_SetActionScript(ACTOR_IVAN, motionActions);
@@ -2103,10 +2103,10 @@ static void Kalay_PushTunnelStatue(void) {
       pushSpeed = PIXELS(1) / 5;
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
-      statue->speed = pushSpeed;
+      statue->speedLimit = pushSpeed;
       statue->acceleration = pushSpeed;
       Object_SetPosition(statue, target->x, target->y, target->z);
-      leader->speed = pushSpeed;
+      leader->speedLimit = pushSpeed;
       leader->acceleration = pushSpeed;
       Object_SetPosition(leader, target->x, target->y, target->z);
       Object_WaitForMove(statue);
@@ -2249,11 +2249,11 @@ static void Kalay_UpdateTunnelPassages(void) {
 // destroyed, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
-static s32 Kalay_UpdateTunnelParticle(struct Object *interpreter) {
+static s32 Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
 #else
-static void Kalay_UpdateTunnelParticle(struct Object *interpreter) {
+static void Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
 #endif
-  struct Actor *particle = (struct Actor *)interpreter;
+  struct Actor *particle = interpreter;
   s16 *lifetime;
   s32 remainingFrames;
   s32 velocityX;
@@ -2262,7 +2262,7 @@ static void Kalay_UpdateTunnelParticle(struct Object *interpreter) {
   lifetime = &particle->timer;
   remainingFrames = *lifetime;
   if (remainingFrames == 0) {
-    Object_Release((struct Object *)particle);
+    Object_Release(particle);
   } else if (remainingFrames == 1) {
     particle->velocityX = 0;
     particle->velocityY = 0;

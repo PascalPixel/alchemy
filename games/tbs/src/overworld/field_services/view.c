@@ -123,14 +123,14 @@ s32 FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
   struct Actor *actor = self;
   struct Actor *host;
 
-  host = actor->linkedObject;
+  host = actor->linkedActor;
   if (host != NULL) {
     actor->motionFlags = 0;
     actor->x.fixed = host->x.fixed;
     actor->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Scene_FindActorTemplate(*(s16 *)&actor->work)->sprite)
+             (s16)Scene_FindActorTemplate(*(s16 *)&actor->userValue)->sprite)
              ->boxX
          << 16) +
         (8 << 16);
@@ -158,18 +158,17 @@ void FieldEffect_SpawnLinked(s32 actorId, s32 emote, s32 wait) {
 
   target = Actor_GetByActorId(actorId);
   if (target != 0) {
-    struct Actor *bubble = (struct Actor *)Object_CreateFar(
-        21, target->x.fixed, target->y.fixed, target->z.fixed);
+    struct Actor *bubble =
+        Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Object_InitializeFar((struct Object *)bubble,
-                           gFieldEffect_LinkedObjectScript);
+      Object_InitializeFar(bubble, gFieldEffect_LinkedObjectScript);
       Object_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
-      bubble->work = actorId;
+      bubble->userValue = actorId;
       sprite = bubble->sprite;
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
@@ -178,7 +177,7 @@ void FieldEffect_SpawnLinked(s32 actorId, s32 emote, s32 wait) {
           (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
-      bubble->linkedObject = target;
+      bubble->linkedActor = target;
 
       // Replace the bubble's priority bits (2 and 3) with 1 or the
       // actor's.
@@ -229,17 +228,16 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->linkedObject == 0) {
-      effect = (struct Actor *)Object_CreateFar(SPRITE_ATTACHED_EFFECT,
-                                                actor->x.fixed, actor->y.fixed,
-                                                actor->z.fixed);
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->linkedActor == 0) {
+      effect = Object_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
+                                actor->y.fixed, actor->z.fixed);
     }
   } else {
-    effect = actor->linkedObject;
+    effect = actor->linkedActor;
     if (effect == 0)
       return;
-    Object_ReleaseFar((struct Object *)effect);
-    actor->linkedObject = 0;
+    Object_ReleaseFar(effect);
+    actor->linkedActor = 0;
     return;
   }
 
@@ -250,18 +248,17 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Object_SelectAnimationFar(effect, 1);
-    actor->linkedObject = effect;
+    actor->linkedActor = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
     Object_SelectAnimationFar(effect, 2);
-    Object_InitializeFar((struct Object *)effect,
-                         (const s32 *)gObjectMotion_WaitScript);
+    Object_InitializeFar(effect, (const s32 *)gObjectMotion_WaitScript);
     effect->timer = 1;
     break;
   }
 
-  effect->work = actorId;
+  effect->userValue = actorId;
   effect->motionFlags = 0;
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;
@@ -271,7 +268,7 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
 #endif
   visual = effect->sprite;
   visual->flags = 0;
-  effect->linkedObject = actor;
+  effect->linkedActor = actor;
 
   // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {

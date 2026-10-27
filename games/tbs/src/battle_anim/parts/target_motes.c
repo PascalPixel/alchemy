@@ -232,7 +232,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
       *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
 
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Object *object =
+      struct Actor *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
 
       // Paralyze: two glints a frame, 4 to 35 pixels from the target in a
@@ -272,7 +272,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
                         COMPOSITE_LIGHTEN);
       draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       ANIM_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, object->x, 160 << 13, object->z);
+      SET_VECTOR(point, object->x.fixed, 160 << 13, object->z.fixed);
       Transform_ApplyPosition(point);
       // Turn the group about the vertical axis, and for Taint's smokes and
       // Heartrender about the horizontal one too; mote i joins i frames after
@@ -429,12 +429,12 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
     if (frame == 80)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(targetIndex, work->effect) {
-      struct Object *target;
+      struct Actor *target;
 
       target =
           GetBattleObjectSlotFar(work->effect->targets[targetIndex])->object;
       ANIM_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(anchor, target->x, 160 << 14, target->z);
+      SET_VECTOR(anchor, target->x.fixed, 160 << 14, target->z.fixed);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         BattleAnim_TintBattler(work->effect->targets[targetIndex], 0,

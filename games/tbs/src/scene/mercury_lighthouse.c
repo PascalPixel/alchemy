@@ -127,7 +127,7 @@
 #include "world_map_render_work.h"
 #include "io_reg.h"
 #include "dma.h"
-#include "object.h"
+#include "actor.h"
 #include "animspr.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
@@ -1224,7 +1224,7 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 }
 
 /// The slide scripts start the sparkles as the statue sets off.
-static s32 MercuryLighthouse_StartStatueSpray(struct Object *interpreter) {
+static s32 MercuryLighthouse_StartStatueSpray(struct Actor *interpreter) {
   s32 priority = TASK_PASS_FRAME;
 
   Task_AddFrame(MercuryLighthouse_SprayAboveStatue, priority);
@@ -1235,7 +1235,7 @@ static s32 MercuryLighthouse_StartStatueSpray(struct Object *interpreter) {
 // SC_CALL passes the interpreter. The native no-argument form also has two
 // direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
 #ifdef UBFIX
-static s32 MercuryLighthouse_StopStatueSpray(struct Object *interpreter) {
+static s32 MercuryLighthouse_StopStatueSpray(struct Actor *interpreter) {
 #else
 static s32 MercuryLighthouse_StopStatueSpray(void) {
 #endif
@@ -2867,7 +2867,7 @@ static void MercuryLighthouse_RideLift(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Actor_Get(ACTOR_PARTY_LEADER)->speed = PIXELS(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->speedLimit = PIXELS(3);
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
   Sound_PlaySong(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(4);

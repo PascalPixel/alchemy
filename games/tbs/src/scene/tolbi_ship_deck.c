@@ -348,8 +348,8 @@ enum TolbiShipDeckMetatileBehavior {
 
 /// An action-script call: shows the actor's sprite. Returns 0 to end the
 /// call.
-static s32 TolbiShipDeck_ShowSprite(struct Object *interpreter) {
-  struct Actor *a = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_ShowSprite(struct Actor *interpreter) {
+  struct Actor *a = interpreter;
   Actor_SetSpriteFlags(a, 1);
   return 0;
 }
@@ -365,12 +365,12 @@ static s32 TolbiShipDeck_ShowSprite(struct Object *interpreter) {
 /// dives at Ouranos, who turns and jumps (sometimes with an emote), then it
 /// returns to its side. riseEnabled picks which side it returns to.
 /// Returns 1 to keep running.
-static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (actor->riseCounter != 0) {
     switch (actor->riseCounter) {
     case 1:
-      actor->speed = PIXELS(4);
+      actor->speedLimit = PIXELS(4);
       actor->acceleration = PIXELS(2);
       Object_SetPosition(actor, PIXELS(268), PIXELS(20), PIXELS(692));
       actor->riseCounter++;
@@ -415,10 +415,10 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
       if (actor->targetX == ACTOR_NO_TARGET &&
           actor->targetY == actor->targetX &&
           actor->targetZ == actor->targetY) {
-        actor->speed = PIXELS(2);
+        actor->speedLimit = PIXELS(2);
         actor->acceleration = PIXELS(1);
         actor->timer = 0;
-        actor->work = 0;
+        actor->userValue = 0;
         actor->riseCounter++;
         actor->riseBaseY = 0;
       }
@@ -439,16 +439,16 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
     }
     if (actor->x.fixed > PIXELS(248) && actor->x.fixed < PIXELS(292))
       actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->work != 0) {
+    if ((s16)actor->userValue != 0) {
       actor->y.fixed = actor->y.fixed -
                        (((u32)Import_RandomNext() << 15) >> 16) - PIXELS(1) / 2;
       if (actor->y.fixed < 0)
-        actor->work = 0;
+        actor->userValue = 0;
     } else {
       actor->y.fixed = actor->y.fixed +
                        (((u32)Import_RandomNext() << 15) >> 16) + PIXELS(1) / 2;
       if (actor->y.fixed > PIXELS(8))
-        actor->work = 1;
+        actor->userValue = 1;
     }
   }
   if (((u32)Import_RandomNext() * 100) >> 16 == 0)
@@ -457,12 +457,12 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
 }
 
 /// The same for the monster that dives at Sean.
-static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (actor->riseCounter != 0) {
     switch (actor->riseCounter) {
     case 1:
-      actor->speed = PIXELS(4);
+      actor->speedLimit = PIXELS(4);
       actor->acceleration = PIXELS(2);
       Object_SetPosition(actor, PIXELS(256), PIXELS(20), PIXELS(640));
       actor->riseCounter++;
@@ -506,10 +506,10 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Object *interpreter) {
       if (actor->targetX == ACTOR_NO_TARGET &&
           actor->targetY == actor->targetX &&
           actor->targetZ == actor->targetY) {
-        actor->speed = PIXELS(2);
+        actor->speedLimit = PIXELS(2);
         actor->acceleration = PIXELS(1);
         actor->timer = 0;
-        actor->work = 0;
+        actor->userValue = 0;
         actor->riseCounter++;
         actor->riseBaseY = 0;
       }
@@ -530,16 +530,16 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Object *interpreter) {
     }
     if (actor->x.fixed > PIXELS(232) && actor->x.fixed < PIXELS(272))
       actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->work != 0) {
+    if ((s16)actor->userValue != 0) {
       actor->y.fixed = actor->y.fixed -
                        (((u32)Import_RandomNext() << 15) >> 16) - PIXELS(1) / 2;
       if (actor->y.fixed < 0)
-        actor->work = 0;
+        actor->userValue = 0;
     } else {
       actor->y.fixed = actor->y.fixed +
                        (((u32)Import_RandomNext() << 15) >> 16) + PIXELS(1) / 2;
       if (actor->y.fixed > PIXELS(8))
-        actor->work = 1;
+        actor->userValue = 1;
     }
   }
   if (((u32)Import_RandomNext() * 100) >> 16 == 0)
@@ -569,9 +569,9 @@ static s32 sOarDepth[8];
 /// Bobs the actor between 4 and 12 pixels high by a random amount
 /// each frame; the actor's work halfword says which way it is going.
 /// Returns 1.
-static s32 TolbiShipDeck_Bob(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
-  s16 *flag = (s16 *)&actor->work;
+static s32 TolbiShipDeck_Bob(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
+  s16 *flag = (s16 *)&actor->userValue;
   s32 val;
   s32 tmp;
 
@@ -599,8 +599,8 @@ done:
 
 /// Now and then (two chances in 32) turns the actor to look
 /// north-northeast or north-northwest. Returns 1.
-static s32 TolbiShipDeck_LookAround(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_LookAround(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   u32 roll = ((u32)(Import_RandomNext() << 5)) >> 16;
 
   if (roll == 6)
@@ -614,8 +614,8 @@ static s32 TolbiShipDeck_LookAround(struct Object *interpreter) {
 /// to him, he turns and jumps back (sometimes with an emote), and it lands on
 /// one of two spots chosen by riseEnabled. The actor's timer holds the
 /// step. Returns 1.
-static s32 TolbiShipDeck_LeapAtOuranos(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   switch (actor->timer) {
   case 0:
     if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
@@ -627,7 +627,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Object *interpreter) {
     break;
   case 2:
     actor->velocityY = PIXELS(4);
-    actor->speed = PIXELS(4);
+    actor->speedLimit = PIXELS(4);
     actor->acceleration = PIXELS(2);
     Object_SetPosition(actor, PIXELS(264), 0, PIXELS(662));
     actor->timer++;
@@ -661,7 +661,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Object *interpreter) {
   case 6:
     actor->timer++;
     actor->velocityY = PIXELS(4);
-    actor->speed = PIXELS(2);
+    actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
     if (actor->riseEnabled != 0) {
       Object_SetPosition(actor, PIXELS(252), 0, PIXELS(646));
@@ -686,8 +686,8 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Object *interpreter) {
 }
 
 /// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   switch (actor->timer) {
   case 0:
     if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
@@ -699,7 +699,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct Object *interpreter) {
     break;
   case 2:
     actor->velocityY = PIXELS(4);
-    actor->speed = PIXELS(4);
+    actor->speedLimit = PIXELS(4);
     actor->acceleration = PIXELS(2);
     Object_SetPosition(actor, PIXELS(176), 0, PIXELS(696));
     actor->timer++;
@@ -731,7 +731,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct Object *interpreter) {
   case 6:
     actor->timer++;
     actor->velocityY = PIXELS(4);
-    actor->speed = PIXELS(2);
+    actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
     if (actor->riseEnabled != 0) {
       Object_SetPosition(actor, PIXELS(184), 0, PIXELS(672));
@@ -756,8 +756,8 @@ static s32 TolbiShipDeck_LeapAtSean(struct Object *interpreter) {
 }
 
 /// Makes the actor hop at random, one frame in 40 on average. Returns 1.
-static s32 TolbiShipDeck_RandomlyStartActorHop(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if ((((u32)(Import_RandomNext() * 40)) >> 16) == 0)
     actor->velocityY = PIXELS(4);
   return 1;
@@ -776,8 +776,8 @@ static void TolbiShipDeck_ShrinkToNormalSize(union ActorOrEffect *fieldObject) {
 /// Turns the actor east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames. riseCounter counts down the wait.
 /// Returns 1.
-static s32 TolbiShipDeck_IdleTurn(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipDeck_IdleTurn(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {

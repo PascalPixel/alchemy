@@ -214,18 +214,25 @@ is the struct an [actor](../glossary.md#actor) is read through.
 
 Some memory is read through a struct of its own, a field-for-field copy of
 the map that differs only where its reader does, because that reader's
-code matches only through it. [An object](../glossary.md#object)'s 112 bytes
-are `struct Object` almost everywhere, but `BattleObject_SpawnObjectsForList`
+code matches only through it. [An actor](../glossary.md#actor)'s 112 bytes
+are `struct Actor` almost everywhere, but `BattleObject_SpawnObjectsForList`
 reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
-ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous
+ARM code built with GCC 2.95.2, which cannot read `Actor`'s anonymous
 unions, keeps `ObjectArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
 (`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
-(`ItemMenuWork`, `StatusScreenWork` and the others) follow the same rule. A
-field's own type is likewise the one every site matches with: `Object.sprite`
-is a plain `struct Sprite *`, because as a union or a `void *` a store or a
-load moves.
+(`ItemMenuWork`, `StatusScreenWork` and the others) follow the same rule.
+
+Within `struct Actor`, a member's union is the form most sites match with, and
+the few that match only with the plain word reach it through a pointer of the
+member's own type (`*(s32 *)&actor->x`, `*(struct Sprite **)&actor->sprite`):
+alchemy-gcc gives an access through a union the union's alias set, which
+conflicts with more stores than the plain word's does. `Exit_PrepareAnimation`
+puts the leader at its cell's middle that way; through `x.fixed` the store of
+the sprite's flags moves. A pointer to an actor kept in memory is likewise a
+component of `struct Actor` itself, so an array of them waits for any store to
+an actor: `FieldEffect_RunLiftOnTarget` keeps its two hands as `void *`.
 
 ### Macros and their expansions
 

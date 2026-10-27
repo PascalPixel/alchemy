@@ -851,7 +851,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->priorityFlags = effectFlags;
   sprite->image.priority = 1;
   effect->scaleX = Q16_ONE / 10;
-  effect->speed = PIXELS(4);
+  effect->speedLimit = PIXELS(4);
   effect->acceleration = PIXELS(4);
   effect->motionFlags = phase;
   Object_SelectAnimation(effect, 2);
@@ -993,7 +993,7 @@ KolimaForestTree_UpdateOrbitSpark(union ActorOrEffect *fieldObject) {
 
   if (age <= 119) {
     SET_VECTOR(position, spark->targetX, spark->targetY, spark->targetZ);
-    heading = (s16)spark->work;
+    heading = (s16)spark->userValue;
     Vector_AddPolarOffset(age * Q16_ONE, age * 768 + heading, position);
     spark->x.fixed = position[0];
     spark->y.fixed = position[1];
@@ -1033,11 +1033,11 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
         Actor_SetSpriteFlags(spark, 0);
         Object_SelectAnimation(spark, 1);
         spark->timer = 0;
-        spark->work = (sparkIndex * 60 * Q16_ONE) / 360;
+        spark->userValue = (sparkIndex * 60 * Q16_ONE) / 360;
         spark->targetX = gKolimaForestTreeSparkOrigin[0];
         spark->targetY = gKolimaForestTreeSparkOrigin[1];
         spark->targetZ = gKolimaForestTreeSparkOrigin[2];
-        spark->speed = PIXELS(8) / 5;
+        spark->speedLimit = PIXELS(8) / 5;
         spark->update = KolimaForestTree_UpdateOrbitSpark;
       }
     }

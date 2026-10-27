@@ -551,7 +551,7 @@ staging and hand back control when they finish.
 
 The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct Unit`, `battleObject` for its
-`struct BattleObject`, `object` for that object's `struct Object`, `record`
+`struct BattleObject`, `object` for that object's `struct Actor`, `record`
 for one of its sprites, and `plan` for the turn.
 
 ## Evidence

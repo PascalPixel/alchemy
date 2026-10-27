@@ -147,7 +147,7 @@ enum SolSanctumElementalStarRoomMetatileBehavior {
 
 #define NULL ((void *)0)
 
-struct Object;
+struct Actor;
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -983,7 +983,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 264, 482);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 278, 480);
-  actor->speed = PIXELS(3);
+  actor->speedLimit = PIXELS(3);
   actor->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(6);
@@ -1141,7 +1141,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   FieldScript_WaitFrames(20);
   actor = Actor_GetById(ACTOR_GARET);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  actor->speed = PIXELS(3);
+  actor->speedLimit = PIXELS(3);
   actor->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(6);
@@ -1209,23 +1209,23 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(460), PIXELS(360));
   Actor_SetPosition(ACTOR_FELIX, PIXELS(471), PIXELS(306));
   actor = Actor_GetById(ACTOR_JENNA);
-  actor->linkedObject = leader;
+  actor->linkedActor = leader;
   actor->steeringFlags |= 1;
   Actor_SetScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_KRADEN);
-  actor->linkedObject = leader;
+  actor->linkedActor = leader;
   actor->steeringFlags |= 1;
   Actor_SetScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_MENARDI);
-  actor->linkedObject = leader;
+  actor->linkedActor = leader;
   actor->steeringFlags |= 1;
   Actor_SetScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_SATUROS);
-  actor->linkedObject = leader;
+  actor->linkedActor = leader;
   actor->steeringFlags |= 1;
   Actor_SetScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   alex = Actor_GetById(ACTOR_ALEX);
-  alex->linkedObject = leader;
+  alex->linkedActor = leader;
   alex->steeringFlags |= 1;
   alex->scaleX = Q16_ONE;
   alex->scaleY = Q16_ONE;
@@ -1233,7 +1233,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   alex->y.fixed = 0;
   Actor_SetScript(alex, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_FELIX);
-  actor->linkedObject = leader;
+  actor->linkedActor = leader;
   actor->steeringFlags |= 1;
   Actor_SetScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   FieldScript_End();
@@ -1923,7 +1923,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // Kraden demonstrates reaching the platforms, then asks the party to help.
   height = 192;
   WaitFrames(6);
-  rising->speed = PIXELS(3);
+  rising->speedLimit = PIXELS(3);
   rising->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);
@@ -1967,7 +1967,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   WaitFrames(6);
-  rising->speed = PIXELS(3);
+  rising->speedLimit = PIXELS(3);
   rising->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);

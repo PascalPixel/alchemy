@@ -211,7 +211,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 s32 Scene_TalkToActor(s32 id) {
   struct ActorTemplate *template = Scene_FindActorTemplate(id);
   s32 result = -1;
-  struct Object *actor = (struct Object *)Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct TriggerView *trigger;
   s32 actorPaused = 0;
   u32 savedAngle;
@@ -253,16 +253,15 @@ s32 Scene_TalkToActor(s32 id) {
       u8 *movementState = &actor->paused;
 
       *movementState = 1;
-      Object_SetAnimationSpeedFar((struct Object *)actor, 0);
+      Object_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
-        struct Object *leader =
-            (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+        struct Actor *leader = Actor_GetById(gSaveBlock.leaderActorId);
 
-        leader->targetX = leader->x;
-        leader->targetY = leader->y;
-        leader->targetZ = leader->z;
+        leader->targetX = leader->x.fixed;
+        leader->targetY = leader->y.fixed;
+        leader->targetZ = leader->z.fixed;
         SET_VELOCITY(leader, 0, 0, 0);
         Actor_LinkPair(id, gSaveBlock.leaderActorId, 0);
       }
@@ -283,18 +282,17 @@ s32 Scene_TalkToActor(s32 id) {
       // talk facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->scriptCursor] == 16) {
         if ((s8)template->talkFacing == 3) {
-          actor->linkedObject =
-              (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+          actor->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)template->talkFacing == 1) {
-          actor->action = savedAngle;
-          Object_InitializeFar((struct Object *)actor,
+          actor->timer = savedAngle;
+          Object_InitializeFar(actor,
                                (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
       actor->paused = 0;
-      Object_SetAnimationSpeedFar((struct Object *)actor, 16);
+      Object_SetAnimationSpeedFar(actor, 16);
     }
     result = 0;
   }

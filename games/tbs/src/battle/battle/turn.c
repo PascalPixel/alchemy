@@ -518,8 +518,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         Sound_PlaySongFar(SE_POWER_UP);
         Object_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
                                   POSE_CAST);
-        Object_SetAnimationSpeedFar(
-            (struct Object *)BattleObject_Get(request->unitId)->object, 32);
+        Object_SetAnimationSpeedFar(BattleObject_Get(request->unitId)->object,
+                                    32);
         ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
                          GLOW_BURST, 0);
         BattlePlayback_WaitForReady();

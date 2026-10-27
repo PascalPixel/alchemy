@@ -3,7 +3,7 @@
 
 /// @file
 /// The words of an object's script as the motion loops index them, and
-/// ObjectArmView, struct Object as update.c reads it.
+/// ObjectArmView, struct Actor as update.c reads it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -23,7 +23,7 @@ struct ObjectScriptWords {
 typedef struct ObjectScriptWords ObjectScriptWords;
 #endif
 
-/// struct Object, field for field, as Object_UpdateAll (update.c) reads it.
+/// struct Actor, field for field, as Object_UpdateAll (update.c) reads it.
 /// update.c is ARM code built with GCC 2.95.2, which cannot read struct
 /// Object's anonymous unions, so it keeps this copy of the layout with the
 /// script as words and the bounce as a union (MATCHING.md).
@@ -91,9 +91,9 @@ struct ObjectArmView {
   ///@{
   u8 riseCounter;
   u8 riseEnabled;
-  s16 action;
-  s16 footprintSide;
-  struct ObjectArmView *linkedObject;
+  s16 timer;
+  s16 userValue;
+  struct ObjectArmView *linkedActor;
   ///@}
   /// Called each frame before its script.
   void (*update)(union ActorOrEffect *fieldObject);

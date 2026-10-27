@@ -179,8 +179,8 @@ static void LemurianShip_SprayUpdate(union ActorOrEffect *fieldObject) {
     drift -= Import_RandomNext();
     drop->x.fixed += drift;
     drop->y.fixed += 0xcccc;
-  } else if ((s16)drop->work != 0) {
-    drop->work = 0;
+  } else if ((s16)drop->userValue != 0) {
+    drop->userValue = 0;
     Object_SelectAnimation(drop, 1);
     drop->wait = 20;
     Actor_SetScript(drop, gSprayFallScript);
@@ -272,7 +272,7 @@ static void Ship_UpdateSwell(void) {
     if (actor != 0) {
       actor->update = LemurianShip_SprayUpdate;
       actor->timer = 60;
-      actor->work = 1;
+      actor->userValue = 1;
       actor->motionFlags = 0;
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->sprite->image.priority = 2;
@@ -286,7 +286,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 LemurianShip_LeaderStepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
 
@@ -297,7 +297,7 @@ static s32 LemurianShip_LeaderStepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 LemurianShip_GaretStepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
 
@@ -308,7 +308,7 @@ static s32 LemurianShip_GaretStepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 LemurianShip_MiaStepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
 
@@ -319,7 +319,7 @@ static s32 LemurianShip_MiaStepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Ivan's boarding height for the swell callback.
-static s32 Ivan_StepOnDeck(struct Object *interpreter) {
+static s32 Ivan_StepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
 
@@ -550,7 +550,7 @@ static void LemurianShip_SetSail(void) {
   grid = gMapGridWork[0];
   ship = Actor_GetById(ACTOR_GANGWAY_NORTH);
   ship->acceleration = 131;
-  ship->speed = 0x20000;
+  ship->speedLimit = 0x20000;
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x3000;
   ObjectMotion_CommitPositionAndActivate(ACTOR_GANGWAY_NORTH, 60, 0);
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x6000;

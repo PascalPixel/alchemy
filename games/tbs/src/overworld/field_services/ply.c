@@ -8,11 +8,11 @@
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
 void FieldEffect_SwayParticle(union ActorOrEffect *fieldObject) {
-  struct Object *obj = (struct Object *)fieldObject;
+  struct Actor *obj = (struct Actor *)fieldObject;
   s16 *phase;
 
-  phase = &obj->action;
-  obj->x = obj->targetX + Iwram_MulQ16(4 << 16, Trig_Sin(*phase << 9));
+  phase = &obj->timer;
+  obj->x.fixed = obj->targetX + Iwram_MulQ16(4 << 16, Trig_Sin(*phase << 9));
   (*phase)++;
   *phase = (*phase + 128) % 128;
 }
@@ -38,14 +38,13 @@ void FieldEffect_UpdateShrinkingOrbitObject(union ActorOrEffect *fieldObject) {
       pos.y = effectWork->y + (10 << 16);
       pos.z = effectWork->z;
       Vector_AddPolarOffset(remainingFrames << 16,
-                            (s16)particle->work + (remainingFrames << 11),
+                            (s16)particle->userValue + (remainingFrames << 11),
                             &pos);
       particle->x.fixed = pos.x;
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      Object_InitializeFar((struct Object *)particle,
-                           gFieldEffect_CommonParticleScript);
+      Object_InitializeFar(particle, gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -56,27 +55,27 @@ void FieldEffect_UpdateShrinkingOrbitObject(union ActorOrEffect *fieldObject) {
 /// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
 void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
-  struct Object *emitter = (struct Object *)fieldObject;
+  struct Actor *emitter = (struct Actor *)fieldObject;
   struct FieldEffectWork *effectWork;
   s16 *phase;
-  struct Object *spark;
+  struct Actor *spark;
   s32 pos[3];
 
-  phase = &emitter->action;
+  phase = &emitter->timer;
   effectWork = gFieldEffectWork;
   if (*phase != -1) {
-    SET_POSITION(emitter,
-                 effectWork->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
-                 effectWork->y + ABOVE, effectWork->z);
+    SET_ACTOR_POSITION(
+        emitter, effectWork->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
+        effectWork->y + ABOVE, effectWork->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
-    SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
+    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + (2 << 16),
+               emitter->z.fixed);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark =
-        (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
+    spark = Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
     // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
@@ -84,12 +83,11 @@ void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
-      spark->action = Random16() >> 9;
-      spark->targetX = spark->x;
-      Anim_ApplyChildValuesFar((struct Object *)spark, SPRITE_COLOR_BLUE_TINT);
+      spark->timer = Random16() >> 9;
+      spark->targetX = spark->x.fixed;
+      Anim_ApplyChildValuesFar(spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      Object_InitializeFar((struct Object *)spark,
-                           gFieldEffect_CommonParticleScript);
+      Object_InitializeFar(spark, gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -125,14 +123,14 @@ void FieldEffect_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    actor = (struct Actor *)Object_Spawn(
-        233, target->x.fixed, target->y.fixed + 0x200000, target->z.fixed);
+    actor = Object_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
+                         target->z.fixed);
     if (actor != 0) {
       actor->scaleY = 0xb333; // 0.7
       actor->scaleX = 0xb333;
       actor->update = FieldEffect_UpdateShrinkingOrbitObject;
       actor->timer = 120;
-      actor->work = i << 13;
+      actor->userValue = i << 13;
       actor->motionFlags = ACTOR_FLOATS;
       last = Sprite_ShareVramCacheEntry(actor->sprite, last);
     }
@@ -150,7 +148,7 @@ void FieldEffect_RunPly(void) {
   WaitFrames(110);
 
   // The one in the centre.
-  target = (struct Actor *)Object_Spawn(233, 0, 0, 0);
+  target = Object_Spawn(233, 0, 0, 0);
   actor = target;
   if (target != 0) {
     target->scaleY = 0xb333;
@@ -159,7 +157,7 @@ void FieldEffect_RunPly(void) {
     target->y.fixed = effectWork->y + 0x100000;
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
-    Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar(target, SPRITE_COLOR_WHITE);
   }
 
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
@@ -172,16 +170,15 @@ void FieldEffect_RunPly(void) {
        * instructions differ in tbs-en. */
       target = actor;
       if (i & 3)
-        Anim_ApplyChildValuesFar((struct Object *)actor,
-                                 SPRITE_COLOR_BLUE_TINT);
+        Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_BLUE_TINT);
       else
-        Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_RED_TINT);
+        Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
   Sound_PlaySongFar(MUS_CURE);
   if (actor != 0) {
     target->update = FieldEffect_RunSparkEmitter;
@@ -199,13 +196,12 @@ void FieldEffect_RunPly(void) {
   // in place.
   if (target != 0) {
     target->timer = -1;
-    target->speed = 0x50000;
+    target->speedLimit = 0x50000;
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
-                                                     0xc00000, 0xe800);
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
     Object_WaitForMoveFar(target);
-    Object_ReleaseFar((struct Object *)target);
+    Object_ReleaseFar(target);
   }
   // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.

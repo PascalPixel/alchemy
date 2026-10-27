@@ -194,8 +194,8 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   s32 frame;
   BlitterPair draw;
   struct BattleCamera *camera;
-  struct Object *target;
-  struct Object *user;
+  struct Actor *target;
+  struct Actor *user;
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;
@@ -228,7 +228,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct Particle *rock = &work->particles[i];
 
-    SET_POSITION(rock, user->x, 0x420000, user->z);
+    SET_POSITION(rock, user->x.fixed, 0x420000, user->z.fixed);
     SET_VELOCITY(rock, (i * 0x500000) >> 5,
                  (s32)(((Random16() & 127) - 64) << 16) >> 6,
                  (s32)(((Random16() & 255) - 127) << 16) >> 5);
@@ -330,9 +330,9 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
         // target, 1/256 of the distance a frame, damped to 60/64 until 85
         // frames after it launched; it hits once below that height.
         if (frame > i * 2 + 16) {
-          rock->velocityX += (target->x - rock->x) >> 8;
+          rock->velocityX += (target->x.fixed - rock->x) >> 8;
           rock->velocityY += (0x140000 - rock->y) >> 8;
-          rock->velocityZ += (target->z - rock->z) >> 8;
+          rock->velocityZ += (target->z.fixed - rock->z) >> 8;
           if (frame < i * 2 + 85) {
             SET_VELOCITY(rock, rock->velocityX * 60 / 64,
                          rock->velocityY * 60 / 64, rock->velocityZ * 60 / 64);

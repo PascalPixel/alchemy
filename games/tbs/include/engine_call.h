@@ -64,7 +64,7 @@ static inline void FieldActor_JumpDownLedge(s32 actorId, s32 mode, s32 action) {
 static inline s32
 FieldObject_CheckMovementCollision(struct Actor *actor,
                                    struct FieldPosition *position) {
-  return MapGrid_CheckCollision((struct Object *)actor, position);
+  return MapGrid_CheckCollision(actor, position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {

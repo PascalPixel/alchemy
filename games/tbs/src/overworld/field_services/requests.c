@@ -22,9 +22,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+    struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
 
-    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
+    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
   Encounter_SelectBattleMusic(zone, slot);
 }
@@ -55,9 +55,9 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->encounter = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = Actor_GetByActorId(state->leaderActorId);
+    struct Actor *leader = Actor_GetByActorId(state->leaderActorId);
 
-    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
+    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
   // Key 0 is no listed encounter, so every Djinni battle takes the music
   // list's last song (battle_cue.c).

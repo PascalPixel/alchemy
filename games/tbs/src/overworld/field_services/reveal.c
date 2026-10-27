@@ -8,7 +8,7 @@
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
 void Object_SetRevealSpriteColor(s32 value) {
-  struct Object *object = gObjects;
+  struct Actor *object = gObjects;
   s32 remainingActors = 63;
 
   do {
@@ -38,7 +38,7 @@ void Object_SetRevealSpriteColor(s32 value) {
 /// FieldEffect_EndReveal removes it.
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
-  struct Object *actor;
+  struct Actor *actor;
   s16 *timer;
   s32 distanceX;
   s32 distanceZ;
@@ -54,8 +54,9 @@ void FieldEffect_WatchLeaderDistance(void) {
   // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
-  distanceX = Iwram_MulQ16(work->revealCenterX - actor->x / Q16_ONE, 0xd105);
-  distanceZ = work->revealCenterY - (actor->z - actor->y) / Q16_ONE;
+  distanceX =
+      Iwram_MulQ16(work->revealCenterX - actor->x.fixed / Q16_ONE, 0xd105);
+  distanceZ = work->revealCenterY - (actor->z.fixed - actor->y.fixed) / Q16_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000

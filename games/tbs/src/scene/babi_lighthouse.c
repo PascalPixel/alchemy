@@ -1174,7 +1174,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 static void BabiLighthouse_PushRoadPillar(void) {
   // Trial: inverting the empty success arm changes two branch instructions
   // (three text bytes in tbs-en); retain the existing branch order.
-  struct Actor *leader = (struct Actor *)Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;
 
@@ -1202,7 +1202,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
 /// climbing or with no pillar ahead, and pushes the pillar
 /// (BabiLighthouse_PushRoadPillar) when he does not climb.
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
-  struct Actor *leader = (struct Actor *)Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 climbDirection = (leader->facing + 0x2000) & 0xc000;
   s32 climbResult = -1;

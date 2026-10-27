@@ -30,10 +30,10 @@ struct ActorDouseView {
 /// The field effect (struct FieldEffectWork, gFieldEffectWork) as Douse reads
 /// it; the notes give the FieldEffectWork fields at the same offsets.
 struct FieldEffectDouseView {
-  s32 angle;             ///< 1/65536 turns: the way the caster faces
-  s32 x, y, z;           ///< the ground under the orb's destination
-  struct Object *caster; ///< mainObject
-  s32 targetObject;      ///< child: the target's object, 0 for none
+  s32 angle;            ///< 1/65536 turns: the way the caster faces
+  s32 x, y, z;          ///< the ground under the orb's destination
+  struct Actor *caster; ///< mainObject
+  s32 targetObject;     ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a trigger names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
@@ -60,7 +60,7 @@ void FieldEffect_SpawnRandomAngleTriplet(union ActorOrEffect *fieldObject) {
 
   if (particle->y <= particle->altitude) {
     particle->wait = dropWait;
-    Object_InitializeFar((struct Object *)particle,
+    Object_InitializeFar((struct Actor *)particle,
                          gFieldEffect_CommonParticleScript);
     p = NULL;
     particle->callback = NULL;
@@ -78,12 +78,12 @@ void FieldEffect_SpawnRandomAngleTriplet(union ActorOrEffect *fieldObject) {
       p->flag = 2;
       p->velocityY = 1 << 16;
       p->speed = Random16() + 0x13333;
-      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)p,
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Actor *)p,
                                                        32 << 16, Random16());
       pp = &p->wait;
       splashWait = 6;
       *pp = splashWait;
-      Object_InitializeFar((struct Object *)p,
+      Object_InitializeFar((struct Actor *)p,
                            gFieldEffect_CommonParticleScript);
     }
   }
@@ -93,15 +93,14 @@ void FieldEffect_SpawnRandomAngleTriplet(union ActorOrEffect *fieldObject) {
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
 void FieldEffect_UpdateDriftingFallObject(union ActorOrEffect *fieldObject) {
-  struct Object *particle = (struct Object *)fieldObject;
+  struct Actor *particle = (struct Actor *)fieldObject;
   s32 drift;
 
-  particle->y -= 0x4ccc;
+  particle->y.fixed -= 0x4ccc;
   drift = Random16();
-  particle->x += drift - Random16();
-  if (particle->y <= particle->groundHeight) {
-    Object_InitializeFar((struct Object *)particle,
-                         gFieldEffect_CommonParticleScript);
+  particle->x.fixed += drift - Random16();
+  if (particle->y.fixed <= particle->groundHeight) {
+    Object_InitializeFar(particle, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -124,7 +123,7 @@ void FieldEffect_RunDouse(void) {
   struct Vector3 start;
   struct Vector3 end;
   struct FieldEffectDouseView *work = gFieldEffectWork;
-  struct Object *caster = work->caster;
+  struct Actor *caster = work->caster;
   struct ActorDouseView *lightOrb;
   struct Vector3 *from;
   struct Vector3 *to;
@@ -141,13 +140,14 @@ void FieldEffect_RunDouse(void) {
   Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->targetObject == 0) {
-    work->x = caster->x;
-    work->z = caster->z;
+    work->x = caster->x.fixed;
+    work->z = caster->z.fixed;
     Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
-  SET_POSITION(from, caster->x, caster->y + (16 << 16), caster->z);
+  SET_POSITION(from, caster->x.fixed, caster->y.fixed + (16 << 16),
+               caster->z.fixed);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -232,7 +232,7 @@ void FieldEffect_RunDouse(void) {
         particle->flag = 0;
         particle->sprite->priority = 2;
         Object_SelectAnimationFar(particle, 8);
-        Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_WHITE);
+        Anim_ApplyChildValuesFar((struct Actor *)particle, SPRITE_COLOR_WHITE);
       }
       WaitFrames(6);
     }
@@ -268,6 +268,6 @@ void FieldEffect_RunDouse(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  Object_ReleaseFar((struct Object *)lightOrb);
+  Object_ReleaseFar((struct Actor *)lightOrb);
   FieldEffect_FadeFromEffectColor();
 }

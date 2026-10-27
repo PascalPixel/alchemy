@@ -426,12 +426,12 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 /// animations (beams.c).
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
-  struct Object *firstObject = BattleObject_Get(firstUnitId)->object;
-  struct Object *secondObject = BattleObject_Get(secondUnitId)->object;
-  s32 firstX = firstObject->x;
-  s32 secondX = secondObject->x;
-  s32 firstZ = firstObject->z;
-  s32 secondZ = secondObject->z;
+  struct Actor *firstObject = BattleObject_Get(firstUnitId)->object;
+  struct Actor *secondObject = BattleObject_Get(secondUnitId)->object;
+  s32 firstX = firstObject->x.fixed;
+  s32 secondX = secondObject->x.fixed;
+  s32 firstZ = firstObject->z.fixed;
+  s32 secondZ = secondObject->z.fixed;
   s32 x = (secondX + firstX) / 2;
   s32 z = (secondZ + firstZ) / 2;
 
@@ -538,7 +538,7 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
 /// and by auto battle (auto_battle.c).
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
-  struct Object *object;
+  struct Actor *object;
   struct Sprite *record;
   struct Sprite **records;
   s32 recordIndex;

@@ -46,7 +46,7 @@
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
 #include "heap_slots.h"
-#include "object.h"
+#include "actor.h"
 #include "animspr.h"
 #include "actor.h"
 #include "object_dispatch.h"

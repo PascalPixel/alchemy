@@ -186,8 +186,8 @@ enum {
 /// Clears the scripted actor's sprite flags and completes this script
 /// command.
 static s32
-BilibinCave_ClearScriptedActorSpriteFlags(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -611,11 +611,11 @@ static void EventScript_PushTorch(void) {
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
 
-  target->speed = PIXELS(1) / 5;
+  target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
   Object_SetPosition(target, destination.x, destination.y, destination.z);
 
-  leader->speed = PIXELS(1) / 5;
+  leader->speedLimit = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
   Object_SetPosition(leader, destination.x, destination.y, destination.z);
 

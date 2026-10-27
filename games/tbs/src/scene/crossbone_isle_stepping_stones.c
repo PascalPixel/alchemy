@@ -598,7 +598,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
       Object_SelectAnimation(leader, 7);
-      leader->speed = PIXELS(3);
+      leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       *flags &= 126;
@@ -640,8 +640,8 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
 /// the low four bits of its timer.
 static s32
-CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
@@ -1307,7 +1307,7 @@ static void EventScript_FrostRaisesPillar(void) {
   (Actor_GetById(ACTOR_THIRD_PUDDLE)->sprite)->image.priority = 2;
   pillar->sprite->image.priority = 2;
   pillar->acceleration = PIXELS(2) / 5;
-  pillar->speed = PIXELS(4) / 5;
+  pillar->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);

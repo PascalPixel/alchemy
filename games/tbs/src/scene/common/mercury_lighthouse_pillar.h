@@ -32,9 +32,9 @@
 
 /// Raises the spark while its scale follows a half-sine pulse.
 static s32
-MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Object *interpreter) {
-  struct Actor *effect = (struct Actor *)interpreter;
-  struct Actor *anchor = effect->linkedObject;
+MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *interpreter) {
+  struct Actor *effect = interpreter;
+  struct Actor *anchor = effect->linkedActor;
   s16 step = ++effect->timer;
   s32 scale;
 
@@ -52,8 +52,8 @@ MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Object *interpreter) {
 }
 
 /// Grows the moving light over the first sixteen script frames.
-static s32 MercuryLighthouse_GrowLight(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 MercuryLighthouse_GrowLight(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 frame;
 
   frame = ++actor->timer;
@@ -66,8 +66,8 @@ static s32 MercuryLighthouse_GrowLight(struct Object *interpreter) {
 }
 
 /// Expands the released light before its script removes it.
-static s32 Actor_AdvanceScaleCounter(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Actor_AdvanceScaleCounter(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 frame;
 
   frame = ++actor->timer;
@@ -81,8 +81,8 @@ static s32 Actor_AdvanceScaleCounter(struct Object *interpreter) {
 
 /// Follows the linked actor and alternates the light's animation
 /// parameter.
-static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 MercuryLighthouse_FollowLeader(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   struct Actor *leader;
   s32 targetZ;
   s32 targetX;
@@ -91,8 +91,8 @@ static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
   s32 distance;
   s32 moveDistance;
 
-  actor->speed = PIXELS(2);
-  leader = actor->linkedObject;
+  actor->speedLimit = PIXELS(2);
+  leader = actor->linkedActor;
   actor->acceleration = PIXELS(1);
   targetX = leader->x.fixed;
   targetZ = leader->z.fixed;
@@ -111,8 +111,8 @@ static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
     distance =
         FixedSqrt(Iwram_MulQ16(deltaX, deltaX) + Iwram_MulQ16(deltaZ, deltaZ));
   moveDistance = distance / 8;
-  if (moveDistance > actor->speed)
-    moveDistance = actor->speed;
+  if (moveDistance > actor->speedLimit)
+    moveDistance = actor->speedLimit;
 
   // Snap within a quarter pixel; otherwise ease toward the leader.
   if (distance < PIXELS(1) / 4) {
@@ -157,7 +157,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedObject = point;
+    spark->linkedActor = point;
     if (sprite != NULL) {
       Sprite_StartAnim(sprite, 2);
       sprite->flags = 0;
@@ -172,7 +172,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedObject = point;
+    spark->linkedActor = point;
     spark->priorityFlags = 2;
     if (sprite != NULL) {
       Sprite_StartAnim(sprite, 1);
@@ -210,7 +210,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
       actor->groundHeight = leader->groundHeight;
       Actor_SetScript(actor, gMercuryLighthouse_PillarScript);
-      actor->linkedObject = leader;
+      actor->linkedActor = leader;
       actor->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
       // this site matches with (scene/README.md): as the field, the sprite's
@@ -335,7 +335,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = 2;
-      obj->speed = 0x40000;
+      obj->speedLimit = 0x40000;
       obj->acceleration = 0x20000;
       Object_SetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
@@ -359,7 +359,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   WaitFrames(3);
   Sound_PlaySong(SE_JUMP);
   Object_SelectAnimation(actor, 7);
-  actor->speed = 0x30000;
+  actor->speedLimit = 0x30000;
   actor->acceleration = 0x20000;
   actor->velocityY = 0x40000;
   *flags &= 0x7e;

@@ -95,7 +95,7 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint origin;
   struct ScreenPoint screen;
   struct ScreenPoint sparkScreen;
-  struct Object *target;
+  struct Actor *target;
   s32 frame;
   s32 i;
   s32 size;
@@ -162,9 +162,9 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
-    newSpark->x = target->x;
-    newSpark->y = target->y + 0xa0000; // 10 pixels up
-    newSpark->z = target->z;
+    newSpark->x = target->x.fixed;
+    newSpark->y = target->y.fixed + 0xa0000; // 10 pixels up
+    newSpark->z = target->z.fixed;
     SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
                  ((Random16() & 255) - 64) << 11,
                  ((Random16() & 255) - 128) << 11);

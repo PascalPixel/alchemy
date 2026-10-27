@@ -925,10 +925,10 @@ static void EventScript_PushStatueOrCrates(void) {
       Object_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
-      pushed->speed = PIXELS(1) / 5;
+      pushed->speedLimit = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
       Object_SetPosition(pushed, destination.x, destination.y, destination.z);
-      leader->speed = PIXELS(1) / 5;
+      leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
       Object_SetPosition(leader, destination.x, destination.y, destination.z);
       Object_WaitForMove(pushed);

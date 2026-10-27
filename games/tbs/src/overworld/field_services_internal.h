@@ -44,7 +44,7 @@
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
 #include "heap_slots.h"
-#include "object.h"
+#include "actor.h"
 #include "animspr.h"
 #include "actor.h"
 #include "object_dispatch.h"
@@ -106,7 +106,7 @@
 static inline void
 FieldEffect_MoveAfterimageHalfway(union ActorOrEffect *fieldObject) {
   struct Actor *afterimage = (struct Actor *)fieldObject;
-  struct Actor *target = afterimage->linkedObject;
+  struct Actor *target = afterimage->linkedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
   afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
@@ -138,10 +138,10 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
-    scale = ((struct Object *)obj)->scaleX + step;                             \
-    ((struct Object *)obj)->scaleY = ((struct Object *)obj)->scaleY + step;    \
-    ((struct Object *)obj)->facing = ((struct Object *)obj)->facing + 0x2000;  \
-    ((struct Object *)obj)->scaleX = scale;                                    \
+    scale = ((struct Actor *)obj)->scaleX + step;                              \
+    ((struct Actor *)obj)->scaleY = ((struct Actor *)obj)->scaleY + step;      \
+    ((struct Actor *)obj)->facing = ((struct Actor *)obj)->facing + 0x2000;    \
+    ((struct Actor *)obj)->scaleX = scale;                                     \
     if (scale < 0x3000) {                                                      \
       Object_ReleaseFar(obj);                                                  \
     }                                                                          \
@@ -164,7 +164,7 @@ struct WaveEffectSprite {
 /// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
 /// frames.
 static inline void
-FieldEffect_InitializeFallingFragment(struct Object *fragment) {
+FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   // Spawn and choose its position at the call site: combining the spawn here
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
@@ -186,10 +186,10 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct FieldEffectWork *effectWork;                                        \
-    struct Object *obj;                                                        \
-    struct Object *pair[2];                                                    \
+    struct Actor *obj;                                                         \
+    struct Actor *pair[2];                                                     \
     struct Vector3 pos;                                                        \
-    struct Object **walk;                                                      \
+    struct Actor **walk;                                                       \
     s32 n;                                                                     \
     s32 dist;                                                                  \
                                                                                \
@@ -216,22 +216,20 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + 0x100000;                                        \
       pos.z = effectWork->z;                                                   \
-      obj =                                                                    \
-          (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);  \
+      obj = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                 \
       if (obj != 0) {                                                          \
-        Object_InitializeFar((struct Object *)obj,                             \
-                             gFieldEffect_FragmentScript);                     \
+        Object_InitializeFar(obj, gFieldEffect_FragmentScript);                \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
         dist = Random16() * 24 + 0x80000;                                      \
-        ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj, \
-                                                         dist, Random16());    \
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle(obj, dist,            \
+                                                         Random16());          \
       }                                                                        \
     }                                                                          \
                                                                                \
-    Object_ReleaseFar((struct Object *)pair[0]);                               \
-    Object_ReleaseFar((struct Object *)pair[1]);                               \
+    Object_ReleaseFar(pair[0]);                                                \
+    Object_ReleaseFar(pair[1]);                                                \
     FieldEffect_FadeFromEffectColor();                                         \
   }
 

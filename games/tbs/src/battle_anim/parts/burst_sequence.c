@@ -117,7 +117,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   s32 frame;
   u8 *sprites;
   struct BattleCamera *camera;
-  struct Object *target;
+  struct Actor *target;
   u8 *palette;
   s32 paletteId;
   s32 row;
@@ -189,7 +189,8 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   for (i = 0; i != 768; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
+    SET_POSITION(mote, target->x.fixed, target->y.fixed + 0x190000,
+                 target->z.fixed);
     SET_VELOCITY(mote, (Random16() & 255) << 12,
                  ((Random16() & 255) - 127) << 12,
                  ((Random16() & 255) - 127) << 12);

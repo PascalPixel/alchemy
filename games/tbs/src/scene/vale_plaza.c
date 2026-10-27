@@ -2011,7 +2011,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedObject = parent;
+      child->linkedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

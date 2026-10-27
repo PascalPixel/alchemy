@@ -1608,7 +1608,7 @@ static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject) {
 /// Advances an effect around its linked actor on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
   struct Actor *effect = (struct Actor *)fieldObject;
-  struct Actor *anchor = effect->linkedObject;
+  struct Actor *anchor = effect->linkedActor;
   u16 *angle = &effect->timer;
   u16 orbitAngle = *angle;
   s32 x;
@@ -1624,7 +1624,7 @@ static void Sanctum_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
   effect->targetZ = z;
   effect->targetX = currentX;
 
-  *angle = (*angle + effect->work);
+  *angle = (*angle + effect->userValue);
 }
 
 /// Creates an orbiting effect with the requested angular step.
@@ -1649,14 +1649,14 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
         effect->motionFlags = zero;
         effect->timer = zero;
       }
-      effect->work = orbitStep;
+      effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
       {
         u16 clearFlags = 0;
         sprite->flags = clearFlags;
       }
       sourceSprite = center->sprite;
-      effect->linkedObject = center;
+      effect->linkedActor = center;
       sprite->image.priority = sourceSprite->image.priority;
     }
   }
@@ -1999,7 +1999,7 @@ static void Sanctum_UpdateRisingSpark(union ActorOrEffect *fieldObject) {
   spark->y.fixed += spark->timer << 12;
   spark->targetY = spark->y.fixed;
   scale = 0;
-  switch (((s16)spark->work >> 2) & 3) {
+  switch (((s16)spark->userValue >> 2) & 3) {
   case 0:
     scale = Q16_ONE;
     break;
@@ -2013,8 +2013,8 @@ static void Sanctum_UpdateRisingSpark(union ActorOrEffect *fieldObject) {
   }
   spark->scaleX = scale;
   spark->scaleY = scale;
-  timer = spark->work - 1;
-  spark->work = timer;
+  timer = spark->userValue - 1;
+  spark->userValue = timer;
   if ((s16)timer <= 0)
     Actor_SetScript(spark, gSanctum_SparkEndScript);
 }
@@ -2043,7 +2043,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   sprite = spark->sprite;
   spark->motionFlags = 0;
   spark->timer = Math_RemainderUnsigned(Import_RandomNext(), 10) + 5;
-  spark->work = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
+  spark->userValue = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
   sprite->image.priority = actor->sprite->image.priority;

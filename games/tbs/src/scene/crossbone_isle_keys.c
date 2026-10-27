@@ -368,7 +368,7 @@ static void EventScript_BaneSecondEscape(void) {
       spinningDjinni = Actor_GetById(ACTOR_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
-      Object_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
+      Object_SetAnimationSpeed(spinningDjinni, 0);
       Actor_SetScript(spinningDjinni, gCrossboneIsleKeys_BaneSquashScript);
       FieldScript_End();
     }
@@ -389,7 +389,7 @@ static void EventScript_BaneLastEscape(void) {
     // Restore the sprite before the last jump and winding escape path.
     djinni = Actor_GetById(ACTOR_BANE);
     djinni->sprite->rotation = 0;
-    Object_SetAnimationSpeed((struct Object *)djinni, 16);
+    Object_SetAnimationSpeed(djinni, 16);
     Script_PlaySong(SE_JUMP);
     djinni = Actor_GetById(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
@@ -449,10 +449,10 @@ static void EventScript_BaneKeepsAway(void) {
       targetByteOffset = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_BANE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
-      djinni->speed = leader->speed;
+      djinni->speedLimit = leader->speedLimit;
       djinni = Actor_GetById(ACTOR_BANE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
-      djinni->acceleration = leader->speed;
+      djinni->acceleration = leader->speedLimit;
       targetByteOffset -= 30;
       targets = (const u8 *)gCrossboneIsleKeys_BaneWalkTargets;
       // The table stores consecutive signed X/Z pixel pairs.
@@ -1447,7 +1447,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
       djinni = Actor_GetById(ACTOR_BANE);
       djinni->sprite->rotation = 0;
-      Object_SetAnimationSpeed((struct Object *)djinni, 16);
+      Object_SetAnimationSpeed(djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(584), PIXELS(680));
     } else {

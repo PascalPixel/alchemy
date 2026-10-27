@@ -126,14 +126,14 @@ void FieldEffect_RunRetreat(void) {
 
   // Start spinning.
   Sound_PlaySongFar(SE_SHIMMER);
-  Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
   Object_SelectAnimationFar(actor, 3);
   actor->update = FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  Object_SetSpriteFlagsFar((struct Object *)actor, 0);
+  Object_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags = 0;
   actor->update = FieldEffect_UpdateDescendingObject;
   actor->targetX = ACTOR_NO_TARGET;
@@ -186,13 +186,13 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
   s32 scale;
 
   limit = particle->groundHeight + 0xA0000;
-  source = particle->linkedObject;
+  source = particle->linkedActor;
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
   if (y <= limit) {
-    Object_ReleaseFar((struct Object *)particle);
+    Object_ReleaseFar(particle);
     return;
   }
 
@@ -217,13 +217,13 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   s32 scale;
 
   limit = particle->groundHeight + 0xA0000;
-  source = particle->linkedObject;
+  source = particle->linkedActor;
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
   if (y <= limit) {
-    Object_ReleaseFar((struct Object *)particle);
+    Object_ReleaseFar(particle);
     return;
   }
 
@@ -291,9 +291,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    actor = (struct Actor *)Object_CreateFar(
-        SPRITE_GOLDEN_RINGS, source->x.fixed, source->y.fixed + 0x400000,
-        source->z.fixed);
+    actor = Object_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
+                             source->y.fixed + 0x400000, source->z.fixed);
     actors[arcIndex] = actor;
     if (actor == NULL)
       continue;
@@ -302,7 +301,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     actor->motionFlags = 0;
     actor->timer = 0;
     zero = 0;
-    actor->linkedObject = source;
+    actor->linkedActor = source;
     actor->scaleY = 0x6666;
     actor->scaleX = 0x6666;
     if (sprite == NULL)

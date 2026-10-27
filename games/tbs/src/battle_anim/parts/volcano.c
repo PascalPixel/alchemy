@@ -46,7 +46,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   u8 *sheet;
   struct ScreenPoint screen;
   BlitterPair draw;
-  struct Object *object;
+  struct Actor *object;
   struct BattleCamera *camera;
   s32 i;
 
@@ -86,7 +86,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     base->y = 0;
     base->x = x;
     base->z = gVolcano_Depths[work->effect->variant][i] << 16;
-    if (object->x < 0)
+    if (object->x.fixed < 0)
       base->x = -x;
   }
 

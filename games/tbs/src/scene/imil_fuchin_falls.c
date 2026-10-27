@@ -1693,8 +1693,8 @@ static void FuchinFallsCave_UpdateDustMotion(union ActorOrEffect *raw) {
 
 /// Hides the dust (SPRITE_COLOR_HIDDEN) when its object script finishes
 /// looping.
-static s32 FuchinFallsCave_SetDustPalette(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 FuchinFallsCave_SetDustPalette(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   return 0;
 }
@@ -1719,8 +1719,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   if (effect == 0)
     return;
   sprite = effect->sprite;
-  Object_SelectAnimation((struct Actor *)effect,
-                         (flags + 1) & EFFECT_SCRIPT_MASK);
+  Object_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_SetScript((struct Actor *)effect, scripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->flags = 0;
@@ -1921,7 +1920,7 @@ Imil_TurnSkaterTowardHeldDirection(union ActorOrEffect *fieldObject) {
     direction = -0x1000;
   actor->facing = facing + direction;
   Object_SelectAnimation(actor, 2);
-  Object_SetAnimationSpeed((struct Object *)actor, IMIL_SLIDE_ANIMATION_STEP);
+  Object_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
 }
 
 /// Slides along Imil Falls Cave's ice until terrain or a metatile behavior
@@ -1966,13 +1965,13 @@ static void Imil_SlideActorAcrossIce(void) {
 
     probe.x = x;
     probe.z = z;
-    actor->speed = PIXELS(2);
+    actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1) / 10;
     actor->timer = 0;
     Object_SetPosition(actor, x, actor->y.fixed, z);
 
     Object_SelectAnimation(actor, 2);
-    Object_SetAnimationSpeed((struct Object *)actor, IMIL_SLIDE_ANIMATION_STEP);
+    Object_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
     Object_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 
@@ -1991,7 +1990,7 @@ static void Imil_SlideActorAcrossIce(void) {
       }
       x = probe.x;
       z = probe.z;
-      actor->speed = PIXELS(2);
+      actor->speedLimit = PIXELS(2);
       actor->acceleration = PIXELS(1) / 10;
       Object_SetPosition(actor, probe.x, probe.y, probe.z);
       Object_WaitForMove(actor);
@@ -2000,7 +1999,7 @@ static void Imil_SlideActorAcrossIce(void) {
       }
     }
 
-    actor->speed = PIXELS(2);
+    actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
     Object_SetPosition(actor, x, actor->y.fixed, z);
     Object_WaitForMove(actor);

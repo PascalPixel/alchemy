@@ -12,7 +12,7 @@
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 
 struct FieldPosition;
-struct Object;
+struct Actor;
 struct Trigger;
 struct ActorTemplate;
 struct Window;

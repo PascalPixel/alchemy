@@ -512,7 +512,7 @@ static void AltmillerCave_StartRetreat(void) {
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainObject;
   ObjectMotion_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
-  Anim_ApplyChildValues((struct Object *)original, 0);
+  Anim_ApplyChildValues(original, 0);
   FieldScript_WaitFrames(20);
   replacement =
       Actor_Create(0, original->x.fixed, original->y.fixed, original->z.fixed);
@@ -611,7 +611,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 126;

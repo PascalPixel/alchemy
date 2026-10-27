@@ -688,7 +688,7 @@ static void Altin_WalkThroughDoorway(void) {
 /// briefly, and stands while on the ground.
 static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
   struct Actor *beast = &fieldObject->actor;
-  s16 *shakeFrames = (s16 *)&beast->work;
+  s16 *shakeFrames = (s16 *)&beast->userValue;
 
   // While this hook owns the beast, timer is its hop phase, work counts down
   // the landing shake, and the effect's countdown is a landing-sound latch.
@@ -704,7 +704,7 @@ static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
       if (fieldObject->effect.countdown != 0) {
         Script_PlaySong(SE_SPLASH);
         fieldObject->effect.countdown = 0;
-        beast->work = 4;
+        beast->userValue = 4;
         MapGrid_SetShake(0, 0x10000, 0x10000);
       }
       beast->y.fixed = beast->groundHeight;
@@ -729,7 +729,7 @@ static void Altin_BeastHopAway(void) {
 
   beast = Actor_GetById(ACTOR_WATER_BEAST);
   beast->timer = 0;
-  beast->work = 0;
+  beast->userValue = 0;
   beast->gravity = 0x6666;
   beast->update = Altin_BeastHop;
   Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
@@ -942,7 +942,7 @@ static void Altin_BeastSpawnSpray(void) {
                                                  0, PIXELS(400)));
     if (spray != 0) {
       spray->actor.timer = WATER_SPRAY_LIFETIME;
-      spray->actor.work = 0;
+      spray->actor.userValue = 0;
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
       Altin_SprayInitialize(&spray->actor);
       spray->actor.update = Altin_SprayDrift;

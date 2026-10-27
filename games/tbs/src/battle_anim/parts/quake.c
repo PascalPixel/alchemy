@@ -155,11 +155,11 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
         // count) and at or below its top. A target below the ground takes its
         // damage pose.
         ANIM_FOR_EACH_TARGET(member, work->effect) {
-          struct Object *object;
+          struct Actor *object;
 
           object =
               GetBattleObjectSlotFar(work->effect->targets[member])->object;
-          SET_VECTOR(point, object->x, object->y, object->z);
+          SET_VECTOR(point, object->x.fixed, object->y.fixed, object->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
@@ -171,7 +171,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
             object->velocityY = 12 << 16;
             object->gravity = 0xab85;
           }
-          if (object->y < 0)
+          if (object->y.fixed < 0)
             BattleAnim_TintBattler(work->effect->targets[member], 0,
                                    POSE_DAMAGE, -1, 0);
         }
@@ -180,12 +180,13 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
 
     // A target that lands flashes white for 5 frames.
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Object *object;
+      struct Actor *object;
       struct Particle *state;
 
       object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       state = &work->particles[member];
-      if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
+      if (state->variant == 0 && object->y.fixed <= 0 &&
+          object->velocityY < 0) {
         state->variant = 1;
         BattleAnim_TintBattler(work->effect->targets[member],
                                SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);

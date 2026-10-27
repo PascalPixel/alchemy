@@ -206,7 +206,7 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// Draws the actor behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his actor template.
-static s32 Actor_DrawBehindScenery(struct Object *interpreter) {
+static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
   union ActorOrEffect *fieldObject = (union ActorOrEffect *)interpreter;
   fieldObject->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   fieldObject->actor.sprite->image.priority = 3;

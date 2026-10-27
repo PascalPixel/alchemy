@@ -39,9 +39,9 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   s32 i;
   u8 *graphics;
   struct BattleCamera *camera;
-  struct Object *caster;
-  struct Object *source;
-  struct Object *target;
+  struct Actor *caster;
+  struct Actor *source;
+  struct Actor *target;
   struct Particle *point;
   struct Particle *step;
   s32 start;
@@ -63,7 +63,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   Object_SelectAnimationFar(caster, POSE_LEAP);
-  Object_SetAnimationSpeedFar((struct Object *)caster, 48);
+  Object_SetAnimationSpeedFar(caster, 48);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -76,13 +76,14 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
-    SET_POSITION(point, source->x, source->y + 0x280000, source->z);
+    SET_POSITION(point, source->x.fixed, source->y.fixed + 0x280000,
+                 source->z.fixed);
     if (i == 0)
-      point->velocityX = (target->x - point->x) / 12;
+      point->velocityX = (target->x.fixed - point->x) / 12;
     else
-      point->velocityX = (target->x * 2 - point->x) / 12;
-    point->velocityY = (target->y - point->y + 0x280000) / 12;
-    point->velocityZ = (target->z - point->z) / 12;
+      point->velocityX = (target->x.fixed * 2 - point->x) / 12;
+    point->velocityY = (target->y.fixed - point->y + 0x280000) / 12;
+    point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
   }
@@ -177,13 +178,13 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           target->velocityY = 0x50000;
           target->gravity = 0xab85;
           target->steeringFlags = 0;
-          Object_StartIdleFar((struct Object *)target);
-          if (target->x < 0)
-            Object_SetMoveTargetFar((struct Object *)target,
-                                    target->x - 0x280000, 0, target->z);
+          Object_StartIdleFar(target);
+          if (target->x.fixed < 0)
+            Object_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
+                                    target->z.fixed);
           else
-            Object_SetMoveTargetFar((struct Object *)target,
-                                    target->x + 0x280000, 0, target->z);
+            Object_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
+                                    target->z.fixed);
           if (i == 2) {
             ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
@@ -224,8 +225,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   s32 i;
   u8 *graphics;
   struct BattleCamera *camera;
-  struct Object *source;
-  struct Object *target;
+  struct Actor *source;
+  struct Actor *target;
   struct Particle *point;
   struct Particle *step;
   struct ScreenPoint screenPosition;
@@ -260,12 +261,14 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
+    SET_POSITION(point, source->x.fixed / 2, source->y.fixed + 0x780000,
+                 source->z.fixed);
     // The signed -64..63 pixel offset scales without a negative left shift.
-    point->velocityX =
-        (target->x + ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) / 12;
-    point->velocityY = (target->y - point->y + 0x140000) / 12;
-    point->velocityZ = (target->z - point->z) / 12;
+    point->velocityX = (target->x.fixed +
+                        ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) /
+                       12;
+    point->velocityY = (target->y.fixed - point->y + 0x140000) / 12;
+    point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;
   }

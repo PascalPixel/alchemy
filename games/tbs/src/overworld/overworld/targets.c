@@ -33,8 +33,8 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// leader by SceneManager_Run for the A button, and by the item code (items.c)
 /// to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
-  struct Object *source;
-  struct Object *candidate;
+  struct Actor *source;
+  struct Actor *candidate;
   s32 nearestActorId;
   s32 nearestDistance;
   s32 actorIndex;
@@ -62,17 +62,17 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
       // y is height: an actor more than 48 pixels above or below is out
       // of reach.
-      if (candidate->y - source->y >= 0) {
-        if (candidate->y - source->y >= 48 << 16)
+      if (candidate->y.fixed - source->y.fixed >= 0) {
+        if (candidate->y.fixed - source->y.fixed >= 48 << 16)
           continue;
-      } else if (source->y - candidate->y >= 48 << 16) {
+      } else if (source->y.fixed - candidate->y.fixed >= 48 << 16) {
         continue;
       }
 
       // The distance in pixels.
-      dx = (candidate->x - source->x) / Q16_ONE;
-      dy = (candidate->y - source->y) / Q16_ONE;
-      dz = (candidate->z - source->z) / Q16_ONE;
+      dx = (candidate->x.fixed - source->x.fixed) / Q16_ONE;
+      dy = (candidate->y.fixed - source->y.fixed) / Q16_ONE;
+      dz = (candidate->z.fixed - source->z.fixed) / Q16_ONE;
 
       squaredX = dx * dx;
       squaredY = dy * dy;
@@ -86,7 +86,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
       // Close actors count from any side; further ones must be within
       // 0x2fff (about 67 degrees) of where the actor faces.
-      angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
+      angle = (u16)ArcTan2(candidate->z.fixed - source->z.fixed,
+                           candidate->x.fixed - source->x.fixed);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->facing);
 
@@ -111,8 +112,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// by the item code (items.c) and by the Psynergy dispatch
 /// (field_services/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
-  struct Object *source;
-  struct Object *candidate;
+  struct Actor *source;
+  struct Actor *candidate;
   s32 nearestActorId;
   s32 nearestDistance;
   s32 facingQuadrant;
@@ -127,7 +128,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   nearestActorId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = (struct Object *)Actor_GetByActorId(id);
+  source = Actor_GetByActorId(id);
   if (source == 0)
     return nearestActorId;
 
@@ -137,7 +138,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (actorIndex == id)
       continue;
 
-    candidate = (struct Object *)Actor_GetByActorId(actorIndex);
+    candidate = Actor_GetByActorId(actorIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
@@ -152,22 +153,22 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       heightLimit = 16 << 16;
 
     {
-      s32 dy = candidate->y - source->y;
+      s32 dy = candidate->y.fixed - source->y.fixed;
       if (dy >= 0) {
         if (dy > heightLimit)
           continue;
-      } else if (source->y - candidate->y > heightLimit) {
+      } else if (source->y.fixed - candidate->y.fixed > heightLimit) {
         continue;
       }
     }
 
     // The distance in whole pixels, rounded toward 0.
-    dx = candidate->x - source->x;
+    dx = candidate->x.fixed - source->x.fixed;
     if (dx < 0)
       dx += 0xffff;
     dx >>= 16;
 
-    dz = candidate->z - source->z;
+    dz = candidate->z.fixed - source->z.fixed;
     if (dz < 0)
       dz += 0xffff;
     pixelZ = dz >> 16;
@@ -180,7 +181,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
     // The cone: 0x1800 (about 34 degrees) either side up to 19 pixels,
     // 0x1000 (22.5 degrees) beyond; 0x2000 (45 degrees) for Mind Read.
-    angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
+    angle = (u16)ArcTan2(candidate->z.fixed - source->z.fixed,
+                         candidate->x.fixed - source->x.fixed);
     coneHalfAngle = 0x1800;
     if (distance > 19)
       coneHalfAngle = 0x1000;
@@ -228,7 +230,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 /// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
 /// Mind Read's wave effect (field_services/mind_read.c) on the caster: each
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
-void Anim_ApplyChildPalette(struct Object *object, s32 palette) {
+void Anim_ApplyChildPalette(struct Actor *object, s32 palette) {
   struct Sprite *sprite;
   struct SpriteAnim **entrySlot;
   struct SpriteAnim *entry;

@@ -8,12 +8,12 @@
 #include "types.h"
 #include "static_assert.h"
 
-struct Object;
+struct Actor;
 
 /// An object script command's handler: it reads its operands at the object's
 /// script cursor, moves the cursor past them and returns 1 to run the next
 /// command this frame or 0 to wait.
-typedef s32 (*ScriptCommand)(struct Object *);
+typedef s32 (*ScriptCommand)(struct Actor *);
 
 /// The whole 0x70-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field
 /// is one work value (enum ObjectScriptValue in objcmd.h), reached through
@@ -60,10 +60,10 @@ struct ScriptOperands {
   u8 frozen;            ///< ObjectArmView.frozen; no work value
   u8 riseCounter;       ///< SW_RISE_COUNTER, kept by map code
   u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by map code
-  s16 actionParameter;  ///< work value 0x23, what its action script reads
-  s16 footprintSide;    ///< work value 0x24, or map scratch
-  u32 linkedObject;     ///< work value 0x25, the object it follows or faces
-  u32 hook;             ///< SW_HOOK, the routine run each frame
+  s16 timer;            ///< work value 0x23, what its action script reads
+  s16 userValue;        ///< work value 0x24, or map scratch
+  u32 linkedActor;      ///< work value 0x25, the object it follows or faces
+  u32 update;           ///< SW_HOOK, the routine run each frame
 };
 
 STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0x00);
@@ -76,9 +76,9 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 0x5d);
 STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);
 STATIC_ASSERT(offsetof(struct ScriptOperands, conditionResult) == 0x57);
 STATIC_ASSERT(offsetof(struct ScriptOperands, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ScriptOperands, actionParameter) == 0x64);
-STATIC_ASSERT(offsetof(struct ScriptOperands, linkedObject) == 0x68);
-STATIC_ASSERT(offsetof(struct ScriptOperands, hook) == 0x6c);
+STATIC_ASSERT(offsetof(struct ScriptOperands, timer) == 0x64);
+STATIC_ASSERT(offsetof(struct ScriptOperands, linkedActor) == 0x68);
+STATIC_ASSERT(offsetof(struct ScriptOperands, update) == 0x6c);
 STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
 
 #endif

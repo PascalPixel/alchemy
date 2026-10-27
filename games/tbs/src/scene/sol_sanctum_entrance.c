@@ -618,11 +618,11 @@ static void EventScript_PushStatue(void) {
       Object_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
-      statue->speed = PIXELS(1) / 5;
+      statue->speedLimit = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
       Object_SetPosition(statue, destination->x, destination->y,
                          destination->z);
-      leader->speed = PIXELS(1) / 5;
+      leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
       Object_SetPosition(leader, destination->x, destination->y,
                          destination->z);

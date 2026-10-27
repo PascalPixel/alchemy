@@ -44,8 +44,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
-  struct Object *user;
-  struct Object *target;
+  struct Actor *user;
+  struct Actor *target;
   s32 x;
   s32 z;
   s32 userHeight;
@@ -74,12 +74,12 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   user = first->object;
   target = second->object;
   percent = 90;
-  x = user->x + percent * (target->x - user->x) / 100;
-  z = user->z + percent * (target->z - user->z) / 100;
+  x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
+  z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(work->effect->user);
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->targets[0]);
-  Object_StartIdleFar((struct Object *)user);
-  Object_SetMoveTargetFar((struct Object *)user, x, 0, z);
+  Object_StartIdleFar(user);
+  Object_SetMoveTargetFar(user, x, 0, z);
   Object_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
@@ -106,8 +106,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     if (frame == 11) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
-      user->y += userHeight;
-      target->y += targetHeight;
+      user->y.fixed += userHeight;
+      target->y.fixed += targetHeight;
     }
 
     // Frame 54: the target flashes and both bounce; the user heads back
@@ -122,11 +122,11 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->steeringFlags = 0;
-      Object_StartIdleFar((struct Object *)user);
-      Object_SetMoveTargetFar((struct Object *)user, 0, 0, user->z);
+      Object_StartIdleFar(user);
+      Object_SetMoveTargetFar(user, 0, 0, user->z.fixed);
     }
     ANIM_VIEW_FROM_CAMERA(camera);
-    SET_VECTOR(point, user->x, user->y, user->z);
+    SET_VECTOR(point, user->x.fixed, user->y.fixed, user->z.fixed);
     Projection_Point(point, &screen);
     screen.x >>= 1;
 
@@ -155,8 +155,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     if (frame == 64) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
-      user->y -= userHeight;
-      target->y -= targetHeight;
+      user->y.fixed -= userHeight;
+      target->y.fixed -= targetHeight;
       Object_SelectAnimationFar(user, 0);
     }
     // The cues: the damage with a heavy impact on the hit, and a shake on

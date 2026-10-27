@@ -45,7 +45,7 @@ void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
 void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   struct BattleAnimWork *work;
   void *canvas;
-  struct Object *object;
+  struct Actor *object;
   struct ScreenPoint position;
   /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
    * fills the frame; as one DrawRectangle, 50 of 256 instructions differ in

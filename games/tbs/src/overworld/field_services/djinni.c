@@ -54,18 +54,15 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                                   dist, dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                                   dist, dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                                   dist, dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
@@ -87,8 +84,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
-    copy = (struct Actor *)Object_CreateFar(sprite, djinni->x.fixed,
-                                            djinni->y.fixed, djinni->z.fixed);
+    copy = Object_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
+                            djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -99,19 +96,19 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
-      Anim_ApplyChildValuesFar((struct Object *)copy, tint);
+      Anim_ApplyChildValuesFar(copy, tint);
       Object_SelectAnimationFar(copy, 0);
-      Object_SetSpriteFlagsFar((struct Object *)copy, 0);
+      Object_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->linkedObject = prev;
+      copy->linkedActor = prev;
       prev = copy;
     }
   }
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                                   64 << 16, dir + 0x8000);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16,
+                                                   dir + 0x8000);
   Sound_PlaySongFar(SE_WHOOSH);
   ObjectMotion_Launch(djinniId, 12, 0);
   WaitFrames(24);
@@ -202,7 +199,7 @@ void Actor_PlaceMapActors(void) {
         gSaveBlock.sequenceResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ActorTemplate *desc = Scene_FindActorTemplate(id);
-        struct Object *object;
+        struct Actor *object;
 
         if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
                                 event - DJINNI_BATTLE_EVENT_FIRST)
@@ -219,10 +216,11 @@ void Actor_PlaceMapActors(void) {
           Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
                                               desc->z);
         } else {
-          struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+          struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
 
-          Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
-                                              leader->z - (32 << 16));
+          Object_SetPositionAndResetMotionFar(object, leader->x.fixed,
+                                              leader->y.fixed,
+                                              leader->z.fixed - (32 << 16));
         }
         Object_SelectAnimationFar(object, 1);
       }
@@ -332,7 +330,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(union ActorOrEffect *fieldObject) {
-  struct Object *object = (struct Object *)fieldObject;
+  struct Actor *object = (struct Actor *)fieldObject;
   object->facing += 0x2000;
 }
 
@@ -352,10 +350,10 @@ enum DjinniLightState {
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
-  struct Object *target;
+  struct Actor *target;
   struct Vector3 position;
 
-  target = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  target = Actor_GetById(gSaveBlock.leaderActorId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
@@ -371,9 +369,9 @@ void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
     }
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
-    position.x = target->x;
-    position.y = target->y + 0x140000;
-    position.z = target->z;
+    position.x = target->x.fixed;
+    position.y = target->y.fixed + 0x140000;
+    position.z = target->z.fixed;
     // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;

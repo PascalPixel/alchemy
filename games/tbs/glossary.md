@@ -290,7 +290,7 @@ scene's own trigger table says
 
 ### Object
 
-One of the 64 slots of `gObjects` (`struct Object`): anything in a scene that
+One of the 64 slots of `gObjects` (`struct Actor`): anything in a scene that
 acts on its own, from the party and the townspeople to the camera and the
 footprints in snow ([World](world.md#objects-and-their-scripts)).
 

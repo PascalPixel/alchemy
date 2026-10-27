@@ -16,11 +16,10 @@ void FieldEffect_UpdateScaledArcObjectA(union ActorOrEffect *fieldObject) {
   s32 frame;
   s32 scale;
 
-  anchor = arc->linkedObject;
+  anchor = arc->linkedActor;
   frame = ++arc->timer;
   if (frame > 31) {
-    Object_InitializeFar((struct Object *)arc,
-                         gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(arc, gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -39,11 +38,10 @@ void FieldEffect_UpdateScaledArcObjectB(union ActorOrEffect *fieldObject) {
   s32 frame;
   s32 scale;
 
-  anchor = arc->linkedObject;
+  anchor = arc->linkedActor;
   frame = ++arc->timer;
   if (frame > 31) {
-    Object_InitializeFar((struct Object *)arc,
-                         gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(arc, gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -101,8 +99,8 @@ void FieldEffect_SpawnScaledArcObjects(struct Actor *linked) {
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    arc = (struct Actor *)Object_CreateFar(SPRITE_GOLDEN_RINGS, linked->x.fixed,
-                                           linked->y.fixed, linked->z.fixed);
+    arc = Object_CreateFar(SPRITE_GOLDEN_RINGS, linked->x.fixed,
+                           linked->y.fixed, linked->z.fixed);
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;
@@ -110,7 +108,7 @@ void FieldEffect_SpawnScaledArcObjects(struct Actor *linked) {
     sprite = (struct SpriteArcOamView *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
-    arc->linkedObject = linked;
+    arc->linkedActor = linked;
     arc->scaleX = arc->scaleY = 0x1999; // 0.1
     if (sprite == 0)
       continue;
@@ -142,9 +140,9 @@ void FieldEffect_SpawnScaledArcObjects(struct Actor *linked) {
 void FieldEffect_FlickerObjectAndTick(union ActorOrEffect *fieldObject) {
   struct Actor *actor = (struct Actor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_WHITE);
   } else {
-    Anim_ApplyChildValuesFar((struct Object *)actor, SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(actor);
@@ -160,7 +158,7 @@ void FieldEffect_CycleObjectValueByCounter(union ActorOrEffect *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Anim_ApplyChildValuesFar((struct Object *)actor, colorIndex);
+    Anim_ApplyChildValuesFar(actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(actor);

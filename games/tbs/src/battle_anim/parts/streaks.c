@@ -98,8 +98,8 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   DrawRectangle drawLower;
   DrawRectangle drawUpper;
   struct BattleCamera *camera;
-  struct Object *source;
-  struct Object *target;
+  struct Actor *source;
+  struct Actor *target;
   s32 resource;
   s32 frame;
   s32 streakIndex;
@@ -173,10 +173,11 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct Particle *streak = &work->particles[k * streaks + streakIndex];
 
-        SET_POSITION(streak, source->x, source->y + lift, source->z);
-        SET_VELOCITY(streak, (target->x - streak->x) / STREAKS_FLIGHT,
-                     (target->y + lift - streak->y) / STREAKS_FLIGHT,
-                     (target->z - streak->z) / STREAKS_FLIGHT);
+        SET_POSITION(streak, source->x.fixed, source->y.fixed + lift,
+                     source->z.fixed);
+        SET_VELOCITY(streak, (target->x.fixed - streak->x) / STREAKS_FLIGHT,
+                     (target->y.fixed + lift - streak->y) / STREAKS_FLIGHT,
+                     (target->z.fixed - streak->z) / STREAKS_FLIGHT);
         streak->variant = 0; // frames since the streak set off
       }
     }
@@ -237,16 +238,16 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
           if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
-            struct Object *struck =
+            struct Actor *struck =
                 GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
-            struck->x +=
+            struck->x.fixed +=
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
                 << 16;
-            if (struck->x > 0)
-              struck->x += 0x8000;
+            if (struck->x.fixed > 0)
+              struck->x.fixed += 0x8000;
             else
-              struck->x -= 0x8000;
+              struck->x.fixed -= 0x8000;
             BattleAnim_TintBattler(work->effect->targets[k], -1, POSE_DAMAGE,
                                    -1, 0);
           }
@@ -330,7 +331,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   BlitterPair draw;
   struct BattleCamera *camera;
   u8 *sheet;
-  struct Object *source;
+  struct Actor *source;
   struct Particle *mote;
   s32 resource;
   s32 frame;
@@ -375,7 +376,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
     // instructions differ.
     speed &= Random16();
     angle = Random16() & 0xffff;
-    SET_POSITION(mote, source->x, source->y + 0x50000, source->z);
+    SET_POSITION(mote, source->x.fixed, source->y.fixed + 0x50000,
+                 source->z.fixed);
     SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
                  ((Random16() & 255) - 32) << 9,
                  -(Trig_Cos(angle) * (speed + 32) << 1) >> 8);
@@ -414,7 +416,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
         // The drifting mode pushes every mote towards the other side of the
         // field, 1/8 pixel a frame faster each frame.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
-          if (source->x < 0)
+          if (source->x.fixed < 0)
             mote->velocityX += 0x2000;
           else
             mote->velocityX -= 0x2000;

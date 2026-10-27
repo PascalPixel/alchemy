@@ -7,7 +7,7 @@
 
 struct SpriteAnim;
 struct Sprite;
-struct Object;
+struct Actor;
 struct FieldPosition;
 struct WorldMapAffinePair;
 struct WorldMapScanline;
@@ -203,9 +203,9 @@ void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
 void Object_SelectAnimation(void *raw, s32 no);
-void Object_SetAnimationSpeed(struct Object *object, s32 val);
-s32 ObjectScript_SetFlagAndTest(struct Object *interpreter);
-s32 ObjectScript_ClearFlagAndTest(struct Object *interpreter);
+void Object_SetAnimationSpeed(struct Actor *object, s32 val);
+s32 ObjectScript_SetFlagAndTest(struct Actor *interpreter);
+s32 ObjectScript_ClearFlagAndTest(struct Actor *interpreter);
 void ObjectScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
                                             s32 operation, s32 value);
 void ObjectScript_SetOrCompareFacing(struct ScriptOperands *state,
@@ -279,33 +279,32 @@ void ObjectScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
-s32 MapGrid_GetScreenRelativePosition(struct Object *object,
+s32 MapGrid_GetScreenRelativePosition(struct Actor *object,
                                       s32 *screenPosition);
 void ObjectSystem_Initialize(s32 controlMode);
 void nullsub_0800C0C4(void);
 void nullsub_0800C0C8(void);
 void *Object_FindFree(void);
-void Object_Release(struct Object *object);
-struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
-void Object_Initialize(struct Object *object, const s32 *script);
-void Object_SetAnimationAndSpeed(struct Object *object, s32 animation,
-                                 s32 step);
-void Object_SetSpriteRotation(struct Object *object, u32 rotation);
+void Object_Release(struct Actor *object);
+struct Actor *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
+void Object_Initialize(struct Actor *object, const s32 *script);
+void Object_SetAnimationAndSpeed(struct Actor *object, s32 animation, s32 step);
+void Object_SetSpriteRotation(struct Actor *object, u32 rotation);
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                        s32 animationId);
-void Object_RegisterSpriteMetadata(struct Object *object, s32 animationId);
-void Object_StartApproachLink(struct Object *object, s32 linkedObjectHandle);
-void Object_StartKeyCheck(struct Object *object);
-void Object_StartMoveByKeys(struct Object *object);
-void Object_StartPlayerControl(struct Object *object);
-void Object_StartWorldMapControl(struct Object *object);
-void Object_StartIdle(struct Object *object);
-void Object_StartCamera(struct Object *object, s32 linkedObjectHandle);
+void Object_RegisterSpriteMetadata(struct Actor *object, s32 animationId);
+void Object_StartApproachLink(struct Actor *object, s32 linkedObjectHandle);
+void Object_StartKeyCheck(struct Actor *object);
+void Object_StartMoveByKeys(struct Actor *object);
+void Object_StartPlayerControl(struct Actor *object);
+void Object_StartWorldMapControl(struct Actor *object);
+void Object_StartIdle(struct Actor *object);
+void Object_StartCamera(struct Actor *object, s32 linkedObjectHandle);
 void Object_WaitForScriptEnd(void *rawObject);
-void Object_SetSpriteFlags(struct Object *object, u32 flags);
-void Object_SetSpriteBlendMode(struct Object *object, u32 mode);
-void Object_SetSpriteScale(struct Object *object, u32 fixedScale);
-void Anim_ApplyChildValues(struct Object *object, u32 param);
+void Object_SetSpriteFlags(struct Actor *object, u32 flags);
+void Object_SetSpriteBlendMode(struct Actor *object, u32 mode);
+void Object_SetSpriteScale(struct Actor *object, u32 fixedScale);
+void Anim_ApplyChildValues(struct Actor *object, u32 param);
 void ObjectSystem_SuspendProjectionAndShowSprites(void);
 void ObjectSystem_ResumeProjectionAndHideLayers(void);
 s32 Object_ReturnTrue(void);
@@ -313,45 +312,45 @@ void ObjectSystem_PlaceSprites(void);
 s32 ObjectCamera_ReturnTrue(void);
 void ObjectSystem_ProjectSprites(void);
 
-s32 ObjectScript_SetBase(struct Object *interpreter);
-s32 ObjectScript_HideSprites(struct Object *interpreter);
-s32 ObjectScript_ShowSprite(struct Object *interpreter);
+s32 ObjectScript_SetBase(struct Actor *interpreter);
+s32 ObjectScript_HideSprites(struct Actor *interpreter);
+s32 ObjectScript_ShowSprite(struct Actor *interpreter);
 void Object_WaitForMove(void *fieldObject);
-s32 Object_IsTargetUnset(struct Object *object);
+s32 Object_IsTargetUnset(struct Actor *object);
 void Object_UpdateAllThumb(void);
-void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+void Object_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
                                       s32 z);
-void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z);
+void Object_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Object_RunUpdateAllFromHeap(void);
 void Object_UpdateAllMotion(void);
-s32 ObjectScript_Wait(struct Object *interpreter);
-s32 ObjectScript_WaitForArrival(struct Object *interpreter);
-s32 ObjectScript_InvokeCallback(struct Object *interpreter);
-s32 ObjectScript_FindLabel(struct Object *interpreter, u32 labelKey);
-s32 ObjectScript_RepeatOrJump(struct Object *interpreter);
-s32 ObjectScript_JumpToLabel(struct Object *interpreter);
-s32 ObjectScript_JumpIfTrue(struct Object *interpreter);
-s32 ObjectScript_JumpIfFalse(struct Object *interpreter);
-s32 ObjectScript_End(struct Object *interpreter);
-s32 ObjectScript_TestFlag(struct Object *interpreter);
-s32 ObjectScript_ToggleFlagAndTest(struct Object *interpreter);
-s32 ObjectScript_SetAnimation(struct Object *interpreter);
-s32 ObjectScript_FreeObject(struct Object *interpreter);
-s32 ObjectScript_Nop(struct Object *interpreter);
-s32 ObjectScript_PlaySound(struct Object *interpreter);
-s32 ObjectScript_CheckOverlap(struct Object *object, s32 *values);
-struct Object *ObjectScript_FindOverlappingEntry(struct Object *object,
-                                                 s32 *values);
-s32 ObjectScript_SetPositionAndResetMotion(struct Object *interpreter);
-s32 ObjectScript_ApplyAbsolutePosition(struct Object *interpreter);
-s32 ObjectScript_ApplyRelativePosition(struct Object *interpreter);
-s32 ObjectScript_StoreAngleToLinkedObject(struct Object *interpreter);
-s32 ObjectScript_ApplyLinkedObjectPosition(struct Object *interpreter);
-s32 ObjectScript_ApplyLocalOffsetPosition(struct Object *interpreter);
-s32 FieldCamera_FollowLeaderInBounds(struct Object *interpreter);
-s32 Object_ApproachLinkedObject(struct Object *interpreter);
-s32 Object_Wander(struct Object *interpreter);
-s32 ObjectScript_WanderNearHome(struct Object *interpreter);
+s32 ObjectScript_Wait(struct Actor *interpreter);
+s32 ObjectScript_WaitForArrival(struct Actor *interpreter);
+s32 ObjectScript_InvokeCallback(struct Actor *interpreter);
+s32 ObjectScript_FindLabel(struct Actor *interpreter, u32 labelKey);
+s32 ObjectScript_RepeatOrJump(struct Actor *interpreter);
+s32 ObjectScript_JumpToLabel(struct Actor *interpreter);
+s32 ObjectScript_JumpIfTrue(struct Actor *interpreter);
+s32 ObjectScript_JumpIfFalse(struct Actor *interpreter);
+s32 ObjectScript_End(struct Actor *interpreter);
+s32 ObjectScript_TestFlag(struct Actor *interpreter);
+s32 ObjectScript_ToggleFlagAndTest(struct Actor *interpreter);
+s32 ObjectScript_SetAnimation(struct Actor *interpreter);
+s32 ObjectScript_FreeObject(struct Actor *interpreter);
+s32 ObjectScript_Nop(struct Actor *interpreter);
+s32 ObjectScript_PlaySound(struct Actor *interpreter);
+s32 ObjectScript_CheckOverlap(struct Actor *object, s32 *values);
+struct Actor *ObjectScript_FindOverlappingEntry(struct Actor *object,
+                                                s32 *values);
+s32 ObjectScript_SetPositionAndResetMotion(struct Actor *interpreter);
+s32 ObjectScript_ApplyAbsolutePosition(struct Actor *interpreter);
+s32 ObjectScript_ApplyRelativePosition(struct Actor *interpreter);
+s32 ObjectScript_StoreAngleToLinkedObject(struct Actor *interpreter);
+s32 ObjectScript_ApplyLinkedObjectPosition(struct Actor *interpreter);
+s32 ObjectScript_ApplyLocalOffsetPosition(struct Actor *interpreter);
+s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter);
+s32 Object_ApproachLinkedObject(struct Actor *interpreter);
+s32 Object_Wander(struct Actor *interpreter);
+s32 ObjectScript_WanderNearHome(struct Actor *interpreter);
 
 void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
                                      s32 operation, s32 value);
@@ -359,19 +358,19 @@ void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
                                    s32 value);
-s32 ObjectScript_ApplyOperandSet(struct Object *interpreter);
-s32 ObjectScript_ApplyOperandAdd(struct Object *interpreter);
-s32 ObjectScript_ApplyOperandCompare(struct Object *interpreter);
+s32 ObjectScript_ApplyOperandSet(struct Actor *interpreter);
+s32 ObjectScript_ApplyOperandAdd(struct Actor *interpreter);
+s32 ObjectScript_ApplyOperandCompare(struct Actor *interpreter);
 
 void Object_SetUpdateValue(void *rawObject, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
                               s32 *secondPosition, s32 radiusB);
-s32 Object_UpdateLeaderControl(struct Object *interpreter);
-s32 Object_MoveOnWorldMap(struct Object *interpreter);
-s32 Field_CheckConfiguredKeysAndCount(struct Object *interpreter);
-s32 Object_MoveByKeys(struct Object *interpreter);
+s32 Object_UpdateLeaderControl(struct Actor *interpreter);
+s32 Object_MoveOnWorldMap(struct Actor *interpreter);
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter);
+s32 Object_MoveByKeys(struct Actor *interpreter);
 
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);
@@ -457,7 +456,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
-s32 MapGrid_CheckCollision(struct Object *object,
+s32 MapGrid_CheckCollision(struct Actor *object,
                            struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
 s32 WorldMap_GetCollision(struct WorldPosition *position);

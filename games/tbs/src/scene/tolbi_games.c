@@ -942,7 +942,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     actor->facing = facing;
     actor->motionFlags = 0;
     actor->sprite->flags = 0;
-    Object_SetAnimationSpeed((struct Object *)actor, childValue);
+    Object_SetAnimationSpeed(actor, childValue);
   }
   // BUG: the original still dereferences actor here when lookup returned
   // NULL.

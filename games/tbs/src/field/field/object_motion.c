@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 ObjectScript_SetBase(struct Object *interpreter) {
+s32 ObjectScript_SetBase(struct Actor *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -17,7 +17,7 @@ s32 ObjectScript_SetBase(struct Object *interpreter) {
 
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
-s32 ObjectScript_HideSprites(struct Object *interpreter) {
+s32 ObjectScript_HideSprites(struct Actor *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
@@ -25,7 +25,7 @@ s32 ObjectScript_HideSprites(struct Object *interpreter) {
 
 /// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
 /// drawn, and moves on to the next command.
-s32 ObjectScript_ShowSprite(struct Object *interpreter) {
+s32 ObjectScript_ShowSprite(struct Actor *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;
@@ -50,7 +50,7 @@ void Object_WaitForMove(void *fieldObject) {
 /// coordinates set, or for an object moved by the ground (any motion flag)
 /// neither its target x nor z. Called by Object_WaitForMove and SC_SYNC
 /// (ObjectScript_WaitForArrival).
-s32 Object_IsTargetUnset(struct Object *object) {
+s32 Object_IsTargetUnset(struct Actor *object) {
   s32 first;
   s32 second;
 
@@ -79,7 +79,7 @@ static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 /// every mode but the battle's (4). Writes each live object's position,
 /// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
-  struct Object *object;
+  struct Actor *object;
   const ObjectScriptWords *script;
   s32 objectsRemaining;
   s32 x;
@@ -137,7 +137,7 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)object->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command]((struct Object *)object) == 0)
+          if (gObjectScript_CommandTable[command]((struct Actor *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
@@ -148,9 +148,9 @@ void Object_UpdateAllThumb(void) {
         continue;
     }
 
-    x = object->x;
-    y = object->y;
-    z = object->z;
+    x = object->x.fixed;
+    y = object->y.fixed;
+    z = object->z.fixed;
 
     if (object->frozen == 0) {
       // Free flight (no motion flags): steer in 3D towards the target,
@@ -340,7 +340,7 @@ void Object_UpdateAllThumb(void) {
     // it after 60.
     if ((object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
-      if (ObjectScript_CheckOverlap((struct Object *)object, pos) != 0) {
+      if (ObjectScript_CheckOverlap(object, pos) != 0) {
         object->refused++;
         continue;
       }
@@ -351,17 +351,17 @@ void Object_UpdateAllThumb(void) {
     switch (object->arrivalAxis) {
     case ARRIVAL_AXIS_X:
       if (x == object->targetX ||
-          ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
+          ((object->x.fixed - object->targetX) ^ (x - object->targetX)) < 0)
         arrivedAtTarget = 1;
       break;
     case ARRIVAL_AXIS_Y:
       if (y == object->targetY ||
-          ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
+          ((object->y.fixed - object->targetY) ^ (y - object->targetY)) < 0)
         arrivedAtTarget = 1;
       break;
     case ARRIVAL_AXIS_Z:
       if (z == object->targetZ ||
-          ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
+          ((object->z.fixed - object->targetZ) ^ (z - object->targetZ)) < 0)
         arrivedAtTarget = 1;
       break;
     default:
@@ -385,7 +385,7 @@ void Object_UpdateAllThumb(void) {
       object->arrivalAxis = 0;
     }
 
-    SET_POSITION(object, x, y, z);
+    SET_ACTOR_POSITION(object, x, y, z);
 
     // Turn to face the direction of travel, at most a sixteenth of a turn
     // (0x1000) a frame.
@@ -413,14 +413,14 @@ void Object_UpdateAllThumb(void) {
 /// and stops it. Reached through SC_POSITION and Object_CreateField, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
 /// field map's actors.
-void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+void Object_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
                                       s32 z) {
-  object->z = z;
+  object->z.fixed = z;
   object->targetX = TARGET_UNSET;
   object->targetY = TARGET_UNSET;
   object->targetZ = TARGET_UNSET;
-  object->x = x;
-  object->y = y;
+  object->x.fixed = x;
+  object->y.fixed = y;
   SET_VELOCITY(object, 0, 0, 0);
 }
 
@@ -434,29 +434,29 @@ void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
 /// Reached through SC_MOVE and the other move commands, the player control,
 /// and as Object_SetMoveTargetFar from the battle's motion, the battle
 /// effects and the Psynergy effects. Sets the target and arrivalAxis.
-void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
+void Object_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
   s32 dz;
   s32 squaredZ;
   u8 *arrivalAxis;
 
-  dx = (x - object->x) / Q16_ONE;
-  distance = (y - object->y) / Q16_ONE;
-  dz = (z - object->z) / Q16_ONE;
+  dx = (x - object->x.fixed) / Q16_ONE;
+  distance = (y - object->y.fixed) / Q16_ONE;
+  dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
   // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
   if (distance < 0x100000) {
-    dx = x - object->x;
-    distance = y - object->y;
-    dz = z - object->z;
+    dx = x - object->x.fixed;
+    distance = y - object->y.fixed;
+    dz = z - object->z.fixed;
     distance =
         FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(distance, distance) +
                   Iwram_MulQ16(dz, dz));
   }
   if (distance < Q16_ONE) {
-    SET_POSITION(object, x, y, z);
+    SET_ACTOR_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
@@ -478,9 +478,9 @@ void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
     // Scale the offset to the target by the shortened distance's share of
     // the whole.
     distance = Iwram_RatioMulQ14(distance, brakingDistance);
-    x = object->x + Iwram_MulQ16(x - object->x, distance);
-    y = object->y + Iwram_MulQ16(y - object->y, distance);
-    z = object->z + Iwram_MulQ16(z - object->z, distance);
+    x = object->x.fixed + Iwram_MulQ16(x - object->x.fixed, distance);
+    y = object->y.fixed + Iwram_MulQ16(y - object->y.fixed, distance);
+    z = object->z.fixed + Iwram_MulQ16(z - object->z.fixed, distance);
   }
   object->targetX = x;
   object->targetY = y;
@@ -488,9 +488,9 @@ void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
   // Watch the axis with the furthest to go: a crossing on an axis with
   // little to go can come long before the target is reached. y only counts
   // in free flight (no motion flags); otherwise the ground sets the height.
-  dx = x - object->x;
-  distance = y - object->y;
-  dz = z - object->z;
+  dx = x - object->x.fixed;
+  distance = y - object->y.fixed;
+  dz = z - object->z.fixed;
   arrivalAxis = &object->arrivalAxis;
   *arrivalAxis = ARRIVAL_AXIS_X;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
@@ -521,7 +521,7 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// ObjectSystem_Initialize adds it as a task in place of Object_UpdateAllThumb
 /// in OBJECT_SYSTEM_BATTLE.
 void Object_UpdateAllMotion(void) {
-  struct Object *object;
+  struct Actor *object;
   s32 objectsRemaining;
   s32 y;
   s32 arrivedAtTarget;
@@ -541,9 +541,9 @@ void Object_UpdateAllMotion(void) {
        objectsRemaining--, object++) {
     if (object->script == 0)
       continue;
-    x = object->x;
-    y = object->y;
-    z = object->z;
+    x = object->x.fixed;
+    y = object->y.fixed;
+    z = object->z.fixed;
     // UB: a frozen object otherwise reads an uninitialized arrival flag, or
     // inherits the preceding object's flag. Initializing it here changes the
     // EN load/store schedule while keeping the 788-byte function extent.
@@ -629,17 +629,17 @@ void Object_UpdateAllMotion(void) {
       switch (object->arrivalAxis) {
       case ARRIVAL_AXIS_X:
         if (x == object->targetX ||
-            ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
+            ((object->x.fixed - object->targetX) ^ (x - object->targetX)) < 0)
           arrivedAtTarget = 1;
         break;
       case ARRIVAL_AXIS_Y:
         if (y == object->targetY ||
-            ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
+            ((object->y.fixed - object->targetY) ^ (y - object->targetY)) < 0)
           arrivedAtTarget = 1;
         break;
       case ARRIVAL_AXIS_Z:
         if (z == object->targetZ ||
-            ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
+            ((object->z.fixed - object->targetZ) ^ (z - object->targetZ)) < 0)
           arrivedAtTarget = 1;
         break;
       }
@@ -659,7 +659,7 @@ void Object_UpdateAllMotion(void) {
       object->targetZ = TARGET_UNSET;
       object->arrivalAxis = 0;
     }
-    SET_POSITION(object, x, y, z);
+    SET_ACTOR_POSITION(object, x, y, z);
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame, the shorter way round.
     if (object->steeringFlags & 1) {

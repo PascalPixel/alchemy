@@ -10,9 +10,9 @@ void FieldEffect_UpdateOrbitingParticleMain(union ActorOrEffect *fieldObject) {
   struct Actor *particle = (struct Actor *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
-    Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_RBG);
+    Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_RBG);
   } else if (frame == 2) {
-    Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_NORMAL);
   }
 }
 
@@ -26,8 +26,7 @@ void FieldEffect_UpdateOrbitingParticleFade(union ActorOrEffect *fieldObject) {
     particle->scaleY -= 0x1000;
     particle->scaleX = scale;
     if (scale <= 0x1000)
-      Object_InitializeFar((struct Object *)particle,
-                           gFieldEffect_CommonParticleScript);
+      Object_InitializeFar(particle, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -52,11 +51,11 @@ FieldEffect_UpdateSpiralParticle(union ActorOrEffect *fieldObject,
       position.x = particle->targetX;
       position.y = particle->targetY;
       position.z = particle->targetZ;
-      Vector_AddPolarOffset(remainingFrames << 17,
-                            clockwise
-                                ? (s16)particle->work - (remainingFrames << 11)
-                                : (s16)particle->work + (remainingFrames << 11),
-                            &position);
+      Vector_AddPolarOffset(
+          remainingFrames << 17,
+          clockwise ? (s16)particle->userValue - (remainingFrames << 11)
+                    : (s16)particle->userValue + (remainingFrames << 11),
+          &position);
       particle->x.fixed = position.x;
       particle->y.fixed = position.y;
       particle->z.fixed = position.z;
@@ -127,7 +126,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = (struct Actor *)Object_Spawn(0xe8, 0, 0, 0);
+    particle = Object_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
@@ -142,9 +141,8 @@ void FieldEffect_RunFrost(void) {
 
       particle->facing = Random16();
       particle->timer = 60;
-      particle->work = Random16();
-      Anim_ApplyChildValuesFar((struct Object *)particle,
-                               SPRITE_COLOR_BLUE_TINT);
+      particle->userValue = Random16();
+      Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
       radius = (Random16() << 2) + (2 << 16);
@@ -168,9 +166,9 @@ void FieldEffect_RunFrost(void) {
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
     do {
-      Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_WHITE);
+      Anim_ApplyChildValuesFar(target, SPRITE_COLOR_WHITE);
       WaitFrames(1);
-      Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_NORMAL);
+      Anim_ApplyChildValuesFar(target, SPRITE_COLOR_NORMAL);
       WaitFrames(4);
       remainingCycles--;
     } while (remainingCycles >= 0);

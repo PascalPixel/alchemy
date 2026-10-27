@@ -443,7 +443,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// step, and as MapGrid_CheckCollisionFar by the Psynergy effects (Move,
 /// Carry, Force, climbing). A layer past MAPGRID_LAYER_OVERHEAD reads the
 /// grid from its start.
-s32 MapGrid_CheckCollision(struct Object *object,
+s32 MapGrid_CheckCollision(struct Actor *object,
                            struct FieldPosition *position) {
   struct MapGridScrollAnimView *gridState;
   s32 pixelX;

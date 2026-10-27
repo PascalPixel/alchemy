@@ -646,7 +646,7 @@ static void Xian_JumpOverSpilledWater(void) {
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
       Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
-      leader->speed = PIXELS(3);
+      leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       leader->motionFlags &= 126;
@@ -776,7 +776,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->velocityZ = 0;
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->speed = 0;
+  carrier->speedLimit = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->acceleration = 0;
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,

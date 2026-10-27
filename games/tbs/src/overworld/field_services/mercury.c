@@ -64,8 +64,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   previous = djinni;
   cursor = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
-    copy = (struct Actor *)Object_CreateFar(kind, djinni->x.fixed,
-                                            djinni->y.fixed, djinni->z.fixed);
+    copy = Object_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
+                            djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -75,11 +75,11 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Anim_ApplyChildValuesFar((struct Object *)copy, SPRITE_COLOR_BLUE_TINT);
+      Anim_ApplyChildValuesFar(copy, SPRITE_COLOR_BLUE_TINT);
       Object_SelectAnimationFar(copy, 0);
-      Object_SetSpriteFlagsFar((struct Object *)copy, 0);
+      Object_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
-      copy->linkedObject = previous;
+      copy->linkedActor = previous;
       previous = copy;
     }
   }
@@ -94,10 +94,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     djinni->y.fixed += 8 << 16;
     WaitFrames(1);
   }
-  Object_ReleaseFar((struct Object *)djinni);
+  Object_ReleaseFar(djinni);
   list = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
-    Object_ReleaseFar((struct Object *)(*list++));
+    Object_ReleaseFar((*list++));
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);

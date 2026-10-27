@@ -369,44 +369,42 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-// The main image reads an object through struct Object, where the maps read the
+// The main image reads an object through struct Actor, where the maps read the
 // same object through struct Actor; these inlines pass a map's
 // actor to it.
 
 /// Turns a one-sprite actor's shadow on or off, bit 0 of its sprite's
 /// flags.
 static inline void Actor_SetSpriteFlags(struct Actor *actor, s32 flags) {
-  Object_SetSpriteFlags((struct Object *)actor, flags);
+  Object_SetSpriteFlags(actor, flags);
 }
 
 /// Sends an object toward a point, where it coasts to a stop.
 static inline void Object_SetPosition(struct Actor *actor, s32 fixed_x,
                                       s32 fixed_y, s32 fixed_z) {
-  Object_SetMoveTarget((struct Object *)actor, fixed_x, fixed_y, fixed_z);
+  Object_SetMoveTarget(actor, fixed_x, fixed_y, fixed_z);
 }
 
 /// Releases an object and its sprites, and empties its place in the object
 /// table.
-static inline void Actor_Release(struct Actor *actor) {
-  Object_Release((struct Object *)actor);
-}
+static inline void Actor_Release(struct Actor *actor) { Object_Release(actor); }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden.
 static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
-  Anim_ApplyChildValues((struct Object *)actor, mode);
+  Anim_ApplyChildValues(actor, mode);
 }
 
 /// Creates a free object in the room, outside the actor table, or
 /// returns NULL when every object is taken.
 static inline struct Actor *Actor_Create(s32 type, s32 fixed_x, s32 fixed_y,
                                          s32 fixed_z) {
-  return (struct Actor *)Object_CreateField(type, fixed_x, fixed_y, fixed_z);
+  return Object_CreateField(type, fixed_x, fixed_y, fixed_z);
 }
 
 /// Starts an object on a sprite script from its first command.
 static inline void Actor_SetScript(struct Actor *actor, const s32 *script) {
-  Object_Initialize((struct Object *)actor, script);
+  Object_Initialize(actor, script);
 }
 
 /// OAM blend modes for Object_SetSpriteBlendMode:
@@ -415,7 +413,7 @@ enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode.
 static inline void Actor_SetBlendMode(struct Actor *actor, s32 mode) {
-  Object_SetSpriteBlendMode((struct Object *)actor, mode);
+  Object_SetSpriteBlendMode(actor, mode);
 }
 
 /// Plays a cell animation, such as a door opening, and holds the script until

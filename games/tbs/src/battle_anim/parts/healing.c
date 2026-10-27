@@ -321,13 +321,13 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
     }
 
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Object *object =
+      struct Actor *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 start = member * HEALING_STAGGER;
 
       // Centre on the point 40 pixels above the target.
       ANIM_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, object->x, 40 << 16, object->z);
+      SET_VECTOR(point, object->x.fixed, 40 << 16, object->z.fixed);
       Transform_ApplyPosition(point);
       if (frame == start + HEALING_SOUND_DELAY)
         Sound_PlaySongFar(SE_RECOVERY);

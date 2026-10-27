@@ -212,7 +212,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
 /// TimberRoomsC: the inn worker sighs between chores.
-static s32 InnWorker_Sigh(struct Object *interpreter) {
+static s32 InnWorker_Sigh(struct Actor *interpreter) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -883,9 +883,9 @@ s32 Scene_Initialize(void) {
       EventScript_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // templates do.
-      Actor_SetMovementType((struct Object *)Actor_GetById(ACTOR_IODEM),
+      Actor_SetMovementType(Actor_GetById(ACTOR_IODEM),
                             MOVEMENT_TYPE_FACE_LEADER);
-      Actor_SetMovementType((struct Object *)Actor_GetById(ACTOR_FARAN),
+      Actor_SetMovementType(Actor_GetById(ACTOR_FARAN),
                             MOVEMENT_TYPE_FACE_LEADER);
       gSaveBlock.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }

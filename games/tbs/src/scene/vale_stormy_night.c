@@ -287,9 +287,8 @@ static s32 sShakeShift;
 /// The step of gValeStormyNight_LookAroundScript: the actor faces a
 /// random way every 20 to 39 frames, as everyone looks about once the Boulder
 /// has gone by.
-static s32
-ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 ValeStormyNight_RerollHeadingOnCountdown(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s32 timer = actor->timer;
   s32 countdown = (s16)timer;
 
@@ -604,7 +603,7 @@ s32 ValeStormyNight_Initialize(void) {
       actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       table = gValeStormyNight_SquashAndStretchScript;
-      actor->work = 1;
+      actor->userValue = 1;
       Actor_SetActionScript(ACTOR_DORA, table);
     }
     Import_ActorSetPosition(ACTOR_JENNA_CHILD, PIXELS(165), PIXELS(1254));
@@ -614,7 +613,7 @@ s32 ValeStormyNight_Initialize(void) {
       actor = Actor_GetById(ACTOR_JENNA_CHILD);
       actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
-      actor->work = 2;
+      actor->userValue = 2;
       Actor_SetActionScript(ACTOR_JENNA_CHILD, table);
     }
     Import_ActorSetPosition(ACTOR_GARET_CHILD, PIXELS(152), PIXELS(1285));
@@ -624,7 +623,7 @@ s32 ValeStormyNight_Initialize(void) {
       actor = Actor_GetById(ACTOR_GARET_CHILD);
       actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
-      actor->work = 3;
+      actor->userValue = 3;
       Actor_SetActionScript(ACTOR_GARET_CHILD, table);
     }
     Import_ActorSetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(184),
@@ -635,7 +634,7 @@ s32 ValeStormyNight_Initialize(void) {
       actor = Actor_GetById(ACTOR_EXHAUSTED_STRONGMAN);
       actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
-      actor->work = 4;
+      actor->userValue = 4;
       Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
     Import_ActorSetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
@@ -896,7 +895,7 @@ static void EventScript_FirstRockFalls(void) {
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
       Actor_SetPosition(ACTOR_FIRST_ROCK, PIXELS(473), PIXELS(932));
-      rock->speed = PIXELS(3) / 2;
+      rock->speedLimit = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
       targetHeight = (rock->y.fixed + PIXELS(240));
       rock->y.fixed += PIXELS(240);
@@ -969,7 +968,7 @@ static void EventScript_SecondRockFalls(void) {
       WaitFrames(40);
       Sound_PlaySong(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
-      rock->speed = PIXELS(3) / 2;
+      rock->speedLimit = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
       targetHeight = (rock->y.fixed + PIXELS(256));
       rock->y.fixed += PIXELS(256);
@@ -1048,7 +1047,7 @@ static void EventScript_ThirdRockFalls(void) {
       ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 0, PIXELS(703));
-      actor->speed = PIXELS(3) / 2;
+      actor->speedLimit = PIXELS(3) / 2;
       actor->acceleration = PIXELS(3) / 2;
       actor->y.fixed += PIXELS(80);
       actor->targetY = actor->y.fixed;
@@ -1118,7 +1117,7 @@ static void EventScript_FourthRockFalls(void) {
       WaitFrames(40);
       Sound_PlaySong(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 3, PIXELS(474), PIXELS(1147));
-      rock->speed = PIXELS(1);
+      rock->speedLimit = PIXELS(1);
       rock->acceleration = PIXELS(1);
       targetHeight = (rock->y.fixed + PIXELS(72));
       rock->y.fixed += PIXELS(72);
@@ -2430,7 +2429,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
     WaitFrames(1);
-  } while ((s16)actor->work != 8);
+  } while ((s16)actor->userValue != 8);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
@@ -2568,7 +2567,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   departureActions = gValeStormyNight_SquashAndStretchScript;
-  actor->work = 1;
+  actor->userValue = 1;
   Actor_SetActionScript(ACTOR_DORA, departureActions);
   Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(165), PIXELS(1254));
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_STAND);
@@ -2576,7 +2575,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-  actor->work = 2;
+  actor->userValue = 2;
   Actor_SetActionScript(ACTOR_JENNA_CHILD, departureActions);
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(152), PIXELS(1285));
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
@@ -2584,14 +2583,14 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-  actor->work = 3;
+  actor->userValue = 3;
   Actor_SetActionScript(ACTOR_GARET_CHILD, departureActions);
   Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(180), PIXELS(1311));
   actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-  actor->work = 4;
+  actor->userValue = 4;
   Actor_SetActionScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
   Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
   Actor_GetById(ACTOR_GARET_CHILD)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2687,7 +2686,7 @@ static void ValeStormyNight_UpdateBoulderShadow(void) {
   shadow->targetX = shadow->x.fixed;
   sprite->offsetY = 10;
   if (gFrameCount & 1) {
-    switch ((s16)source->work) {
+    switch ((s16)source->userValue) {
     case 1:
     case 5:
       shadow->scaleX += 0xa3d;
@@ -2966,7 +2965,7 @@ static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedObject = parent;
+      child->linkedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

@@ -160,7 +160,7 @@
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
 
-static s32 WorldMap_AlignToMap(struct Object *interpreter);
+static s32 WorldMap_AlignToMap(struct Actor *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeCameraOverCaravan(void);
@@ -542,7 +542,7 @@ static void WorldMap_CircleFlint(union ActorOrEffect *fieldObject) {
     Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   else
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
-  if ((s16)actor->work == 0) {
+  if ((s16)actor->userValue == 0) {
     angle = (s16 *)&actor->timer;
     actor->x.fixed = PIXELS(5584);
     actor->y.fixed =
@@ -556,8 +556,8 @@ static void WorldMap_CircleFlint(union ActorOrEffect *fieldObject) {
 
 /// Flint's object script (gWorldMapFlintScript): until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
-static s32 WorldMap_SetUpFlint(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_SetUpFlint(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
   }
@@ -567,7 +567,7 @@ static s32 WorldMap_SetUpFlint(struct Object *interpreter) {
   actor->update = WorldMap_CircleFlint;
   actor->motionFlags = 0;
   actor->timer = 0;
-  actor->work = 0;
+  actor->userValue = 0;
   actor->scaleX = Q16_ONE / 2;
   actor->scaleY = Q16_ONE / 2;
   return 0;
@@ -584,8 +584,8 @@ const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 /// Kolima Bridge's object script (gWorldMapKolimaBridgeScript): it turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
-static s32 WorldMap_SetUpKolimaBridge(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   WorldMap_AlignToMap(interpreter);
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     Object_SelectAnimation(actor, WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
@@ -595,8 +595,8 @@ static s32 WorldMap_SetUpKolimaBridge(struct Object *interpreter) {
 
 /// The object script of every picture on the map (gWorldMapAlignToMapScript):
 /// it turns the sprite with the map's rotation.
-static s32 WorldMap_AlignToMap(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -607,8 +607,8 @@ static s32 WorldMap_AlignToMap(struct Object *interpreter) {
 
 /// Iodem's object script (gWorldMapIodemScript): he turns with the map and
 /// blocks the way, so the leader cannot walk through him.
-static s32 WorldMap_SetUpIodem(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -622,8 +622,8 @@ static s32 WorldMap_SetUpIodem(struct Object *interpreter) {
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
 /// FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party. Called by its
 /// object script.
-static s32 WorldMap_SetUpStorm(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   actor->collisionFlags = 0;
@@ -638,8 +638,8 @@ static s32 WorldMap_SetUpStorm(struct Object *interpreter) {
 /// Called each frame by the storm's object script (gWorldMapStormScript): it
 /// hides the storm on odd frames, and WorldMap_UpdateLocationContacts shows it
 /// again on the next, so it flickers.
-static s32 WorldMap_BlinkActorSprite(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
     actor->spriteStorageKind ^= 1;
   return 1;
@@ -791,7 +791,7 @@ static void WorldMap_UpdateLocationContacts(void) {
   leader = Actor_GetById(gSaveBlock.leaderActorId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gFieldWork;
-  actor = (struct Actor *)work->camera;
+  actor = work->camera;
   left = actor->x.fixed - PIXELS(160);
   right = actor->x.fixed + PIXELS(160);
   top = actor->z.fixed - PIXELS(300);
@@ -1636,7 +1636,7 @@ static void EventScript_MeetFlint(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Script_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    djinni->work = 1;
+    djinni->userValue = 1;
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     WaitFrames(16);
     Script_SetMessage(MsgWorldMapOh);
@@ -1647,7 +1647,7 @@ static void EventScript_MeetFlint(void) {
     WorldMap_Freeze();
     djinni->motionFlags = ACTOR_FALLS;
     djinni->gravity = PIXELS(1) / 4;
-    djinni->speed = PIXELS(1);
+    djinni->speedLimit = PIXELS(1);
     djinni->acceleration = PIXELS(1);
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
@@ -2089,7 +2089,7 @@ static void EventScript_UseBlackOrb(void) {
   iodem = NULL;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
-  Object_StartIdle((struct Object *)leader);
+  Object_StartIdle(leader);
   if (leader->z.fixed > PIXELS(3432)) {
     if (leader->x.fixed > PIXELS(5998)) {
       Object_SetPosition(leader, PIXELS(5998), leader->y.fixed, PIXELS(3453));

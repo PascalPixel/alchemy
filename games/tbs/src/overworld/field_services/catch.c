@@ -24,9 +24,9 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Object *actor = effectWork->mainObject;
-  struct Object *child = effectWork->child;
-  struct Object *object;
+  struct Actor *actor = effectWork->mainObject;
+  struct Actor *child = effectWork->child;
+  struct Actor *object;
   struct FixedPointPosition spawn;
   struct FixedPointPosition origin;
   struct FixedPointPosition target;
@@ -34,13 +34,13 @@ void FieldEffect_RunCatch(void) {
   s32 i;
   s32 steps = 11;
 
-  origin.x = actor->x;
-  origin.y = actor->y + (16 << 16);
-  origin.z = actor->z;
+  origin.x = actor->x.fixed;
+  origin.y = actor->y.fixed + (16 << 16);
+  origin.z = actor->z.fixed;
   if (effectWork->enabled) {
-    target.x = actor->x;
-    target.y = actor->y + (32 << 16);
-    target.z = actor->z;
+    target.x = actor->x.fixed;
+    target.y = actor->y.fixed + (32 << 16);
+    target.z = actor->z.fixed;
     Vector_AddPolarOffset(32 << 16, effectWork->angle, &target.x);
   } else {
     target.x = effectWork->x;
@@ -50,8 +50,7 @@ void FieldEffect_RunCatch(void) {
   spawn.x = effectWork->x;
   spawn.y = effectWork->y + (32 << 16);
   spawn.z = effectWork->z;
-  object = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y,
-                                         spawn.z);
+  object = Object_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
@@ -60,7 +59,7 @@ void FieldEffect_RunCatch(void) {
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Object_SelectAnimationFar(object, 5);
-  Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_GRB);
+  Anim_ApplyChildValuesFar(object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
   // way each frame.
@@ -68,9 +67,9 @@ void FieldEffect_RunCatch(void) {
   do {
     s32 scale;
 
-    SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
-                 origin.y + (target.y - origin.y) * step / 10,
-                 origin.z + (target.z - origin.z) * step / 10);
+    SET_ACTOR_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
+                       origin.y + (target.y - origin.y) * step / 10,
+                       origin.z + (target.z - origin.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -83,7 +82,7 @@ void FieldEffect_RunCatch(void) {
 
   // Press down 2 pixels a frame for 10 frames.
   for (i = 0; i < 10; i++) {
-    object->y -= 2 << 16;
+    object->y.fixed -= 2 << 16;
     WaitFrames(1);
   }
   Object_SelectAnimationFar(object, 5);
@@ -93,13 +92,13 @@ void FieldEffect_RunCatch(void) {
   // then puts it away for good, as Vale's EventScript_CatchNut moves the Nut
   // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
   if (child != 0)
-    Object_SetPositionAndResetMotionFar((struct Object *)child, -(9 << 16),
-                                        child->y, -(9 << 16));
+    Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
+                                        -(9 << 16));
   WaitFrames(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
-    object->y += 0x18000;
+    object->y.fixed += 0x18000;
     WaitFrames(1);
   }
   WaitFrames(10);
@@ -110,15 +109,15 @@ void FieldEffect_RunCatch(void) {
   do {
     s32 scale;
 
-    SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
-                 target.y + (origin.y - target.y) * step / 10,
-                 target.z + (origin.z - target.z) * step / 10);
+    SET_ACTOR_POSITION(object, target.x + (origin.x - target.x) * step / 10,
+                       target.y + (origin.y - target.y) * step / 10,
+                       target.z + (origin.z - target.z) * step / 10);
     scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     WaitFrames(1);
     step++;
   } while (step < steps);
-  Object_ReleaseFar((struct Object *)object);
+  Object_ReleaseFar(object);
   FieldEffect_FadeFromEffectColor();
 }

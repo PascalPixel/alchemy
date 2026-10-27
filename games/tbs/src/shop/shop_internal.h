@@ -24,7 +24,7 @@
 #include "heap_slots.h"
 #include "party_state.h"
 #include "battle_system.h"
-#include "object.h"
+#include "actor.h"
 #include "dma.h"
 #include "task.h"
 #include "resource.h"

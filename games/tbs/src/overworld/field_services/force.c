@@ -68,8 +68,7 @@ void FieldEffect_RunForce(void) {
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
   Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
-  projectile =
-      (struct Actor *)Object_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
+  projectile = Object_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldEffect_FadeFromEffectColor();
     return;
@@ -77,11 +76,11 @@ void FieldEffect_RunForce(void) {
   projectile->scaleY = 0x4000;
   projectile->scaleX = 0x4000;
   projectile->facing = effectWork->angle;
-  projectile->speed = 4 << 16;
+  projectile->speedLimit = 4 << 16;
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   Object_SelectAnimationFar(projectile, 5);
-  Anim_ApplyChildValuesFar((struct Object *)projectile, SPRITE_COLOR_BGR);
+  Anim_ApplyChildValuesFar(projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < Q16_ONE) {
     do {
@@ -97,18 +96,17 @@ void FieldEffect_RunForce(void) {
   // Three afterimages, sharing one set of graphics.
   sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] =
-        (struct Actor *)Object_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
-                                     projectile->y.fixed, projectile->z.fixed);
+    copy = copies[i] = Object_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
+                                    projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
       copy->facing = effectWork->angle;
-      copy->speed = 4 << 16;
+      copy->speedLimit = 4 << 16;
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       Object_SelectAnimationFar(copy, 5);
-      Anim_ApplyChildValuesFar((struct Object *)copy, SPRITE_COLOR_RBG);
+      Anim_ApplyChildValuesFar(copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);
     }
@@ -132,21 +130,19 @@ void FieldEffect_RunForce(void) {
     pos.y = effectWork->y + ABOVE;
     pos.z = effectWork->z;
   }
-  Object_SetMoveTargetFar((struct Object *)projectile, pos.x, pos.y, pos.z);
-  Object_InitializeFar((struct Object *)projectile,
-                       gFieldEffect_BurstParticleObjectScript + 4);
+  Object_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
+  Object_InitializeFar(projectile, gFieldEffect_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
-      Object_SetMoveTargetFar((struct Object *)copy, pos.x, pos.y, pos.z);
-      Object_InitializeFar((struct Object *)copy,
-                           gFieldEffect_CommonParticleScript + 1);
+      Object_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
+      Object_InitializeFar(copy, gFieldEffect_CommonParticleScript + 1);
     }
   }
 
   // Wait, at most 60 frames, for the shot's script to end.
-  for (i = 0; i <= 59 && ((struct Object *)projectile)->script != NULL; i++)
+  for (i = 0; i <= 59 && (projectile)->script != NULL; i++)
     WaitFrames(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
@@ -160,14 +156,12 @@ void FieldEffect_RunForce(void) {
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, effectWork->angle, &pos);
-    if (MapGrid_CheckCollisionFar((struct Object *)target,
-                                  (struct FieldPosition *)&pos) ==
+    if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&pos) ==
             COLLISION_NONE &&
-        ObjectScript_CheckOverlapFar((struct Object *)target, (s32 *)&pos) ==
-            0) {
+        ObjectScript_CheckOverlapFar(target, (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;
-      target->speed = 1 << 16;
-      Object_SetMoveTargetFar((struct Object *)target, pos.x, pos.y, pos.z);
+      target->speedLimit = 1 << 16;
+      Object_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }
 

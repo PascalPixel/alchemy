@@ -12,7 +12,7 @@
 /// Actor_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
 s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Object *object = Actor_GetByActorId(objectId);
+  struct Actor *object = Actor_GetByActorId(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -38,8 +38,8 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
 #endif
-  x = object->x - cameraX;
-  z = object->z - cameraZ - object->y;
+  x = object->x.fixed - cameraX;
+  z = object->z.fixed - cameraZ - object->y.fixed;
   *position++ = x / 0x10000;
   *position = z / 0x10000;
   if ((object->spriteStorageKind & 15) == OBJECT_SPRITE_ONE)
@@ -107,7 +107,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
-  struct Object *object;
+  struct Actor *object;
   struct Sprite *context;
   struct SpriteAnim *effect;
 
@@ -122,8 +122,9 @@ void Exit_PrepareAnimation(s32 animation) {
   effect->colorMode = param;
   // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
-  object->x = (object->x & 0xFFF00000) + 0x80000;
-  object->z = (object->z & 0xFFF00000) + 0x100000;
+  // The coordinates as plain words: through .fixed, the union moves a store.
+  *(s32 *)&object->x = (*(s32 *)&object->x & 0xFFF00000) + 0x80000;
+  *(s32 *)&object->z = (*(s32 *)&object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
   object->targetX = ACTOR_NO_TARGET;
@@ -158,7 +159,7 @@ void Exit_StartStairsDown(void) {
 void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -167,8 +168,9 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   mask = 0xfff00000;
   spriteAnimation->flags = zero;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
-  leader->x = (leader->x & mask) + 0x80000;
-  leader->z &= mask;
+  // The coordinates as plain words: through .fixed, the union moves a store.
+  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + 0x80000;
+  *(s32 *)&leader->z &= mask;
   Object_SelectAnimationFar(leader, animation);
   WaitFrames(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
@@ -179,7 +181,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;
-  Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
+  Object_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
+                          leader->z.fixed + 0x80000);
   Object_WaitForMoveFar(leader);
 }
 
@@ -209,7 +212,7 @@ s32 Entrance_PlayArrival(void) {
       flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_GetFar(flag) != 0) {
         s32 leaderId;
-        struct Object *leader;
+        struct Actor *leader;
 
         GameFlag_ClearFar(flag);
         leaderId = gSaveBlock.leaderActorId;
@@ -217,14 +220,14 @@ s32 Entrance_PlayArrival(void) {
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
-        leader->y += 0x00a00000;
+        leader->y.fixed += 0x00a00000;
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         // Until the next frame's fall would reach the ground.
-        while (leader->y + leader->velocityY > leader->groundHeight) {
+        while (leader->y.fixed + leader->velocityY > leader->groundHeight) {
           WaitFrames(1);
         }
         Sound_PlaySongFar(SE_DOOR_CLOSE);
-        leader->y = leader->groundHeight;
+        leader->y.fixed = leader->groundHeight;
         Object_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         FieldScript_WaitFrames(15);
         FieldCamera_FollowActor(leaderId, 1);

@@ -148,7 +148,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct Object *object;
+  struct Actor *object;
   s32 tick;
   struct Particle *point;
   s32 size;
@@ -228,9 +228,9 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
       object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x;
-        position.world.y = object->y;
-        position.world.z = object->z;
+        position.world.x = object->x.fixed;
+        position.world.y = object->y.fixed;
+        position.world.z = object->z.fixed;
         Projection_Point(&position.world, &screen);
         // Always canvas x 64, where BG2X puts the target; only the
         // projected y is kept.
@@ -324,7 +324,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct Object *object;
+  struct Actor *object;
   s32 tick;
   struct Particle *point;
   s32 size;
@@ -379,9 +379,9 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
       object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x;
-        position.world.y = object->y;
-        position.world.z = object->z;
+        position.world.x = object->x.fixed;
+        position.world.y = object->y.fixed;
+        position.world.z = object->z.fixed;
         Projection_Point(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;

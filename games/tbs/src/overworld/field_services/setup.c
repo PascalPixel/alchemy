@@ -67,8 +67,8 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
 void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
-  struct Object *user;
-  struct Object *target;
+  struct Actor *user;
+  struct Actor *target;
   s32 dir;
   struct FieldEffectWork *effectWork;
 
@@ -91,14 +91,14 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 
       effectWork->savedPalette = pal;
     }
-    effectWork->x = target->x;
-    effectWork->z = target->z;
-    effectWork->y = target->y;
+    effectWork->x = target->x.fixed;
+    effectWork->z = target->z.fixed;
+    effectWork->y = target->y.fixed;
     return;
   }
-  effectWork->x = user->x;
-  effectWork->z = user->z;
-  effectWork->y = user->y;
+  effectWork->x = user->x.fixed;
+  effectWork->z = user->z.fixed;
+  effectWork->y = user->y.fixed;
   Vector_AddPolarOffset(0x100000, dir, &effectWork->x);
 }
 
@@ -106,10 +106,10 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Object *user = effectWork->mainObject;
+  struct Actor *user = effectWork->mainObject;
 
   user->update = NULL;
-  Anim_ApplyChildValuesFar((struct Object *)user, SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar(user, SPRITE_COLOR_NORMAL);
   WaitFrames(1);
 }
 
@@ -159,7 +159,7 @@ void FieldEffect_End(void) {
     s32 active;
 
     do {
-      struct Object *slot = SETUP_OBJECT_SLOTS;
+      struct Actor *slot = SETUP_OBJECT_SLOTS;
 
       active = 0;
       remaining = 0;
@@ -223,7 +223,7 @@ void FieldEffect_StartCast(void) {
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {
-    Actor_SetOthersPaused((struct Object *)caster, 1, 0);
+    Actor_SetOthersPaused(caster, 1, 0);
     MessageArgument_PushFar(announcedAbility, MESSAGE_ARGUMENT_ABILITY);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -232,7 +232,7 @@ void FieldEffect_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    Actor_SetOthersPaused((struct Object *)caster, 0, 0x10);
+    Actor_SetOthersPaused(caster, 0, 0x10);
   }
   if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
     if (effectWork->visible != 0) {

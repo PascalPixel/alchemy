@@ -28,7 +28,7 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
 /// absent. The actor must exist: a NULL from Actor_GetByActorId is
 /// read through. Called by Speaker_GetIdleFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct Object *object = Actor_GetByActorId(id);
+  struct Actor *object = Actor_GetByActorId(id);
   struct SpeakerSprite *sprite;
 
   if (object->spriteStorageKind != OBJECT_SPRITE_ONE ||

@@ -144,27 +144,27 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
 void FieldEffect_UpdateDescendingOrbitObject(union ActorOrEffect *fieldObject) {
-  struct Object *mote = (struct Object *)fieldObject;
+  struct Actor *mote = (struct Actor *)fieldObject;
   struct Vector3 position;
-  struct Object *leader;
+  struct Actor *leader;
   s32 timer;
   s16 frames;
   s32 y;
 
-  leader = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  leader = Actor_GetById(gSaveBlock.leaderActorId);
   timer = mote->orbitFrames - 1;
   mote->orbitFrames = timer;
   frames = mote->orbitFrames;
-  position.x = leader->x;
-  position.z = leader->z;
+  position.x = leader->x.fixed;
+  position.z = leader->z.fixed;
   Vector_AddPolarOffset(frames * 0x6666, (frames << 11) + mote->orbitAngle,
                         &position);
-  mote->x = position.x;
-  mote->z = position.z;
-  y = mote->y + 0xFFFF0000;
-  mote->y = y;
-  if (y < leader->y + 0x140000)
-    Object_ReleaseFar((struct Object *)mote);
+  mote->x.fixed = position.x;
+  mote->z.fixed = position.z;
+  y = mote->y.fixed + 0xFFFF0000;
+  mote->y.fixed = y;
+  if (y < leader->y.fixed + 0x140000)
+    Object_ReleaseFar(mote);
 }
 
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on
@@ -176,17 +176,17 @@ void FieldEffect_UpdateDescendingOrbitObject(union ActorOrEffect *fieldObject) {
 /// straight at its target.
 void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   struct Vector3 position;
-  struct Object *source;
+  struct Actor *source;
   s32 state;
   u32 random;
 
-  source = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  source = Actor_GetById(gSaveBlock.leaderActorId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {
-    position.x = source->x;
-    position.y = source->y;
-    position.z = source->z;
+    position.x = source->x.fixed;
+    position.y = source->y.fixed;
+    position.z = source->z.fixed;
 
     random = Random16() * 10 + 0xa0000;
     Vector_AddPolarOffset(random, Random16(), &position);

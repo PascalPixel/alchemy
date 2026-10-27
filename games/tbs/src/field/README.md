@@ -72,7 +72,7 @@ the point its script aims it at, following the ground up and down, floating,
 and refusing to let solid objects overlap. In a battle a simpler update
 replaces it, which moves the first 14 objects and runs no scripts.
 
-The objects are `gObjects`, read as `struct Object`, and
+The objects are `gObjects`, read as `struct Actor`, and
 `Object_UpdateAllThumb` gives each its turn; `Object_UpdateAllMotion` is the
 battle's update.
 
@@ -315,7 +315,7 @@ is in [Maps](../map/README.md#the-world-maps-data).
 ### One object, a few views
 
 All 64 objects are the same 112 bytes, and the engine reads them as
-`struct Object`: the script commands, the motion loop, the cameras, the
+`struct Actor`: the script commands, the motion loop, the cameras, the
 battle and the field effects all take one. Scenes read the same object as
 `struct Actor`, and an effect as `struct FieldEffect`, with their fields
 in the same places. A few more views remain where

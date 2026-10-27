@@ -346,10 +346,10 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // frames and flashes somewhere else.
     if (phase >= 0 && phase <= 172) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct Object *object =
+        struct Actor *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
-        SET_VECTOR(point, object->x, object->y, object->z);
+        SET_VECTOR(point, object->x.fixed, object->y.fixed, object->z.fixed);
         Projection_Point(point, &screen);
         for (j = 0; j != 6; j++) {
           struct Particle *spark =
@@ -411,13 +411,13 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
         if (frame > i * 8 + 160) {
           struct BattleObject *slot =
               GetBattleObjectSlotFar(work->effect->targets[i]);
-          struct Object *object = slot->object;
+          struct Actor *object = slot->object;
           void *record;
           s32 n;
 
-          object->y += 8 << 16;
-          if (object->y > 128 << 16)
-            object->y = 128 << 16;
+          object->y.fixed += 8 << 16;
+          if (object->y.fixed > 128 << 16)
+            object->y.fixed = 128 << 16;
           object->gravity = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
             Sprite_StartAnimFar(record, 5);
@@ -428,12 +428,12 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // frames later.
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 5 + 286) {
-        struct Object *object =
+        struct Actor *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         // 0xab85 is the battle units' usual gravity, which the lift
         // cleared (battle/motion.c sets the same).
-        object->y = 96 << 16;
+        object->y.fixed = 96 << 16;
         object->gravity = 0xab85;
       }
       if (frame == i * 5 + 302) {
@@ -467,13 +467,13 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct Object *object =
+        struct Actor *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         for (j = 0; j != 10; j++) {
           struct Particle *ember = &work->particles[i * 10 + j];
 
-          SET_POSITION(ember, object->x, 20 << 16, object->z);
+          SET_POSITION(ember, object->x.fixed, 20 << 16, object->z.fixed);
           SET_VELOCITY(ember, (Trig_Sin(j * 0x3334) * 4),
                        (Random16() & 0x7fff) + (1 << 16),
                        (Trig_Cos(j * 0x3334) * 4));
@@ -493,10 +493,10 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
 
         if (frame >= start && frame < i * 4 + 314) {
           s32 cellIndex = (frame - start) / 2;
-          struct Object *object =
+          struct Actor *object =
               GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
-          SET_VECTOR(point, object->x, 0, object->z);
+          SET_VECTOR(point, object->x.fixed, 0, object->z.fixed);
           Projection_Point(point, &screen);
           screen.x >>= 1;
           draw[0](canvas, work->sheet + cellIndex * (20 * 24), screen.x - 20,

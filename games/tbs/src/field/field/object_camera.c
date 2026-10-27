@@ -50,7 +50,7 @@ void ObjectSystem_PlaceSprites(void) {
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
-  struct Object *object;
+  struct Actor *object;
   struct Sprite *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
@@ -96,7 +96,7 @@ void ObjectSystem_PlaceSprites(void) {
       continue;
     // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
-    if (object->x != 0 || object->z != 0) {
+    if (object->x.fixed != 0 || object->z.fixed != 0) {
       kind = object->spriteStorageKind & 15;
       if (kind == OBJECT_SPRITE_NONE)
         continue;
@@ -112,9 +112,9 @@ void ObjectSystem_PlaceSprites(void) {
         frozen->dirty = kind;
         continue;
       }
-      dx = object->x - viewX;
-      dz = object->z - viewZ;
-      screenTop = dz - object->y;
+      dx = object->x.fixed - viewX;
+      dz = object->z.fixed - viewZ;
+      screenTop = dz - object->y.fixed;
       sprite = object->sprite;
       // From 32 pixels left of the screen to 32 past its 240, and from 32
       // pixels above it to 224.
@@ -123,7 +123,8 @@ void ObjectSystem_PlaceSprites(void) {
         // The cell under the object: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
         tile = &((struct ObjectCameraTile *)grid->layers[object->layer]
-                     .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
+                     .cells)[(object->x.fixed >> 20) +
+                             ((object->z.fixed >> 20) << 7)];
         if (object->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
@@ -137,7 +138,7 @@ void ObjectSystem_PlaceSprites(void) {
         scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
         scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
         drawPosition.x = dx;
-        drawPosition.height = object->y;
+        drawPosition.height = object->y.fixed;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->groundHeight;
         // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
@@ -201,7 +202,7 @@ void ObjectSystem_ProjectSprites(void) {
   struct ObjectSystemWork *system;
   struct ObjectCameraPoint *eye;
   struct ObjectCameraPoint *target;
-  struct Object *object;
+  struct Actor *object;
   s32 angle;
   s32 spritesRemaining;
   s32 kind;
@@ -259,7 +260,7 @@ void ObjectSystem_ProjectSprites(void) {
     kind = object->spriteStorageKind & 15;
     switch (kind) {
     case OBJECT_SPRITE_ONE:
-      objectPosition = &object->x;
+      objectPosition = &object->x.fixed;
       scale[0] = object->scaleX;
       scale[1] = object->scaleY;
       sprite = object->sprite;
@@ -283,7 +284,7 @@ void ObjectSystem_ProjectSprites(void) {
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != NULL)
-          Render_PlaceProjectedSprite(sprite, &object->x, groupScale,
+          Render_PlaceProjectedSprite(sprite, &object->x.fixed, groupScale,
                                       object->facing + angle, object->layer);
       }
       break;

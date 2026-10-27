@@ -83,13 +83,13 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   // direction at up to 2 pixels a frame.
   ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
   ANIM_FOR_EACH_TARGET(k, work->effect) {
-    struct Object *src = GetBattleObjectSlotFar(work->effect->user)->object;
+    struct Actor *src = GetBattleObjectSlotFar(work->effect->user)->object;
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
-      SET_POSITION(mote, src->x, height, src->z);
+      SET_POSITION(mote, src->x.fixed, height, src->z.fixed);
       SET_VELOCITY(mote, ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10);
@@ -126,7 +126,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      struct Object *target =
+      struct Actor *target =
           GetBattleObjectSlotFar(work->effect->targets[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(work->effect->targets[k]) / 2;
 
@@ -152,9 +152,9 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
             Particle_AdvanceWithGravity3D(mote, 62, 0);
             // The pull: 1/512 of the distance added to the speed each frame.
             if (frame > k * 20 + i + 30) {
-              s32 dx = (target->x - mote->x) >> 9;
-              s32 dy = (target->y + half - mote->y) >> 9;
-              s32 dz = (target->z - mote->z) >> 9;
+              s32 dx = (target->x.fixed - mote->x) >> 9;
+              s32 dy = (target->y.fixed + half - mote->y) >> 9;
+              s32 dz = (target->z.fixed - mote->z) >> 9;
 
               mote->velocityX += dx;
               mote->velocityY += dy;

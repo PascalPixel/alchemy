@@ -5,7 +5,7 @@
 #include "field_effect_sprite.h"
 
 struct SpeakerDefinition;
-struct Object;
+struct Actor;
 struct ScreenTransitionState;
 struct ActorDouseView;
 struct TriggerView;
@@ -199,7 +199,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId);
-void Anim_ApplyChildPalette(struct Object *object, s32 palette);
+void Anim_ApplyChildPalette(struct Actor *object, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
@@ -217,20 +217,20 @@ void TreasureSpot_CloseChest(s32 id);
 void TreasureSpot_LaunchMimic(s32 id);
 void TreasureSpot_OpenChest(s32 id);
 void TreasureSpot_ShowOpened(s32 id);
-struct Object *TreasureSpot_GetActor(s32 id);
+struct Actor *TreasureSpot_GetActor(s32 id);
 void TreasureSpot_Hide(s32 id);
 void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject);
-struct Object *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
+struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
 void Object_DestroyIfPresent(void *object);
-void ItemDisplay_RaiseAboveLeader(struct Object *object);
+void ItemDisplay_RaiseAboveLeader(struct Actor *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
 void Reveal_EmitSparkles(union ActorOrEffect *fieldObject);
-s32 Field_IsRevealActive(struct Object *interpreter);
+s32 Field_IsRevealActive(struct Actor *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 
 void FieldEffect_StartWindowHBlankDma(void);

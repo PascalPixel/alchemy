@@ -34,7 +34,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   u8 *sheet;
   void *cells;
   BlitterPair draw;
-  struct Object *target;
+  struct Actor *target;
   /* FAKEMATCH(dead): a second position nothing uses gives the frame its 76
    * bytes; as one position, 2 of 580 instructions differ in tbs-en. */
   struct ScreenPoint position[2];
@@ -232,8 +232,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct Object *)target, target->x << 1, 0,
-                              target->z);
+      Object_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
       BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_DAMAGE, -1, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on

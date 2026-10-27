@@ -62,7 +62,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
     FieldEffect_SpawnBurstParticleField();
     Object_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
-    Object_SetSpriteFlagsFar((struct Object *)target, 0);
+    Object_SetSpriteFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
     Sound_PlaySongFar(SE_RECOVERY);
@@ -98,11 +98,10 @@ void FieldEffect_RunGrowth(void) {
     radius = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = effectWork->y;
-    particle = (struct Actor *)Object_Spawn(GROWTH_FALL_OBJECT, p->values[0],
-                                            p->values[1], p->values[2]);
+    particle = Object_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
+                            p->values[2]);
     if (particle != 0) {
-      Object_InitializeFar((struct Object *)particle,
-                           gFieldEffect_BurstParticleObjectScript);
+      Object_InitializeFar(particle, gFieldEffect_BurstParticleObjectScript);
       particle->motionFlags = ACTOR_FALLS;
     }
     WaitFrames(((Random16() * 2) >> 16) + 2);
@@ -150,8 +149,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
     // palette, so the shadow (turned on by SPRITE_FLAG_SHADOW below) is drawn
     // with the particle's picture. BUG: the copy comes before the NULL test, so
     // a failed spawn (a full object table) is read through.
-    particle =
-        (struct Actor *)Object_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
+    particle = Object_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
     child->fullColor = visual->fullColor;
@@ -164,14 +162,12 @@ void FieldEffect_SpawnBurstParticleField(void) {
       particle->scaleY = 0xb333; // 0.7
       particle->scaleX = 0xb333;
       particle->acceleration = 0x18000;
-      particle->speed = 0x18000;
+      particle->speedLimit = 0x18000;
       particle->motionFlags = 0;
-      Anim_ApplyChildValuesFar((struct Object *)particle,
-                               SPRITE_COLOR_GREEN_TINT);
+      Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_GREEN_TINT);
       Object_SelectAnimationFar(particle, 7);
-      Object_InitializeFar((struct Object *)particle,
-                           gFieldEffect_CommonParticleScript + 1);
-      Object_SetSpriteFlagsFar((struct Object *)particle, 1);
+      Object_InitializeFar(particle, gFieldEffect_CommonParticleScript + 1);
+      Object_SetSpriteFlagsFar(particle, 1);
 
       // Destination: 4 to 10 pixels from the effect's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
@@ -179,8 +175,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
         Vector_AddPolarOffset(0xe0000, effectWork->angle, pos);
       radius = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(radius, Random16(), pos);
-      Object_SetMoveTargetFar((struct Object *)particle, pos[0], pos[1],
-                              pos[2]);
+      Object_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }
     Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
     WaitFrames(2);

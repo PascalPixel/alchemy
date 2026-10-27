@@ -18,7 +18,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 #else
   v->update = (void (*)(union ActorOrEffect *))MercuryLighthouse_TrailSparks;
 #endif
-  v->speed = PIXELS(1) / 5;
+  v->speedLimit = PIXELS(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);

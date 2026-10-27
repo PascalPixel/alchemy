@@ -53,7 +53,7 @@ PushedObject_FindAtTile(const struct FieldPosition *position,
 
   for (i = ACTOR_FIRST_PLACED;
        i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
-    struct Actor *actor = (struct Actor *)slots[i];
+    struct Actor *actor = slots[i];
 
     // UB: Actor_ClearAll leaves unfilled slots null. The guard grows
     // this helper from 0x58 to 0x5c bytes in the native English trial.
@@ -126,10 +126,10 @@ UNUSED static void PushedObject_AdvancePair(void) {
   rate = 0x3333;
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
-  next->speed = rate;
+  next->speedLimit = rate;
   next->acceleration = rate;
   Object_SetPosition(next, dst.x, dst.y, dst.z);
-  lead->speed = rate;
+  lead->speedLimit = rate;
   lead->acceleration = rate;
   Object_SetPosition(lead, dst.x, dst.y, dst.z);
   Object_WaitForMove(next);
@@ -253,7 +253,7 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
   list = work->actors + ACTOR_FIRST_PLACED;
   for (i = ACTOR_FIRST_PLACED;
        i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
-    struct Actor *actor = (struct Actor *)*list;
+    struct Actor *actor = *list;
     s32 kind;
     j = 0;
     // UB: the same empty slots are scanned here; the null guard grows the
@@ -440,7 +440,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedObjectProbe probe) {
     horizontalExtent = (extentA + extentB) >> 4;
   }
 
-  actor->speed = 0x8000;
+  actor->speedLimit = 0x8000;
   actor->acceleration = 0x1999;
   originalPosition.x = actor->x.fixed;
   originalPosition.z = actor->z.fixed;

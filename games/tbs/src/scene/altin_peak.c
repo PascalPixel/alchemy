@@ -342,8 +342,8 @@ static s32 AltinPeak_ShadowFollowBoulder(union ActorOrEffect *fieldObject) {
 
 /// Script callback for a piece of flying rock debris: it moves by its
 /// velocity, grows by its z velocity and falls under its gravity.
-static s32 AltinPeak_FlyDebris(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 AltinPeak_FlyDebris(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s32 rise;
   s32 growth;
 
@@ -1250,7 +1250,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// lands with a splash (SE_SPLASH) that shakes the screen briefly.
 static void AltinPeak_UpdateBeastHops(union ActorOrEffect *fieldObject) {
   struct Actor *beast = &fieldObject->actor;
-  s16 *shakeDelay = (s16 *)&beast->work;
+  s16 *shakeDelay = (s16 *)&beast->userValue;
 
   // The route owns timer (hop phase), work (shake delay) and the effect's
   // countdown (landing-sound latch) until it removes this hook.
@@ -1265,7 +1265,7 @@ static void AltinPeak_UpdateBeastHops(union ActorOrEffect *fieldObject) {
       if (fieldObject->effect.countdown != 0) {
         Sound_PlaySong(SE_SPLASH);
         fieldObject->effect.countdown = 0;
-        beast->work = 4;
+        beast->userValue = 4;
         MapGrid_SetShake(PIXELS(1), 0, Q16_ONE);
       }
       beast->y.fixed = beast->groundHeight;
@@ -1316,7 +1316,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   // Run the timed hopping callback while the beast moves along its route.
   beast->effect.countdown = 0;
   beast->actor.timer = 0;
-  beast->actor.work = 0;
+  beast->actor.userValue = 0;
   beast->actor.gravity = PIXELS(2) / 5;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1340,7 +1340,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldCamera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
   beast->effect.countdown = 0;
   beast->actor.timer = 0;
-  beast->actor.work = 0;
+  beast->actor.userValue = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 320, 232);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 340, 262);
@@ -1370,7 +1370,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
   beast->effect.countdown = 0;
   beast->actor.timer = 0;
-  beast->actor.work = 0;
+  beast->actor.userValue = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 329, 219);
   beast->actor.update = 0;
@@ -1452,7 +1452,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   FieldCamera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
   actor->effect.countdown = 0;
   actor->actor.timer = 0;
-  actor->actor.work = 0;
+  actor->actor.userValue = 0;
   actor->actor.gravity = PIXELS(2) / 5;
   actor->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1486,7 +1486,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   ObjectMotion_ArmCallback(ACTOR_FIRST_WATER_BEAST, 0, 40);
   actor->effect.countdown = 0;
   actor->actor.timer = 0;
-  actor->actor.work = 0;
+  actor->actor.userValue = 0;
   actor->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 120, 215);
@@ -1964,7 +1964,7 @@ static void AltinPeak_SpawnSpray(void) {
   if (spray == NULL)
     return;
   spray->actor.timer = 30;
-  spray->actor.work = 1;
+  spray->actor.userValue = 1;
   spray->effect.countdown = 20;
   AltinPeak_InitializeSpray(&spray->actor);
   spray->effect.update = AltinPeak_DriftSpray;
@@ -2449,7 +2449,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
 /// The cart rolls over a marked cell: SE_STOP_ACTION_SE plays, and SE_CART_TURN
 /// and SE_CART_ROLL follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct Actor *actor) {
-  actor->work = 33;
+  actor->userValue = 33;
   Sound_PlaySong(SE_STOP_ACTION_SE);
 }
 
@@ -2467,7 +2467,7 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   angle &= actor->facing;
   radius = actor->y.fixed / Q16_ONE;
   radius = gAltinPeak_RollRadii[actor->timer - radius + 16];
-  timer = (s16 *)&actor->work;
+  timer = (s16 *)&actor->userValue;
   if (*timer != 0) {
     if (--*timer == 20) {
       Sound_PlaySong(SE_CART_TURN);
@@ -2540,11 +2540,11 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));
   actor->facing = heading;
-  actor->speed = PIXELS(2);
+  actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1) / 20;
   actor->paused = 0;
   actor->timer = actor->y.fixed / Q16_ONE;
-  actor->work = 0;
+  actor->userValue = 0;
   position.x = actor->x.fixed;
   position.y = actor->y.fixed;
   position.z = actor->z.fixed;

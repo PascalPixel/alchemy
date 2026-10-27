@@ -411,7 +411,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(actor, 7);
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;
@@ -1761,9 +1761,9 @@ MercuryLighthouseAerie_UpdateBeaconSpark(union ActorOrEffect *fieldObject) {
   struct Actor *beacon;
   u16 angle;
 
-  beacon = spark->linkedObject;
+  beacon = spark->linkedActor;
   angle = spark->timer;
-  spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speed + 28);
+  spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speedLimit + 28);
   spark->z.fixed = (Trig_Sin(angle) << 4) + PIXELS(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
@@ -1820,10 +1820,10 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->motionFlags = tick;
   angle = Import_RandomNext() & 0x0ffff000;
   spark->timer = angle;
-  spark->work = tick;
-  spark->linkedObject = beacon;
+  spark->userValue = tick;
+  spark->linkedActor = beacon;
   spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
-  spark->speed = (Trig_Sin((height & 0xfffff) >> 4) * 24) >> 16;
+  spark->speedLimit = (Trig_Sin((height & 0xfffff) >> 4) * 24) >> 16;
   sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;
 }

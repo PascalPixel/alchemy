@@ -502,8 +502,8 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
 
 /// An action-script call: stands the actor still at the origin, with no
 /// velocity and no target. Returns 0.
-static s32 ShipRooms_ResetActor(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Object_SelectAnimation(actor, 1);
   actor->x.fixed = 0;
   actor->y.fixed = 0;
@@ -516,19 +516,19 @@ static s32 ShipRooms_ResetActor(struct Object *interpreter) {
 
 /// Bobs the actor between the floor and 8 pixels up by a random amount
 /// each frame. Returns 1.
-static s32 ShipRooms_Bob(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 ShipRooms_Bob(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 verticalMotionDirection;
   s32 descendingY;
   s32 ascendingY;
 
-  if ((s16)actor->work != 0) {
+  if ((s16)actor->userValue != 0) {
     descendingY = (actor->y.fixed - ((u32)(Import_RandomNext() << 15) >> 16)) -
                   PIXELS(1) / 2;
     actor->y.fixed = descendingY;
     if (descendingY < 0) {
       verticalMotionDirection = 0;
-      actor->work = verticalMotionDirection;
+      actor->userValue = verticalMotionDirection;
     }
   } else {
     ascendingY = actor->y.fixed + ((u32)(Import_RandomNext() << 15) >> 16) +
@@ -536,7 +536,7 @@ static s32 ShipRooms_Bob(struct Object *interpreter) {
     actor->y.fixed = ascendingY;
     if (ascendingY > PIXELS(8)) {
       verticalMotionDirection = 1;
-      actor->work = verticalMotionDirection;
+      actor->userValue = verticalMotionDirection;
     }
   }
   return 1;
@@ -544,8 +544,8 @@ static s32 ShipRooms_Bob(struct Object *interpreter) {
 
 /// Now and then (two chances in 64) turns the actor to face
 /// south-southeast or south-southwest. Returns 1.
-static s32 ShipRooms_LookAround(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 ShipRooms_LookAround(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   u32 choice = (u32)(Import_RandomNext(actor) << 6) >> 16;
 
   if (choice == 6) {
@@ -566,7 +566,7 @@ static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
 
   *counter = frame;
   if ((u8)frame > 80) {
-    actor->work += 1;
+    actor->userValue += 1;
   }
 }
 
@@ -597,22 +597,22 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
   struct Actor *captain;
 
   captain = Actor_GetById(ACTOR_QUARTERS_CAPTAIN);
-  switch ((s16)actor->work) {
+  switch ((s16)actor->userValue) {
   case 0:
     actor->facing = FACING_NORTHWEST + FACING_STEP;
-    actor->work++;
+    actor->userValue++;
     actor->riseCounter = 0;
     break;
   case 2:
     actor->facing = 0;
-    actor->work++;
+    actor->userValue++;
     actor->riseCounter = 0;
     break;
   case 4:
     Object_SelectAnimation(actor, 2);
     Object_SetPosition(actor, PIXELS(468), PIXELS(32), PIXELS(632));
     actor->riseBaseY = 60;
-    actor->work++;
+    actor->userValue++;
     break;
   case 5:
     if (ShipRooms_HasArrived(actor) != 0) {
@@ -621,7 +621,7 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
       if (captain->paused == 0) {
         actor->riseEnabled = 1;
       }
-      actor->work++;
+      actor->userValue++;
     }
     break;
   case 7:
@@ -629,14 +629,14 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
       Object_SelectAnimation(actor, 3);
       actor->riseEnabled = 2;
     }
-    actor->work++;
+    actor->userValue++;
     actor->riseCounter = 0;
     break;
   case 9:
     Object_SelectAnimation(actor, 2);
     Object_SetPosition(actor, PIXELS(480), PIXELS(32), PIXELS(600));
     actor->riseBaseY = 60;
-    actor->work++;
+    actor->userValue++;
     if (captain->paused == 0) {
       actor->riseEnabled = 3;
     }
@@ -645,7 +645,7 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
     if (ShipRooms_HasArrived(actor) != 0) {
       Object_SelectAnimation(actor, 1);
       actor->riseCounter = 0;
-      actor->work++;
+      actor->userValue++;
     }
     break;
   case 1:
@@ -656,7 +656,7 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
     ShipRooms_WaitThenAdvance(actor);
     break;
   case 12:
-    actor->work = 0;
+    actor->userValue = 0;
     break;
   }
 }
@@ -688,8 +688,8 @@ static void ShipRooms_WatchPacer(union ActorOrEffect *fieldObject) {
 
 /// An action-script call: lays the actor flat on the floor, drawn
 /// underfoot at priority 1 with its parts hidden. Returns 1.
-static s32 ShipRooms_LayFlat(struct Object *interpreter) {
-  struct Actor *work = (struct Actor *)interpreter;
+static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
+  struct Actor *work = interpreter;
   struct Sprite *sprite = work->sprite;
 
   work->collisionFlags = 8;
@@ -2484,7 +2484,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, x, 600,
                          FACING_NORTHWEST + FACING_STEP);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
-    actor->work = done;
+    actor->userValue = done;
     zero = 0;
     actor->riseEnabled = zero;
     actor->collisionFlags |= 128;

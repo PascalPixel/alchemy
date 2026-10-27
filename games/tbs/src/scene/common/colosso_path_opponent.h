@@ -73,7 +73,7 @@ static void Colosso_UpdatePathOpponent(void) {
       }
       actor->timer = *itemActorId;
       actor->acceleration = 0x4000;
-      actor->speed = 0x10000;
+      actor->speedLimit = 0x10000;
       Object_SetPosition(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
       Actor_SetScript(actor, gColosso_OpponentFinishScript);

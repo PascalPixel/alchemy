@@ -514,7 +514,7 @@ void WorldPicture_Show(s32 picture) {
 /// On the world map, shows only the map's actors within 320 pixels
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateObjectVisibilityBounds(void) {
-  struct Object *object;
+  struct Actor *object;
   s32 x;
   s32 y;
   s32 left;
@@ -527,10 +527,10 @@ void Field_UpdateObjectVisibilityBounds(void) {
   // camera.
   Actor_GetById(gSaveBlock.leaderActorId);
   object = gFieldWork->camera;
-  x = object->x;
+  x = object->x.fixed;
   left = x - (320 << 16);
   right = x + (320 << 16);
-  y = object->z;
+  y = object->z.fixed;
   top = y - (600 << 16);
   bottom = y + (400 << 16);
 
@@ -539,8 +539,8 @@ void Field_UpdateObjectVisibilityBounds(void) {
     object = Actor_GetByActorId(id);
 
     if (object != 0) {
-      s32 ox = object->x;
-      s32 oy = object->z;
+      s32 ox = object->x.fixed;
+      s32 oy = object->z.fixed;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
         object->spriteStorageKind = OBJECT_SPRITE_NONE;

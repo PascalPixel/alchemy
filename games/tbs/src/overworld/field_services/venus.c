@@ -13,8 +13,8 @@
 /// Djinni's actor slot. Uses all 24 field effect sprites, tints the
 /// field palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
-  struct Object *leader;
-  struct Object *djinni;
+  struct Actor *leader;
+  struct Actor *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
   s8 *slotState;
@@ -22,8 +22,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s32 scale;
   struct Vector3 position;
 
-  leader = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
-  djinni = (struct Object *)Actor_GetById(djinniId);
+  leader = Actor_GetById(gSaveBlock.leaderActorId);
+  djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -57,9 +57,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
-  position.x = djinni->x;
-  position.y = djinni->y;
-  position.z = djinni->z;
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 field effect sprites.
@@ -105,11 +105,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
-    position.x = leader->x;
-    position.y = leader->y + 0x780000;
-    position.z = leader->z;
-    djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
-                                           position.y, position.z);
+    position.x = leader->x.fixed;
+    position.y = leader->y.fixed + 0x780000;
+    position.z = leader->z.fixed;
+    djinni = Object_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
@@ -119,8 +118,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
       djinni->update = FieldEffect_UpdateDescendingOrbitObject;
       djinni->motionFlags = 0;
       Object_SelectAnimationFar(djinni, 7);
-      Anim_ApplyChildValuesFar((struct Object *)djinni,
-                               SPRITE_COLOR_GREEN_TINT);
+      Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -128,30 +126,28 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   WaitFrames(1);
   Sound_PlaySongFar(SE_LIGHT_APPEAR);
-  position.x = leader->x;
-  position.y = leader->y + 0x120000;
-  position.z = leader->z;
+  position.x = leader->x.fixed;
+  position.y = leader->y.fixed + 0x120000;
+  position.z = leader->z.fixed;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
   // Actor.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
-                                           position.y, position.z);
+    djinni = Object_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;
     djinni->scaleX = 0x9999;
     djinni->motionFlags = 2;
     djinni->velocityY = 0x50000;
-    djinni->groundHeight = djinni->y;
+    djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + 0x16666;
-    ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                                     0x200000, Random16());
-    Anim_ApplyChildValuesFar((struct Object *)djinni, SPRITE_COLOR_GREEN_TINT);
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000,
+                                                     Random16());
+    Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
-    Object_InitializeFar((struct Object *)djinni,
-                         gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(djinni, gFieldEffect_CommonParticleScript);
   }
 
   WaitFrames(15);
@@ -167,19 +163,19 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// sets MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
 /// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
-  struct Object *source;
+  struct Actor *source;
   struct Vector3 position;
   s8 *statePointer;
   s32 state;
 
-  source = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  source = Actor_GetById(gSaveBlock.leaderActorId);
   statePointer = &effect->state;
   state = *statePointer;
 
   if (state == MERCURY_DROPLET_AIM) {
-    position.x = source->x;
-    position.y = source->y + Random16() * 5 + 0xf0000;
-    position.z = source->z;
+    position.x = source->x.fixed;
+    position.y = source->y.fixed + Random16() * 5 + 0xf0000;
+    position.z = source->z.fixed;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
 

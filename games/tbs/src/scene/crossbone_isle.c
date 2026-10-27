@@ -781,7 +781,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
     fixedZ = ((selectedActor->z.fixed + (zOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
 
-    selectedActor->speed = PIXELS(1);
+    selectedActor->speedLimit = PIXELS(1);
     selectedActor->acceleration = PIXELS(1) / 2;
     Object_SetPosition(selectedActor, fixedX, selectedActor->y.fixed, fixedZ);
   }
@@ -793,7 +793,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
     fixedZ =
         ((logActor->z.fixed + (zOffset * PIXELS(1))) & 0xFFF00000) + PIXELS(8);
 
-    logActor->speed = PIXELS(1);
+    logActor->speedLimit = PIXELS(1);
     logActor->acceleration = PIXELS(1) / 2;
     Object_SetPosition(logActor, fixedX, logActor->y.fixed, fixedZ);
   }
@@ -971,7 +971,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(actor, 7);
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
     movingFlags = 126;

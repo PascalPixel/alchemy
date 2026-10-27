@@ -50,7 +50,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
   // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct Object *object;
+    struct Actor *object;
     s32 offset;
     s32 height;
     struct Particle *shard;
@@ -58,7 +58,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
     offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
     object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
     height = BattleUnit_GetEffectHeightFar(work->effect->targets[member]) / 2;
-    SET_VECTOR(point, object->x, height, object->z);
+    SET_VECTOR(point, object->x.fixed, height, object->z.fixed);
     Projection_Point(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct Particle *)(Ram_MapGridCellBuffer + offset);
@@ -178,7 +178,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   ANIM_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct Object *object;
+    struct Actor *object;
     s32 halfHeight;
 
     object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
@@ -187,7 +187,8 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
       struct Particle *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
-      SET_POSITION(mote, object->x, object->y + halfHeight, object->z);
+      SET_POSITION(mote, object->x.fixed, object->y.fixed + halfHeight,
+                   object->z.fixed);
       SET_VELOCITY(mote, ((Random16() & 0xff) - 128) << 10,
                    ((Random16() & 0xff) - 128) << 10,
                    ((Random16() & 0xff) - 128) << 10);
@@ -206,7 +207,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   // starts the user's glow and frame 64 shows the damage. The last target's
   // motes get 72 frames to reach the user.
   for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
-    struct Object *user;
+    struct Actor *user;
     s32 halfHeight;
 
     user = GetBattleObjectSlotFar(work->effect->user)->object;
@@ -245,9 +246,9 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
               s32 dy;
               s32 dz;
 
-              dx = (user->x - mote->x) >> 8;
-              dy = (user->y + halfHeight - mote->y) >> 8;
-              dz = (user->z - mote->z) >> 8;
+              dx = (user->x.fixed - mote->x) >> 8;
+              dy = (user->y.fixed + halfHeight - mote->y) >> 8;
+              dz = (user->z.fixed - mote->z) >> 8;
               mote->velocityX += dx;
               mote->velocityY += dy;
               mote->velocityZ += dz;

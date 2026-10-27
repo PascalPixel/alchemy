@@ -223,7 +223,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u32 sideStart;
   u32 sideCount;
   u32 livingCount;
-  struct Object *actorRecord;
+  struct Actor *actorRecord;
   u32 index;
 
   livingCount = 0;
@@ -363,8 +363,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
-  Object_SetAnimationSpeedFar(
-      (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
+  Object_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
   work.effect.targetCount = 1;
@@ -390,7 +389,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;
-  struct Object *object;
+  struct Actor *object;
   s32 targetYaw;
   s32 targetIndex;
 
@@ -424,7 +423,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   // the target's side takes the effect.
   object = BattleObject_Get(work.effect.user)->object;
   Object_SelectAnimationFar(object, POSE_CAST);
-  Object_SetAnimationSpeedFar((struct Object *)object, 16);
+  Object_SetAnimationSpeedFar(object, 16);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = ANIM_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);

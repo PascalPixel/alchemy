@@ -18,7 +18,7 @@ s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing =
-      ((struct Object *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
   s32 actorAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
   s32 tileAhead;
 
@@ -215,7 +215,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing =
-      ((struct Object *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
   s32 actorAhead =
       Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, group);
   s32 tileAhead;

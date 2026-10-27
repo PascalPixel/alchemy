@@ -12,7 +12,7 @@
 #include "ram_buffer.h"
 #include "script_layer.h"
 #include "scene_tables.h"
-#include "object.h"
+#include "actor.h"
 #include "animspr.h"
 #include "map_grid.h"
 #include "io_reg.h"
@@ -53,7 +53,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       obj->groundHeight = actor->groundHeight;
       animation = obj->sprite;
       Actor_SetScript(obj, gMercuryLighthouse_PillarScript);
-      obj->linkedObject = actor;
+      obj->linkedActor = actor;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {
@@ -77,7 +77,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->priorityFlags = 2;
-    obj->speed = 0x40000;
+    obj->speedLimit = 0x40000;
     if (animation != 0) {
       Sprite_StartAnim(animation, 6);
       animation->flags = 0;

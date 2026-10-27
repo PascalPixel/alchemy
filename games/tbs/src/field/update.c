@@ -80,7 +80,7 @@ void Object_UpdateAll(void) {
 #endif
 
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command]((struct Object *)object) == 0)
+          if (gObjectScript_CommandTable[command]((struct Actor *)object) == 0)
             break;
         } else {
           object->scriptCursor++;

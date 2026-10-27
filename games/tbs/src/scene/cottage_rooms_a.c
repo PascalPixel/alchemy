@@ -184,15 +184,15 @@ static void CottageRoomsA_SpawnSleepZ(void);
 /// Called each frame by gCottageRoomsA_SleepZScript; the actor's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
 /// CottageRoomsA_SpawnSleepZ.
-static s32 CottageRoomsA_AdvanceSleepZ(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
 
   actor->x.fixed += (s16)actor->timer * 256;
-  actor->y.fixed += (s16)actor->work * 256;
+  actor->y.fixed += (s16)actor->userValue * 256;
   actor->scaleX += Q16_ONE / 40;
   actor->scaleY += Q16_ONE / 40;
   actor->timer += 5;
-  actor->work = (s16)actor->work - 1;
+  actor->userValue = (s16)actor->userValue - 1;
   return 0;
 }
 
@@ -938,8 +938,8 @@ static void CottageRoomsA_SpawnSleepZ(void) {
     actor->y.fixed = height;
     actor->targetY = height;
     // The drifting script consumes these two work fields as signed 8.8 steps.
-    actor->timer = 25; // 25/256 pixel per frame.
-    actor->work = 128; // 1/2 pixel per frame.
+    actor->timer = 25;      // 25/256 pixel per frame.
+    actor->userValue = 128; // 1/2 pixel per frame.
   }
   Actor_SetActionScript(actorId, gCottageRoomsA_SleepZScript);
 }

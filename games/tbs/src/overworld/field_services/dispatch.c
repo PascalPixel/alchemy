@@ -137,7 +137,7 @@ void FieldEffect_DispatchRequestKind(void) {
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
     if (gSaveBlock.pausedObject != effectWork->secondObjectId)
-      ((struct Object *)effectWork->child)->paused = 1;
+      ((struct Actor *)effectWork->child)->paused = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
@@ -206,7 +206,7 @@ void FieldEffect_FinishMindRead(void) {
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
     if (gSaveBlock.pausedObject != effectWork->secondObjectId) {
-      ((struct Object *)effectWork->child)->paused = 0;
+      ((struct Actor *)effectWork->child)->paused = 0;
     }
   }
 }
@@ -270,7 +270,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
 void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
-  struct Object *owner = (struct Object *)fieldObject;
+  struct Actor *owner = (struct Actor *)fieldObject;
   s32 kind;
   struct Sprite *animation;
   s32 initialCount;
@@ -307,13 +307,13 @@ void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
 /// Sends an object toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target. Carry, Lift, Douse, Move and the
 /// Djinni's hop into battle throw things this way.
-void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                       s32 magnitude,
                                                       s32 angle) {
   s32 pos[3];
 
   if (object != 0) {
-    SET_VECTOR(pos, object->x, object->y, object->z);
+    SET_VECTOR(pos, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(magnitude, angle, pos);
     Object_SetMoveTargetFar(object, pos[0], pos[1], pos[2]);
   }
@@ -373,22 +373,22 @@ struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
 /// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
-struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
+struct Actor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Object *object;
+  struct Actor *object;
 
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
     if (object->spriteStorageKind == OBJECT_SPRITE_NONE) {
-      Object_ReleaseFar((struct Object *)object);
+      Object_ReleaseFar(object);
       return NULL;
     }
     object->groundHeight =
-        ((struct Object *)effectWork->mainObject)->groundHeight;
+        ((struct Actor *)effectWork->mainObject)->groundHeight;
     object->motionFlags = 4;
     object->priorityFlags = 4;
     object->sprite->image.priority = 0;
-    Object_SetSpriteFlagsFar((struct Object *)object, 0);
+    Object_SetSpriteFlagsFar(object, 0);
     Object_SelectAnimationFar(object, 1);
   }
   return object;
@@ -398,9 +398,9 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 /// player's and except. FieldEffect_StartCast pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
-void Actor_SetOthersPaused(struct Object *except, s32 state, s32 value) {
+void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
   s16 *player;
-  struct Object *object;
+  struct Actor *object;
   s32 actorId;
 
   actorId = 0;
@@ -409,7 +409,7 @@ void Actor_SetOthersPaused(struct Object *except, s32 state, s32 value) {
     object = Actor_GetByActorId(actorId);
     if (actorId != *player && object != NULL && object != except) {
       object->paused = state;
-      Object_SetAnimationSpeedFar((struct Object *)object, value);
+      Object_SetAnimationSpeedFar(object, value);
     }
     actorId++;
   } while (actorId <= OBJECT_LAST);

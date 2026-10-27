@@ -248,7 +248,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
-              struct Object *object =
+              struct Actor *object =
                   GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
               BattleAnim_TintBattler(work->effect->targets[k],

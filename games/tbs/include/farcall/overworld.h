@@ -414,7 +414,7 @@ void FieldScript_WaitForZoomTransitionFar(void);
 s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
 /// Starts an actor's action script: an enum MovementType, or the script
 /// itself.
-void Actor_SetMovementTypeFar(struct Object *object, s32 kind);
+void Actor_SetMovementTypeFar(struct Actor *object, s32 kind);
 /// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
 /// -1), and remembers sound_id to play again later.
 void Scene_QueueMusicFar(s32 sound_id);

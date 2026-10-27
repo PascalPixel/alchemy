@@ -40,7 +40,7 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
   s32 portrait;
   s32 flags;
   s32 message;
-  struct Object *object;
+  struct Actor *object;
   s32 x;
   s32 y;
   s32 found;
@@ -77,7 +77,7 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&object->x, pos);
+        Transform_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -94,7 +94,7 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
       sprite = actorId;
       object = Actor_GetByActorId(gSaveBlock.leaderActorId);
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&object->x, pos);
+        Transform_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -336,7 +336,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX
   s32 pos[3];
-  struct Object *object;
+  struct Actor *object;
 #else
   struct {
     s32 x, y;
@@ -368,7 +368,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
       if (state->mode == OBJECT_SYSTEM_WORLD_MAP)
         positionFound =
             Transform_ProjectPoint(
-                (const u8 *)object + offsetof(struct Object, x), pos) != 0;
+                (const u8 *)object + offsetof(struct Actor, x), pos) != 0;
       else
         positionFound = Actor_GetScreenPosition(speaker, pos) != -1;
     }

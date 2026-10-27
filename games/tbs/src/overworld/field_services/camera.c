@@ -10,8 +10,8 @@
 /// FieldScript_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
-  struct Object *subject;
-  struct Object *camera;
+  struct Actor *subject;
+  struct Actor *camera;
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
 
@@ -22,10 +22,11 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   camera = work->camera;
   grid = gMapGridWork[0];
   if (subject != 0) {
-    grid->origin = &camera->x;
-    Object_StartCameraFar((struct Object *)camera, (s32)subject);
+    grid->origin = &camera->x.fixed;
+    Object_StartCameraFar(camera, (s32)subject);
     if (keepPosition == 0) {
-      SET_POSITION(camera, subject->x, subject->y, subject->z);
+      SET_ACTOR_POSITION(camera, subject->x.fixed, subject->y.fixed,
+                         subject->z.fixed);
       WaitFrames(1);
       if (work->mode != OBJECT_SYSTEM_WORLD_MAP) {
         MapGrid_CenterOnFollowedPointFar();
@@ -60,7 +61,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   s32 positionZ;
   s32 positionY;
   struct MapGridScrollWork *grid;
-  struct Object *camera;
+  struct Actor *camera;
 
   positionX = requestedX;
   positionY = requestedY;
@@ -75,20 +76,20 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   // down the 160-pixel screen), the z limits moved down the map by its
   // height, since it shows at z less its height.
   minimumX = grid->minX + 0x780000;
-  cameraY = camera->y;
+  cameraY = camera->y.fixed;
   minimumZ = grid->minY + cameraY + 0x600000;
   maximumX = grid->maxX + 0xFF880000;
   maximumZ = grid->maxY + cameraY + 0xFFC00000;
-  grid->origin = &camera->x;
-  Object_StartIdleFar((struct Object *)camera);
+  grid->origin = &camera->x.fixed;
+  Object_StartIdleFar(camera);
   if (positionX == -1) {
-    positionX = camera->x;
+    positionX = camera->x.fixed;
   }
   if (positionY == -1) {
-    positionY = camera->y;
+    positionY = camera->y.fixed;
   }
   if (positionZ == -1) {
-    positionZ = camera->z;
+    positionZ = camera->z.fixed;
   }
   if (positionX < minimumX) {
     positionX = minimumX;
@@ -103,7 +104,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
     positionZ = maximumZ;
   }
   if (shouldGlide == 0) {
-    SET_POSITION(camera, positionX, positionY, positionZ);
+    SET_ACTOR_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
     if (runtimeBlock->mode != OBJECT_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
@@ -116,13 +117,14 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
 /// The script command "camera move to actor":
 /// FieldCamera_MoveWithinMapBounds to the actor's x and z.
 void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
-  struct Object *subject;
+  struct Actor *subject;
 
   subject = Actor_GetByActorId(actorId);
   // The field work, looked up and not used.
   AllocHeapSlotEwram(HEAP_SLOT_FIELD, 0xCCC);
   if (subject != NULL) {
-    FieldCamera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
+    FieldCamera_MoveWithinMapBounds(subject->x.fixed, -1, subject->z.fixed,
+                                    glide);
   }
 }
 
@@ -137,25 +139,26 @@ void FieldCamera_WaitForArrival(void) {
 
 /// The script command "get view centre": returns the camera object.
 struct Actor *FieldCamera_GetScriptObject(void) {
-  return (struct Actor *)((struct FieldWork *)AllocHeapSlotEwram(
-                              HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+  return ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                                 sizeof(struct FieldWork)))
       ->camera;
 }
 
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set it
 /// jumps there at once.
-UNUSED void FieldCamera_FollowObject(struct Object *target,
+UNUSED void FieldCamera_FollowObject(struct Actor *target,
                                      s32 keepCurrentPosition) {
-  struct Object *camera;
+  struct Actor *camera;
 
   camera = ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
                                                    sizeof(struct FieldWork)))
                ->camera;
   if (target != NULL) {
-    Object_StartCameraFar((struct Object *)camera, 0);
-    camera->linkedObject = target;
+    Object_StartCameraFar(camera, 0);
+    camera->linkedActor = target;
     if (keepCurrentPosition == 0) {
-      SET_POSITION(camera, target->x, target->y, target->z);
+      SET_ACTOR_POSITION(camera, target->x.fixed, target->y.fixed,
+                         target->z.fixed);
     }
   }
 }

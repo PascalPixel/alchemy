@@ -12,16 +12,16 @@
 struct ActorTemplate;
 struct Trigger;
 struct Actor;
-struct Object;
+struct Actor;
 struct MapGridCell;
 
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
-  struct Object *object; ///< the actor placed for it
-  u8 id;                 ///< the subject of its trigger, 100 to 239
-  u8 unused;             ///< cleared with the slot; no code names it
-  u8 column;             ///< its 16-pixel cell
-  u8 row;                ///< its 16-pixel cell
+  struct Actor *object; ///< the actor placed for it
+  u8 id;                ///< the subject of its trigger, 100 to 239
+  u8 unused;            ///< cleared with the slot; no code names it
+  u8 column;            ///< its 16-pixel cell
+  u8 row;               ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct TreasureSpot) == 8);
@@ -105,7 +105,7 @@ struct FieldWork {
   u16 unusedAfterMessage;
   /// Both set to -1 by FieldScript_Start at each script; nothing reads them.
   s16 unusedBeforeCamera[2];
-  struct Object
+  struct Actor
       *camera; ///< the object the map view follows, which has no actor id
   u8 unusedAfterCamera[0x10]; ///< no code names it
   s32 speaker;                ///< the actor speaking; the leader at each script

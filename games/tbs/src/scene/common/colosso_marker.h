@@ -15,7 +15,7 @@
 #include "types.h"
 #include "call.h"
 #include "animspr.h"
-#include "object.h"
+#include "actor.h"
 #include "actor.h"
 #include "task.h"
 #include "vram_cache.h"
@@ -122,7 +122,7 @@ void Colosso_RestoreWarrior(s32 id) {
   actor->motionFlags = 3;
   actor->layer = 0;
   actor->y.fixed = zero;
-  ((struct Object *)actor)->groundHeight = zero;
+  (actor)->groundHeight = zero;
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Object_SelectAnimation(actor, 0);
   Object_SelectAnimation(actor, 1);
@@ -133,7 +133,7 @@ void Colosso_RestoreWarrior(s32 id) {
 void Actor_ResetMotionFields(s32 actorId) {
   struct Actor *o = Actor_GetById(actorId);
 
-  Object_StartIdle((struct Object *)o);
+  Object_StartIdle(o);
   o->velocityX = 0;
   o->velocityZ = 0;
   o->targetX = ACTOR_NO_TARGET;
@@ -263,13 +263,12 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
     s32 speed = 0x20000;
     s32 zero = 0;
 
-    actor->speed = speed;
+    actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    Object_StartIdle((struct Object *)actor);
+    Object_StartIdle(actor);
     Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
-                         z << 16);
+    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
   }
 }
 
@@ -282,13 +281,12 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
     s32 speed = 0x14000;
     s32 zero = 0;
 
-    actor->speed = speed;
+    actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    Object_StartIdle((struct Object *)actor);
+    Object_StartIdle(actor);
     Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
-                         z << 16);
+    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
     Object_WaitForMove(actor);
     Object_SelectAnimation(actor, 1);
   }

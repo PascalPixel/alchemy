@@ -43,7 +43,7 @@ void FieldEffect_UpdateParticleMotionAndScale(
 /// velocity 1.5 times their z velocity, so the ring is wider than deep as the
 /// field is drawn. Carry's FieldEffect_SteerLiftedTarget spawns it where it
 /// sets its load down.
-void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
+void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   struct EffectOptions opt;
   s32 vel[3];
   s32 vz;
@@ -61,8 +61,8 @@ void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
     vel[1] = 0;
     vz = Trig_Sin(angle);
     vel[2] = vz;
-    FieldEffect_SpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1],
-                              vz, 0x01090001, &opt);
+    FieldEffect_SpawnResident(origin->x.fixed, origin->y.fixed, origin->z.fixed,
+                              vel[0], vel[1], vz, 0x01090001, &opt);
     i++;
   } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
 }
@@ -74,7 +74,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
 void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
-  struct Object *effect = (struct Object *)fieldObject;
+  struct Actor *effect = (struct Actor *)fieldObject;
   s32 len;
   s32 angle;
   s32 dx;
@@ -85,8 +85,8 @@ void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
   angle = effect->facing;
   dx = Iwram_MulQ16(len, Trig_Cos(angle));
   dz = Iwram_MulQ16(len, Trig_Sin(angle));
-  effect->x += dx;
-  effect->z += dz;
+  effect->x.fixed += dx;
+  effect->z.fixed += dz;
   // The u16 angle wraps: 0xfff0 gives a small backwards drift. A turn burst
   // adds 1/32 of a turn each frame without stopping the outward motion.
   effect->facing += 0xfff0;
@@ -105,20 +105,20 @@ void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
 void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
-  struct Object *effect = (struct Object *)fieldObject;
-  struct Object *anchor;
+  struct Actor *effect = (struct Actor *)fieldObject;
+  struct Actor *anchor;
   s32 angle;
   s32 radius;
   s32 dx;
   s32 dz;
 
-  anchor = effect->linkedObject;
+  anchor = effect->linkedActor;
   radius = WHIRLWIND_ORBIT_RADIUS;
   angle = effect->facing;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
-  effect->x = anchor->x + dx;
-  effect->z = anchor->z + dz;
+  effect->x.fixed = anchor->x.fixed + dx;
+  effect->z.fixed = anchor->z.fixed + dz;
   effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
   if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
     // The engine integrates height after this callback. Supply upward speed
@@ -137,14 +137,14 @@ void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
 void FieldEffect_ShrinkObjectScaleUntilHalf(union ActorOrEffect *fieldObject) {
-  struct Object *object = (struct Object *)fieldObject;
+  struct Actor *object = (struct Actor *)fieldObject;
   s32 scale;
 
   scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
   object->scaleY = scale;
   object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Object_SetPositionAndResetMotionFar((struct Object *)object, 0, 0, 0);
+    Object_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
 }
@@ -191,7 +191,7 @@ void FieldEffect_RunWhirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = (struct Actor *)Object_Spawn(0xda, 0, 0, 0);
+  ball = Object_Spawn(0xda, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -230,12 +230,12 @@ void FieldEffect_RunWhirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = (struct Actor *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = Object_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
-        particle->linkedObject = ball;
+        particle->linkedActor = ball;
         particle->timer = 0;
-        particle->work = 0;
+        particle->userValue = 0;
         particle->facing = Random16();
       }
       WaitFrames(6);
@@ -250,6 +250,6 @@ void FieldEffect_RunWhirlwind(void) {
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
-  Object_ReleaseFar((struct Object *)ball);
+  Object_ReleaseFar(ball);
   FieldEffect_FadeFromEffectColor();
 }

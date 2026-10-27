@@ -2018,7 +2018,7 @@ static void EventScript_MendingTheRoof(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
-  ((struct Actor *)FieldCamera_GetScriptObject())->motionFlags = 0;
+  (FieldCamera_GetScriptObject())->motionFlags = 0;
   WaitFrames(1);
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -3138,7 +3138,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 
       verticalSpeed = Import_RandomNext() + PIXELS(1);
       particle->acceleration = Q16_ONE;
-      particle->speed = verticalSpeed;
+      particle->speedLimit = verticalSpeed;
       particle->motionFlags = 2;
       particle->gravity = 0x0a3d;
 

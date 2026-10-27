@@ -67,7 +67,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       return;                                                                  \
                                                                                \
     sprite = effect->sprite;                                                   \
-    set_mode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);        \
+    set_mode(effect, (flags + 1) & EFFECT_SCRIPT_MASK);                        \
     set_script((void *)effect,                                                 \
                gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);      \
     effect->motionFlags = 0;                                                   \
@@ -103,7 +103,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       }                                                                        \
     }                                                                          \
     if ((flags & EFFECT_USE_SCRIPT) != 0) {                                    \
-      set_mode((struct Actor *)effect, 1);                                     \
+      set_mode(effect, 1);                                                     \
       set_script((void *)effect, options->script);                             \
     }                                                                          \
     if ((flags & EFFECT_USE_ROTATION) != 0)                                    \

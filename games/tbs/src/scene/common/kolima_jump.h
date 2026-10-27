@@ -25,7 +25,7 @@ static s32 PushedObject_RunStepEffect(struct FieldPosition *request) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(actor, 7);
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
     *flags &= 0x7e;

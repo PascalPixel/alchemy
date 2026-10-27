@@ -60,9 +60,9 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;
-  struct Object *target;
+  struct Actor *target;
   s32 dx;
-  struct Object *actor;
+  struct Actor *actor;
   u8 *palette;
   s32 frame;
   s32 i;
@@ -92,7 +92,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   actor = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   // The ball falls 15 pixels a frame towards the middle of the field.
-  if (actor->x > 0)
+  if (actor->x.fixed > 0)
     dx = -(15 << 16);
   else
     dx = 15 << 16;
@@ -134,8 +134,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->gravity = 0xab85;
       actor->steeringFlags = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct Object *)actor, actor->x * 3, 0,
-                              actor->z);
+      Object_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
       Object_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
@@ -151,16 +150,16 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->gravity = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
-      actor->z = target->z;
-      Object_StartIdleFar((struct Object *)actor);
+      actor->z.fixed = target->z.fixed;
+      Object_StartIdleFar(actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes
     // as the battle shows the damage.
     if (frame > 17) {
-      if (actor->y > 0) {
-        actor->x += dx;
-        actor->y -= 8 << 16;
+      if (actor->y.fixed > 0) {
+        actor->x.fixed += dx;
+        actor->y.fixed -= 8 << 16;
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
         // On ANIM_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
@@ -177,8 +176,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
           screenPosition.y += 8;
         }
       }
-      if (actor->y < 0) {
-        actor->y = 0;
+      if (actor->y.fixed < 0) {
+        actor->y.fixed = 0;
         // Each chip flies off 24 pixels above the landing at a random angle
         // and a speed of 0.5 to 16.5 pixels a frame (speed / 64), doubled
         // vertically, and lives 32 to 39 frames.
@@ -323,7 +322,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     }
 
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      struct Object *target =
+      struct Actor *target =
           GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
       // Centre on the point 20 pixels above the target and spin the group
@@ -331,7 +330,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
       // frame 32k, its skull i on frame 4 * (8k + i), and it flashes 32
       // frames into its turn.
       ANIM_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, target->x, 20 << 16, target->z);
+      SET_VECTOR(point, target->x.fixed, 20 << 16, target->z.fixed);
       Transform_ApplyPosition(point);
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
@@ -462,7 +461,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     member = 0;
     if (work->effect->targetCount != 0) {
       while (member != work->effect->targetCount) {
-        struct Object *object;
+        struct Actor *object;
 
         object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
         // Target `member` has its turn from frame 16 * member, and takes
@@ -475,7 +474,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
             BattleAnim_TintBattler(work->effect->targets[member], 0,
                                    POSE_DAMAGE, -1, 0);
           }
-          SET_VECTOR(point, object->x, 40 << 16, object->z);
+          SET_VECTOR(point, object->x.fixed, 40 << 16, object->z.fixed);
           Projection_Point(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, circling once every 128

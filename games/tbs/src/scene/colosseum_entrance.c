@@ -544,7 +544,7 @@ static void EventScript_TalkToAzart(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->work;
+    u16 *work = &contestant->userValue;
     u16 value = 112;
 
     *work = value;
@@ -1018,7 +1018,7 @@ static void EventScript_FinalsStart(void) {
       actor = Actor_GetById(ACTOR_AZART);
       actor->update = NULL;
       actor->timer = 0;
-      actor->work = 0;
+      actor->userValue = 0;
       SET_VELOCITY(actor, 0, 0, 0);
       actor->targetX = ACTOR_NO_TARGET;
       actor->targetY = ACTOR_NO_TARGET;
@@ -1796,7 +1796,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->work;
+    u16 *work = &contestant->userValue;
     u16 value = 112;
 
     *work = value;

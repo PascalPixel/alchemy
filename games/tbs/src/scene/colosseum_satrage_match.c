@@ -440,7 +440,7 @@ static void EventScript_KnockDownObstacle(void) {
   sprite = obstacle->sprite;
   Script_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
-  obstacle->speed = 0x13333;
+  obstacle->speedLimit = 0x13333;
   Sound_PlaySong(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
   Object_SetPosition(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
@@ -547,7 +547,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
          0xFFF00000) +
         0x80000;
 
-    pusher->speed = 0x10000;
+    pusher->speedLimit = 0x10000;
     pusher->acceleration = 0x8000;
     Object_SetPosition(pusher, destinationX, pusher->y.fixed, destinationZ);
   }
@@ -562,7 +562,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
          0xFFF00000) +
         0x80000;
 
-    log->speed = 0x10000;
+    log->speedLimit = 0x10000;
     log->acceleration = 0x8000;
     Object_SetPosition(log, destinationX, log->y.fixed, destinationZ);
   }
@@ -633,7 +633,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   FieldScript_Start();
   Import_ActorSetAnimation(pusher, 8);
   FieldScript_WaitFrames(6);
-  log->speed = 0x8000;
+  log->speedLimit = 0x8000;
   log->acceleration = 0x3333;
   Object_SelectAnimation(
       log, gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
@@ -641,11 +641,10 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
-  Object_StartCamera(
-      (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
-                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
-          ->camera,
-      (s32)log);
+  Object_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
+                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+                         ->camera,
+                     (s32)log);
   ObjectMotion_SetSpeedParameters(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Object_SelectAnimation(pusherActor, 2);
   Object_SetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
@@ -1101,7 +1100,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       actor = Actor_GetById(liftId);
       actor->priorityFlags = 2;
       Object_SelectAnimation(actor, 4);
-      actor->speed = 0x8000;
+      actor->speedLimit = 0x8000;
       actor->acceleration = 0x3333;
     }
     Task_AddFrame(ColosseumSatrageMatch_UpdateLifts, TASK_PASS_FRAME + 5);
@@ -1469,7 +1468,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   }
   Import_ActorSetAnimation(pusher, 8);
   FieldScript_WaitFrames(6);
-  obstacle->speed = 0x8000;
+  obstacle->speedLimit = 0x8000;
   obstacle->acceleration = 0x3333;
   Sound_PlaySong(SE_HEAVY_MOVE);
   Object_SelectAnimation(obstacle, 3);
@@ -1750,8 +1749,8 @@ ColosseumSatrageMatch_SpawnRandomMapEffect(union ActorOrEffect *fieldObject) {
 
 /// Raises the linked finish effect, starts its script and clears the link.
 static s32
-ColosseumSatrageMatch_RaiseLinkedMapEffect(struct Object *interpreter) {
-  struct Actor *source = (struct Actor *)interpreter;
+ColosseumSatrageMatch_RaiseLinkedMapEffect(struct Actor *interpreter) {
+  struct Actor *source = interpreter;
   struct Actor *effect = Actor_GetById(source->timer);
 
   Object_SetPosition(effect, source->x.fixed, source->y.fixed + PIXELS(36),
@@ -1797,7 +1796,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   timer = (s16 *)&warrior->timer;
   *timer = *itemActorId;
   warrior->acceleration = PIXELS(1) / 4;
-  warrior->speed = PIXELS(1);
+  warrior->speedLimit = PIXELS(1);
 
   Object_SetPosition(warrior, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
@@ -1967,11 +1966,11 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   Object_SelectAnimation(pusher, 8);
   WaitFrames(15);
 
-  obstacle->speed = 0x3333;
+  obstacle->speedLimit = 0x3333;
   obstacle->acceleration = 0x3333;
   Object_SetPosition(obstacle, destination.x, destination.y, destination.z);
 
-  pusher->speed = 0x3333;
+  pusher->speedLimit = 0x3333;
   pusher->acceleration = 0x3333;
   Object_SetPosition(pusher, destination.x, destination.y, destination.z);
 

@@ -13,13 +13,13 @@
 /// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
-  struct Object *djinni;
+  struct Actor *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
   s32 scale;
   s32 remainingParticles;
 
-  djinni = (struct Object *)Actor_GetById(djinniId);
+  djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
@@ -42,11 +42,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   ObjectMotion_Launch(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
-  position.x = djinni->x;
-  position.y = djinni->y;
-  position.z = djinni->z;
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
-  Object_ReleaseFar((struct Object *)djinni);
+  Object_ReleaseFar(djinni);
   Sound_PlaySongFar(SE_SCATTER);
   effect = effectWork->sprites;
   remainingParticles = 23;
@@ -85,8 +85,8 @@ void FieldEffect_SetObjectAlternatingWords(union ActorOrEffect *fieldObject) {
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
-  ((struct Object *)object)->scaleX = scale;
-  ((struct Object *)object)->scaleY = scale;
+  ((struct Actor *)object)->scaleX = scale;
+  ((struct Actor *)object)->scaleY = scale;
 }
 
 /// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
@@ -95,7 +95,7 @@ void FieldEffect_SetObjectAlternatingWords(union ActorOrEffect *fieldObject) {
 /// joining does.
 void FieldEffect_AdvanceAngleWithRamp(union ActorOrEffect *fieldObject) {
   void *obj = (void *)fieldObject;
-  struct Object *spin = obj;
+  struct Actor *spin = obj;
   u32 step;
 
   step = spin->spinRampFrames * 0x50;
@@ -115,11 +115,11 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// stops where it arrives, hidden; 40 frames later it swarms to points within 4
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
-  struct Object *owner;
+  struct Actor *owner;
   struct Vector3 position;
   s32 state;
 
-  owner = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+  owner = Actor_GetById(gSaveBlock.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {
@@ -142,7 +142,8 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     // front
     // (priority 0, z lifting the sprite) after 3 frames.
     ((struct Sprite *)effect->object)->image.priority =
-        owner->sprite->image.priority;
+        // Through the sprite union this load moves.
+        (*(struct Sprite **)&owner->sprite)->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
@@ -168,9 +169,9 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->x;
-    position.y = owner->y + 0x140000;
-    position.z = owner->z;
+    position.x = owner->x.fixed;
+    position.y = owner->y.fixed + 0x140000;
+    position.z = owner->z.fixed;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;

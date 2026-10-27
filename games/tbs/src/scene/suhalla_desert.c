@@ -227,16 +227,16 @@ static void EventScript_FightFlash(void) {
 /// A storm's actor template script: clears its sprite and collision
 /// flags.
 static s32
-SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
   actor->collisionFlags = 0;
   return 0;
 }
 
 /// A storm's actor template script: toggles its single-sprite storage.
-static s32 SuhallaDesert_ToggleActorActive(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 SuhallaDesert_ToggleActorActive(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   actor->spriteStorageKind ^= 1;
   return 1;
 }
@@ -577,8 +577,8 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
 /// The chasing storm's script: it follows the leader, throwing up sand every
 /// eight frames, and catches a moving leader it comes within 8 pixels of
 /// (event 55).
-static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   struct EffectOptions options;
   struct Actor *selectedActor;
   s32 dx;
@@ -587,7 +587,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
 
   selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
   actor->acceleration = PIXELS(1) / 4;
-  actor->speed = PIXELS(3) / 2;
+  actor->speedLimit = PIXELS(3) / 2;
   actor->motionFlags = 0;
   Actor_SetSpriteFlags(actor, 0);
   actor->spriteStorageKind ^= 1;

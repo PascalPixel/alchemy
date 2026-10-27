@@ -641,8 +641,8 @@ s32 SolSanctumEruption_Initialize(void) {
 
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
 /// each ember's object script, gEruption_EmberScript.
-static s32 SolSanctumEruption_AlignEmberToHeading(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   actor->sprite->rotation = actor->facing + 0x4000;
   return 1;
 }
@@ -665,7 +665,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     Object_SelectAnimation(actor, 2);
     actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
-    actor->speed = PIXELS(8);
+    actor->speedLimit = PIXELS(8);
     actor->acceleration = PIXELS(3) / 4;
     actor->scaleX = 9 * Q16_ONE / 5;
     actor->scaleY = 9 * Q16_ONE / 5;
@@ -780,7 +780,7 @@ static void SolSanctumEruption_StepEmbers(void) {
         Sound_PlaySong(SE_GLITTER);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
-      ember->speed = PIXELS(8);
+      ember->speedLimit = PIXELS(8);
       ember->acceleration = PIXELS(1);
       Actor_SetSpriteFlags(ember, 0);
       ember->sprite->image.priority = 1;
@@ -1819,7 +1819,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedObject = parent;
+      child->linkedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

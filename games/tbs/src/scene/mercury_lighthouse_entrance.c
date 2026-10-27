@@ -167,7 +167,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
-static s32 MercuryLighthouseEntrance_PlayStepSound(struct Object *interpreter) {
+static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
   Sound_PlaySong(SE_FOOTSTEP);
   return 0;
 }

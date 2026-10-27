@@ -70,7 +70,7 @@ void FieldScript_WaitFrames(s32 frames) {
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
-  struct Object *object;
+  struct Actor *object;
 
   object = Actor_GetByActorId(gSaveBlock.leaderActorId);
   object->speedLimit = Q16_ONE;
@@ -395,7 +395,7 @@ void Inventory_ReservedNoOp(void) {}
 /// Only actors drawn as a sprite (OBJECT_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
-  struct Object *actorObject = Actor_GetByActorId(actorId);
+  struct Actor *actorObject = Actor_GetByActorId(actorId);
 
   if (actorObject != 0 && actorObject->spriteStorageKind == OBJECT_SPRITE_ONE) {
     s32 frames = 0;

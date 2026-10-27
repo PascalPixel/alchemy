@@ -154,23 +154,23 @@ static void GomaCavePillar_UpdateFragment(union ActorOrEffect *fieldObject) {
   struct Actor *fragment = (struct Actor *)fieldObject;
   // The actor's speed and acceleration slots carry the two selected axis
   // steps.
-  s16 plane = (s16)fragment->work;
+  s16 plane = (s16)fragment->userValue;
 
   switch (plane) {
   case PLANE_XY:
-    fragment->x.fixed += fragment->speed;
+    fragment->x.fixed += fragment->speedLimit;
     fragment->targetX = fragment->x.fixed;
     fragment->y.fixed += fragment->acceleration;
     fragment->targetY = fragment->y.fixed;
     break;
   case PLANE_XZ:
-    fragment->x.fixed += fragment->speed;
+    fragment->x.fixed += fragment->speedLimit;
     fragment->targetX = fragment->x.fixed;
     fragment->z.fixed += fragment->acceleration;
     fragment->targetZ = fragment->z.fixed;
     break;
   case PLANE_YZ:
-    fragment->y.fixed += fragment->speed;
+    fragment->y.fixed += fragment->speedLimit;
     fragment->targetY = fragment->y.fixed;
     fragment->z.fixed += fragment->acceleration;
     fragment->targetZ = fragment->z.fixed;
@@ -179,8 +179,8 @@ static void GomaCavePillar_UpdateFragment(union ActorOrEffect *fieldObject) {
 }
 
 /// Applies child value 15 at the end of a fragment's lifetime.
-static s32 GomaCavePillar_FinishFragment(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 GomaCavePillar_FinishFragment(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   return 0;
 }
@@ -210,9 +210,9 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   fragment->motionFlags = 0;
   sprite->flags = 0;
   fragment->update = GomaCavePillar_UpdateFragment;
-  fragment->speed = firstRate;
+  fragment->speedLimit = firstRate;
   fragment->acceleration = secondRate;
-  fragment->work = (u16)planeAndPriority;
+  fragment->userValue = (u16)planeAndPriority;
   priority = (u32)planeAndPriority >> 16;
   switch (priority) {
   case 0:
@@ -511,7 +511,7 @@ static void EventScript_JumpGapWest(void) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speed = PIXELS(3);
+    leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 0x7e;

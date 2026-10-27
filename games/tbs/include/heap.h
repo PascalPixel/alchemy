@@ -52,7 +52,7 @@ enum HeapSlot {
   HEAP_SLOT_SPRITE_ANIMS = 3,
   /// The object system's sprite pool (struct Sprite).
   HEAP_SLOT_SPRITES = 4,
-  /// The 64 objects (struct Object).
+  /// The 64 objects (struct Actor).
   HEAP_SLOT_OBJECTS = 5,
   /// The object system's work (struct ObjectSystemWork, gObjectSystemWork),
   /// taken by ObjectSystem_Initialize. The item, Psynergy, Status, Djinn and

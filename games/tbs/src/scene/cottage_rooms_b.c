@@ -634,7 +634,7 @@ static void EventScript_DoraWakesIsaac(void) {
     struct FieldWork *work = *eventSlot;
 
     grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
-    viewCenter = (struct Actor *)work->camera;
+    viewCenter = work->camera;
   }
   sprite = Actor_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm event.
@@ -734,8 +734,8 @@ static void EventScript_DoraWakesIsaac(void) {
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
-  Object_RegisterSpriteMetadata(
-      (struct Object *)Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
+  Object_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER),
+                                SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
@@ -1270,7 +1270,7 @@ static void CottageRoomsB_SpawnEffectPair(union ActorOrEffect *fieldObject) {
       part = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedObject = parent;
+      child->linkedActor = parent;
       if (part != NULL) {
         sprite = part;
         Sprite_StartAnim(part, 0);

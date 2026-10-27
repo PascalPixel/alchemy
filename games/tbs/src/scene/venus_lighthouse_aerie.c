@@ -220,8 +220,8 @@ enum {
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
-static s32 VenusLighthouseAerie_PulseActorScale(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 *counter = &actor->timer;
 
   switch (*counter) {
@@ -350,7 +350,7 @@ static void EventScript_JumpToNextPlatform(void) {
     Object_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     Sound_PlaySong(SE_JUMP);
     actor->velocityY = PIXELS(4);
@@ -1296,7 +1296,7 @@ static void VenusLighthouseAerie_SpawnLinkedPairEffects(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedObject = parent;
+      child->linkedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;
@@ -1560,7 +1560,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->actor.priorityFlags &= ~1;
     star->actor.motionFlags = 0;
     star->actor.retainSpriteCache = 1;
-    star->actor.speed = PIXELS(8) / 5;
+    star->actor.speedLimit = PIXELS(8) / 5;
     star->actor.acceleration = 0xcccc;
     iconPixels = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     // Display the Venus Star icon before sending it toward the beacon.
@@ -1574,7 +1574,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   starShadow->y.fixed = PIXELS(32);
   starShadow->z.fixed = actor->z.fixed;
   starShadow->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  starShadow->speed = PIXELS(8) / 5;
+  starShadow->speedLimit = PIXELS(8) / 5;
   starShadow->acceleration = PIXELS(4) / 5;
   starShadow->scaleX = 3 * Q16_ONE / 4;
   starShadow->scaleY = 3 * Q16_ONE / 4;
@@ -1925,7 +1925,8 @@ VenusLighthouseAerie_UpdateUpperOrbit(union ActorOrEffect *fieldObject) {
   struct Actor *center = Actor_GetById(ACTOR_BEAM_BOTTOM);
   u16 angle = effect->timer;
 
-  effect->x.fixed = center->x.fixed + Trig_Cos(angle) * (effect->speed + 3);
+  effect->x.fixed =
+      center->x.fixed + Trig_Cos(angle) * (effect->speedLimit + 3);
   effect->z.fixed = center->z.fixed + Trig_Sin(angle) * 2;
   effect->targetX = effect->x.fixed;
   effect->targetZ = effect->z.fixed;
@@ -1944,7 +1945,8 @@ VenusLighthouseAerie_UpdateRisingOrbit(union ActorOrEffect *fieldObject) {
   s32 across;
 
   cosine = Trig_Cos(angle);
-  along = anchor->x.fixed + cosine * (actor->speed + actor->riseCounter + 6);
+  along =
+      anchor->x.fixed + cosine * (actor->speedLimit + actor->riseCounter + 6);
   actor->x.fixed = along;
 
   sine = Trig_Sin(angle);
@@ -1991,9 +1993,10 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
     effect->motionFlags = 0;
     angle = Random_Next() & 0xffff000;
     effect->timer = angle;
-    effect->work = 0;
+    effect->userValue = 0;
     effect->update = VenusLighthouseAerie_UpdateUpperOrbit;
-    effect->speed = Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit =
+        Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->image.priority = 1;
   }
@@ -2888,22 +2891,22 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   MapGrid_CopyCellsTo(19, 92, 19, 68, 8, 21);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->z.fixed -= PIXELS(32);
-  actor->work = 0;
+  actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_GetById(ACTOR_GARET);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(32);
-  actor->work = 0;
+  actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_GetById(ACTOR_IVAN);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(32);
-  actor->work = 0;
+  actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_GetById(ACTOR_MIA);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(18);
-  actor->work = 0;
+  actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_GetById(ACTOR_BEACON_ORB)->y.fixed = PIXELS(56);
   FieldCamera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
@@ -3139,11 +3142,11 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       effect->motionFlags = 0;
       angle = Random_Next() & 0xffff000;
       effect->timer = angle;
-      effect->work = 0;
+      effect->userValue = 0;
       effect->riseCounter = (u32)Random_Next() >> 13;
       effect->update = VenusLighthouseAerie_UpdateRisingOrbit;
-      effect->speed = Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24;
-      effect->speed = center->speed >> 16;
+      effect->speedLimit = Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24;
+      effect->speedLimit = center->speedLimit >> 16;
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
@@ -3219,10 +3222,10 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   effect->motionFlags = phase;
   angle = Random_Next() & 0xffff000;
   effect->timer = angle;
-  effect->work = phase;
-  effect->linkedObject = &center->actor;
+  effect->userValue = phase;
+  effect->linkedActor = &center->actor;
   effect->update = VenusLighthouseAerie_UpdateOrbitingEffect;
-  effect->speed = Trig_Sin((drift & 0xfffff) >> 4) * 24 >> 16;
+  effect->speedLimit = Trig_Sin((drift & 0xfffff) >> 4) * 24 >> 16;
   sprite->flags = 0;
   sprite->image.priority = center->actor.sprite->image.priority;
 }
@@ -3234,10 +3237,10 @@ VenusLighthouseAerie_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
   struct Actor *anchor;
   s32 spin;
 
-  anchor = fieldObject->actor.linkedObject;
+  anchor = fieldObject->actor.linkedActor;
   spin = fieldObject->effect.spin;
   fieldObject->effect.x =
-      anchor->x.fixed + Trig_Cos(spin) * (fieldObject->actor.speed + 28);
+      anchor->x.fixed + Trig_Cos(spin) * (fieldObject->actor.speedLimit + 28);
   fieldObject->effect.z = Trig_Sin(spin) * 16 + PIXELS(164);
   fieldObject->actor.targetX = fieldObject->effect.x;
   fieldObject->actor.targetZ = fieldObject->effect.z;

@@ -18,7 +18,7 @@ FieldEffect_AnimateVerticalPositive(union ActorOrEffect *fieldObject) {
   s32 frame;
   s32 amplitude;
 
-  anchor = self->linkedObject;
+  anchor = self->linkedActor;
   self->timer = (self->timer + 1);
   frame = self->timer;
 
@@ -44,7 +44,7 @@ FieldEffect_AnimateVerticalNegative(union ActorOrEffect *fieldObject) {
   s32 frame;
   s32 amplitude;
 
-  anchor = self->linkedObject;
+  anchor = self->linkedActor;
   self->timer = (self->timer + 1);
   frame = self->timer;
 

@@ -23,7 +23,7 @@ void FieldEffect_CheckCloakTile(void) {
   u32 slot;
 #endif
   struct FieldWork *work;
-  struct Object *leader;
+  struct Actor *leader;
   u8 *tile;
   s32 x;
   s32 y;
@@ -46,12 +46,12 @@ void FieldEffect_CheckCloakTile(void) {
     u32 tx;
     u32 ty;
 
-    x = leader->x;
+    x = leader->x.fixed;
     if (x < 0)
       x += 0x1fffff;
     tx = (x >> 21) & 31;
 
-    y = leader->z;
+    y = leader->z.fixed;
     if (y < 0)
       y += 0x1fffff;
     ty = (y >> 21) & 31;
@@ -65,13 +65,13 @@ void FieldEffect_CheckCloakTile(void) {
     } else
       tile = (u8 *)gMapGridCellBuffer;
 
-    x = leader->x;
+    x = leader->x.fixed;
     if (x < 0)
       x += 0xfffff;
     {
       u32 tx = x >> 20;
 
-      y = leader->z;
+      y = leader->z.fixed;
       if (y < 0)
         y += 0xfffff;
 
@@ -90,7 +90,7 @@ void FieldEffect_CheckCloakTile(void) {
 /// frames. The leader ends with its shadow back.
 /// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
-  struct Object *object;
+  struct Actor *object;
   struct Sprite *animation;
   struct SpriteAnim *entry;
   u32 i;
@@ -147,7 +147,7 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
-  struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   struct Sprite *animation = leader->sprite;
   struct SpriteAnim *entry = animation->entries[0];
   u32 n;

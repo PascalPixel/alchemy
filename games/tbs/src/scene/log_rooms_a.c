@@ -340,7 +340,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(leader, 7);
-    leader->speed = PIXELS(3);
+    leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;

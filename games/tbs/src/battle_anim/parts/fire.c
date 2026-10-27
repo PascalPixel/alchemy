@@ -34,7 +34,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   s32 bodyTop;
   struct ScreenPoint screen;
   BlitterPair draw;
-  struct Object *user;
+  struct Actor *user;
   s32 i;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
@@ -61,7 +61,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // outwards at 2 to 4 pixels a frame and rising at -1/4 to 1.73 pixels a
   // frame.
   user = GetBattleObjectSlotFar(work->effect->user)->object;
-  bodyTop = user->y + BattleUnit_GetEffectHeightFar(work->effect->user);
+  bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->effect->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
     s32 angle;
@@ -72,7 +72,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
     SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
                  (s32)(((Random16() & 127) - 16) << 16) >> 6,
                  (Trig_Cos(angle) * speed) >> 6);
-    SET_POSITION(ember, user->x, bodyTop, user->z);
+    SET_POSITION(ember, user->x.fixed, bodyTop, user->z.fixed);
     // -1 in flight, then the frames of the impact flare.
     ember->variant = -1;
   }
@@ -126,7 +126,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
       // speed to 60/64 until 85 frames after the ember appeared. Embers are
       // dealt to the targets in turn (i % count).
       if (frame > launchFrame + 48 && ember->variant == -1) {
-        struct Object *target;
+        struct Actor *target;
         s32 vx;
         s32 vy;
         s32 vz;
@@ -134,9 +134,9 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
         target = GetBattleObjectSlotFar(
                      work->effect->targets[i % work->effect->targetCount])
                      ->object;
-        vx = ember->velocityX += (target->x - ember->x) >> 9;
-        vy = ember->velocityY += (target->y - ember->y) >> 9;
-        vz = ember->velocityZ += (target->z - ember->z) >> 9;
+        vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
+        vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
+        vz = ember->velocityZ += (target->z.fixed - ember->z) >> 9;
         if (frame < launchFrame + 85) {
           SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
         }

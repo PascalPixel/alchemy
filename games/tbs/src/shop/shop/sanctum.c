@@ -133,9 +133,8 @@ s32 Sanctum_Run(s32 unitId) {
   shop->action = serviceSelection;
 
   {
-    s32 keeperAnimationId = (u16)((struct Object *)Actor_GetByIdFar(unitId))
-                                ->sprite->entries[0]
-                                ->animationId;
+    s32 keeperAnimationId =
+        (u16)(Actor_GetByIdFar(unitId))->sprite->entries[0]->animationId;
     shop->keeperGraphics = keeperAnimationId;
   }
 

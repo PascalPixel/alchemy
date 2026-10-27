@@ -149,7 +149,7 @@ s32 SceneManager_Run(s32 entrance) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gSaveBlock.leaderActorId];
-      Object_StartIdleFar((struct Object *)actor);
+      Object_StartIdleFar(actor);
       gSaveBlock.x = actor->x.fixed;
       gSaveBlock.y = 0;
       gSaveBlock.z = actor->z.fixed;
@@ -370,13 +370,13 @@ s32 SceneManager_Run(s32 entrance) {
       actor = work->actors[gSaveBlock.leaderActorId];
       if (actor != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          Object_StartKeyCheckFar((struct Object *)actor);
+          Object_StartKeyCheckFar(actor);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          Object_StartMoveByKeysFar((struct Object *)actor);
+          Object_StartMoveByKeysFar(actor);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          Object_StartWorldMapControlFar((struct Object *)actor);
+          Object_StartWorldMapControlFar(actor);
         else
-          Object_StartPlayerControlFar((struct Object *)actor);
+          Object_StartPlayerControlFar(actor);
       }
       do {
         WaitFrames(1);
@@ -410,7 +410,7 @@ done:
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
-  struct Object *leader;
+  struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   u8 *cells;
@@ -423,9 +423,9 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
-    probePosition.vector.x = leader->x;
-    probePosition.vector.y = leader->y;
-    probePosition.vector.z = leader->z;
+    probePosition.vector.x = leader->x.fixed;
+    probePosition.vector.y = leader->y.fixed;
+    probePosition.vector.z = leader->z.fixed;
     Vector_AddPolarOffset(0x100000, leader->facing, probePosition.coordinates);
     // World map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
@@ -446,7 +446,8 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     if (behavior >= MB_JAR && behavior <= MB_WELL) {
       groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
-      if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
+      if (groundHeight >= leader->y.fixed &&
+          groundHeight <= leader->y.fixed + 0x400000) {
         result = behavior;
       }
     } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {

@@ -81,8 +81,8 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// Abilities: Halt (FIELD_PSYNERGY_HALT).
 void FieldEffect_RunHalt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Object *caster = effectWork->mainObject;
-  struct Object *orb;
+  struct Actor *caster = effectWork->mainObject;
+  struct Actor *orb;
   struct FieldEffectSprite *effect;
   struct Vector3 pos;
   struct Vector3 from;
@@ -90,8 +90,8 @@ void FieldEffect_RunHalt(void) {
   s32 step;
   s32 i;
 
-  effectWork->y = caster->y;
-  orb = (struct Object *)Object_Spawn(250, 0, 0, 0);
+  effectWork->y = caster->y.fixed;
+  orb = Object_Spawn(250, 0, 0, 0);
   step = 0;
   Object_SelectAnimationFar(orb, 0);
   if (orb == 0)
@@ -99,9 +99,9 @@ void FieldEffect_RunHalt(void) {
 
   // From 16 pixels above the caster to 8 pixels above the effect's position.
   FieldEffect_FadeToEffectColor();
-  from.x = caster->x;
-  from.y = caster->y + (16 << 16);
-  from.z = caster->z;
+  from.x = caster->x.fixed;
+  from.y = caster->y.fixed + (16 << 16);
+  from.z = caster->z.fixed;
   to.x = effectWork->x;
   to.y = effectWork->y + (8 << 16);
   to.z = effectWork->z;
@@ -110,9 +110,9 @@ void FieldEffect_RunHalt(void) {
     s32 steps = 11;
     s32 scale;
 
-    SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
-                 from.y + (to.y - from.y) * step / 10,
-                 from.z + (to.z - from.z) * step / 10);
+    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
+                       from.y + (to.y - from.y) * step / 10,
+                       from.z + (to.z - from.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
@@ -138,9 +138,9 @@ void FieldEffect_RunHalt(void) {
   // position.
   effect = &effectWork->sprites[0];
   for (i = 0; i < 16; i++) {
-    pos.x = orb->x;
-    pos.y = orb->y + (8 << 16);
-    pos.z = orb->z;
+    pos.x = orb->x.fixed;
+    pos.y = orb->y.fixed + (8 << 16);
+    pos.z = orb->z.fixed;
     Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
@@ -149,11 +149,11 @@ void FieldEffect_RunHalt(void) {
     effect++;
   }
 
-  pos.x = orb->x;
-  pos.y = orb->y + (8 << 16);
-  pos.z = orb->z;
+  pos.x = orb->x.fixed;
+  pos.y = orb->y.fixed + (8 << 16);
+  pos.z = orb->z.fixed;
   WaitFrames(8);
-  Object_ReleaseFar((struct Object *)orb);
+  Object_ReleaseFar(orb);
   WaitFrames(4);
   WaitFrames(30);
   FieldEffect_FadeFromEffectColor();
@@ -194,7 +194,7 @@ void FieldEffect_PauseObject(s32 actorId) {
     }
     actor->update = FieldEffect_UpdatePausedObject;
     actor->paused = 1;
-    Object_SetAnimationSpeedFar((struct Object *)actor, 0);
+    Object_SetAnimationSpeedFar(actor, 0);
   }
 }
 
@@ -211,10 +211,10 @@ void FieldEffect_ResumeObject(s32 actorId) {
       struct SaveBlock *state = &gSaveBlock;
       actor->update = (void (*)(union ActorOrEffect *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Anim_ApplyChildValuesFar((struct Object *)actor, state->pausedPose);
+      Anim_ApplyChildValuesFar(actor, state->pausedPose);
     }
     actor->paused = 0;
-    Object_SetAnimationSpeedFar((struct Object *)actor, 16);
+    Object_SetAnimationSpeedFar(actor, 16);
   }
 }
 

@@ -49,7 +49,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   u8 *graphics;
   struct Point2D wave;
   struct Point2D drift;
-  struct Object *object;
+  struct Actor *object;
   struct BattleObject *battleObject;
   struct Particle *point;
   struct Particle *spark;
@@ -111,13 +111,14 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   ANIM_FOR_EACH_TARGET(index, work->effect) {
     battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
     object = battleObject->object;
-    home[index].x = object->x;
-    home[index].y = object->z;
+    home[index].x = object->x.fixed;
+    home[index].y = object->z.fixed;
     baseAngle[index] = object->facing;
-    heading[index] = (u16)ArcTan2(object->x, object->z);
-    radius[index] = Iwram_Sqrt((object->x >> 8) * (object->x >> 8) +
-                               (object->z >> 8) * (object->z >> 8)) >>
-                    7;
+    heading[index] = (u16)ArcTan2(object->x.fixed, object->z.fixed);
+    radius[index] =
+        Iwram_Sqrt((object->x.fixed >> 8) * (object->x.fixed >> 8) +
+                   (object->z.fixed >> 8) * (object->z.fixed >> 8)) >>
+        7;
     spin[index] = 0;
     object->gravity = 0;
   }
@@ -173,8 +174,9 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
         object = battleObject->object;
-        object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
-        object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
+        // Plain words: through .fixed, the union moves a spill.
+        *(s32 *)&object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
+        *(s32 *)&object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
         // The spin gains 48/65536 turn a frame each frame. Within 16 pixels
         // of the middle a target rises 6 pixels a frame, else half a pixel,
@@ -183,11 +185,11 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
-            object->y += 0x60000;
+            object->y.fixed += 0x60000;
           else
-            object->y += 0x8000;
-          if (object->y > 0x7c0000)
-            object->y = 0x7c0000;
+            object->y.fixed += 0x8000;
+          if (object->y.fixed > 0x7c0000)
+            object->y.fixed = 0x7c0000;
         }
 
         if (frame <= 490) {
@@ -315,7 +317,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       ANIM_FOR_EACH_TARGET(index, work->effect) {
         battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
         object = battleObject->object;
-        object->y = ((Random16() & 15) + 8) << 16;
+        object->y.fixed = ((Random16() & 15) + 8) << 16;
       }
 
       // The block and its comets are projected about a centre left of the
@@ -580,12 +582,12 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
   // Put the targets back.
   ANIM_FOR_EACH_TARGET(index, work->effect) {
-    struct Object *object;
+    struct Actor *object;
 
     battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
     object = battleObject->object;
-    object->x = home[index].x;
-    object->z = home[index].y;
+    object->x.fixed = home[index].x;
+    object->z.fixed = home[index].y;
     object->facing = baseAngle[index];
   }
 

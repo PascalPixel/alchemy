@@ -14,7 +14,7 @@ struct BattleAction;
 struct BattleAnimArgs;
 struct BattleTurn;
 struct Unit;
-struct Object;
+struct Actor;
 struct FieldEffectSprite;
 struct AreaNameRule;
 

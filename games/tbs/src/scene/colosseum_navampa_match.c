@@ -412,7 +412,7 @@ static void EventScript_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
   struct SaveBlock *state = &gSaveBlock;
   s32 id = state->leaderActorId;
-  struct Actor *subject = (struct Actor *)work->camera;
+  struct Actor *subject = work->camera;
   struct Actor *actor = Actor_GetById(id);
   s32 z = actor->z.part.pixel;
 
@@ -436,7 +436,7 @@ static void EventScript_GrowPlant(void) {
 static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
                                                       s32 height) {
   ledge->acceleration = PIXELS(2) / 5;
-  ledge->speed = PIXELS(4) / 5;
+  ledge->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(ledge, ledge->x.fixed, height, ledge->z.fixed);
 }
 
@@ -743,7 +743,7 @@ static void EventScript_RollLongLog(void) {
   FieldScript_Start();
   Import_ActorSetAnimation(actorId, 8);
   FieldScript_WaitFrames(6);
-  log->speed = PIXELS(1) / 2;
+  log->speedLimit = PIXELS(1) / 2;
   acceleration = PIXELS(1) / 5;
   log->acceleration = acceleration;
   Object_SelectAnimation(log, mode);
@@ -751,7 +751,7 @@ static void EventScript_RollLongLog(void) {
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(actorId, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  Object_StartCamera((struct Object *)work->camera, (s32)log);
+  Object_StartCamera(work->camera, (s32)log);
   Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
   Script_PlaySong(SE_HEAVY_MOVE);
   Object_SelectAnimation(rider, 2);
@@ -792,7 +792,7 @@ far:
 
 /// Displays the activated moving sidewalk and plays its arrival sounds.
 static s32
-ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Object *interpreter) {
+ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Actor *interpreter) {
   TilesetAnim_Pause(1);
   TilesetAnim_Resume(2);
   Sound_PlaySong(SE_STOP_ACTION_SE);
@@ -810,7 +810,7 @@ static void EventScript_ForceSidewalkLog(void) {
   effect->motionFlags = 0;
   moveRate = PIXELS(8) / 5;
   effect->acceleration = moveRate;
-  effect->speed = moveRate;
+  effect->speedLimit = moveRate;
   Object_SelectAnimation(effect, 2);
   Actor_SetScript(effect, gColosseumNavampaMatch_SidewalkLogScript);
   GameFlag_Set(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
@@ -849,7 +849,7 @@ static void EventScript_PassNorthWallOpening(void) {
 #endif
   actor = Actor_GetById(*actorId);
   actor->acceleration = PIXELS(1);
-  actor->speed = PIXELS(2);
+  actor->speedLimit = PIXELS(2);
   FieldEffect_ConfigureLinkedObject(*actorId, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
   Object_SelectAnimation(actor, 5);
@@ -881,7 +881,7 @@ static void EventScript_PassSouthWallOpening(void) {
     actor->x.fixed = PIXELS(664);
   }
   actor->acceleration = PIXELS(1);
-  actor->speed = PIXELS(2);
+  actor->speedLimit = PIXELS(2);
   Object_SelectAnimation(actor, 5);
   z = actor->z.fixed & 0xFFF00000;
   Object_SetPosition(actor, actor->x.fixed, actor->y.fixed, z + PIXELS(12));
@@ -1232,14 +1232,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match; timer and work hold signed 1/256-pixel steps.
 static s32
-ColosseumNavampaMatch_AdvanceParticleMotion(struct Object *interpreter) {
-  struct Actor *particle = (struct Actor *)interpreter;
+ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *interpreter) {
+  struct Actor *particle = interpreter;
   particle->x.fixed += particle->timer * 256;
-  particle->y.fixed += (s16)particle->work * 256;
+  particle->y.fixed += (s16)particle->userValue * 256;
   particle->scaleX += Q16_ONE / 40;
   particle->scaleY += Q16_ONE / 40;
   particle->timer += 5;
-  particle->work = (s16)particle->work - 1;
+  particle->userValue = (s16)particle->userValue - 1;
   return 0;
 }
 
@@ -1291,7 +1291,7 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
     particle->targetY = height;
   }
   particle->timer = 25;
-  particle->work = 128;
+  particle->userValue = 128;
   Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
@@ -1833,10 +1833,9 @@ static void ColosseumNavampaMatch_PositionActor(s32 selector, s32 x, s32 z) {
 
   actor = Actor_GetByActorId(selector);
   if (actor != 0) {
-    Object_StartIdle((struct Object *)actor);
+    Object_StartIdle(actor);
     Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
-                         z << 16);
+    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
   }
 }
 
@@ -1847,10 +1846,9 @@ static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
 
   actor = Actor_GetByActorId(selector);
   if (actor != 0) {
-    Object_StartIdle((struct Object *)actor);
+    Object_StartIdle(actor);
     Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
-                         z << 16);
+    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
     Object_WaitForMove(actor);
     Object_SelectAnimation(actor, 1);
   }
@@ -2180,8 +2178,8 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
 /// Presents the prize above the warrior who took it, with the treasure fanfare,
 /// and clears the link.
 static s32
-ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Object *interpreter) {
-  struct Actor *source = (struct Actor *)interpreter;
+ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
+  struct Actor *source = interpreter;
 
   struct Actor *effect = Actor_GetById(source->timer);
 
@@ -2222,7 +2220,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   linkedItemActorId = &actor->timer;
   *linkedItemActorId = *itemActorId;
   actor->acceleration = PIXELS(1) / 4;
-  actor->speed = PIXELS(1);
+  actor->speedLimit = PIXELS(1);
   Object_SetPosition(actor, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
   Actor_SetScript(actor, gColosseumNavampaMatch_PlaceScript);
@@ -2316,11 +2314,11 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
   Object_SelectAnimation(subject, 8);
   WaitFrames(15);
 
-  target->speed = PIXELS(1) / 5;
+  target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
   Object_SetPosition(target, position.x, position.y, position.z);
 
-  subject->speed = PIXELS(1) / 5;
+  subject->speedLimit = PIXELS(1) / 5;
   subject->acceleration = PIXELS(1) / 5;
   Object_SetPosition(subject, position.x, position.y, position.z);
 

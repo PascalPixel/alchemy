@@ -271,8 +271,8 @@ extern s32 gImil_ArcOrigin[];
 
 /// A sick person shivers: a quick squash, then a pause, longer for
 /// ACTOR_SICK_OLD_MAN, whose work Imil_Initialize sets.
-static s32 Imil_UpdateShiver(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Imil_UpdateShiver(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   switch (actor->timer) {
   case 6:
     actor->scaleX += -Q16_ONE / 4;
@@ -289,7 +289,7 @@ static s32 Imil_UpdateShiver(struct Object *interpreter) {
   case 0:
     actor->scaleX += Q16_ONE / 16;
     actor->scaleY += -Q16_ONE / 32;
-    if ((s16)actor->work != 0) {
+    if ((s16)actor->userValue != 0) {
       actor->timer = (u32)Import_RandomNext() % 40 + 40;
     } else {
       actor->timer = (u32)Import_RandomNext() % 20 + 20;
@@ -832,7 +832,7 @@ s32 Imil_Initialize(void) {
       GameFlag_Clear(FLAG_IMIL_FOOTPRINTS);
     }
     leader->timer = 0;
-    leader->work = 0;
+    leader->userValue = 0;
     Task_AddFrame(Imil_SpawnAmbientEffects, TASK_PASS_FRAME);
     Task_AddFrame(Imil_UpdateFootprints, TASK_PASS_FRAME);
     ObjectMotion_SetActionVariant(ACTOR_SNOWMAN, 1);
@@ -878,7 +878,7 @@ s32 Imil_Initialize(void) {
         if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR)) {
           Import_ActorSetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
           Actor_GetById(ACTOR_OLD_WOMAN)->facing = 0;
-          Actor_GetById(ACTOR_OLD_MAN)->work = 0;
+          Actor_GetById(ACTOR_OLD_MAN)->userValue = 0;
           Actor_SetActionScript(ACTOR_OLD_MAN, gImil_ShiverScript);
         } else {
           Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
@@ -886,7 +886,7 @@ s32 Imil_Initialize(void) {
       }
     } else if (entrance == ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST) {
       if (!GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        Actor_GetById(ACTOR_SICK_OLD_MAN)->work = 1;
+        Actor_GetById(ACTOR_SICK_OLD_MAN)->userValue = 1;
         Actor_SetActionScript(ACTOR_SICK_OLD_MAN, gImil_ShiverScript);
       }
     } else if (entrance == ICE_ROOMS_HOUSE_NORTHEAST) {
@@ -1140,7 +1140,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
       b[0] = gImil_ArcOrigin[0];
       b[1] = gImil_ArcOrigin[1] + PIXELS(8);
       b[2] = gImil_ArcOrigin[2];
-      Vector_AddPolarOffset(t << 16, (t << 11) + (s16)actor->work, b);
+      Vector_AddPolarOffset(t << 16, (t << 11) + (s16)actor->userValue, b);
       actor->x.fixed = b[0];
       actor->y.fixed = b[1];
       actor->z.fixed = b[2];
@@ -1562,7 +1562,7 @@ static void Imil_TurnSlidingActor(union ActorOrEffect *fieldObject) {
     d = -0x1000;
   actor->facing = prev + d;
   Object_SelectAnimation(actor, 2);
-  Object_SetAnimationSpeed((struct Object *)actor, 0x30);
+  Object_SetAnimationSpeed(actor, 0x30);
 }
 
 /// The leader slides along Imil's ice until something stops him.
@@ -1606,12 +1606,12 @@ static void Imil_RunIceSlide(void) {
 
     probe.x = x;
     probe.z = z;
-    subject->speed = PIXELS(2);
+    subject->speedLimit = PIXELS(2);
     subject->acceleration = PIXELS(1) / 10;
     subject->timer = 0;
     Object_SetPosition(subject, x, subject->y.fixed, z);
     Object_SelectAnimation(subject, 2);
-    Object_SetAnimationSpeed((struct Object *)subject, 48);
+    Object_SetAnimationSpeed(subject, 48);
     Object_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 
@@ -1629,7 +1629,7 @@ static void Imil_RunIceSlide(void) {
       }
       x = probe.x;
       z = probe.z;
-      subject->speed = PIXELS(2);
+      subject->speedLimit = PIXELS(2);
       subject->acceleration = PIXELS(1) / 10;
       Object_SetPosition(subject, probe.x, probe.y, probe.z);
       Object_WaitForMove(subject);
@@ -1638,7 +1638,7 @@ static void Imil_RunIceSlide(void) {
       }
     }
 
-    subject->speed = PIXELS(2);
+    subject->speedLimit = PIXELS(2);
     subject->acceleration = PIXELS(1);
     Object_SetPosition(subject, x, subject->y.fixed, z);
     Object_WaitForMove(subject);

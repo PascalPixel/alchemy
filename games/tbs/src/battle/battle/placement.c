@@ -35,7 +35,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 sprite;
   s32 registeredSprite;
   struct Unit *unit;
-  struct Object *object;
+  struct Actor *object;
   s32 facingAngle;
   s32 weaponSprite;
   u8 classId;
@@ -46,7 +46,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
   // Actor_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
-  object = (struct Object *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
@@ -272,7 +272,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
   }
-  Object_InitializeFar((struct Object *)object, gBattleObject_EmptyScript);
+  Object_InitializeFar(object, gBattleObject_EmptyScript);
 }
 
 /// Reads the battlefield position of party place index from

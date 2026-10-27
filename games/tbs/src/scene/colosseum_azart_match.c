@@ -98,7 +98,7 @@
 #include "text/msg_ids.h"
 #include "battle_unit.h"
 #include "resource.h"
-#include "object.h"
+#include "actor.h"
 #include "ability_ids.h"
 #include "edition.h"
 #include "item_ids.h"
@@ -386,12 +386,12 @@ static void EventScript_DousePipe(void) {
   none = 0;
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
-  actor->speed = PIXELS(4) / 5;
+  actor->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
   actor = Actor_Get(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
-  actor->speed = PIXELS(4) / 5;
+  actor->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
   Object_WaitForMove(actor);
   FieldScript_WaitFrames(45);
@@ -414,7 +414,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
     x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
     z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    leader->speed = PIXELS(1);
+    leader->speedLimit = PIXELS(1);
     leader->acceleration = PIXELS(1) / 2;
     Object_SetPosition(leader, x, leader->y.fixed, z);
   }
@@ -423,7 +423,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
     x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
     z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    actor->speed = PIXELS(1);
+    actor->speedLimit = PIXELS(1);
     actor->acceleration = PIXELS(1) / 2;
     Object_SetPosition(actor, x, actor->y.fixed, z);
   }
@@ -533,18 +533,17 @@ static void EventScript_PushPipeworksPillar(void) {
   FieldScript_Start();
   Import_ActorSetAnimation(leaderId, ANIM_PUSH);
   FieldScript_WaitFrames(6);
-  actor->speed = PIXELS(1) / 2;
+  actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
   Object_SelectAnimation(actor, 2);
   Object_SetPosition(actor, actor->x.fixed - PIXELS(48), 0, actor->z.fixed);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(leaderId, ANIM_WALK);
-  Object_StartCamera(
-      (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
-                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
-          ->camera,
-      (s32)actor);
+  Object_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
+                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+                         ->camera,
+                     (s32)actor);
   Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
   Object_SetPosition(leader, leader->x.fixed - PIXELS(24), 0, leader->z.fixed);
   ObjectMotion_CommitCurrentPositionAndActivate(leaderId);
@@ -576,14 +575,14 @@ static void EventScript_PushPipeworksPillar(void) {
   actor = Actor_GetById(ACTOR_PIPE_WEST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
-  actor->speed = PIXELS(4) / 5;
+  actor->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
   Object_SelectAnimation(actor, 3);
   ColosseumAzartMatch_AnimatePipeworksWater();
   actor = Actor_GetById(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
-  actor->speed = PIXELS(4) / 5;
+  actor->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
   Object_WaitForMove(actor);
   FieldScript_WaitFrames(15);
@@ -775,7 +774,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     actor->motionFlags = zero;
     actor->acceleration = PIXELS(2) / 5;
-    actor->speed = PIXELS(4) / 5;
+    actor->speedLimit = PIXELS(4) / 5;
     actor->y.fixed = PIXELS(8);
     Object_SelectAnimation(actor, 3);
   } else {
@@ -1043,7 +1042,7 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
                                                      s32 height) {
   actor->motionFlags = 0;
   actor->acceleration = PIXELS(2) / 5;
-  actor->speed = PIXELS(4) / 5;
+  actor->speedLimit = PIXELS(4) / 5;
   Object_SetPosition(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
@@ -1432,8 +1431,8 @@ ColosseumAzartMatch_SpawnRandomEffect(union ActorOrEffect *fieldObject) {
 
 /// Presents the collected item above its collector and signals completion.
 static s32
-ColosseumAzartMatch_PlaceFinishItemAboveActor(struct Object *interpreter) {
-  struct Actor *collector = (struct Actor *)interpreter;
+ColosseumAzartMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
+  struct Actor *collector = interpreter;
   struct Actor *itemActor = Actor_GetById(collector->timer);
 
   Object_SetPosition(itemActor, collector->x.fixed,
@@ -1478,7 +1477,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   pendingItemActorId = &actor->timer;
   *pendingItemActorId = *itemActorId;
   actor->acceleration = PIXELS(1) / 4;
-  actor->speed = PIXELS(1);
+  actor->speedLimit = PIXELS(1);
 
   Object_SetPosition(actor, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
@@ -1577,11 +1576,11 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   Object_SelectAnimation(subject, 8);
   WaitFrames(15);
 
-  target->speed = PIXELS(1) / 5;
+  target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
   Object_SetPosition(target, position.x, position.y, position.z);
 
-  subject->speed = PIXELS(1) / 5;
+  subject->speedLimit = PIXELS(1) / 5;
   subject->acceleration = PIXELS(1) / 5;
   Object_SetPosition(subject, position.x, position.y, position.z);
 

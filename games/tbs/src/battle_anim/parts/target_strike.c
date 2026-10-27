@@ -137,8 +137,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   s32 k;
   u8 *particleSheet;
   struct BattleCamera *camera;
-  struct Object *target;
-  struct Object *source;
+  struct Actor *target;
+  struct Actor *source;
   s32 resource;
   s32 i;
   s32 wispSheet = TARGET_STRIKE_SMOKE_CELLS;
@@ -217,16 +217,16 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
     for (i = 0; i != 128; i++) {
       struct Particle *step = &PARTICLES[k * 128 + i];
 
-      SET_POSITION(step, target->x, 0x140000, target->z);
+      SET_POSITION(step, target->x.fixed, 0x140000, target->z.fixed);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11);
       step->variant = -1;
     }
     for (i = 0; i != 512; i++) {
-      TARGET_STRIKE_SPARKS[i].x = target->x;
+      TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
       TARGET_STRIKE_SPARKS[i].y = 0x140000;
-      TARGET_STRIKE_SPARKS[i].z = target->z;
+      TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_COLUMN) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
@@ -518,9 +518,9 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
             Particle_AdvanceWithGravity3D(step, 60, 0);
             step->variant++;
             if (step->variant > 10) {
-              s32 dx = (source->x - step->x) >> 8;
-              s32 dy = (source->y - step->y + 0x140000) >> 8;
-              s32 dz = (source->z - step->z) >> 8;
+              s32 dx = (source->x.fixed - step->x) >> 8;
+              s32 dy = (source->y.fixed - step->y + 0x140000) >> 8;
+              s32 dz = (source->z.fixed - step->z) >> 8;
 
               step->velocityX += dx;
               step->velocityY += dy;

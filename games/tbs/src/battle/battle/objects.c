@@ -24,7 +24,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   s32 unitIndex;
   s32 recordIndex;
   s32 count;
-  struct Object *object;
+  struct Actor *object;
   struct Sprite *record;
   struct Sprite **records;
 
@@ -47,7 +47,7 @@ void BattleObject_UpdateSpritePriorities(void) {
             s32 shadowPriority = 0;
 
             // Off the ground.
-            if (object->y != 0)
+            if (object->y.fixed != 0)
               shadowPriority = 9;
             shadow = slot->shadowEntry;
             if (shadow->priority != shadowPriority) {
@@ -210,7 +210,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   struct SpriteAnim *shownIcon;
   struct SpriteAnim *icon;
   struct Sprite *record;
-  struct Object *object;
+  struct Actor *object;
   s32 iconAnimation;
   s32 iconHandle;
   s32 previousCondition;
@@ -315,7 +315,7 @@ s32 BattleObject_UpdatePose(s32 unitId) {
   }
 
   Object_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
-  Object_SetAnimationSpeedFar((struct Object *)BattleObject_Get(unitId)->object,
+  Object_SetAnimationSpeedFar(BattleObject_Get(unitId)->object,
                               (unitId & 3) + 14);
 }
 
@@ -325,7 +325,7 @@ s32 BattleObject_UpdatePose(s32 unitId) {
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObject *battleObject;
-  struct Object *object;
+  struct Actor *object;
   s32 recordIndex;
   struct Sprite *record;
 
@@ -518,7 +518,7 @@ void ResetMotionRecordGroup(void *recordGroup) {
 
 /// Detaches the scripts from every sprite of a battle object. Nothing in the
 /// source calls it.
-void ResetBattleObjectRecordGroups(struct Object *object) {
+void ResetBattleObjectRecordGroups(struct Actor *object) {
   s32 storageKind;
   s32 remaining;
   void **recordGroups;
@@ -579,7 +579,7 @@ void *BattleObject_DestroyAll(void) {
     }
     battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
-      Object_ReleaseFar((struct Object *)battleObject->object);
+      Object_ReleaseFar(battleObject->object);
       battleObject->object = NULL;
       battleObject->active = 0;
     }
@@ -621,13 +621,13 @@ s32 BattleCamera_ApplyTransform(void) {
 /// and y, then its depth; Transform_ProjectPoint). Returns 0. Reached through
 /// its far stub from Projection_Unit.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
-  struct Object *object = BattleObject_Get(unitId)->object;
+  struct Actor *object = BattleObject_Get(unitId)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   s32 position[3];
   s32 projectionScale;
 
   BattleCamera_ApplyTransform();
-  SET_VECTOR(position, object->x, object->y, object->z);
+  SET_VECTOR(position, object->x.fixed, object->y.fixed, object->z.fixed);
   projectionScale = Transform_ProjectPoint(position, projected);
   // The sprite's projected scale is worked out and thrown away; compare
   // BattleMotion_ProjectScaledPosition, which keeps it.
@@ -637,7 +637,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 
 /// Returns sprite recordIndex of an object (0 only, for a single sprite), or
 /// null when it has no such sprite. Called throughout the battle parts.
-void *GetMotionRecord(struct Object *object, s32 recordIndex) {
+void *GetMotionRecord(struct Actor *object, s32 recordIndex) {
   s32 storageKind = object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK;
   if (storageKind == OBJECT_SPRITE_ONE) {
     if (recordIndex == 0) {

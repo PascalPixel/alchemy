@@ -77,7 +77,7 @@
 #include "field_service.h"
 #include "scene_tables.h"
 #include "kolima.h"
-#include "object.h"
+#include "actor.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -193,8 +193,8 @@ enum KolimaBridgeActorId {
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
-static s32 Kolima_ApplyPendingPose(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Kolima_ApplyPendingPose(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (gKolima_PendingPose != 0) {
     Object_SelectAnimation(actor, 2);
     gKolima_PendingPose = 0;
@@ -205,8 +205,8 @@ static s32 Kolima_ApplyPendingPose(struct Object *interpreter) {
 /// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
-static s32 Kolima_UpdateTimedAppearance(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Kolima_UpdateTimedAppearance(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s32 randomValue = Import_RandomNext();
   s32 scaledRandom = randomValue * 100;
   s32 appearanceTimer = (u16)actor->timer + ((u32)scaledRandom >> 16);
@@ -249,8 +249,8 @@ static void Kolima_InitializeCursedVillagers(struct ActorTemplate *templates) {
 
 /// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
 /// released when its timer runs out.
-static s32 Kolima_UpdateFallingDebris(struct Object *interpreter) {
-  struct Actor *debris = (struct Actor *)interpreter;
+static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
+  struct Actor *debris = interpreter;
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
   debris->velocityZ -= PIXELS(1) / 25;
@@ -1589,7 +1589,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   sparkle->priorityFlags = priorityFlags;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speed = PIXELS(8);
+  sparkle->speedLimit = PIXELS(8);
   sparkle->acceleration = PIXELS(8);
   sparkle->motionFlags = framePhase;
   Object_SelectAnimation(sparkle, 2);
@@ -1600,8 +1600,8 @@ static void Kolima_SpawnCurseSparkle(void) {
 #include "common/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > PIXELS(59) && actor->x.fixed < PIXELS(141) &&
          actor->z.fixed > PIXELS(211) && actor->z.fixed < PIXELS(257)) ||

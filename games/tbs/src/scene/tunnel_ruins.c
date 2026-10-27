@@ -237,8 +237,8 @@ static void TunnelRuins_MarkPushPillarCells(void);
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
-static s32 TunnelRuins_RefreshActorAfterShrinking(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -275,7 +275,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Sound_PlaySong(SE_JUMP);
     Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
 
-    actor->speed = PIXELS(3);
+    actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;

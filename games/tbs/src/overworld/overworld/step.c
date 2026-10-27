@@ -69,7 +69,7 @@ s32 Field_CountRequests(void) {
 /// which match an item or Psynergy trigger to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
-  struct Object *leader;
+  struct Actor *leader;
   struct MapGridScrollAnimView *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
@@ -77,16 +77,16 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = (struct Object *)work->actors[gSaveBlock.leaderActorId];
+  leader = work->actors[gSaveBlock.leaderActorId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
   if (leader == 0)
     return 0;
 
-  position.vector.x = leader->x;
-  position.vector.y = leader->y;
-  position.vector.z = leader->z;
+  position.vector.x = leader->x.fixed;
+  position.vector.y = leader->y.fixed;
+  position.vector.z = leader->z.fixed;
   Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
 
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
@@ -200,7 +200,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gSaveBlock.leaderActorId;
-  struct Object *leader = (struct Object *)work->actors[leaderId];
+  struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
@@ -263,7 +263,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       encounterSpeed <<= 1;
     if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
       fullEncounterRate = 1;
-      work->encounter = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
+      work->encounter =
+          Encounter_RollWorldMap((s32)&leader->x.fixed, encounterSpeed);
     } else if (event == MB_ENCOUNTER_GROUND_1 ||
                event == MB_ENCOUNTER_GROUND_2) {
       fullEncounterRate =

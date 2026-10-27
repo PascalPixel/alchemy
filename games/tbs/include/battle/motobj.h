@@ -2,7 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 /// @file
-/// BattleSpriteObject, the view of struct Object one battle function gives a
+/// BattleSpriteObject, the view of struct Actor one battle function gives a
 /// unit its sprites through, and SpriteAnimHeadView, the start of a sprite
 /// anim.
 
@@ -14,9 +14,9 @@
 
 union ActorOrEffect;
 
-/// struct Object, field for field, as BattleObject_SpawnObjectsForList gives a
+/// struct Actor, field for field, as BattleObject_SpawnObjectsForList gives a
 /// battle unit its sprites: the sprite word untyped (void *), and the cursor,
-/// wait and footprintSide unsigned. Through struct Object, whose sprite is a
+/// wait and footprintSide unsigned. Through struct Actor, whose sprite is a
 /// struct Sprite pointer, the store of a two-part enemy's sprite list moves
 /// after the next store, and a view that pads the fields it does not read
 /// with bytes moves it too (MATCHING.md).
@@ -60,9 +60,9 @@ struct BattleSpriteObject {
   u8 frozen;
   u8 riseCounter;
   u8 riseEnabled;
-  s16 action;
-  u16 footprintSide;
-  struct BattleSpriteObject *linkedObject;
+  s16 timer;
+  u16 userValue;
+  struct BattleSpriteObject *linkedActor;
   void (*update)(union ActorOrEffect *fieldObject);
 };
 

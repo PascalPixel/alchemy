@@ -254,7 +254,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
 
     // Each target's own timeline, starting 8 frames after the one before.
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Object *object =
+      struct Actor *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 height =
           BattleUnit_GetEffectHeightFar(work->effect->targets[member]) * 2 / 3;
@@ -263,7 +263,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
         Sound_PlaySongFar(SE_POWER_UP);
       ANIM_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
-      SET_VECTOR(point, object->x, height, object->z);
+      SET_VECTOR(point, object->x.fixed, height, object->z.fixed);
       Transform_ApplyPosition(point);
       if (frame == member * 8 + 48)
         BattleAnim_TintBattler(work->effect->targets[member],
@@ -542,7 +542,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
     if (frame == 72)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(j, work->effect) {
-      struct Object *object;
+      struct Actor *object;
       s32 targetFrame;
       s32 x;
       s32 y;
@@ -554,7 +554,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
         ANIM_VIEW_FROM_CAMERA(camera);
         // Centre on the point 20 pixels above the target; the view is set
         // from the camera twice.
-        SET_VECTOR(point, object->x, 160 << 13, object->z);
+        SET_VECTOR(point, object->x.fixed, 160 << 13, object->z.fixed);
         ANIM_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(point);
         SET_VECTOR(origin, 0, 0, 0);

@@ -124,8 +124,8 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
 static s32
-KolimaForestEntrance_FlashHitPsynergyFields(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s32 *pending = &gKolimaForestEntrance_PsynergyFieldHit;
   if (*pending) {
     Object_SelectAnimation(actor, 2);
@@ -138,8 +138,8 @@ KolimaForestEntrance_FlashHitPsynergyFields(struct Object *interpreter) {
 /// shows its bright frame (7) while the timer is past 1000, its dim one (10)
 /// before; at 1200 the timer starts over.
 static s32
-KolimaForestEntrance_TwinkleGroundSparkle(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 *counter = &actor->timer;
   *counter = (*counter + (((u32)Import_RandomNext() * 100) >> 16));
   if (*counter > 1000)
@@ -1131,7 +1131,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   sparkle->priorityFlags = priorityFlags;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speed = PIXELS(8);
+  sparkle->speedLimit = PIXELS(8);
   sparkle->acceleration = PIXELS(8);
   sparkle->motionFlags = framePhase;
   Object_SelectAnimation(sparkle, 2);
@@ -1145,8 +1145,8 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
 /// are told.
 static s32
-KolimaForestEntrance_BurstOnPsynergyField(struct Object *interpreter) {
-  struct Actor *sparkle = (struct Actor *)interpreter;
+KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
+  struct Actor *sparkle = interpreter;
   s32 x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0

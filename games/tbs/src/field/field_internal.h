@@ -39,7 +39,7 @@
 #include "metadata_lookup.h"
 #include "edition.h"
 #include "objdisp.h"
-#include "object.h"
+#include "actor.h"
 #include "battle_system.h"
 #include "transform.h"
 #include "action_script.h"

@@ -21,7 +21,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
     x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-    actor->speed = 0x10000;
+    actor->speedLimit = 0x10000;
     actor->acceleration = 0x8000;
     Object_SetPosition(actor, x, actor->y.fixed, z);
   }
@@ -30,7 +30,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
     x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-    other->speed = 0x10000;
+    other->speedLimit = 0x10000;
     other->acceleration = 0x8000;
     Object_SetPosition(other, x, other->y.fixed, z);
   }

@@ -178,8 +178,8 @@ enum TolbiShipMastMetatileBehavior {
 
 /// Keeps the effect actor relative to the saved camera origin and
 /// rotates it.
-static s32 TolbiShipMast_FollowCameraAndRotate(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 *origin = gTolbiShipMast_CameraOrigin;
   s32 *center = gTolbiShipMast_CameraCenter;
@@ -193,8 +193,8 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Object *interpreter) {
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
-static s32 TolbiShipMast_RandomizeLookoutFacing(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
@@ -229,8 +229,8 @@ enum TolbiShipMastSway {
 };
 
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
-static s32 TolbiShipMast_SwayActor(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   s16 *state = &actor->timer;
   s32 next;
 
@@ -252,7 +252,7 @@ static s32 TolbiShipMast_SwayActor(struct Object *interpreter) {
   if (actor->x.fixed > PIXELS(40) && actor->x.fixed < PIXELS(320)) {
     actor->x.fixed += actor->riseBaseY;
   }
-  state = (s16 *)&actor->work;
+  state = (s16 *)&actor->userValue;
   if (*state == SWAY_HELD) {
     actor->y.fixed = 0;
   } else if (*state != SWAY_INCREASING) {
@@ -273,12 +273,12 @@ static s32 TolbiShipMast_SwayActor(struct Object *interpreter) {
 
 /// Shrinks both axes; once small enough, clears the actor's position and
 /// speed.
-static s32 TolbiShipMast_ShrinkAndStopActor(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   struct Sprite *sprite = actor->sprite;
 
   sprite->image.priority = 3;
-  actor->speed = PIXELS(2);
+  actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
   if (actor->scaleX > Q16_ONE / 16) {
     actor->scaleX -= Q16_ONE / 64;
@@ -680,7 +680,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   ObjectMotion_SetActionVariant(actorId, 1);
   actor->motionFlags = 0;
   actor->timer = (u32)Import_RandomNext() >> 15;
-  actor->work = (u32)Import_RandomNext() >> 15;
+  actor->userValue = (u32)Import_RandomNext() >> 15;
   randomValue = Import_RandomNext();
   randomValue <<= 2;
   randomValue >>= 16;

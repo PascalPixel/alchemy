@@ -26,8 +26,8 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   s32 member;
   u8 *sheet;
   DrawRectangle *draw;
-  struct Object *actor;
-  struct Object *goal;
+  struct Actor *actor;
+  struct Actor *goal;
   s32 frame;
   s32 i;
   s32 position[3];
@@ -68,8 +68,8 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   // equal steps from the user's feet to 90 pixels up at the first target's
   // x and depth 0, frame 80 plays the Djinni's sound and frame 83 shows it.
   // target keeps that point for the healing.
-  SET_VECTOR(position, actor->x, 0, actor->z);
-  SET_VECTOR(target, goal->x, 180 << 15, 0);
+  SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
+  SET_VECTOR(target, goal->x.fixed, 180 << 15, 0);
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
@@ -167,11 +167,11 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     view.x >>= 1;
     callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Object *object =
+      struct Actor *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 start = member * 8;
       ANIM_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(position, object->x, 160 << 14, object->z);
+      SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);
       Transform_ApplyPosition(position);
       // 30 frames into its turn the target hears the recovery sound, and
       // it glows from 40 to 64; its 64 sparkles spiral in, sparkle i from

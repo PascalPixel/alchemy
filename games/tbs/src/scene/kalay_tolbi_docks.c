@@ -907,7 +907,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   {
     s32 pixelZ = actor->z.fixed / 0x10000;
 
-    actor->work = pixelZ;
+    actor->userValue = pixelZ;
   }
   FieldScript_End();
 }

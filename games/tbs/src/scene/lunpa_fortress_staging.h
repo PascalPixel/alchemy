@@ -7,7 +7,7 @@
 #include "item_ids.h"
 
 #include "pushed_object.h"
-#include "object.h"
+#include "actor.h"
 #include "actor.h"
 
 static __inline__ void SetFieldWorkValue(s16 *field, s32 value) {

@@ -1007,7 +1007,7 @@ static void Vault_UpdateDriftingEffect(union ActorOrEffect *fieldObject) {
   s32 horizontalRate;
   s32 verticalRate;
 
-  effect->x.fixed += effect->speed;
+  effect->x.fixed += effect->speedLimit;
   effect->targetX = effect->x.fixed;
 
   if (effect->timer != 0) {
@@ -1020,8 +1020,8 @@ static void Vault_UpdateDriftingEffect(union ActorOrEffect *fieldObject) {
     effect->targetY = effect->y.fixed;
   }
 
-  horizontalRate = effect->speed;
-  effect->speed = horizontalRate - Math_Divide(horizontalRate, 28);
+  horizontalRate = effect->speedLimit;
+  effect->speedLimit = horizontalRate - Math_Divide(horizontalRate, 28);
   verticalRate = effect->acceleration;
   effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
 }
@@ -1036,7 +1036,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   s32 z;
   u8 zero;
 
-  anchor = (struct Actor *)Actor_GetById(ACTOR_VAULT_DOG);
+  anchor = Actor_GetById(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
   // Pick a small offset around the anchor and create the drifting sprite there.
@@ -1058,7 +1058,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
-    effect = (struct Actor *)Object_CreateField(0xac, x, baseY, z);
+    effect = Object_CreateField(0xac, x, baseY, z);
   }
   if (effect == NULL)
     return;
@@ -1095,13 +1095,13 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->acceleration =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
     driftMultiplier = (u32)Import_RandomNext() % 15 - 7;
-    effect->speed = VAULT_DRIFT_RATE * driftMultiplier;
+    effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = zero;
   } else {
     s32 driftMultiplier;
 
     driftMultiplier = (u32)Import_RandomNext() % 10 + 8;
-    effect->speed =
+    effect->speedLimit =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
     driftMultiplier = (u32)Import_RandomNext() % 14 + 1;
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;

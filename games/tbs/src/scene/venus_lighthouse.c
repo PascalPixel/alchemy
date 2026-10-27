@@ -598,11 +598,11 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   moveRate = PIXELS(1) / 5;
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
-  pillar->speed = moveRate;
+  pillar->speedLimit = moveRate;
   pillar->acceleration = moveRate;
   Object_SetPosition(pillar, targetPosition.x, targetPosition.y,
                      targetPosition.z);
-  leader->speed = moveRate;
+  leader->speedLimit = moveRate;
   leader->acceleration = moveRate;
   Object_SetPosition(leader, targetPosition.x, targetPosition.y,
                      targetPosition.z);
@@ -667,8 +667,8 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
 
 /// Called by gVenusGreyStatueScript and gVenusGreyPillarScript: draws the
 /// actor in the colour mode of its VENUS_COLOR_MARK.
-static s32 VenusLighthouse_UpdateChildFromTimer(struct Object *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *interpreter) {
+  struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
@@ -736,8 +736,7 @@ VenusLighthouse_EmitRisingParticles(union ActorOrEffect *fieldObject) {
 }
 
 /// Clears the scripted actor's sprite flags and advances its script.
-static s32
-VenusLighthouse_ClearScriptedSpriteFlags(struct Object *interpreter) {
+static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
   void *actor = (void *)interpreter;
   Object_SetSpriteFlags(actor, 0);
   return 0;
@@ -807,7 +806,7 @@ static void EventScript_EnterSparklingPassage(void) {
   leader->update =
       (void (*)(union ActorOrEffect *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
-  leader->speed = PIXELS(1) / 5;
+  leader->speedLimit = PIXELS(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
@@ -1002,7 +1001,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   if (effect == 0) {
     return 0;
   }
-  effect->speed = PIXELS(1);
+  effect->speedLimit = PIXELS(1);
   effect->acceleration = PIXELS(1);
   Actor_SetSpriteFlags(effect, 0);
   Object_SelectAnimation(effect, PARTICLE_ANIMATION_FLICKER);
@@ -1076,7 +1075,7 @@ static s32 EventScript_JumpAcrossGap(void) {
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
       Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
-      leader->speed = PIXELS(3);
+      leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       *motionFlags &= 0x7e;
@@ -2084,8 +2083,7 @@ static void EventScript_MoveSwitchPillar(void) {
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
     // SC_FREE clears the script pointer; work value 0x28 signals the
     // opening sound earlier, while the gate effects are still running.
-    while (((struct Object *)firstGateEffect)->script != 0 ||
-           ((struct Object *)secondGateEffect)->script != 0) {
+    while ((firstGateEffect)->script != 0 || (secondGateEffect)->script != 0) {
       if (firstGateEffect->riseEnabled != 0 ||
           secondGateEffect->riseEnabled != 0) {
         FieldScript_WaitFrames(30);
@@ -2640,8 +2638,8 @@ static void EventScript_MoveSocketPillar(void) {
       Actor_SetScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
       secondGateEffect = VenusLighthouse_CreateLight(
           216, 760, gVenusFourthFloorLightToSouthwest);
-      while (((struct Object *)firstGateEffect)->script != 0 ||
-             ((struct Object *)secondGateEffect)->script != 0) {
+      while ((firstGateEffect)->script != 0 ||
+             (secondGateEffect)->script != 0) {
         if (firstGateEffect->riseEnabled != 0 ||
             secondGateEffect->riseEnabled != 0) {
           Script_Wait(30);
@@ -3325,7 +3323,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
     struct FieldWork *work = gFieldWork;
 
     actorId = gSaveBlock.leaderActorId;
-    viewCenter = (struct Actor *)work->camera;
+    viewCenter = work->camera;
   }
   actor = Actor_GetById(actorId);
   nextPosition.x =
@@ -3763,8 +3761,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 /// fourth floor only the
 /// middle socket has more than one piece, and only the light from the
 /// south-east socket reaches it.
-static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
-  struct Actor *light = (struct Actor *)interpreter;
+static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
+  struct Actor *light = interpreter;
   struct FieldPosition pillarPosition;
   struct Actor *pillar;
   struct Sprite *sprite;

@@ -37,8 +37,8 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   BlitterPair draw;
   u8 *sheet;
   s32 frameCount;
-  struct Object *target;
-  struct Object *user;
+  struct Actor *target;
+  struct Actor *user;
   u8 *palette;
   s32 sheetId;
   s32 frame;
@@ -104,21 +104,21 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
-  SET_VECTOR(center, user->x, 0, user->z);
+  SET_VECTOR(center, user->x.fixed, 0, user->z.fixed);
   // Every caller passes a literal anchor, so goal is always set before the
   // interpolation starts; none passes DJINNI_ANCHOR_USER_X.
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
-    SET_VECTOR(goal, target->x, 0x3c0000, target->z);
+    SET_VECTOR(goal, target->x.fixed, 0x3c0000, target->z.fixed);
     break;
   case DJINNI_ANCHOR_TARGET_X:
-    SET_VECTOR(goal, target->x, 0x3c0000, 0);
+    SET_VECTOR(goal, target->x.fixed, 0x3c0000, 0);
     break;
   case DJINNI_ANCHOR_OVER_USER:
-    SET_VECTOR(goal, user->x, 0x3c0000, user->z);
+    SET_VECTOR(goal, user->x.fixed, 0x3c0000, user->z.fixed);
     break;
   case DJINNI_ANCHOR_USER_X:
-    SET_VECTOR(goal, user->x, 0x3c0000, 0);
+    SET_VECTOR(goal, user->x.fixed, 0x3c0000, 0);
     break;
   case DJINNI_ANCHOR_CENTRE:
     SET_VECTOR(goal, 0, 0x3c0000, 0);
@@ -307,9 +307,9 @@ void BattleAnim_RunWingBeat(struct BattleAnimArgs *effect) {
 /// action pose, its animation back at the usual speed.
 static inline void BattleAnim_RunVolleyWithAction(struct BattleAnimArgs *effect,
                                                   s32 mode) {
-  struct Object *user;
+  struct Actor *user;
 
-  user = (struct Object *)GetBattleObjectSlotFar(effect->user)->object;
+  user = GetBattleObjectSlotFar(effect->user)->object;
   Object_SelectAnimationFar(user, POSE_LEAP);
   Object_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleAnim_RunProjectileVolley(effect, mode);
@@ -416,7 +416,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   s32 comet;
   s32 shots;
   s32 steps;
-  struct Object *user;
+  struct Actor *user;
   s32 k;
   // The trail particles placed, and later the sparks' speed shift: one
   // local for both, as separate locals change the register allocation.
@@ -553,7 +553,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
     // Wave and h - 15 to h for Slash, Shuriken and Crazy Voice.
 
     ANIM_FOR_EACH_TARGET(i, work->effect) {
-      struct Object *target =
+      struct Actor *target =
           GetBattleObjectSlotFar(work->effect->targets[i])->object;
       s32 targetHeight =
           BattleUnit_GetEffectHeightFar(work->effect->targets[i]);
@@ -561,54 +561,57 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
       for (j = 0; j != shots; j++) {
         struct Particle *shot = &work->particles[i * shots + j];
 
-        shot->x = user->x;
+        shot->x = user->x.fixed;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->y = user->y + ((Random16() & 15) << 16) + 0x3a0000;
+          shot->y = user->y.fixed + ((Random16() & 15) << 16) + 0x3a0000;
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
-          shot->y = user->y + height / 2;
+          shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
-          shot->y = user->y + height / 2;
+          shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y =
+              user->y.fixed + height / 2 + ((16 - (Random16() & 31)) << 16);
         else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y =
+              user->y.fixed + height / 2 + ((16 - (Random16() & 31)) << 16);
         else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
-          shot->y = user->y + height / 2 + ((32 - (Random16() & 63)) << 16);
+          shot->y =
+              user->y.fixed + height / 2 + ((32 - (Random16() & 63)) << 16);
         else if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
-          shot->y = user->y + height / 2;
+          shot->y = user->y.fixed + height / 2;
         else
-          shot->y = user->y + height;
-        shot->z = user->z;
-        shot->velocityX = (target->x - shot->x) / steps;
+          shot->y = user->y.fixed + height;
+        shot->z = user->z.fixed;
+        shot->velocityX = (target->x.fixed - shot->x) / steps;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->velocityY =
-              (s32)(target->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) /
-              steps;
+          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 63) << 16) -
+                                  shot->y - 0xc0000) /
+                            steps;
         else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
-          shot->velocityY =
-              (s32)(target->y + ((Random16() & 7) << 16) - shot->y + 0x160000) /
-              steps;
+          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 7) << 16) -
+                                  shot->y + 0x160000) /
+                            steps;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
-          shot->velocityY =
-              (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
-              steps;
+          shot->velocityY = (s32)(target->y.fixed +
+                                  ((64 - (Random16() & 63)) << 16) - shot->y) /
+                            steps;
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
-          shot->velocityY =
-              (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
-              steps;
+          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 31) << 16) -
+                                  shot->y + 0x40000) /
+                            steps;
         else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1 ||
                  mode == PROJECTILE_VOLLEY_WING_STROKE ||
                  mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->velocityY = 0;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
-          shot->velocityY = (s32)(target->y + targetHeight / 2 +
+          shot->velocityY = (s32)(target->y.fixed + targetHeight / 2 +
                                   ((Random16() & 15) << 16) - shot->y) /
                             steps;
         else
-          shot->velocityY = (s32)(target->y + targetHeight -
+          shot->velocityY = (s32)(target->y.fixed + targetHeight -
                                   ((Random16() & 15) << 16) - shot->y) /
                             steps;
-        shot->velocityZ = (target->z - shot->z) / steps;
+        shot->velocityZ = (target->z.fixed - shot->z) / steps;
         shot->variant = 0;
       }
     }
@@ -676,7 +679,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
       ANIM_VIEW_FROM_CAMERA(camera);
       index = 0;
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct Object *target =
+        struct Actor *target =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         for (j = 0; j != shots; j++, index++) {
@@ -714,7 +717,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
               // A shot hits once it is on the target's side of the field and
               // past the target's x.
               x = shot->x;
-              if (target->x < 0) {
+              if (target->x.fixed < 0) {
                 hit = x < 0;
                 /* FAKEMATCH(dead): two updates that cancel, under a test that
                  * emits nothing, make hit a 0 or 1 value before it is tested;
@@ -736,7 +739,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                 if (!hit)
                   goto drawShot;
               }
-              if (ABS(x) >= ABS(target->x)) {
+              if (ABS(x) >= ABS(target->x.fixed)) {
                 s32 spawned = 0;
                 struct Particle *flash = &PARTICLES[index];
 
@@ -839,7 +842,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
               FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
-              if (ABS(shot->x) <= ABS(target->x))
+              if (ABS(shot->x) <= ABS(target->x.fixed))
                 draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
                         screenPosition->x - 16, screenPosition->y - 12, 32, 24);
             } else if (mode == PROJECTILE_VOLLEY_SLEET ||
@@ -985,7 +988,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 /// selects POSE_STANDING.
 UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
-  struct Object *object = slot->object;
+  struct Actor *object = slot->object;
 
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
@@ -994,9 +997,8 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   object->bounce = 0;
   object->steeringFlags = 0;
   object->snapToTarget = 1;
-  Object_StartIdleFar((struct Object *)object);
-  Object_SetMoveTargetFar((struct Object *)object, slot->anchorX, 0,
-                          slot->anchorZ);
+  Object_StartIdleFar(object);
+  Object_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
   Object_SelectAnimationFar(object, POSE_STANDING);
 }
 
@@ -1010,14 +1012,14 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
-  struct Object *object = slot->object;
-  struct Object *target = targetSlot->object;
+  struct Actor *object = slot->object;
+  struct Actor *target = targetSlot->object;
   s32 rate = 80;
-  s32 diffX = target->x - object->x;
-  s32 startX = object->x;
+  s32 diffX = target->x.fixed - object->x.fixed;
+  s32 startX = object->x.fixed;
   s32 dx = rate * diffX / 100;
-  s32 diffZ = target->z - object->z;
-  s32 startZ = object->z;
+  s32 diffZ = target->z.fixed - object->z.fixed;
+  s32 startZ = object->z.fixed;
   s32 dz = rate * diffZ / 100;
   s32 x = startX + dx;
   s32 z = startZ + dz;
@@ -1034,8 +1036,8 @@ void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->velocityY = 0;
   object->bounce = 0;
   object->steeringFlags = 1;
-  Object_StartIdleFar((struct Object *)object);
-  Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
+  Object_StartIdleFar(object);
+  Object_SetMoveTargetFar(object, x, 0, z);
   Object_SelectAnimationFar(object, POSE_LEAP);
 }
 

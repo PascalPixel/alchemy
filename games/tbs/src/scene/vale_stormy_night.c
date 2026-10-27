@@ -644,8 +644,7 @@ s32 ValeStormyNight_Initialize(void) {
         ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(ValeStormyNight_CopyLeaderSpritePriority, TASK_PASS_FRAME);
     Import_ActorSetPosition(ACTOR_JENNAS_FATHER, 0, 0);
     Import_ActorSetPosition(ACTOR_JENNAS_MOTHER, 0, 0);
     Import_ActorSetPosition(ACTOR_FELIX_CHILD, 0, 0);
@@ -1531,9 +1530,9 @@ static void EventScript_WatchBoulderFall(void) {
     updateEffects = ValeStormyNight_UpdateBoulderMapEffects;
     sShakeDone = 0;
     *shakeShift = 0;
-    FieldScheduler_AddOrUpdateCallback(updateEffects, TASK_PASS_FRAME);
+    Task_AddOrUpdateFrame(updateEffects, TASK_PASS_FRAME);
     cycleBoulderPalette = ValeStormyNight_CycleBoulderPalette;
-    FieldScheduler_AddCallback(cycleBoulderPalette, TASK_PASS_FRAME);
+    Task_AddFrame(cycleBoulderPalette, TASK_PASS_FRAME);
     FieldScript_WaitFrames(40);
     *shakeShift = 1;
     FieldScript_WaitFrames(30);
@@ -2389,7 +2388,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
-  Task_Wait(40);
+  WaitFrames(40);
   // Stage the boulder and its shadow for the downriver camera shot.
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
   currentActor = Actor_Get(ACTOR_BOULDER);
@@ -2416,26 +2415,25 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   currentActor->velocityY = stoppedVelocity;
   currentActor = FieldCamera_GetScriptObject();
   currentActor->velocityZ = stoppedVelocity;
-  Task_Wait(1);
+  WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
   MapGrid_CenterOnFollowedPoint();
-  Task_Wait(1);
+  WaitFrames(1);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(30);
-  Task_Wait(30);
+  WaitFrames(30);
   // Follow the boulder script until its eighth movement phase.
-  FieldScheduler_AddCallback(ValeStormyNight_UpdateBoulderShadow,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ValeStormyNight_UpdateBoulderShadow, TASK_PASS_FRAME);
   Actor_SetActionScript(ACTOR_BOULDER, gValeStormyNight_BoulderRollsDownriver);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
-    Task_Wait(1);
+    WaitFrames(1);
   } while ((s16)actor->work != 8);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
-  Task_Wait(60);
+  WaitFrames(60);
   MapGrid_WaitForShakeToSettle();
   currentActor = FieldCamera_GetScriptObject();
   currentActor->targetX = ACTOR_NO_TARGET;
@@ -2452,7 +2450,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   currentActor->velocityZ = resetValue;
   Task_Remove(ValeStormyNight_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
-  Task_Wait(1);
+  WaitFrames(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
   boulderShadow->scaleX = 0x14000;
   boulderShadow->scaleY = 0x14000;
@@ -2464,7 +2462,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   actor->z.fixed = resetValue;
   actor->targetX = resetValue;
   actor->targetZ = resetValue;
-  Task_Wait(1);
+  WaitFrames(1);
   // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
   Actor_SetPosition(ACTOR_DORA, PIXELS(169), PIXELS(1264));
@@ -2494,12 +2492,11 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   MapGrid_CenterOnFollowedPoint();
   boulderShadow->scaleX = 2 * Q16_ONE;
   boulderShadow->scaleY = 2 * Q16_ONE;
-  FieldScheduler_AddCallback(ValeStormyNight_FlickerBoulderShadow,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ValeStormyNight_FlickerBoulderShadow, TASK_PASS_FRAME);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
-  Task_Wait(1);
+  WaitFrames(1);
   boulderShadow = Actor_Get(ACTOR_KYLE);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2547,7 +2544,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
-  Task_Wait(160);
+  WaitFrames(160);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
@@ -2600,8 +2597,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_GetById(ACTOR_GARET_CHILD)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
-  FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ValeStormyNight_CopyLeaderSpritePriority, TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(181), PIXELS(1273));
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;
@@ -2616,7 +2612,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   Actor_SetPosition(ACTOR_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
-  Task_Wait(60);
+  WaitFrames(60);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);

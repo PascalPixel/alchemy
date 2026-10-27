@@ -612,7 +612,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Script_SetMessage(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
-  Task_Wait(1);
+  WaitFrames(1);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Script_ShowMessage(-1, 0);
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
@@ -902,7 +902,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_FIRST_SOLDIER, 528, 352);
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 528, 368);
-  Task_Wait(3);
+  WaitFrames(3);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_STAND);
   Script_Wait(30);
   Script_Wait(10);
@@ -1161,7 +1161,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
-  Task_Wait(1);
+  WaitFrames(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
   // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
   // adds four bytes in the native English trial (0x82c to 0x830).
@@ -1176,14 +1176,14 @@ static void BabiPalace_WakeAfterFinals(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
-    Task_Wait(3);
+    WaitFrames(3);
     state->value = step;
   }
   Script_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Script_Wait(30);
   for (step = 5; step <= 31; step++) {
-    Task_Wait(3);
+    WaitFrames(3);
     state->value = step;
   }
   state->active = 31;
@@ -1354,7 +1354,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Script_Wait(30);
   // Wait for the player to leave the bed before the companions rejoin.
   while ((gKeysHeld & KEYS_DPAD) == 0) {
-    Task_Wait(1);
+    WaitFrames(1);
   }
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
@@ -1548,7 +1548,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
-  Task_Wait(2);
+  WaitFrames(2);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Script_Wait(10);
   Script_ShowMessage(ACTOR_IODEM, 0);

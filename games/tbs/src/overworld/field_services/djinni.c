@@ -151,7 +151,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
   if (owner >= 0) {
     FieldScript_Start();
-    WorldMap_StartScript();
+    WorldMap_Freeze();
     if (slot != -1) {
       // On the world map the actors far from the view are removed while
       // the effect plays and placed again after it.
@@ -173,7 +173,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     }
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);
-    WorldMap_EndScript();
+    WorldMap_Unfreeze();
     FieldScript_End();
   }
 }

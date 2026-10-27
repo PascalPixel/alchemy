@@ -36,7 +36,7 @@ FarCall_GameTable:
 	overlay_veneer GameFlag_DecrementByte
 	overlay_veneer GameFlag_GetNibble
 	overlay_veneer GameFlag_SetNibble
-	overlay_veneer Game_Restart
+	overlay_veneer Game_RestartQuest
 	export Unit_AddHpFar, Unit_AddHp
 	export Unit_AddPpFar, Unit_AddPp
 	export Unit_RecalculateGaugesFar, Unit_RecalculateGauges

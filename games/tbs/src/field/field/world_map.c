@@ -712,7 +712,7 @@ void WorldMap_PresentStillFrame(void) {
 /// saves BG1's tiles, draws the current affine frame into pixels and hands
 /// the window and VBlank to it.
 ///
-/// Called through WorldMap_StartStillViewFar by WorldMap_StartScript
+/// Called through WorldMap_StartStillViewFar by WorldMap_Freeze
 /// when a menu or script starts on the world map, and by the world map's
 /// lighthouse transition. Sets animationActive, suspends the tileset
 /// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
@@ -752,7 +752,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// the default cells back and returns to the perspective view.
 ///
 /// Called through WorldMap_LoadAreaGraphicsFar by
-/// WorldMap_EndScript when a menu or script ends, by
+/// WorldMap_Unfreeze when a menu or script ends, by
 /// WorldPicture_Show, and by the world map's lighthouse transition.
 /// Decodes into gMapGridCellBuffer and gBgTileBuffer, sets gVBlankCallback to
 /// WorldMap_ShowBg1FromBuffer, sets the window rows back to 0 and 159, clears

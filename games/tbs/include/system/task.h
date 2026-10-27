@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-enum SchedulerTaskLimits { TASK_COUNT = 20, TASK_COUNT_TLA = 24 };
+enum TaskLimits { TASK_COUNT = 20, TASK_COUNT_TLA = 24 };
 
 typedef void (*TaskFunc)(void);
 

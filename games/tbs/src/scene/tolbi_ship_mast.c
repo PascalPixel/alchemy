@@ -351,7 +351,7 @@ s32 TolbiShipMast_Initialize(void) {
       GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Import_RandomNext();
     gTolbiShipMast_SwayY = (u16)Import_RandomNext();
-    FieldScheduler_AddCallback(TolbiShipMast_UpdateSway, TASK_PASS_FRAME);
+    Task_AddFrame(TolbiShipMast_UpdateSway, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {

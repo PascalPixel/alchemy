@@ -7,7 +7,7 @@
 s32 SceneManager_RunFar(s32 entrance);
 /// The sequence manager, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
-/// GAME_START_TITLE, and Game_Restart starts it again.
+/// GAME_START_TITLE, and Game_RestartQuest starts it again.
 void SequenceManager_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void FieldScript_WaitFramesFar(s32 frames);
@@ -289,9 +289,9 @@ void TreasureSpot_SetActorPositionFar(s32 id, s32 x, s32 y);
 void TreasureSpot_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
 /// script or menu runs; elsewhere it does nothing.
-void WorldMap_StartScriptFar(void);
-/// Undoes WorldMap_StartScript, reloading the area's graphics.
-void WorldMap_EndScriptFar(void);
+void WorldMap_FreezeFar(void);
+/// Undoes WorldMap_Freeze, reloading the area's graphics.
+void WorldMap_UnfreezeFar(void);
 /// Returns the actor in a slot, or NULL; map overlays look actors
 /// up through it.
 void *Actor_GetByActorIdFar(u32 index);

@@ -211,7 +211,8 @@ static __inline__ s32 RunLuckyWheels(s32 entrance) {
 /// runtime, then either runs a battle or minigame and picks the scene to return
 /// to, or loads a scene's code, starts its music and runs it until the
 /// party takes an exit. Called with GAME_START_TITLE through
-/// SequenceManager_RunFar by System_Initialize at power-on and by Game_Restart.
+/// SequenceManager_RunFar by System_Initialize at power-on and by
+/// Game_RestartQuest.
 void SequenceManager_Run(s32 mode) {
   const struct SceneHeader *table;
   const struct SceneHeader *record;
@@ -222,7 +223,7 @@ void SequenceManager_Run(s32 mode) {
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
     gSaveBlock.sceneId = (s32)&SceneId_ValePlaza;
     gSaveBlock.entrance = mode;
-  } else if (gDebugMode && mode == GAME_START_DEBUG_MAIN_MENU) {
+  } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
     gSaveBlock.sceneId = (s32)&SceneId_MainMenu;
     gSaveBlock.entrance = MAIN_MENU_FROM_SANCTUM;
   } else {

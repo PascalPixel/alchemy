@@ -285,8 +285,7 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
 /// frame.
 static void TretTreeBranch_StartBg3Split(void) {
   Irq_SetHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
-  FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(TretTreeBranch_UpdateBg3ScrollSplit, TASK_PASS_FRAME);
 }
 
 struct SceneEntrance gTretTreeBranch_Entrances[] = {

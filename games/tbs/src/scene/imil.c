@@ -833,8 +833,8 @@ s32 Imil_Initialize(void) {
     }
     leader->timer = 0;
     leader->work = 0;
-    Task_AddCallback(Imil_SpawnAmbientEffects, TASK_PASS_FRAME);
-    FieldScheduler_AddCallback(Imil_UpdateFootprints, TASK_PASS_FRAME);
+    Task_AddFrame(Imil_SpawnAmbientEffects, TASK_PASS_FRAME);
+    Task_AddFrame(Imil_UpdateFootprints, TASK_PASS_FRAME);
     ObjectMotion_SetActionVariant(ACTOR_SNOWMAN, 1);
     if (GameFlag_Get(FLAG_IMIL_SNOWMAN_MOVED)) {
       Imil_PlaceMovedSnowman();

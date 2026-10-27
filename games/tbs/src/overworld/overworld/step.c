@@ -481,12 +481,12 @@ s32 Party_ApplyPoisonDamage(void) {
 ///
 /// Called by SceneManager_Run around the handling of most requests, by the
 /// Djinni effect and by the world map's overlay; each call is paired with
-/// WorldMap_EndScript. Changes the screen transition state in
+/// WorldMap_Unfreeze. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return
 /// the slot's block when it has one; with that slot free, the world map takes a
 /// new, uncleared block there, kept until the map ends, whose step is then
 /// leftover memory.
-void WorldMap_StartScript(void) {
+void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
 
@@ -504,9 +504,9 @@ void WorldMap_StartScript(void) {
   }
 }
 
-/// Ends what WorldMap_StartScript started: on the world map, reloads
+/// Ends what WorldMap_Freeze started: on the world map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
-void WorldMap_EndScript(void) {
+void WorldMap_Unfreeze(void) {
   struct FieldWork *work;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));

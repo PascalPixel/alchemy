@@ -956,8 +956,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
     actorSlot++;
   } while (remaining >= 0);
 
-  FieldScheduler_AddCallback(VaultCave_UpdateFrostControlledFallingObjects,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VaultCave_UpdateFrostControlledFallingObjects, TASK_PASS_FRAME);
 }
 
 /// Initializes four water drops and starts their timed updater.
@@ -979,8 +978,7 @@ static void VaultCave_StartTimedFalls(void) {
     actorSlot++;
   } while (fallingIndex <= 3);
 
-  FieldScheduler_AddCallback(VaultCave_UpdateTimedFallingObjects,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VaultCave_UpdateTimedFallingObjects, TASK_PASS_FRAME);
 }
 
 /// Arriving in any room of Vault Cave: restores the room's puzzles and
@@ -1057,8 +1055,7 @@ s32 Scene_Initialize(void) {
         Import_ActorSetAnimation(ACTOR_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
-      FieldScheduler_AddCallback(VaultCave_UpdatePuddlePriorities,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(VaultCave_UpdatePuddlePriorities, TASK_PASS_FRAME);
       break;
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
     case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:

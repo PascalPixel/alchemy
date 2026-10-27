@@ -441,7 +441,7 @@ s32 MainMenu_Run(void) {
 
   blendStarted = 0;
   MainMenu_LoadBackground();
-  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, TASK_PASS_FRAME);
+  Task_AddFrame(MainMenu_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = blendStarted;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -492,7 +492,7 @@ menu_top:;
   if (v6 == 0) {
     if (blendStarted == 0) {
       WaitFrames(30);
-      FieldScheduler_AddCallback(MainMenu_UpdateBlend, TASK_PASS_FRAME);
+      Task_AddFrame(MainMenu_UpdateBlend, TASK_PASS_FRAME);
       WaitFrames(1);
       blendStarted = 1;
     }

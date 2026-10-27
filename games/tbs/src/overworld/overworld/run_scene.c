@@ -137,10 +137,10 @@ s32 SceneManager_Run(s32 entrance) {
         gSaveBlock.pendingDjinnEvent = 0;
       }
       if (gSaveBlock.pendingItem != 0) {
-        WorldMap_StartScript();
+        WorldMap_Freeze();
         if (Party_CheckItemLimit(gSaveBlock.pendingItem) == 0)
           PartyInventory_GiveItem(gSaveBlock.pendingItem, 0);
-        WorldMap_EndScript();
+        WorldMap_Unfreeze();
         gSaveBlock.pendingItem = 0;
       }
     }
@@ -172,7 +172,7 @@ s32 SceneManager_Run(s32 entrance) {
             u32 i;
 
             Leader_StopMoving();
-            WorldMap_StartScript();
+            WorldMap_Freeze();
             for (i = 0; i < work->fallenCount; i++) {
               Object_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
               MessageArgument_PushFar(work->fallenOwners[i],
@@ -200,11 +200,11 @@ s32 SceneManager_Run(s32 entrance) {
               Unit_UpdateGauges(vitals);
               gSaveBlock.sceneId = gSaveBlock.restartScene;
               gSaveBlock.entrance = gSaveBlock.restartEntrance;
-              WorldMap_EndScript();
+              WorldMap_Unfreeze();
               result = EXIT_KEEP_DESTINATION;
               goto done;
             }
-            WorldMap_EndScript();
+            WorldMap_Unfreeze();
           } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_PICTURE) {
             Leader_StopMoving();
             WorldPicture_Show((s32)&ResourceId_WorldMapPicture);
@@ -269,7 +269,7 @@ s32 SceneManager_Run(s32 entrance) {
           AreaNameWindow_HideFar();
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
@@ -281,37 +281,37 @@ s32 SceneManager_Run(s32 entrance) {
             FieldMenu_RunFar();
             work->effectTimerRunning = 1;
           }
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           Scene_TalkToActor(work->talk & 0xfff);
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           work->talk = 0;
         } else if (work->searchCell != 0) {
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           Field_SearchCell(work->searchCell);
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           work->searchCell = 0;
         } else if (work->psynergy != 0) {
           AreaNameWindow_HideFar();
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           Field_UsePsynergy(work->psynergy);
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           work->psynergy = 0;
         } else if (work->item != 0) {
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           Field_UseItem(work->item, work->itemArgument);
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           work->item = 0;
         } else if (work->start != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
-          WorldMap_StartScript();
+          WorldMap_Freeze();
           GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             DebugMapSelect_RunFar();
@@ -355,7 +355,7 @@ s32 SceneManager_Run(s32 entrance) {
                                    FIELD_MESSAGE_ZOOM);
             }
           }
-          WorldMap_EndScript();
+          WorldMap_Unfreeze();
           GameFlag_ClearFar(FLAG_MENU_OPEN);
           work->start = 0;
         }

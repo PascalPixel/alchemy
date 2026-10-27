@@ -41,7 +41,7 @@ timed work, or plays an arrival event; it may send the party on at once. It
 skips arrival events when the party is coming back to where it stood, as
 after a battle.
 
-The six are `struct SceneEntries`, in a fixed order at the start of
+The six are `struct SceneEntryPoints`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
 `Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorTemplates`,
@@ -253,7 +253,7 @@ this exit, waits until the script has finished.
 A script is plain C written in the calls of `script_layer.h`,
 `field_service.h` and `engine_call.h`. A step that takes time runs the
 game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
-explains it). A callback is added with `FieldScheduler_AddCallback`.
+explains it). A callback is added with `Task_AddFrame`.
 
 ## State that cleans itself up
 
@@ -373,7 +373,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
   `FieldScript_ShowMessageAndWait` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
-- **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
+- **callback**: a function a scene adds with `Task_AddFrame` at
   `TASK_PASS_FRAME`, run once a frame until removed.
 - **update hook**: an actor's `update`, run each frame with the
   actor.

@@ -725,7 +725,7 @@ restart:
   for (;;) {
     // 0x280 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
-      Serial_StartSend((void *)Cart_Restart, 0x280);
+      Serial_StartSend((void *)Cart_Start, 0x280);
     if (gKeysHeld & KEY_B)
       Serial_StartSend((void *)(Rom_Start + 0x1000), 0x280);
     if (gKeysHeld & KEY_START) {

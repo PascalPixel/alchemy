@@ -50,7 +50,7 @@ STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);
 /// The field reads each entry's veneer as the address word in its last four
 /// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
 /// gOverlayArea.initialize(), gOverlayArea.events() and so on.
-struct SceneEntries {
+struct SceneEntryPoints {
   u32 initializeVeneer;
   s32 (*initialize)(void);
   u32 entrancesVeneer;
@@ -65,9 +65,9 @@ struct SceneEntries {
   const struct SceneExitRegion *(*regions)(void);
 };
 
-STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
-STATIC_ASSERT(offsetof(struct SceneEntries, exits) == 0x14);
-STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
+STATIC_ASSERT(sizeof(struct SceneEntryPoints) == 48);
+STATIC_ASSERT(offsetof(struct SceneEntryPoints, exits) == 0x14);
+STATIC_ASSERT(offsetof(struct SceneEntryPoints, regions) == 0x2c);
 
 /// A position on the field.
 struct FieldPosition {
@@ -81,6 +81,6 @@ extern const struct SceneHeader gSceneHeaders[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its 48-byte entry table. Every
 /// overlay is linked to run at this one fixed address (0x02008000).
-extern struct SceneEntries gOverlayArea;
+extern struct SceneEntryPoints gOverlayArea;
 
 #endif

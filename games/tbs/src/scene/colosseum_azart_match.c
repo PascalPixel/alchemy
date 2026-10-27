@@ -298,8 +298,7 @@ static void ColosseumAzartMatch_ResetBrokenBridge(void) {
 /// Starts the bridge's repeating opening sequence.
 static void ColosseumAzartMatch_StartBrokenBridge(void) {
   gColosseumAzartMatch_Countdown = 66;
-  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
 }
 
 /// Waits for the crossing window, bounded by one bridge cycle.
@@ -745,8 +744,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
-  FieldScheduler_AddCallback(ColosseumAzartMatch_UpdateBrokenBridge,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
   actor = Actor_GetById(ACTOR_GROWTH_PLANT);
   actor->layer = 1;
   zero = 0;
@@ -812,8 +810,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
-    FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(Colosso_RaiseTakePlaceOnPsynergy, TASK_PASS_FRAME);
     Actor_DestroyById(ACTOR_PRIZE_A);
     Actor_DestroyById(ACTOR_PRIZE_B);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -1243,7 +1240,7 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
   gColosso_LetteringMode = mode;
   gColosso_LetteringParameter = (param << 4);
 
-  FieldScheduler_AddCallback(Colosso_UpdateLettering, TASK_PASS_FRAME);
+  Task_AddFrame(Colosso_UpdateLettering, TASK_PASS_FRAME);
 
   script = gColosseumAzartMatch_LetteringTitle;
   if (mode == COLOSSO_SHAPE_DIGIT) {

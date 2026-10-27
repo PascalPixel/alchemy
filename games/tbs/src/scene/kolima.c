@@ -830,7 +830,7 @@ static void Kolima_WitnessForestCurse(void) {
   WaitFrames(1);
   // The falling sparkles threaten to turn the party into trees as well.
   gKolima_EffectActive = 1;
-  FieldScheduler_AddCallback(Kolima_SpawnCurseSparkle, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_SpawnCurseSparkle, TASK_PASS_FRAME);
   WaitFrames(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
@@ -908,7 +908,7 @@ static void Kolima_WitnessForestCurse(void) {
   firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = PIXELS(128);
   *firstCurtainState = KOLIMA_DUST_CLOSING;
-  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(180);
   Script_PlaySong(MUS_FOREST);
   Kolima_ShowMessageAndWait(ACTOR_GARET, 80);
@@ -960,8 +960,7 @@ static void Kolima_WitnessForestCurse(void) {
   stagingValue = 0;
   ObjectMotion_SetActionVariant(ACTOR_MIA, 3);
   gKolima_PendingPose = stagingValue;
-  FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_AlternateProtectiveFieldHeights, TASK_PASS_FRAME);
   Script_PlaySong(SE_SHIMMER);
   Actor_GetById(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
@@ -1214,7 +1213,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectOffset = PIXELS(128);
   secondCurtainState = &gFallingEffectState;
   *secondCurtainState = KOLIMA_DUST_CLOSING;
-  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);

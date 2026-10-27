@@ -270,7 +270,7 @@ static void EventScript_RevealSecrets(void) {
       actor->scaleY = SPARKLE_SCALE_Y;
     }
   }
-  FieldScheduler_AddCallback(Lunpa_UpdateIcePillarDrawOrder, TASK_PASS_FRAME);
+  Task_AddFrame(Lunpa_UpdateIcePillarDrawOrder, TASK_PASS_FRAME);
   GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
@@ -736,7 +736,7 @@ static void EventScript_GuardsCatchParty(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RIGHT_GUARD);
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
   FieldScript_End();
-  FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
+  Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
 }
 
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
@@ -828,7 +828,7 @@ static void EventScript_GuardsThrowIsaacOut(void) {
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
-  FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
+  Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(1);
   Script_PlaySong(SE_SCUFFLE);
   FieldScript_WaitFrames(20);
@@ -857,7 +857,7 @@ static void EventScript_GuardsThrowIsaacOut(void) {
   Script_PlaySong(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
+  Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(2);
   // A smaller second bounce ends with the guards' final warning.
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(3);
@@ -952,14 +952,13 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
         GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-      FieldScheduler_AddCallback(Lunpa_WatchForFortressApproach,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(Lunpa_WatchForFortressApproach, TASK_PASS_FRAME);
     }
 #if TBS_PATCH_4
     if (gSaveBlock.cloaked != 0)
       EventScript_CastCloak();
 #endif
-    FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
+    Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
     // The fortress's puzzles and beaten guards are reset.
     GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
     GameFlag_Clear(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);

@@ -92,8 +92,8 @@
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
-	.set import.WorldMap_StartScript, 1
-	.set import.WorldMap_EndScript, 1
+	.set import.WorldMap_Freeze, 1
+	.set import.WorldMap_Unfreeze, 1
 	.set import.Actor_GetByActorId, 1
 	.set import.FieldEffect_LoadActionEffectResources, 1
 	.set import.FieldEffect_End, 1

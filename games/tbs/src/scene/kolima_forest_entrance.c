@@ -378,8 +378,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   gKolimaForestEntrance_SparkleSoundOn = 1;
-  FieldScheduler_AddCallback(KolimaForestEntrance_SpawnCurseSparkle,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(KolimaForestEntrance_SpawnCurseSparkle, TASK_PASS_FRAME);
   WaitFrames(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
@@ -450,7 +449,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
   gFallingEffectState = KOLIMA_DUST_CLOSING;
-  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(180);
   Script_PlaySong(MUS_FOREST);
   KolimaForestEntrance_ShowMessageAndWait(ACTOR_GARET, 80);
@@ -494,8 +493,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetActionVariant(ACTOR_IVAN, 3);
   ObjectMotion_SetActionVariant(ACTOR_MIA, 3);
   gKolimaForestEntrance_PsynergyFieldHit = 0;
-  FieldScheduler_AddCallback(KolimaForestEntrance_FlickerPsynergyFields,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(KolimaForestEntrance_FlickerPsynergyFields, TASK_PASS_FRAME);
   Script_PlaySong(SE_SHIMMER);
   Actor_GetById(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
@@ -751,7 +749,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
   gFallingEffectState = KOLIMA_DUST_CLOSING;
-  FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);

@@ -38,9 +38,9 @@ enum LeaderMovementMode {
 
 /// SequenceManager_Run's mode: where the game starts.
 enum GameStart {
-  GAME_START_TITLE = 0,          ///< the title screen, with a fresh save block
-  GAME_START_DEBUG_VALE = 1,     ///< in debug mode, SceneId_ValePlaza
-  GAME_START_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
+  GAME_START_TITLE = 0,      ///< the title screen, with a fresh save block
+  GAME_START_DEBUG_VALE = 1, ///< in debug mode, SceneId_ValePlaza
+  GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the main menu
 };
 
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
@@ -176,8 +176,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
-void WorldMap_StartScript(void);
-void WorldMap_EndScript(void);
+void WorldMap_Freeze(void);
+void WorldMap_Unfreeze(void);
 s32 SceneManager_Run(s32 entrance);
 s32 Actor_GetTriggerTileAheadOfCurrent(void);
 void Scene_ApplyEntrance(void);

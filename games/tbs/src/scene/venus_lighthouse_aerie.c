@@ -962,8 +962,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
     frame = (frame + 1);
     WaitFrames(1);
   } while ((u32)frame <= 39);
-  FieldScheduler_AddCallback(VenusLighthouseAerie_UpdateShebaPalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   FieldScript_WaitFrames(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
@@ -1410,9 +1409,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
   Script_GetViewCenter()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
-  Task_Wait(1);
+  WaitFrames(1);
   MapGrid_Redraw();
-  Task_Wait(1);
+  WaitFrames(1);
   Script_OpenScreen();
   Script_WaitForScreen();
   Script_Wait(80);
@@ -1464,7 +1463,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     gFieldWork->message++;
     answeredYes = FALSE;
   }
-  Task_Wait(20);
+  WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_MIA, FACING_NORTHWEST);
@@ -1479,14 +1478,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // Saturos and Menardi recover from their defeat before using the Venus Star.
   Actor_Stop(ACTOR_SATUROS);
   Actor_Stop(ACTOR_MENARDI);
-  Task_Wait(1);
+  WaitFrames(1);
   actor = Actor_Get(ACTOR_SATUROS);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   actor = Actor_Get(ACTOR_MENARDI);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
-  Task_Wait(1);
+  WaitFrames(1);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -1604,7 +1603,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->actor.velocityY = PIXELS(5);
     Object_SetPosition(&star->actor, PIXELS(300), PIXELS(32), PIXELS(154));
     Object_WaitForMove(&star->actor);
-    Task_Wait(6);
+    WaitFrames(6);
     star->actor.x.fixed = 0;
     star->actor.y.fixed = 0;
     star->actor.z.fixed = 0;
@@ -1678,12 +1677,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
-  Task_Wait(20);
+  WaitFrames(20);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(24);
-  Task_Wait(60);
-  Task_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
-                   TASK_PASS_FRAME);
+  WaitFrames(60);
+  Task_AddFrame(VenusLighthouseAerie_SpawnUpperOrbitParticles, TASK_PASS_FRAME);
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
@@ -1692,16 +1690,16 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                         gVenusLighthouseAerie_BeamNarrowAction);
   Actor_SetActionScript(ACTOR_BEAM_LOWER,
                         gVenusLighthouseAerie_BeamNarrowAction);
-  Task_Wait(120);
+  WaitFrames(120);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
-  Task_Wait(120);
+  WaitFrames(120);
   Script_PlaySong(MUS_ERUPTION);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
-  Task_Wait(120);
+  WaitFrames(120);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
 
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STAND);
@@ -1858,7 +1856,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                       &menardiBurst);
   }
   Script_PlaySong(SE_POWER_UP);
-  Task_Wait(6);
+  WaitFrames(6);
   VenusLighthouseAerie_FlashScreen();
   saturos = Actor_Get(ACTOR_SATUROS);
   saturosBurst.palette = 7;
@@ -1888,7 +1886,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetDestination(ACTOR_MENARDI, 294, 196);
   // Slide the two transformed actors together, then start the fusion
   // battle.
-  Task_AddCallback(VenusLighthouseAerie_UpdateBeamActors, TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_UpdateBeamActors, TASK_PASS_FRAME);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Script_ShowMessage(ACTOR_GARET, 0);
   GameFlag_Set(FLAG_VENUS_AERIE_FUSION_SLIDING);
@@ -2161,8 +2159,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Actor_GetById(ACTOR_BEACON_ORB)->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   Actor_Get(ACTOR_BEACON_ORB)->y.fixed = PIXELS(40);
-  FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
   FieldScript_StartScreenTransition();
@@ -2217,8 +2214,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->y.fixed = PIXELS(34);
   actor->z.fixed = PIXELS(96);
 
-  FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_SpawnUpperOrbitParticles, TASK_PASS_FRAME);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
   WaitFrames(1);
@@ -2590,8 +2586,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   ObjectMotion_SetActionVariant(ACTOR_BEACON_ORB, 2);
   sTransitionStep = 0;
   sTransitionTimer = 240;
-  FieldScheduler_AddCallback(VenusLighthouseAerie_UpdateBeaconRise,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_UpdateBeaconRise, TASK_PASS_FRAME);
   do {
     WaitFrames(1);
   } while (GameFlag_Get(FLAG_VENUS_AERIE_PARTY_LIFTED) == 0);
@@ -2676,8 +2671,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Actor_Get(ACTOR_SHEBA)->riseCounter = 0;
   Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= 4;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
-  FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);

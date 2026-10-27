@@ -793,8 +793,8 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   }
   // Increase the chance of showing the alternate scroll on each scanline.
   sShakeChance = 0;
-  FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(CrossboneIsleSteppingStones_PrepareWaterScroll,
+                TASK_PASS_FRAME);
   WaitFrames(1);
   Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
@@ -1418,8 +1418,8 @@ static void EventScript_FreezeThirdPuddle(void) {
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);
     FieldScript_WaitFrames(20);
     // The third puddle freezes while the previously frozen second puddle thaws.
-    FieldScheduler_AddCallback(CrossboneIsleSteppingStones_SpawnFrostParticle,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(CrossboneIsleSteppingStones_SpawnFrostParticle,
+                  TASK_PASS_FRAME);
     FieldScript_WaitFrames(40);
     if (Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                        1) != 0) {
@@ -1666,8 +1666,8 @@ s32 Scene_Initialize(void) {
     }
     EventScript_MovePillar();
     FieldScript_WaitFrames(1);
-    FieldScheduler_AddCallback(CrossboneIsleSteppingStones_UpdateLeaderPriority,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(CrossboneIsleSteppingStones_UpdateLeaderPriority,
+                  TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       for (id = ACTOR_FIRST_PILLAR; id < ACTOR_FIRST_PILLAR + 4; id++) {
         actor = Actor_GetById(id);

@@ -696,14 +696,14 @@ prompt:
     if (coins == 0) {
       Script_SetMessage(message + 1);
       Script_ShowMessage(-1, 0);
-      Task_Wait(1);
+      WaitFrames(1);
       goto prompt;
     }
   } else if (choice == SPRING_TOSS_MEDAL) {
     if (medals == 0) {
       Script_SetMessage(message + 2);
       Script_ShowMessage(-1, 0);
-      Task_Wait(1);
+      WaitFrames(1);
       goto prompt;
     }
     if (PartyInventory_CountFreeSlots() == 0) {
@@ -721,7 +721,7 @@ prompt:
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   }
-  Task_Wait(5);
+  WaitFrames(5);
   Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
@@ -734,7 +734,7 @@ prompt:
       result = -1;
       break;
     }
-    Task_Wait(1);
+    WaitFrames(1);
   }
   Window_Close(window, 2);
 #else
@@ -770,14 +770,14 @@ prompt:
       if (coins == 0) {
         Script_SetMessage(message + 1);
         Script_ShowMessage(-1, 0);
-        Task_Wait(1);
+        WaitFrames(1);
         continue;
       }
     } else if (choice == SPRING_TOSS_MEDAL) {
       if (medals == 0) {
         Script_SetMessage(message + 2);
         Script_ShowMessage(-1, 0);
-        Task_Wait(1);
+        WaitFrames(1);
         continue;
       }
       if (PartyInventory_CountFreeSlots() == 0) {
@@ -794,7 +794,7 @@ prompt:
     result = MsgTolbiToss;
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
-    Task_Wait(5);
+    WaitFrames(5);
     Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
@@ -807,7 +807,7 @@ prompt:
         result = -1;
         break;
       }
-      Task_Wait(1);
+      WaitFrames(1);
     }
     Window_Close(window, 2);
     break;
@@ -1462,7 +1462,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
     s32 budget = 0xc83;
     void (*task)(void) = TolbiSpring_UpdateTossSimulation;
 
-    FieldScheduler_AddCallback(task, budget);
+    Task_AddFrame(task, budget);
   }
 }
 

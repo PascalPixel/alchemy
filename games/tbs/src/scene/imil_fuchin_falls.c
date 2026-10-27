@@ -1808,8 +1808,7 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   WaitFrames(30);
 
   // Blow dust from the cave mouth while the room brightens.
-  FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(ImilFuchinFalls_BlowCaveMouthDust, TASK_PASS_FRAME);
   WaitFrames(40);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(40);

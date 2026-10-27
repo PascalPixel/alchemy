@@ -724,7 +724,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     sparkTask = TreeRooms_SpawnSwirlSparks;
     origin->z = PIXELS(52);
   }
-  Task_AddCallback(sparkTask, TASK_PASS_FRAME);
+  Task_AddFrame(sparkTask, TASK_PASS_FRAME);
   FieldScript_WaitFrames(220);
   Task_Remove(sparkTask);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
@@ -768,7 +768,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldScript_WaitFrames(20);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(FLAG_TRET_DEFEATED);
-  FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
+  Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   FieldScript_End();
 }
 
@@ -828,7 +828,7 @@ s32 TreeRooms_EnterRoom(void) {
   Actor_ConfigureSpriteColor(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gSaveBlock.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
-    FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
+    Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Import_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
     Import_ActorSetPosition(ACTOR_TRET, 0, 0);

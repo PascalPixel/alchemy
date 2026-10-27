@@ -162,16 +162,6 @@ static inline void Psynergy_Cancel(void) {
   FieldEffect_FinishWaveAndReleaseHeapBlock();
 }
 
-/// FieldScheduler_AddCallback (engine_call.h) under the map service layer's
-/// name.
-static inline s32 Task_AddCallback(void (*callback)(void), s32 priority) {
-  return FieldScheduler_AddCallback(callback, priority);
-}
-
-/// Lets frames go by even under debug fast-forward, where Script_Wait would
-/// skip them.
-static inline void Task_Wait(s32 frames) { WaitFrames(frames); }
-
 /// Loads a map's sprite picture into VRAM; returns its first tile number, 0
 /// when there's no room.
 static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
@@ -213,10 +203,9 @@ static inline void Object_MotionSetPositionAndCommit(s32 actorId, s32 x,
   ObjectMotion_SetPositionAndCommit(actorId, x, z);
 }
 
-/// FieldScheduler_AddCallback (engine_call.h) under a second name.
-static inline s32 FieldScheduler_AddOrUpdateCallback(TaskFunc callback,
-                                                     s32 priority) {
-  return FieldScheduler_AddCallback(callback, priority);
+/// Task_AddFrame (engine_call.h) under a second name.
+static inline s32 Task_AddOrUpdateFrame(TaskFunc callback, s32 priority) {
+  return Task_AddFrame(callback, priority);
 }
 
 /// Changes the metatile behavior of the cell at (x, y), in 16.16 pixels,

@@ -1552,8 +1552,7 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_PILLAR_B), 0);
       Actor_GetById(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_GetById(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
@@ -1572,8 +1571,7 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_PILLAR_B), 0);
       Actor_GetById(ACTOR_SECOND_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_GetById(ACTOR_SECOND_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
@@ -1640,8 +1638,7 @@ s32 TunnelRuins_Initialize(void) {
       Actor_GetById(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_GetById(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       Actor_GetById(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     }
   } else {
@@ -1751,8 +1748,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
       MapGrid_CopyCellAttributes(8, 49, 1, 1, 8, 113);
       EventScript_ShowFalseStatues();
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:

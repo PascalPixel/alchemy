@@ -2650,7 +2650,7 @@ static void EventScript_MoveSocketPillar(void) {
           GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN);
           break;
         }
-        Task_Wait(1);
+        WaitFrames(1);
       }
     }
   }
@@ -3008,15 +3008,15 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
         WaitFrames(1);
-        FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
-                                   TASK_PASS_FRAME);
+        Task_AddFrame(VenusLighthouse_EmitWestPassageParticles,
+                      TASK_PASS_FRAME);
       }
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
         MapGrid_CopyCells(58, 12, 3, 13, 34, 12);
         MapGrid_CopyCellsTo(81, 41, 97, 14, 5, 2);
         WaitFrames(1);
-        FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles,
-                                   TASK_PASS_FRAME);
+        Task_AddFrame(VenusLighthouse_EmitEastPassageParticles,
+                      TASK_PASS_FRAME);
       }
       if (gSaveBlock.entrance ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM)
@@ -3209,8 +3209,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST:
       WaitFrames(1);
-      FieldScheduler_AddCallback(VenusLighthouse_VisitPillarActors,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(VenusLighthouse_VisitPillarActors, TASK_PASS_FRAME);
       actor = Actor_GetById(ACTOR_SOCKET_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
@@ -3549,8 +3548,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
         goto again;
       }
       if (extraBursts == 3)
-        FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
-                                   TASK_PASS_FRAME);
+        Task_AddFrame(VenusLighthouse_EmitWestPassageParticles,
+                      TASK_PASS_FRAME);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
     rowOffset += 0x100000;
@@ -3613,8 +3612,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
       extraBursts++;
       goto again;
     }
-    FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(VenusLighthouse_EmitEastPassageParticles, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
     rowOffset += 0x100000;
     row++;

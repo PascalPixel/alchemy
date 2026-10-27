@@ -781,7 +781,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       // The lights grow in one by one, each with SE_LIGHT_APPEAR.
       state = PUZZLE_LIGHTS_SHOWN;
       Script_PlaySong(SE_CHIME);
-      Task_Wait(30);
+      WaitFrames(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
         AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
@@ -792,12 +792,12 @@ static void AltmillerCave_TurnRock(s32 rock) {
         do {
           actor->scaleY = scale;
           actor->scaleX = scale;
-          Task_Wait(1);
+          WaitFrames(1);
           scale += 3 * Q16_ONE / 64;
         } while (actor->scaleX < Q16_ONE);
         angle -= 0x3333;
       }
-      Task_Wait(30);
+      WaitFrames(30);
       correctRock = 1;
     } else {
       Script_PlaySong(SE_MENU_ERROR);
@@ -808,7 +808,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       // The wrong rock: the lights shrink away.
       state = PUZZLE_START;
       Script_PlaySong(SE_MENU_ERROR);
-      Task_Wait(30);
+      WaitFrames(30);
       for (i = 0; i < LIGHT_COUNT; i++) {
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         Script_PlaySong(SE_LIGHT_APPEAR);
@@ -816,14 +816,14 @@ static void AltmillerCave_TurnRock(s32 rock) {
              scale -= 3 * Q16_ONE / 64) {
           actor->scaleY = scale;
           actor->scaleX = scale;
-          Task_Wait(1);
+          WaitFrames(1);
         }
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);
       }
     } else {
       Script_PlaySong(SE_CHIME);
       correctRock = 1;
-      Task_Wait(30);
+      WaitFrames(30);
     }
   }
   puzzleState = &gSceneLocalState[1];
@@ -838,19 +838,19 @@ static void AltmillerCave_TurnRock(s32 rock) {
     gAltmillerCave_LightWheel->ticks = 0;
     gAltmillerCave_LightWheel->speed = 0x200;
     gAltmillerCave_LightWheel->travel = 0x3000;
-    Task_AddCallback(AltmillerCave_SpinLights, TASK_PASS_FRAME);
+    Task_AddFrame(AltmillerCave_SpinLights, TASK_PASS_FRAME);
     if (rounds <= 2) {
       while (gAltmillerCave_LightWheel->phase != WHEEL_STOPPED) {
-        Task_Wait(1);
+        WaitFrames(1);
       }
-      Task_Wait(10);
+      WaitFrames(10);
       Script_PlaySong(SE_CHIME);
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
       puzzleState[0] = PUZZLE_SOLVED;
       while (gAltmillerCave_LightWheel->phase != WHEEL_SLOWING) {
-        Task_Wait(1);
+        WaitFrames(1);
       }
       gAltmillerCave_LightWheel->phase = WHEEL_SLOWING;
       gAltmillerCave_LightWheel->ticks = 0;
@@ -871,7 +871,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         }
         radius -= PIXELS(1) / 5;
         angle += 0xc00;
-        Task_Wait(1);
+        WaitFrames(1);
       } while (radius > 0);
       for (i = 0; i < LIGHT_COUNT; i++) {
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);

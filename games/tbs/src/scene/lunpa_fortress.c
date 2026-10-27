@@ -3295,9 +3295,9 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE:
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Task_AddCallback(LunpaFortress_CheckEntranceGuard, TASK_PASS_FRAME);
-    Task_AddCallback(LunpaFortress_CheckFirstEntranceSentry, TASK_PASS_FRAME);
-    Task_AddCallback(LunpaFortress_CheckSecondEntranceSentry, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckEntranceGuard, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckFirstEntranceSentry, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckSecondEntranceSentry, TASK_PASS_FRAME);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
@@ -3311,10 +3311,9 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM:
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Task_AddCallback(LunpaFortress_UpdateGroundFloorPatrolDetection,
-                     TASK_PASS_FRAME);
-    Task_AddCallback(LunpaFortress_CheckGroundFloorDoorApproach,
-                     TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_UpdateGroundFloorPatrolDetection,
+                  TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckGroundFloorDoorApproach, TASK_PASS_FRAME);
     WaitFrames(1);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
@@ -3326,7 +3325,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM:
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Task_AddCallback(LunpaFortress_CheckUpperHallGuard, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckUpperHallGuard, TASK_PASS_FRAME);
     break;
   default:
     gFieldWork->transition =
@@ -3374,7 +3373,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-    Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_UpdatePairedGuardDetection, TASK_PASS_FRAME);
     WaitFrames(1);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
@@ -3397,7 +3396,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-    Task_AddCallback(LunpaFortress_UpdateHallGuardDetection, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_UpdateHallGuardDetection, TASK_PASS_FRAME);
     WaitFrames(1);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
@@ -3418,8 +3417,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_MIDDLE_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH:
-    Task_AddCallback(LunpaFortress_CheckUpperFloorDoorApproach,
-                     TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckUpperFloorDoorApproach, TASK_PASS_FRAME);
     break;
   default:
     gFieldWork->transition =

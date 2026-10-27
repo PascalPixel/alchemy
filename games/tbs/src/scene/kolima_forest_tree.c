@@ -334,8 +334,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   WaitFrames(40);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   gKolimaForestTreePlaySparkSound = 1;
-  FieldScheduler_AddCallback(KolimaForestTree_SpawnRejectionSpark,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(KolimaForestTree_SpawnRejectionSpark, TASK_PASS_FRAME);
   WaitFrames(30);
   gKolimaForestTreePlaySparkSound = 0;
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
@@ -458,8 +457,7 @@ static void KolimaForestTree_RestoreTret(void) {
   // Carry the healing across the forest as its healthy colours return.
   paletteFrame = &gKolimaForestTreePaletteFrame;
   *paletteFrame = 0;
-  FieldScheduler_AddCallback(KolimaForestTree_UpdateHealingPalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   FieldScript_WaitFrames(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
@@ -592,7 +590,7 @@ static void KolimaForestTree_RestoreTret(void) {
   gKolimaForestTreeSparkOrigin[1] = PIXELS(48);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
   gKolimaForestTreeSparkOrigin[2] = PIXELS(205);
-  FieldScheduler_AddCallback(spawnOrbitSparks, TASK_PASS_FRAME);
+  Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   FieldScript_WaitFrames(100);
   Task_Remove(spawnOrbitSparks);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
@@ -691,7 +689,7 @@ static void KolimaForestTree_RestoreTret(void) {
   gKolimaForestTreeSparkOrigin[1] = PIXELS(20);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
   gKolimaForestTreeSparkOrigin[2] = PIXELS(258);
-  FieldScheduler_AddCallback(spawnOrbitSparks, TASK_PASS_FRAME);
+  Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   FieldScript_WaitFrames(100);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 40);
   ObjectMotion_SetVariantCallback(ACTOR_IVAN, 1);

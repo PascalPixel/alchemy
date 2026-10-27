@@ -297,7 +297,7 @@ load moves.
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
   compiler library's call through r3, with the code's address as its fourth
-  argument. `System_SoftReset` calls the untyped fixed address `Cart_Restart`
+  argument. `System_SoftReset` calls the untyped fixed address `Cart_Start`
   through a local `s32 (*reset)(void)`. With no declared type to differ from,
   these casts are no `wrapper`.
 - The sound driver, compiled with pret's `old_agbcc`, calls its command table

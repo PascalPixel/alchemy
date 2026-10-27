@@ -2,13 +2,13 @@
 #define ALCHEMY_CARTBOOT_H
 
 /// @file
-/// Cart_Restart, the cartridge's restart entry at 0x08000000.
+/// Cart_Start, the cartridge's restart entry at 0x08000000.
 
 #include "types.h"
 
 /// The cartridge's first instruction. The soft reset in WaitFrames jumps
 /// here, and SerialTest_Run, a link cable test nothing reaches, sends the
 /// first 640 bytes from here.
-#define Cart_Restart FIXED_ADDRESS((u32), 0x08000000, Rom_Start)
+#define Cart_Start FIXED_ADDRESS((u32), 0x08000000, Rom_Start)
 
 #endif

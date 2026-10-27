@@ -218,5 +218,5 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
     } while (i != count);
   }
   list->count = count;
-  FieldScheduler_AddCallback(SolSanctum_UpdateRing, TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctum_UpdateRing, TASK_PASS_FRAME);
 }

@@ -31,7 +31,7 @@ struct StatWork {
 
 /// Starts a new game: clears the save block and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
-void Game_Restart(void) {
+void Game_RestartQuest(void) {
   SaveBlock_InitializeDefaults();
   SequenceManager_RunFar(0);
 }
@@ -553,7 +553,7 @@ struct MapLocalStateSnapshotView {
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the main menu's new game, by
-/// Game_Restart and SequenceManager_Run, and by the debug battle menu.
+/// Game_RestartQuest and SequenceManager_Run, and by the debug battle menu.
 void SaveBlock_InitializeDefaults(void) {
   volatile s32 zero;
 

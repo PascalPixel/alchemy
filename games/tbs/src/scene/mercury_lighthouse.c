@@ -616,8 +616,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
 
   work = gFieldWork;
   FieldScript_Start();
-  FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(MercuryLighthouse_SparkleAroundLeader, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -861,8 +860,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, (nextRow + 1));
   Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
   // Keep the opened fountain spraying after the tile animation completes.
-  FieldScheduler_AddCallback(MercuryLighthouse_SprayAtFountain,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(MercuryLighthouse_SprayAtFountain, TASK_PASS_FRAME);
   MapGrid_WaitForShakeToSettle();
 }
 
@@ -1229,7 +1227,7 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 static s32 MercuryLighthouse_StartStatueSpray(struct Object *interpreter) {
   s32 priority = TASK_PASS_FRAME;
 
-  FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue, priority);
+  Task_AddFrame(MercuryLighthouse_SprayAboveStatue, priority);
   return 0;
 }
 
@@ -2329,7 +2327,7 @@ s32 MercuryLighthouse_Initialize(void) {
       (struct MercuryLighthouseLights *)gSceneLocalState);
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
-    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
+    Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
     MercuryLighthouse_ClearPalette();
   if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseLower) {
@@ -2429,8 +2427,8 @@ s32 MercuryLighthouse_Initialize(void) {
         MapGrid_CopyCellAttributes(9, 5, 1, 1, 9, 10);
       }
 #if TBS_PATCH_3
-      FieldScheduler_AddCallback(MercuryLighthouse_UpdateLeaderEffectTarget,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(MercuryLighthouse_UpdateLeaderEffectTarget,
+                    TASK_PASS_FRAME);
 #endif
       break;
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST:
@@ -2538,8 +2536,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (Actor_GetById(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
-          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
-                                     TASK_PASS_FRAME);
+          Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
       } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
@@ -2574,8 +2571,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (Actor_GetById(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
-          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
-                                     TASK_PASS_FRAME);
+          Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
       } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
@@ -2613,8 +2609,7 @@ s32 MercuryLighthouse_Initialize(void) {
     // This map contains Mia's entrance, the lift and the healing fountain.
     switch (gSaveBlock.entrance) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
-      FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
-                                 TASK_PASS_FRAME);
+      Task_AddFrame(MercuryLighthouse_CycleWaterfallPalette, TASK_PASS_FRAME);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
@@ -2682,8 +2677,7 @@ s32 MercuryLighthouse_Initialize(void) {
         ObjectMotion_SetActionVariant(ACTOR_DOOR_STATUE, 1);
         MapGrid_CopyCellAttributes(116, 37, 3, 3, 52, 37);
         MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
-        FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
-                                   TASK_PASS_FRAME);
+        Task_AddFrame(MercuryLighthouse_CycleEntrancePalette, TASK_PASS_FRAME);
         break;
       }
       if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
@@ -2696,8 +2690,7 @@ s32 MercuryLighthouse_Initialize(void) {
         }
         SetEffectRecordMode(Actor_GetById(ACTOR_MIA), 1);
         MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
-        FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
-                                   TASK_PASS_FRAME);
+        Task_AddFrame(MercuryLighthouse_CycleEntrancePalette, TASK_PASS_FRAME);
       } else {
         Import_ActorSetPosition(ACTOR_MIA, 0, 0);
         Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));

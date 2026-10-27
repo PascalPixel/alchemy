@@ -125,8 +125,8 @@ FarCall_OverworldTable:
 	export TreasureSpot_SetActorPositionFar, TreasureSpot_SetActorPosition
 	overlay_veneer TreasureSpot_Hide
 	export TreasureSpot_MoveLeaderAwayFar, TreasureSpot_MoveLeaderAway
-	export WorldMap_StartScriptFar, WorldMap_StartScript
-	export WorldMap_EndScriptFar, WorldMap_EndScript
+	export WorldMap_FreezeFar, WorldMap_Freeze
+	export WorldMap_UnfreezeFar, WorldMap_Unfreeze
 	overlay_veneer Actor_ResetForObject
 	overlay_veneer FieldScript_SpawnActorTemplates
 	overlay_veneer Actor_DestroyAtIndex

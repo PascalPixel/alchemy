@@ -11,7 +11,7 @@ static __inline__ void System_SoftReset(void) {
   // the ROM does at both resets. Through a void (*)(void) local one reset
   // moves to r1 (3 of 403 instructions differ); cast and called with no
   // local, 10 differ.
-  s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
+  s32 (*reset)(void) = (s32 (*)(void))Cart_Start;
 
   gCartridgeResetMarker = 0x19670704;
   Io_Write16(0, &REG_IME);

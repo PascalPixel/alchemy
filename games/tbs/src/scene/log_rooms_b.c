@@ -431,7 +431,7 @@ s32 Scene_Initialize(void) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
-    FieldScheduler_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
+    Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
   }
 
   return 0;

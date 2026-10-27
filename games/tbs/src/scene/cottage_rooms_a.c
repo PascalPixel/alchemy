@@ -605,7 +605,7 @@ static void EventScript_GaretComesHome(void) {
   Actor_GetById(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   Actor_GetById(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
   timedUpdate = CottageRoomsA_SpawnSleepZ;
-  FieldScheduler_AddCallback(timedUpdate, TASK_PASS_FRAME);
+  Task_AddFrame(timedUpdate, TASK_PASS_FRAME);
   WaitFrames(1);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();

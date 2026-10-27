@@ -204,7 +204,7 @@ scenes, 96 in all for 201 scenes, and only one is loaded at a time ([Engine](eng
 
 The two tables an overlay meets the main image through: the entry table opens
 it with six veneers the field calls to ask the scene its questions
-(`struct SceneEntries`), and the import table ends it with one veneer for each
+(`struct SceneEntryPoints`), and the import table ends it with one veneer for each
 main-image function it calls
 ([System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 

@@ -1008,8 +1008,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   {
     s32 priority = 3200;
 
-    FieldScheduler_AddCallback(SolSanctumStatue_UpdateScrollingSprites,
-                               priority);
+    Task_AddFrame(SolSanctumStatue_UpdateScrollingSprites, priority);
   }
 }
 

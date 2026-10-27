@@ -13,7 +13,7 @@ struct ItemDefinition;
 struct LevelUpResult;
 struct SummonDefinition;
 
-void Game_Restart(void);
+void Game_RestartQuest(void);
 void *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
 struct Unit *Unit_Get(u32 unitId);

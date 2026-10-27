@@ -50,7 +50,7 @@
 	import FreeHeapSlot, FreeHeapSlotFar
 	import Alloc, AllocFar
 	import AllocEwram, AllocEwramFar
-	import Free, Sys_FreeFar
+	import Free, FreeFar
 	import Decompress_ByteLz, Decompress_ByteLzFar
 	import Decompress_TaggedLz, Decompress_TaggedLzFar
 	import VramCache_FreeEntry, VramCache_FreeEntryFar
@@ -304,8 +304,8 @@
 	import ItemDisplay_ShowItem, ItemDisplay_ShowItemFar
 	import TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar
 	import TreasureSpot_MoveLeaderAway, TreasureSpot_MoveLeaderAwayFar
-	import WorldMap_StartScript, WorldMap_StartScriptFar
-	import WorldMap_EndScript, WorldMap_EndScriptFar
+	import WorldMap_Freeze, WorldMap_FreezeFar
+	import WorldMap_Unfreeze, WorldMap_UnfreezeFar
 	import Actor_GetByActorId, Actor_GetByActorIdFar
 	import FieldEffect_StartFadeOverlay, FieldEffect_StartFadeOverlayFar
 	import Field_DispatchTypeHandler, Field_DispatchTypeHandlerFar

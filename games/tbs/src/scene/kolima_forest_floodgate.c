@@ -313,8 +313,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   // The shake: each frame captures the scroll, and the HBlank handler shows
   // the upper lines shifted, more often as the chance climbs to 100%.
   gKolimaForestFloodgate_ShakeChance = 0;
-  FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(KolimaForestFloodgate_CaptureShakeScroll, TASK_PASS_FRAME);
   WaitFrames(1);
   Irq_SetHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
   Sound_PlaySong(SE_WATER_LEVEL);

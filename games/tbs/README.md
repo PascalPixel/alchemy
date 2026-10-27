@@ -146,7 +146,7 @@ same 32 KB over the scene before it. Overlays never call each other; code
 several scenes need is copied into each.
 
 The rest of the game reaches a scene only through the six questions above,
-`struct SceneEntries` at the start of every overlay. Each answer is a
+`struct SceneEntryPoints` at the start of every overlay. Each answer is a
 function rather than a fixed table, so a scene can answer differently as the
 story moves on. [Engine](engine.md#overlays) describes loading an overlay and
 [Scenes](src/scene/README.md) finding a [trigger](glossary.md#trigger).

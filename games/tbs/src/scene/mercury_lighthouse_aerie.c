@@ -222,8 +222,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
-    FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 1);
     ObjectMotion_SetActionVariant(ACTOR_GARET, 1);
     ObjectMotion_SetActionVariant(ACTOR_IVAN, 1);

@@ -679,7 +679,7 @@ s32 Bilibin_Initialize(void) {
     Bilibin_RestoreVillageActors();
   } else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade) {
     Bilibin_RestoreRiverActors();
-    FieldScheduler_AddCallback(Bilibin_UpdateWadingRipples, TASK_PASS_FRAME);
+    Task_AddFrame(Bilibin_UpdateWadingRipples, TASK_PASS_FRAME);
   } else if (gSaveBlock.sceneId == (s32)&SceneId_BilibinTreasury) {
     Bilibin_SetUpTreasury();
   }

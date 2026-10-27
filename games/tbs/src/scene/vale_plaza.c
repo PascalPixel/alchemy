@@ -602,8 +602,7 @@ static void EventScript_DemonstratePsynergy(void) {
           Actor_GetById(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
       WaitFrames(1);
     }
-    FieldScheduler_AddCallback(ValePlaza_UpdateShowingStrongmanPsynergy,
-                               TASK_PASS_FRAME);
+    Task_AddFrame(ValePlaza_UpdateShowingStrongmanPsynergy, TASK_PASS_FRAME);
     Sound_PlaySong(SE_TREMOR);
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
@@ -714,9 +713,9 @@ static void EventScript_BoyLiftsSmallRock(void) {
     ValePlaza_FlashPsynergyPalette(Actor_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
     WaitFrames(1);
   }
-  FieldScheduler_AddOrUpdateCallback(ValePlaza_UpdateRockLiftingBoyPsynergy,
-                                     TASK_PASS_FRAME);
-  FieldScheduler_AddCallback(ValePlaza_UpdateSmallRockPalette, TASK_PASS_FRAME);
+  Task_AddOrUpdateFrame(ValePlaza_UpdateRockLiftingBoyPsynergy,
+                        TASK_PASS_FRAME);
+  Task_AddFrame(ValePlaza_UpdateSmallRockPalette, TASK_PASS_FRAME);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   // Suspend ordinary movement while lifting the target a little each frame.
   rock = Actor_GetById(ACTOR_STORM_SMALL_ROCK);

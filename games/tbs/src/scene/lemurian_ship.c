@@ -645,7 +645,7 @@ static void EventScript_RaiseTheShip(void) {
   // steps.
   gOrbGlowActive = 1;
   gOrbGlowPhase = 0;
-  FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PASS_FRAME);
+  Task_AddFrame(Ship_UpdateSwell, TASK_PASS_FRAME);
   gSprayActive = 1;
   Script_Wait(20);
   Script_PlaySong(SE_RUSH);
@@ -656,14 +656,14 @@ static void EventScript_RaiseTheShip(void) {
   Script_Wait(60);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   gOrbGlowFadeFrames = 0;
-  FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PASS_FRAME);
+  Task_AddFrame(OrbGlow_Fade, TASK_PASS_FRAME);
   // The ship rises 90 pixels, 0.2 pixels a frame.
   risen = 0;
   do {
     grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += 0x3333;
     grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += 0x3333;
     risen += 0x3333;
-    Task_Wait(1);
+    WaitFrames(1);
   } while (risen < PIXELS(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
@@ -672,7 +672,7 @@ static void EventScript_RaiseTheShip(void) {
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
   Script_PlaySong(SE_STOP_ACTION_SE);
-  Task_Wait(1);
+  WaitFrames(1);
   // A flash of white; the swell starts as it clears.
   Script_PlaySong(SE_CRASH);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
@@ -689,7 +689,7 @@ static void EventScript_RaiseTheShip(void) {
     REG_BLDY = dark;
     Script_Wait(8);
   }
-  FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PASS_FRAME);
+  Task_AddFrame(ShipGlow_CyclePalette, TASK_PASS_FRAME);
   Script_PlaySong(MUS_PUZZLE_SOLVED);
   Sound_WaitForFanfare();
   Script_Wait(20);
@@ -918,7 +918,7 @@ static void Curtain_Start(void) {
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);
 
   sCurtainGap = 0x30;
-  FieldScheduler_AddCallback(Curtain_Close, TASK_PASS_FRAME);
+  Task_AddFrame(Curtain_Close, TASK_PASS_FRAME);
 }
 
 /// The ship's glow: ShipGlow_CyclePalette shows six of these colours at a

@@ -335,8 +335,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Script_ShowMessageAndWait(ACTOR_JENNA, 0, 30);
   // Embers start to rain from the Wise One.
   SolSanctumEruption_ResetEmberEmission();
-  Task_AddCallback(SolSanctumEruption_StepEmbers, TASK_PASS_FRAME);
-  Task_AddCallback(SolSanctumEruption_UpdateEmberFrequency, TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_StepEmbers, TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateEmberFrequency, TASK_PASS_FRAME);
   FieldScript_WaitFrames(240);
   // Saturos: "It must be the guardian of the Elemental Stars!" The camera
   // moves to his group, all facing west.
@@ -1209,8 +1209,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // The floor by the Wise One starts to break up; the Wise One glows and
   // holds it together with Psynergy.
   Script_PlaySong(SE_TREMOR);
-  FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_FlickerFirstCollapseTiles, TASK_PASS_FRAME);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(40);
@@ -1231,8 +1230,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     WaitFrames(1);
   }
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(30);
@@ -1386,8 +1384,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // The floor breaks up again in two places; the Wise One floats to each and
   // holds it together.
   Script_PlaySong(SE_TREMOR);
-  FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
@@ -1410,8 +1407,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     WaitFrames(1);
   }
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(30);
@@ -1435,8 +1431,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_TREMOR);
-  FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_FlickerFirstCollapseTiles, TASK_PASS_FRAME);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
@@ -1446,8 +1441,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     WaitFrames(1);
   }
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1470,8 +1464,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_TREMOR);
-  FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   SolSanctumEruption_FinishMaterialization();
   FieldScript_WaitFrames(60);
   ObjectMotion_SetPositionAndCommit(ACTOR_WISE_ONE, 184, 87);
@@ -1498,8 +1491,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     WaitFrames(1);
   }
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   FieldScript_WaitFrames(20);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   // Fade the chamber away, stop its effects and leave through the rescue exit.
@@ -1662,8 +1654,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   }
   WaitFrames(20);
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,
-                             TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateElementalArcs, TASK_PASS_FRAME);
   Script_PlaySong(SE_GLITTER);
   gArcEffectTimers[0] = 1;
   WaitFrames(6);

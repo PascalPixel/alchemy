@@ -28,7 +28,7 @@ FarCall_RuntimeTable:
 	overlay_veneer Heap_GetRemainingEwram
 	export AllocFar, Alloc
 	export AllocEwramFar, AllocEwram
-	export Sys_FreeFar, Free
+	export FreeFar, Free
 	overlay_veneer DebugText_Print
 	overlay_veneer DebugText_PrintHex
 	overlay_veneer DebugText_PrintDecimal

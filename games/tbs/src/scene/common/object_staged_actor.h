@@ -183,8 +183,8 @@ static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
 /// way.
-static void PushedActor_StopBlockedMotion(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void PushedActor_StopBlockedMotion(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
@@ -480,7 +480,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update = PushedActor_StopBlockedMotion;
 #else
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
-      (void (*)(union ActorOrEffect *))PushedActor_StopBlockedMotion;
+      (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
 #endif
   FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)

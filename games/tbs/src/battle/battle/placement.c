@@ -229,7 +229,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     break;
   }
 
-  actor->object = object;
+  actor->actor = object;
   actor->anchorX = fixedX;
   actor->anchorZ = fixedZ;
   actor->palette = palette;

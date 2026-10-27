@@ -32,7 +32,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   void *canvas;
   u8 *particleSheet;
   struct BattleCamera *camera;
-  struct Actor *targetObject;
+  struct Actor *targetActor;
   struct Particle *shard;
   struct ScreenPoint position;
   struct ScreenPoint origin;
@@ -60,7 +60,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   BattleMotion_ApproachTargetFar(work->effect->user, work->effect->targets[0],
                                  4, 0);
   WaitFrames(1);
-  targetObject = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  targetActor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
 
   i = 0;
   do {
@@ -68,8 +68,8 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     // the field; each group of four lives two frames longer than the last.
     struct Particle *seed = &work->particles[i];
 
-    SET_POSITION(seed, targetObject->x.fixed, targetObject->y.fixed,
-                 targetObject->z.fixed);
+    SET_POSITION(seed, targetActor->x.fixed, targetActor->y.fixed,
+                 targetActor->z.fixed);
     SET_VELOCITY(seed, (Random16() & 255) << 11,
                  ((Random16() & 255) - 127) << 12,
                  ((Random16() & 255) - 127) << 12);

@@ -10,15 +10,15 @@ STATIC_ASSERT(sizeof(struct Vector3) == 0x0c);
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
-  struct Actor *liftedObject;
+  struct Actor *liftedActor;
   struct Vector3 position;
   struct Actor *fragment;
   u32 radius;
 
-  liftedObject = ((struct FieldEffectWork *)gFieldEffectWork)->child;
-  position.x = liftedObject->x.fixed;
-  position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
-  position.z = liftedObject->z.fixed;
+  liftedActor = ((struct FieldEffectWork *)gFieldEffectWork)->child;
+  position.x = liftedActor->x.fixed;
+  position.y = liftedActor->y.fixed - Random16() * 16 + (24 << 16);
+  position.z = liftedActor->z.fixed;
 
   radius = Random16() * 3;
   Vector_AddPolarOffset(radius * 16, Random16(), &position);
@@ -66,7 +66,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   struct Vector3 *p;
 
   effectWork = gFieldEffectWork;
-  src = effectWork->mainObject;
+  src = effectWork->mainActor;
   target = effectWork->child;
   if (target == NULL)
     return;

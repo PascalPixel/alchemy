@@ -68,14 +68,14 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   // the squares fit in 32 bits, and a twentieth of it is both the
   // acceleration and the top speed.
   {
-    struct Actor *object = GetBattleObjectSlotFar(work->effect->user)->object;
+    struct Actor *actor = GetBattleObjectSlotFar(work->effect->user)->actor;
     struct Actor *target =
-        GetBattleObjectSlotFar(work->effect->targets[0])->object;
-    s32 diffX = target->x.fixed - object->x.fixed;
-    s32 startX = object->x.fixed;
+        GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+    s32 diffX = target->x.fixed - actor->x.fixed;
+    s32 startX = actor->x.fixed;
     s32 deltaX = diffX * 80 / 100;
-    s32 diffZ = target->z.fixed - object->z.fixed;
-    s32 startZ = object->z.fixed;
+    s32 diffZ = target->z.fixed - actor->z.fixed;
+    s32 startZ = actor->z.fixed;
     s32 deltaZ = diffZ * 80 / 100;
     s32 x = startX + deltaX;
     s32 z = startZ + deltaZ;
@@ -85,16 +85,16 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 
     distance = Iwram_Sqrt(shortX * shortX + shortZ * shortZ);
     distance = (distance << 8) / 20;
-    object->acceleration = distance;
-    object->speedLimit = distance;
-    object->snapToTarget = 1;
-    object->velocityY = 0x70000;
-    object->gravity = 0xdeb8;
-    object->bounce = 0;
-    object->steeringFlags = 1;
-    Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, x, 0, z);
-    Actor_SelectAnimationFar(object, POSE_LEAP);
+    actor->acceleration = distance;
+    actor->speedLimit = distance;
+    actor->snapToTarget = 1;
+    actor->velocityY = 0x70000;
+    actor->gravity = 0xdeb8;
+    actor->bounce = 0;
+    actor->steeringFlags = 1;
+    Actor_StartIdleFar(actor);
+    Actor_SetMoveTargetFar(actor, x, 0, z);
+    Actor_SelectAnimationFar(actor, POSE_LEAP);
   }
 
   // Play the swirl and impact, then let the sparks bounce and fade.

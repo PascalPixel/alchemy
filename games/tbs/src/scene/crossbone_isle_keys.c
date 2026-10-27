@@ -274,13 +274,11 @@ static void EventScript_HaltPursuer(void) {}
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
-static void
-CrossboneIsleKeys_FaceBaneTowardLeader(union ActorOrEffect *fieldObject) {
+static void CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
 #else
-static s32
-CrossboneIsleKeys_FaceBaneTowardLeader(union ActorOrEffect *fieldObject) {
+static s32 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
 #endif
-  struct Actor *actor = &fieldObject->actor;
+  struct Actor *actor = updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
@@ -426,7 +424,7 @@ static void EventScript_BaneLastEscape(void) {
     djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
     djinni->update =
-        (void (*)(union ActorOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
+        (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     FieldScript_End();
   }
@@ -1438,8 +1436,8 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-      djinni->update = (void (*)(
-          union ActorOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
+      djinni->update =
+          (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));

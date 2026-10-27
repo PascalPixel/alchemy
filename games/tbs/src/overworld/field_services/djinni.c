@@ -6,8 +6,8 @@
 #include "../field_services_internal.h"
 
 /// Update hook shared by the Djinni battle-start and Mercury afterimages.
-void Actor_MoveHalfwayTowardTarget(union ActorOrEffect *fieldObject) {
-  FieldEffect_MoveAfterimageHalfway(fieldObject);
+void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
+  FieldEffect_MoveAfterimageHalfway(actor);
 }
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
@@ -313,12 +313,12 @@ void FieldEffect_InitializeSlots(void) {
 /// waits a frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s32 i;
 
   Task_Remove(FieldEffect_UpdateAllSlots);
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    effect = &effectWork->sprites[i];
+    effect = &effectWork->particles[i];
     if (effect->active != 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
@@ -327,8 +327,8 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
 }
 
 /// Per-frame update: spins an object 1/8 turn a frame.
-void FieldEffect_AdvanceSpinAngle(union ActorOrEffect *fieldObject) {
-  struct Actor *object = (struct Actor *)fieldObject;
+void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
+  struct Actor *object = (struct Actor *)actor;
   object->facing += 0x2000;
 }
 
@@ -347,7 +347,7 @@ enum DjinniLightState {
 /// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
-void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
+void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;
 

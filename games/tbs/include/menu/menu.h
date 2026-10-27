@@ -34,7 +34,7 @@ extern u8 gStatusScreen_LevelLetterString[];
 struct Sprite;
 struct AbilityDefinition;
 struct DjinnListTable;
-struct FieldEffectSprite;
+struct FieldParticle;
 struct PagedList;
 struct ActorSystemWork;
 struct PsynergyEntry;

@@ -33,7 +33,7 @@ void FieldEffect_RunForce(void) {
   struct Actor *copy;
   struct Actor *caster;
   struct FieldEffectWork *effectWork;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   struct Sprite *sharedAnimation;
   void *event;
   s32 scale;
@@ -44,17 +44,17 @@ void FieldEffect_RunForce(void) {
   target = effectWork->child;
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_PSYNERGY_START);
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
-    caster = effectWork->mainObject;
+    caster = effectWork->mainActor;
     FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
-    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialBurst);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = 0xb333; // 0.7
     effect->scaleX = 0xb333;
     WaitFrames(2);
@@ -63,7 +63,7 @@ void FieldEffect_RunForce(void) {
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full
   // size by 0x500 a frame (39 frames).
-  caster = effectWork->mainObject;
+  caster = effectWork->mainActor;
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
@@ -120,7 +120,7 @@ void FieldEffect_RunForce(void) {
   // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
   // is freed on arrival.
   if (effectWork->enabled != 0) {
-    caster = effectWork->mainObject;
+    caster = effectWork->mainActor;
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + ABOVE;
     pos.z = caster->z.fixed;

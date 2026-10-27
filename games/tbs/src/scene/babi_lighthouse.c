@@ -253,7 +253,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
-  options.update = (void (*)(union ActorOrEffect *))FieldEffect_AdvanceMotion;
+  options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
@@ -1271,8 +1271,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 /// Update callback of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
-static void
-BabiLighthouse_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
+static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   struct Sprite *sprite;
   struct Actor *actor;
   s32 priority;
@@ -1342,6 +1341,7 @@ s32 BabiLighthouse_SetupMap(void) {
     Actor_SetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
+    // Through union ActorOrEffect: as struct Actor the stores move.
     ((union ActorOrEffect *)Actor_GetById(ACTOR_LEFT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
     ((union ActorOrEffect *)Actor_GetById(ACTOR_RIGHT_PILLAR))->actor.update =

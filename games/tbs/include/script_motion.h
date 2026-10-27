@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-union ActorOrEffect;
+struct Actor;
 
 // UB: scripts have variable lengths, so a one-word member cannot describe
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
@@ -96,7 +96,7 @@ struct ActorArmView {
   struct ActorArmView *linkedActor;
   ///@}
   /// Called each frame before its script.
-  void (*update)(union ActorOrEffect *fieldObject);
+  void (*update)(struct Actor *actor);
 };
 
 STATIC_ASSERT(sizeof(struct ActorArmView) == 0x70);

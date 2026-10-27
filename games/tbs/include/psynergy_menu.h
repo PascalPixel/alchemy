@@ -47,7 +47,7 @@ struct PsynergyMenuWork {
   u8 columnCount;
   u8 rowCount;
   ///@}
-  struct Sprite *tabObjects[8]; ///< the party members' figures
+  struct Sprite *tabSprites[8]; ///< the party members' figures
   s16 tabX[8];                  ///< screen pixels
   s16 rowPositions[8];          ///< screen pixels
   s32 memberScale[8];           ///< 16.16 fixed point, 0x10000 full size
@@ -98,7 +98,7 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
               0x260);
 
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 0x222);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 0x114);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 0x154);
 
 #endif

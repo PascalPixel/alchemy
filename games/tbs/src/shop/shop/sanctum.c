@@ -402,7 +402,7 @@ void Shop_DrawSelectMessage(struct Window *target, s32 unitId) {
 /// flies in again; SANCTUM_SPARKLE_LAST_FLIGHT, which
 /// Sanctum_RunMemberIconBurst sets as the burst ends, frees the slot on
 /// arrival.
-void Sanctum_UpdateBurstSparkle(struct FieldEffectSprite *effect) {
+void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
   s32 state;
@@ -414,7 +414,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldEffectSprite *effect) {
     position.x = effect->originX;
     position.z = effect->originZ;
     Vector_AddPolarOffset(0x280000, Random16(), &position);
-    FieldEffectSprite_SetPositionFar(effect, position.x, position.z);
+    FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->originX;
     position.z = effect->originZ;
     Vector_AddPolarOffset(0x40000, Random16(), &position);
@@ -426,11 +426,11 @@ void Sanctum_UpdateBurstSparkle(struct FieldEffectSprite *effect) {
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
-    targetPending = FieldEffectSprite_HasPendingTargetFar(effect);
+    targetPending = FieldParticle_HasPendingTargetFar(effect);
     if (targetPending == 0)
       *statePointer = targetPending;
   } else if (state == SANCTUM_SPARKLE_LAST_FLIGHT) {
-    if (FieldEffectSprite_HasPendingTargetFar(effect) == 0)
+    if (FieldParticle_HasPendingTargetFar(effect) == 0)
       FieldEffect_ClearOwnedSlotFar(effect);
   }
 }
@@ -442,13 +442,13 @@ void Sanctum_UpdateBurstSparkle(struct FieldEffectSprite *effect) {
 /// swaps or grey.
 void Shop_ResetEffects(void) {
   struct ShopWork *shop = gMenuWork;
-  struct FieldEffectSprite *effect = shop->effects;
+  struct FieldParticle *effect = shop->effects;
   s32 remainingEffects = 23;
   s8 burstMember;
 
   do {
     remainingEffects--;
-    FieldEffectSprite_UpdateFar(effect);
+    FieldParticle_UpdateFar(effect);
     effect++;
   } while (remainingEffects >= 0);
   burstMember = shop->burstMember;
@@ -479,7 +479,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   struct ShopWork *shop;
   s8 savedCursorMode;
   struct FixedPointPosition position;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s32 callbackPriority;
   s32 effectIndex;
 
@@ -502,10 +502,10 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   effectIndex = 0;
   effect = shop->effects;
   do {
-    FieldEffectSprite_InitializeFar(effect, 0x11c, position.x, position.z);
-    FieldEffectSprite_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldEffectSprite_SetActorModeFar(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
+    FieldParticle_InitializeFar(effect, 0x11c, position.x, position.z);
+    FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
+    FieldParticle_SetActorModeFar(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
     WaitFrames(3);
@@ -525,7 +525,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
       if (*(s8 *)(entry + 5) != 0) {
         *entry = activeMode;
       }
-      entry += sizeof(struct FieldEffectSprite);
+      entry += sizeof(struct FieldParticle);
     }
   }
 
@@ -537,7 +537,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
-    struct FieldEffectSprite *effectSlot = shop->effects;
+    struct FieldParticle *effectSlot = shop->effects;
     for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       s32 flag = *flagEntry;
 

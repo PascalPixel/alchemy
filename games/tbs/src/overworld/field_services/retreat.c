@@ -9,8 +9,8 @@
 /// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
-void FieldEffect_UpdateSpinAngle(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   u32 step;
 
   step = actor->timer * 0x50;
@@ -23,8 +23,8 @@ void FieldEffect_UpdateSpinAngle(union ActorOrEffect *fieldObject) {
 /// pixel a frame; once its scale falls below 0x3000 (84 frames from full
 /// size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldEffect_UpdateDescendingActor(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+void FieldEffect_UpdateDescendingActor(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   u32 scale;
 
   actor->scaleY -= 0x280;
@@ -48,13 +48,13 @@ enum RetreatParticleState {
 /// object's screen position (8 pixels lower) in a direction within 1/8 turn of
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
 /// object on arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   struct Vector3 pos;
   struct Actor *main;
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectWork *)gFieldEffectWork)->mainObject;
+  main = ((struct FieldEffectWork *)gFieldEffectWork)->mainActor;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -85,10 +85,10 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
     if ((gFrameCount & 2) != 0)
       Sound_PlaySongFar(SE_GLITTER);
   } else if (state == RETREAT_PARTICLE_FLYING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == RETREAT_PARTICLE_LAST_FLIGHT) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }
@@ -107,9 +107,9 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 /// the map. Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *actor = effectWork->mainObject;
+  struct Actor *actor = effectWork->mainActor;
   struct Vector3 pos;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   u8 last;
   u32 i;
 
@@ -117,7 +117,7 @@ void FieldEffect_RunRetreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);
-  Actor_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
+  Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
   WaitFrames(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
@@ -142,13 +142,13 @@ void FieldEffect_RunRetreat(void) {
   pos.z = actor->z.fixed;
   Camera_WorldToScreen(&pos);
   i = 0;
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
   do {
     s32 scale;
-    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -162,8 +162,8 @@ void FieldEffect_RunRetreat(void) {
   i = 0;
   last = RETREAT_PARTICLE_LAST_FLIGHT;
   do {
-    if (effectWork->sprites[i].active != 0)
-      effectWork->sprites[i].state = last;
+    if (effectWork->particles[i].active != 0)
+      effectWork->particles[i].state = last;
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
@@ -175,11 +175,10 @@ void FieldEffect_RunRetreat(void) {
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the world map, whose map is SceneId_MainMenu).
-void FieldEffect_UpdateDescendingParticlePositiveArc(
-    union ActorOrEffect *fieldObject) {
+void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   // One shared inline kernel with constant inversion grows the positive and
   // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
-  struct Actor *particle = (struct Actor *)fieldObject;
+  struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -208,9 +207,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
 /// down, 16 pixels in front of the object and up to 5 pixels nearer.
-void FieldEffect_UpdateDescendingParticleNegativeArc(
-    union ActorOrEffect *fieldObject) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
+  struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -283,7 +281,7 @@ struct DescendingArcSprite {
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   struct Actor *source = arc;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *leader = effectWork->mainObject;
+  struct Actor *leader = effectWork->mainActor;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;

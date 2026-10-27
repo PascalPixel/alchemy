@@ -225,7 +225,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // Frame 88: knock the target back, away from the middle of the field,
     // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_BREAK_FRAME) {
-      target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+      target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
       target->velocityY = 0x10000;
       target->acceleration = 0x20000;
       target->speedLimit = 0x20000;
@@ -239,8 +239,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // frame 88, gets the battle units' usual gravity back (0xab85, as
     // battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->effect->targets[0])->object->gravity =
-          0xAB85;
+      GetBattleObjectSlotFar(work->effect->targets[0])->actor->gravity = 0xAB85;
     }
     ANIM_PRESENT_FRAME(work);
   }

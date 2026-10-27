@@ -6,7 +6,7 @@
 
 /// Updates one field effect sprite: counts its age, runs its callback (after
 /// any delay), moves it and draws it.
-void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
+void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
     if (effect->callbackDelay != 0)
@@ -16,7 +16,7 @@ void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
     // A callback may release its own slot; do not move or draw it afterward.
     if (effect->active != 0) {
       if (effect->updateMotion != 0)
-        FieldEffectSprite_UpdateMotion(effect);
+        FieldParticle_UpdateMotion(effect);
       if (effect->render != 0)
         FieldEffect_DrawScaledActor(effect);
     }
@@ -28,13 +28,13 @@ void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
 /// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
-void FieldEffect_DrawScaledActor(struct FieldEffectSprite *object) {
+void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct Sprite *sprite;
   s32 offset;
   struct SpriteScale scale;
   struct SpritePlacement position;
 
-  sprite = object->object;
+  sprite = object->actor;
   offset = 0;
   if (object->flags & 4)
     offset = 0x1fc0000 - object->z;
@@ -52,7 +52,7 @@ void FieldEffect_DrawScaledActor(struct FieldEffectSprite *object) {
 /// Moves a field effect sprite toward its target, turning at most turnStepMax
 /// a frame when turnStepLimited is set and speeding up by acceleration to
 /// speedMax. One that stops at its target lands on it once within 8 pixels.
-void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect) {
+void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 deltaX;
   s32 deltaZ;
   s32 distance;
@@ -78,7 +78,7 @@ void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect) {
       distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
                            Iwram_MulQ16(deltaZ, deltaZ));
     if (distance <= 0x80000) {
-      FieldEffectSprite_SetPosition(effect, effect->targetX, effect->targetZ);
+      FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }
@@ -110,7 +110,7 @@ void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect) {
 /// Returns 1 while a field effect sprite that stops at its target still has
 /// one (it has not arrived), 0 once it has arrived or when it never stops. The
 /// sprites' callbacks poll it each frame to step their states.
-u32 FieldEffectSprite_HasPendingTarget(struct FieldEffectSprite *effect) {
+u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   // A plain != changes the English instructions at the same extent.
   u32 targetX;
 
@@ -124,8 +124,7 @@ u32 FieldEffectSprite_HasPendingTarget(struct FieldEffectSprite *effect) {
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.
-void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
-                                   s32 z) {
+void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = FIELD_EFFECT_SPRITE_NO_TARGET;
   effect->targetZ = FIELD_EFFECT_SPRITE_NO_TARGET;
   effect->x = x;
@@ -134,14 +133,13 @@ void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
 }
 
 /// Sets the animation of a field effect sprite.
-void FieldEffectSprite_SetActorMode(struct FieldEffectSprite *effect,
-                                    s32 mode) {
-  Sprite_StartAnimFar(effect->object, mode);
+void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
+  Sprite_StartAnimFar(effect->actor, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.
-void FieldEffectSprite_SetCallback(struct FieldEffectSprite *effect,
-                                   EffectCallback callback) {
+void FieldParticle_SetCallback(struct FieldParticle *effect,
+                               EffectCallback callback) {
   effect->callback = callback;
   effect->callbackDelay = 0;
   effect->age = 0;
@@ -154,16 +152,16 @@ void FieldEffectSprite_SetCallback(struct FieldEffectSprite *effect,
 /// limited with turnStepMax 0, so it holds heading 0 until its callback clears
 /// turnStepLimited or gives a step, as the first states of the callbacks that
 /// steer to a target do.
-void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
-                                  s32 x, s32 z) {
+void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
+                              s32 z) {
   struct Sprite *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
   animation = Sprite_CreateFar(kind);
-  effect->object = animation;
+  effect->actor = animation;
   if (animation != NULL)
     animation->image.priority = 0;
-  FieldEffectSprite_SetPosition(effect, x, z);
+  FieldParticle_SetPosition(effect, x, z);
   effect->scaleX = Q16_ONE;
   effect->speedMax = 0x20000;
   effect->scaleY = Q16_ONE;
@@ -174,7 +172,7 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->object;
+    struct Sprite *sprite = effect->actor;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
@@ -184,14 +182,14 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
   effect->active = 1;
   effect->randomValue = Random16();
   effect->flags = 4;
-  FieldEffectSprite_SetActorMode(effect, 1);
+  FieldParticle_SetActorMode(effect, 1);
 }
 
 /// Frees a field effect sprite and its sprite, clearing it to zero
 /// (inactive). Its callback calls it as its last state; the update then
 /// neither moves nor draws it.
-void FieldEffect_ClearOwnedSlot(struct FieldEffectSprite *effect) {
-  if (effect->object)
-    Sprite_DestroyFar(effect->object);
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
+  if (effect->actor)
+    Sprite_DestroyFar(effect->actor);
   Dma_Fill32(0, effect, sizeof *effect);
 }

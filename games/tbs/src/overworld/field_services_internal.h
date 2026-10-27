@@ -103,9 +103,8 @@
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
-static inline void
-FieldEffect_MoveAfterimageHalfway(union ActorOrEffect *fieldObject) {
-  struct Actor *afterimage = (struct Actor *)fieldObject;
+static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *actor) {
+  struct Actor *afterimage = (struct Actor *)actor;
   struct Actor *target = afterimage->linkedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
@@ -117,14 +116,14 @@ FieldEffect_MoveAfterimageHalfway(union ActorOrEffect *fieldObject) {
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldEffect_UpdateEffectSlots(void) {
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldEffectWork *)gFieldEffectWork)->sprites;
+  effect = ((struct FieldEffectWork *)gFieldEffectWork)->particles;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
-    FieldEffectSprite_Update(effect);
+    FieldParticle_Update(effect);
     effect++;
   } while (remainingSlots >= 0);
 }
@@ -134,8 +133,8 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// 0x3000 (3/16 of full size). step is negative: from full size the object
 /// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
-  void name(union ActorOrEffect *fieldObject) {                                \
-    void *obj = fieldObject;                                                   \
+  void name(struct Actor *actor) {                                             \
+    void *obj = actor;                                                         \
     s32 scale;                                                                 \
                                                                                \
     scale = ((struct Actor *)obj)->scaleX + step;                              \
@@ -236,7 +235,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
 /// The states of a particle that flies out and back: Halt's,
 /// Force's and Move's (FieldEffect_UpdateRadialCamera,
 /// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOrbitAndReturn).
-/// FieldEffectSprite_SetCallback starts it at the first; each takes the next.
+/// FieldParticle_SetCallback starts it at the first; each takes the next.
 enum OutAndBackState {
   OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
   OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there

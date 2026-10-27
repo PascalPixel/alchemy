@@ -158,8 +158,7 @@ static void VenusLighthouseAerie_StopActorMotion(struct Actor *actor);
 static void VenusLighthouseAerie_UpdateBeaconRise(void);
 static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor);
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
-static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union ActorOrEffect *fieldObject);
+static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor);
 
 /// The metatile behaviors the aerie's step triggers answer.
 enum VenusLighthouseAerieMetatileBehavior {
@@ -253,27 +252,28 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *interpreter) {
 
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
-static void
-VenusLighthouseAerie_UpdateDriftingParticle(union ActorOrEffect *fieldObject) {
-  s32 velocityX = fieldObject->effect.velocity.x;
+static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
+  s32 velocityX = ((struct FieldEffect *)actor)->velocity.x;
   s32 velocityZ;
 
-  fieldObject->effect.x += velocityX;
-  fieldObject->effect.y += fieldObject->effect.velocity.y;
-  velocityZ = fieldObject->effect.velocity.z;
-  fieldObject->effect.z += velocityZ;
-  fieldObject->effect.velocity.x = velocityX - velocityX / 22;
-  fieldObject->effect.velocity.z = velocityZ - velocityZ / 20;
-  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
-  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
-  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
+  ((struct FieldEffect *)actor)->x += velocityX;
+  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
+  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
+  ((struct FieldEffect *)actor)->z += velocityZ;
+  ((struct FieldEffect *)actor)->velocity.x = velocityX - velocityX / 22;
+  ((struct FieldEffect *)actor)->velocity.z = velocityZ - velocityZ / 20;
+  ((struct FieldEffect *)actor)->scaleX +=
+      ((struct FieldEffect *)actor)->scaleRateX;
+  ((struct FieldEffect *)actor)->scaleY +=
+      ((struct FieldEffect *)actor)->scaleRateY;
+  ((struct FieldEffect *)actor)->sprite->rotation +=
+      ((struct FieldEffect *)actor)->spin;
 }
 
 /// Turns the falling actor sprite until its rotation leaves the negative
 /// half-turn.
-static void
-VenusLighthouseAerie_StepSpriteRotation(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   struct Sprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
@@ -1371,7 +1371,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Actor *actor;
   struct Actor *menardi;
   struct Actor *saturos;
-  union ActorOrEffect *star = NULL;
+  struct Actor *star = NULL;
   struct Actor *starShadow;
   struct Sprite *sprite;
   u8 *iconPixels;
@@ -1546,19 +1546,19 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
-  star = (union ActorOrEffect *)FieldActor_Create(
+  star = (struct Actor *)FieldActor_Create(
       SPRITE_BLANK, actor->x.fixed, actor->y.fixed + PIXELS(8), actor->z.fixed);
   if (star != NULL) {
-    sprite = star->actor.sprite;
+    sprite = star->sprite;
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
     sprite->image.priority = 0;
-    star->actor.priorityFlags &= ~1;
-    star->actor.motionFlags = 0;
-    star->actor.retainSpriteCache = 1;
-    star->actor.speedLimit = PIXELS(8) / 5;
-    star->actor.acceleration = 0xcccc;
+    star->priorityFlags &= ~1;
+    star->motionFlags = 0;
+    star->retainSpriteCache = 1;
+    star->speedLimit = PIXELS(8) / 5;
+    star->acceleration = 0xcccc;
     iconPixels = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     // Display the Venus Star icon before sending it toward the beacon.
     Item_LoadIcon(ITEM_VENUS_STAR);
@@ -1576,39 +1576,35 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   starShadow->scaleX = 3 * Q16_ONE / 4;
   starShadow->scaleY = 3 * Q16_ONE / 4;
   if (star != NULL) {
-    star->actor.motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    star->effect.velocity.y = PIXELS(3) / 5;
-    star->effect.velocity.x = PIXELS(4) / 5;
-    star->actor.velocityY = PIXELS(8);
-    FieldActor_SetMoveTarget(&star->actor, PIXELS(308), PIXELS(32),
-                             PIXELS(164));
+    star->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    ((struct FieldEffect *)star)->velocity.y = PIXELS(3) / 5;
+    ((struct FieldEffect *)star)->velocity.x = PIXELS(4) / 5;
+    star->velocityY = PIXELS(8);
+    FieldActor_SetMoveTarget(star, PIXELS(308), PIXELS(32), PIXELS(164));
   }
   Actor_MoveToAndWait(ACTOR_VENUS_STAR_SHADOW, 308, 164);
   Actor_SetPosition(ACTOR_VENUS_STAR_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX, 0);
   if (star != NULL) {
     Script_PlaySong(SE_STAR_BOUNCE);
-    Actor_SetSpriteFlags(&star->actor, 0);
-    star->actor.velocityY = PIXELS(4);
-    FieldActor_SetMoveTarget(&star->actor, PIXELS(314), PIXELS(32),
-                             PIXELS(137));
-    Actor_WaitForMove(&star->actor);
+    Actor_SetSpriteFlags(star, 0);
+    star->velocityY = PIXELS(4);
+    FieldActor_SetMoveTarget(star, PIXELS(314), PIXELS(32), PIXELS(137));
+    Actor_WaitForMove(star);
     Script_PlaySong(SE_STAR_BOUNCE);
-    star->actor.sprite->image.priority = 1;
-    star->actor.velocityY = PIXELS(6);
-    FieldActor_SetMoveTarget(&star->actor, PIXELS(285), PIXELS(32),
-                             PIXELS(146));
-    Actor_WaitForMove(&star->actor);
+    star->sprite->image.priority = 1;
+    star->velocityY = PIXELS(6);
+    FieldActor_SetMoveTarget(star, PIXELS(285), PIXELS(32), PIXELS(146));
+    Actor_WaitForMove(star);
     Script_PlaySong(SE_STAR_BOUNCE);
-    star->actor.velocityY = PIXELS(5);
-    FieldActor_SetMoveTarget(&star->actor, PIXELS(300), PIXELS(32),
-                             PIXELS(154));
-    Actor_WaitForMove(&star->actor);
+    star->velocityY = PIXELS(5);
+    FieldActor_SetMoveTarget(star, PIXELS(300), PIXELS(32), PIXELS(154));
+    Actor_WaitForMove(star);
     WaitFrames(6);
-    star->actor.x.fixed = 0;
-    star->actor.y.fixed = 0;
-    star->actor.z.fixed = 0;
-    VenusLighthouseAerie_StopActorMotion(&star->actor);
+    star->x.fixed = 0;
+    star->y.fixed = 0;
+    star->z.fixed = 0;
+    VenusLighthouseAerie_StopActorMotion(star);
   }
   // Let the group react as the Venus Star reaches the beacon.
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -1917,9 +1913,8 @@ static void VenusLighthouseAerie_FlashScreen(void) {
 
 /// Orbits a particle around the upper beam and keeps its target at that
 /// position.
-static void
-VenusLighthouseAerie_UpdateUpperOrbit(union ActorOrEffect *fieldObject) {
-  struct Actor *effect = &fieldObject->actor;
+static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
+  struct Actor *effect = actor;
   struct Actor *center = Actor_GetById(ACTOR_BEAM_BOTTOM);
   u16 angle = effect->timer;
 
@@ -1932,9 +1927,8 @@ VenusLighthouseAerie_UpdateUpperOrbit(union ActorOrEffect *fieldObject) {
 }
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
-static void
-VenusLighthouseAerie_UpdateRisingOrbit(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = &fieldObject->actor;
+static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *updated) {
+  struct Actor *actor = updated;
   struct Actor *anchor = Actor_GetById(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
   s32 cosine;
@@ -3168,7 +3162,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
 /// Emits particles beside the lower beam and links each to its source
 /// actor.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
-  union ActorOrEffect *center;
+  struct Actor *center;
   struct Actor *effect;
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
@@ -3176,7 +3170,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   s32 phase;
   s32 angle;
 
-  center = ((union ActorOrEffect *)Actor_GetById(23));
+  center = ((struct Actor *)Actor_GetById(23));
   grid = gMapGridWork[0];
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(grid->viewY >> 16) <= 129) {
@@ -3197,9 +3191,9 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   phase = gFrameCount & 15;
   if (phase != 0)
     return;
-  effect = FieldActor_Create(SPRITE_PARTICLE, center->actor.x.fixed + PIXELS(8),
-                             center->actor.y.fixed + drift + PIXELS(8),
-                             center->actor.z.fixed);
+  effect =
+      FieldActor_Create(SPRITE_PARTICLE, center->x.fixed + PIXELS(8),
+                        center->y.fixed + drift + PIXELS(8), center->z.fixed);
   drift /= PIXELS(6);
   drift <<= 16;
   if (effect == 0)
@@ -3211,28 +3205,27 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   angle = Random_Next() & 0xffff000;
   effect->timer = angle;
   effect->userValue = phase;
-  effect->linkedActor = &center->actor;
+  effect->linkedActor = center;
   effect->update = VenusLighthouseAerie_UpdateOrbitingEffect;
   effect->speedLimit = Trig_Sin((drift & 0xfffff) >> 4) * 24 >> 16;
   sprite->flags = 0;
-  sprite->image.priority = center->actor.sprite->image.priority;
+  sprite->image.priority = center->sprite->image.priority;
 }
 
 /// Moves a linked particle along its horizontal ellipse and preserves its
 /// target.
-static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
+static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   struct Actor *anchor;
   s32 spin;
 
-  anchor = fieldObject->actor.linkedActor;
-  spin = fieldObject->effect.spin;
-  fieldObject->effect.x =
-      anchor->x.fixed + Trig_Cos(spin) * (fieldObject->actor.speedLimit + 28);
-  fieldObject->effect.z = Trig_Sin(spin) * 16 + PIXELS(164);
-  fieldObject->actor.targetX = fieldObject->effect.x;
-  fieldObject->actor.targetZ = fieldObject->effect.z;
-  fieldObject->effect.spin -= 0x200;
+  anchor = actor->linkedActor;
+  spin = ((struct FieldEffect *)actor)->spin;
+  ((struct FieldEffect *)actor)->x =
+      anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
+  ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + PIXELS(164);
+  actor->targetX = ((struct FieldEffect *)actor)->x;
+  actor->targetZ = ((struct FieldEffect *)actor)->z;
+  ((struct FieldEffect *)actor)->spin -= 0x200;
 }
 
 s32 gFieldEffect_ShortScript[] = {

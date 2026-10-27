@@ -443,7 +443,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   // added by BattleAnim_StartCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  casterActor = GetBattleObjectSlotFar(work->effect->user)->object;
+  casterActor = GetBattleObjectSlotFar(work->effect->user)->actor;
 
   // Gathering sparks: x is the radius (32 to 95), and the three velocities
   // are the spark's roll, pitch and yaw.
@@ -613,7 +613,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
 
   // The Djinni's step a frame, to reach 30 pixels above the target in six
   // frames.
-  targetActor = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  targetActor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   motion = &velocity;
   SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
                (targetActor->y.fixed - position->y + 0x1e0000) / 6,
@@ -900,7 +900,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
         struct Actor *caster;
         s32 height;
-        caster = GetBattleObjectSlotFar(work->effect->user)->object;
+        caster = GetBattleObjectSlotFar(work->effect->user)->actor;
         height = BattleUnit_GetEffectHeightFar(work->effect->user) / 2;
         for (i = 0; i != 32; i++, step++) {
           if (step->variant >= 0) {

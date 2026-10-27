@@ -670,7 +670,7 @@ s32 Scene_Initialize(void) {
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   {
     struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
@@ -682,7 +682,7 @@ s32 Scene_Initialize(void) {
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.

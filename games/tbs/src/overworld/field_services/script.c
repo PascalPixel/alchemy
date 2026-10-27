@@ -70,20 +70,20 @@ void FieldScript_WaitFrames(s32 frames) {
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Lookup(gSaveBlock.leaderActorId);
-  object->speedLimit = Q16_ONE;
-  object->acceleration = 0x8000;
-  object->targetX = ACTOR_NO_TARGET;
-  object->targetZ = ACTOR_NO_TARGET;
-  object->velocityX = 0;
-  object->velocityZ = 0;
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
+  actor->speedLimit = Q16_ONE;
+  actor->acceleration = 0x8000;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
-    Actor_SelectAnimationFar(object, 0xC);
+    Actor_SelectAnimationFar(actor, 0xC);
     return;
   }
-  Actor_SelectAnimationFar(object, 1);
+  Actor_SelectAnimationFar(actor, 1);
 }
 
 /// The script command "begin script": closes any area name window, stops the
@@ -395,11 +395,11 @@ void Inventory_ReservedNoOp(void) {}
 /// Only actors drawn as a sprite (ACTOR_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
-  struct Actor *actorObject = Actor_Lookup(actorId);
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actorObject != 0 && actorObject->spriteStorageKind == ACTOR_SPRITE_ONE) {
+  if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     s32 frames = 0;
-    u8 *animationNumber = &actorObject->sprite->lastNo;
+    u8 *animationNumber = &actor->sprite->lastNo;
 
     while (frames <= 89) {
       WaitFrames(1);

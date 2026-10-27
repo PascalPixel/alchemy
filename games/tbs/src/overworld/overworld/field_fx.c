@@ -67,13 +67,13 @@ void TreasureSpot_MoveLeaderAway(void) {
 /// Starts the particle script and its first child at priority 1, if the spawn
 /// succeeded. Allocation failure leaves the effect absent. The script sinks
 /// the sparkle a quarter pixel a frame for 60 frames, then frees it.
-static inline void Actor_InitializeSparkle(struct Actor *object) {
+static inline void Actor_InitializeSparkle(struct Actor *actor) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
-  if (object != 0) {
-    Actor_StartScriptFar(object, gFieldEffect_ParticleScript);
-    Actor_SelectAnimationFar(object, 0);
-    object->sprite->image.priority = 1;
+  if (actor != 0) {
+    Actor_StartScriptFar(actor, gFieldEffect_ParticleScript);
+    Actor_SelectAnimationFar(actor, 0);
+    actor->sprite->image.priority = 1;
   }
 }
 
@@ -81,8 +81,8 @@ static inline void Actor_InitializeSparkle(struct Actor *object) {
 /// within 16 pixels of it. Installed as the picture's update hook by
 /// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
 /// and ItemDisplay_ShowItem.
-void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject) {
-  struct Actor *emitter = (struct Actor *)fieldObject;
+void ItemDisplay_EmitSparkles(struct Actor *actor) {
+  struct Actor *emitter = (struct Actor *)actor;
   union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;
@@ -208,23 +208,23 @@ void Actor_ReleaseIfPresent(void *object) {
 /// holds it up (ANIM_LEADER_ARMS_RAISED) facing the screen. Called by
 /// Field_ExamineCell for what a search finds, by ItemDisplay_ShowPicture and by
 /// ItemDisplay_ShowItem.
-void ItemDisplay_RaiseAboveLeader(struct Actor *object) {
+void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   struct Actor *leader;
 
-  if (object == 0)
+  if (actor == 0)
     return;
 
   leader = Actor_Lookup(gSaveBlock.leaderActorId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
-  object->acceleration = 1 << 16;
-  object->speedLimit = 2 << 16;
-  object->motionFlags = 0;
-  Actor_SetMoveTargetFar(object, leader->x.fixed, leader->y.fixed + (36 << 16),
+  actor->acceleration = 1 << 16;
+  actor->speedLimit = 2 << 16;
+  actor->motionFlags = 0;
+  Actor_SetMoveTargetFar(actor, leader->x.fixed, leader->y.fixed + (36 << 16),
                          leader->z.fixed);
   WaitFrames(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
-  Actor_StartScriptFar(object, gFieldEffect_RisingPulseScript);
+  Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
@@ -267,12 +267,12 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  struct Actor *object =
+  struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
                       leader->y.fixed + (36 << 16), leader->z.fixed);
 
-  if (object != 0) {
-    struct Sprite *sprite = object->sprite;
+  if (actor != 0) {
+    struct Sprite *sprite = actor->sprite;
 
     sprite->flags = 0;
     sprite->count = 0;
@@ -285,13 +285,13 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
-      object->update = ItemDisplay_EmitSparkles;
+      actor->update = ItemDisplay_EmitSparkles;
     if (flags & 2)
-      ItemDisplay_RaiseAboveLeader(object);
+      ItemDisplay_RaiseAboveLeader(actor);
 
     WaitFrames(80);
     Actor_SelectAnimationFar(leader, 1);
-    Actor_ReleaseFar(object);
+    Actor_ReleaseFar(actor);
   }
 }
 
@@ -332,8 +332,8 @@ void FieldEffect_ClearRandomParticles(void) {
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's update hook by
 /// FieldEffect_SpawnNearbyMarkers.
-void Reveal_EmitSparkles(union ActorOrEffect *fieldObject) {
-  const struct Actor *source = (const struct Actor *)fieldObject;
+void Reveal_EmitSparkles(struct Actor *actor) {
+  const struct Actor *source = (const struct Actor *)actor;
   union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;

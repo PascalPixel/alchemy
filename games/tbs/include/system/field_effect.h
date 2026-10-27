@@ -77,7 +77,7 @@ struct FieldEffect {
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
-  void (*update)(union ActorOrEffect *fieldObject);
+  void (*update)(struct Actor *actor);
 };
 
 STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
@@ -87,7 +87,9 @@ STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
-/// An object on the field, read as an actor or as an effect.
+/// An actor read as an actor and as a field effect at once: a view kept for
+/// the one store that matches only through it (BabiLighthouse_SetupMap), as
+/// an access through a union conflicts with every store to either struct.
 union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;
@@ -145,8 +147,7 @@ struct EffectOptions {
   const s32 *script; ///< the object script, run in mode 1
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame
-  void (*update)(
-      union ActorOrEffect *fieldObject); ///< replaces the update hook
+  void (*update)(struct Actor *actor); ///< replaces the update hook
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

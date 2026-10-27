@@ -276,7 +276,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 #include "common/effect_advance.h"
 
 /// Emits a ring of dust around a corridor room's pillar as it sinks.
-static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
+static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   struct Actor *actor;
   struct Vector3 velocity;
   struct EffectOptions options;
@@ -285,7 +285,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   s32 velocityX;
   s32 velocityZ;
 
-  actor = Actor_GetById(objectId);
+  actor = Actor_GetById(actorId);
   options.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;

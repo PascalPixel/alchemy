@@ -510,8 +510,8 @@ static void AltmillerCave_StartRetreat(void) {
   struct Actor *replacement;
 
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
-  original = effectWork->mainObject;
-  Actor_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
+  original = effectWork->mainActor;
+  Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
   Anim_ApplyChildValues(original, 0);
   FieldScript_WaitFrames(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
@@ -521,7 +521,7 @@ static void AltmillerCave_StartRetreat(void) {
             (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct Actor) / 4,
             REG_DMA3);
     original->update = 0;
-    effectWork->mainObject = replacement;
+    effectWork->mainActor = replacement;
     original->spriteStorageKind = 0;
   }
 }
@@ -638,8 +638,8 @@ static void AltmillerCave_MoveStagedActorToClearPosition(void) {
 
 /// Update callback of the light at the top of the stopped ring: it pulses
 /// through four sizes.
-static void AltmillerCave_PulseLight(union ActorOrEffect *fieldObject) {
-  struct Actor *light = (struct Actor *)fieldObject;
+static void AltmillerCave_PulseLight(struct Actor *actor) {
+  struct Actor *light = (struct Actor *)actor;
   s32 scale = gAltmillerCave_PulseScales[(light->timer >> 2) & 3];
 
   light->scaleX = scale;
@@ -2028,9 +2028,8 @@ const struct Trigger *AltmillerCave_GetTriggers(void) {
 
 /// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
 /// sprite priority.
-static void
-AltmillerCave_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if (actor != NULL) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority =
@@ -2199,8 +2198,7 @@ s32 AltmillerCave_Initialize(void) {
 
 /// Update callback of a piece of the burst wall: it flies off to a random
 /// point 120 pixels away, with a crash every fourth frame as they start.
-static void
-AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
+static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];
   s32 x;
   s32 z;
@@ -2226,13 +2224,13 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
     if ((gVBlankCount & 3) == 0)
       Sound_PlaySong(SE_HEAVY_IMPACT);
   } else if (currentPhase == 1) {
-    if (FieldEffectSprite_HasPendingTarget(fragment) == 0) {
+    if (FieldParticle_HasPendingTarget(fragment) == 0) {
       s32 nextPhase = *phase;
       nextPhase--;
       *phase = nextPhase;
     }
   } else if (currentPhase == 2) {
-    if (FieldEffectSprite_HasPendingTarget(fragment) == 0)
+    if (FieldParticle_HasPendingTarget(fragment) == 0)
       FieldEffect_ClearOwnedSlot(fragment);
   }
 }
@@ -2242,7 +2240,7 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
   struct Vector3 position;
-  struct FieldEffectSprite *fragment;
+  struct FieldParticle *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
@@ -2252,15 +2250,14 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   position.y = PIXELS(24);
   position.z = PIXELS(144);
   Camera_WorldToScreen(&position);
-  fragment = effectWork->sprites;
+  fragment = effectWork->particles;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
-    FieldEffectSprite_Initialize(fragment, SPRITE_PARTICLE, position.x,
-                                 position.z);
-    FieldEffectSprite_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
-    FieldEffectSprite_SetActorMode(fragment, 7);
-    Sprite_SetAnimColorModes(fragment->object,
+    FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
+    FieldParticle_SetActorMode(fragment, 7);
+    Sprite_SetAnimColorModes(fragment->actor,
                              (u32)(Import_RandomNext() * 7) >> 16);
     scale = Math_DivideUnsigned(Import_RandomNext(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
@@ -2278,14 +2275,14 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     s32 mode = 2;
     // Walk the state bytes within the complete field effect sprite array.
     u8 *stateCursor =
-        (u8 *)&effectWork->sprites + offsetof(struct FieldEffectSprite, state);
+        (u8 *)&effectWork->particles + offsetof(struct FieldParticle, state);
 
     for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
-      if (((s8 *)stateCursor)[offsetof(struct FieldEffectSprite, active) -
-                              offsetof(struct FieldEffectSprite, state)] != 0) {
+      if (((s8 *)stateCursor)[offsetof(struct FieldParticle, active) -
+                              offsetof(struct FieldParticle, state)] != 0) {
         *stateCursor = mode;
       }
-      stateCursor += sizeof(struct FieldEffectSprite);
+      stateCursor += sizeof(struct FieldParticle);
     }
   }
   MapGrid_WaitForShakeToSettle();

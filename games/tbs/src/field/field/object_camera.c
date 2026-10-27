@@ -50,7 +50,7 @@ void ActorSystem_PlaceSprites(void) {
   s32 viewX;
   s32 viewZ;
   struct ActorSystemWork *system;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
@@ -90,14 +90,14 @@ void ActorSystem_PlaceSprites(void) {
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
   system->used = 0;
-  object = gActors;
-  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, object++) {
-    if (object->script == 0)
+  actor = gActors;
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
+    if (actor->script == 0)
       continue;
-    // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
+    // An actor at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
-    if (object->x.fixed != 0 || object->z.fixed != 0) {
-      kind = object->spriteStorageKind & 15;
+    if (actor->x.fixed != 0 || actor->z.fixed != 0) {
+      kind = actor->spriteStorageKind & 15;
       if (kind == ACTOR_SPRITE_NONE)
         continue;
       // This camera places single sprites only; groups are left.
@@ -105,27 +105,27 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       // While a menu has sprite projection suspended, only held objects are
       // drawn.
-      if (system->suspended != 0 && object->retainSpriteCache == 0) {
-        struct Sprite *frozen = object->sprite;
+      if (system->suspended != 0 && actor->retainSpriteCache == 0) {
+        struct Sprite *frozen = actor->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
         continue;
       }
-      dx = object->x.fixed - viewX;
-      dz = object->z.fixed - viewZ;
-      screenTop = dz - object->y.fixed;
-      sprite = object->sprite;
+      dx = actor->x.fixed - viewX;
+      dz = actor->z.fixed - viewZ;
+      screenTop = dz - actor->y.fixed;
+      sprite = actor->sprite;
       // From 32 pixels left of the screen to 32 past its 240, and from 32
       // pixels above it to 224.
       if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
           screenTop < 0xe00000) {
-        // The cell under the object: x and z >> 20 are 16-pixel cells, and a
+        // The cell under the actor: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
-        tile = &((struct ActorCameraTile *)grid->layers[object->layer]
-                     .cells)[(object->x.fixed >> 20) +
-                             ((object->z.fixed >> 20) << 7)];
-        if (object->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
+        tile = &(
+            (struct ActorCameraTile *)grid->layers[actor->layer]
+                .cells)[(actor->x.fixed >> 20) + ((actor->z.fixed >> 20) << 7)];
+        if (actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
             sprite->image.priority = priority;
@@ -134,48 +134,48 @@ void ActorSystem_PlaceSprites(void) {
         }
         layerPlusOne = tile->layer;
         if (layerPlusOne != 0)
-          object->layer = layerPlusOne - 1;
-        scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
-        scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
+          actor->layer = layerPlusOne - 1;
+        scale.x = Iwram_MulQ16(actor->scaleX, sprite->scale);
+        scale.y = Iwram_MulQ16(actor->scaleY, sprite->scale);
         drawPosition.x = dx;
-        drawPosition.height = object->y.fixed;
+        drawPosition.height = actor->y.fixed;
         drawPosition.y = dz;
-        drawPosition.groundHeight = object->groundHeight;
+        drawPosition.groundHeight = actor->groundHeight;
         // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
         // or down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
         // which Render_ApplyProjectedPlacement takes from the point's y
         // before its height is taken off. ACTOR_PRIORITY_UNDERFOOT, which
-        // footprints take, moves the slot 160 back, and an object at most 220
+        // footprints take, moves the slot 160 back, and an actor at most 220
         // pixels up crosses that function's 100-pixel line into its lowest
         // slot; bit 2 moves it 160 on.
-        if (object->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
+        if (actor->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
           drawPosition.groundHeight += 0xfec00000;
         }
-        if (object->priorityFlags & 4) {
+        if (actor->priorityFlags & 4) {
           drawPosition.height += 0x1400000; // +320 pixels
           drawPosition.y += 0x1400000;
           drawPosition.groundHeight += 0x1400000;
         }
         Render_ApplyProjectedPlacement(sprite, &drawPosition, &scale,
-                                       object->facing);
+                                       actor->facing);
         continue;
       }
       // Off screen: the sprite's VRAM goes back to the cache, and dirty makes
       // it redraw when it comes back.
-      if (object->retainSpriteCache == 0) {
+      if (actor->retainSpriteCache == 0) {
         if (!sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = 1;
         }
       }
     } else {
-      kind = object->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & 15;
       if (kind == ACTOR_SPRITE_ONE) {
-        sprite = object->sprite;
-        if (object->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
+        sprite = actor->sprite;
+        if (actor->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = kind;
         }
@@ -202,7 +202,7 @@ void ActorSystem_ProjectSprites(void) {
   struct ActorSystemWork *system;
   struct ActorCameraPoint *eye;
   struct ActorCameraPoint *target;
-  struct Actor *object;
+  struct Actor *actor;
   s32 angle;
   s32 spritesRemaining;
   s32 kind;
@@ -251,41 +251,41 @@ void ActorSystem_ProjectSprites(void) {
   }
   // The objects are placed from the last down. A sprite's layer byte is its
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
-  object = gActors;
-  object += ACTOR_COUNT - 1;
+  actor = gActors;
+  actor += ACTOR_COUNT - 1;
   fixedScale = Q16_ONE;
-  for (i = ACTOR_COUNT - 1; i >= 0; i--, object--) {
-    if (object->script == 0)
+  for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
+    if (actor->script == 0)
       continue;
-    kind = object->spriteStorageKind & 15;
+    kind = actor->spriteStorageKind & 15;
     switch (kind) {
     case ACTOR_SPRITE_ONE:
-      objectPosition = &object->x.fixed;
-      scale[0] = object->scaleX;
-      scale[1] = object->scaleY;
-      sprite = object->sprite;
+      objectPosition = &actor->x.fixed;
+      scale[0] = actor->scaleX;
+      scale[1] = actor->scaleY;
+      sprite = actor->sprite;
       if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
         scale[0] = fixedScale;
         scale[1] = fixedScale;
       }
       Render_PlaceProjectedSprite(sprite, objectPosition, scale,
-                                  object->facing + angle, object->layer);
+                                  actor->facing + angle, actor->layer);
       break;
     case ACTOR_SPRITE_GROUP:
-      groupScale[0] = object->scaleX;
-      groupScale[1] = object->scaleY;
+      groupScale[0] = actor->scaleX;
+      groupScale[1] = actor->scaleY;
       if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
         groupScale[0] = fixedScale;
         groupScale[1] = fixedScale;
       }
       // A group's sprite field points to its four sprite pointers; empty
       // ones are null.
-      sprites = (void **)object->sprite;
+      sprites = (void **)actor->sprite;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != NULL)
-          Render_PlaceProjectedSprite(sprite, &object->x.fixed, groupScale,
-                                      object->facing + angle, object->layer);
+          Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,
+                                      actor->facing + angle, actor->layer);
       }
       break;
     case ACTOR_SPRITE_NONE:

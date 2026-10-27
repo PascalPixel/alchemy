@@ -373,7 +373,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // as a 64x64, 256-colour sprite at (172, 56).
     {
       struct MenuSprite *face =
-          (struct MenuSprite *)GetBattleObjectSlotFar(member)->object->sprite;
+          (struct MenuSprite *)GetBattleObjectSlotFar(member)->actor->sprite;
 
       portraitSprite.oam.word.attr01 = 0xC0002400;
       portraitSprite.oam.word.attr23 = 0;

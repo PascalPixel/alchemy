@@ -33,8 +33,8 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
 /// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
 /// loads into effectWork->arcTileSlot.
-void FieldEffect_UpdatePairedArcSpawner(union ActorOrEffect *fieldObject) {
-  struct Actor *caster = (struct Actor *)fieldObject;
+void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
+  struct Actor *caster = (struct Actor *)actor;
   s16 phase;
   s32 elapsedFrames;
 
@@ -88,7 +88,7 @@ void FieldScript_ShowStatusMessage(void) {
 /// distance down by their speed (overworld/step.c), 2,400 pixels in all.
 void FieldEffect_RunAvoid(void) {
   struct FieldEffectWork *effectWork;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *group;
   struct SpriteAnim *entry;
   u32 angle;
@@ -96,10 +96,10 @@ void FieldEffect_RunAvoid(void) {
   s32 count;
 
   effectWork = gFieldEffectWork;
-  object = effectWork->mainObject;
-  group = object->sprite;
+  actor = effectWork->mainActor;
+  group = actor->sprite;
   entry = group->entries[0];
-  angle = object->facing;
+  angle = actor->facing;
   slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
@@ -111,14 +111,14 @@ void FieldEffect_RunAvoid(void) {
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gSaveBlock.avoidDistance = 0x09600000;
     gSaveBlock.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
-    Anim_ApplyChildValuesFar(object, zero);
-    object->update = FieldEffect_UpdatePairedArcSpawner;
-    object->arcPhase = zero;
-    object->arcFrames = zero;
+    Anim_ApplyChildValuesFar(actor, zero);
+    actor->update = FieldEffect_UpdatePairedArcSpawner;
+    actor->arcPhase = zero;
+    actor->arcFrames = zero;
   }
   Sound_PlaySongFar(SE_SPIN);
   WaitFrames(15);
-  object->arcPhase = 1;
+  actor->arcPhase = 1;
   WaitFrames(10);
   // Flash white for 2 frames in every 5.
   for (count = 0; count < 20; count++) {
@@ -130,8 +130,8 @@ void FieldEffect_RunAvoid(void) {
     group->flags = SPRITE_FLAG_SHADOW;
     WaitFrames(3);
   }
-  object->update = NULL;
-  object->facing = angle;
+  actor->update = NULL;
+  actor->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
   WaitFrames(15);
   Sound_PlaySongFar(SE_NOTE_MID);
@@ -140,10 +140,10 @@ void FieldEffect_RunAvoid(void) {
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gSaveBlock.cloaked != 0)
-    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_OUTLINED);
+    Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_OUTLINED);
   else
-    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
-  Anim_ApplyChildValuesFar(object, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
+  Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }

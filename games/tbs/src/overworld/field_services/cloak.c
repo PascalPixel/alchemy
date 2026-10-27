@@ -90,19 +90,19 @@ void FieldEffect_CheckCloakTile(void) {
 /// frames. The leader ends with its shadow back.
 /// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *animation;
   struct SpriteAnim *entry;
   u32 i;
 
-  object = Actor_Lookup(gSaveBlock.leaderActorId);
-  animation = object->sprite;
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
+  animation = actor->sprite;
   entry = animation->entries[0];
 
   Sound_PlaySongFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
-  Actor_SelectAnimationFar(object, 0);
-  object->update = 0;
+  Actor_SelectAnimationFar(actor, 0);
+  actor->update = 0;
 
   for (i = 0; i < 5; ++i) {
     entry->colorMode = SPRITE_COLOR_WHITE;

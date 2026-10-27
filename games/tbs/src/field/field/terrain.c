@@ -443,7 +443,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// step, and as MapGrid_CheckCollisionFar by the Psynergy effects (Move,
 /// Carry, Force, climbing). A layer past MAPGRID_LAYER_OVERHEAD reads the
 /// grid from its start.
-s32 MapGrid_CheckCollision(struct Actor *object,
+s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
   struct MapGridScrollAnimView *gridState;
   s32 pixelX;
@@ -460,8 +460,8 @@ s32 MapGrid_CheckCollision(struct Actor *object,
     return COLLISION_NONE;
   // The three layers have their windows into the grid; any other layer
   // reads the grid from its start.
-  if (object->layer <= MAPGRID_LAYER_OVERHEAD)
-    cell = gridState->layers[object->layer].cells;
+  if (actor->layer <= MAPGRID_LAYER_OVERHEAD)
+    cell = gridState->layers[actor->layer].cells;
   else
     cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
@@ -481,8 +481,8 @@ s32 MapGrid_CheckCollision(struct Actor *object,
   targetGround = gMapGrid_TerrainHeightFunctions[*heightBytes++ & 15](
       heightBytes, pixelX & 15, pixelZ & 15);
 #endif
-  // Up to 8 pixels up or 12 down is a step the object can take.
-  stepHeight = targetGround - object->groundHeight;
+  // Up to 8 pixels up or 12 down is a step the actor can take.
+  stepHeight = targetGround - actor->groundHeight;
   if (stepHeight > 0x80000)
     return COLLISION_TOO_HIGH;
   if (stepHeight < -0xc0000)

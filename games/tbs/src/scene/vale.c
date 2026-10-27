@@ -152,11 +152,11 @@ static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union ActorOrEffect *fieldObject);
+static void Vale_HaveGuardWatchTheLeader(struct Actor *actor);
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union ActorOrEffect *fieldObject);
+static s32 Vale_HaveGuardWatchTheLeader(struct Actor *actor);
 #endif
-static void Vale_TrailSparkles(union ActorOrEffect *fieldObject);
+static void Vale_TrailSparkles(struct Actor *actor);
 static void Vale_VanishMoveHand(struct Actor *emitter);
 static void Vale_UpdateParticlePosition(struct Actor *particle, s32 distance,
                                         s32 angle);
@@ -896,7 +896,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
 #ifdef UBFIX
   actor->update = Vale_HaveGuardWatchTheLeader;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vale_HaveGuardWatchTheLeader;
+  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
 #endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
@@ -949,7 +949,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
 #ifdef UBFIX
   actor->update = Vale_HaveGuardWatchTheLeader;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vale_HaveGuardWatchTheLeader;
+  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
 #endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   FieldScript_End();
@@ -2169,7 +2169,7 @@ static void EventScript_MendingTheRoof(void) {
   Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, 378, 584);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
-  moveHand->update = (void (*)(union ActorOrEffect *))stoppedMotionFlags;
+  moveHand->update = (void (*)(struct Actor *))stoppedMotionFlags;
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Task_Remove(Vale_UpdateGaretPaletteAndEffects);
@@ -3054,11 +3054,11 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union ActorOrEffect *fieldObject) {
+static void Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union ActorOrEffect *fieldObject) {
+static s32 Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
 #endif
-  struct Actor *guard = &fieldObject->actor;
+  struct Actor *guard = updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
 #ifdef UBFIX
@@ -3076,8 +3076,8 @@ static s32 Vale_HaveGuardWatchTheLeader(union ActorOrEffect *fieldObject) {
 
 /// The Move hand's update hook in the opening: each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
-static void Vale_TrailSparkles(union ActorOrEffect *fieldObject) {
-  struct Actor *source = &fieldObject->actor;
+static void Vale_TrailSparkles(struct Actor *updated) {
+  struct Actor *source = updated;
   s32 spawnPosition[3];
   s32 randomDistance;
   struct Actor *particle;

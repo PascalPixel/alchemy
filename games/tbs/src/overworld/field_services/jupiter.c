@@ -15,7 +15,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s32 scale;
   s32 remainingParticles;
 
@@ -48,15 +48,14 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(djinni);
   Sound_PlaySongFar(SE_SCATTER);
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
-    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
-                                 position.z);
-    FieldEffectSprite_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -80,8 +79,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// Per-frame update: makes an object pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void FieldEffect_SetActorAlternatingWords(union ActorOrEffect *fieldObject) {
-  u8 *object = (u8 *)fieldObject;
+void FieldEffect_SetActorAlternatingWords(struct Actor *actor) {
+  u8 *object = (u8 *)actor;
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
@@ -93,8 +92,8 @@ void FieldEffect_SetActorAlternatingWords(union ActorOrEffect *fieldObject) {
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
 /// zeroes the frame count first (Object.spinRampFrames), as the Mars Djinni's
 /// joining does.
-void FieldEffect_AdvanceAngleWithRamp(union ActorOrEffect *fieldObject) {
-  void *obj = (void *)fieldObject;
+void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
+  void *obj = (void *)actor;
   struct Actor *spin = obj;
   u32 step;
 
@@ -114,7 +113,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, 0xFFFFFE40)
 /// turn) from its origin at up to 5 pixels a frame and starts over, until it
 /// stops where it arrives, hidden; 40 frames later it swarms to points within 4
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
-void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   struct Actor *owner;
   struct Vector3 position;
   s32 state;
@@ -141,7 +140,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
     // front
     // (priority 0, z lifting the sprite) after 3 frames.
-    ((struct Sprite *)effect->object)->image.priority =
+    ((struct Sprite *)effect->actor)->image.priority =
         // Through the sprite union this load moves.
         (*(struct Sprite **)&owner->sprite)->image.priority;
     effect->flags = 0;
@@ -150,16 +149,16 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
-      ((struct Sprite *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->actor)->image.priority = 0;
       effect->flags = 4;
     }
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == MARS_SPARK_STOPPING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct Sprite *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->actor)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;
@@ -180,10 +179,10 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_CRASH);
   } else if (state == MARS_SPARK_SWARMING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == MARS_SPARK_LEAVING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }

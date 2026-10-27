@@ -52,7 +52,7 @@ struct ItemMenuWork {
   u8 columnCount;
   u8 rowCount;
   ///@}
-  struct Sprite *memberObjects[8]; ///< the party members' figures
+  struct Sprite *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];                  ///< screen pixels
   s16 memberY[8];                  ///< screen pixels
   s32 memberScale[8];              ///< 16.16 fixed point, 0x10000 full size
@@ -96,7 +96,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedColumn) == 0x110);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedRow) == 0x111);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, columnCount) == 0x112);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 0x114);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, memberX) == 0x134);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 0x144);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, memberScale) == 0x154);

@@ -8,19 +8,19 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// FieldEffectSprite.targetX and targetZ while the sprite has no target, at
+/// FieldParticle.targetX and targetZ while the sprite has no target, at
 /// rest.
 #define FIELD_EFFECT_SPRITE_NO_TARGET ((s32)0x80000000)
 
-struct FieldEffectSprite;
-/// A field effect sprite's per-frame routine (FieldEffectSprite.callback).
-typedef void (*EffectCallback)(struct FieldEffectSprite *);
+struct FieldParticle;
+/// A field effect sprite's per-frame routine (FieldParticle.callback).
+typedef void (*EffectCallback)(struct FieldParticle *);
 
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback. The 24 are
 /// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT heap slot.
-struct FieldEffectSprite {
-  void *object; ///< the object it draws, released with it
+struct FieldParticle {
+  void *actor;  ///< the object it draws, released with it
   s32 x;        ///< 16.16 fixed-point pixels
   s32 z;        ///< 16.16 fixed-point pixels
   s32 targetX;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
@@ -46,7 +46,7 @@ struct FieldEffectSprite {
   /// Nonzero turns the heading toward the target by at most turnStepMax a
   /// frame; zero faces the target at once.
   s8 turnStepLimited;
-  s8 updateMotion; ///< nonzero: FieldEffectSprite_UpdateMotion moves it each
+  s8 updateMotion; ///< nonzero: FieldParticle_UpdateMotion moves it each
                    ///< frame
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the sprite is in use
@@ -55,8 +55,8 @@ struct FieldEffectSprite {
   u8 flags;
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectSprite) == 0x48);
-STATIC_ASSERT(offsetof(struct FieldEffectSprite, orbitRadius) == 0x3c);
-STATIC_ASSERT(offsetof(struct FieldEffectSprite, state) == 0x40);
+STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
+STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
+STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
 #endif

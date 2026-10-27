@@ -24,7 +24,7 @@ struct ActorDouseView {
   /// gFieldEffect_CommonParticleScript frees it.
   s16 wait;
   u8 reserved60[0xc];
-  void (*callback)(union ActorOrEffect *fieldObject); ///< per-frame update
+  void (*callback)(struct Actor *actor); ///< per-frame update
 };
 
 /// The field effect (struct FieldEffectWork, gFieldEffectWork) as Douse reads
@@ -33,7 +33,7 @@ struct FieldEffectDouseView {
   s32 angle;            ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;          ///< the ground under the orb's destination
   struct Actor *caster; ///< mainObject
-  s32 targetObject;     ///< child: the target's object, 0 for none
+  s32 targetActor;      ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a trigger names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
@@ -50,8 +50,8 @@ struct FieldEffectDouseView {
 /// Per-frame update of a falling drop: on reaching altitude it is freed 2
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are freed after 6 frames.
-void FieldEffect_SpawnRandomAngleTriplet(union ActorOrEffect *fieldObject) {
-  struct ActorDouseView *particle = (struct ActorDouseView *)fieldObject;
+void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
+  struct ActorDouseView *particle = (struct ActorDouseView *)actor;
   s32 i;
   struct ActorDouseView *p;
   s32 dropWait = 2;
@@ -92,8 +92,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union ActorOrEffect *fieldObject) {
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
-void FieldEffect_UpdateDriftingFallActor(union ActorOrEffect *fieldObject) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
+  struct Actor *particle = (struct Actor *)actor;
   s32 drift;
 
   particle->y.fixed -= 0x4ccc;
@@ -139,7 +139,7 @@ void FieldEffect_RunDouse(void) {
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
-  if (work->targetObject == 0) {
+  if (work->targetActor == 0) {
     work->x = caster->x.fixed;
     work->z = caster->z.fixed;
     Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);

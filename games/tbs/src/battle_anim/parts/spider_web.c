@@ -45,7 +45,7 @@ void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
 void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   struct BattleAnimWork *work;
   void *canvas;
-  struct Actor *object;
+  struct Actor *actor;
   struct ScreenPoint position;
   /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
    * fills the frame; as one DrawRectangle, 50 of 256 instructions differ in
@@ -79,7 +79,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Trails keep 3/4 a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  object = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  actor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   Projection_ScaledUnit(work->effect->targets[0], &position);
   // Line the canvas up so the swipe crosses the target: the target's x
   // lands at canvas x 16 against the enemies and 112 against the party.
@@ -123,9 +123,9 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
     // verticalMotionPhase 0x4000 is the quarter of its speed a bounce keeps.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
-        object->velocityY = 0xc0000;
-        object->gravity = 0x7851;
-        object->bounce = 0x4000;
+        actor->velocityY = 0xc0000;
+        actor->gravity = 0x7851;
+        actor->bounce = 0x4000;
       }
       if (frame == 65) {
         work->shakeFrames = 4;

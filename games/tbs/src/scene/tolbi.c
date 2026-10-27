@@ -136,11 +136,11 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void removes its zero result; its aligned extent stays 152 bytes.
 #ifdef UBFIX
-static void Tolbi_UpdateKid(union ActorOrEffect *fieldObject) {
+static void Tolbi_UpdateKid(struct Actor *updated) {
 #else
-static s32 Tolbi_UpdateKid(union ActorOrEffect *fieldObject) {
+static s32 Tolbi_UpdateKid(struct Actor *updated) {
 #endif
-  struct Actor *self = &fieldObject->actor;
+  struct Actor *self = updated;
   u8 **workAreas = gWindowWork;
   struct WindowWork *ui = (struct WindowWork *)workAreas[0];
   struct FieldWork *work =
@@ -433,14 +433,14 @@ static void Tolbi_EnterDoor(void) {
 /// The update of ACTOR_TOLBI_OLD_MAN, who during the festival says he is 65
 /// and that Babi was already old when he was born: gives him the leader's
 /// sprite priority every frame, for both of his sprite parts.
-static void Tolbi_CopyLeaderPriority(union ActorOrEffect *fieldObject) {
+static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
   s32 priority;
 
-  if (fieldObject != NULL) {
+  if (updated != NULL) {
     priority = Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
-    fieldObject->actor.priorityFlags = 0;
-    fieldObject->actor.sprite->image.priority = priority;
-    fieldObject->actor.sprite->shadow.priority = priority;
+    updated->priorityFlags = 0;
+    updated->sprite->image.priority = priority;
+    updated->sprite->shadow.priority = priority;
   }
 }
 
@@ -448,7 +448,7 @@ static void Tolbi_CopyLeaderPriority(union ActorOrEffect *fieldObject) {
 /// update, and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
-  void (*kidUpdate)(union ActorOrEffect *);
+  void (*kidUpdate)(struct Actor *);
   s32 clearFlags;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -460,7 +460,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
 #else
-  kidUpdate = (void (*)(union ActorOrEffect *))Tolbi_UpdateKid;
+  kidUpdate = (void (*)(struct Actor *))Tolbi_UpdateKid;
 #endif
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;

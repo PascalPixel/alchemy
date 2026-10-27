@@ -826,7 +826,7 @@ const struct Trigger *Lalivero_GetTriggers(void) {
 /// the wounded soldiers of the first visit (and its event), or the sign at
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
-  union ActorOrEffect *fieldObject;
+  struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *icon;
 
@@ -855,11 +855,11 @@ s32 Lalivero_Initialize(void) {
 
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
-  fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_BLACK_ORB);
-  fieldObject->actor.retainSpriteCache = 1;
-  fieldObject->actor.motionFlags = 0;
-  sprite = fieldObject->actor.sprite;
-  fieldObject->actor.y.fixed = PIXELS(10);
+  actor = (struct Actor *)Actor_Get(ACTOR_BLACK_ORB);
+  actor->retainSpriteCache = 1;
+  actor->motionFlags = 0;
+  sprite = actor->sprite;
+  actor->y.fixed = PIXELS(10);
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -884,16 +884,16 @@ s32 Lalivero_Initialize(void) {
     // party with their own collision off, and the two cells each covers
     // become wall instead. The third cell copied, at x 78, lies outside the
     // town's 32 columns, where the camera never goes, and changes nothing.
-    fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_WEST_SOLDIER);
-    fieldObject->actor.collisionFlags = 0;
-    fieldObject->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    fieldObject->actor.sprite->flags = 0;
-    fieldObject->actor.sprite->rotation = FACING_NORTH;
-    fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_EAST_SOLDIER);
-    fieldObject->actor.collisionFlags = 0;
-    fieldObject->actor.priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    fieldObject->actor.sprite->flags = 0;
-    fieldObject->actor.sprite->rotation = FACING_SOUTH;
+    actor = (struct Actor *)Actor_Get(ACTOR_WEST_SOLDIER);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->sprite->flags = 0;
+    actor->sprite->rotation = FACING_NORTH;
+    actor = (struct Actor *)Actor_Get(ACTOR_EAST_SOLDIER);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->sprite->flags = 0;
+    actor->sprite->rotation = FACING_SOUTH;
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 13, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 14, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 78, 23);
@@ -905,15 +905,15 @@ s32 Lalivero_Initialize(void) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the event.
-      fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
-      fieldObject->actor.paused = 1;
-      fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
-      fieldObject->actor.paused = 1;
+      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor->paused = 1;
+      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor->paused = 1;
       EventScript_WatchWoundedSoldiers();
-      fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
-      fieldObject->actor.paused = 0;
-      fieldObject = (union ActorOrEffect *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
-      fieldObject->actor.paused = 0;
+      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor->paused = 0;
+      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor->paused = 0;
     }
   }
   return 0;

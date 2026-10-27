@@ -73,10 +73,10 @@ void FieldEffect_SetupActorPair(s32 userId, s32 targetId) {
   struct FieldEffectWork *effectWork;
 
   effectWork = gFieldEffectWork;
-  effectWork->firstObjectId = userId;
+  effectWork->firstActorId = userId;
   user = Actor_Lookup((s16)userId);
-  effectWork->secondObjectId = targetId;
-  effectWork->mainObject = user;
+  effectWork->secondActorId = targetId;
+  effectWork->mainActor = user;
   target = Actor_Lookup((s16)targetId);
   dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
   effectWork->child = target;
@@ -106,7 +106,7 @@ void FieldEffect_SetupActorPair(s32 userId, s32 targetId) {
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *user = effectWork->mainObject;
+  struct Actor *user = effectWork->mainActor;
 
   user->update = NULL;
   Anim_ApplyChildValuesFar(user, SPRITE_COLOR_NORMAL);
@@ -127,7 +127,7 @@ void FieldEffect_End(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
   struct MapGridScrollWork *grid;
-  struct FieldEffectSprite *effectSlot;
+  struct FieldParticle *effectSlot;
   s32 remaining;
 
 #ifdef UBFIX
@@ -143,7 +143,7 @@ void FieldEffect_End(void) {
   grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
 #endif
   for (remaining = 0; remaining < 24; remaining++) {
-    effectSlot = &effectWork->sprites[remaining];
+    effectSlot = &effectWork->particles[remaining];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
   }
@@ -152,9 +152,9 @@ void FieldEffect_End(void) {
   // from inside it frees only the slots; the rest waits for its own.
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
-    void (*firstActiveUpdate)(union ActorOrEffect *) =
+    void (*firstActiveUpdate)(struct Actor *) =
         FieldEffect_UpdateScaledArcActorB;
-    void (*secondActiveUpdate)(union ActorOrEffect *) =
+    void (*secondActiveUpdate)(struct Actor *) =
         FieldEffect_UpdateScaledArcActorA;
     s32 active;
 
@@ -164,7 +164,7 @@ void FieldEffect_End(void) {
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(union ActorOrEffect *) = slot->update;
+        void (*update)(struct Actor *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
@@ -210,7 +210,7 @@ void FieldEffect_StartCast(void) {
 
   effectWork = *(void **)Ram_FieldEffectWork;
   renderState = *(void **)Ram_FieldWork;
-  caster = effectWork->mainObject;
+  caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
   Actor_SelectAnimationFar(caster, 0x14);

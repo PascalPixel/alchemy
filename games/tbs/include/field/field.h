@@ -52,7 +52,7 @@ struct ActorTemplate;
 struct SceneExitRegion;
 struct SparkleFrame;
 struct Swirl;
-union ActorOrEffect;
+struct Actor;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
 /// path in ColossoRaceWork is played back or recorded by

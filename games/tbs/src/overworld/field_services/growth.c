@@ -83,12 +83,12 @@ void FieldEffect_RunGrowth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
-  s32 remainingObjects;
+  s32 remainingActors;
 
   FieldEffect_SpawnBurstParticleField();
   Sound_PlaySongFar(SE_HEAVY_IMPACT);
   p = &pos;
-  remainingObjects = GROWTH_FALL_LAST;
+  remainingActors = GROWTH_FALL_LAST;
   do {
     struct Actor *particle;
     s32 radius;
@@ -105,8 +105,8 @@ void FieldEffect_RunGrowth(void) {
       particle->motionFlags = ACTOR_FALLS;
     }
     WaitFrames(((Random16() * 2) >> 16) + 2);
-    remainingObjects--;
-  } while (remainingObjects >= 0);
+    remainingActors--;
+  } while (remainingActors >= 0);
   WaitFrames(30);
   FieldEffect_FadeFromEffectColor();
 }
@@ -123,7 +123,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   s32 particleIndex;
 
   effectWork = gFieldEffectWork;
-  caster = effectWork->mainObject;
+  caster = effectWork->mainActor;
   FieldEffect_FadeToEffectColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;

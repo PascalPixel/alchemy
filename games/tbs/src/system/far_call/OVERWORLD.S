@@ -162,12 +162,12 @@ FarCall_OverworldTable:
 	overlay_veneer Encounter_GetDjinnFormation
 	export Scene_PlayMusicFar, Scene_PlayMusic
 	export Djinn_JoinPartyFar, Djinn_JoinParty
-	export FieldEffectSprite_UpdateFar, FieldEffectSprite_Update
-	export FieldEffectSprite_HasPendingTargetFar, FieldEffectSprite_HasPendingTarget
-	export FieldEffectSprite_SetPositionFar, FieldEffectSprite_SetPosition
-	export FieldEffectSprite_SetActorModeFar, FieldEffectSprite_SetActorMode
-	export FieldEffectSprite_SetCallbackFar, FieldEffectSprite_SetCallback
-	export FieldEffectSprite_InitializeFar, FieldEffectSprite_Initialize
+	export FieldParticle_UpdateFar, FieldParticle_Update
+	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
+	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
+	export FieldParticle_SetActorModeFar, FieldParticle_SetActorMode
+	export FieldParticle_SetCallbackFar, FieldParticle_SetCallback
+	export FieldParticle_InitializeFar, FieldParticle_Initialize
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
 	export Camera_WorldToScreenFar, Camera_WorldToScreen
 	export Speaker_GetVoiceFar, Speaker_GetVoice

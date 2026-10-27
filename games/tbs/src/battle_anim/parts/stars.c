@@ -55,7 +55,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  caster = GetBattleObjectSlotFar(effect->user)->object;
+  caster = GetBattleObjectSlotFar(effect->user)->actor;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords((void *)BG_PLTT,
@@ -71,8 +71,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
@@ -252,8 +252,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // Each star starts 120 pixels above the user, at half its x (towards the
   // middle of the field), aims at a random spot up to 64 pixels either side
   // of the target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15

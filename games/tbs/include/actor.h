@@ -30,7 +30,7 @@ enum ScreenTransitionStyle {
 
 #include "animspr.h"
 
-union ActorOrEffect;
+struct Actor;
 
 /// An actor: one of the 64 people and things on the field (gActors,
 /// HEAP_SLOT_ACTORS), with its actor script, position, motion toward a target,
@@ -157,7 +157,7 @@ struct Actor {
   /// The actor its actor script follows or faces.
   struct Actor *linkedActor;
   /// Called each frame before its script, while the actor is live.
-  void (*update)(union ActorOrEffect *fieldObject);
+  void (*update)(struct Actor *actor);
 };
 
 /// Sets an actor's position in one statement, as SET_POSITION does for a

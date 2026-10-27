@@ -567,7 +567,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
       s32 windowX;
       s32 tileX;
 
-      menu->tabObjects[i] = figure;
+      menu->tabSprites[i] = figure;
       windowX = window->x;
       offsetX = spacing + 16;
       offsetX *= i;
@@ -582,7 +582,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
   }
   // Clear the unused party slots so the callback can skip them.
   for (; i < 8; i++) {
-    menu->tabObjects[i] = 0;
+    menu->tabSprites[i] = 0;
   }
   // 200 << 4 is 0xc80, TASK_PASS_FRAME: once a frame in the main
   // loop, rank 0x80.
@@ -604,7 +604,7 @@ void Menu_ReleaseEntryActors(void) {
 
   count = (u16)Party_ListMembersFar(memberIds);
   if (count != 0) {
-    figures = menu->tabObjects;
+    figures = menu->tabSprites;
     i = count;
     do {
       struct Sprite *figure = *figures++;
@@ -629,7 +629,7 @@ void Menu_UpdateEntryActorTransforms(void) {
 
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    struct Sprite *figure = menu->tabObjects[i];
+    struct Sprite *figure = menu->tabSprites[i];
     // 482 less the row's screen y, in 16.16. The ground y is always 482,
     // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
     // Render_ApplyProjectedPlacement), and raising the image by this height

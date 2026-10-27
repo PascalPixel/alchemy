@@ -18,7 +18,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
   struct Actor *leader;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
@@ -58,15 +58,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One spark a frame into each of the 24 field effect sprites.
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
   remaining = 23;
   do {
-    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
-                                 position.z);
-    FieldEffectSprite_SetCallback(effect,
-                                  FieldEffect_UpdatePhasedRadialParticle);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdatePhasedRadialParticle);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -88,13 +86,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     WaitFrames(20);
     nextState = MARS_SPARK_STOPPING;
-    slotState = &effectWork->sprites[0].state;
+    slotState = &effectWork->particles[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct FieldEffectSprite);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 
@@ -111,14 +109,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     slotState = (s8 *)effectWork;
     nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldEffectWork, sprites) +
-                 offsetof(struct FieldEffectSprite, state);
+    slotState += offsetof(struct FieldEffectWork, particles) +
+                 offsetof(struct FieldParticle, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct FieldEffectSprite);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 
@@ -143,8 +141,8 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, 0xFFFFFC00)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
-void FieldEffect_UpdateDescendingOrbitActor(union ActorOrEffect *fieldObject) {
-  struct Actor *mote = (struct Actor *)fieldObject;
+void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
+  struct Actor *mote = (struct Actor *)actor;
   struct Vector3 position;
   struct Actor *leader;
   s32 timer;
@@ -174,7 +172,7 @@ void FieldEffect_UpdateDescendingOrbitActor(union ActorOrEffect *fieldObject) {
 /// FieldEffect_RunVenusDjinnCapture in venus.c; a particle that starts on an
 /// odd frame plays SE_CLATTER. It speeds up by 1 pixel a frame to at most 5,
 /// straight at its target.
-void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct Vector3 position;
   struct Actor *source;
   s32 state;
@@ -210,10 +208,10 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_CLATTER);
   } else if (state == VENUS_PARTICLE_RISING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == VENUS_PARTICLE_LAST_RISE) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }

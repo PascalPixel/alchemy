@@ -7,8 +7,8 @@
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
-void FieldEffect_SwayParticle(union ActorOrEffect *fieldObject) {
-  struct Actor *obj = (struct Actor *)fieldObject;
+void FieldEffect_SwayParticle(struct Actor *actor) {
+  struct Actor *obj = (struct Actor *)actor;
   s16 *phase;
 
   phase = &obj->timer;
@@ -21,8 +21,8 @@ void FieldEffect_SwayParticle(union ActorOrEffect *fieldObject) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
 /// particles; each one's work holds its starting angle.
-void FieldEffect_UpdateShrinkingOrbitActor(union ActorOrEffect *fieldObject) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
+  struct Actor *particle = (struct Actor *)actor;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
   s16 remainingFrames;
@@ -54,8 +54,8 @@ void FieldEffect_UpdateShrinkingOrbitActor(union ActorOrEffect *fieldObject) {
 /// as it slowly falls. With phase -1 it stays where it is. The update
 /// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
-void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
-  struct Actor *emitter = (struct Actor *)fieldObject;
+void FieldEffect_RunSparkEmitter(struct Actor *actor) {
+  struct Actor *emitter = (struct Actor *)actor;
   struct FieldEffectWork *effectWork;
   s16 *phase;
   struct Actor *spark;
@@ -112,7 +112,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// event's finishCallback.
 void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *target = effectWork->mainObject;
+  struct Actor *target = effectWork->mainActor;
   struct Actor *actor;
   struct Sprite *last;
   u8 resourceSlot;

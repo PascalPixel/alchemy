@@ -86,7 +86,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 *viewLeader;
   s32 *viewLeaderLow;
 #endif
-  struct Actor *object;
+  struct Actor *actor;
   u32 i;
   s32 k;
   s32 lineCount;
@@ -337,9 +337,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
-    object = Actor_Lookup(gSaveBlock.leaderActorId);
-    centerX = (object->x.fixed - ax) / Q16_ONE;
-    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
+    actor = Actor_Lookup(gSaveBlock.leaderActorId);
+    centerX = (actor->x.fixed - ax) / Q16_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
     // its index, and the value is not used.
     gFrameCount;
@@ -454,9 +454,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
-    object = Actor_Lookup(gSaveBlock.leaderActorId);
-    centerX = (object->x.fixed - ax) / Q16_ONE;
-    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
+    actor = Actor_Lookup(gSaveBlock.leaderActorId);
+    centerX = (actor->x.fixed - ax) / Q16_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -504,11 +504,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeaderLow[0] & 0xffff0000;
     cameraY = viewLeaderLow[1] & 0xffff0000;
 #endif
-    object = Actor_Lookup(gSaveBlock.leaderActorId);
-    centerX = (object->x.fixed - ax) / Q16_ONE;
+    actor = Actor_Lookup(gSaveBlock.leaderActorId);
+    centerX = (actor->x.fixed - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 8;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 8;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;

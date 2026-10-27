@@ -71,8 +71,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   // frame, and the animation waits 20 frames for it.
   first = GetBattleObjectSlotFar(work->effect->user);
   second = GetBattleObjectSlotFar(work->effect->targets[0]);
-  user = first->object;
-  target = second->object;
+  user = first->actor;
+  target = second->actor;
   percent = 90;
   x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;

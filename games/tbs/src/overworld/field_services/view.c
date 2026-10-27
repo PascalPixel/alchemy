@@ -115,11 +115,11 @@ void FieldScript_WaitForZoomTransition(void) {
 // consumer ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedActorPosition(union ActorOrEffect *fieldObject) {
+void FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
 #else
-s32 FieldEffect_CopyLinkedActorPosition(union ActorOrEffect *fieldObject) {
+s32 FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
 #endif
-  void *self = (void *)fieldObject;
+  void *self = (void *)updated;
   struct Actor *actor = self;
   struct Actor *host;
 
@@ -174,7 +174,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
       bubble->update = FieldEffect_CopyLinkedActorPosition;
 #else
       bubble->update =
-          (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedActorPosition;
+          (void (*)(struct Actor *))FieldEffect_CopyLinkedActorPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedActor = target;
@@ -211,7 +211,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
 /// AttachedEffectFlag: removes the object attached to an actor, attaches
 /// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
 /// 2) that ends by itself (gActor_WaitScript, 40 frames). The attached
-/// object is kept as the actor's linkedObject, so ATTACHED_EFFECT_ATTACH
+/// object is kept as the actor's linkedActor, so ATTACHED_EFFECT_ATTACH
 /// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (overworld/step.c).
@@ -264,7 +264,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   effect->update = FieldEffect_CopyLinkedActorPosition;
 #else
   effect->update =
-      (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedActorPosition;
+      (void (*)(struct Actor *))FieldEffect_CopyLinkedActorPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

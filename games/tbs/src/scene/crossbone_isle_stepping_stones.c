@@ -617,24 +617,30 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 
 /// Moves the particle while damping its velocity, growing it, and advancing
 /// rotation.
-static void CrossboneIsleSteppingStones_UpdateDampedParticle(
-    union ActorOrEffect *fieldObject) {
+static void
+CrossboneIsleSteppingStones_UpdateDampedParticle(struct Actor *actor) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
 
-  fieldObject->effect.x += fieldObject->effect.velocity.x;
-  fieldObject->effect.y += fieldObject->effect.velocity.y;
-  fieldObject->effect.z += fieldObject->effect.velocity.z;
-  velocityX = fieldObject->effect.velocity.x;
-  velocityY = fieldObject->effect.velocity.y;
-  velocityZ = fieldObject->effect.velocity.z;
-  fieldObject->effect.velocity.x = velocityX - Math_Divide(velocityX, 10);
-  fieldObject->effect.velocity.y = velocityY - Math_Divide(velocityY, 3);
-  fieldObject->effect.velocity.z = velocityZ - Math_Divide(velocityZ, 10);
-  fieldObject->effect.scaleX += fieldObject->effect.scaleRateX;
-  fieldObject->effect.scaleY += fieldObject->effect.scaleRateY;
-  fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
+  ((struct FieldEffect *)actor)->x += ((struct FieldEffect *)actor)->velocity.x;
+  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
+  ((struct FieldEffect *)actor)->z += ((struct FieldEffect *)actor)->velocity.z;
+  velocityX = ((struct FieldEffect *)actor)->velocity.x;
+  velocityY = ((struct FieldEffect *)actor)->velocity.y;
+  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
+  ((struct FieldEffect *)actor)->velocity.x =
+      velocityX - Math_Divide(velocityX, 10);
+  ((struct FieldEffect *)actor)->velocity.y =
+      velocityY - Math_Divide(velocityY, 3);
+  ((struct FieldEffect *)actor)->velocity.z =
+      velocityZ - Math_Divide(velocityZ, 10);
+  ((struct FieldEffect *)actor)->scaleX +=
+      ((struct FieldEffect *)actor)->scaleRateX;
+  ((struct FieldEffect *)actor)->scaleY +=
+      ((struct FieldEffect *)actor)->scaleRateY;
+  ((struct FieldEffect *)actor)->sprite->rotation +=
+      ((struct FieldEffect *)actor)->spin;
 }
 
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
@@ -938,15 +944,15 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
 #ifdef UBFIX
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static void CrossboneIsleSteppingStones_UpdateActorPriority(
-    union ActorOrEffect *fieldObject) {
+static void
+CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
 #else
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static s32 CrossboneIsleSteppingStones_UpdateActorPriority(
-    union ActorOrEffect *fieldObject) {
+static s32
+CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   s32 hit;
   u32 id;
@@ -1221,15 +1227,15 @@ static void EventScript_StopRising(void) {
 #ifdef UBFIX
 /// Keeps the frozen puddle's underfoot flag consistent with the leader's height
 /// and depth.
-static void CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union ActorOrEffect *fieldObject) {
+static void
+CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
 #else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
-static s32 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union ActorOrEffect *fieldObject) {
+static s32
+CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *ref = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if (actor->z.fixed > ref->z.fixed) {
@@ -1255,8 +1261,8 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
 #ifdef UBFIX
   actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))
-      CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
+  actor->update = (void (*)(
+      struct Actor *))CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
   MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                              actor->z.fixed >> 20);
@@ -1357,14 +1363,14 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static void CrossboneIsleSteppingStones_SpawnThawParticle(
-    union ActorOrEffect *fieldObject) {
+static void
+CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
 #else
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static s32 CrossboneIsleSteppingStones_SpawnThawParticle(
-    union ActorOrEffect *fieldObject) {
+static s32
+CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   struct EffectOptions *settings;
   u32 phase = gFrameCount & 7;
@@ -1429,12 +1435,12 @@ static void EventScript_FreezeThirdPuddle(void) {
           CrossboneIsleSteppingStones_SpawnThawParticle;
 #else
       Actor_GetById(ACTOR_SECOND_PUDDLE)->update = (void (*)(
-          union ActorOrEffect *))CrossboneIsleSteppingStones_SpawnThawParticle;
+          struct Actor *))CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
       Import_ActorSetAnimation(ACTOR_SECOND_PUDDLE, 6);
       Actor_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
       Actor_GetById(ACTOR_SECOND_PUDDLE)->update =
-          (void (*)(union ActorOrEffect *))set;
+          (void (*)(struct Actor *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1);
       Actor_ConfigureSpriteColor(ACTOR_SECOND_PUDDLE, SPRITE_COLOR_NORMAL);
@@ -1552,8 +1558,8 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
 #ifdef UBFIX
     actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-    actor->update = (void (*)(union ActorOrEffect *))
-        CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
+    actor->update = (void (*)(
+        struct Actor *))CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
     MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                                actor->z.fixed >> 20);
@@ -1570,8 +1576,8 @@ static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
 #ifdef UBFIX
   actor->update = CrossboneIsleSteppingStones_UpdateActorPriority;
 #else
-  actor->update = (void (*)(
-      union ActorOrEffect *))CrossboneIsleSteppingStones_UpdateActorPriority;
+  actor->update =
+      (void (*)(struct Actor *))CrossboneIsleSteppingStones_UpdateActorPriority;
 #endif
 }
 

@@ -203,7 +203,7 @@ void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
 void Actor_SelectAnimation(void *raw, s32 no);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 val);
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 val);
 s32 ActorScript_SetFlagAndTest(struct Actor *interpreter);
 s32 ActorScript_ClearFlagAndTest(struct Actor *interpreter);
 void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
@@ -279,32 +279,30 @@ void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
-s32 MapGrid_GetScreenRelativePosition(struct Actor *object,
-                                      s32 *screenPosition);
+s32 MapGrid_GetScreenRelativePosition(struct Actor *actor, s32 *screenPosition);
 void ActorSystem_Initialize(s32 controlMode);
 void nullsub_0800C0C4(void);
 void nullsub_0800C0C8(void);
 void *Actor_FindFree(void);
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *object, const s32 *script);
-void Actor_SetAnimationAndSpeed(struct Actor *object, s32 animation, s32 step);
-void Actor_SetSpriteRotation(struct Actor *object, u32 rotation);
-void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
-                                       s32 animationId);
-void Actor_RegisterSpriteMetadata(struct Actor *object, s32 animationId);
-void Actor_StartApproachLink(struct Actor *object, s32 linkedObjectHandle);
-void Actor_StartKeyCheck(struct Actor *object);
-void Actor_StartMoveByKeys(struct Actor *object);
-void Actor_StartPlayerControl(struct Actor *object);
-void Actor_StartWorldMapControl(struct Actor *object);
-void Actor_StartIdle(struct Actor *object);
-void Actor_StartCamera(struct Actor *object, s32 linkedObjectHandle);
-void Actor_WaitForScriptEnd(void *rawObject);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-void Actor_SetBlendMode(struct Actor *object, u32 mode);
-void Actor_SetSpriteScale(struct Actor *object, u32 fixedScale);
-void Anim_ApplyChildValues(struct Actor *object, u32 param);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
+void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step);
+void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation);
+void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor, s32 animationId);
+void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId);
+void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle);
+void Actor_StartKeyCheck(struct Actor *actor);
+void Actor_StartMoveByKeys(struct Actor *actor);
+void Actor_StartPlayerControl(struct Actor *actor);
+void Actor_StartWorldMapControl(struct Actor *actor);
+void Actor_StartIdle(struct Actor *actor);
+void Actor_StartCamera(struct Actor *actor, s32 linkedActorHandle);
+void Actor_WaitForScriptEnd(void *rawActor);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
+void Actor_SetBlendMode(struct Actor *actor, u32 mode);
+void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale);
+void Anim_ApplyChildValues(struct Actor *actor, u32 param);
 void ActorSystem_SuspendProjectionAndShowSprites(void);
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 s32 Actor_ReturnTrue(void);
@@ -315,11 +313,11 @@ void ActorSystem_ProjectSprites(void);
 s32 ActorScript_SetBase(struct Actor *interpreter);
 s32 ActorScript_HideSprites(struct Actor *interpreter);
 s32 ActorScript_ShowSprite(struct Actor *interpreter);
-void Actor_WaitForMove(void *fieldObject);
-s32 Actor_IsTargetUnset(struct Actor *object);
+void Actor_WaitForMove(void *actor);
+s32 Actor_IsTargetUnset(struct Actor *actor);
 void Actor_UpdateAllThumb(void);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_RunUpdateAllFromHeap(void);
 void Actor_UpdateAllMotion(void);
 s32 ActorScript_Wait(struct Actor *interpreter);
@@ -337,8 +335,8 @@ s32 ActorScript_SetAnimation(struct Actor *interpreter);
 s32 ActorScript_Release(struct Actor *interpreter);
 s32 ActorScript_Nop(struct Actor *interpreter);
 s32 ActorScript_PlaySound(struct Actor *interpreter);
-s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
-struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
+s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values);
+struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values);
 s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter);
 s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter);
@@ -361,7 +359,7 @@ s32 ActorScript_ApplyOperandSet(struct Actor *interpreter);
 s32 ActorScript_ApplyOperandAdd(struct Actor *interpreter);
 s32 ActorScript_ApplyOperandCompare(struct Actor *interpreter);
 
-void Actor_SetUpdateValue(void *rawObject, s32 value);
+void Actor_SetUpdateValue(void *rawActor, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
@@ -455,8 +453,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position);

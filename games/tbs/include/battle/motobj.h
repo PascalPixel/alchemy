@@ -12,7 +12,7 @@
 #include "edition.h"
 #include "farcall.h"
 
-union ActorOrEffect;
+struct Actor;
 
 /// struct Actor, field for field, as BattleObject_SpawnObjectsForList gives a
 /// battle unit its sprites: the sprite word untyped (void *), and the cursor,
@@ -63,7 +63,7 @@ struct BattleActor {
   s16 timer;
   u16 userValue;
   struct BattleActor *linkedActor;
-  void (*update)(union ActorOrEffect *fieldObject);
+  void (*update)(struct Actor *actor);
 };
 
 /// A sprite anim, as battle objects set its palette and

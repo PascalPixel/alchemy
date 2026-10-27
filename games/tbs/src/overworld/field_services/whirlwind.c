@@ -25,9 +25,8 @@ enum {
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z
 /// velocity a little, and changes its scale and spin. Assigned by
 /// FieldEffect_SpawnRadialParticleRing for Carry's landing particles.
-void FieldEffect_UpdateParticleMotionAndScale(
-    union ActorOrEffect *fieldObject) {
-  struct FieldEffect *effect = &fieldObject->effect;
+void FieldEffect_UpdateParticleMotionAndScale(struct Actor *actor) {
+  struct FieldEffect *effect = ((struct FieldEffect *)actor);
 
   effect->x += effect->velocity.x;
   effect->y += effect->velocity.y;
@@ -73,8 +72,8 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 /// While it wanders, the engine's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
-void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
-  struct Actor *effect = (struct Actor *)fieldObject;
+void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
+  struct Actor *effect = (struct Actor *)actor;
   s32 len;
   s32 angle;
   s32 dx;
@@ -104,8 +103,8 @@ void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
-void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
-  struct Actor *effect = (struct Actor *)fieldObject;
+void FieldEffect_CircleAnchor(struct Actor *actor) {
+  struct Actor *effect = (struct Actor *)actor;
   struct Actor *anchor;
   s32 angle;
   s32 radius;
@@ -136,8 +135,8 @@ void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
-void FieldEffect_ShrinkActorScaleUntilHalf(union ActorOrEffect *fieldObject) {
-  struct Actor *object = (struct Actor *)fieldObject;
+void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
+  struct Actor *object = (struct Actor *)actor;
   s32 scale;
 
   scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
@@ -173,7 +172,7 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldEffect_RunWhirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *src = effectWork->mainObject;
+  struct Actor *src = effectWork->mainActor;
   struct Actor *target = effectWork->child;
   struct Vector3 pos;
   struct Vector3 from;

@@ -89,8 +89,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  actor = GetBattleObjectSlotFar(work->effect->user)->object;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  actor = GetBattleObjectSlotFar(work->effect->user)->actor;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // The ball falls 15 pixels a frame towards the middle of the field.
   if (actor->x.fixed > 0)
     dx = -(15 << 16);
@@ -323,7 +323,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
 
     ANIM_FOR_EACH_TARGET(k, work->effect) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[k])->object;
+          GetBattleObjectSlotFar(work->effect->targets[k])->actor;
 
       // Centre on the point 20 pixels above the target and spin the group
       // about it, a full turn every 128 frames; target k's turn starts on
@@ -461,9 +461,9 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     member = 0;
     if (work->effect->targetCount != 0) {
       while (member != work->effect->targetCount) {
-        struct Actor *object;
+        struct Actor *actor;
 
-        object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+        actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
         // Target `member` has its turn from frame 16 * member, and takes
         // its damage pose 32 frames in.
         if (frame > member * 16 &&
@@ -474,7 +474,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
             BattleAnim_TintBattler(work->effect->targets[member], 0,
                                    POSE_DAMAGE, -1, 0);
           }
-          SET_VECTOR(point, object->x.fixed, 40 << 16, object->z.fixed);
+          SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
           Projection_Point(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, circling once every 128

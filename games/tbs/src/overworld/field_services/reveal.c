@@ -8,15 +8,15 @@
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
 void Actor_SetRevealSpriteColor(s32 value) {
-  struct Actor *object = gActors;
+  struct Actor *actor = gActors;
   s32 remainingActors = 63;
 
   do {
-    if (object->script != NULL) {
-      u8 kind = object->spriteStorageKind;
+    if (actor->script != NULL) {
+      u8 kind = actor->spriteStorageKind;
 
       if (kind == ACTOR_SPRITE_ONE) {
-        struct Sprite *animation = object->sprite;
+        struct Sprite *animation = actor->sprite;
         struct SpriteAnim *entry = animation->entries[0];
 
         if (entry->animationId == 200) {
@@ -26,7 +26,7 @@ void Actor_SetRevealSpriteColor(s32 value) {
       }
     }
     remainingActors--;
-    object++;
+    actor++;
   } while (remainingActors >= 0);
 }
 

@@ -263,11 +263,11 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
-static void ValeCave_FaceActorTowardLeader(union ActorOrEffect *fieldObject) {
+static void ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 #else
-static s32 ValeCave_FaceActorTowardLeader(union ActorOrEffect *fieldObject) {
+static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   s32 distanceZ = leader->z.fixed - actor->z.fixed;
   s32 distanceX = leader->x.fixed - actor->x.fixed;
@@ -284,7 +284,7 @@ static s32 ValeCave_FaceActorTowardLeader(union ActorOrEffect *fieldObject) {
 #define VALE_CAVE_FACE_LEADER_CALLBACK ValeCave_FaceActorTowardLeader
 #else
 #define VALE_CAVE_FACE_LEADER_CALLBACK                                         \
-  ((void (*)(union ActorOrEffect *))ValeCave_FaceActorTowardLeader)
+  ((void (*)(struct Actor *))ValeCave_FaceActorTowardLeader)
 #endif
 
 /// Selects entrance positions and camera bounds for the current cave

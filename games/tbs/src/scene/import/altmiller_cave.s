@@ -65,10 +65,10 @@
 	.set import.FieldEffect_StartCast, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Scene_PlayMusic, 1
-	.set import.FieldEffectSprite_HasPendingTarget, 1
-	.set import.FieldEffectSprite_SetActorMode, 1
-	.set import.FieldEffectSprite_SetCallback, 1
-	.set import.FieldEffectSprite_Initialize, 1
+	.set import.FieldParticle_HasPendingTarget, 1
+	.set import.FieldParticle_SetActorMode, 1
+	.set import.FieldParticle_SetCallback, 1
+	.set import.FieldParticle_Initialize, 1
 	.set import.FieldEffect_ClearOwnedSlot, 1
 	.set import.Camera_WorldToScreen, 1
 	.set import.FieldEffect_InitializeSlots, 1

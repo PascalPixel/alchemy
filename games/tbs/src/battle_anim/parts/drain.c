@@ -50,15 +50,15 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
   // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct Actor *object;
+    struct Actor *actor;
     s32 offset;
     s32 height;
     struct Particle *shard;
 
     offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
-    object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+    actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
     height = BattleUnit_GetEffectHeightFar(work->effect->targets[member]) / 2;
-    SET_VECTOR(point, object->x.fixed, height, object->z.fixed);
+    SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
     Projection_Point(point, &screen);
     screen.x >>= 1;
     for (i = 0, shard = (struct Particle *)(Ram_MapGridCellBuffer + offset);
@@ -178,17 +178,17 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   ANIM_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct Actor *object;
+    struct Actor *actor;
     s32 halfHeight;
 
-    object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+    actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
     halfHeight =
         BattleUnit_GetEffectHeightFar(work->effect->targets[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
       struct Particle *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
-      SET_POSITION(mote, object->x.fixed, object->y.fixed + halfHeight,
-                   object->z.fixed);
+      SET_POSITION(mote, actor->x.fixed, actor->y.fixed + halfHeight,
+                   actor->z.fixed);
       SET_VELOCITY(mote, ((Random16() & 0xff) - 128) << 10,
                    ((Random16() & 0xff) - 128) << 10,
                    ((Random16() & 0xff) - 128) << 10);
@@ -210,7 +210,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
     struct Actor *user;
     s32 halfHeight;
 
-    user = GetBattleObjectSlotFar(work->effect->user)->object;
+    user = GetBattleObjectSlotFar(work->effect->user)->actor;
     halfHeight = BattleUnit_GetEffectHeightFar(work->effect->user) / 2;
     if (frame == 64)
       ANIM_SHOW_DAMAGE(SE_IMPACT);

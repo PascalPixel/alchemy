@@ -1711,9 +1711,8 @@ static void ColosseumSatrageMatch_WaitForOpponentFinish(void) {
 }
 
 /// Occasionally spawns a falling particle around the linked finish effect.
-static void
-ColosseumSatrageMatch_SpawnRandomMapEffect(union ActorOrEffect *fieldObject) {
-  struct Actor *source = (struct Actor *)fieldObject;
+static void ColosseumSatrageMatch_SpawnRandomMapEffect(struct Actor *actor) {
+  struct Actor *source = (struct Actor *)actor;
   s32 position[3];
   u32 chance;
 

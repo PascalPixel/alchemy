@@ -678,11 +678,11 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *interpreter) {
 // void differs in 6 bytes of the 56-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_PulseChildEffect(union ActorOrEffect *fieldObject) {
+static void VenusLighthouse_PulseChildEffect(struct Actor *updated) {
 #else
-static s32 VenusLighthouse_PulseChildEffect(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_PulseChildEffect(struct Actor *updated) {
 #endif
-  void *actor = (void *)fieldObject;
+  void *actor = (void *)updated;
   if ((gFrameCount & 3) == 0)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
@@ -702,13 +702,11 @@ static s32 VenusLighthouse_PulseChildEffect(union ActorOrEffect *fieldObject) {
 // void differs in 14 bytes of the 172-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void
-VenusLighthouse_EmitRisingParticles(union ActorOrEffect *fieldObject) {
+static void VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
 #else
-static s32
-VenusLighthouse_EmitRisingParticles(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
@@ -747,13 +745,11 @@ static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
 // void differs in 14 bytes of the 180-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void
-VenusLighthouse_EmitPassageSparkTrail(union ActorOrEffect *fieldObject) {
+static void VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
 #else
-static s32
-VenusLighthouse_EmitPassageSparkTrail(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 fallSpeed;
   s32 framePhase;
@@ -804,7 +800,7 @@ static void EventScript_EnterSparklingPassage(void) {
   leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
   leader->update =
-      (void (*)(union ActorOrEffect *))VenusLighthouse_EmitPassageSparkTrail;
+      (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
   leader->speedLimit = PIXELS(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -840,7 +836,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
     leader->update =
-        (void (*)(union ActorOrEffect *))VenusLighthouse_EmitPassageSparkTrail;
+        (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
@@ -897,7 +893,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldScript_WaitFrames(24);
   options.palette = 7;
-  options.update = (void (*)(union ActorOrEffect *))FieldEffect_AdvanceMotion;
+  options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -941,11 +937,11 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 // void differs in 172 bytes (extent 196 to 192 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_TrailLight(union ActorOrEffect *fieldObject) {
+static void VenusLighthouse_TrailLight(struct Actor *updated) {
 #else
-static s32 VenusLighthouse_TrailLight(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_TrailLight(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 velocityY;
   s32 velocityX;
@@ -1012,7 +1008,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
 #ifdef UBFIX
   effect->update = VenusLighthouse_TrailLight;
 #else
-  effect->update = (void (*)(union ActorOrEffect *))VenusLighthouse_TrailLight;
+  effect->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
 #endif
   effect->riseEnabled = 0;
   Actor_StartScript(effect, script);
@@ -1325,7 +1321,7 @@ static void EventScript_JumpDown(void) {
   leader->update = VenusLighthouse_EmitRisingParticles;
 #else
   leader->update =
-      (void (*)(union ActorOrEffect *))VenusLighthouse_EmitRisingParticles;
+      (void (*)(struct Actor *))VenusLighthouse_EmitRisingParticles;
 #endif
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -2124,12 +2120,11 @@ static void EventScript_JumpOrPushSwitchPillar(void) {
 // unused native result in matching builds.
 #ifdef UBFIX
 static void
-VenusLighthouse_FollowSupportingPillarHeight(union ActorOrEffect *fieldObject) {
+VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
 #else
-static s32
-VenusLighthouse_FollowSupportingPillarHeight(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
 #endif
-  struct Actor *pillar = (struct Actor *)fieldObject;
+  struct Actor *pillar = (struct Actor *)updated;
   struct Actor *support;
 
   support = Actor_GetById(pillar->timer);
@@ -2326,8 +2321,8 @@ static void EventScript_CarryFloatingPillar(void) {
           VenusLighthouse_FollowSupportingPillarHeight;
 #else
       Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update =
-          (void (*)(union ActorOrEffect *))
-              VenusLighthouse_FollowSupportingPillarHeight;
+          (void (*)(
+              struct Actor *))VenusLighthouse_FollowSupportingPillarHeight;
 #endif
       VenusLighthouse_LowerFloatingPillars(40);
       Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)
@@ -2579,8 +2574,8 @@ static void EventScript_MoveSocketPillar(void) {
     pillar->layer = 0;
     motionFlags = &pillar->motionFlags;
     *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    ((union ActorOrEffect *)pillar)->effect.velocity.y = PIXELS(1) / 10;
-    ((union ActorOrEffect *)pillar)->effect.velocity.x = 0;
+    ((struct FieldEffect *)pillar)->velocity.y = PIXELS(1) / 10;
+    ((struct FieldEffect *)pillar)->velocity.x = 0;
     MapGrid_CopyCellAttributes(6, 44, 1, 1,
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
@@ -2943,8 +2938,7 @@ s32 VenusLighthouse_Initialize(void) {
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else
-        actor->update =
-            (void (*)(union ActorOrEffect *))VenusLighthouse_TrailLight;
+        actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveGatePillar();
@@ -3080,8 +3074,7 @@ s32 VenusLighthouse_Initialize(void) {
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else
-        actor->update =
-            (void (*)(union ActorOrEffect *))VenusLighthouse_TrailLight;
+        actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveSwitchPillar();
@@ -3252,8 +3245,7 @@ s32 VenusLighthouse_Initialize(void) {
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else
-        actor->update =
-            (void (*)(union ActorOrEffect *))VenusLighthouse_TrailLight;
+        actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveSocketPillar();
@@ -3628,12 +3620,11 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 // void differs in 14 bytes of the 196-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void
-VenusLighthouse_UpdateRisingSpray(union ActorOrEffect *fieldObject) {
+static void VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
 #else
-static s32 VenusLighthouse_UpdateRisingSpray(union ActorOrEffect *fieldObject) {
+static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions optionsStorage;
   struct EffectOptions *options = &optionsStorage;
   s32 framePhase;

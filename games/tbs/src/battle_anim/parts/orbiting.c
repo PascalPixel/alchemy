@@ -172,10 +172,10 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   }
   for (frame = 0; frame != work->effect->targetCount * 16 + 64; frame++) {
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Actor *object;
+      struct Actor *actor;
       u32 memberFrame;
 
-      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       Projection_ScaledUnit(work->effect->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
@@ -186,10 +186,10 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
          * differ in tbs-en. */
         register s32 *rec asm("r0");
 
-        // The object's projection is computed, but nothing reads it.
+        // The actor's projection is computed, but nothing reads it.
         ANIM_VIEW_FROM_CAMERA(camera);
         rec = point;
-        SET_VECTOR(rec, object->x.fixed, object->y.fixed, object->z.fixed);
+        SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(rec, &center);
         /* FAKEMATCH(one-pass): the store in a one-pass block, before the spark
          * loop's i = 0; as a plain store, 1 of 265 instructions differ in
@@ -289,7 +289,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
     ANIM_FOR_EACH_TARGET(member, work->effect) {
       struct Actor *effect;
 
-      effect = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+      effect = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       ANIM_VIEW_FROM_CAMERA(camera);
       // Centred 20 pixels above the target's feet.
       SET_VECTOR(point, effect->x.fixed, 160 << 13, effect->z.fixed);

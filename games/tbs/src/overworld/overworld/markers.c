@@ -111,7 +111,7 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->priorityFlags = 1;
           markerActor->collisionFlags = 1;
           marker->id = trigger->subject;
-          marker->object = markerActor;
+          marker->actor = markerActor;
           // Plain words: through .fixed, the union moves the store above.
           marker->column = *(s32 *)&markerActor->x / 0x100000;
           marker->row = *(s32 *)&markerActor->z / 0x100000;
@@ -138,7 +138,7 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->collisionFlags = 1;
           markerActor->priorityFlags = 1;
-          marker->object = markerActor;
+          marker->actor = markerActor;
           marker->id = trigger->subject;
           // Plain words: through .fixed, the union moves the store above.
           marker->column = *(s32 *)&markerActor->x / 0x100000;
@@ -186,14 +186,14 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Actor *object;
+  struct Actor *actor;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
-    object = marker->object;
-    if (object != NULL)
-      Actor_SelectAnimationFar(object, animation);
+    actor = marker->actor;
+    if (actor != NULL)
+      Actor_SelectAnimationFar(actor, animation);
     Sound_PlaySongFar(sound);
     WaitFrames(12);
   }
@@ -212,19 +212,19 @@ void TreasureSpot_CloseChest(s32 id) {
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Actor *object;
+  struct Actor *actor;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
-    object = marker->object;
+    actor = marker->actor;
     WaitFrames(18);
-    if (object != NULL)
-      Actor_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
+    if (actor != NULL)
+      Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlaySongFar(SE_ENEMY_CRY);
-    if (object != NULL) {
-      object->velocityY = 8 << 16;
-      Actor_SetSpriteFlagsFar(object, 1);
+    if (actor != NULL) {
+      actor->velocityY = 8 << 16;
+      Actor_SetSpriteFlagsFar(actor, 1);
     }
   }
 }
@@ -241,14 +241,14 @@ void TreasureSpot_OpenChest(s32 id) {
 void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Actor *object;
+  struct Actor *actor;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
-    object = marker->object;
-    if (object != NULL)
-      Actor_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
+    actor = marker->actor;
+    if (actor != NULL)
+      Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_OPEN);
   }
 }
 
@@ -262,7 +262,7 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
   if (slotIndex == -1)
     return NULL;
   marker = &gFieldWork->treasureSpots[slotIndex];
-  return marker->object;
+  return marker->actor;
 }
 
 /// Hides the object of treasure spot id by clearing its animationKind:
@@ -271,14 +271,14 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
-  struct Actor *object;
+  struct Actor *actor;
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
-    object = marker->object;
-    if (object != NULL)
-      object->spriteStorageKind = ACTOR_SPRITE_NONE;
+    actor = marker->actor;
+    if (actor != NULL)
+      actor->spriteStorageKind = ACTOR_SPRITE_NONE;
   }
 }
 
@@ -290,24 +290,24 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 objectX;
   s32 objectZ;
   struct TreasureSpot *marker;
-  struct Actor *object;
+  struct Actor *actor;
 
   objectZ = z;
   objectX = x;
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
-    object = marker->object;
-    if (object != NULL) {
+    actor = marker->actor;
+    if (actor != NULL) {
       if (objectX == -1)
         objectX = (marker->column << 20) + 0x80000;
       if (objectZ == -1)
         objectZ = (marker->row << 20) + 0x80000;
-      object->x.fixed = objectX;
-      object->z.fixed = objectZ;
+      actor->x.fixed = objectX;
+      actor->z.fixed = objectZ;
       groundHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
-      object->groundHeight = groundHeight;
-      object->y.fixed = groundHeight;
+      actor->groundHeight = groundHeight;
+      actor->y.fixed = groundHeight;
     }
   }
 }

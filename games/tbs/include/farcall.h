@@ -32,7 +32,7 @@ struct Unit;
 struct Actor;
 struct EffectLaunch;
 struct ScreenPoint;
-struct FieldEffectSprite;
+struct FieldParticle;
 struct Vector3;
 struct EnemyDefinition;
 struct Actor;

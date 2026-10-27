@@ -18,7 +18,7 @@ s32 Actor_ClearChildAndCollisionFlags(void *obj) {
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
 /// runs it again every frame until the actor's script is replaced.
-s32 Actor_MoveTowardTarget(struct Actor *object) {
+s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
   s32 deltaX;
@@ -29,29 +29,29 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
   s32 newZ;
   s32 distance;
 
-  target = object->linkedActor;
+  target = actor->linkedActor;
   if (target != 0) {
     // Whole pixels, rounded toward zero as a division by 0x10000 would.
-    deltaX = target->x.fixed - object->x.fixed;
+    deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
       deltaX += 0xffff;
     pixelsX = deltaX >> 16;
-    deltaZ = target->z.fixed - object->z.fixed;
+    deltaZ = target->z.fixed - actor->z.fixed;
     if (deltaZ < 0)
       deltaZ += 0xffff;
     pixelsZ = deltaZ >> 16;
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
-    step = object->timer;
+    step = actor->timer;
     if (distance >= step) {
       // << 20 is 16 pixels in 16.16 per pixel of distance. Offsets can be
       // negative: shift their word representation before reading it as a
       // signed displacement, rather than shifting a negative.
-      newX = object->x.fixed + (s32)((u32)pixelsX << 20) / step;
-      newZ = object->z.fixed + (s32)((u32)pixelsZ << 20) / step;
-      Actor_SetMoveTargetFar(object, newX, object->y.fixed, newZ);
-      Actor_SelectAnimationFar(object, 2);
+      newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
+      newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
+      Actor_SelectAnimationFar(actor, 2);
     } else {
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(actor, 1);
     }
   }
   return 1;
@@ -60,26 +60,26 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
 /// the actor's script is replaced.
-s32 Actor_TurnTowardLinkedActor(struct Actor *object) {
+s32 Actor_TurnTowardLinkedActor(struct Actor *actor) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
   struct Actor *target;
 
-  target = object->linkedActor;
+  target = actor->linkedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
-    object->steeringFlags &= 0xfe;
-    targetAngle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
-                               target->x.fixed - object->x.fixed);
-    currentAngle = object->facing;
+    actor->steeringFlags &= 0xfe;
+    targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+                               target->x.fixed - actor->x.fixed);
+    currentAngle = actor->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
       if (turnStep > 0x1000)
         turnStep = 0x1000;
       if (turnStep < -0x1000)
         turnStep = -0x1000;
-      object->facing = (currentAngle + turnStep);
+      actor->facing = (currentAngle + turnStep);
     }
   }
   return 1;
@@ -91,7 +91,7 @@ s32 Actor_TurnTowardLinkedActor(struct Actor *object) {
 /// (overworld/actors.c), from Scene_TalkToActor after a talk
 /// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.
-void Actor_SetMovementType(struct Actor *object, s32 action) {
+void Actor_SetMovementType(struct Actor *actor, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
     action = (s32)gMovementType_StandScript;
@@ -109,7 +109,7 @@ void Actor_SetMovementType(struct Actor *object, s32 action) {
     action = (s32)gMovementType_FollowLinkedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    object->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
+    actor->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
@@ -118,7 +118,7 @@ void Actor_SetMovementType(struct Actor *object, s32 action) {
   default:
     break;
   }
-  Actor_StartScriptFar(object, (const s32 *)action);
+  Actor_StartScriptFar(actor, (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of

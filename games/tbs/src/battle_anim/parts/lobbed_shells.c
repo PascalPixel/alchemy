@@ -155,11 +155,11 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   // flight to the target and an upward throw of 4 pixels a frame; only the
   // first of each target's 16 is drawn.
   ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
   height = 0x40000;
   ANIM_FOR_EACH_TARGET(k, work->effect) {
     struct Actor *target =
-        GetBattleObjectSlotFar(work->effect->targets[k])->object;
+        GetBattleObjectSlotFar(work->effect->targets[k])->actor;
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];

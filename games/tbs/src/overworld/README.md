@@ -230,7 +230,7 @@ event's work serves the Djinn joining as well as Psynergy.
   the field effect playing: the ability, its field kind (`fieldPsynergy`), its
   caster and target, and 24 field effect sprites. It is
   `HEAP_SLOT_FIELD_EFFECT`, reached as `gFieldEffectWork`. Local name `event`.
-- **field effect sprite**: `struct FieldEffectSprite`, one particle an effect
+- **field effect sprite**: `struct FieldParticle`, one particle an effect
   moves and draws.
 - **treasure spot**: a chest or Psynergy Stone the map places at one of
   its cells; the field work holds up to ten, apart from the actors.

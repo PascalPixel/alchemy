@@ -168,8 +168,8 @@ static void ShipGlow_CyclePalette(void) {
 /// A drop of spray rises and wobbles for its timer, then falls back by
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
-static void LemurianShip_SprayUpdate(union ActorOrEffect *fieldObject) {
-  struct Actor *drop = (struct Actor *)fieldObject;
+static void LemurianShip_SprayUpdate(struct Actor *actor) {
+  struct Actor *drop = (struct Actor *)actor;
 
   if (drop->timer != 0) {
     s32 drift;

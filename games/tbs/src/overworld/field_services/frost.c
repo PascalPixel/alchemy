@@ -6,8 +6,8 @@
 
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
-void FieldEffect_UpdateOrbitingParticleMain(union ActorOrEffect *fieldObject) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+void FieldEffect_UpdateOrbitingParticleMain(struct Actor *actor) {
+  struct Actor *particle = (struct Actor *)actor;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
     Anim_ApplyChildValuesFar(particle, SPRITE_COLOR_RBG);
@@ -17,8 +17,8 @@ void FieldEffect_UpdateOrbitingParticleMain(union ActorOrEffect *fieldObject) {
 }
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void FieldEffect_UpdateOrbitingParticleFade(union ActorOrEffect *fieldObject) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {
+  struct Actor *particle = (struct Actor *)actor;
   s32 scale;
 
   if (particle != NULL) {
@@ -34,10 +34,9 @@ void FieldEffect_UpdateOrbitingParticleFade(union ActorOrEffect *fieldObject) {
 /// starts at 60 (FieldEffect_RunFrost). The particle circles its target point
 /// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
 /// each frame left, so it closes in from 118 pixels.
-static inline void
-FieldEffect_UpdateSpiralParticle(union ActorOrEffect *fieldObject,
-                                 s32 clockwise) {
-  struct Actor *particle = (struct Actor *)fieldObject;
+static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
+                                                    s32 clockwise) {
+  struct Actor *particle = (struct Actor *)actor;
   struct Vector3 position;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -66,13 +65,13 @@ FieldEffect_UpdateSpiralParticle(union ActorOrEffect *fieldObject,
 }
 
 /// Spirals anticlockwise at twice the frames left in pixels, then fades.
-void FieldEffect_UpdateOrbitingParticleLeft(union ActorOrEffect *fieldObject) {
-  FieldEffect_UpdateSpiralParticle(fieldObject, 0);
+void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *actor) {
+  FieldEffect_UpdateSpiralParticle(actor, 0);
 }
 
 /// Per-frame update: as FieldEffect_UpdateOrbitingParticleLeft, clockwise.
-void FieldEffect_UpdateOrbitingParticleRight(union ActorOrEffect *fieldObject) {
-  FieldEffect_UpdateSpiralParticle(fieldObject, 1);
+void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor) {
+  FieldEffect_UpdateSpiralParticle(actor, 1);
 }
 
 /// Runs Frost cast on a target.

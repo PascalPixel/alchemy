@@ -16,7 +16,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
@@ -63,14 +63,13 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 field effect sprites.
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
   remaining = 23;
   do {
-    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
-                                 position.z);
-    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialSpread);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = 0x8000;
     effect->scaleY = Random16() + 0x18000;
     remaining--;
@@ -87,14 +86,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
     nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, sprites) +
-                 offsetof(struct FieldEffectSprite, state);
+    slotState += offsetof(struct FieldEffectWork, particles) +
+                 offsetof(struct FieldParticle, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct FieldEffectSprite);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 
@@ -161,7 +160,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// then falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture
 /// sets MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
 /// MercuryDropletState).
-void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct Vector3 position;
   s8 *statePointer;
@@ -191,7 +190,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
     (*statePointer)++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
              MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);
@@ -219,6 +218,6 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
-void FieldEffect_HalveDistanceToTarget(union ActorOrEffect *fieldObject) {
-  FieldEffect_MoveAfterimageHalfway(fieldObject);
+void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
+  FieldEffect_MoveAfterimageHalfway(actor);
 }

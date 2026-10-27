@@ -6,8 +6,8 @@
 
 /// An effect's update hook: move by its velocity, which loses an eighteenth of
 /// its x and a sixteenth of its z each frame, and grow and spin at its rates.
-static void FieldEffect_AdvanceMotion(union ActorOrEffect *fieldObject) {
-  struct FieldEffect *effect = &fieldObject->effect;
+static void FieldEffect_AdvanceMotion(struct Actor *actor) {
+  struct FieldEffect *effect = ((struct FieldEffect *)actor);
 
   effect->x += effect->velocity.x;
   effect->y += effect->velocity.y;

@@ -2137,9 +2137,8 @@ static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
 
 /// Occasionally scatters an effect around the prize being raised at the
 /// arena.
-static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
-    union ActorOrEffect *fieldObject) {
-  struct Actor *source = (struct Actor *)fieldObject;
+static void ColosseumNavampaMatch_SpawnRandomFinishEffect(struct Actor *actor) {
+  struct Actor *source = (struct Actor *)actor;
 
   s32 position[3];
   u32 randomValue;

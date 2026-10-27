@@ -156,7 +156,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   // centre of the field at random speeds, mostly rising; variant is a
   // spark's life in moves, 16 to 79, so the later sparks are larger and last
   // longer. Only the first 32 fly (see the frame loop).
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->effect->targets[0]) / 2;
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &work->particles[i];
@@ -301,7 +301,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   s32 strength;
   BlitterPair draw;
   DrawRectangle *slots;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *target;
   u16 *background;
   void *colors = (void *)BG_PLTT;
@@ -375,7 +375,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   // velocities, acceleration and vertical strength are saved, zeroed and
   // restored after.
   if (big == 1) {
-    object = GetBattleObjectSlotFar(work->effect->user)->object;
+    actor = GetBattleObjectSlotFar(work->effect->user)->actor;
     for (i = 0; i != 64; i++) {
       struct Particle *mote = &work->particles[i];
 
@@ -383,15 +383,15 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    Actor_SetAnimationSpeedFar(object, 0);
-    velocityX = object->velocityX;
-    velocityY = object->velocityY;
-    velocityZ = object->velocityZ;
-    strength = object->gravity;
-    acceleration = object->acceleration;
-    SET_VELOCITY(object, 0, 0, 0);
-    object->acceleration = 0;
-    object->gravity = 0;
+    Actor_SetAnimationSpeedFar(actor, 0);
+    velocityX = actor->velocityX;
+    velocityY = actor->velocityY;
+    velocityZ = actor->velocityZ;
+    strength = actor->gravity;
+    acceleration = actor->acceleration;
+    SET_VELOCITY(actor, 0, 0, 0);
+    actor->acceleration = 0;
+    actor->gravity = 0;
     Projection_ScaledUnit(work->effect->user, &screenPosition);
     // BG1 scrolls so the user stands at canvas x 64, where the motes are
     // centred.
@@ -429,10 +429,10 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       ANIM_PRESENT_FRAME(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, 16);
-    SET_VELOCITY(object, velocityX, velocityY, velocityZ);
-    object->acceleration = acceleration;
-    object->gravity = strength;
+    Actor_SetAnimationSpeedFar(actor, 16);
+    SET_VELOCITY(actor, velocityX, velocityY, velocityZ);
+    actor->acceleration = acceleration;
+    actor->gravity = strength;
   }
 
   // The strike: clear the canvas, scroll BG1 so the first target is on
@@ -456,7 +456,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   anchor.x += scrollX;
   gBgScroll[1].y = 80;
   gBgScroll[1].x = scrollX;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->effect->targets[0]) / 2;
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &work->particles[i];

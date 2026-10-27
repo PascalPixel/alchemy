@@ -16,7 +16,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
-  v->update = (void (*)(union ActorOrEffect *))MercuryLighthouse_TrailSparks;
+  v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
 #endif
   v->speedLimit = PIXELS(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);

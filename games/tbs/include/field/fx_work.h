@@ -9,7 +9,7 @@
 #include "field_effect_sprite.h"
 
 struct Sprite;
-union ActorOrEffect;
+struct Actor;
 
 /// The work of a Psynergy effect: its caster and target, where it takes
 /// place, the map state it restores and its 24 field effect sprites.
@@ -18,16 +18,16 @@ union ActorOrEffect;
 /// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
 /// effects and Altmiller Cave's map. The effect's end releases it.
 struct FieldEffectWork {
-  s32 angle;          ///< 1/65536 turns
-  s32 x;              ///< 16.16 fixed-point pixels
-  s32 y;              ///< 16.16 fixed-point pixels
-  s32 z;              ///< 16.16 fixed-point pixels
-  void *mainObject;   ///< the caster's object
-  void *child;        ///< the target's object, or NULL
-  s16 firstObjectId;  ///< the caster's object id
-  s16 secondObjectId; ///< the target's object id, -1 for none
-  u16 action;         ///< the ability id
-  s16 fieldPsynergy;  ///< the ability's field kind (FIELD_PSYNERGY_)
+  s32 angle;         ///< 1/65536 turns
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  void *mainActor;   ///< the caster's object
+  void *child;       ///< the target's object, or NULL
+  s16 firstActorId;  ///< the caster's object id
+  s16 secondActorId; ///< the target's object id, -1 for none
+  u16 action;        ///< the ability id
+  s16 fieldPsynergy; ///< the ability's field kind (FIELD_PSYNERGY_)
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
@@ -44,7 +44,7 @@ struct FieldEffectWork {
   /// The target's update hook and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{
-  void (*savedCallback)(union ActorOrEffect *fieldObject);
+  void (*savedCallback)(struct Actor *actor);
   const s32 *savedScript;
   ///@}
   u8 unusedAfterSavedScript[4]; ///< no code names it
@@ -59,7 +59,7 @@ struct FieldEffectWork {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct FieldEffectSprite sprites[24];
+  struct FieldParticle particles[24];
   u8 unusedAfterSlots[2]; ///< no code names it
   s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
   s8 messageMode;         ///< the announcement's box mode: 1, a script adds 8
@@ -67,12 +67,12 @@ struct FieldEffectWork {
 };
 
 STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x720);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, mainObject) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 0x10);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 0x46);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, sprites) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 0x58);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
 

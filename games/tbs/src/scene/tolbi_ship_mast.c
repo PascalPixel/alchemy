@@ -212,8 +212,8 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *interpreter) {
 
 /// Grows both axes by the same amount until the actor reaches full
 /// scale.
-static void TolbiShipMast_GrowActorScale(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void TolbiShipMast_GrowActorScale(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if (actor->scaleX < Q16_ONE) {
     actor->scaleX += 160;
     actor->scaleY += 160;
@@ -467,7 +467,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   s32 x;
   s32 zero = 0;
   s32 scale;
-  void (*update)(union ActorOrEffect *);
+  void (*update)(struct Actor *);
 
   FieldScript_Start();
   Event_CallWithLastActiveActorId(gTolbiShipMast_FirstAttackActorTemplates);

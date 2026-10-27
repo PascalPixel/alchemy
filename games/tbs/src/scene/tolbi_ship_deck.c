@@ -765,8 +765,8 @@ static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *interpreter) {
 
 /// The update that shrinks an enlarged actor by 1/32 a frame until it is
 /// back to normal size.
-static void TolbiShipDeck_ShrinkToNormalSize(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if (actor->scaleX > Q16_ONE) {
     actor->scaleX -= Q16_ONE / 32;
     actor->scaleY -= Q16_ONE / 32;

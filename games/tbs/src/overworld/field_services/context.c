@@ -11,8 +11,8 @@
 /// messages.c to place a speaker's bubble, and through
 /// Actor_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
-s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Actor *object = Actor_Lookup(objectId);
+s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
+  struct Actor *actor = Actor_Lookup(actorId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -23,7 +23,7 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   s32 x;
   s32 z;
 
-  if (object == 0)
+  if (actor == 0)
     return -1;
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
@@ -38,13 +38,13 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
 #endif
-  x = object->x.fixed - cameraX;
-  z = object->z.fixed - cameraZ - object->y.fixed;
+  x = actor->x.fixed - cameraX;
+  z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / 0x10000;
   *position = z / 0x10000;
-  if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
+  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
     *position -= (s8)Resource_GetMetadataRecordFar(
-                     object->sprite->entries[0]->animationId)
+                     actor->sprite->entries[0]->animationId)
                      ->boxX;
   return 0;
 }
@@ -107,12 +107,12 @@ s32 Field_StartEncounterTransition(s32 unused) {
 void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  object = Actor_Lookup(gSaveBlock.leaderActorId);
-  context = object->sprite;
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
+  context = actor->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
@@ -123,13 +123,13 @@ void Exit_PrepareAnimation(s32 animation) {
   // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&object->x = (*(s32 *)&object->x & 0xFFF00000) + 0x80000;
-  *(s32 *)&object->z = (*(s32 *)&object->z & 0xFFF00000) + 0x100000;
-  object->velocityX = zero;
-  object->velocityZ = zero;
-  object->targetX = ACTOR_NO_TARGET;
-  object->targetZ = ACTOR_NO_TARGET;
-  Actor_SelectAnimationFar(object, animation);
+  *(s32 *)&actor->x = (*(s32 *)&actor->x & 0xFFF00000) + 0x80000;
+  *(s32 *)&actor->z = (*(s32 *)&actor->z & 0xFFF00000) + 0x100000;
+  actor->velocityX = zero;
+  actor->velocityZ = zero;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
+  Actor_SelectAnimationFar(actor, animation);
   WaitFrames(18);
 }
 

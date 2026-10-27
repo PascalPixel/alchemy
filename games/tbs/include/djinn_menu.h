@@ -75,7 +75,7 @@ struct DjinnMenuWork {
   /// here.
   u8 cursorGrid[4];
   /// ItemMenuWork's party figures; not named here.
-  struct Sprite *memberObjects[8];
+  struct Sprite *memberSprites[8];
   s16 memberX[8];     ///< screen pixels
   s16 memberY[8];     ///< screen pixels
   s32 memberScale[8]; ///< ItemMenuWork's; not named here

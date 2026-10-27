@@ -47,8 +47,8 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
-  actor = GetBattleObjectSlotFar(work->effect->user)->object;
-  goal = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  actor = GetBattleObjectSlotFar(work->effect->user)->actor;
+  goal = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
   // pixels a frame.
   for (i = 0; i != 64; i++) {
@@ -168,7 +168,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
     ANIM_FOR_EACH_TARGET(member, work->effect) {
       struct Actor *object =
-          GetBattleObjectSlotFar(work->effect->targets[member])->object;
+          GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       s32 start = member * 8;
       ANIM_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);

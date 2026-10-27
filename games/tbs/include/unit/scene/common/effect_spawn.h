@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-union ActorOrEffect;
+struct Actor;
 
-void FieldEffect_UpdateMotionScaleAndSpin(union ActorOrEffect *fieldObject);
+void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor);
 
 #endif

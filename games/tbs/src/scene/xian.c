@@ -273,11 +273,11 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 154 to 150 bytes in tbs-en.
 #ifdef UBFIX
-static void Xian_WatchWaterCarrierPath(union ActorOrEffect *fieldObject) {
+static void Xian_WatchWaterCarrierPath(struct Actor *updated) {
 #else
-static s32 Xian_WatchWaterCarrierPath(union ActorOrEffect *fieldObject) {
+static s32 Xian_WatchWaterCarrierPath(struct Actor *updated) {
 #endif
-  struct Actor *self = (struct Actor *)fieldObject;
+  struct Actor *self = (struct Actor *)updated;
   struct Actor *leader;
   s32 near = 0;
 

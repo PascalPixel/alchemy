@@ -198,7 +198,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   // velocity.
   // DEAD: runs once, for the first target only; the ROM keeps the loop.
   for (k = 0; k != 1; k++) {
-    target = GetBattleObjectSlotFar(work->effect->targets[k])->object;
+    target = GetBattleObjectSlotFar(work->effect->targets[k])->actor;
     // Smoke works on the canvas: x under the target, line 80, drifting up
     // to 1 pixel a frame each way.
     for (i = 0; i != 64; i++) {
@@ -474,7 +474,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
     draw[1] = *lower;
     // DEAD: runs once, for the user only; the ROM keeps the loop.
     for (k = 0; k != 1; k++) {
-      source = GetBattleObjectSlotFar(work->effect->user)->object;
+      source = GetBattleObjectSlotFar(work->effect->user)->actor;
       // Smoke puffs rise and spread through six images over 24 frames,
       // pulled up by 1/64 pixel a frame each frame and slowed to 62/64.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {

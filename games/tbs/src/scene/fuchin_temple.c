@@ -246,11 +246,11 @@ FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
 // UB: update hooks return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
-static void FuchinTemple_FaceLeader(union ActorOrEffect *fieldObject) {
+static void FuchinTemple_FaceLeader(struct Actor *updated) {
 #else
-static s32 FuchinTemple_FaceLeader(union ActorOrEffect *fieldObject) {
+static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,
                           player->x.fixed - actor->x.fixed);
@@ -2486,12 +2486,11 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
 /// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
 /// and blue in turn every two frames.
-static void
-FuchinTemple_AlternateLessonChildEffect(union ActorOrEffect *fieldObject) {
+static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    Actor_SetSpriteColor((struct Actor *)fieldObject, SPRITE_COLOR_RED_TINT);
+    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_RED_TINT);
   } else {
-    Actor_SetSpriteColor((struct Actor *)fieldObject, SPRITE_COLOR_BLUE_TINT);
+    Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_BLUE_TINT);
   }
 }
 

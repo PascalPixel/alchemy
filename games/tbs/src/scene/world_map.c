@@ -488,8 +488,8 @@ static void EventScript_MeetHail(void) {
 
 /// The update hook of a sparkle around the Black Orb: it frees the sparkle on
 /// its second frame.
-static void WorldMap_ReleaseSparkAfterDelay(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if (actor->timer <= 0) {
     actor->timer++;
   } else {
@@ -499,8 +499,8 @@ static void WorldMap_ReleaseSparkAfterDelay(union ActorOrEffect *fieldObject) {
 
 /// The update hook of the Black Orb held up over the wreck: it swells and
 /// shrinks every four frames and gives off a sparkle every other frame.
-static void WorldMap_PulseOrbAndSpawnSparks(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *spark;
   s32 x;
   s32 y;
@@ -534,8 +534,8 @@ static void WorldMap_PulseOrbAndSpawnSparks(union ActorOrEffect *fieldObject) {
 /// flickers white and red and circles 16 pixels around his spot, bobbing 4
 /// pixels up and down, facing the way he goes. EventScript_MeetFlint stops him
 /// by setting his work to 1.
-static void WorldMap_CircleFlint(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void WorldMap_CircleFlint(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   s16 *angle;
 
   if (gFrameCount & 2)

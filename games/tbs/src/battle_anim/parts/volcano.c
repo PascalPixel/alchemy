@@ -46,7 +46,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   u8 *sheet;
   struct ScreenPoint screen;
   BlitterPair draw;
-  struct Actor *object;
+  struct Actor *actor;
   struct BattleCamera *camera;
   s32 i;
 
@@ -77,7 +77,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     PARTICLES[i].variant = 0;
 
   // The pillars stand 72 to 87 pixels out on the first target's side.
-  object = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  actor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   for (i = 0; i != 4; i++) {
     struct Particle *base = &work->particles[i];
     s32 x;
@@ -86,7 +86,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     base->y = 0;
     base->x = x;
     base->z = gVolcano_Depths[work->effect->variant][i] << 16;
-    if (object->x.fixed < 0)
+    if (actor->x.fixed < 0)
       base->x = -x;
   }
 

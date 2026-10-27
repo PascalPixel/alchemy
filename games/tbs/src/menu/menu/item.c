@@ -1325,10 +1325,10 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (Item_CanUnitEquip(menu->memberIds[memberIndex],
                             menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
           0) {
-        struct Sprite *partyFigure = menu->memberObjects[memberIndex];
+        struct Sprite *partyFigure = menu->memberSprites[memberIndex];
         Sprite_StartAnimFar(partyFigure, 3);
       } else {
-        struct Sprite *partyFigure = menu->memberObjects[memberIndex];
+        struct Sprite *partyFigure = menu->memberSprites[memberIndex];
         Sprite_StartAnimFar(partyFigure, 1);
       }
       memberIndex++;
@@ -1347,7 +1347,7 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
   if (menu->partyCount != 0) {
     memberIndex = 0;
     do {
-      struct Sprite *partyFigure = menu->memberObjects[memberIndex];
+      struct Sprite *partyFigure = menu->memberSprites[memberIndex];
       Sprite_StartAnimFar(partyFigure, 1);
       memberIndex++;
     } while (memberIndex < menu->partyCount);
@@ -2916,7 +2916,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++) {
-          Sprite_StartAnimFar(menu->memberObjects[i], 1);
+          Sprite_StartAnimFar(menu->memberSprites[i], 1);
         }
       }
 
@@ -2926,7 +2926,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           if (Item_CanUnitEquip(menu->memberIds[i],
                                 INVENTORY_ITEM_ID_MASK &
                                     menu->items[state.selectedIndex]) != 0) {
-            Sprite_StartAnimFar(menu->memberObjects[i], 3);
+            Sprite_StartAnimFar(menu->memberSprites[i], 3);
           }
         }
       }

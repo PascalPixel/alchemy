@@ -15,7 +15,7 @@ struct BattleAnimArgs;
 struct BattleTurn;
 struct Unit;
 struct Actor;
-struct FieldEffectSprite;
+struct FieldParticle;
 struct AreaNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
@@ -46,7 +46,7 @@ struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
 struct TriggerView;
-struct FieldEffectSprite;
+struct FieldParticle;
 struct EnemyDefinition;
 struct Actor;
 struct BattleAnimObject;

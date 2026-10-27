@@ -207,10 +207,10 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his actor template.
 static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
-  union ActorOrEffect *fieldObject = (union ActorOrEffect *)interpreter;
-  fieldObject->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  fieldObject->actor.sprite->image.priority = 3;
-  fieldObject->actor.sprite->shadow.priority = 3;
+  struct Actor *actor = (struct Actor *)interpreter;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->sprite->image.priority = 3;
+  actor->sprite->shadow.priority = 3;
   return 0;
 }
 
@@ -219,11 +219,11 @@ static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
 // UB: update hooks return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void AlpineCrossing_LeaderFaceFeizhi(union ActorOrEffect *fieldObject) {
+static void AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
 #else
-static s32 AlpineCrossing_LeaderFaceFeizhi(union ActorOrEffect *fieldObject) {
+static s32 AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
 #endif
-  struct Actor *leader = (struct Actor *)fieldObject;
+  struct Actor *leader = (struct Actor *)updated;
   struct Actor *feizhi;
 
   feizhi = Actor_GetById(ACTOR_FEIZHI);
@@ -574,8 +574,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
 #ifdef UBFIX
     leader->update = AlpineCrossing_LeaderFaceFeizhi;
 #else
-    leader->update =
-        (void (*)(union ActorOrEffect *))AlpineCrossing_LeaderFaceFeizhi;
+    leader->update = (void (*)(struct Actor *))AlpineCrossing_LeaderFaceFeizhi;
 #endif
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     if ((leader->z.fixed >> 20) == 13) {
@@ -840,11 +839,11 @@ static void AlpineCrossing_HidePath(void) {
 // UB: this update hook has no result. Plain void changes the native return
 // sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
-static void Pillar_SortAgainstLeader(union ActorOrEffect *fieldObject) {
+static void Pillar_SortAgainstLeader(struct Actor *updated) {
 #else
-static s32 Pillar_SortAgainstLeader(union ActorOrEffect *fieldObject) {
+static s32 Pillar_SortAgainstLeader(struct Actor *updated) {
 #endif
-  struct Actor *pillar = (struct Actor *)fieldObject;
+  struct Actor *pillar = (struct Actor *)updated;
   if (Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
@@ -880,7 +879,7 @@ static void AlpineCrossing_FreezePuddle(void) {
   Actor_GetById(ACTOR_WATER_FOR_FROST)->update = Pillar_SortAgainstLeader;
 #else
   Actor_GetById(ACTOR_WATER_FOR_FROST)->update =
-      (void (*)(union ActorOrEffect *))Pillar_SortAgainstLeader;
+      (void (*)(struct Actor *))Pillar_SortAgainstLeader;
 #endif
 
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 56, 18);

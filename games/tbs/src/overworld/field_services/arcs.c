@@ -8,10 +8,10 @@
 /// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
-void FieldEffect_UpdateScaledArcActorA(union ActorOrEffect *fieldObject) {
+void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
-  struct Actor *arc = (struct Actor *)fieldObject;
+  struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
   s32 frame;
   s32 scale;
@@ -32,8 +32,8 @@ void FieldEffect_UpdateScaledArcActorA(union ActorOrEffect *fieldObject) {
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 /// object and up to 5 pixels nearer while small.
-void FieldEffect_UpdateScaledArcActorB(union ActorOrEffect *fieldObject) {
-  struct Actor *arc = (struct Actor *)fieldObject;
+void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
+  struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
   s32 frame;
   s32 scale;
@@ -92,7 +92,7 @@ struct SpriteArcOamView {
 /// frames).
 void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *source = effectWork->mainObject;
+  struct Actor *source = effectWork->mainActor;
   struct Actor *arcs[2];
   struct Actor *arc;
   struct SpriteArcOamView *sprite;
@@ -137,8 +137,8 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
-void FieldEffect_FlickerActorAndTick(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 2) != 0) {
     Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_WHITE);
   } else {
@@ -153,8 +153,8 @@ void FieldEffect_FlickerActorAndTick(union ActorOrEffect *fieldObject) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldEffect_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
-void FieldEffect_CycleActorValueByCounter(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+void FieldEffect_CycleActorValueByCounter(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 

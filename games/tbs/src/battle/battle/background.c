@@ -426,12 +426,12 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 /// animations (beams.c).
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
-  struct Actor *firstObject = BattleObject_Get(firstUnitId)->object;
-  struct Actor *secondObject = BattleObject_Get(secondUnitId)->object;
-  s32 firstX = firstObject->x.fixed;
-  s32 secondX = secondObject->x.fixed;
-  s32 firstZ = firstObject->z.fixed;
-  s32 secondZ = secondObject->z.fixed;
+  struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;
+  struct Actor *secondActor = BattleObject_Get(secondUnitId)->actor;
+  s32 firstX = firstActor->x.fixed;
+  s32 secondX = secondActor->x.fixed;
+  s32 firstZ = firstActor->z.fixed;
+  s32 secondZ = secondActor->z.fixed;
   s32 x = (secondX + firstX) / 2;
   s32 z = (secondZ + firstZ) / 2;
 
@@ -531,32 +531,32 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
 }
 
 /// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's
-/// battle object, the picture and its shadow.
-/// Does nothing for a unit with no battle object or motion object. Called by
+/// battle actor, the picture and its shadow.
+/// Does nothing for a unit with no battle actor or motion actor. Called by
 /// BattleHighlight_SetModes and its helpers here, by the opening's
 /// storm (BattleTransition_Run), by the staging (staging.c)
 /// and by auto battle (auto_battle.c).
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *record;
   struct Sprite **records;
   s32 recordIndex;
 
   if (slot == 0)
     return;
-  object = slot->object;
-  if (object == 0)
+  actor = slot->actor;
+  if (actor == 0)
     return;
-  switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
   case ACTOR_SPRITE_ONE: {
-    record = object->sprite;
+    record = actor->sprite;
     record->image.objectMode = mode;
     record->shadow.objectMode = mode;
     break;
   }
   case ACTOR_SPRITE_GROUP: {
-    records = (struct Sprite **)object->sprite;
+    records = (struct Sprite **)actor->sprite;
     recordIndex = 0;
     do {
       record = *records++;

@@ -12,11 +12,11 @@
 // void differs in 21 bytes (extent 136 to 132 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void MercuryLighthouse_TrailSparks(union ActorOrEffect *fieldObject) {
+static void MercuryLighthouse_TrailSparks(struct Actor *updated) {
 #else
-static s32 MercuryLighthouse_TrailSparks(union ActorOrEffect *fieldObject) {
+static s32 MercuryLighthouse_TrailSparks(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 velocityY;
 

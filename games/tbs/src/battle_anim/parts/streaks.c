@@ -155,7 +155,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   // Halve the canvas each frame, so streaks leave a trail.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
   {
     // The length counts 6 frames for every streak although targets are 32
     // frames apart: with four targets the fourth's hit (frame 120) would fall
@@ -169,7 +169,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
     // Every streak starts 20 pixels above the user and moves in a straight
     // line to 20 pixels above its target over 24 frames.
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      target = GetBattleObjectSlotFar(work->effect->targets[k])->object;
+      target = GetBattleObjectSlotFar(work->effect->targets[k])->actor;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct Particle *streak = &work->particles[k * streaks + streakIndex];
 
@@ -239,7 +239,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
             struct Actor *struck =
-                GetBattleObjectSlotFar(work->effect->targets[k])->object;
+                GetBattleObjectSlotFar(work->effect->targets[k])->actor;
 
             struck->x.fixed +=
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
@@ -364,7 +364,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode
   // halves the spread across the ground. In pixels a frame: up to 4 across,
   // up to 8 in depth, and -0.25 to 1.75 up.
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;
     s32 angle;

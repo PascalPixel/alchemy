@@ -40,7 +40,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   s32 portrait;
   s32 flags;
   s32 message;
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 y;
   s32 found;
@@ -69,15 +69,15 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   message = work->message;
   actorId &= 0xfff;
   x = 0;
-  object = Actor_Lookup(actorId);
+  actor = Actor_Lookup(actorId);
   work->speaker = actorId;
   y = 0;
   found = 0;
   if (work->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
-    if (object != 0) {
+    if (actor != 0) {
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&object->x.fixed, pos);
+        Transform_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -92,9 +92,9 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       }
     } else if (actorId <= 7) {
       sprite = actorId;
-      object = Actor_Lookup(gSaveBlock.leaderActorId);
+      actor = Actor_Lookup(gSaveBlock.leaderActorId);
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&object->x.fixed, pos);
+        Transform_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;

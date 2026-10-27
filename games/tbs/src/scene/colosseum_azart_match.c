@@ -1394,9 +1394,8 @@ static void ColosseumAzartMatch_WaitForStageReady(void) {
 }
 
 /// Occasionally spawns an animated effect around the finish item.
-static void
-ColosseumAzartMatch_SpawnRandomEffect(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void ColosseumAzartMatch_SpawnRandomEffect(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   s32 position[3];
   u32 chance;
 

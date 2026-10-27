@@ -270,7 +270,7 @@ void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   groupIndex = 0;
 
-  while ((group = GetMotionRecordFar(slot->object, groupIndex)) != NULL) {
+  while ((group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL) {
     // The timer's low byte, read through memory as the original does.
     if (timerSlot != -1) {
       work->actorTimers[timerSlot] = ((u8 *)&timerFrames)[0];

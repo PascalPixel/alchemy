@@ -421,8 +421,8 @@ static void EventScript_MovePillar(void) {
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
-static void GondowanCave_RotateLeapingActor(union ActorOrEffect *fieldObject) {
-  fieldObject->actor.sprite->rotation -= 0x400;
+static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
+  actor->sprite->rotation -= 0x400;
 }
 
 /// Waits at most forty frames for the actor to descend to the height

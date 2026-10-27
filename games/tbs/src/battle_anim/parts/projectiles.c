@@ -87,8 +87,8 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   }
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
-  user = GetBattleObjectSlotFar(work->effect->user)->object;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  user = GetBattleObjectSlotFar(work->effect->user)->actor;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // Sparks spread out flat from the centre, 20 to 51 pixels up, at 4 to 12
   // pixels a frame (speed / 32).
   for (i = 0; i != 64; i++) {
@@ -309,7 +309,7 @@ static inline void BattleAnim_RunVolleyWithAction(struct BattleAnimArgs *effect,
                                                   s32 mode) {
   struct Actor *user;
 
-  user = GetBattleObjectSlotFar(effect->user)->object;
+  user = GetBattleObjectSlotFar(effect->user)->actor;
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleAnim_RunProjectileVolley(effect, mode);
@@ -527,7 +527,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Where the shots start and how fast they fly.
-  user = GetBattleObjectSlotFar(work->effect->user)->object;
+  user = GetBattleObjectSlotFar(work->effect->user)->actor;
   shots = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS]);
   steps = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS]);
   {
@@ -554,7 +554,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[i])->object;
+          GetBattleObjectSlotFar(work->effect->targets[i])->actor;
       s32 targetHeight =
           BattleUnit_GetEffectHeightFar(work->effect->targets[i]);
 
@@ -680,7 +680,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
       index = 0;
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         struct Actor *target =
-            GetBattleObjectSlotFar(work->effect->targets[i])->object;
+            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
 
         for (j = 0; j != shots; j++, index++) {
           if (j * stagger + i * delay < frame) {
@@ -988,18 +988,18 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 /// selects POSE_STANDING.
 UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
-  struct Actor *object = slot->object;
+  struct Actor *actor = slot->actor;
 
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
-  object->velocityY = 0x40000;
-  object->gravity = 0xab85;
-  object->bounce = 0;
-  object->steeringFlags = 0;
-  object->snapToTarget = 1;
-  Actor_StartIdleFar(object);
-  Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
-  Actor_SelectAnimationFar(object, POSE_STANDING);
+  actor->acceleration = 0x20000;
+  actor->speedLimit = 0x80000;
+  actor->velocityY = 0x40000;
+  actor->gravity = 0xab85;
+  actor->bounce = 0;
+  actor->steeringFlags = 0;
+  actor->snapToTarget = 1;
+  Actor_StartIdleFar(actor);
+  Actor_SetMoveTargetFar(actor, slot->anchorX, 0, slot->anchorZ);
+  Actor_SelectAnimationFar(actor, POSE_STANDING);
 }
 
 /// Moves a battler 80% of the way to another one over a number of frames,
@@ -1012,14 +1012,14 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
-  struct Actor *object = slot->object;
-  struct Actor *target = targetSlot->object;
+  struct Actor *actor = slot->actor;
+  struct Actor *target = targetSlot->actor;
   s32 rate = 80;
-  s32 diffX = target->x.fixed - object->x.fixed;
-  s32 startX = object->x.fixed;
+  s32 diffX = target->x.fixed - actor->x.fixed;
+  s32 startX = actor->x.fixed;
   s32 dx = rate * diffX / 100;
-  s32 diffZ = target->z.fixed - object->z.fixed;
-  s32 startZ = object->z.fixed;
+  s32 diffZ = target->z.fixed - actor->z.fixed;
+  s32 startZ = actor->z.fixed;
   s32 dz = rate * diffZ / 100;
   s32 x = startX + dx;
   s32 z = startZ + dz;
@@ -1029,16 +1029,16 @@ void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
 
   speed = Iwram_Sqrt(stepX * stepX + stepZ * stepZ);
   speed = (speed << 8) / frames;
-  object->acceleration = speed;
-  object->speedLimit = speed;
-  object->snapToTarget = 1;
-  object->gravity = 0xab85;
-  object->velocityY = 0;
-  object->bounce = 0;
-  object->steeringFlags = 1;
-  Actor_StartIdleFar(object);
-  Actor_SetMoveTargetFar(object, x, 0, z);
-  Actor_SelectAnimationFar(object, POSE_LEAP);
+  actor->acceleration = speed;
+  actor->speedLimit = speed;
+  actor->snapToTarget = 1;
+  actor->gravity = 0xab85;
+  actor->velocityY = 0;
+  actor->bounce = 0;
+  actor->steeringFlags = 1;
+  Actor_StartIdleFar(actor);
+  Actor_SetMoveTargetFar(actor, x, 0, z);
+  Actor_SelectAnimationFar(actor, POSE_LEAP);
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST

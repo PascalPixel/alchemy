@@ -18,11 +18,11 @@
 // void differs in 13 bytes of the 152-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void Vault_UpdateWalkingVillager(union ActorOrEffect *fieldObject) {
+static void Vault_UpdateWalkingVillager(struct Actor *actor) {
 #else
-static s32 Vault_UpdateWalkingVillager(union ActorOrEffect *fieldObject) {
+static s32 Vault_UpdateWalkingVillager(struct Actor *actor) {
 #endif
-  struct Actor *self = (struct Actor *)fieldObject;
+  struct Actor *self = (struct Actor *)actor;
   u8 **globals = gWindowWork;
   u8 *windowWork = globals[0];
   u8 *workspace = globals[12];

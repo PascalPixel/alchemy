@@ -16,8 +16,8 @@ struct SpriteAnimHeadView;
 /// BattleWork.objects holds the 14, reached by unit id through
 /// BattleObject_Get; BattleObject_Make fills one in when the unit is placed.
 struct BattleObject {
-  struct Actor *object; ///< NULL once released
-  u16 resource;         ///< the unit's sprite
+  struct Actor *actor; ///< NULL once released
+  u16 resource;        ///< the unit's sprite
   u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
   u16 shadow;    ///< the shadow sprite under the unit (BATTLE_SHADOW_SPRITE)

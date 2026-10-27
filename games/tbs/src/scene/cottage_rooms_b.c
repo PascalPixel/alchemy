@@ -146,7 +146,7 @@ static void EventScript_DoraWakesIsaac(void);
 static void EventScript_HurryToThePlaza(void);
 static void CottageRoomsB_RestoreRoomPatch(void);
 static void EventScript_ShowMythrilBag(void);
-static void CottageRoomsB_SpawnEffectPair(union ActorOrEffect *fieldObject);
+static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
@@ -1209,36 +1209,33 @@ static void EventScript_ShowMythrilBag(void) {
 
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no actor is given it.
-UNUSED static void
-CottageRoomsB_FlashPaletteAndSpawnPair(union ActorOrEffect *fieldObject) {
+UNUSED static void CottageRoomsB_FlashPaletteAndSpawnPair(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetColorMode(&fieldObject->actor, 7);
+    Actor_SetColorMode(actor, 7);
   } else {
-    Actor_SetColorMode(&fieldObject->actor, 0);
+    Actor_SetColorMode(actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    CottageRoomsB_SpawnEffectPair(fieldObject);
+    CottageRoomsB_SpawnEffectPair(actor);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
-static void
-CottageRoomsB_CyclePaletteAndSpawnPair(union ActorOrEffect *fieldObject) {
+static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
-    Actor_SetColorMode(&fieldObject->actor, (gFrameCount >> 1) % 6);
+    Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    CottageRoomsB_SpawnEffectPair(fieldObject);
+    CottageRoomsB_SpawnEffectPair(actor);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
-static void
-CottageRoomsB_CyclePaletteOnOddFrames(union ActorOrEffect *fieldObject) {
+static void CottageRoomsB_CyclePaletteOnOddFrames(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
-    Actor_SetColorMode(&fieldObject->actor, slot);
+    Actor_SetColorMode(actor, slot);
   }
 }
 
@@ -1247,8 +1244,8 @@ CottageRoomsB_CyclePaletteOnOddFrames(union ActorOrEffect *fieldObject) {
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
-static void CottageRoomsB_SpawnEffectPair(union ActorOrEffect *fieldObject) {
-  struct Actor *parent = &fieldObject->actor;
+static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
+  struct Actor *parent = actor;
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *part;
@@ -1305,13 +1302,13 @@ static void CottageRoomsB_SpawnEffectPair(union ActorOrEffect *fieldObject) {
 /// Unused: cycles Dora's palette with particles; nothing calls it.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {
   CottageRoomsB_CyclePaletteAndSpawnPair(
-      (union ActorOrEffect *)Actor_GetById(ACTOR_DORA));
+      (struct Actor *)Actor_GetById(ACTOR_DORA));
 }
 
 /// Unused: cycles Dora's palette without particles; nothing calls it.
 UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
   CottageRoomsB_CyclePaletteOnOddFrames(
-      (union ActorOrEffect *)Actor_GetById(ACTOR_TUNIC));
+      (struct Actor *)Actor_GetById(ACTOR_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its objects are released.

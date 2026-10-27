@@ -163,13 +163,11 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 108 to 104 bytes in tbs-en.
 #ifdef UBFIX
-static void
-Vault_UpdateRoofComplainerProximity(union ActorOrEffect *fieldObject) {
+static void Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
 #else
-static s32
-Vault_UpdateRoofComplainerProximity(union ActorOrEffect *fieldObject) {
+static s32 Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
 #endif
-  struct Actor *entity = (struct Actor *)fieldObject;
+  struct Actor *entity = (struct Actor *)updated;
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
@@ -879,14 +877,14 @@ s32 Scene_Initialize(void) {
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   actor->timer = zero;
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update = (void (*)(union ActorOrEffect *))Vault_UpdateWalkingVillager;
+  actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
@@ -899,7 +897,7 @@ s32 Scene_Initialize(void) {
       actor->update = Vault_UpdateRoofComplainerProximity;
 #else
       actor->update =
-          (void (*)(union ActorOrEffect *))Vault_UpdateRoofComplainerProximity;
+          (void (*)(struct Actor *))Vault_UpdateRoofComplainerProximity;
 #endif
     }
   }
@@ -1002,8 +1000,8 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
 /// Applies drift and gradually damps both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
 /// mirrors the resulting position into the actor's target coordinates.
-static void Vault_UpdateDriftingEffect(union ActorOrEffect *fieldObject) {
-  struct Actor *effect = (struct Actor *)fieldObject;
+static void Vault_UpdateDriftingEffect(struct Actor *updated) {
+  struct Actor *effect = (struct Actor *)updated;
   s32 horizontalRate;
   s32 verticalRate;
 
@@ -1109,7 +1107,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   }
   // Install the custom motion and share the anchor's drawing priority.
   {
-    void (*update)(union ActorOrEffect *) = Vault_UpdateDriftingEffect;
+    void (*update)(struct Actor *) = Vault_UpdateDriftingEffect;
     u8 *spriteFlags;
 
     /* FAKEMATCH(one-pass): the block takes the flags address before the update

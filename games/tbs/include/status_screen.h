@@ -40,7 +40,7 @@ struct StatusScreenWork {
   u8 selectedRow;
   u8 columnCount;
   u8 rowCount;
-  struct Sprite *memberObjects[8];
+  struct Sprite *memberSprites[8];
   s16 memberX[8];     ///< screen pixels
   s16 memberY[8];     ///< screen pixels
   s32 memberScale[8]; ///< 16.16 fixed point, 0x10000 full size
@@ -57,7 +57,7 @@ struct StatusScreenWork {
   struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the member chooser, 0 for the Status menu
   s16 completionFlag; ///< ItemMenuWork's; not named here
-  struct Sprite *rowObjects[4];
+  struct Sprite *rowSprites[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels
 };
@@ -68,14 +68,14 @@ STATIC_ASSERT(offsetof(struct StatusScreenWork, statusWindow) == 0x24);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 0x48);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 0x10c);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberSprites) == 0x114);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 0x144);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 0x174);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 0x17c);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 0x208);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 0x21a);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 0x220);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowObjects) == 0x224);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 0x224);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 0x234);
 STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x244);
 

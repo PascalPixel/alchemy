@@ -37,7 +37,7 @@ void Actor_UpdateAll(void) {
   struct ActorArmView *object;
   s32 y;
   s32 arrived;
-  struct ActorArmView *nextObject;
+  struct ActorArmView *nextActor;
   s32 nextSlot;
   s32 slot;
   s32 x;
@@ -53,13 +53,13 @@ void Actor_UpdateAll(void) {
   u16 travelAngle;
 
   for (slot = 0, object = gActors; slot < ACTOR_SLOTS;
-       slot = nextSlot, object = nextObject) {
+       slot = nextSlot, object = nextActor) {
     nextSlot = slot + 1;
-    nextObject = object + 1;
+    nextActor = object + 1;
     if (object->script == NULL)
       continue;
     if (object->update != NULL)
-      object->update((union ActorOrEffect *)object);
+      object->update((struct Actor *)object);
     if (object->script == NULL)
       continue;
     if (object->paused != 0)

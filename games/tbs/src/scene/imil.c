@@ -1219,24 +1219,25 @@ static void Imil_InitializeRisingEffect(struct Actor *work) {
 
 /// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
-static void Imil_UpdateRisingEffect(union ActorOrEffect *fieldObject) {
-  fieldObject->effect.x += (s16)fieldObject->effect.spin << 8;
-  fieldObject->effect.y += PIXELS(1) / 2;
-  fieldObject->effect.scaleX += 3 * Q16_ONE / 100;
-  fieldObject->effect.scaleY += 3 * Q16_ONE / 100;
-  fieldObject->effect.spin += 2;
-  if (--fieldObject->effect.countdown == 0) {
-    Actor_Release(&fieldObject->actor);
+static void Imil_UpdateRisingEffect(struct Actor *actor) {
+  ((struct FieldEffect *)actor)->x += (s16)((struct FieldEffect *)actor)->spin
+                                      << 8;
+  ((struct FieldEffect *)actor)->y += PIXELS(1) / 2;
+  ((struct FieldEffect *)actor)->scaleX += 3 * Q16_ONE / 100;
+  ((struct FieldEffect *)actor)->scaleY += 3 * Q16_ONE / 100;
+  ((struct FieldEffect *)actor)->spin += 2;
+  if (--((struct FieldEffect *)actor)->countdown == 0) {
+    Actor_Release(actor);
   }
 }
 
 /// Initializes a newly created ambient effect for its one-second rise.
-static inline void Imil_StartRisingEffect(union ActorOrEffect *fieldObject) {
-  if (fieldObject != NULL) {
-    Imil_InitializeRisingEffect(&fieldObject->actor);
-    fieldObject->effect.countdown = 60;
-    fieldObject->effect.update = Imil_UpdateRisingEffect;
-    Actor_SelectAnimation(&fieldObject->actor, 5);
+static inline void Imil_StartRisingEffect(struct Actor *actor) {
+  if (actor != NULL) {
+    Imil_InitializeRisingEffect(actor);
+    ((struct FieldEffect *)actor)->countdown = 60;
+    ((struct FieldEffect *)actor)->update = Imil_UpdateRisingEffect;
+    Actor_SelectAnimation(actor, 5);
   }
 }
 
@@ -1246,33 +1247,33 @@ static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (frame.h); the six editions build the
   // same bytes without it
   volatile u32 *frame;
-  union ActorOrEffect *fieldObject;
+  struct Actor *actor;
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    fieldObject = (union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(463), 0, PIXELS(292));
-    Imil_StartRisingEffect(fieldObject);
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(463), 0,
+                                              PIXELS(292));
+    Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    fieldObject = (union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(320), PIXELS(32), PIXELS(356));
-    Imil_StartRisingEffect(fieldObject);
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(320),
+                                              PIXELS(32), PIXELS(356));
+    Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    fieldObject = (union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(118), 0, PIXELS(70));
-    Imil_StartRisingEffect(fieldObject);
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(118), 0,
+                                              PIXELS(70));
+    Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    fieldObject = (union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(342), 0, PIXELS(124));
-    Imil_StartRisingEffect(fieldObject);
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(342), 0,
+                                              PIXELS(124));
+    Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    fieldObject = (union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(431), 0, PIXELS(171));
-    Imil_StartRisingEffect(fieldObject);
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(431), 0,
+                                              PIXELS(171));
+    Imil_StartRisingEffect(actor);
   }
 }
 
@@ -1530,7 +1531,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingActor(union ActorOrEffect *fieldObject) {
+static void Imil_TurnSlidingActor(struct Actor *updated) {
   struct Actor *actor;
   s32 z;
   s32 t;
@@ -1538,7 +1539,7 @@ static void Imil_TurnSlidingActor(union ActorOrEffect *fieldObject) {
   u16 prev;
   s32 n;
 
-  actor = &fieldObject->actor;
+  actor = updated;
   n = (u16)actor->timer;
   z = 0;
   t = ((s16 *)&actor->timer)[z];

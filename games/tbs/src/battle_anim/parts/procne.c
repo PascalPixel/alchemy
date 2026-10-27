@@ -49,7 +49,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   u8 *graphics;
   struct Point2D wave;
   struct Point2D drift;
-  struct Actor *object;
+  struct Actor *actor;
   struct BattleObject *battleObject;
   struct Particle *point;
   struct Particle *spark;
@@ -110,17 +110,16 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   // pixels: the root of the 8.8 squares is 8.8, and >> 7 keeps one more bit.
   ANIM_FOR_EACH_TARGET(index, work->effect) {
     battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
-    object = battleObject->object;
-    home[index].x = object->x.fixed;
-    home[index].y = object->z.fixed;
-    baseAngle[index] = object->facing;
-    heading[index] = (u16)ArcTan2(object->x.fixed, object->z.fixed);
-    radius[index] =
-        Iwram_Sqrt((object->x.fixed >> 8) * (object->x.fixed >> 8) +
-                   (object->z.fixed >> 8) * (object->z.fixed >> 8)) >>
-        7;
+    actor = battleObject->actor;
+    home[index].x = actor->x.fixed;
+    home[index].y = actor->z.fixed;
+    baseAngle[index] = actor->facing;
+    heading[index] = (u16)ArcTan2(actor->x.fixed, actor->z.fixed);
+    radius[index] = Iwram_Sqrt((actor->x.fixed >> 8) * (actor->x.fixed >> 8) +
+                               (actor->z.fixed >> 8) * (actor->z.fixed >> 8)) >>
+                    7;
     spin[index] = 0;
-    object->gravity = 0;
+    actor->gravity = 0;
   }
 
   // The dust: each mote starts 120 out, after a random delay (variant). z
@@ -173,10 +172,10 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
     ANIM_FOR_EACH_TARGET(index, work->effect) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
-        object = battleObject->object;
+        actor = battleObject->actor;
         // Plain words: through .fixed, the union moves a spill.
-        *(s32 *)&object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
-        *(s32 *)&object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
+        *(s32 *)&actor->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
+        *(s32 *)&actor->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
         // The spin gains 48/65536 turn a frame each frame. Within 16 pixels
         // of the middle a target rises 6 pixels a frame, else half a pixel,
@@ -185,27 +184,27 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
-            object->y.fixed += 0x60000;
+            actor->y.fixed += 0x60000;
           else
-            object->y.fixed += 0x8000;
-          if (object->y.fixed > 0x7c0000)
-            object->y.fixed = 0x7c0000;
+            actor->y.fixed += 0x8000;
+          if (actor->y.fixed > 0x7c0000)
+            actor->y.fixed = 0x7c0000;
         }
 
         if (frame <= 490) {
           heading[index] += spin[index];
           if (heading[index] > 0x10000)
             heading[index] -= 0x10000;
-          object->facing += spin[index] / 4;
+          actor->facing += spin[index] / 4;
         }
 
         if (frame == 395)
-          object->gravity = 0xab85;
+          actor->gravity = 0xab85;
 
         slot = 0;
         do {
           if (frame == gProcne_Frames[slot]) {
-            object->velocityY = 0;
+            actor->velocityY = 0;
             BattleAnim_TintBattler(work->effect->targets[index],
                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
           }
@@ -316,8 +315,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
       ANIM_FOR_EACH_TARGET(index, work->effect) {
         battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
-        object = battleObject->object;
-        object->y.fixed = ((Random16() & 15) + 8) << 16;
+        actor = battleObject->actor;
+        actor->y.fixed = ((Random16() & 15) + 8) << 16;
       }
 
       // The block and its comets are projected about a centre left of the
@@ -582,13 +581,13 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
   // Put the targets back.
   ANIM_FOR_EACH_TARGET(index, work->effect) {
-    struct Actor *object;
+    struct Actor *actor;
 
     battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
-    object = battleObject->object;
-    object->x.fixed = home[index].x;
-    object->z.fixed = home[index].y;
-    object->facing = baseAngle[index];
+    actor = battleObject->actor;
+    actor->x.fixed = home[index].x;
+    actor->z.fixed = home[index].y;
+    actor->facing = baseAngle[index];
   }
 
   gProjection.centerX = 120;

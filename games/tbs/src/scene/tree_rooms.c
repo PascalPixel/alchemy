@@ -1040,8 +1040,8 @@ static void TreeRooms_PlayGesture(s32 gesture) {
 }
 
 /// Moves a fading spark outward from its saved origin, then releases it.
-static void TreeRooms_UpdateSwirlSpark(union ActorOrEffect *fieldObject) {
-  struct Actor *spark = (struct Actor *)fieldObject;
+static void TreeRooms_UpdateSwirlSpark(struct Actor *actor) {
+  struct Actor *spark = (struct Actor *)actor;
   struct FieldPosition position;
   s32 frame;
 

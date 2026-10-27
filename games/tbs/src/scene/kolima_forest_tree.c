@@ -984,9 +984,8 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
 
 /// Expands a spark along its spiral for 120 frames, then releases its cache
 /// slot.
-static void
-KolimaForestTree_UpdateOrbitSpark(union ActorOrEffect *fieldObject) {
-  struct Actor *spark = &fieldObject->actor;
+static void KolimaForestTree_UpdateOrbitSpark(struct Actor *actor) {
+  struct Actor *spark = actor;
   s32 position[3];
   s32 age = spark->timer;
   s32 heading;

@@ -116,7 +116,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *info;
   s32 scale;
   /* FAKEMATCH(dead): an unused vector for the frame's 12 bytes; without it, 1
@@ -124,10 +124,10 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   UNUSED s32 unused[3];
 
   camera = gBattleCamera;
-  object = GetBattleObjectSlotFar(unit)->object;
-  info = GetMotionRecordFar(object, 0);
+  actor = GetBattleObjectSlotFar(unit)->actor;
+  info = GetMotionRecordFar(actor, 0);
   ANIM_VIEW_FROM_CAMERA(camera);
-  scale = Iwram_MulQ16(Transform_ProjectPoint(&object->x.fixed, screen),
+  scale = Iwram_MulQ16(Transform_ProjectPoint(&actor->x.fixed, screen),
                        info->scale);
   // The table height is 16.16: >> 17 takes half of it in whole pixels.
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);

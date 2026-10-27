@@ -159,7 +159,7 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   // and up to 4 either way in depth.
   BattleAnim_SetApproachMotion(work->effect->user, work->effect->targets[0],
                                10);
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
     newSpark->x = target->x.fixed;

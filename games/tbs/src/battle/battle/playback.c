@@ -188,7 +188,7 @@ void BattlePlayback_Run(void) {
             if (events->pendingSong > 0)
               Sound_PlaySongFar(events->pendingSong);
             events->actorId = events->queue.operands[eventIndex];
-            Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->object,
+            Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->actor,
                                      POSE_DAMAGE);
             events->phase = PLAY_HIT;
             events->timer = 0;
@@ -204,10 +204,9 @@ void BattlePlayback_Run(void) {
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
             BattleObject_ResetRuntimeFields(events->actorId);
             unit = Unit_GetFar(events->actorId);
-            for (recordIndex = 0;
-                 (record =
-                      GetMotionRecord(BattleObject_Get(events->actorId)->object,
-                                      recordIndex)) != 0;
+            for (recordIndex = 0; (record = GetMotionRecord(
+                                       BattleObject_Get(events->actorId)->actor,
+                                       recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != BATTLE_SIDE_ENEMY)
                 Sprite_StartAnimFar(record, POSE_PARTY_HELD);
@@ -231,7 +230,7 @@ void BattlePlayback_Run(void) {
                 BattleObject_Get(events->queue.operands[eventIndex]));
             slot = BattleObject_Get(events->queue.operands[eventIndex]);
             BattleObject_SetColorMode(
-                slot->object,
+                slot->actor,
                 BattleObject_GetPalette(events->queue.operands[eventIndex]));
             BattleObject_UpdatePose(events->queue.operands[eventIndex]);
             break;
@@ -305,12 +304,12 @@ void BattlePlayback_Run(void) {
 
           selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
-          BattleObject_SetColorMode(slot->object,
+          BattleObject_SetColorMode(slot->actor,
                                     BattleObject_GetPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
           selection[1] = BATTLE_UNIT_LIST_END;
-          BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
+          BattleObject_SetColorMode(BattleObject_Get(events->actorId)->actor,
                                     SPRITE_COLOR_WHITE);
         }
         PartyStatus_HighlightMembersFar(selection);
@@ -363,7 +362,7 @@ void BattlePlayback_Run(void) {
 
           for (recordIndex = 0, slot = records, lastFrameMask = 0xff;
                (record =
-                    GetMotionRecord(BattleObject_Get(events->actorId)->object,
+                    GetMotionRecord(BattleObject_Get(events->actorId)->actor,
                                     recordIndex)) != 0;
                recordIndex++) {
             struct SpriteAnim *child;
@@ -396,7 +395,7 @@ void BattlePlayback_Run(void) {
 
         slot = BattleObject_Get(events->actorId);
         slot->fading = 1;
-        for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
+        for (count = 0; (record = GetMotionRecord(slot->actor, count)) != 0;
              count++)
           records[count] = record;
         base = events->timer * 4;

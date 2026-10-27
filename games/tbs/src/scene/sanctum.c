@@ -177,7 +177,7 @@ static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
-static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject);
+static void Sanctum_UpdateHealerAfterimage(struct Actor *actor);
 static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
@@ -189,12 +189,12 @@ static void Sanctum_RestoreQuestFloor(void);
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
 /// Faces the actor whose ID this callback stores in the timer field.
-static void Sanctum_FaceActorNamedByTimer(union ActorOrEffect *fieldObject) {
+static void Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
 #else
 /// Faces the actor whose ID this callback stores in the timer field.
-static s32 Sanctum_FaceActorNamedByTimer(union ActorOrEffect *fieldObject) {
+static s32 Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *target;
 
   target = Actor_GetById((s16)actor->timer);
@@ -552,12 +552,12 @@ static void EventScript_LeaveAfterRefusing(void) {
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps this actor at the party leader's drawing priority.
-static void Sanctum_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
+static void Sanctum_MatchLeaderPriority(struct Actor *updated) {
 #else
 /// Keeps this actor at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
+static s32 Sanctum_MatchLeaderPriority(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   actor->sprite->image.priority =
       Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
   actor->sprite->shadow.priority =
@@ -1147,7 +1147,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_GetById(ACTOR_EAST_HEALER)->update = Sanctum_MatchLeaderPriority;
 #else
     Actor_GetById(ACTOR_EAST_HEALER)->update =
-        (void (*)(union ActorOrEffect *))Sanctum_MatchLeaderPriority;
+        (void (*)(struct Actor *))Sanctum_MatchLeaderPriority;
 #endif
   }
   FieldScript_End();
@@ -1579,8 +1579,8 @@ static void Sanctum_HideHealerAfterimage(void) {
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *healer;
 
   healer = Actor_GetById(ACTOR_HEALER);
@@ -1604,8 +1604,8 @@ static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject) {
 }
 
 /// Advances an effect around its linked actor on an elliptical path.
-static void Sanctum_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
-  struct Actor *effect = (struct Actor *)fieldObject;
+static void Sanctum_UpdateOrbitingEffect(struct Actor *updated) {
+  struct Actor *effect = (struct Actor *)updated;
   struct Actor *anchor = effect->linkedActor;
   u16 *angle = &effect->timer;
   u16 orbitAngle = *angle;
@@ -1822,7 +1822,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_GetById(ACTOR_HEALER)->update = Sanctum_FaceActorNamedByTimer;
 #else
   Actor_GetById(ACTOR_HEALER)->update =
-      (void (*)(union ActorOrEffect *))Sanctum_FaceActorNamedByTimer;
+      (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
 #endif
   Actor_GetById(ACTOR_GARETS_GRANDFATHER)->timer = GARET;
 #ifdef UBFIX
@@ -1830,7 +1830,7 @@ static void Sanctum_ReenactSolSanctum(void) {
       Sanctum_FaceActorNamedByTimer;
 #else
   Actor_GetById(ACTOR_GARETS_GRANDFATHER)->update =
-      (void (*)(union ActorOrEffect *))Sanctum_FaceActorNamedByTimer;
+      (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
 #endif
   Actor_SetPositionAndReset(ACTOR_GARET, 196, 180);
   Actor_SetPositionAndReset(ACTOR_GARET, 184, 184);
@@ -1990,8 +1990,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union ActorOrEffect *fieldObject) {
-  struct Actor *spark = &fieldObject->actor;
+static void Sanctum_UpdateRisingSpark(struct Actor *updated) {
+  struct Actor *spark = updated;
   s32 scale;
   s32 timer;
 

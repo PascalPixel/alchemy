@@ -220,8 +220,8 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_CELLS, 1, 1);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  user = GetBattleObjectSlotFar(work->effect->user)->object;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  user = GetBattleObjectSlotFar(work->effect->user)->actor;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   // The rocks leave the user 66 pixels up, fanning out towards the middle
   // of the field, rock i at 2.5 i pixels a frame across, up to 1 up or down
   // and up to 4 in depth. Eight are launched, the first six drawn.

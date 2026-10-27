@@ -12,7 +12,7 @@ s32 Shop_RunFar(s32 row, s32 keeper_id);
 s32 Sanctum_RunFar(s32 unitId);
 /// Runs an inn's counter, the party sleeping if the player pays: mode is the
 /// inn's price row and objectId the innkeeper.
-s32 Inn_CheckInFar(s32 mode, s32 objectId);
+s32 Inn_CheckInFar(s32 mode, s32 actorId);
 /// Moves the cursor one frame along its straight glide to its target; the
 /// menus' cursor tasks call it every frame.
 void MenuCursor_AdvanceFar(struct MenuCursor *cursor);

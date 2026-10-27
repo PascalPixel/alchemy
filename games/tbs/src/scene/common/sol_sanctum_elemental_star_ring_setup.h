@@ -200,7 +200,7 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   if (count != 0) {
     cleared = none;
     do {
-      light = &((union ActorOrEffect *)Actor_GetById(first))->effect;
+      light = (struct FieldEffect *)Actor_GetById(first);
       {
         u8 *flags = &light->sprite->flags;
 

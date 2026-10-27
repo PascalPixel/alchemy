@@ -9,13 +9,13 @@ struct Actor;
 struct ScreenTransitionState;
 struct ActorDouseView;
 struct TriggerView;
-struct FieldEffectSprite;
+struct FieldParticle;
 struct Vector3;
 struct Actor;
 struct OrbitEffect;
 struct ActorTemplate;
 struct Window;
-union ActorOrEffect;
+struct Actor;
 
 /// The exit request whose destination is already in gSaveBlock.sceneId and
 /// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
@@ -131,8 +131,8 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkActorAndDestroySlow(union ActorOrEffect *fieldObject);
-void FieldEffect_ShrinkActorAndDestroyFast(union ActorOrEffect *fieldObject);
+void FieldEffect_ShrinkActorAndDestroySlow(struct Actor *actor);
+void FieldEffect_ShrinkActorAndDestroyFast(struct Actor *actor);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
@@ -199,7 +199,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId);
-void Anim_ApplyChildPalette(struct Actor *object, s32 palette);
+void Anim_ApplyChildPalette(struct Actor *actor, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
@@ -222,14 +222,14 @@ void TreasureSpot_Hide(s32 id);
 void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
-void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject);
+void ItemDisplay_EmitSparkles(struct Actor *actor);
 struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
 void Actor_ReleaseIfPresent(void *object);
-void ItemDisplay_RaiseAboveLeader(struct Actor *object);
+void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
-void Reveal_EmitSparkles(union ActorOrEffect *fieldObject);
+void Reveal_EmitSparkles(struct Actor *actor);
 s32 Field_IsRevealActive(struct Actor *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 

@@ -122,11 +122,11 @@ again:
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gSaveBlock.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
-  struct Actor *object = Actor_GetById(gSaveBlock.leaderActorId);
+  struct Actor *actor = Actor_GetById(gSaveBlock.leaderActorId);
   s32 gridX =
-      8 + ((((union FieldCoordinate *)&object->x.fixed)->part.pixel) & 0xfff0);
+      8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
   s32 gridZ =
-      8 + ((((union FieldCoordinate *)&object->z.fixed)->part.pixel) & 0xfff0);
+      8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
   s32 result;
 
   FieldScript_Start();
@@ -144,8 +144,8 @@ s32 Field_ClimbDown(void) {
 
       // The ground under the point 16 pixels lower may not be a wall cell
       // of the overhead layer: the check returns nonzero for a wall.
-      SET_POSITION(position, object->x.fixed, object->y.fixed - 0x100000,
-                   object->z.fixed);
+      SET_POSITION(position, actor->x.fixed, actor->y.fixed - 0x100000,
+                   actor->z.fixed);
       result = MapGrid_IsWallAtFar((struct WorldPosition *)position);
       if (result != 0)
         goto failure;
@@ -153,14 +153,14 @@ s32 Field_ClimbDown(void) {
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       Actor_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
-      object->speedLimit = Q16_ONE;
+      actor->speedLimit = Q16_ONE;
       Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_NORTH, 0);
       Actor_RefreshSelectorById(gSaveBlock.leaderActorId);
-      object->steeringFlags = ACTOR_FACES_MOTION;
-      object->motionFlags = 0;
-      Actor_SetSpriteFlagsFar(object, 0);
-      Actor_SelectAnimationFar(object, 13);
-      Actor_SetMoveTargetFar(object, gridX << 16, object->y.fixed - 0x100000,
+      actor->steeringFlags = ACTOR_FACES_MOTION;
+      actor->motionFlags = 0;
+      Actor_SetSpriteFlagsFar(actor, 0);
+      Actor_SelectAnimationFar(actor, 13);
+      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - 0x100000,
                              (gridZ << 16) + 0x100000);
       Actor_WaitForMoveById(gSaveBlock.leaderActorId);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
@@ -171,15 +171,15 @@ s32 Field_ClimbDown(void) {
     // Let go of the wall and fall: ground following and gravity again
     // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the ground is read, and the shadow back.
-    Actor_SelectAnimationFar(object, ANIM_LEADER_CLIMB);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    object->velocityY = 0x40000;
-    object->groundHeight = object->y.fixed;
-    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
+    Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB);
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->velocityY = 0x40000;
+    actor->groundHeight = actor->y.fixed;
+    Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     FieldScript_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->steeringFlags = ACTOR_FACES_MOTION;
-    object->facing = FACING_NORTH;
+    actor->steeringFlags = ACTOR_FACES_MOTION;
+    actor->facing = FACING_NORTH;
   }
 
   FieldScript_End();
@@ -201,18 +201,18 @@ failure:
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gSaveBlock.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
-  struct Actor *object = Actor_GetById(gSaveBlock.leaderActorId);
+  struct Actor *actor = Actor_GetById(gSaveBlock.leaderActorId);
   s16 spriteFlags = 1;
   s32 gridX =
-      8 + ((((union FieldCoordinate *)&object->x.fixed)->part.pixel) & 0xfff0);
+      8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
   s32 gridZ =
-      8 + ((((union FieldCoordinate *)&object->z.fixed)->part.pixel) & 0xfff0);
+      8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
   s32 result;
 
   FieldScript_Start();
 
-  if (object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    spriteFlags = object->sprite->flags;
+  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+    spriteFlags = actor->sprite->flags;
 
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -226,46 +226,46 @@ s32 Field_ClimbUp(void) {
 
       // The ground under the leader may not be a wall cell of the overhead
       // layer.
-      SET_POSITION(position, object->x.fixed, object->y.fixed, object->z.fixed);
+      SET_POSITION(position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
       result = MapGrid_IsWallAtFar((struct WorldPosition *)position);
       if (result != 0)
         goto failure;
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
-      object->steeringFlags = 0;
+      actor->steeringFlags = 0;
       Actor_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
-      Actor_SelectAnimationFar(object, 6);
+      Actor_SelectAnimationFar(actor, 6);
       WaitFrames(4);
-      Actor_SelectAnimationFar(object, 7);
-      object->velocityY = 0x40000;
+      Actor_SelectAnimationFar(actor, 7);
+      actor->velocityY = 0x40000;
       WaitFrames(4);
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       spriteFlags &= 0xfe;
-      Actor_SetSpriteFlagsFar(object, spriteFlags);
-      object->speedLimit = Q16_ONE;
-      object->velocityY = 0;
-      Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
+      Actor_SetSpriteFlagsFar(actor, spriteFlags);
+      actor->speedLimit = Q16_ONE;
+      actor->velocityY = 0;
+      Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
       WaitFrames(4);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
-      object->steeringFlags = ACTOR_FACES_MOTION;
+      actor->steeringFlags = ACTOR_FACES_MOTION;
       WaitFrames(8);
     } else {
       goto failure;
     }
   } else {
     // Climb over the top: up 8 pixels and a cell north.
-    object->motionFlags = 0;
-    Actor_SelectAnimationFar(object, 11);
-    Actor_SetMoveTargetFar(object, gridX << 16, object->y.fixed + 0x80000,
+    actor->motionFlags = 0;
+    Actor_SelectAnimationFar(actor, 11);
+    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + 0x80000,
                            (gridZ << 16) - 0x100000);
     Actor_WaitForMoveById(gSaveBlock.leaderActorId);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;
-    object->groundHeight = object->y.fixed;
-    Actor_SetSpriteFlagsFar(object, spriteFlags);
+    actor->groundHeight = actor->y.fixed;
+    Actor_SetSpriteFlagsFar(actor, spriteFlags);
     FieldScript_WaitFrames(4);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->steeringFlags = ACTOR_FACES_MOTION;
+    actor->steeringFlags = ACTOR_FACES_MOTION;
   }
 
   FieldScript_End();

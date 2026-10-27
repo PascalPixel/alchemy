@@ -230,7 +230,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 /// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
 /// Mind Read's wave effect (field_services/mind_read.c) on the caster: each
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
-void Anim_ApplyChildPalette(struct Actor *object, s32 palette) {
+void Anim_ApplyChildPalette(struct Actor *actor, s32 palette) {
   struct Sprite *sprite;
   struct SpriteAnim **entrySlot;
   struct SpriteAnim *entry;
@@ -238,8 +238,8 @@ void Anim_ApplyChildPalette(struct Actor *object, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
-    sprite = object->sprite;
+  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+    sprite = actor->sprite;
     replacement = palette - 1;
     if (palette == 0)
       replacement = gMindRead_CasterPaletteCycle[(gFrameCount >> 1) & 7];

@@ -219,7 +219,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// stand where the party left them, the stump's ivy gone once Ivan has blown
 /// it off.
 s32 Scene_Initialize(void) {
-  struct Actor *movedObject;
+  struct Actor *movedActor;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   FieldScript_WaitFrames(10);
@@ -261,8 +261,8 @@ s32 Scene_Initialize(void) {
     Import_ActorSetPosition(ACTOR_EAST_PILLAR, PIXELS(376), PIXELS(280));
     Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
-    movedObject = Actor_GetById(ACTOR_EAST_PILLAR);
-    Actor_SetSpriteFlags(movedObject, 0);
+    movedActor = Actor_GetById(ACTOR_EAST_PILLAR);
+    Actor_SetSpriteFlags(movedActor, 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
   return 0;
@@ -518,8 +518,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveEntrance_SpinStump(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = &fieldObject->actor;
+static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
+  struct Actor *actor = updated;
   struct Sprite *state = actor->sprite;
   s32 v = state->rotation - 0x800;
 

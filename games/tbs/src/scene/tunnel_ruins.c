@@ -220,9 +220,9 @@ enum {
 };
 
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union ActorOrEffect *fieldObject);
+static void TunnelRuins_RideStoneBelow(struct Actor *actor);
 #else
-static s32 TunnelRuins_RideStoneBelow(union ActorOrEffect *fieldObject);
+static s32 TunnelRuins_RideStoneBelow(struct Actor *actor);
 #endif
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
@@ -364,11 +364,11 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
 #ifdef UBFIX
-static void TunnelRuins_SplashDousedPillar(union ActorOrEffect *fieldObject) {
+static void TunnelRuins_SplashDousedPillar(struct Actor *updated) {
 #else
-static s32 TunnelRuins_SplashDousedPillar(union ActorOrEffect *fieldObject) {
+static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   s32 x;
   s32 z;
@@ -405,11 +405,11 @@ static s32 TunnelRuins_SplashDousedPillar(union ActorOrEffect *fieldObject) {
 // pillar while the pillar is in row 10 and the leader is above 48 pixels
 // down; otherwise the puddle is put away at the map's origin.
 #ifdef UBFIX
-static void TunnelRuins_PuddleFollowsPillar(union ActorOrEffect *fieldObject) {
+static void TunnelRuins_PuddleFollowsPillar(struct Actor *updated) {
 #else
-static s32 TunnelRuins_PuddleFollowsPillar(union ActorOrEffect *fieldObject) {
+static s32 TunnelRuins_PuddleFollowsPillar(struct Actor *updated) {
 #endif
-  struct Actor *puddle = (struct Actor *)fieldObject;
+  struct Actor *puddle = (struct Actor *)updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed > -PIXELS(48) &&
@@ -480,7 +480,7 @@ static void EventScript_HopDownStep(void) {
   WaitFrames(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
-  options.update = (void (*)(union ActorOrEffect *))FieldEffect_AdvanceMotion;
+  options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   Sound_PlaySong(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
@@ -508,13 +508,13 @@ static void EventScript_HopDownStep(void) {
 #define UPDATE_BY_RELATIVE_DEPTH Actor_SetFlagBitByRelativeDepth
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(union ActorOrEffect *))Actor_SetFlagBitByRelativeDepth)
+  ((void (*)(struct Actor *))Actor_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
 #else
 #define UPDATE_RIDE_STONE_BELOW                                                \
-  ((void (*)(union ActorOrEffect *))TunnelRuins_RideStoneBelow)
+  ((void (*)(struct Actor *))TunnelRuins_RideStoneBelow)
 #endif
 
 #include "common/effect_radial.h"
@@ -958,8 +958,7 @@ static void EventScript_DouseStartsOnPillar(void) {
 #ifdef UBFIX
   puddle->update = TunnelRuins_PuddleFollowsPillar;
 #else
-  puddle->update =
-      (void (*)(union ActorOrEffect *))TunnelRuins_PuddleFollowsPillar;
+  puddle->update = (void (*)(struct Actor *))TunnelRuins_PuddleFollowsPillar;
 #endif
 }
 
@@ -1002,11 +1001,11 @@ static void EventScript_FreezeDousePuddle(void) {
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union ActorOrEffect *fieldObject) {
+static void TunnelRuins_RideStoneBelow(struct Actor *updated) {
 #else
-static s32 TunnelRuins_RideStoneBelow(union ActorOrEffect *fieldObject) {
+static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
 #endif
-  struct Actor *supportedActor = (struct Actor *)fieldObject;
+  struct Actor *supportedActor = (struct Actor *)updated;
   s16 *supportingActorId = &supportedActor->timer;
   struct Actor *supportingActor = Actor_GetById(*supportingActorId);
 
@@ -1182,7 +1181,7 @@ static void EventScript_SetStoneOnBalance(void) {
           TunnelRuins_RideStoneBelow;
 #else
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->update =
-          (void (*)(union ActorOrEffect *))TunnelRuins_RideStoneBelow;
+          (void (*)(struct Actor *))TunnelRuins_RideStoneBelow;
 #endif
       TunnelRuins_SettleBalance(40);
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->priorityFlags |=

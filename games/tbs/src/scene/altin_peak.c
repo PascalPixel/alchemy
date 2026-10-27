@@ -142,7 +142,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
 static void AltinPeak_SpawnDebris(void);
-static void AltinPeak_SparkleIce(union ActorOrEffect *fieldObject);
+static void AltinPeak_SparkleIce(struct Actor *actor);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
 static void AltinPeak_AwardFrostJewelAndDrain(void);
 static void AltinPeak_DrainAfterSecondBeast(void);
@@ -325,11 +325,11 @@ static void AltinPeak_TalkToDjinni(void) {
 // hooks return void. Plain void removes the native zero result and changes its
 // return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void AltinPeak_ShadowFollowBoulder(union ActorOrEffect *fieldObject) {
+static void AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
 #else
-static s32 AltinPeak_ShadowFollowBoulder(union ActorOrEffect *fieldObject) {
+static s32 AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
 #endif
-  struct Actor *follower = (struct Actor *)fieldObject;
+  struct Actor *follower = (struct Actor *)updated;
   struct Actor *actor = Actor_GetById(ACTOR_FALLING_BOULDER);
 
   follower->x.fixed = actor->x.fixed;
@@ -1006,8 +1006,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
 #ifdef UBFIX
   shadow->update = AltinPeak_ShadowFollowBoulder;
 #else
-  shadow->update =
-      (void (*)(union ActorOrEffect *))AltinPeak_ShadowFollowBoulder;
+  shadow->update = (void (*)(struct Actor *))AltinPeak_ShadowFollowBoulder;
 #endif
   Import_ActorSetAnimation(ACTOR_FALLING_BOULDER, 4);
   boulder->bounce = PIXELS(1) / 2;
@@ -1247,8 +1246,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Update callback of the hopping water beast: once a second it leaps up and
 /// lands with a splash (SE_SPLASH) that shakes the screen briefly.
-static void AltinPeak_UpdateBeastHops(union ActorOrEffect *fieldObject) {
-  struct Actor *beast = &fieldObject->actor;
+static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
+  struct Actor *beast = updated;
   s16 *shakeDelay = (s16 *)&beast->userValue;
 
   // The route owns timer (hop phase), work (shake delay) and the effect's
@@ -1258,12 +1257,12 @@ static void AltinPeak_UpdateBeastHops(union ActorOrEffect *fieldObject) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   }
   if (beast->velocityY == 0) {
-    Actor_SelectAnimation(&fieldObject->actor, 1);
+    Actor_SelectAnimation(updated, 1);
     beast->y.fixed -= PIXELS(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
-      if (fieldObject->effect.countdown != 0) {
+      if (((struct FieldEffect *)updated)->countdown != 0) {
         Sound_PlaySong(SE_SPLASH);
-        fieldObject->effect.countdown = 0;
+        ((struct FieldEffect *)updated)->countdown = 0;
         beast->userValue = 4;
         MapGrid_SetShake(PIXELS(1), 0, Q16_ONE);
       }
@@ -1275,8 +1274,8 @@ static void AltinPeak_UpdateBeastHops(union ActorOrEffect *fieldObject) {
   }
   if (beast->timer == 0) {
     Sound_PlaySong(SE_JUMP);
-    fieldObject->effect.countdown = 1;
-    Actor_SelectAnimation(&fieldObject->actor, 2);
+    ((struct FieldEffect *)updated)->countdown = 1;
+    Actor_SelectAnimation(updated, 2);
     beast->velocityY = PIXELS(3);
   }
   if (++beast->timer == 60)
@@ -1297,12 +1296,12 @@ static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
 /// second puddle with Frost and hops across it, then stops to watch the party
 /// leader.
 static void AltinPeak_ShowFirstBeastRoute(void) {
-  union ActorOrEffect *beast;
+  struct Actor *beast;
   struct Actor *leader;
   struct Actor *actor;
   s32 jumpSpeed;
 
-  beast = (union ActorOrEffect *)Actor_GetById(ACTOR_FIRST_WATER_BEAST);
+  beast = (struct Actor *)Actor_GetById(ACTOR_FIRST_WATER_BEAST);
   FieldScript_Start();
   FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
@@ -1313,16 +1312,16 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(295), PIXELS(32), PIXELS(212), 1);
   // Run the timed hopping callback while the beast moves along its route.
-  beast->effect.countdown = 0;
-  beast->actor.timer = 0;
-  beast->actor.userValue = 0;
-  beast->actor.gravity = PIXELS(2) / 5;
-  beast->actor.update = AltinPeak_UpdateBeastHops;
+  ((struct FieldEffect *)beast)->countdown = 0;
+  beast->timer = 0;
+  beast->userValue = 0;
+  beast->gravity = PIXELS(2) / 5;
+  beast->update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 308, 291);
   Actor_SetPositionAndCommit(ACTOR_FIRST_WATER_BEAST, 311, 215);
-  beast->actor.update = 0;
-  beast->actor.paused = 0;
+  beast->update = 0;
+  beast->paused = 0;
   FieldScript_WaitFrames(16);
   Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1337,14 +1336,14 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
                       40);
   FieldCamera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
-  beast->effect.countdown = 0;
-  beast->actor.timer = 0;
-  beast->actor.userValue = 0;
-  beast->actor.update = AltinPeak_UpdateBeastHops;
+  ((struct FieldEffect *)beast)->countdown = 0;
+  beast->timer = 0;
+  beast->userValue = 0;
+  beast->update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 320, 232);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 340, 262);
   Actor_SetPositionAndCommit(ACTOR_FIRST_WATER_BEAST, 374, 262);
-  beast->actor.update = 0;
+  beast->update = 0;
   FieldScript_WaitFrames(16);
   Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1366,12 +1365,12 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
                       20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
-  beast->effect.countdown = 0;
-  beast->actor.timer = 0;
-  beast->actor.userValue = 0;
-  beast->actor.update = AltinPeak_UpdateBeastHops;
+  ((struct FieldEffect *)beast)->countdown = 0;
+  beast->timer = 0;
+  beast->userValue = 0;
+  beast->update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 329, 219);
-  beast->actor.update = 0;
+  beast->update = 0;
   Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   FieldScript_WaitFrames(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1429,11 +1428,11 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 /// Stepping near the beast again: it hops back over the ice and settles down,
 /// spitting water.
 static void AltinPeak_ShowSecondBeastRoute(void) {
-  union ActorOrEffect *actor;
+  struct Actor *actor;
   struct Actor *movingActor;
   u32 waitedFrames;
 
-  actor = (union ActorOrEffect *)Actor_GetById(ACTOR_FIRST_WATER_BEAST);
+  actor = (struct Actor *)Actor_GetById(ACTOR_FIRST_WATER_BEAST);
   FieldScript_Start();
   Actor_Stop(ACTOR_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -1448,16 +1447,16 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
-  actor->effect.countdown = 0;
-  actor->actor.timer = 0;
-  actor->actor.userValue = 0;
-  actor->actor.gravity = PIXELS(2) / 5;
-  actor->actor.update = AltinPeak_UpdateBeastHops;
+  ((struct FieldEffect *)actor)->countdown = 0;
+  actor->timer = 0;
+  actor->userValue = 0;
+  actor->gravity = PIXELS(2) / 5;
+  actor->update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 212, 200);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 103, 200);
-  actor->actor.update = NULL;
-  actor->actor.paused = 0;
+  actor->update = NULL;
+  actor->paused = 0;
   FieldScript_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1482,14 +1481,14 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Actor_ArmCallback(ACTOR_FIRST_WATER_BEAST, 0, 40);
-  actor->effect.countdown = 0;
-  actor->actor.timer = 0;
-  actor->actor.userValue = 0;
-  actor->actor.update = AltinPeak_UpdateBeastHops;
+  ((struct FieldEffect *)actor)->countdown = 0;
+  actor->timer = 0;
+  actor->userValue = 0;
+  actor->update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 120, 215);
-  actor->actor.update = NULL;
-  actor->actor.paused = 0;
+  actor->update = NULL;
+  actor->paused = 0;
   Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   FieldScript_WaitFrames(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1506,10 +1505,10 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
        waitedFrames++) {
     FieldScript_WaitFrames(1);
   }
-  actor = (union ActorOrEffect *)Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = (struct Actor *)Actor_GetById(ACTOR_PARTY_LEADER);
   FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
-  FieldCamera_MoveWithinMapBounds(actor->actor.x.fixed, actor->actor.y.fixed,
-                                  actor->actor.z.fixed, 1);
+  FieldCamera_MoveWithinMapBounds(actor->x.fixed, actor->y.fixed,
+                                  actor->z.fixed, 1);
   FieldCamera_WaitForArrival();
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
   FieldScript_End();
@@ -1909,8 +1908,8 @@ static void AltinPeak_InitializeSpray(struct Actor *spray) {
 /// Update callback of a spray particle: it grows while drifting away from the
 /// beast, then curls and flattens when its movement timer runs low. The timer
 /// can start another curl; the separate lifetime still ends after 20 updates.
-static void AltinPeak_DriftSpray(union ActorOrEffect *fieldObject) {
-  struct Actor *spray = &fieldObject->actor;
+static void AltinPeak_DriftSpray(struct Actor *updated) {
+  struct Actor *spray = updated;
 
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
@@ -1946,28 +1945,28 @@ static void AltinPeak_DriftSpray(union ActorOrEffect *fieldObject) {
     spray->timer -= 2;
   else
     spray->timer = ((u32)(Import_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--fieldObject->effect.countdown == 0)
+  if (--((struct FieldEffect *)updated)->countdown == 0)
     Actor_Release(spray);
 }
 
 /// Task while a beast spits: every fourth frame a spray particle
 /// starts from its spout, living 20 frames.
 static void AltinPeak_SpawnSpray(void) {
-  union ActorOrEffect *spray;
+  struct Actor *spray;
 
   if ((gFrameCount & 3) != 0)
     return;
-  spray = (union ActorOrEffect *)Actor_Create(
+  spray = (struct Actor *)Actor_Create(
       SPRITE_DUST_PUFF, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
       gAltinPeak_SprayOrigin[2]);
   if (spray == NULL)
     return;
-  spray->actor.timer = 30;
-  spray->actor.userValue = 1;
-  spray->effect.countdown = 20;
-  AltinPeak_InitializeSpray(&spray->actor);
-  spray->effect.update = AltinPeak_DriftSpray;
-  Actor_SelectAnimation(&spray->actor, 1);
+  spray->timer = 30;
+  spray->userValue = 1;
+  ((struct FieldEffect *)spray)->countdown = 20;
+  AltinPeak_InitializeSpray(spray);
+  ((struct FieldEffect *)spray)->update = AltinPeak_DriftSpray;
+  Actor_SelectAnimation(spray, 1);
 }
 
 /// A water beast starts spitting water from (x, y, z) toward facing
@@ -2019,8 +2018,8 @@ static void AltinPeak_SpawnDebris(void) {
 
 /// Update callback of the frozen second puddle: its ice glints every eight
 /// frames.
-static void AltinPeak_SparkleIce(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void AltinPeak_SparkleIce(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
 
   s32 framePhase = gFrameCount & 7;
 

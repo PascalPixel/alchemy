@@ -185,7 +185,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
   // i * 32 onwards, as many as its row's BURST_SEQUENCE_MOTES.
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
   for (i = 0; i != 768; i++) {
     struct Particle *mote = &PARTICLES[i];
 

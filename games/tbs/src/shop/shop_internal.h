@@ -86,7 +86,7 @@ enum ShopStockRow {
   SHOP_STOCK_ROW_XIAN_ITEMS = 18
 };
 
-/// What a sparkle of the sanctum's burst is doing (FieldEffectSprite.state,
+/// What a sparkle of the sanctum's burst is doing (FieldParticle.state,
 /// Sanctum_UpdateBurstSparkle).
 enum SanctumSparkleState {
   /// Placed on a ring around the burst's centre and aimed inside it.

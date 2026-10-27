@@ -190,11 +190,11 @@ static void LamakanDesert_TalkToSmog(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 104 to 100 bytes in tbs-en.
 #ifdef UBFIX
-static void LamakanDesert_LeaderSpraySand(union ActorOrEffect *fieldObject) {
+static void LamakanDesert_LeaderSpraySand(struct Actor *updated) {
 #else
-static s32 LamakanDesert_LeaderSpraySand(union ActorOrEffect *fieldObject) {
+static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions params;
   s32 phase;
 
@@ -797,8 +797,7 @@ static void LamakanDesert_FallIntoPit(void) {
 #ifdef UBFIX
   record->update = LamakanDesert_LeaderSpraySand;
 #else
-  record->update =
-      (void (*)(union ActorOrEffect *))LamakanDesert_LeaderSpraySand;
+  record->update = (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
 #endif
   record = Actor_Get(best);
   if (record != 0) {

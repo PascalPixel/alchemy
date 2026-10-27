@@ -22,7 +22,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldEffectWork *effectWork;
   struct Actor **cursor;
   struct Actor **list;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
@@ -114,14 +114,13 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  effect = effectWork->sprites;
+  effect = effectWork->particles;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    FieldEffectSprite_Initialize(effect, 240, position.x, position.z);
-    FieldEffectSprite_SetCallback(effect,
-                                  FieldEffect_UpdateRandomTargetParticle);
-    FieldEffectSprite_SetActorMode(effect, 7);
-    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
+    FieldParticle_Initialize(effect, 240, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);
     effect++;
@@ -136,14 +135,14 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
     nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, sprites) +
-                 offsetof(struct FieldEffectSprite, state);
+    slotState += offsetof(struct FieldEffectWork, particles) +
+                 offsetof(struct FieldParticle, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {
       if (slotState[5] != 0) // active
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct FieldEffectSprite);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 

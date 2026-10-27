@@ -129,7 +129,7 @@ void ReleaseBattleObjectRecords(s32 unitId);
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
 struct BattleObject *BattleObject_Get(s32 unitId);
 void ResetMotionRecordGroup(void *recordGroup);
-void ResetBattleObjectRecordGroups(struct Actor *object);
+void ResetBattleObjectRecordGroups(struct Actor *actor);
 s32 BattleObject_MarkForRelease(s32 unitId);
 #ifdef UBFIX
 void BattleObject_DestroyAll(void);
@@ -143,7 +143,7 @@ void BattleCamera_ApplyTransform(void);
 s32 BattleCamera_ApplyTransform(void);
 #endif
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
-void *GetMotionRecord(struct Actor *object, s32 recordIndex);
+void *GetMotionRecord(struct Actor *actor, s32 recordIndex);
 void BattleCamera_SetDefaultView(void);
 void BattleMotion_ReturnToSpot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
@@ -210,9 +210,9 @@ s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags);
 s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
                           struct BattleAction *selection);
 #ifdef UBFIX
-void BattleObject_SetColorMode(struct Actor *object, s32 palette);
+void BattleObject_SetColorMode(struct Actor *actor, s32 palette);
 #else
-s32 BattleObject_SetColorMode(struct Actor *object, s32 palette);
+s32 BattleObject_SetColorMode(struct Actor *actor, s32 palette);
 #endif
 s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode);
 

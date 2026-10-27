@@ -26,7 +26,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
 
   effectWork = gFieldEffectWork;
   target = effectWork->child;
-  caster = effectWork->mainObject;
+  caster = effectWork->mainActor;
   if (target == NULL)
     return;
 
@@ -121,7 +121,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
 /// Field effect sprite callback of a particle that scatters 25 pixels from its
 /// origin in a random direction, then gathers beside the main object and is
 /// freed. Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
-void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
@@ -147,7 +147,7 @@ again:
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
     // On arrival, go straight on.
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->state++;
       goto again;
     }
@@ -157,7 +157,7 @@ again:
   if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward effectWork->angle from 16 pixels above the main object,
     // on screen, give or take 4 pixels.
-    struct Actor *caster = effectWork->mainObject;
+    struct Actor *caster = effectWork->mainActor;
 
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + (16 << 16);
@@ -174,7 +174,7 @@ again:
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      FieldEffectSprite_HasPendingTarget(effect) == 0)
+      FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 

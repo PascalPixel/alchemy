@@ -237,8 +237,8 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// Per-frame update: once the object has arrived (no destination left on any
 /// axis), frees it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
-void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
-  struct Actor *object = (struct Actor *)fieldObject;
+void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
+  struct Actor *object = (struct Actor *)actor;
   s32 targetY;
   s32 targetX;
 

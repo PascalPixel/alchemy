@@ -40,7 +40,7 @@ void BattleMotion_ApplyKnockbackFar(s32 id, s32 variant);
 s32 BattleUnit_ListIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get); the animations find the sprites they move through it.
-struct BattleObject *GetBattleObjectSlotFar(s32 objectId);
+struct BattleObject *GetBattleObjectSlotFar(s32 actorId);
 /// Fights a battle against an enemy formation from its opening to its end, and
 /// returns the enemies defeated, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_RunFar(s32 enemyGroup);
@@ -61,7 +61,7 @@ s32 BattleParty_PrepareMembersFar(u16 *owners);
 /// by `pos` pixels.
 void BattleCamera_SetCommandViewFar(s32 pos);
 /// Returns one of an object's sprites, or null when it has no such sprite.
-void *GetMotionRecordFar(struct Actor *object, s32 record_index);
+void *GetMotionRecordFar(struct Actor *actor, s32 record_index);
 /// Highlights the units in `actors` by turning every other unit's sprites
 /// semi-transparent, or stops the highlight with HIGHLIGHT_OFF.
 void BattleHighlight_SetModesFar(u16 *actors, s32 mode);

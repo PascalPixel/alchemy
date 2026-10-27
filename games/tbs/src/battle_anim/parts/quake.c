@@ -155,11 +155,10 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
         // count) and at or below its top. A target below the ground takes its
         // damage pose.
         ANIM_FOR_EACH_TARGET(member, work->effect) {
-          struct Actor *object;
+          struct Actor *actor;
 
-          object =
-              GetBattleObjectSlotFar(work->effect->targets[member])->object;
-          SET_VECTOR(point, object->x.fixed, object->y.fixed, object->z.fixed);
+          actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+          SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
@@ -168,10 +167,10 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
               screen.y >= top) {
             // 12 pixels a frame upwards, under the gravity the battle's own
             // motions use (BattleMotion_ReturnToSpot in battle/motion.c).
-            object->velocityY = 12 << 16;
-            object->gravity = 0xab85;
+            actor->velocityY = 12 << 16;
+            actor->gravity = 0xab85;
           }
-          if (object->y.fixed < 0)
+          if (actor->y.fixed < 0)
             BattleAnim_TintBattler(work->effect->targets[member], 0,
                                    POSE_DAMAGE, -1, 0);
         }
@@ -180,13 +179,12 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
 
     // A target that lands flashes white for 5 frames.
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Actor *object;
+      struct Actor *actor;
       struct Particle *state;
 
-      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       state = &work->particles[member];
-      if (state->variant == 0 && object->y.fixed <= 0 &&
-          object->velocityY < 0) {
+      if (state->variant == 0 && actor->y.fixed <= 0 && actor->velocityY < 0) {
         state->variant = 1;
         BattleAnim_TintBattler(work->effect->targets[member],
                                SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);

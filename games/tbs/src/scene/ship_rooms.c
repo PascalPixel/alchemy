@@ -592,8 +592,8 @@ static s32 ShipRooms_HasArrived(struct Actor *actor) {
 /// at each, and signals the captain (ACTOR_QUARTERS_CAPTAIN) through his own
 /// riseEnabled at three points of the round, but not while the captain is
 /// paused. work holds the step.
-static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
-  struct Actor *actor = (struct Actor *)fieldObject;
+static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *captain;
 
   captain = Actor_GetById(ACTOR_QUARTERS_CAPTAIN);
@@ -664,8 +664,8 @@ static void ShipRooms_PaceCaptainsQuarters(union ActorOrEffect *fieldObject) {
 /// The update of the captain, who watches Kaja pace: turns north-northeast at
 /// the first signal, shrugs at the second if still turned, and faces east at
 /// the third. Does nothing while paused.
-static void ShipRooms_WatchPacer(union ActorOrEffect *fieldObject) {
-  struct Actor *watcher = (struct Actor *)fieldObject;
+static void ShipRooms_WatchPacer(struct Actor *actor) {
+  struct Actor *watcher = (struct Actor *)actor;
   struct Actor *pacer;
 
   pacer = Actor_GetById(ACTOR_QUARTERS_KAJA);

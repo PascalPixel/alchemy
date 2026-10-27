@@ -13,11 +13,11 @@
 // void differs in 7 bytes (extent 70 to 68 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void Actor_SetFlagBitByRelativeDepth(union ActorOrEffect *fieldObject) {
+static void Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
 #else
-static s32 Actor_SetFlagBitByRelativeDepth(union ActorOrEffect *fieldObject) {
+static s32 Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
 #endif
-  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *actor = (struct Actor *)updated;
   struct Actor *ref;
   u8 *fp;
   u8 flag;

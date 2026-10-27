@@ -323,10 +323,10 @@
 	import FieldYesNo_Ask, FieldYesNo_AskFar
 	import Scene_PlayMusic, Scene_PlayMusicFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
-	import FieldEffectSprite_HasPendingTarget, FieldEffectSprite_HasPendingTargetFar
-	import FieldEffectSprite_SetActorMode, FieldEffectSprite_SetActorModeFar
-	import FieldEffectSprite_SetCallback, FieldEffectSprite_SetCallbackFar
-	import FieldEffectSprite_Initialize, FieldEffectSprite_InitializeFar
+	import FieldParticle_HasPendingTarget, FieldParticle_HasPendingTargetFar
+	import FieldParticle_SetActorMode, FieldParticle_SetActorModeFar
+	import FieldParticle_SetCallback, FieldParticle_SetCallbackFar
+	import FieldParticle_Initialize, FieldParticle_InitializeFar
 	import FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar
 	import Camera_WorldToScreen, Camera_WorldToScreenFar
 	import FieldScript_ClearInvalidPackedValues, FieldScript_ClearInvalidPackedValuesFar

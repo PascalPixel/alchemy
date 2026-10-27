@@ -686,8 +686,8 @@ static void Altin_WalkThroughDoorway(void) {
 /// Update callback of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
-static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
-  struct Actor *beast = &fieldObject->actor;
+static void Altin_BeastHop(struct Actor *actor) {
+  struct Actor *beast = actor;
   s16 *shakeFrames = (s16 *)&beast->userValue;
 
   // While this hook owns the beast, timer is its hop phase, work counts down
@@ -701,9 +701,9 @@ static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
     Actor_SelectAnimation(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
-      if (fieldObject->effect.countdown != 0) {
+      if (((struct FieldEffect *)actor)->countdown != 0) {
         Script_PlaySong(SE_SPLASH);
-        fieldObject->effect.countdown = 0;
+        ((struct FieldEffect *)actor)->countdown = 0;
         beast->userValue = 4;
         MapGrid_SetShake(0, 0x10000, 0x10000);
       }
@@ -715,7 +715,7 @@ static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
   }
   if (beast->timer == 0) {
     Script_PlaySong(SE_JUMP);
-    fieldObject->effect.countdown = 1;
+    ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
   }
@@ -908,8 +908,8 @@ static void Altin_SprayInitialize(struct Actor *spray) {
 /// Update callback of a spray particle: it drifts and grows with a random
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
-static void Altin_SprayDrift(union ActorOrEffect *fieldObject) {
-  struct Actor *spray = &fieldObject->actor;
+static void Altin_SprayDrift(struct Actor *actor) {
+  struct Actor *spray = actor;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
@@ -927,7 +927,7 @@ static void Altin_SprayDrift(union ActorOrEffect *fieldObject) {
     spray->timer--;
   else
     spray->timer = (((u32)Import_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--fieldObject->effect.countdown == 0) {
+  if (--((struct FieldEffect *)actor)->countdown == 0) {
     spray->update = 0;
     Actor_Release(spray);
   }
@@ -936,17 +936,17 @@ static void Altin_SprayDrift(union ActorOrEffect *fieldObject) {
 /// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
 static void Altin_BeastSpawnSpray(void) {
-  union ActorOrEffect *spray;
+  struct Actor *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union ActorOrEffect *)FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(64), 0, PIXELS(400)));
+    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(64), 0,
+                                               PIXELS(400)));
     if (spray != 0) {
-      spray->actor.timer = WATER_SPRAY_LIFETIME;
-      spray->actor.userValue = 0;
-      spray->effect.countdown = WATER_SPRAY_LIFETIME;
-      Altin_SprayInitialize(&spray->actor);
-      spray->actor.update = Altin_SprayDrift;
-      Actor_SelectAnimation(&spray->actor, 1);
+      spray->timer = WATER_SPRAY_LIFETIME;
+      spray->userValue = 0;
+      ((struct FieldEffect *)spray)->countdown = WATER_SPRAY_LIFETIME;
+      Altin_SprayInitialize(spray);
+      spray->update = Altin_SprayDrift;
+      Actor_SelectAnimation(spray, 1);
     }
   }
 }

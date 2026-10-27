@@ -60,7 +60,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // The embers leave the top of the user's body in a random direction,
   // outwards at 2 to 4 pixels a frame and rising at -1/4 to 1.73 pixels a
   // frame.
-  user = GetBattleObjectSlotFar(work->effect->user)->object;
+  user = GetBattleObjectSlotFar(work->effect->user)->actor;
   bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->effect->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
@@ -133,7 +133,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
 
         target = GetBattleObjectSlotFar(
                      work->effect->targets[i % work->effect->targetCount])
-                     ->object;
+                     ->actor;
         vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
         vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
         vz = ember->velocityZ += (target->z.fixed - ember->z) >> 9;

@@ -24,7 +24,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *actor = effectWork->mainObject;
+  struct Actor *actor = effectWork->mainActor;
   struct Actor *child = effectWork->child;
   struct Actor *object;
   struct FixedPointPosition spawn;

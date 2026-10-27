@@ -148,7 +148,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct Actor *object;
+  struct Actor *actor;
   s32 tick;
   struct Particle *point;
   s32 size;
@@ -225,12 +225,12 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x.fixed;
-        position.world.y = object->y.fixed;
-        position.world.z = object->z.fixed;
+        position.world.x = actor->x.fixed;
+        position.world.y = actor->y.fixed;
+        position.world.z = actor->z.fixed;
         Projection_Point(&position.world, &screen);
         // Always canvas x 64, where BG2X puts the target; only the
         // projected y is kept.
@@ -324,7 +324,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct Actor *object;
+  struct Actor *actor;
   s32 tick;
   struct Particle *point;
   s32 size;
@@ -376,12 +376,12 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
+      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
-        position.world.x = object->x.fixed;
-        position.world.y = object->y.fixed;
-        position.world.z = object->z.fixed;
+        position.world.x = actor->x.fixed;
+        position.world.y = actor->y.fixed;
+        position.world.z = actor->z.fixed;
         Projection_Point(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;

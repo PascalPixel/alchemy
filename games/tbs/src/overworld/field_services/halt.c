@@ -10,7 +10,7 @@
 /// arrival. Set on the 16 particles of FieldEffect_RunHalt. They fly out
 /// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
 /// frame.
-void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateRadialCamera(struct FieldParticle *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
@@ -38,7 +38,7 @@ top:
     return;
   }
   if (state == OUT_AND_BACK_FLYING_OUT) {
-    if (FieldEffectSprite_HasPendingTarget(effect) != 0)
+    if (FieldParticle_HasPendingTarget(effect) != 0)
       return;
     *statePointer = *statePointer + 1;
     goto top;
@@ -57,7 +57,7 @@ top:
     return;
   }
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      FieldEffectSprite_HasPendingTarget(effect) == 0)
+      FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 
@@ -81,9 +81,9 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// Abilities: Halt (FIELD_PSYNERGY_HALT).
 void FieldEffect_RunHalt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *caster = effectWork->mainObject;
+  struct Actor *caster = effectWork->mainActor;
   struct Actor *orb;
-  struct FieldEffectSprite *effect;
+  struct FieldParticle *effect;
   struct Vector3 pos;
   struct Vector3 from;
   struct Vector3 to;
@@ -136,16 +136,16 @@ void FieldEffect_RunHalt(void) {
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.
-  effect = &effectWork->sprites[0];
+  effect = &effectWork->particles[0];
   for (i = 0; i < 16; i++) {
     pos.x = orb->x.fixed;
     pos.y = orb->y.fixed + (8 << 16);
     pos.z = orb->z.fixed;
     Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
-    FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
-    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialCamera);
-    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_WHITE);
+    FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialCamera);
+    Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -163,8 +163,8 @@ void FieldEffect_RunHalt(void) {
 /// eight params at random. FieldEffect_PauseActor sets it, and
 /// FieldEffect_ResumeActor looks for it to know the object was paused this
 /// way.
-void FieldEffect_UpdatePausedActor(union ActorOrEffect *fieldObject) {
-  void *object = (void *)fieldObject;
+void FieldEffect_UpdatePausedActor(struct Actor *actor) {
+  void *object = (void *)actor;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
   Anim_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
@@ -209,7 +209,7 @@ void FieldEffect_ResumeActor(s32 actorId) {
   if (actor != 0) {
     if (actor->update == FieldEffect_UpdatePausedActor) {
       struct SaveBlock *state = &gSaveBlock;
-      actor->update = (void (*)(union ActorOrEffect *))state->pausedUpdate;
+      actor->update = (void (*)(struct Actor *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Anim_ApplyChildValuesFar(actor, state->pausedPose);
     }

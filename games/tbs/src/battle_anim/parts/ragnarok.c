@@ -48,7 +48,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
-  user = GetBattleObjectSlotFar(effect->user)->object;
+  user = GetBattleObjectSlotFar(effect->user)->actor;
   // Nothing in the animation or the battle reads the variant afterwards.
   // XXX (no evidence): why it is forced to the stronger one; the store
   // changes nothing the game shows, so only the author's intent would say.

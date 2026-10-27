@@ -153,7 +153,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // above the ground. Each is placed relative to its target.
     ANIM_FOR_EACH_TARGET(k, work->effect) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[k])->object;
+          GetBattleObjectSlotFar(work->effect->targets[k])->actor;
       s32 start = k * 16;
 
       ANIM_VIEW_FROM_CAMERA(camera);
@@ -196,7 +196,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
 
       if (frame >= start + 72) {
         struct Actor *target =
-            GetBattleObjectSlotFar(work->effect->targets[i])->object;
+            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
 
         ANIM_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)

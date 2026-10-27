@@ -4,7 +4,7 @@
 #include "types.h"
 struct Window;
 
-struct FieldEffectSprite;
+struct FieldParticle;
 struct SelectionNodeLinkView;
 struct SelectionScreenCursorView;
 struct WindowSprite;
@@ -85,12 +85,12 @@ s32 Sanctum_RunPartyService(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Sanctum_HighlightMembers(struct Window *window, s32 selected);
 void Shop_DrawSelectMessage(struct Window *target, s32 unitId);
-void Sanctum_UpdateBurstSparkle(struct FieldEffectSprite *effect);
+void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect);
 void Shop_ResetEffects(void);
 void Sanctum_RunMemberIconBurst(s32 member);
 
 s32 Inn_RoomPrice(s32 innId);
-s32 Inn_CheckIn(s32 innId, s32 objectId);
+s32 Inn_CheckIn(s32 innId, s32 actorId);
 void Inn_PlaySleep(s32 roomPrice);
 
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot);

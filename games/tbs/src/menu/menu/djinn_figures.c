@@ -236,7 +236,7 @@ UNUSED void Menu_StartPartyFiguresWalking(void) {
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {
-    Sprite_StartAnimFar(menu->memberObjects[index], 1);
+    Sprite_StartAnimFar(menu->memberSprites[index], 1);
   }
 }
 

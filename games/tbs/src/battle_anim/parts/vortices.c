@@ -40,7 +40,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   BlitterPair draw;
   u8 *palette;
   struct Actor *source;
-  struct Actor *object;
+  struct Actor *actor;
   struct Particle *point;
   struct Particle *seat;
   struct Particle *target;
@@ -66,7 +66,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
                     COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE_2);
-  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->actor;
   y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->effect->user);
   // The motes start at the top of the user, flying out up to 4 pixels a
   // frame across and up to 2 up; variant -1 means no burst yet.
@@ -82,8 +82,8 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   // Where each target stands, on the ground.
   ANIM_FOR_EACH_TARGET(i, work->effect) {
     seat = &work->particles[FROTH_FIRST_TARGET + i];
-    object = GetBattleObjectSlotFar(work->effect->targets[i])->object;
-    SET_POSITION(seat, object->x.fixed, 0, object->z.fixed);
+    actor = GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+    SET_POSITION(seat, actor->x.fixed, 0, actor->z.fixed);
   }
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;

@@ -15,8 +15,8 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// Per-frame update of Move's hand (FieldEffect_StartItemBreak): turns it
 /// toward the object it is linked to, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateItemBreakFragment(union ActorOrEffect *fieldObject) {
-  struct Actor *source = (struct Actor *)fieldObject;
+void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
+  struct Actor *source = (struct Actor *)actor;
   struct Actor *target;
   struct Vector3 position;
   struct Actor *fragment;
@@ -83,7 +83,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   struct Vector3 *candidate;
 
   effectWork = gFieldEffectWork;
-  user = effectWork->mainObject;
+  user = effectWork->mainActor;
   target = effectWork->child;
   // work->angle is the way the caster faces; the hand's side of the target
   // is the opposite way, toward the caster.
@@ -220,7 +220,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(effectWork->firstObjectId)->steeringFlags &= 0xfe;
+      Actor_GetById(effectWork->firstActorId)->steeringFlags &= 0xfe;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
@@ -240,7 +240,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   target->update = effectWork->savedCallback;
   FieldEffect_StopCasterHook();
   if (moved == 1)
-    (Actor_GetById(effectWork->firstObjectId))->steeringFlags |= 1;
+    (Actor_GetById(effectWork->firstActorId))->steeringFlags |= 1;
   FieldEffect_FadeFromEffectColor();
   UpdateRisingParticleBurst(pusher);
 }
@@ -249,7 +249,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 /// where it started, comes back and is freed. It goes out straight at up to 4
 /// pixels a frame and comes back turning at most 1/64 turn a frame, so it
 /// curves home.
-void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect) {
+void FieldEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
@@ -276,7 +276,7 @@ next_state:
   }
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
-    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       (*statePtr)++;
       goto next_state;
     }
@@ -293,7 +293,7 @@ next_state:
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      FieldEffectSprite_HasPendingTarget(effect) == 0)
+      FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 
@@ -307,7 +307,7 @@ void FieldEffect_RunMove(void) {
   void *object;
 
   effectWork = gFieldEffectWork;
-  object = effectWork->mainObject;
+  object = effectWork->mainActor;
 
   /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
    * mainObject load below the frame's sub sp; as a plain call, 2 of 24
@@ -382,21 +382,21 @@ void *FieldEffect_StartItemBreak(void *object) {
 /// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
 /// at most 600 frames, for it to arrive at its target. Called by both Move
 /// effects on the hand.
-void FieldEffect_SnapScaleToFull(struct Actor *object) {
+void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
 
-  if (object != NULL) {
-    scale = object->scaleX;
+  if (actor != NULL) {
+    scale = actor->scaleX;
     if (scale <= 0xffff) {
       do {
         next = scale + 0x1000;
         scale = next;
       } while (next <= 0xffff);
-      object->scaleX = next;
-      object->scaleY = next;
+      actor->scaleX = next;
+      actor->scaleY = next;
     }
-    Actor_WaitForMoveFar(object);
+    Actor_WaitForMoveFar(actor);
   }
 }
 

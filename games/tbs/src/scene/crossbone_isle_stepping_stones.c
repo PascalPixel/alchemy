@@ -78,7 +78,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "heap.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "actor_effect.h"
 #include "fixed_math.h"
 #include "flags.h"

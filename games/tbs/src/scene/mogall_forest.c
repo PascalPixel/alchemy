@@ -90,7 +90,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "fixed_math.h"
 #include "vector3.h"
 #include "flags.h"

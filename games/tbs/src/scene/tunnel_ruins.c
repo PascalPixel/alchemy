@@ -91,7 +91,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "flags.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"

@@ -62,7 +62,7 @@ overlay, and the rows are `struct Trigger`. [Scenes](src/scene/README.md#the-ent
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
 page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
-and [Places](src/field/scene_headers.s) lists every scene in
+and [Places](src/field/scenes.s) lists every scene in
 [story order](glossary.md#the-places-in-story-order).
 
 ## Scene and area flags

@@ -40,7 +40,7 @@
 /// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
 /// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
 /// party for keeping McCoy waiting. The garden is another area
-/// (scene_headers.s gives Bilibin 8 and the garden 9), so
+/// (scenes.s gives Bilibin 8 and the garden 9), so
 /// Scene_Arrive clears the flag on the way in and the guard never
 /// sees it set.
 ///

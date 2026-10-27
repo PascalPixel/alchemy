@@ -47,7 +47,7 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
-#include "scene_header.h"
+#include "scene.h"
 
 /// The actors, numbering the rows of
 /// gTimberRoomsAActorTemplates and of

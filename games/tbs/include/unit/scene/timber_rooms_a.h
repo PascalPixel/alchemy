@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "scene_tables.h"
-#include "scene_header.h"
+#include "scene.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);

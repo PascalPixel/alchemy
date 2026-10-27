@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "static_assert.h"
 
 /// Where a pushed object ahead of the leader would roll to: its footprint, its

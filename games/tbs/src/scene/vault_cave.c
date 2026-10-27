@@ -97,7 +97,7 @@
 #include "songs.h"
 #include "actor_script.h"
 #include "map_grid_scroll.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "macros.h"
 #include "item_ids.h"
 

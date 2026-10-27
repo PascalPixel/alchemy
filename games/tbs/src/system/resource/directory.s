@@ -15,7 +15,7 @@
 @   unused N               N unused entries.
 @ A row's number is its place, so a row added or moved renumbers every row
 @ after it. Code naming a resource by its symbol follows, but some numbers
-@ travel bare: the map table (field/scene_headers.s) names each map's overlay by
+@ travel bare: the map table (field/scenes.s) names each map's overlay by
 @ number, objects.tsv numbers each overlay's rows, the layouts are counted on
 @ from ResourceId_Map001 (MapGrid_LoadMap), and the option menu's marker
 @ steps through eight frames from ResourceId_MenuCursorFrames.

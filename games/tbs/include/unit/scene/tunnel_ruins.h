@@ -4,7 +4,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field_coordinate.h"
-#include "scene_header.h"
+#include "scene.h"
 
 struct SceneEntrance;
 struct SceneExitRegion;

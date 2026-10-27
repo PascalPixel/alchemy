@@ -84,7 +84,7 @@
 #include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "songs.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"

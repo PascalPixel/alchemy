@@ -292,7 +292,7 @@ in [story order](glossary.md#the-places-in-story-order):
   by sending the party to the title screen
   ([lemurian_ship.c](src/scene/lemurian_ship.c)).
 
-[Places](src/field/scene_headers.s) lists every scene in story order with what
+[Places](src/field/scenes.s) lists every scene in story order with what
 happens there.
 
 ## The world map
@@ -340,7 +340,7 @@ banks](src/system/README.md#why-the-program-is-cut-into-banks)).
   the windows text is drawn in.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far calls,
   overlays and songs.
-- [Places](src/field/scene_headers.s): every scene in story order, with its
+- [Places](src/field/scenes.s): every scene in story order, with its
   actor templates and triggers.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.

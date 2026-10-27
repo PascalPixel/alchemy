@@ -4,7 +4,7 @@
 #include "types.h"
 #include "engine_call.h"
 #include "actor.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "save_block.h"
 #include "songs.h"
 

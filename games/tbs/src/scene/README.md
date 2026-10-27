@@ -11,7 +11,7 @@ area of RAM when the party arrives, and replaced when it leaves.
 to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of
 main-program functions it may call. Each overlay has a generated page of its
-own, listed in [Places](../field/scene_headers.s) in
+own, listed in [Places](../field/scenes.s) in
 [story order](../../glossary.md#the-places-in-story-order), with its
 [map](../../glossary.md#map), its [triggers](../../glossary.md#trigger)
 and a recording of each event.
@@ -72,7 +72,7 @@ east, y up and z south, and a facing is one of eight headings
 These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
 table (named in `scene_exits.h`), `struct ActorTemplate`,
 `struct SceneExitRegion` and `struct Trigger`, all in `scene_tables.h` and
-`scene_header.h`.
+`scene.h`.
 
 ### Conditions
 
@@ -304,7 +304,7 @@ that includes the header; each header's opening comment says what it holds.
 
 Each overlay is three objects, linked in this order into the overlay area:
 `entry/<scene>`, `<scene>` and `import/<scene>`. The scene table, `gScenes` in
-[`field/scene_headers.s`](../field/scene_headers.s), gives each scene its overlay,
+[`field/scenes.s`](../field/scenes.s), gives each scene its overlay,
 area, scene type and map, and names it `SceneId_<Scene>`; several scenes may
 share one overlay, and then share its file. A scene overlay is never split into
 parts, because its code is laid out by kind (entry points, then handlers,
@@ -343,7 +343,7 @@ page](../../README.md#the-scene-table-and-areas). The maps the scenes are
 drawn on are in [Maps](../map/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
-To find the code for a scene, find its row in `field/scene_headers.s`: the
+To find the code for a scene, find its row in `field/scenes.s`: the
 overlay's resource number begins the rows of `objects.tsv` that name its
 files. To find what someone says, search `games/tbs/text/en.po` for the line;
 its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).

@@ -107,7 +107,7 @@
 #include "call.h"
 #include "battle_party.h"
 #include "field_effect.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "display_transition.h"
 #include "fx_work.h"
 #include "text/msg_ids.h"

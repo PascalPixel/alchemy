@@ -59,7 +59,7 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "fixed_point_position.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

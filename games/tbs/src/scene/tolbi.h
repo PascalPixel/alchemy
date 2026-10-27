@@ -8,7 +8,7 @@
 #include "field_effect.h"
 #include "tbs_edition.h"
 #include "window.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "heap.h"
 
 #define NULL ((void *)0)

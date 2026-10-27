@@ -126,7 +126,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "scene_header.h"
+#include "scene.h"
 
 /// The visible anchor charm has been created this visit.
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)

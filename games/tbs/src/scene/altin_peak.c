@@ -113,7 +113,7 @@
 #include "actor_script.h"
 #include "irq.h"
 #include "fixed_math.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "map_grid_scroll.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"

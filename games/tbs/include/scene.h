@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_SCENE_HEADER_H
-#define ALCHEMY_SCENE_HEADER_H
+#ifndef ALCHEMY_SCENE_H
+#define ALCHEMY_SCENE_H
 
 /// @file
 /// Scene headers, exit regions and scene entry tables, with the field work they
@@ -15,7 +15,7 @@ struct MapGridCell;
 struct Actor;
 
 /// A scene's row in gScenes: its overlay's resource, its area,
-/// its scene type and its map. One row per scene number; field/scene_headers.s
+/// its scene type and its map. One row per scene number; field/scenes.s
 /// writes them, and its SceneId_ symbols are the row numbers.
 struct Scene {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
@@ -76,7 +76,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every scene's header, by scene number (field/scene_headers.s).
+/// Every scene's header, by scene number (field/scenes.s).
 extern const struct Scene gScenes[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its 48-byte entry table. Every

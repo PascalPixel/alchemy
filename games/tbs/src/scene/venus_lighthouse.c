@@ -113,7 +113,7 @@
 #include "scene_ids.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "flags.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"

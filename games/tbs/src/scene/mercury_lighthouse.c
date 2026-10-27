@@ -132,7 +132,7 @@
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "fx_work.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"

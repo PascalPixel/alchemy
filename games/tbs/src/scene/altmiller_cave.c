@@ -93,7 +93,7 @@
 #include "actor_script.h"
 #include "frame.h"
 #include "fixed_math.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "fx_work.h"
 #include "flags.h"
 #include "songs.h"

@@ -105,7 +105,7 @@
 #include "actor_script.h"
 #include "actor.h"
 #include "heap.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "fixed_math.h"
 #include "colosso_gauge.h"
 #include "macros.h"

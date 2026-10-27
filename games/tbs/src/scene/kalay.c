@@ -125,7 +125,7 @@
 #include "actor_effect.h"
 #include "orbit.h"
 #include "fixed_math.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "heap.h"
 
 #include "flags.h"

@@ -86,7 +86,7 @@
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"

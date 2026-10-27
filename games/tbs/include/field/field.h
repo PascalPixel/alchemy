@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 #include "actor.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "scene_tables.h"
 #include "menu_list.h"
 #include "farcall.h"

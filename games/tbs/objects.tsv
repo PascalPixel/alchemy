@@ -102,7 +102,7 @@ main	rom_main_04	games/tbs/src/overworld/scene_rules
 main	rom_main_04	games/tbs/src/overworld/battle_cue
 main	rom_main_04	games/tbs/src/overworld/swatch
 main	rom_main_04	games/tbs/src/overworld/fxdata
-main	rom_main_04	games/tbs/src/field/scene_headers
+main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/overworld/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/menu

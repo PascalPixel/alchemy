@@ -99,7 +99,7 @@
 #include "actor.h"
 #include "heap_slots.h"
 #include "heap.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "colosso_gauge.h"
 #include "flags.h"
 #include "songs.h"

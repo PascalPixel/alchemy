@@ -3,7 +3,7 @@
 
 /// @file
 /// Scene numbers, named after their places, in the order of gScenes
-/// (field/scene_headers.s).
+/// (field/scenes.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C takes the number as (s32)&SceneId_Vale, and the exit tables name a
@@ -18,7 +18,7 @@ extern char SceneId_Title;
 extern char SceneId_FileScreen;
 /// ★ Named from its area name: World Map
 extern char SceneId_WorldMap;
-/// The World Map's map, row 1 of gMaps (field/scene_headers.s names it with
+/// The World Map's map, row 1 of gMaps (field/scenes.s names it with
 /// the World Map's scene row), which the field compares gSaveBlock.mapId with.
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)

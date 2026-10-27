@@ -194,7 +194,7 @@ leaves the partner's party there for the link battle that follows; the world
 map's still picture; and the debug sprite viewer.
 
 Each scene's row of `gScenes`
-([`field/scene_headers.s`](../field/scene_headers.s)) gives a map number,
+([`field/scenes.s`](../field/scenes.s)) gives a map number,
 which picks a row of `gMaps` ([`field/maps.c`](../field/maps.c)):
 the map's header, palette and tiles. `MapGrid_LoadMap` unpacks each
 part, and `Tile_ConvertMapGrid` puts the three planes together into the cell

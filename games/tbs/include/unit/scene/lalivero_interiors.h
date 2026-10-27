@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "scene_tables.h"
-#include "scene_header.h"
+#include "scene.h"
 
 const struct SceneEntrance *LaliveroInteriors_GetEntrances(void);
 const struct SceneExitRegion *LaliveroInteriors_GetRegions(void);

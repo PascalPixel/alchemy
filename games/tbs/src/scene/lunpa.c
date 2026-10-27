@@ -65,7 +65,7 @@
 #include "event_layer.h"
 #include "engine_call.h"
 #include "scene_tables.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "edition.h"
 #include "lunpa.h"
 #include "text/msg_ids.h"

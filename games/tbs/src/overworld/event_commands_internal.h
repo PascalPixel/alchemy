@@ -14,7 +14,7 @@
 #include "types.h"
 #include "battle_type.h"
 #include "save_block.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "battle_system.h"
 #include "battle.h"
 #include "battle_unit.h"

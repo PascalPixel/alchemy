@@ -16,7 +16,7 @@
 #include "field_effect.h"
 #include "ram_buffer.h"
 #include "map_grid.h"
-#include "scene_header.h"
+#include "scene.h"
 #include "heap.h"
 #include "keystate.h"
 #include "fixed_math.h"

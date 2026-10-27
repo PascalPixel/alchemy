@@ -241,6 +241,16 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   save; as `IRQ_LOCK`, 1 of 123 instructions differs. Other sites keep
   arithmetic on `BLEND_ALPHA` rather than its `|` form, its operands written
   out, or a signed halving as its three steps.
+- An inline and a direct call of the routine it wraps can compile
+  differently, because each inline argument is a pseudo of its own and a
+  constant two calls share is loaded again. An event command therefore keeps
+  both spellings where its sites need both: events call `Actor_FaceDirection`,
+  the inline in `event_inline.h`, and the sites that match only with the
+  direct call name its routine, `Actor_ArmCallback`; folding that inline into
+  its routine changes 316 functions in tbs-en. Where an inline and its routine
+  would share a name, the inline takes the `FieldActor_` or `FieldEvent_`
+  prefix (`FieldEvent_ShowMessageThenWait`), and where folding changes no
+  function the two are one name (`Actor_Stop`, `Event_WaitFrames`).
 - A statement macro takes the shape all its uses match with. In
   `BattleAnim_BuildBlitter`'s second walk, `PUT`, `COPY` and `PATCH` are
   `do { } while (0)` blocks and the others plain statements or a block.

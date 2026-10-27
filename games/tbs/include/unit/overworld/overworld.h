@@ -127,7 +127,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 // would come before Field_RequestDjinnBattle and
 // Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
 // (2 of 52 instructions in tbs-en). Split evidence for
-// overworld|field_services.
+// overworld|event_commands.
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif

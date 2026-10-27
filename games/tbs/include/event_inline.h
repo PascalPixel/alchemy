@@ -2,17 +2,19 @@
 #define ALCHEMY_EVENT_INLINE_H
 
 /// @file
-/// The map service layer: one typed inline for each engine service a map
-/// calls by its own name, passing it on to the main image's import
+/// The event inlines: one typed inline for each event command an event calls
+/// by its own name, passing it on to the main image's import
 /// (Actor_FaceEachOther calls Actor_LinkPair).
 ///
 /// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. A map writes
+/// compiler-steering device. An event writes
 /// `Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);` and the inline
-/// makes the call. Where a site matches only through a second inline over the
-/// same routine, that inline takes the FieldActor_ prefix, as
-/// FieldActor_JumpDownLedge does; where an inline would have its routine's
-/// name, the routine keeps it and the inline takes the prefix.
+/// makes the call; a site that matches only with the direct call names the
+/// routine instead, and MATCHING.md says why both spellings stay. Where a site
+/// matches only through a second inline over the same routine, that inline
+/// takes the FieldActor_ prefix, as FieldActor_JumpDownLedge does; where an
+/// inline would have its routine's name, the routine keeps it and the inline
+/// takes the prefix.
 
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"

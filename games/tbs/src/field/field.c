@@ -14,10 +14,10 @@
 ///   Sprites         sprite_draw.c: Sprite_ComposeFrame,
 ///                   Render_PlaceProjectedSprite; animation.c:
 ///                   Sprite_Create, Sprite_StartAnim
-///   Objects         objects.c: Actor_Create, ActorSystem_Initialize;
+///   Actors          actors.c: Actor_Create, ActorSystem_Initialize;
 ///                   actor_motion.c: Actor_UpdateAllThumb,
 ///                   Actor_SetMoveTarget
-///   Object scripts  script_commands.c (the SC_ commands of actor_script.h);
+///   Actor scripts   script_commands.c (the SC_ commands of actor_script.h);
 ///                   player_control.c: Actor_UpdatePlayerControl
 ///   Maps            map_layers.c: MapGrid_LoadMap,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:

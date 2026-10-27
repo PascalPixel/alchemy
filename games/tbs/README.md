@@ -113,8 +113,12 @@ the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["A frame in Xian"]) --> tasks["Every task runs once"]
-  tasks --> check{"A request?"}
+  frame(["A frame in Xian"]) --> fade["Palette fade: move the colours toward their target"]
+  fade --> actors["Actors: each runs its script; player control reads the buttons"]
+  actors --> camera["Camera: scroll the map after Isaac"]
+  camera --> rest["Sprites, water and windows: place the actors, step the water, draw any window"]
+  rest --> ground["Check the ground under Isaac"]
+  ground --> check{"A request?"}
   check -->|"no"| frame
   check -->|"yes"| handle["Handle it to the end"]
   handle --> frame
@@ -122,22 +126,28 @@ flowchart TD
   classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class frame,next link
-  class tasks,handle step
+  class fade,actors,camera,rest,ground,handle step
   class check step
 ```
 
 Isaac stands at the foot of Xian's stairs and the player presses nothing,
-yet the village is alive. Each frame the scene manager
-waits for the screen, and while it waits every task runs once:
+yet the village is alive. Each frame the scene manager waits for the screen,
+and while it waits the tasks run once each, highest priority first:
 
-- every actor runs its [actor script](glossary.md#actor-script): the water
-  carrier takes her next step on her round;
-- Isaac's script has handed him to player control, which reads the buttons,
-  finds none pressed and keeps him standing;
-- the tile animation swaps the next frame of the moving water into place;
-- the camera follows Isaac, and the sprites are placed on the screen.
+- **Palette fade** moves the colours a step toward their target, which holds
+  them still once the fade-in is over.
+- **Actors**: every actor runs its [actor script](glossary.md#actor-script).
+  The water carrier takes her next step on her round; Isaac's script has
+  handed him to player control, which reads the buttons, finds none pressed
+  and keeps him standing.
+- **Camera** scrolls the map so that it follows Isaac; it runs after the
+  actors so that it follows where they are now.
+- **Sprites, water and windows**, which share the lowest priority: every
+  actor's sprite is placed on the screen, the tile animation swaps the next
+  frame of the moving water into place, and any open window draws its text.
 
-Then the scene manager asks whether anything should happen. Usually nothing
+Then the scene manager checks the ground under Isaac and asks whether
+anything should happen. Usually nothing
 has, and the next frame begins. When something has, it is a
 [field request](glossary.md#field-request), and the scene manager runs it
 from start to finish before the next frame of standing or walking. Talking
@@ -165,9 +175,10 @@ which is why the party comes back from a battle to the same spot: the scene
 is loaded again, keeping where everyone stood.
 
 The loop is the rest of `SceneManager_Run` in
-[scene_manager.c](src/overworld/overworld/scene_manager.c). The actors are
-moved by `Actor_UpdateAllMotion`, the water by `TilesetAnim_Update` and the
-camera by `MapGrid_UpdateLayerScroll`, all tasks; Isaac's buttons are read by
+[scene_manager.c](src/overworld/overworld/scene_manager.c). The tasks are, in the
+order above, `PaletteFade_Update`, `Actor_UpdateAllThumb`,
+`MapGrid_UpdateLayerScroll`, then `ActorSystem_PlaceSprites`,
+`TilesetAnim_Update` and `WindowSystem_Update`; Isaac's buttons are read by
 `Field_CheckConfiguredKeys` and the ground under him by `Field_UpdateWalking`.
 [Running a scene](src/overworld/README.md#the-scene-manager-serves-requests)
 follows each request in full.

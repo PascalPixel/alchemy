@@ -26,7 +26,7 @@
 /// every map temp flag it is cleared when the party next comes in, so the log
 /// is back on the bank, but a battle keeps it.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "save_block.h"
@@ -52,9 +52,9 @@
 #include "engine_call.h"
 #include "scene_tables.h"
 #include "kolima.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
@@ -113,7 +113,7 @@ extern s32 gKolimaForestEntrance_PsynergyFieldHit;
 extern s32 gKolimaForestEntrance_MiaInParty;
 extern s32 gKolimaForestEntrance_SparkleSoundOn;
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.

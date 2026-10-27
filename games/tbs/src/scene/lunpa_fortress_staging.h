@@ -6,7 +6,7 @@
 #include "scene_tables.h"
 #include "item_ids.h"
 
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "actor.h"
 #include "actor.h"
 

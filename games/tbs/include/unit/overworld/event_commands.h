@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_OVERWORLD_EVENT_COMMANDS_H
 
 #include "types.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 #include "unit/overworld/overworld.h"
 
 struct Sprite;

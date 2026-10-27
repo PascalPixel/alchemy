@@ -43,7 +43,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "create_configured_overlay_object.h"
+#include "create_configured_actor.h"
 #include "debug.h"
 #include "game.h"
 #include "graphics.h"
@@ -56,7 +56,7 @@
 #include "item.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "heap_slots.h"
 #include "ability_ids.h"
 #include "macros.h"
@@ -527,7 +527,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
 }
 
 // Shared height-wait code stays at its native position in the overlay.
-#include "common/object_waitdown.h"
+#include "common/actor_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the pool under the waterfall with a splash and sinks

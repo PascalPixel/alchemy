@@ -112,7 +112,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "songs.h"
 #include "item_ids.h"
@@ -257,7 +257,7 @@ struct BilibinRippleTimer {
 
 struct BilibinRippleTimer gBilibin_RippleTimer;
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// The party has looked once at the tree at Bilibin's entrance, so a second
 /// look says it looks like a living person.
@@ -893,7 +893,7 @@ static void Bilibin_SetUpTreasury(void) {
   }
 }
 
-#include "common/object_findcell.h"
+#include "common/actor_findcell.h"
 
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
 /// Bilibin Barricade: it slides one cell ahead with the leader behind it, if

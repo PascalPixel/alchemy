@@ -5,11 +5,11 @@
 #include "speaker.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "types.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
-// object_effect_scripts.h, and overworld.c declares the colour curves. Some
+// field_effect_scripts.h, and overworld.c declares the colour curves. Some
 // readers declare their table without const: battle.h's
 // gFieldEffect_TargetRangeByMode, gMindRead_CasterPaletteCycle,
 // gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,

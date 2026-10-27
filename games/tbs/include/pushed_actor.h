@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_PUSHED_OBJECT_H
-#define ALCHEMY_PUSHED_OBJECT_H
+#ifndef ALCHEMY_PUSHED_ACTOR_H
+#define ALCHEMY_PUSHED_ACTOR_H
 
 /// @file
 /// The pushed objects' movement probes and footprint bounds.

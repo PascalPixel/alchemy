@@ -50,7 +50,7 @@
 ///   Kolima_RestoreBridgeState draws it down on every later visit, and the
 ///   bridge on the world map is drawn down with the same flag.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
@@ -81,7 +81,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "scene_header.h"
@@ -266,7 +266,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
   return 1;
 }
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {

@@ -43,7 +43,7 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 #include "fixed_math.h"

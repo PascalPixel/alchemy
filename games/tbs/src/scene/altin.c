@@ -72,7 +72,7 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "songs.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384

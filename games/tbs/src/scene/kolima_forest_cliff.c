@@ -35,7 +35,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "actor.h"
 #include "save_block.h"
 #include "event_layer.h"
@@ -53,7 +53,7 @@ enum {
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.

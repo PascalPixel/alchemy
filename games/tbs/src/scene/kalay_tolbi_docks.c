@@ -92,7 +92,7 @@
 #include "event_inline.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"

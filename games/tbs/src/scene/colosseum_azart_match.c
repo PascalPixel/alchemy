@@ -55,7 +55,7 @@
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "save_block.h"
 #include "io_write_queue.h"
@@ -93,7 +93,7 @@
 #include "event_layer.h"
 #include "event_inline.h"
 #include "scene_tables.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
 #include "battle_unit.h"
@@ -102,7 +102,7 @@
 #include "ability_ids.h"
 #include "edition.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "heap.h"
 #include "scene_header.h"
@@ -1510,7 +1510,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 #include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_map_state.h"
-#include "common/object_findslot.h"
+#include "common/actor_findslot.h"
 
 /// Checks the next cell and pushes its object one step if clear.
 static void ColosseumAzartMatch_PushActorAhead(void) {

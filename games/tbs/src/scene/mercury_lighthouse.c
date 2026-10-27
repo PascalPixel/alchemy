@@ -81,7 +81,7 @@
 ///   flows, people come to drink from it, and an Empty Bottle used at it
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "heap.h"
 #include "iwram_call.h"
@@ -90,7 +90,7 @@
 #include "unit/import.h"
 #include "unit/scene/mercury_lighthouse.h"
 #include "unit/scene/common/effect_spawn.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "unit/scene/common/mercury_lighthouse_lights.h"
 #include "unit/scene/common/mercury_lighthouse_pillar.h"
 #include "unit/overworld/overworld.h"
@@ -105,7 +105,7 @@
 #include "mercury.h"
 #include "event_layer.h"
 #include "field_effect.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 #include "ram_buffer.h"
 #include "battle.h"
 #include "debug.h"
@@ -135,7 +135,7 @@
 #include "scene_header.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "iowrite.h"
 #include "battle_unit.h"
 #include "flags.h"
@@ -371,7 +371,7 @@ enum {
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// MercuryLighthouseMiddle: talking to Sleet, a Mercury Djinni, starts its
 /// battle.

@@ -58,7 +58,7 @@
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "songs.h"
 
@@ -199,7 +199,7 @@ static void McCoyPalace_McCoyRewardsParty(void);
 static void McCoyPalace_PresentRewardChests(void);
 
 // The shared facing callback precedes the map's entry points.
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceEntrances;

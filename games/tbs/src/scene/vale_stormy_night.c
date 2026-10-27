@@ -53,7 +53,7 @@
 /// gValeStormyNight_Exits gives each exit's destination. Two cells start a
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "unit/import.h"
 #include "unit/scene/vale_stormy_night.h"
@@ -83,7 +83,7 @@
 #include "resource.h"
 #include "field_effect.h"
 #include "tbs_edition.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "heap_slots.h"
 #include "vram_cache.h"
 #include "fixed_math.h"
@@ -301,7 +301,7 @@ static s32 ValeStormyNight_RerollHeadingOnCountdown(struct Actor *interpreter) {
   return 1;
 }
 
-#include "common/object_pulse.h"
+#include "common/actor_pulse.h"
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.

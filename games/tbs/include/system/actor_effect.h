@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJECT_EFFECT_H
-#define ALCHEMY_OBJECT_EFFECT_H
+#ifndef ALCHEMY_ACTOR_EFFECT_H
+#define ALCHEMY_ACTOR_EFFECT_H
 
 /// @file
 /// The fade overlay, the weather particles and the actor effect work.

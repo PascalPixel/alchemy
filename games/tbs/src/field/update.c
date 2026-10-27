@@ -1,10 +1,10 @@
 #include "unit/field/update.h"
-#include "unit/field/object_script.h"
+#include "unit/field/actor_script.h"
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"
 #include "mulq16.h"
-#include "script_motion.h"
+#include "actor_arm_view.h"
 #include "macros.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven objects updated each frame

@@ -110,7 +110,7 @@ function of its own, a hook, that runs every frame before its script, even
 while the object is paused.
 
 The commands are the `SC_` macros of
-[`objcmd.h`](../../include/objcmd.h), each a row of
+[`actor_script.h`](../../include/actor_script.h), each a row of
 `gActorScript_CommandTable`, and `ActorScript_FindLabel` finds a jump's
 label. The reference pages give every command; these are the ones above.
 
@@ -382,7 +382,7 @@ differences from this one.
   entries of OAM (the hardware's sprite list), and up to four **sprite anims**
   (`struct SpriteAnim`), animations composed into one picture.
 - An **object script** is a list of 32-bit words: `SC_` commands of
-  [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
+  [`actor_script.h`](../../include/actor_script.h) and their operands. An **animation
   script** is a list of byte pairs that a sprite anim plays.
 - A map **layer** is one of a town's three backgrounds
   ([Maps](../map/README.md#one-grid-three-layers)).
@@ -401,13 +401,13 @@ an unusual spelling.
 ## Evidence
 
 The command names (`SC_WAIT`, `SC_SYNC` and the rest) are the macros of
-`objcmd.h`, named from what each handler does; the struct views are named from
+`actor_script.h`, named from what each handler does; the struct views are named from
 the fields each family reads, and the map words from the loader. None is
 recovered from the original.
 
 The update accepts command words up to 63 but the table has 47 entries, so a
 word from 47 to 63 would call through whatever follows the table. No script
-does: every script is written in `objcmd.h`'s macros, whose last command is
+does: every script is written in `actor_script.h`'s macros, whose last command is
 `SC_KEY_COUNT` (`0x23`), and none holds a bare word from `0x24` to 63.
 
 The field scenes sampled for a sprite with more than one drawn anim (Vale,

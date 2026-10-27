@@ -71,7 +71,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 
@@ -208,7 +208,7 @@ static void Xian_SpawnTrainingParticles(void) {
   }
 }
 
-#include "common/object_distance.h"
+#include "common/actor_distance.h"
 
 /// The water carrier has spilled her water.
 /// ★ Named from the game: "You made me spill my water!"

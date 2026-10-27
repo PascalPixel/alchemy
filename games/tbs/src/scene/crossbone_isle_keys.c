@@ -60,7 +60,7 @@
 #include "event_layer.h"
 #include "event_inline.h"
 #include "scene_tables.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "io_reg.h"
 #include "resource.h"
 #include "actor.h"
@@ -71,7 +71,7 @@
 #include "call.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "iowrite.h"
 #include "field_effect.h"
 #include "fixed_math.h"
@@ -222,7 +222,7 @@ static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
   Actor_GetById(ACTOR_FIRST_PILLAR)->y.fixed = PIXELS(32);
 }
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// Talking to Bane in CrossboneIsleBane while Halt holds it
 /// (TRIGGER_TALK_HALTED): Bane, a Venus Djinni, joins the party.

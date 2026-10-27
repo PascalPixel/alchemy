@@ -134,7 +134,7 @@
 #include "ability_ids.h"
 #include "songs.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "iowrite.h"
 #include "actor.h"
 #include "flags.h"
@@ -150,7 +150,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.

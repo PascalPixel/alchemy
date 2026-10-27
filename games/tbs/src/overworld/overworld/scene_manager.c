@@ -11,7 +11,7 @@ struct ActorSystemSuspendView {
   u16 used;     ///< ActorSystemWork's; not named here
   u8 unused[2]; ///< ActorSystemWork's; no code names it
   /// ActorSystemWork's suspended: while nonzero, sprites not held are not
-  /// drawn and give up their VRAM (object_camera.c, sprite_draw.c).
+  /// drawn and give up their VRAM (actor_camera.c, sprite_draw.c).
   u16 wait;
 };
 

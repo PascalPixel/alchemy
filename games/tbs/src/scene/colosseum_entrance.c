@@ -79,7 +79,7 @@
 #include "text/msg_ids.h"
 #include "actor.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "macros.h"
 #include "flags.h"

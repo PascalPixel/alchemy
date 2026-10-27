@@ -93,7 +93,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/kalay.h"
-#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/actor_orbit.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/window/window.h"
@@ -117,12 +117,12 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
-#include "action_script.h"
+#include "actor_script.h"
+#include "script_operands.h"
 #include "macros.h"
 
 #include "actor.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 #include "orbit.h"
 #include "fixed_math.h"
 #include "scene_header.h"
@@ -377,7 +377,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
 }
 
 // Shared source, included in link order.
-#include "common/object_heading.h"
+#include "common/actor_heading.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
 /// free; it changes what Layana says.
@@ -2069,7 +2069,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 }
 
 // Shared source, included in link order.
-#include "common/object_findcell.h"
+#include "common/actor_findcell.h"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one cell when there is room.
@@ -2395,7 +2395,7 @@ static void Kalay_FreezePuddle(void) {
 }
 
 // Shared source, included in link order.
-#include "common/object_orbit.h"
+#include "common/actor_orbit.h"
 
 // One cell in each facing direction: x in the high 16 bits, z in the low 16.
 // UB: negative x coordinates cannot be left-shifted as signed integers.

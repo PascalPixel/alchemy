@@ -87,7 +87,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
@@ -138,7 +138,7 @@ enum ValeKradensCottageActorId {
   ACTOR_COTTAGE_VISITOR
 };
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// The front door of Kraden's cottage stands open since Kraden set off, so
 /// walking in (metatile behavior 3, the exit into the cottage) skips its

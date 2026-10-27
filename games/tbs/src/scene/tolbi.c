@@ -66,7 +66,7 @@
 #include "edition.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 #include "fixed_math.h"
 #include "map_grid.h"
@@ -86,7 +86,7 @@ static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(ACTOR_TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
 }
 
-#include "common/object_distance.h"
+#include "common/actor_distance.h"
 
 /// Stops a running child when the target is close by and ahead of it, or
 /// always when force is set; otherwise starts the child running again.

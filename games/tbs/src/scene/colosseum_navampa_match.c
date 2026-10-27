@@ -47,7 +47,7 @@
 /// sleep; both exits lead to Babi's Palace, where he wakes long after the
 /// finals.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "save_block.h"
 #include "io_write_queue.h"
@@ -95,7 +95,7 @@
 #include "ability_ids.h"
 #include "edition.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "heap.h"
 #include "scene_header.h"
@@ -2250,7 +2250,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
 #include "common/colosso_path_opponent.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_map_state.h"
-#include "common/object_findslot.h"
+#include "common/actor_findslot.h"
 
 /// Pushes a neighboring actor one cell when its destination and overhead
 /// are clear.

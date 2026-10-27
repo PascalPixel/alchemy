@@ -73,8 +73,8 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "create_configured_overlay_object.h"
-#include "pushed_object.h"
+#include "create_configured_actor.h"
+#include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -89,7 +89,7 @@
 #include "scene_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 
 #include "fixed_math.h"
@@ -207,7 +207,7 @@ static void ValeCave_ApplyEntryState(void);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// In the third room, the western log has been pushed off the ledge.
 /// ★ Named from what the player sees: two logs standing north to south on the
@@ -836,7 +836,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
   }
 }
 
-#include "common/object_pairmove.h"
+#include "common/actor_pairmove.h"
 
 /// In Vale Cave's second room, walking east onto the riding log: it carries
 /// the leader to the eastern end of the passage.

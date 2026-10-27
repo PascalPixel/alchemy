@@ -1,4 +1,4 @@
-#include "action_script.h"
+#include "script_operands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

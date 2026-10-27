@@ -76,7 +76,7 @@
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/vale.h"
-#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/actor_orbit.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/overworld/overworld.h"
@@ -106,7 +106,7 @@
 #include "iwram_call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "field_effect.h"
 #include "map_grid_scroll.h"
@@ -365,7 +365,7 @@ enum ValeAnimation {
   ANIM_GARET_STARTLED = 13
 };
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// The roof of Isaac's house has just been mended; for the rest of the visit
 /// Dora frets about the hole Garet left.
@@ -3266,7 +3266,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   }
 }
 
-#include "common/object_orbit.h"
+#include "common/actor_orbit.h"
 
 /// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
 /// four, and the world map's linked sparks every 16 frames.

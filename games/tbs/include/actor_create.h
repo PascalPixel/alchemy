@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJECT_FACTORY_H
-#define ALCHEMY_OBJECT_FACTORY_H
+#ifndef ALCHEMY_ACTOR_CREATE_H
+#define ALCHEMY_ACTOR_CREATE_H
 
 /// @file
 /// FieldActor_Create, which creates an object.

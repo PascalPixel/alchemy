@@ -150,7 +150,7 @@ enum {
 // Shared effect and proximity routines precede the map's entry points.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_distance.h"
+#include "common/actor_distance.h"
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
@@ -525,7 +525,7 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 #include "common/vault_map_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 /// The jail door opens and the party walks in.
 /// It's drawn behind the doorway as it goes in, to

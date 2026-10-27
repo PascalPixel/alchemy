@@ -53,7 +53,7 @@
 ///   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
 ///   leads ashore to Tolbi Docks (SceneId_TolbiDocks).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "flags.h"
 #include "songs.h"
 #include "version.h"
@@ -83,7 +83,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "map_grid_scroll.h"
 #include "heap.h"
 #include "fixed_math.h"
@@ -335,7 +335,7 @@ enum TolbiShipDeckMetatileBehavior {
 };
 
 // Shared code, included where it sits in the ROM.
-#include "common/object_pulse.h"
+#include "common/actor_pulse.h"
 
 /// The door to the passengers' hold has been drawn open this visit.
 /// ★ Named from the game: "I saw some warriors in among the passengers

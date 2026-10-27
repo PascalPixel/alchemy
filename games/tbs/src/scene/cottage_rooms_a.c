@@ -52,7 +52,7 @@
 /// a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "unit/import.h"
 #include "unit/scene/cottage_rooms_a.h"
@@ -71,7 +71,7 @@
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
 #include "flags.h"
@@ -177,7 +177,7 @@ enum CottageRoomsAAnimation {
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///

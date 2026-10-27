@@ -114,7 +114,7 @@
 #include "animspr.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "field_effect.h"
 #include "fixed_math.h"
@@ -448,7 +448,7 @@ static inline s32 ValePlaza_TurnAndWaitValue(s32 actorId, s32 facing,
 #define VALE_PLAZA_TURN_AND_WAIT ValePlaza_TurnAndWaitValue
 #endif
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 const struct SceneEntrance *ValePlaza_GetEntrances(void) {
   return gValePlaza_Entrances;

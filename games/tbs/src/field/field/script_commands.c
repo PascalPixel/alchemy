@@ -2,7 +2,7 @@
 /// Object script commands: waits, jumps, flags, moves and work values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
-/// (object_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
+/// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
 /// for each live object; each returns 1 to run on and 0 to end the object's
 /// frame (the protocol is in this folder's README).
 
@@ -106,7 +106,7 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 /// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
 /// moves on; with n = SC_FOREVER it always jumps. Counts in
 /// interpreter->repeatCount and clears it when the loop ends, so loops do not
-/// nest. The engine's own scripts (object_script.c) end with
+/// nest. The engine's own scripts (actor_script.c) end with
 /// SC_LOOP(SC_FOREVER, SC_TOP).
 s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;
@@ -256,7 +256,7 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 /// object (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
 /// The object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
 /// player's control (player_control.c), the motion loop's solid test
-/// (object_motion.c), and the carry and Force effects through
+/// (actor_motion.c), and the carry and Force effects through
 /// ActorScript_CheckOverlapFar.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 objectIndex;

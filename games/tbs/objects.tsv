@@ -52,7 +52,7 @@ main	rom_main_01	games/tbs/src/field/world_map_resources
 main	rom_main_01	games/tbs/src/field/curve_data
 main	rom_main_01	games/tbs/src/field/map_grid_data
 main	rom_main_01	games/tbs/src/field/griddata
-main	rom_main_01	games/tbs/src/field/object_script
+main	rom_main_01	games/tbs/src/field/actor_script
 main	rom_main_01	games/tbs/src/field/operand
 main	rom_main_01	games/tbs/src/field/maps
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW

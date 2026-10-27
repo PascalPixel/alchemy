@@ -51,7 +51,7 @@
 #include "heap.h"
 #include "menu_list.h"
 #include "irq.h"
-#include "object_factory.h"
+#include "actor_create.h"
 #include "equipment_menu.h"
 #include "unit.h"
 #include "inventory.h"

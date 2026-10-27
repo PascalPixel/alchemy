@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJECT_DISPATCH_H
-#define ALCHEMY_OBJECT_DISPATCH_H
+#ifndef ALCHEMY_ACTOR_CONTROLLERS_H
+#define ALCHEMY_ACTOR_CONTROLLERS_H
 
 /// @file
 /// The object dispatcher's scripts: key checks, the player, the world map and

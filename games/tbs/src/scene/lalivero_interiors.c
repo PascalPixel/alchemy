@@ -37,7 +37,7 @@
 /// sends the party outside, where Iodem gives it the Black Orb (lalivero.c). A
 /// barrel holds a Lucky Medal.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -62,7 +62,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 #include "flags.h"
 static void LaliveroInteriors_TellFaranAboutJenna(void);

@@ -85,7 +85,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 #include "flags.h"
 #include "djinn_ids.h"
@@ -183,7 +183,7 @@ static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
-#include "common/object_waitdown.h"
+#include "common/actor_waitdown.h"
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.

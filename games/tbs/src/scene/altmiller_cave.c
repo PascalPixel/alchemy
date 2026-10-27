@@ -77,9 +77,9 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "edition.h"
-#include "object_dispatch.h"
+#include "actor_controllers.h"
 #include "scene_ids.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -88,9 +88,9 @@
 #include "ability_ids.h"
 #include "call.h"
 #include "display_transition.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "frame.h"
 #include "fixed_math.h"
 #include "scene_header.h"
@@ -292,7 +292,7 @@ enum {
 struct LightWheel gAltmillerCave_LightWheelState
     __attribute__((nocommon, aligned(4)));
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// Talking to the Djinni in AltmillerCaveSquall starts the battle with Squall,
 /// a Jupiter Djinni.

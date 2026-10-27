@@ -2,7 +2,7 @@
 /// Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 /// the sparkling dust that falls when Tret's curse strikes. "That sparkly stuff
 /// on the ground... What is it?"
-#include "action_script.h"
+#include "script_operands.h"
 #include "types.h"
 #include "actor.h"
 #include "event_layer.h"

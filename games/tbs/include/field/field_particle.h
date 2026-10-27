@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_EFFECT_SPRITE_H
-#define ALCHEMY_FIELD_EFFECT_SPRITE_H
+#ifndef ALCHEMY_FIELD_PARTICLE_H
+#define ALCHEMY_FIELD_PARTICLE_H
 
 /// @file
 /// Field effect sprites: the particles Psynergy effects move and draw.

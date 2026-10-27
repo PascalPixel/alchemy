@@ -69,7 +69,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "actor.h"
@@ -150,10 +150,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Particle and movable-object routines precede this map's entry points.
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;

@@ -5,7 +5,7 @@
 #include "types.h"
 #include "task.h"
 
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "item_ids.h"

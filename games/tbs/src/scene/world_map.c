@@ -76,7 +76,7 @@
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "save_block.h"
 #include "heap.h"
@@ -121,7 +121,7 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "frame.h"
 #include "fx_work.h"

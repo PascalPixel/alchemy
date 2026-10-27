@@ -30,7 +30,7 @@
 #include "save_block.h"
 #include "scene_ids.h"
 #include "unit/scene/mccoy_palace_grounds.h"
-#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/actor_orbit.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/runtime/runtime.h"
@@ -51,7 +51,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 #include "heap.h"
@@ -119,7 +119,7 @@ static void McCoyPalaceGrounds_RestoreStory(void);
 static void McCoyPalaceGrounds_GuardsArrestParty(void);
 static void McCoyPalaceGrounds_OpenGate(void);
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGroundsEntrances;
@@ -456,7 +456,7 @@ static void McCoyPalaceGrounds_OpenGate(void) {
   GameFlag_Set(FLAG_GATE_OPEN);
 }
 
-#include "common/object_orbit.h"
+#include "common/actor_orbit.h"
 
 // clang-format off
 /// The gate opening: three steps of cells, 5 frames each.

@@ -91,7 +91,7 @@
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own actor templates.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "flags.h"
 #include "songs.h"
 #include "heap.h"
@@ -124,7 +124,7 @@
 #include "inventory.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "scene_header.h"
 

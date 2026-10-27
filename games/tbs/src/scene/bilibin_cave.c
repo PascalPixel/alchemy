@@ -57,7 +57,7 @@
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "engine_call.h"
 #include "scene_ids.h"
@@ -82,7 +82,7 @@
 #include "scene_tables.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "flags.h"
 #include "songs.h"
@@ -559,7 +559,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 }
 
 // The shared cell lookup retains its position before the push handler.
-#include "common/object_findcell.h"
+#include "common/actor_findcell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce): it moves only when its next cell and movement

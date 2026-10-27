@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_CREATE_CONFIGURED_OVERLAY_OBJECT_H
-#define ALCHEMY_CREATE_CONFIGURED_OVERLAY_OBJECT_H
+#ifndef ALCHEMY_CREATE_CONFIGURED_ACTOR_H
+#define ALCHEMY_CREATE_CONFIGURED_ACTOR_H
 
 /// @file
 /// The engine calls a map uses to create an overlay object and set its sprite

@@ -453,7 +453,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
 
 /// Starts an object on the script that approaches its linked object
 /// (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
-/// the engine's other scripts (object_script.c).
+/// the engine's other scripts (actor_script.c).
 void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
   Actor_StartScript(actor, gActor_ApproachLinkScript);
   actor->linkedActor = (struct Actor *)linkedActorHandle;

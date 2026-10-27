@@ -54,13 +54,13 @@
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse_aerie.h"
 #include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/object_nearest.h"
+#include "unit/scene/common/actor_nearest.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -81,7 +81,7 @@
 #include "scene_tables.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
-#include "create_configured_overlay_object.h"
+#include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -99,13 +99,13 @@
 #include "text/msg_ids.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "map_grid_scroll.h"
 #include "tbs_edition.h"
 #include "io_reg.h"
 #include "window.h"
 #include "heap.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "fx_work.h"
 #include "palbuf.h"
@@ -285,7 +285,7 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
   }
 }
 
-#include "common/object_heading.h"
+#include "common/actor_heading.h"
 
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
@@ -305,8 +305,8 @@ const struct ActorTemplate *VenusLighthouseAerie_GetActorTemplates(void) {
   return gVenusLighthouseAerieActorTemplates;
 }
 
-#include "common/object_distance.h"
-#include "common/object_nearest.h"
+#include "common/actor_distance.h"
+#include "common/actor_nearest.h"
 
 /// Saturos and Menardi slide together as they fuse.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)

@@ -111,7 +111,7 @@
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "songs.h"
@@ -383,7 +383,7 @@ static void LunpaFortress_RestoreUpperFloorDoors(void);
 static void LunpaFortress_RestoreCaveDoors(void);
 static void LunpaFortress_RestoreToadonpaDoors(void);
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
 /// ★ Named from the game: "Huh? Donpa, didn't you just say you're going to lock
@@ -3532,7 +3532,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
 // The ROM keeps these three tables in .rodata, but the shared declarations in
-// field.h and object_staged_actor.h lack const, so a section attribute
+// field.h and staged_actor.h lack const, so a section attribute
 // places each one.
 s32 gPushedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),

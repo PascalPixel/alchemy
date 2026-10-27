@@ -49,7 +49,7 @@
 /// last lift has stopped, another while it moves. Each copied cell is a wall,
 /// a jump across or open ground, as the lifts line up or part.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
@@ -95,7 +95,7 @@
 #include "ability_ids.h"
 #include "edition.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "heap_slots.h"
 #include "heap.h"
@@ -1899,7 +1899,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 }
 
 #include "common/colosso_map_state.h"
-#include "common/object_findslot.h"
+#include "common/actor_findslot.h"
 
 /// Pushes the adjacent obstacle only when the destination and space above are
 /// clear.

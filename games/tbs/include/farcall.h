@@ -15,7 +15,7 @@
 /// including this header to keep that declaration in scope.
 
 #include "task.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 #include "irq.h"
 #include "types.h"
 #include "edition.h"

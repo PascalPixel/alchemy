@@ -69,7 +69,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "create_configured_overlay_object.h"
+#include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -155,7 +155,7 @@ static s16 *sLastCocoon;
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.

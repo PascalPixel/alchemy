@@ -50,7 +50,7 @@
 #include "scene_ids.h"
 #include "call.h"
 #include "fixed_math.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
@@ -155,7 +155,7 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
   sprite->rotation -= 0x800;
 }
 
-#include "common/object_waitdown.h"
+#include "common/actor_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the water with a splash and sinks

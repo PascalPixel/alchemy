@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_ACTION_SCRIPT_H
-#define ALCHEMY_FIELD_ACTION_SCRIPT_H
+#ifndef ALCHEMY_SCRIPT_OPERANDS_H
+#define ALCHEMY_SCRIPT_OPERANDS_H
 
 /// @file
 /// The object script interpreter and the operands its commands read.
@@ -16,7 +16,7 @@ struct Actor;
 typedef s32 (*ScriptCommand)(struct Actor *);
 
 /// The whole 0x70-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field
-/// is one work value (enum ActorScriptValue in objcmd.h), reached through
+/// is one work value (enum ActorScriptValue in actor_script.h), reached through
 /// gActorScript_OperandHandlerTable, and named for what the engine keeps
 /// there. The types are the widths the handlers read, not the engine's own.
 struct ScriptOperands {

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
-#define ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
+#ifndef ALCHEMY_FIELD_EFFECT_SCRIPTS_H
+#define ALCHEMY_FIELD_EFFECT_SCRIPTS_H
 
 /// @file
 /// The object scripts field effects give their particles and fragments.

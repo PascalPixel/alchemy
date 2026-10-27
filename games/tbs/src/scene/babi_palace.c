@@ -77,7 +77,7 @@
 #include "ability_ids.h"
 #include "event_layer.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "heap_slots.h"
 #include "display_transition.h"
 #include "flags.h"

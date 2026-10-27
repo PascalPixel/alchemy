@@ -20,7 +20,7 @@
 /// curtains close (Curtain_Start), and the game goes to the clear screen by the
 /// title's TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "save_block.h"
 #include "vram_cache.h"
@@ -61,7 +61,7 @@
 #include "resource.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "item_ids.h"
 #include "songs.h"
 #include "heap.h"

@@ -67,7 +67,7 @@
 /// (AltinPeak_SpawnDebris); the beasts' spray is SPRITE_DUST_PUFF recoloured,
 /// as in Altin.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "macros.h"
 #include "save_block.h"
@@ -110,7 +110,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "irq.h"
 #include "fixed_math.h"
 #include "scene_header.h"
@@ -318,7 +318,7 @@ static void AltinPeak_TalkToDjinni(void) {
 }
 
 // Shared source, included where its bytes sit in the ROM.
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 // Update callback of AltinPeakFallingRocks's boulder shadow: it stays under the
 // boulder, on the ground 12 pixels down, while the boulder bounces. UB: update

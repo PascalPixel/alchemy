@@ -9,7 +9,7 @@
 #include "item.h"
 #include "static_assert.h"
 #include "render_input.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 #include "animspr.h"
 #include "cursor.h"
 

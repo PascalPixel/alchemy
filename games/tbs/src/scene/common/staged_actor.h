@@ -11,7 +11,7 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "map_grid_copy.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"
 #include "call.h"
@@ -40,7 +40,7 @@
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gPushedActor_FootprintBounds[];
 
-#include "object_distance.h"
+#include "actor_distance.h"
 
 /// Returns the placed actor on the cell of the 16.16 position and at its
 /// height (in whole pixels), or 0. origin is not read.

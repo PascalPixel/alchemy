@@ -130,7 +130,7 @@ enum { ANIM_HSU_IN_BED = 6 };
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;

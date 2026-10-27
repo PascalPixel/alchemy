@@ -2,7 +2,7 @@
 #include "iwram_call.h"
 
 // Several maps (Mercury and Venus Lighthouses' aeries, Tolbi, Vault, Venus
-// Lighthouse, Xian, and every map with object_staged_actor.h): the
+// Lighthouse, Xian, and every map with staged_actor.h): the
 // distance between two actors.
 
 /// The distance in whole pixels between two 16.16 positions of x, y and z.

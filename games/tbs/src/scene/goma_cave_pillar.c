@@ -40,7 +40,7 @@
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug map selector
 /// reaches, plays the stump being pushed to the edge and falling.
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "unit/import.h"
@@ -63,7 +63,7 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "edition.h"
 #include "tbs_edition.h"
 #include "actor.h"
@@ -73,7 +73,7 @@
 #include "fixed_point_position.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 
 #include "flags.h"
@@ -138,7 +138,7 @@ enum { ENTRANCE_STUMP_FALL = 99 };
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
 // Shared movement routines stay in their linked order.
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.

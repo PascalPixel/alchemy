@@ -15,9 +15,9 @@
 ///                   Render_PlaceProjectedSprite; animation.c:
 ///                   Sprite_Create, Sprite_StartAnim
 ///   Objects         objects.c: Actor_Create, ActorSystem_Initialize;
-///                   object_motion.c: Actor_UpdateAllThumb,
+///                   actor_motion.c: Actor_UpdateAllThumb,
 ///                   Actor_SetMoveTarget
-///   Object scripts  script_commands.c (the SC_ commands of objcmd.h);
+///   Object scripts  script_commands.c (the SC_ commands of actor_script.h);
 ///                   player_control.c: Actor_UpdatePlayerControl
 ///   Maps            map_layers.c: MapGrid_LoadMap,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
@@ -32,9 +32,9 @@
 #include "field/decompress.c"
 #include "field/sprite_draw.c"
 #include "field/animation.c"
-#include "field/objects.c"
-#include "field/object_camera.c"
-#include "field/object_motion.c"
+#include "field/actors.c"
+#include "field/actor_camera.c"
+#include "field/actor_motion.c"
 #include "field/script_commands.c"
 #include "field/player_control.c"
 #include "field/map_grid.c"

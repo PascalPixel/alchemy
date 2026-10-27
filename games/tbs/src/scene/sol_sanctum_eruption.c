@@ -33,7 +33,7 @@
 /// over a shadow that shrinks with him: the platform's actor,
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "unit/scene/sol_sanctum_eruption.h"
 #include "unit/scene/common/effect_psynergy.h"
@@ -61,7 +61,7 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "heap_slots.h"
 #include "vram_cache.h"

@@ -77,7 +77,7 @@
 /// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first room's inscription points the
 /// way: `The dragon's flame illuminates the path of truth in darkness.`
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "keystate.h"
 #include "scene_ids.h"
@@ -112,9 +112,9 @@
 #include "fx_work.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 #include "palbuf.h"
 #include "io_reg.h"
 #include "flags.h"
@@ -264,7 +264,7 @@ const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void) {
   return gImilFuchinFalls_NoActorTemplates;
 }
 
-#include "common/object_pairmove.h"
+#include "common/actor_pairmove.h"
 
 /// The first room's first log lies at the east end of its track.
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,

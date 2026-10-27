@@ -54,7 +54,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "create_configured_overlay_object.h"
+#include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -70,7 +70,7 @@
 #include "text/msg_ids.h"
 #include "glyph.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "io_reg.h"
@@ -158,7 +158,7 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gFieldWork->message += amount;
 }
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;

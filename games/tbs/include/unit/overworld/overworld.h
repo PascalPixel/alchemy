@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_OVERWORLD_OVERWORLD_H
 
 #include "types.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 
 struct SpeakerDefinition;
 struct Actor;

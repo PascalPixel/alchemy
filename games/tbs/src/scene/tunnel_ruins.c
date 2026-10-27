@@ -56,7 +56,7 @@
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "version.h"
 #include "save_block.h"
 #include "heap_slots.h"
@@ -66,7 +66,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/runtime/runtime.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "actor.h"
@@ -76,7 +76,7 @@
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "field_effect.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "edition.h"
 #include "scene_ids.h"
 #include "battle.h"
@@ -89,7 +89,7 @@
 #include "sound.h"
 #include "system.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "scene_header.h"
 #include "flags.h"
@@ -229,7 +229,7 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -357,7 +357,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   }
 }
 
-#include "common/object_depth.h"
+#include "common/actor_depth.h"
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 156 to 152 bytes in tbs-en.

@@ -92,7 +92,7 @@ of the leader's script, run once a frame: "move by the pad, wait a frame,
 repeat".
 
 The objects are the 64 places of `gActors`, and the steps are
-the `SC_` commands of `objcmd.h`, run by `Actor_UpdateAllThumb`.
+the `SC_` commands of `actor_script.h`, run by `Actor_UpdateAllThumb`.
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
 commands, the sprites and [the views of one
 object](src/field/README.md#one-object-a-few-views).

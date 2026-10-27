@@ -74,7 +74,7 @@
 /// map other than a return from battle. Every arrival sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse.h"
@@ -84,7 +84,7 @@
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 #include "macros.h"
 
 #define NULL ((void *)0)
@@ -94,7 +94,7 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "field_effect.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -526,7 +526,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 /// The map's names for the bytes Actor keeps for map code: a statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
@@ -537,8 +537,8 @@ enum {
   SW_VENUS_LIGHT_ARRIVED = SW_RISE_ENABLED
 };
 
-#include "common/object_distance.h"
-#include "common/object_findslot.h"
+#include "common/actor_distance.h"
+#include "common/actor_findslot.h"
 
 /// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
 /// leaning into it (ANIM_PUSH), when the cell beyond is free, nothing
@@ -868,8 +868,8 @@ static void VenusLighthouse_LeaveDepthPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
 }
 
-#include "common/object_depth.h"
-#include "common/object_waitidle.h"
+#include "common/actor_depth.h"
+#include "common/actor_waitidle.h"
 #include "common/effect_advance.h"
 
 /// Drops the leader onto the floor and emits the radial landing dust.

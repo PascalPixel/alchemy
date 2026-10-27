@@ -76,7 +76,7 @@
 /// each have two rows, chosen by whether the channels upstairs run
 /// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "animspr.h"
 #include "save_block.h"
 #include "heap_slots.h"
@@ -102,7 +102,7 @@
 #include "types.h"
 #include "mercury.h"
 #include "scene_tables.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -122,7 +122,7 @@
 #include "text/msg_ids.h"
 #include "iwram_call.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
@@ -162,7 +162,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 #include "common/mercury_lighthouse_sparks.h"
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts

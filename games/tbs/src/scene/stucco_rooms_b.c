@@ -59,7 +59,7 @@
 #include "edition.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the

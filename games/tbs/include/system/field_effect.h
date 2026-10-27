@@ -7,7 +7,7 @@
 #include "edition.h"
 #include "event_layer.h"
 #include "vector3.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.

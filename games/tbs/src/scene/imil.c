@@ -64,7 +64,7 @@
 ///   Bottle, a Sleep Bomb and Lucky Pepper, the last from the oven with the
 ///   stew, whose find always answers first, so the stew's line is unused.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "animspr.h"
 #include "version.h"
 #include "save_block.h"
@@ -97,7 +97,7 @@
 #include "frame.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "io_reg.h"
@@ -300,7 +300,7 @@ static s32 Imil_UpdateShiver(struct Actor *interpreter) {
   return 1;
 }
 
-#include "common/object_facing.h"
+#include "common/actor_facing.h"
 
 /// Imil is two maps: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {

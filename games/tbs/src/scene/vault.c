@@ -73,7 +73,7 @@
 #include "inventory.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "flags.h"
 #include "djinn_ids.h"
@@ -984,7 +984,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "common/object_distance.h"
+#include "common/actor_distance.h"
 #include "common/vault_range.h"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {

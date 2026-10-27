@@ -56,7 +56,7 @@
 #include "version.h"
 #include "scene_ids.h"
 #include "unit/scene/lunpa.h"
-#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/actor_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -973,7 +973,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "common/object_orbit.h"
+#include "common/actor_orbit.h"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
   {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

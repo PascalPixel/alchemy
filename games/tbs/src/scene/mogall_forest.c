@@ -55,13 +55,13 @@
 /// fifth larger with its colours rotated (SPRITE_COLOR_BRG). The rocks Move
 /// settles are SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "engine_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/scene/mogall_forest.h"
-#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/actor_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -74,7 +74,7 @@
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -89,7 +89,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "scene_header.h"
 #include "fixed_math.h"
 #include "vector3.h"
@@ -299,7 +299,7 @@ enum {
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -1672,7 +1672,7 @@ s32 MogallForest_Initialize(void) {
   return 0;
 }
 
-#include "common/object_orbit.h"
+#include "common/actor_orbit.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))

@@ -65,7 +65,7 @@
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
-#include "pushed_object.h"
+#include "pushed_actor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -80,7 +80,7 @@
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "actor.h"
 #include "flags.h"
 #include "songs.h"
@@ -212,7 +212,7 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -223,7 +223,7 @@ static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_LUFF, DJINNI_LUFF);
 }
 
-#include "common/object_waitidle.h"
+#include "common/actor_waitidle.h"
 #include "common/effect_advance.h"
 
 /// Arriving by falling from the floor above: the leader drops in, lands with

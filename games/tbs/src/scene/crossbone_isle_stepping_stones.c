@@ -36,7 +36,7 @@
 /// The other three side rooms are in crossbone_isle_keys.c, and the ninth
 /// floor's in crossbone_isle.c.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "map_grid_scroll.h"
 #include "scene_ids.h"
@@ -53,8 +53,8 @@
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "field_effect.h"
-#include "create_configured_overlay_object.h"
-#include "pushed_object.h"
+#include "create_configured_actor.h"
+#include "pushed_actor.h"
 #include "ram_buffer.h"
 #include "map_grid.h"
 #include "io_reg.h"
@@ -76,10 +76,10 @@
 #include "irq.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "heap.h"
 #include "scene_header.h"
-#include "object_effect.h"
+#include "actor_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
@@ -182,7 +182,7 @@ STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.shape) == 3);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.h"
+#include "common/staged_actor.h"
 
 #include "common/map_grid_panel.h"
 

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJCMD_H
-#define ALCHEMY_OBJCMD_H
+#ifndef ALCHEMY_ACTOR_SCRIPT_H
+#define ALCHEMY_ACTOR_SCRIPT_H
 
 /// @file
 /// Object scripts: one s32 command word, then its operands, as

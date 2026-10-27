@@ -2,7 +2,7 @@
 /// Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestTree): an effect that
 /// stretches as it travels.
-#include "action_script.h"
+#include "script_operands.h"
 #include "types.h"
 #include "actor.h"
 

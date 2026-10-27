@@ -62,7 +62,7 @@
 #include "unit/import.h"
 #include "unit/scene/mercury_lighthouse_aerie.h"
 #include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/object_nearest.h"
+#include "unit/scene/common/actor_nearest.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
@@ -71,7 +71,7 @@
 #include "event_layer.h"
 #include "engine_call.h"
 #include "scene_tables.h"
-#include "create_configured_overlay_object.h"
+#include "create_configured_actor.h"
 #include "heap_slots.h"
 #include "battle.h"
 #include "debug.h"
@@ -173,7 +173,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 #include "common/effect_create.h"
 
 #include "common/effect_spawn.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
@@ -386,8 +386,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Event_End();
 }
 
-#include "common/object_distance.h"
-#include "common/object_nearest.h"
+#include "common/actor_distance.h"
+#include "common/actor_nearest.h"
 
 /// Lighthouse Aerie: walking into metatile behavior 10 or 11. If nothing is in
 /// the way the leader jumps two cells ahead, off any platform and onto the

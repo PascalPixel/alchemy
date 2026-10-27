@@ -30,7 +30,7 @@ enum CollapseActorId {
   ACTOR_ALEX
 };
 
-#include "object_effect.h"
+#include "actor_effect.h"
 
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;

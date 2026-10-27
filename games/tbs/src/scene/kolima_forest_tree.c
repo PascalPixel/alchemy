@@ -69,7 +69,7 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"

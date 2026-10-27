@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "field_effect_sprite.h"
+#include "field_particle.h"
 
 struct Sprite;
 struct Actor;

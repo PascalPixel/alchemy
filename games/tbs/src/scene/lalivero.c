@@ -49,7 +49,7 @@
 #include "item_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "songs.h"
 #include "flags.h"
 #include "heap.h"

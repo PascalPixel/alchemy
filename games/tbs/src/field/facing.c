@@ -1,6 +1,6 @@
 #include "unit/field/facing.h"
 #include "types.h"
-#include "objcmd.h"
+#include "actor_script.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the frame to draw for
 /// each sector of the facing angle. Sprite_ComposeFrame adds the low

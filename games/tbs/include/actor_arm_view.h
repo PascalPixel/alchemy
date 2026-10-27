@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_SCRIPT_MOTION_H
-#define ALCHEMY_SCRIPT_MOTION_H
+#ifndef ALCHEMY_ACTOR_ARM_VIEW_H
+#define ALCHEMY_ACTOR_ARM_VIEW_H
 
 /// @file
 /// The words of an object's script as the motion loops index them, and

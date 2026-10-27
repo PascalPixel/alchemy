@@ -46,7 +46,7 @@
 /// At sea the lookout says he is the lookout, not an oarsman; at the island he
 /// warns of monsters and wonders at its treasures.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "save_block.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -73,7 +73,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "fixed_math.h"
 #include "map_grid_scroll.h"
 #include "heap.h"

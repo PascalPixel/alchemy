@@ -580,7 +580,7 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-#include "common/object_findcell.h"
+#include "common/actor_findcell.h"
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.

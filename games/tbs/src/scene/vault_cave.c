@@ -95,7 +95,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "songs.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "map_grid_scroll.h"
 #include "scene_header.h"
 #include "macros.h"

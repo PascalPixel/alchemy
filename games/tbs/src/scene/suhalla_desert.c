@@ -54,7 +54,7 @@
 /// - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
 ///   leader.
 
-#include "action_script.h"
+#include "script_operands.h"
 #include "flags.h"
 #include "version.h"
 #include "save_block.h"
@@ -89,7 +89,7 @@
 #include "ability_ids.h"
 #include "edition.h"
 #include "item_ids.h"
-#include "objcmd.h"
+#include "actor_script.h"
 #include "iowrite.h"
 #include "songs.h"
 #include "heap.h"

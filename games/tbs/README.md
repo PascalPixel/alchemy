@@ -72,26 +72,16 @@ and `Scene_ReturnFromSequence` turns it into the scene to go back to.
 ## The scene manager
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  start(["From the sequence manager"]) --> setup["Set the scene up: its map, the party at its entrance, its actors and chests"]
-  setup --> own["The scene's own set-up"]
-  own --> fade["Fade in"]
-  fade --> walk["The player walks"]
-  walk -->|"next frame"| check{"Did anything happen?"}
-  check -->|"no"| walk
-  check -->|"yes: a request"| pick{"The most urgent request"}
-  pick -->|"anything else"| run["Run it to the end: an event, talking, searching, a push, Psynergy, an item, a menu"]
-  run --> more{"More requests?"}
-  more -->|"yes"| pick
-  more -->|"no"| walk
-  pick -->|"an exit or a battle"| leave["Fade out, give back the scene's memory"]
-  own -->|"it leaves at once"| leave
-  leave --> done(["Back to the sequence manager"])
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
+flowchart LR
+  scene(["Scene"]) --> setup["Set up"] --> walk["Walk"]
+  walk -->|"something happens"| handle["Handle it"]
+  handle -->|"done"| walk
+  handle -->|"an exit or a battle"| next(["Request another sequence"])
   classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class start,done,leave flow
-  class setup,own,fade,walk,check,pick,run,more field
+  class scene,next flow
+  class setup,walk,handle field
 ```
 
 A scene has two states, and the scene manager switches between them. While

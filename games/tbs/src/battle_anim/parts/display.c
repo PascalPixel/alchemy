@@ -28,12 +28,12 @@ void BattleAnim_ConfigureEffectDisplay(void) {
 }
 
 /// Scrolls BG1 by (scrollStepX, scrollStepY) once every scrollInterval
-/// frames.
+/// VBlanks.
 ///
-/// Runs each frame as a task added by BattleAnim_RunAtalanta
-/// and BattleAnim_RunThor, which set the work block's scroll fields first and
-/// remove it before they return. Counts work->scrollTimer and moves
-/// gBgScroll[1].
+/// Runs each VBlank as a task in the VBlank pass, added by
+/// BattleAnim_RunAtalanta and BattleAnim_RunThor, which set the work block's
+/// scroll fields first and remove it before they return. Counts
+/// work->scrollTimer and moves gBgScroll[1].
 void BattleAnim_AdvanceScrollOnInterval(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   u32 *timer = (u32 *)&work->scrollTimer;
@@ -46,11 +46,11 @@ void BattleAnim_AdvanceScrollOnInterval(void) {
   }
 }
 
-/// Slides the affine BG2 in steps: once every scrollInterval frames, writes
+/// Slides the affine BG2 in steps: once every scrollInterval VBlanks, writes
 /// the work block's reference point (bg2x, bg2y) to BG2X and BG2Y, then moves
 /// it by (scrollStepX, scrollStepY).
 ///
-/// Runs each frame as a task added by
+/// Runs each VBlank as a task in the VBlank pass, added by
 /// BattleAnim_RunParticleStreams, which removes it before it returns. Counts
 /// work->scrollTimer.
 void BattleAnim_AdvanceBg2OnInterval(void) {
@@ -74,9 +74,9 @@ void BattleAnim_AdvanceBg2OnInterval(void) {
 /// PARTICLES (Ram_MapGridCellBuffer), so window 0's edges follow the per-line
 /// table the animation drew there.
 ///
-/// Runs each frame as a task added by BattleAnim_RunIce and
-/// BattleAnim_RunDouse, which remove it before they return. Stopping the
-/// channel first makes each frame's transfer start again from the table's
+/// Runs each VBlank as a task in the VBlank pass, added by BattleAnim_RunIce
+/// and BattleAnim_RunDouse, which remove it before they return. Stopping the
+/// channel first makes each VBlank's transfer start again from the table's
 /// first line.
 void BattleAnim_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;

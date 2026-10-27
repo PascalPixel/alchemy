@@ -16,7 +16,7 @@ extern u8 gBlendBrighten;
  * Fade_FromWhite, Fade_ToWhite and
  * Fade_ToBlack (7 each). */
 extern volatile u8 gBlendDuration;
-extern u8 gBlendFramesLeft;
+extern u8 gBlendVBlanksLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its

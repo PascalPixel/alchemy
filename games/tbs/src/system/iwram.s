@@ -20,8 +20,8 @@ gTasksRunning:
 	.global gTasks
 gTasks:
 	.space 0x000000a0
-	.global gScreenFadeFramesLeft
-gScreenFadeFramesLeft:
+	.global gScreenFadeVBlanksLeft
+gScreenFadeVBlanksLeft:
 	.space 0x00000004
 	.global gDebugTextEnabled
 gDebugTextEnabled:
@@ -62,8 +62,8 @@ gDecodeFillByte:
 	.global gKeysPressed
 gKeysPressed:
 	.space 0x00000004
-	.global gScreenFadeFrames
-gScreenFadeFrames:
+	.global gScreenFadeVBlanks
+gScreenFadeVBlanks:
 	.space 0x00000004
 	.global gPlayTimeFrames
 gPlayTimeFrames:

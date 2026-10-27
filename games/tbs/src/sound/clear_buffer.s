@@ -31,7 +31,7 @@
 @ ChnVolSetAsm is public in pret m4a_1.s.
 @ Why ply_note is assembly:
 @ Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
-@ The frame and r8-r11 save/restore match the library; this is library
+@ The stack frame and r8-r11 save/restore match the library; this is library
 @ provenance rather than a handwritten game-code assertion.
 @ Why ply_endtie is assembly:
 @ push saves r4/r5 without lr; Nintendo library ply_endtie.

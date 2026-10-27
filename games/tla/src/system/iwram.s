@@ -10,8 +10,8 @@ gVBlankCount:
 	.global gSchedulerStatus
 gSchedulerStatus:
 	.space 0x00000004
-	.global gBlendFramesLeft
-gBlendFramesLeft:
+	.global gBlendVBlanksLeft
+gBlendVBlanksLeft:
 	.space 0x00000004
 	.global gData_03001110
 gData_03001110:

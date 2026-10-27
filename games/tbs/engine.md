@@ -35,13 +35,13 @@ The cartridge's first instruction leads to `System_Entry`, which calls
 ![Isaac talks to the strongman by Vale's river: a window opens and types out "I don't blame Felix", its red arrow bobbing while it waits; A brings a second page, and the window closes](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
 While a line of dialogue waits for A, the code that showed it simply stops
-and waits, yet the arrow keeps bobbing and the river keeps rippling. No
-part of the game is called once a frame to do its share. A talk, an event,
-a menu screen or a battle animation is an ordinary piece of code that runs
-from start to finish, and when time has to pass it asks to wait a number of
-frames. What must keep moving meanwhile is a task, a short job run once every
-frame whatever the waiting code is doing. In the recording the window's
-typing and its arrow are one task and the river's moving water another.
+and waits, yet the arrow keeps bobbing and the river keeps rippling. A
+talk, an event, a menu screen or a battle animation is not called once a frame
+to do its share: it is an ordinary piece of code that runs from start to
+finish, and when time has to pass it asks to wait a number of frames. What
+must keep moving meanwhile is a task, a short job run once every frame
+whatever the waiting code is doing. In the recording the window's typing and
+its arrow are one task and the river's moving water another.
 
 Each task has a priority, which says whether it runs during the frame or in
 the blank, and in what order. Order matters: a battle's camera runs after the

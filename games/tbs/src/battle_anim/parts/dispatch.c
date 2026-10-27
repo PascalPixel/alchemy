@@ -136,10 +136,10 @@ void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
 /// Builds window 0's right edge for every scanline and restarts the HBlank
 /// DMA that writes it to WIN0H each line.
 ///
-/// Runs each frame as a task added by BattleAnim_RunNeptune
-/// (neptune.c) and BattleAnim_RunBoreas (boreas.c), which fill the edge
-/// offsets and remove the task again. Writes the WIN0H table and stops and
-/// re-arms DMA channel 0.
+/// Runs each VBlank as a task in the VBlank pass, added by
+/// BattleAnim_RunNeptune (neptune.c) and BattleAnim_RunBoreas (boreas.c), which
+/// fill the edge offsets and remove the task again. Writes the WIN0H table and
+/// stops and re-arms DMA channel 0.
 ///
 /// Ram_MapGridCellBuffer + 0    : the base right edge (u16)
 /// Ram_MapGridCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge

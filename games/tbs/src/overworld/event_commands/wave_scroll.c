@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// Task for the scanline effect: restarts DMA 0 each frame to
+/// VBlank-pass task for the scanline effect: restarts DMA 0 each VBlank to
 /// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
 /// one scanline at a time. The first line is written directly; the DMA writes
 /// three words at each HBlank from then on.

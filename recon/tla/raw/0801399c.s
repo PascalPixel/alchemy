@@ -170,7 +170,7 @@ Func_0801399c:
 	ldrb r3, [r3, #4]
 	strb r3, [r6, #1]
 	bl Func_081c0088
-	bl SoundDriver_EnterFrameUpdate
+	bl SoundDriver_EnterVBlankUpdate
 	cmp r0, #0
 	bne .L_08013af6
 	ldr r3, .L_08013b24
@@ -203,7 +203,7 @@ Func_0801399c:
 .L_08013b20:
 	.4byte gData_03007ff0
 .L_08013b24:
-	.4byte IwramSoundRenderFrame
+	.4byte IwramSoundRenderVBlank
 .L_08013b28:
 	.4byte gFrameVBlanks
 .L_08013b2c:

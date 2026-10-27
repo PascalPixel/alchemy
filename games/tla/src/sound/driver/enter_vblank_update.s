@@ -1,14 +1,14 @@
-@ The sound driver's frame entry: checks the stack is in IWRAM and the
-@ sound area is unlocked, saves the high registers, runs the two frame
+@ The sound driver's VBlank entry: checks the stack is in IWRAM and the
+@ sound area is unlocked, saves the high registers, runs the two VBlank
 @ callbacks and enters the IWRAM mixer with its buffer offset for this
-@ frame. Handwritten (S1): it reads its three words with one pc-relative
+@ VBlank. Handwritten (S1): it reads its three words with one pc-relative
 @ block load, and calls its callbacks through lr with a lone BL suffix.
 
 .syntax unified
 	.thumb
-	.global SoundDriver_EnterFrameUpdate
+	.global SoundDriver_EnterVBlankUpdate
 	.thumb_func
-SoundDriver_EnterFrameUpdate:
+SoundDriver_EnterVBlankUpdate:
 	add	r1, pc, #20
 	ldmia	r1!, {r0, r2, r3}
 	mov	r1, sp

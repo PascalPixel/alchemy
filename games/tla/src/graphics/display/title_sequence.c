@@ -106,8 +106,8 @@ extern char ResourceId_TitleScreenPicture;
 extern const u8 Data_081a873e[];
 extern const u8 gTitle_PromptTiles[];
 
-void Fade_ToWhite(s32 frames);
-void Fade_FromWhite(s32 frames);
+void Fade_ToWhite(s32 vblanks);
+void Fade_FromWhite(s32 vblanks);
 void Fade_Wait(void);
 void Func_080140d8(void *entry, s32 slot);
 

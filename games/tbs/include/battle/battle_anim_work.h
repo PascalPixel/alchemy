@@ -123,7 +123,7 @@ struct BattleAnimWork {
   /// Each target's flash timer in frames, for args->targets[n]: set by
   /// BattleAnim_TintBattler, counted down by BattleAnim_CountDownBattlerTints.
   u8 actorTimers[8];
-  s32 framesSinceTransfer; ///< 1 on a canvas copy's frame, then counts up
+  s32 vblanksSinceTransfer; ///< 1 on a canvas copy's VBlank, then counts up
   /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas
   /// transfer task copies the canvas and clears it.
   s32 transferPending;
@@ -148,7 +148,7 @@ STATIC_ASSERT(offsetof(struct BattleAnimWork, win0h) == 0x77bc);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, bg2x) == 0x77d0);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, animations) == 0x77d8);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, actorTimers) == 0x7818);
-STATIC_ASSERT(offsetof(struct BattleAnimWork, framesSinceTransfer) == 0x7820);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, vblanksSinceTransfer) == 0x7820);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, transferPending) == 0x7824);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, args) == 0x7828);
 STATIC_ASSERT(sizeof(struct BattleAnimWork) == 0x782c);

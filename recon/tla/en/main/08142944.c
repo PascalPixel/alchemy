@@ -150,7 +150,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
   work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
-  work->framesSinceTransfer = 1;
+  work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));

@@ -100,7 +100,7 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   return 0;
 }
 
-/// A task: on a frame whose canvas is ready (transferPending),
+/// A VBlank-pass task: on a VBlank after the canvas is ready (transferPending),
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
@@ -129,9 +129,9 @@ void LuckyWheels_TransferCanvas(void) {
       break;
     }
     work->transferPending = 0;
-    work->framesSinceTransfer = 1;
+    work->vblanksSinceTransfer = 1;
   } else {
-    (work->framesSinceTransfer)++;
+    (work->vblanksSinceTransfer)++;
   }
 }
 

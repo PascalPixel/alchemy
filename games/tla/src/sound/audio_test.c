@@ -2,14 +2,14 @@
 #include "io_reg.h"
 #include "input.h"
 
-/// The frame state's byte 2, set while the audio test runs.
-struct SoundFrameState {
+/// The sound VBlank state's byte 2, set while the audio test runs.
+struct SoundVBlankState {
   u8 unk00[2];
   u8 unk02;
   u8 unk03;
 };
 
-extern volatile struct SoundFrameState gData_03001138;
+extern volatile struct SoundVBlankState gData_03001138;
 extern s32 Data_03000ee4;
 extern s32 gIwramHi_Data1;
 
@@ -27,7 +27,7 @@ struct AudioTestCues {
 static const struct AudioTestCues sAudioTestCues = {{0, 80, 100}};
 
 /// Runs the audio test's three cue selectors and five mixer presets forever,
-/// from preset 3, with the frame state's byte 2 set, a clip timer of 2 and
+/// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2 and
 /// the commands 0, 78 and 390.
 // As ☀️'s AudioTest_RunParameterController (games/tbs/src/sound/sound.c).
 void Func_081c1014(void) {

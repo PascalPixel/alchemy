@@ -580,7 +580,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     MemFree(model);
     MemFree(verts);
 
-    while (*(volatile s32 *)&work->framesSinceTransfer <= 1) {
+    while (*(volatile s32 *)&work->vblanksSinceTransfer <= 1) {
     }
     ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;

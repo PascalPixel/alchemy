@@ -21,7 +21,7 @@ enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
   /// fixed point.
   BGM_UNITY_SCALE = 0x100,
-  /// A ramp's step a VBlank: a full fade in or out takes 64 frames.
+  /// A ramp's step a VBlank: a full fade in or out takes 64 VBlanks.
   BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/music_player_table.s) and
@@ -32,7 +32,7 @@ enum {
   TRACKS_ALL = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSong' entries, one a player.
   /// VBlanks after a fanfare starts before the music waits for it to end.
-  BGM_RESTORE_DELAY_FRAMES = 10,
+  BGM_RESTORE_DELAY_VBLANKS = 10,
   /// Sound_WaitForSong gives up after this many frames, about
   /// five seconds.
   BGM_WAIT_TIMEOUT_FRAMES = 300
@@ -53,7 +53,7 @@ void Sound_PlaySong(s32 id) {
 
   if (id == SONG_FADE_OUT_BGM) {
     // Fade the music out, once until the next music starts: 16 steps 7
-    // frames apart, 112 frames. MUS_SILENCE is a song with no tracks,
+    // VBlanks apart, 112 VBlanks. MUS_SILENCE is a song with no tracks,
     // so a later request for the faded music starts it again.
     if (gBgmFadeRequested != 0)
       return;
@@ -62,7 +62,7 @@ void Sound_PlaySong(s32 id) {
     gCurrentBgm = MUS_SILENCE;
   } else if (id == SONG_FADE_OUT_ACTION_SE) {
     // The control is also the number of the song table's row 289, so it fades
-    // MUSIC_PLAYER_ACTION_SE out over 48 frames (16 steps of 3) and that row
+    // MUSIC_PLAYER_ACTION_SE out over 48 VBlanks (16 steps of 3) and that row
     // never plays. Only sound effects record their song in
     // gMusicPlayerLastSong; MUSIC_PLAYER_ACTION_SE's is 0 after this fade.
     gMusicPlayerLastSong[MUSIC_PLAYER_ACTION_SE] = 0;
@@ -93,7 +93,7 @@ void Sound_PlaySong(s32 id) {
     gBgmVolumeTarget = 0;
     gBgmVolume = 0;
     m4aSongNumStart(id);
-    gBgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
+    gBgmRestoreDelay = BGM_RESTORE_DELAY_VBLANKS;
   } else {
     // Music: the keep control, or the music last chosen (gCurrentBgm),
     // changes nothing, so a scene may name its music on every entry; a song
@@ -109,7 +109,7 @@ void Sound_PlaySong(s32 id) {
             ? SOUND_REVERB_LONG
             : SOUND_REVERB_NORMAL);
     m4aSongNumStart(id);
-    // A silent start fades the new music in over 64 frames.
+    // A silent start fades the new music in over 64 VBlanks.
     if (flags & SONG_FLAG_FADE_IN)
       gBgmVolume = 0;
     else
@@ -174,8 +174,8 @@ void Sound_UpdateBgmRamps(void) {
     m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
                          (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
   }
-  // Count the PCM buffer's frames down and restart the FIFO DMAs from its
-  // start when they run out (SoundInfo.transferCountdown).
+  // Count down the VBlanks left in the PCM buffer and restart the FIFO DMAs
+  // from its start when they run out (SoundInfo.transferCountdown).
   m4aSoundVSync();
 }
 
@@ -296,7 +296,7 @@ void Sound_SetBgmPitch(u16 pitch) {
   m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
-/// Sets the target and per-frame step of the combined BGM tempo/pitch ramp
+/// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
 /// (0x100 the song's own). Reached only through the sound far-call table's
 /// veneer.
 void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
@@ -312,7 +312,7 @@ void Sound_SetBgmVolume(s16 volume) {
   gBgmVolume = volume;
 }
 
-/// Sets the BGM volume target (0x100 full) and its per-frame step. Reached
+/// Sets the BGM volume target (0x100 full) and its per-VBlank step. Reached
 /// only through the sound far-call table's veneer.
 void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeTarget = targetVolume;

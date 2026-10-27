@@ -169,8 +169,8 @@ void MemFree(void *buffer);
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 // The listing reads the transfer count twice per pass of its wait.
 #define WAIT_TRANSFER(work)                                                    \
-  while (*(volatile u32 *)&(work)->framesSinceTransfer,                        \
-         *(volatile u32 *)&(work)->framesSinceTransfer <= 1)
+  while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                        \
+         *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
 // Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 // rains ruin in six blasts while the ground splits, then a black sphere

@@ -380,7 +380,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     }
   }
   // A frame passes between releasing and creating sprites, except inside a
-  // main-loop task (gTasksRunning is set while WaitFrames runs them),
+  // frame-pass task (gTasksRunning is set while WaitFrames runs them),
   // which cannot wait.
   if (gTasksRunning == 0)
     WaitFrames(1);

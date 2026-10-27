@@ -942,7 +942,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     MemFree(model);
     MemFree(verts);
-    while (*(volatile u32 *)&work->framesSinceTransfer <= 1) {
+    while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
     }
     work->transferPending = 1;
     WaitFrames(1);

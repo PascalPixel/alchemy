@@ -24,7 +24,7 @@ struct CanvasWork {
   s32 transferMode;
   s32 transferValue;
   u8 unk_7788[0x15c];
-  s32 framesSinceTransfer;
+  s32 vblanksSinceTransfer;
   s32 transferPending;
 };
 
@@ -70,11 +70,11 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     }
     /* FAKEMATCH: the native reads the counter before it stores 1, a load
      * nothing uses; as a plain store, 38 instructions differ in tla-en. */
-    (void)*(volatile s32 *)&work->framesSinceTransfer;
-    work->framesSinceTransfer = 1;
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
-    work->framesSinceTransfer++;
+    work->vblanksSinceTransfer++;
   }
 }
 
@@ -129,11 +129,11 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
      * BattleEffect_ProcessPendingGraphicsTransfer. */
-    (void)*(volatile s32 *)&work->framesSinceTransfer;
-    work->framesSinceTransfer = 1;
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
-    work->framesSinceTransfer++;
+    work->vblanksSinceTransfer++;
   }
 }
 
@@ -169,10 +169,10 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     }
     /* FAKEMATCH: the dead read before the counter is set to 1, as in
      * BattleEffect_ProcessPendingGraphicsTransfer. */
-    (void)*(volatile s32 *)&work->framesSinceTransfer;
-    work->framesSinceTransfer = 1;
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
-    work->framesSinceTransfer++;
+    work->vblanksSinceTransfer++;
   }
 }

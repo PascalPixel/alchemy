@@ -1,6 +1,6 @@
 @ Why assembly: MusicPlayer2000's shared call_r3 helper supplies the bx r3 hook entry.
-@ Mixer-frame setup transfers into a shared live-stack IWRAM mixer rather
-@ than returning through an ordinary call frame.
+@ The mixer's VBlank setup transfers into a shared live-stack IWRAM mixer rather
+@ than returning through an ordinary call's stack frame.
 @ Mixer_Enter is Camelot's copy of SoundMain's entry (src/sound/umul_high.s)
 @ for the VBlank handler: it neither raises the ident nor sets up the mixer's
 @ line limit, and it jumps to the game's own IWRAM mixer, IwramSoundMixEntry,
@@ -16,7 +16,7 @@ Mixer_Enter:
 	ldr	r2, [pc, #100]
 	ldr	r3, [r0, #0]
 	cmp	r2, r3
-	beq Mixer_StartFrame
+	beq Mixer_Run
 	bx	lr
 	.global Mixer_EnterCallViaR3
 	.thumb_func
@@ -24,9 +24,9 @@ Mixer_EnterCallViaR3:
 	bx	r3
 .syntax unified
 	.thumb
-	.global Mixer_StartFrame
+	.global Mixer_Run
 	.thumb_func
-Mixer_StartFrame:
+Mixer_Run:
 	push	{r5, r6, r7, lr}
 	mov	r1, r8
 	mov	r2, r9

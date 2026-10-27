@@ -15,7 +15,7 @@ struct SoundWork;
 extern const u8 gSound_Cgb3LevelCodes[];
 extern const s16 gSound_CgbFrequencySteps[];
 extern const u8 gSound_CgbPitchCodes[];
-extern const u16 gSound_FrameLengths[];
+extern const u16 gSound_PcmSamplesPerVBlank[];
 extern const u8 gSound_NoisePitchCodes[];
 extern u32 gSound_PcmFrequencySteps[];
 extern u8 gSound_PcmPitchCodes[];

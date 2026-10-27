@@ -400,7 +400,7 @@ s32 WorldMap_InitializePerspective(void);
 #endif
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void WorldMap_LoadGraphics(s32 x, s32 z);
-void WorldMap_ApplyAffineFrame(void);
+void WorldMap_ApplyAffinePage(void);
 void WorldMap_RenderPaletteMappedRow(u32 tileRow);
 void WorldMap_RenderPaletteMappedColumn(u32 tileColumn);
 void WorldMap_UpdateView(void);

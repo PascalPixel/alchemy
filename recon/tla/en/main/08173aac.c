@@ -134,8 +134,8 @@ void MemFree(void *buffer);
 // The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
 #define WAIT_TRANSFER(work)                                                    \
-  while (*(volatile u32 *)&(work)->framesSinceTransfer,                        \
-         *(volatile u32 *)&(work)->framesSinceTransfer <= 1)
+  while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                        \
+         *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
 // The shared body of sixteen abilities' effects (variant_i.c): Gasp (mode
 // 0), Reflux (2), Djinn Counter (3), Mold and Meld (4), Shine (5), Lull (6),

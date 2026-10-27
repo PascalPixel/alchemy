@@ -123,7 +123,7 @@ void BattleTransition_BuildTilemap(void *tilemap) {
   Iwram_FillWords(destination, 0x280, 0x03ff03ff);
 }
 
-/// Shows the zoomed background's finished page each frame while the
+/// Shows the zoomed background's finished page each VBlank while the
 /// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
 /// each VBlank as a task, in the VBlank pass at its highest
@@ -197,12 +197,13 @@ void BattleTransition_AdvanceTimer(void) {
   BattleCamera_SetView(0, 0, 0, 0x64);
 }
 
-/// Draws a frame of the curtain opening on BG1: over 80 frames a row moves up
-/// from row 13 to row 4 and its vertically flipped twin down to row 20, the
-/// row's tile stepping through CURTAIN_TILE(1) to (8), the last one clear.
-/// Runs each frame as a task added by
-/// BattleTransition_Run, reading the frame from
-/// gBattleEntryTimer's timer; writes BG1's map in screen block 12.
+/// Draws the curtain opening on BG1 as it stands at the current frame: over 80
+/// frames a row moves up from row 13 to row 4 and its vertically flipped twin
+/// down to row 20, the row's tile stepping through CURTAIN_TILE(1) to (8), the
+/// last one clear. Runs each VBlank as a task in the VBlank pass, added by
+/// BattleTransition_Run, reading the frame from gBattleEntryTimer's timer,
+/// which BattleTransition_AdvanceTimer counts in the frame pass; writes BG1's
+/// map in screen block 12.
 void BattleTransition_DrawRows(void) {
   u32 column;
   s32 transitionFrame;

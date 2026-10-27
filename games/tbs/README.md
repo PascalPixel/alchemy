@@ -6,9 +6,9 @@ use the Japanese subtitle, or TBS, to keep it apart from
 
 ## How the game is built
 
-Every part of The Broken Seal, from one line of dialogue to a whole battle, is
-code that runs from its start to its end and waits where it stands whenever
-time must pass:
+Every program, event, menu and battle animation in The Broken Seal is code
+that runs from its start to its end and waits where it stands whenever time
+must pass, while short tasks run once a frame to keep the world moving:
 
 - **One program at a time.** A [monitor](#the-monitor)
   runs one program (a scene, a battle, a minigame) from start to finish.
@@ -200,9 +200,9 @@ battle animation) calls it when time must pass:
 ```c
 void WaitFrames(s32 frames) {         /* simplified */
   while (frames--) {
-    Task_RunPass(TASK_PASS_FRAME);   /* every queued task, once */
-    Oam_BuildBuffer(...);            /* this frame's picture */
-    VBlankIntrWait();                /* halt until the next VBlank *
+    Task_RunPass(TASK_PASS_FRAME);    /* every queued task, once */
+    Oam_BuildBuffer(...);             /* this frame's picture */
+    VBlankIntrWait();                 /* halt until the next VBlank */
   }
 }
 ```
@@ -218,7 +218,7 @@ carrier's line, `Event_ShowMessageAndWait` simplified:
 ```c
 window = FieldMessage_ShowAtActor(actorId, flags);  /* open her window */
 while (!Window_IsClosedFar(window))
-  WaitFrames(1);                       /* the water keeps moving */
+  WaitFrames(1);                                    /* the water keeps moving */
 ```
 
 The window itself is drawn by a task, which types the line out and closes the

@@ -36,7 +36,7 @@ extern u8 Data_0802146cSize[];
 extern u32 gData_03001144;
 extern u32 Data_03001244;
 
-void Fade_FromBlack(s32 frames);
+void Fade_FromBlack(s32 vblanks);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane);

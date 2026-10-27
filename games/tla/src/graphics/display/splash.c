@@ -12,8 +12,8 @@ extern char ResourceId_NintendoLogo;
 
 void Audio_PlayCue(s32 cue);
 void Scheduler_ResetTaskTable(void);
-void Fade_ToBlack(s32 frames);
-void Fade_FromBlack(s32 frames);
+void Fade_ToBlack(s32 vblanks);
+void Fade_FromBlack(s32 vblanks);
 void Fade_Wait(void);
 void Func_08014b70(void);
 void Ui_LoadWindowGraphics(void);

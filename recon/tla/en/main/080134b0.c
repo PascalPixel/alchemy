@@ -1,7 +1,7 @@
 // Draft, differ 42 of 73 (66 before, 2026-10-26): waits for the next frame
 // interrupt, running the once-a-frame sound step first unless only the
 // interrupt is wanted. The frame state is volatile (each store reads the byte
-// first), IwramSoundRenderFrame is reached at its resident IWRAM address, and
+// first), IwramSoundRenderVBlank is reached at its resident IWRAM address, and
 // IME is written through a pointer to it, as the native stores the address
 // register. Left: the native loads gData_03001138 afresh in the long path and
 // forms the countdown in a copy (adds r3, r2, #0); here the address loaded for
@@ -11,19 +11,19 @@
 #include "callback_scheduler.h"
 #include "audio_engine.h"
 
-struct FrameSoundState {
+struct SoundVBlankState {
   u8 lastVBlank;
   u8 transferCountdown;
   u8 interruptOnly;
   u8 updating;
 };
-extern volatile struct FrameSoundState gData_03001138;
+extern volatile struct SoundVBlankState gData_03001138;
 extern volatile u16 gData_0300121c;
 extern u32 gVBlankCount;
 extern struct SoundWork *gData_03007ff0;
 void Func_081c0088(void);
-s32 SoundDriver_EnterFrameUpdate(void);
-#define IwramSoundRenderFrame FIXED_ADDRESS((void (*)(s32 flags)), 0x03000d40, IwramSoundRenderFrame)
+s32 SoundDriver_EnterVBlankUpdate(void);
+#define IwramSoundRenderVBlank FIXED_ADDRESS((void (*)(s32 flags)), 0x03000d40, IwramSoundRenderVBlank)
 
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
@@ -48,8 +48,8 @@ void System_WaitForFrameInterrupt(void) {
         count <= 1 ? sound->transferPeriod : sound->transferCountdown - 1;
     REG_IME = saved;
     Func_081c0088();
-    if (SoundDriver_EnterFrameUpdate() == 0)
-      IwramSoundRenderFrame(8);
+    if (SoundDriver_EnterVBlankUpdate() == 0)
+      IwramSoundRenderVBlank(8);
     gData_03001138.updating = 0;
     while (!(gData_0300121c & 1))
       ;

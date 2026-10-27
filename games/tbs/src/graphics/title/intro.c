@@ -115,7 +115,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
 
 /// A VBlank task of the title intro, added by Title_ShowIntro: places the
 /// rising sprites along the slope of the scrolling background, alternating two
-/// sets every other frame so twice as many show, hides the rest and copies the
+/// sets every other VBlank so twice as many show, hides the rest and copies the
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
@@ -138,7 +138,7 @@ void Title_UpdateIntroSprites(void) {
   slopeBaseY = 48 - gBgScroll[1].y;
   slopeTopY = 144 - work->rise;
   // Alternating the two groups fits six shapes into twelve OAM entries;
-  // each group is visible every other frame.
+  // each group is visible every other VBlank.
   if (work->frame < 0x118) {
     if ((work->frameCount & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);

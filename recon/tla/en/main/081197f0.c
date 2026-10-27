@@ -147,7 +147,7 @@ void UiText_DrawQuantity(s32 slot, s32 kind);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void BattlePresentation_WaitForAdvance(void);
 void Func_081284c0(void);
-void Fade_ToBlack(s32 frames);
+void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void Func_0811843c(void);

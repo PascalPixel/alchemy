@@ -29,8 +29,8 @@ struct TransitionMapWork {
 };
 
 void WaitFrames(s32 frames);
-void Fade_FromBlack(s32 frames);
-void Fade_ToBlack(s32 frames);
+void Fade_FromBlack(s32 vblanks);
+void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void BattleEffect_SetPrimaryBufferValue(s32 value);

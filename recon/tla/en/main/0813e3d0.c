@@ -6,7 +6,7 @@
 // Twin: The Broken Seal's BattleEffect_RunElementPillar, reached from the
 // scenes through the far-call table (table_47.s). It sets up its own heap
 // blocks, so unlike a dispatched effect it stores work->effect and marks
-// the work active (framesSinceTransfer = 1) itself. ⚓️ drops the twin's
+// the work active (vblanksSinceTransfer = 1) itself. ⚓️ drops the twin's
 // unused GetBattleObjectSlotFar call, works out the glow's picture again for
 // the mirrored half, and reads the strength from the argument.
 
@@ -119,7 +119,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
   sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
   camera = Ram_HeapSlots->cameraWork;
-  work->framesSinceTransfer = 1;
+  work->vblanksSinceTransfer = 1;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;

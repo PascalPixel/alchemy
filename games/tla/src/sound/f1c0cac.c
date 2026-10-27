@@ -1,17 +1,17 @@
 #include "audio_engine.h"
 #include "audio_engine_symbols.h"
 
-/// The interrupt handler clears unk03 every frame after the sound
+/// The interrupt handler clears unk03 every VBlank after the sound
 /// update, reading it first as only a volatile access survives; while it is
 /// set, sound commands are ignored.
-struct SoundFrameState {
+struct SoundVBlankState {
   u8 unk00[3];
   u8 unk03;
 };
 
 extern const struct SongEntry gSound_SongTable[];
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern volatile struct SoundFrameState gData_03001138;
+extern volatile struct SoundVBlankState gData_03001138;
 extern u8 gData_02005814;
 extern u16 gData_02005820[8];
 extern u16 gData_02005830;

@@ -5,8 +5,8 @@
 #include "display_transition.h"
 
 void WaitFrames(s32 frames);
-void Fade_FromBlack(s32 frames);
-void Fade_ToBlack(s32 frames);
+void Fade_FromBlack(s32 vblanks);
+void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 index);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct DisplayTransitionState *Func_080d019c(void);

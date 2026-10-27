@@ -9,7 +9,7 @@ struct BattleFxTransferWork {
   s32 transferMode;
   s32 transferValue;
   u8 unk_7788[0x78e4 - 0x7788];
-  s32 framesSinceTransfer;
+  s32 vblanksSinceTransfer;
   s32 transferPending;
 };
 
@@ -54,9 +54,9 @@ void BattlePres_ProcessPendingTileTransfer(void) {
       break;
     }
     work->transferPending = 0;
-    work->framesSinceTransfer = 1;
+    work->vblanksSinceTransfer = 1;
   } else {
-    work->framesSinceTransfer++;
+    work->vblanksSinceTransfer++;
   }
 }
 

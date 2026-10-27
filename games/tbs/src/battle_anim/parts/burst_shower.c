@@ -25,8 +25,8 @@ enum BurstShowerMode {
 /// Arms DMA 0 to copy one word of gBattleAnimWork's bg2xLines table into BG2X
 /// at each horizontal blank, bending BG2 line by line.
 ///
-/// Runs each frame as a task added by the target motes, the
-/// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
+/// Runs each VBlank as a task in the VBlank pass, added by the target motes,
+/// the casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
 /// each of which removes it before it returns. Stops DMA 0 and restarts it
 /// from the top of the table.
 void BattleAnim_ArmBg2AffineHBlankDma(void) {

@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
-	.global IwramSoundRenderFrame
-IwramSoundRenderFrame:
+	.global IwramSoundRenderVBlank
+IwramSoundRenderVBlank:
 	bx	pc
 AlchemyUncredited_080012fa:
 	.2byte	0x0200

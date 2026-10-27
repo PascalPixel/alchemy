@@ -115,7 +115,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// HEAP_SLOT_WORLD_MAP_FRAME; loads the default cells, metatile attributes and
 /// tileset animations; writes the blend, BG and affine registers and
 /// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
-/// WorldMap_ApplyAffineFrame as tasks.
+/// WorldMap_ApplyAffinePage as tasks.
 #ifdef UBFIX
 void WorldMap_InitializePerspective(void) {
 #else
@@ -267,7 +267,7 @@ s32 WorldMap_InitializePerspective(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   Task_Add(WorldMap_UpdateView, TASK_PASS_FRAME + 5);
-  Task_Add(WorldMap_ApplyAffineFrame, TASK_PASS_VBLANK);
+  Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_VBLANK);
   // Each of the 16 by 16 grid cells starts on the tile of its own number.
   for (tileIndex = 255; tileIndex >= 0; tileIndex--)
     perspective->tileIds[tileIndex] = tileIndex;
@@ -391,15 +391,15 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Free(buffer);
 }
 
-/// HBlank setup each frame on the world map: copies the first scanline's BG2
+/// HBlank setup each VBlank on the world map: copies the first scanline's BG2
 /// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks
 /// the BG mode from the window's top and bottom.
 ///
-/// Added as a task by WorldMap_InitializePerspective (priority
-/// 0x480). Reads this frame's affine page (gFrameCount & 1), restarts DMA 0,
+/// Added as a VBlank-pass task by WorldMap_InitializePerspective. Reads this
+/// frame's affine page (gFrameCount & 1), restarts DMA 0,
 /// sets shownTop and shownBottom, writes REG_DISPCNT's mode and clears
 /// windowPending.
-void WorldMap_ApplyAffineFrame(void) {
+void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[160] =
       ((struct WorldMapFrameWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_FRAME))
           ->pages;
@@ -412,7 +412,7 @@ void WorldMap_ApplyAffineFrame(void) {
   u32 windowTop;
   u32 nextDisplayControl;
 
-  // Stop last frame's HBlank DMA, then load line 0's eight words (BG2PA to
+  // Stop the last VBlank's HBlank DMA, then load line 0's eight words (BG2PA to
   // BG3Y) by hand; the DMA repeats eight words into the same registers at
   // each HBlank for the lines after it.
   dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;

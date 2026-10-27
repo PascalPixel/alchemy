@@ -11,12 +11,12 @@ static __inline__ s32 Sound_ClearWords(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-/// Sets direct sound to a fixed 31536 Hz output with 528 samples a frame,
+/// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
 /// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
 /// and 2 at them, then restarts timer 0 at line 159.
 void AudioEngine_SetFixedPcmRate(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
-  u32 frame;
+  u32 samples;
   u8 *buffer;
   u32 control;
   volatile u8 *vcount;
@@ -25,8 +25,8 @@ void AudioEngine_SetFixedPcmRate(u32 mode) {
   work->transferPeriod = 3;
   work->outputRate = 31536;
   work->rate = mode;
-  frame = 528;
-  work->frameSamples = frame;
+  samples = 528;
+  work->pcmSamplesPerVBlank = samples;
   work->rateStep = 266;
   /* FAKEMATCH: control holds both timer 0 control values, so 0 is built after
    * the last work store into r2 and 0x80 by movs rather than as halfword pool
@@ -39,7 +39,7 @@ void AudioEngine_SetFixedPcmRate(u32 mode) {
     REG_TM0CNT_H = control;
   } while (0);
   do {
-    REG_TM0CNT_L = __divsi3(-140448, frame);
+    REG_TM0CNT_L = __divsi3(-140448, samples);
   } while (0);
   buffer = gData_02003a90;
   /* FAKEMATCH: the clear goes through the inline wrapper Sound_ClearWords, as

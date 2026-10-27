@@ -18,8 +18,8 @@ struct BgScroll {
 extern struct BgScroll gBgScroll[];
 extern char ResourceId_CamelotLogo;
 
-void Fade_ToBlack(s32 frames);
-void Fade_FromWhite(s32 frames);
+void Fade_ToBlack(s32 vblanks);
+void Fade_FromWhite(s32 vblanks);
 void Fade_Wait(void);
 void DebugText_Clear(void);
 void Ui_LoadWindowGraphics(void);

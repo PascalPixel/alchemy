@@ -42,7 +42,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
-/// 1 while WaitFrames runs the main-loop tasks.
+/// 1 while WaitFrames runs the frame pass's tasks (TASK_PASS_FRAME).
 /* FAKEMATCH(volatile): the read Task_Add discards stays a
  * load; as plain u8, 8 of 61 instructions differ in tbs-en. */
 extern volatile u8 gTasksRunning;

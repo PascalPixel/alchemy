@@ -435,7 +435,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   }
 }
 
-/// The burst's main-loop task while Sanctum_RunMemberIconBurst plays: steps
+/// The burst's frame-pass task while Sanctum_RunMemberIconBurst plays: steps
 /// all 24 sparkle slots, then, from the sixth sparkle until 20 frames after
 /// the tune ends (while burstMember is not -1), gives the party member's icon a
 /// random colour mode each frame: SpriteColorMode 0 to 6, normal, the channel

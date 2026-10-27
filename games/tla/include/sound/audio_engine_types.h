@@ -71,7 +71,7 @@ typedef void (*SoundCommand)(struct SoundPlayer *player,
 #define SOUND_COMMAND_PCM_RATE 30 ///< AudioEngine_SetPcmRate.
 /// MusicTrack_Stop: silences the track's notes and empties its list.
 #define SOUND_COMMAND_STOP_TRACK 31
-#define SOUND_COMMAND_FADE 32 ///< MusicPlayer_StepFade: a frame of a fade.
+#define SOUND_COMMAND_FADE 32 ///< MusicPlayer_StepFade: a fade's step a VBlank.
 #define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< MusicTrack_CalculateOutput.
 /// SoundNote_Detach: unlinks a note from its track's list
 /// (AudioCommand_InvokeSlot34).
@@ -120,12 +120,12 @@ struct SoundVoice {
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
   /// rhythm or split voice its voice table.
   const void *target;
-  /// PCM: added to the envelope each frame until 255. CGB: frames a step.
+  /// PCM: added to the envelope each VBlank until 255. CGB: VBlanks a step.
   /// In a split voice, these four bytes are a pointer to its key map.
   u8 attack;
-  u8 decay;   ///< PCM: envelope * decay / 256 a frame. CGB: frames a step.
+  u8 decay;   ///< PCM: envelope * decay / 256 a VBlank. CGB: VBlanks a step.
   u8 sustain; ///< Level decay stops at: 0 to 255 for PCM, 0 to 15 for CGB.
-  u8 release; ///< PCM: envelope * release / 256 a frame. CGB: frames a step.
+  u8 release; ///< PCM: envelope * release / 256 a VBlank. CGB: VBlanks a step.
 };
 
 /// A PCM note, one of 12 the mixer renders: its state and envelope, its
@@ -145,9 +145,9 @@ struct SoundNote {
   /// 0 to 255 (0x09).
   u8 unk07[3];
   /// For a PCM note, the mixer writes the envelope's right level here each
-  /// frame; the name comes from CgbNote.peak.
+  /// VBlank; the name comes from CgbNote.peak.
   u8 peak;
-  /// 0x0b left level, 0x0c echo level, 0x0d echo frames, 0x10 gate in ticks,
+  /// 0x0b left level, 0x0c echo level, 0x0d echo VBlanks, 0x10 gate in ticks,
   /// 0x11 the song's key, 0x12 velocity, 0x13 priority, 0x14 rhythm pan;
   /// the mixer keeps a PCM note's samples left in the word at 0x18.
   u8 unk0b[0x0e];
@@ -181,18 +181,18 @@ struct CgbNote {
   u8 kind;
   u8 outRight; ///< Velocity and track volume to the right, 0 to 255.
   u8 outLeft;  ///< Velocity and track volume to the left, 0 to 255.
-  u8 attack;   ///< Frames per attack step.
-  u8 decay;    ///< Frames per decay step.
+  u8 attack;   ///< VBlanks per attack step.
+  u8 decay;    ///< VBlanks per decay step.
   u8 sustain;  ///< Sustain level 0 to 15, scaled by peak.
-  u8 release;  ///< Frames per release step.
+  u8 release;  ///< VBlanks per release step.
   u8 key;      ///< The key played, before the track's pitch.
   u8 level;    ///< Envelope level 0 to 15 written to the channel.
   /// Top of the envelope: (outRight + outLeft) / 16, at most 15 when one
   /// side plays.
   u8 peak;
-  u8 counter;    ///< Frames left in the current envelope step.
+  u8 counter;    ///< VBlanks left in the current envelope step.
   u8 echoLevel;  ///< After release, the level held is peak * echoLevel / 256.
-  u8 echoLength; ///< Frames the echo lasts.
+  u8 echoLength; ///< VBlanks the echo lasts.
   /// 0x10 gate in ticks, 0x11 the song's key, 0x12 velocity, 0x13 priority
   /// (a new note of higher priority takes the channel), 0x14 rhythm pan.
   u8 unk0e[0x0b];
@@ -310,7 +310,7 @@ struct SoundTrack {
   /// each note, 0x1d track priority added to the player's for its notes.
   u8 unk1b[3];
   u8 tailLevel;  ///< Each new note's echo level.
-  u8 tailLength; ///< Each new note's echo length in frames.
+  u8 tailLength; ///< Each new note's echo length in VBlanks.
   /// The notes this track started, newest first, linked through
   /// SoundNote.next; PCM notes from SoundWork.pcmNotes and CGB notes. NULL
   /// ends the list or leaves it empty.
@@ -358,12 +358,12 @@ struct SoundPlayer {
   u8 *workBytes;  ///< gSound_WorkBytes, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
-  /// tempo * tempoScale / 256, added to tempoCount each frame.
+  /// tempo * tempoScale / 256, added to tempoCount each VBlank.
   u16 tempoStep;
   /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a VBlank.
   u16 tempoCount;
-  u16 fadePeriod;  ///< Frames between fade steps; 0 when not fading.
-  u16 fadeCounter; ///< Frames left until the next fade step.
+  u16 fadePeriod;  ///< VBlanks between fade steps; 0 when not fading.
+  u16 fadeCounter; ///< VBlanks left until the next fade step.
   /// bits: 8..4 level, 0 to 0x100 in steps of 16 | 1 fade in | 0 pause at the
   /// end (SoundFadeFlag).
   u16 fadeVolume;
@@ -382,8 +382,8 @@ struct SoundPlayer {
 /// and CGB notes, and the routines the driver calls.
 struct SoundWork {
   u32 lock; ///< SOUND_LOCK when free; raised while the driver changes it.
-  /// Frames until the VBlank DMA restart, which reloads it from
-  /// transferPeriod; also picks the frame of the buffers being mixed.
+  /// VBlanks until the DMA restart, which reloads it from
+  /// transferPeriod; also picks which VBlank's part of the buffers is mixed.
   /* FAKEMATCH: volatile steers library C only: without it
    * AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23.
    */
@@ -391,18 +391,19 @@ struct SoundWork {
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).
   u8 volume;       ///< PCM volume 0 to 15, 15 at start (mode bits 15..12).
-  u8 rate;         ///< 1 to 12, indexes gSound_FrameLengths (mode bits 19..16).
-  u8 unk09;        ///< Not named by TLA code.
+  u8 rate;  ///< 1 to 12, indexes gSound_PcmSamplesPerVBlank (mode bits 19..16).
+  u8 unk09; ///< Not named by TLA code.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 c15;
-  u8 transferPeriod; ///< Frames the buffers hold: 0x630 / frameSamples.
+  u8 transferPeriod; ///< VBlanks the buffers hold: 0x630 / pcmSamplesPerVBlank.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. Sound_MaxLines, 0.
   u8 maxLines;
-  u8 unk0d[3];      ///< Not named by TLA code.
-  u32 frameSamples; ///< Samples mixed a frame, from gSound_FrameLengths.
-  u32 outputRate;   ///< Samples a second: frameSamples * 59.7275, rounded.
+  u8 unk0d[3];             ///< Not named by TLA code.
+  u32 pcmSamplesPerVBlank; ///< Samples mixed a VBlank, from
+                           ///< gSound_PcmSamplesPerVBlank.
+  u32 outputRate; ///< Samples a second: pcmSamplesPerVBlank * 59.7275, rounded.
   /// 2^23 / outputRate, rounded; a note's frequency times it is its step a
   /// sample.
   u32 rateStep;
@@ -424,7 +425,7 @@ struct SoundWork {
   u8 unk40[0x10];                ///< Not named by TLA code.
   struct SoundNote pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
-  /// transferPeriod frames of frameSamples each.
+  /// transferPeriod VBlanks of pcmSamplesPerVBlank each.
   s8 buffers[2][0x630];
 };
 

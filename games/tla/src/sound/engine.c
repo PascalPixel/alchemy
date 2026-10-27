@@ -10,7 +10,7 @@ void Audio_EmptyCallback(void);
 void AudioEngine_SetPcmRate(u32 mode);
 void AudioEngine_SuspendDirectSound(void);
 void AudioEngine_ResumeDirectSound(void);
-extern const u16 gSound_FrameLengths[];
+extern const u16 gSound_PcmSamplesPerVBlank[];
 extern SoundCommand gSound_CommandTable[36];
 
 void AudioCommand_InvokeSlot34(struct SoundNote *note) {
@@ -75,19 +75,19 @@ void AudioEngine_Initialize(struct SoundWork *work) {
 
 void AudioEngine_SetPcmRate(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
-  u32 frame;
+  u32 samples;
   volatile u16 *timer;
 
   mode = (mode & 0xF0000) >> 16;
   work->rate = mode;
-  frame = gSound_FrameLengths[mode - 1];
-  work->frameSamples = frame;
-  work->transferPeriod = __divsi3(0x630, frame);
-  work->outputRate = __divsi3(0x91D1B * frame + 5000, 10000);
+  samples = gSound_PcmSamplesPerVBlank[mode - 1];
+  work->pcmSamplesPerVBlank = samples;
+  work->transferPeriod = __divsi3(0x630, samples);
+  work->outputRate = __divsi3(0x91D1B * samples + 5000, 10000);
   work->rateStep = (__divsi3(0x1000000, work->outputRate) + 1) >> 1;
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
-  *timer = -__divsi3(0x44940, frame);
+  *timer = -__divsi3(0x44940, samples);
   AudioEngine_ResumeDirectSound();
   while (*(volatile u8 *)0x04000006 == 159)
     ;

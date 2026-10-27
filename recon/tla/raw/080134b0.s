@@ -61,7 +61,7 @@ System_WaitForFrameInterrupt:
 	ldr r3, .L_08013550
 	strh r4, [r3]
 	bl Func_081c0088
-	bl SoundDriver_EnterFrameUpdate
+	bl SoundDriver_EnterVBlankUpdate
 	cmp r0, #0
 	bne .L_0801352e
 	ldr r3, .L_0801355c
@@ -95,4 +95,4 @@ System_WaitForFrameInterrupt:
 .L_08013558:
 	.4byte gData_03007ff0
 .L_0801355c:
-	.4byte IwramSoundRenderFrame
+	.4byte IwramSoundRenderVBlank

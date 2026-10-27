@@ -7,7 +7,7 @@
 // volatile pointer, differ 115, the pointer then stays in a register), keeps
 // keys in r0 and gInput in r1 (swapped here), and takes the low byte of the
 // VBlank count from its register (lsls/lsrs) where the draft reloads it as a
-// byte. IwramSoundRenderFrame is reached through lr as a long call.
+// byte. IwramSoundRenderVBlank is reached through lr as a long call.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -19,7 +19,7 @@
 #include "io_write_queue.h"
 #include "callback_scheduler.h"
 
-struct SoundFrameState {
+struct SoundVBlankState {
   u8 lastVBlank;
   u8 unk01;
   u8 unk02;
@@ -30,7 +30,7 @@ struct BgScrollRegs {
   u32 words[4];
 };
 
-extern volatile struct SoundFrameState gData_03001138;
+extern volatile struct SoundVBlankState gData_03001138;
 extern u8 *gData_03007ff0;
 extern void (*gData_030011f8)(void);
 extern u32 gVBlankCount;
@@ -41,8 +41,8 @@ void Func_08016990(void);
 void SoundDriver_VSyncRefresh(void);
 void Fade_Update(void);
 void Func_081c0088(void);
-s32 SoundDriver_EnterFrameUpdate(void);
-void IwramSoundRenderFrame(s32) __attribute__((long_call));
+s32 SoundDriver_EnterVBlankUpdate(void);
+void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
 void Func_0801399c(void) {
   u32 keys;
@@ -102,8 +102,8 @@ void Func_0801399c(void) {
   if (gData_03001138.lastVBlank != (u8)vblankCount && gData_03001138.unk03 == 0) {
     gData_03001138.unk01 = gData_03007ff0[4];
     Func_081c0088();
-    if (SoundDriver_EnterFrameUpdate() == 0)
-      IwramSoundRenderFrame(8);
+    if (SoundDriver_EnterVBlankUpdate() == 0)
+      IwramSoundRenderVBlank(8);
     gData_03001138.lastVBlank = vblankCount;
   }
   gVBlankCount = vblankCount + 1;

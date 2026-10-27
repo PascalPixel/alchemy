@@ -98,11 +98,11 @@ void BattleAnim_WipeCanvas(s32 direction, s32 fill) {
 /// way transferMode says, leaving the canvas cleared, faded, darkened or
 /// brightened for the next frame.
 ///
-/// Runs each frame as a task that nearly every canvas animation
-/// adds, most through ANIM_START_TRANSFER, and removes before its blocks
-/// are freed (ANIM_FINISH_CANVAS). Clears work->transferPending after a
-/// copy, and counts work->framesSinceTransfer: 1 on a frame that copied,
-/// one more on each frame that did not. No animation reads that count;
+/// Runs each VBlank as a task in the VBlank pass, which nearly every canvas
+/// animation adds, most through ANIM_START_TRANSFER, and removes before its
+/// blocks are freed (ANIM_FINISH_CANVAS). Clears work->transferPending after a
+/// copy, and counts work->vblanksSinceTransfer: 1 on a VBlank that copied,
+/// one more on each VBlank that did not. No animation reads that count;
 /// overworld/lucky_wheels.c keeps the same count for its own transfer.
 void BattleAnim_ProcessPendingGraphicsTransfer(void) {
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
@@ -141,10 +141,10 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
       break;
     }
     work->transferPending = 0;
-    counter = &work->framesSinceTransfer;
+    counter = &work->vblanksSinceTransfer;
     nextCounter = 1;
   } else {
-    counter = &work->framesSinceTransfer;
+    counter = &work->vblanksSinceTransfer;
     nextCounter = *counter + 1;
   }
   *counter = nextCounter;
@@ -155,10 +155,10 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
 /// character block 2 (0x06008000), the way transferMode says (every mode but
 /// CANVAS_COPY_AND_BRIGHTEN).
 ///
-/// Runs each frame as a task added by
+/// Runs each VBlank as a task in the VBlank pass, added by
 /// BattleAnim_RunParticleStreams, which removes it before it returns. Clears
 /// work->transferPending after a copy; unlike the canvas transfer it keeps
-/// no frame count.
+/// no count of VBlanks.
 void BattleAnim_FlushPendingGraphicsTransfer(void) {
   // This switch stays apart from BattleAnim_ProcessPendingGraphicsTransfer's:
   // shared, both compile differently.

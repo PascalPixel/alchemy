@@ -25,10 +25,10 @@ extern u8 gScreenFadeToWhite;
 /* FAKEMATCH(volatile): the fades load the duration back after storing it; as
  * plain u8, 13 of 29 instructions differ in tbs-en (ScreenFade_Start). */
 extern volatile u8
-    gScreenFadeFrames; ///< the fade's length in frames, 0 when idle
-/// Frames until the running fade reaches its target; ScreenFade_Update counts
+    gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
+/// VBlanks until the running fade reaches its target; ScreenFade_Update counts
 /// it down.
-extern u8 gScreenFadeFramesLeft;
+extern u8 gScreenFadeVBlanksLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
 /// The brightness the running fade started from, 0 to 16.

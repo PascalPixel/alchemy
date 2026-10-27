@@ -5,9 +5,9 @@ The grassland behind a battle, the monsters, the fonts, the
 ordinary picture files anyone can open and edit, and every build packs them
 into the forms the game reads. The folder also holds the code of the two
 screens that are mostly pictures, the title intro and the credits, the
-handwritten decoders that unpack tiles and animation
-[frames](../../glossary.md#frame) for the rest of the game, and a few helpers
-of the German and Italian message text that sit beside them on the cartridge.
+handwritten decoders that unpack tiles and animation pictures for the rest of
+the game, and a few helpers of the German and Italian message text that sit
+beside them on the cartridge.
 [Battle animations](../battle_anim/README.md) load their sheets from
 `battle_anims/`, and each [map](../../glossary.md#map) in
 [Maps](../map/README.md) places its tiles from `tileset/`.

@@ -40,10 +40,10 @@ s32 Sound_LoadReverbCode(s32 code);
 void Sound_ReservedNoOpA(void);
 void Sound_ReservedNoOpB(void);
 void Input_HandleKeyInterrupt(void);
-void ScreenFade_ToBlack(s32 frames);
-void ScreenFade_FromBlack(s32 frames);
-void ScreenFade_ToWhite(s32 frames);
-void ScreenFade_FromWhite(s32 frames);
+void ScreenFade_ToBlack(s32 vblanks);
+void ScreenFade_FromBlack(s32 vblanks);
+void ScreenFade_ToWhite(s32 vblanks);
+void ScreenFade_FromWhite(s32 vblanks);
 s32 Decompress_TaggedLz(const void *source, void *destination);
 s32 Decompress_MoveToFrontLz(const void *source, void *destination);
 s32 Decompress_ByteLz(const void *source, void *destination);
@@ -53,7 +53,7 @@ void Serial_WaitForReceive(void);
 void IoWriteQueue_FlushPending(void);
 
 void ScreenFade_Update(void);
-void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames);
+void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 vblanks);
 void ScreenFade_Wait(void);
 
 void Oam_ResetFrame(void);

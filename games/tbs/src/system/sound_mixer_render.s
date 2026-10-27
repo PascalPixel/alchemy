@@ -1,4 +1,4 @@
-@ Why IwramSoundRenderFrame to IwramSoundSynthWave are assembly:
+@ Why IwramSoundRenderVBlank to IwramSoundSynthWave are assembly:
 @ Sound synthesis uses fp as packed volume/sample arithmetic and writes
 @ computed mixed words with stmia r5! without a matching block-copy source.
 @ Why IwramCopyWords is assembly:
@@ -6,7 +6,7 @@
 @ lr.
 .syntax unified
 	.arm
-IwramSoundRenderFrame:
+IwramSoundRenderVBlank:
 	add	r0, pc, #656
 	mov	r9, #352
 	mov	r8, #-16777216

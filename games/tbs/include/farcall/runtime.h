@@ -69,9 +69,9 @@ void *Resource_GetTableEntryFar(s32 index);
 /// Does nothing. The Title, Lucky Dice and Lucky Wheels pass it a
 /// far-call resource id.
 void Stub_NoOpHookFar(s32 unused);
-/// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`
-/// frames; it only starts the screen fade.
-void ScreenFade_ToBlackFar(s32 frames);
+/// Fades BG1 to BG3, the sprites and the backdrop out to black over `vblanks`
+/// VBlanks; it only starts the screen fade.
+void ScreenFade_ToBlackFar(s32 vblanks);
 /// Waits a frame at a time until the running screen fade finishes.
 void ScreenFade_WaitFar(void);
 /// Puts the serial port in multiplayer mode, installs the link interrupts and

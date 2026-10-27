@@ -26,7 +26,7 @@ extern u32 gFrameCount;
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
-void Fade_ToBlack(s32 frames);
+void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 void Func_0200031c(s32 unused);
 void Func_020005ac(struct TitleSprite *sprite, s32 priority);

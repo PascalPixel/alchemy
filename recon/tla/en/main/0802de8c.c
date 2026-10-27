@@ -59,7 +59,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 value);
 s32 Func_0802e444(s32 spriteId, s32 direction);
 void Func_0802e4c8(s32 x, s32 y, void *ring);
 void Battle_PlaceActorsByFormationKind(void);
-void Fade_FromBlack(s32 frames);
+void Fade_FromBlack(s32 vblanks);
 void WaitFrames(s32 frames);
 s32 Runtime_ConstantZeroResult(s32 resource, void *table);
 

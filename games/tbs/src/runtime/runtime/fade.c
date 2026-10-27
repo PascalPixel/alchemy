@@ -13,14 +13,14 @@ enum {
   FADE_LEVEL_MAX = 16 ///< BLDY's strongest level: all white or all black.
 };
 
-/// Steps the screen fade once a frame, called by System_VBlankHandler: sets
+/// Steps the screen fade once a VBlank, called by System_VBlankHandler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
-/// the start level to the target level and counts gScreenFadeFramesLeft down;
-/// at the end it clears gScreenFadeFrames, which ScreenFade_Wait waits on.
-/// While gScreenFadeFrames is 0 it writes nothing, leaving BLDCNT and BLDY as
+/// the start level to the target level and counts gScreenFadeVBlanksLeft down;
+/// at the end it clears gScreenFadeVBlanks, which ScreenFade_Wait waits on.
+/// While gScreenFadeVBlanks is 0 it writes nothing, leaving BLDCNT and BLDY as
 /// they were last written.
 void ScreenFade_Update(void) {
-  if (gScreenFadeFrames != 0) {
+  if (gScreenFadeVBlanks != 0) {
     {
       volatile u16 *blendControl;
       u32 control;
@@ -35,7 +35,7 @@ void ScreenFade_Update(void) {
       *blendControl = control;
     }
     {
-      u8 *remaining = &gScreenFadeFramesLeft;
+      u8 *remaining = &gScreenFadeVBlanksLeft;
       s32 delta;
       s32 level;
       s32 step;
@@ -48,11 +48,11 @@ void ScreenFade_Update(void) {
       step = *remaining;
       /* FAKEMATCH(wrapper): the division as a call to __divsi3, which clobbers
        * memory, so the zero test reloads *remaining; as delta * step /
-       * gScreenFadeFrames, 8 of 46 instructions differ in tbs-en. */
-      level += __divsi3(delta * step, gScreenFadeFrames);
+       * gScreenFadeVBlanks, 8 of 46 instructions differ in tbs-en. */
+      level += __divsi3(delta * step, gScreenFadeVBlanks);
       REG_BLDY = level;
       if (*remaining == 0)
-        gScreenFadeFrames = 0;
+        gScreenFadeVBlanks = 0;
     }
   }
 }
@@ -60,20 +60,20 @@ void ScreenFade_Update(void) {
 // Screen fades. ScreenFade_Update moves the fade one step each VBlank.
 // The brightness (BLDY) runs from 0, the picture as drawn, to 16, all white
 // or all black.
-//   gScreenFadeToWhite   : 0 fades toward black, 1 toward white
-//   gScreenFadeLayers     : the BLDCNT layers the fade covers
-//   gScreenFadeFramesLeft : frames until the fade ends
+//   gScreenFadeToWhite     : 0 fades toward black, 1 toward white
+//   gScreenFadeLayers      : the BLDCNT layers the fade covers
+//   gScreenFadeVBlanksLeft : VBlanks until the fade ends
 
 /// Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
-/// target brightness to `level` over `frames` frames.
+/// target brightness to `level` over `vblanks` VBlanks.
 #define FADE_DEFINE_BLEND(name, brighten, level)                               \
-  void name(s32 frames) {                                                      \
+  void name(s32 vblanks) {                                                     \
     gScreenFadeToWhite = brighten;                                             \
     gScreenFadeLayers = FADE_GAME_LAYERS;                                      \
     gScreenFadeStartLevel = gScreenFadeTargetLevel;                            \
     gScreenFadeTargetLevel = level;                                            \
-    gScreenFadeFrames = frames;                                                \
-    gScreenFadeFramesLeft = gScreenFadeFrames;                                 \
+    gScreenFadeVBlanks = vblanks;                                              \
+    gScreenFadeVBlanksLeft = gScreenFadeVBlanks;                               \
   }
 
 /// Fades out to black.
@@ -90,13 +90,14 @@ FADE_DEFINE_BLEND(ScreenFade_FromWhite, 1, 0)
 
 /// Starts a fade of any layers by setting the gBlend globals ScreenFade_Update
 /// steps. Reached through the far-call table.
-///   bright : 0 toward black, 1 toward white
-///   layer  : the BLDCNT layers to fade (low six bits)
-///   start  : the starting brightness; above 16, the current target
-///   target : the brightness to end at
-///   frames : how long the fade takes; with 0 nothing is written, but
-///            `target` still becomes the current target
-void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
+///   bright  : 0 toward black, 1 toward white
+///   layer   : the BLDCNT layers to fade (low six bits)
+///   start   : the starting brightness; above 16, the current target
+///   target  : the brightness to end at
+///   vblanks : how long the fade takes, in VBlanks; with 0 nothing is
+///             written, but `target` still becomes the current target
+void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target,
+                      s32 vblanks) {
   gScreenFadeToWhite = bright;
   gScreenFadeLayers = layer & FADE_LAYER_MASK;
   if (start > FADE_LEVEL_MAX) {
@@ -105,16 +106,16 @@ void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
     gScreenFadeStartLevel = start;
   }
   gScreenFadeTargetLevel = target;
-  gScreenFadeFramesLeft = (gScreenFadeFrames = frames);
+  gScreenFadeVBlanksLeft = (gScreenFadeVBlanks = vblanks);
 }
 
 /// Waits a frame at a time until the running fade has finished. Called by
 /// the Title and the battle, and through the far-call table.
 void ScreenFade_Wait(void) {
-  if (gScreenFadeFrames != 0) {
+  if (gScreenFadeVBlanks != 0) {
     do {
       WaitFrames(1);
-    } while (gScreenFadeFrames != 0);
+    } while (gScreenFadeVBlanks != 0);
   }
 }
 

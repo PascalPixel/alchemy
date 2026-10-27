@@ -153,7 +153,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
-  work->framesSinceTransfer = 1;
+  work->vblanksSinceTransfer = 1;
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();

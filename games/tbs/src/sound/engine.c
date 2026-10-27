@@ -48,15 +48,14 @@ void CgbOscOff(u8 channel);
 
 extern const u8 gCgb3Vol[];
 
-/// The PCM buffer's size in samples. It holds transferPeriod whole frames
-/// (0x630 / frameSamples, rounded down: 4 of 352 at the game's rate), after
-/// which m4aSoundVSync starts the DMAs again from its start.
+/// The PCM buffer's size in samples. It holds transferPeriod VBlanks of
+/// samples (0x630 / pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's
+/// rate), after which m4aSoundVSync starts the DMAs again from its start.
 #define SOUND_PCM_BUFFER_SIZE 0x630
-/// The display's frame rate in ten-thousandths of a hertz: 59.7275 frames a
-/// second.
-#define SOUND_FRAME_RATE_E4 597275
-/// CPU cycles in a frame: 228 lines of 1232 cycles.
-#define SOUND_CYCLES_PER_FRAME (228 * 1232)
+/// The VBlank rate in ten-thousandths of a hertz: 59.7275 VBlanks a second.
+#define SOUND_VBLANK_RATE_E4 597275
+/// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles.
+#define SOUND_CYCLES_PER_VBLANK (228 * 1232)
 
 /// Resets the sound hardware, clears the whole sound work block and installs
 /// the default PCM driver: stores `work` in SOUND_INFO_PTR, points the FIFO
@@ -97,37 +96,38 @@ void SoundInit(struct SoundInfo *work) {
   work->externalVolumePitch = DummyFunc;
   MPlayJumpTableCopy(gMPlayJumpTable);
   work->commands = gMPlayJumpTable;
-  // Frame length 4 (224 samples, 13379 a second) until m4aSoundInit sets
+  // Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets
   // the game's mode.
   SampleFreqSet(0x40000);
   work->ident = ID_NUMBER;
 }
 
-/// Sets the PCM frame length (`mode` bits 16 to 19 pick a
+/// Sets the PCM rate in samples a VBlank (`mode` bits 16 to 19 pick a
 /// gPcmSamplesPerVBlankTable entry) and the rates derived from it, and Timer
 /// 0's reload, starting playback at scanline 159. Called by SoundInit and
 /// m4aSoundMode, and by songs through the command table.
 void SampleFreqSet(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
-  u32 frameSamples;
+  u32 pcmSamplesPerVBlank;
   volatile u16 *timer;
 
-  // Convert the selected frame length into mixer and timer increments.
+  // Convert the selected rate into mixer and timer increments.
   mode = (mode & 0xF0000) >> 16;
   work->rate = mode;
-  frameSamples = gPcmSamplesPerVBlankTable[mode - 1];
-  work->frameSamples = frameSamples;
-  // Frames the DMA plays before the buffer wraps, and the sample rate in hertz
+  pcmSamplesPerVBlank = gPcmSamplesPerVBlankTable[mode - 1];
+  work->pcmSamplesPerVBlank = pcmSamplesPerVBlank;
+  // VBlanks the DMA plays before the buffer wraps, and the sample rate in hertz
   // (rounded), and half its reciprocal in 24-bit fixed point
-  work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, frameSamples);
-  work->outputRate = __divsi3(SOUND_FRAME_RATE_E4 * frameSamples + 5000, 10000);
+  work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, pcmSamplesPerVBlank);
+  work->outputRate =
+      __divsi3(SOUND_VBLANK_RATE_E4 * pcmSamplesPerVBlank + 5000, 10000);
   work->rateStep = (__divsi3(0x1000000, work->outputRate) + 1) >> 1;
   // Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
-  // take their next sample, frameSamples times a frame. It starts at scanline
-  // 159 after the FIFO transfers restart.
+  // take their next sample, pcmSamplesPerVBlank times a VBlank. It starts at
+  // scanline 159 after the FIFO transfers restart.
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
-  *timer = -__divsi3(SOUND_CYCLES_PER_FRAME, frameSamples);
+  *timer = -__divsi3(SOUND_CYCLES_PER_VBLANK, pcmSamplesPerVBlank);
   m4aSoundVSyncOn();
   // Wait out a line 159 already begun, then for the next one to begin.
   while (*(volatile u8 *)&REG_VCOUNT == 159)
@@ -570,7 +570,7 @@ void CgbModVol(struct CgbChannel *note) {
 }
 
 /// Steps CGB note envelopes and writes changed pitch, volume and trigger
-/// registers, once a frame. Installed as the work's cgbUpdate callback by
+/// registers, once a VBlank. Installed as the work's cgbUpdate callback by
 /// MPlayExtender; the mixer calls it.
 void CgbSound(void) {
   s32 channel;
@@ -585,9 +585,9 @@ void CgbSound(void) {
   s32 envelopeControl;
   u32 byteMask = 0xff;
 
-  // A second software envelope step once in every 15 frames, 16 steps in 15
-  // frames: 63.7 a second, close to the 64 a second the hardware steps its own
-  // envelopes, where one step a frame would give 59.7.
+  // A second software envelope step once in every 15 VBlanks, 16 steps in 15
+  // VBlanks: 63.7 a second, close to the 64 a second the hardware steps its own
+  // envelopes, where one step a VBlank would give 59.7.
   if (work->c15)
     work->c15--;
   else

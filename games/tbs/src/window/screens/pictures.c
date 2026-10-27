@@ -524,8 +524,8 @@ void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index,
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
-/// a task each frame, with CommandRow_PutBg1InFront at line
-/// 136 (tile row 17, the top of the row's icons), so that BG1 is behind
+/// a task each VBlank, in the VBlank pass, with CommandRow_PutBg1InFront at
+/// line 136 (tile row 17, the top of the row's icons), so that BG1 is behind
 /// above the strip and in front from it down.
 void CommandRow_PutBg1Behind(void) {
   u32 value = REG_BG1CNT;

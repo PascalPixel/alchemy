@@ -304,7 +304,7 @@ comes back when it closes.
 
 `WorldMap_BuildScanlineTable` gives each line its scale and
 distance, `Transform_UpdateVertices` turns them into the console's values
-each frame, and `WorldMap_ApplyAffineFrame` feeds them line by line;
+each frame, and `WorldMap_ApplyAffinePage` feeds them line by line;
 `WorldMap_StartStillView` makes the still picture and
 `WorldMap_LoadAreaGraphics` brings the moving view back. The world map's data
 is in [Maps](../map/README.md#the-world-maps-data).

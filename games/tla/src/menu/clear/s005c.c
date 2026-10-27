@@ -16,7 +16,7 @@ struct ClearWork {
 extern char ResourceId_LogoOnBlack;
 extern u16 gData_020024f4[];
 
-void Fade_ToBlack(s32 frames);
+void Fade_ToBlack(s32 vblanks);
 void Func_020021f8(void *source, void *destination);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));

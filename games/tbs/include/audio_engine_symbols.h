@@ -15,8 +15,8 @@ enum AudioCommandMask {
 };
 
 /// The sound driver's mode at start (m4aSoundInit, m4aSoundMode):
-/// 8 PCM notes (bits 11..8), volume 15 (15..12), frame length 7 (19..16),
-/// 352 samples a frame or 21024 a second, and sound bias resolution 1 (from
+/// 8 PCM notes (bits 11..8), volume 15 (15..12), rate 7 (19..16),
+/// 352 samples a VBlank or 21024 a second, and sound bias resolution 1 (from
 /// bits 23..20). Its reverb field, 0, leaves the reverb as it is.
 #define AUDIO_INITIAL_MODE 0x0097F800
 
@@ -25,10 +25,10 @@ enum AudioCommandMask {
 enum SongControl {
   SONG_NUM_MASK = 0xfff,
   SONG_FLAGS_MASK = 0xf000,
-  SONG_FLAG_FADE_IN = 0x1000, ///< music fades in over 64 frames
-  SONG_FADE_OUT_BGM = 17,     ///< fades the music out over 112 frames, once
+  SONG_FLAG_FADE_IN = 0x1000, ///< music fades in over 64 VBlanks
+  SONG_FADE_OUT_BGM = 17,     ///< fades the music out over 112 VBlanks, once
   SONG_KEEP_BGM = 18,         ///< keeps the music that is playing
-  /// Fades player 3 out over 48 frames; also the number of the song table's
+  /// Fades player 3 out over 48 VBlanks; also the number of the song table's
   /// row 289, so that row never plays.
   SONG_FADE_OUT_ACTION_SE = 0x121,
   /// Songs from here to SONG_SE_FIRST are fanfares; those below are music,
@@ -54,11 +54,11 @@ enum MusicPlayerId {
 };
 
 /// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode
-/// copies into place, each carrying a different share of a frame's sound into
+/// copies into place, each carrying a different share of a VBlank's sound into
 /// the next: the song's reverb, as MusicPlayer2000 calls it. Each is the last
-/// step of IwramSoundRenderFrame's loop, which reads back what the two hardware
-/// buffers held the time before, and works out what the mix buffer starts the
-/// next frame with.
+/// step of IwramSoundRenderVBlank's loop, which reads back what the two
+/// hardware buffers held the time before, and works out what the mix buffer
+/// starts the next VBlank with.
 enum SoundReverbCode {
   /// One value for both channels, from the two buffers together; only the
   /// audio test loads it.

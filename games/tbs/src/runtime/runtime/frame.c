@@ -123,7 +123,7 @@ void WaitFrames(s32 frames) {
     __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
-    // Run the main-loop tasks and build this frame's sprites
+    // Run the frame pass's tasks and build this frame's sprites
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_FRAME);
     gTasksRunning = 0;

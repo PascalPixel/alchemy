@@ -200,7 +200,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 
 /// A VBlank task of the credits: drifts both pictures together,
 /// keeping their horizontal offsets aligned throughout the crossfade. Each
-/// fourth frame both scrolls fall by one (adding 0xffff to the 16-bit
+/// fourth VBlank both scrolls fall by one (adding 0xffff to the 16-bit
 /// value), moving the pictures a pixel right; a picture is as wide as its
 /// map, 256 pixels, so it wraps without a seam.
 void Credits_ScrollBackgrounds(void) {
@@ -991,7 +991,7 @@ void Credits_UpdateTextSprites(void) {
     gWaitForFlashWrite++;
 }
 
-/// A main-loop task added by Credits_InitTextSprites: renders
+/// A frame-pass task added by Credits_InitTextSprites: renders
 /// each entering line sixteen rows ahead of the visible top, into the hidden
 /// half of the tile ring. A null table entry latches the end-of-text state.
 void Credits_DrawEnteringLine(void) {

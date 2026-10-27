@@ -12,7 +12,7 @@
 /// places the camera at its position (or at the one it follows) with its yaw,
 /// pitch and distance, and, unless its flag holds the background, refreshes the
 /// background's zoom. Runs as a task that
-/// Battle_Run adds with priority TASK_PASS_FRAME - 1: in the main-loop
+/// Battle_Run adds with priority TASK_PASS_FRAME - 1: in the frame
 /// pass, after the tasks of priority TASK_PASS_FRAME (the objects'
 /// camera, the sprite priorities and playback). Changes battle->linkMisses and
 /// linkPaused, the camera's yaw and gBattleBackgroundWork's frame count, the

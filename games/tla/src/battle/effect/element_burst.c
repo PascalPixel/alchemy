@@ -95,7 +95,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
   sheet = Runtime_AllocateHeapBlock(SLOT_BATTLE_SHEET, 0x60e);
-  work->framesSinceTransfer = 1;
+  work->vblanksSinceTransfer = 1;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;

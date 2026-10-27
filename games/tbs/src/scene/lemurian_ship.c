@@ -773,8 +773,8 @@ s32 LemurianShip_SetupMap(void) {
 
 /// Arms DMA 0 to copy the shown ripple page, a line each HBlank, into
 /// background 3's scroll registers, writing the first line itself.
-/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
-/// removes it.
+/// Runs each VBlank, in the VBlank pass; ScanlineEffect_InitWave adds it and
+/// Ripple_Stop removes it.
 void ScanlineEffect_ArmDma(void) {
   struct RippleScrollWork *work;
   u32 *source;
@@ -796,8 +796,8 @@ void ScanlineEffect_ArmDma(void) {
 }
 
 /// Builds the other ripple page and swaps it in.
-/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
-/// removes it.
+/// Runs each VBlank, in the VBlank pass; ScanlineEffect_InitWave adds it and
+/// Ripple_Stop removes it.
 void ScanlineEffect_BuildPage(void) {
   struct RippleScrollWork *work;
   u16 *line;

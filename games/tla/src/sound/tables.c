@@ -127,8 +127,8 @@ const u32 gSound_PcmFrequencySteps[] = {
     0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-/// Samples per frame for each playback frequency setting.
-const u16 gSound_FrameLengths[] = {
+/// Samples mixed a VBlank for each playback frequency setting.
+const u16 gSound_PcmSamplesPerVBlank[] = {
     96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
 

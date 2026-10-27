@@ -155,9 +155,10 @@ lasts two or more, which is the game's slowdown
 
 ### VBlank
 
-One refresh of the screen. The console draws about 59.73 a second, then
-pauses in the vertical blank (VBlank), whose interrupt mixes the sound and
-reads the buttons whatever the game is doing. The music keeps time in VBlanks
+One refresh of the screen. The console draws about 59.73 pictures a second,
+and after each it pauses in the vertical blank (VBlank), whose interrupt mixes
+the sound and reads the buttons whatever the game is doing. The music keeps
+time in VBlanks
 ([Engine](engine.md)).
 
 ### IWRAM and EWRAM

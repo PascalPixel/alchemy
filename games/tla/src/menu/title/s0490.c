@@ -12,7 +12,7 @@ struct TitleWork {
 
 extern char ResourceId_LogoOnBlack;
 
-void Fade_ToBlack(s32 frames);
+void Fade_ToBlack(s32 vblanks);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH: forwarding through the inline keeps the buffer address a

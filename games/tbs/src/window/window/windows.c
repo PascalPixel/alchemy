@@ -169,9 +169,9 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   }
 }
 
-/// The per-frame tilemap upload: copies each 256-byte band of the tilemap
-/// (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the whole
-/// tilemap, bits 1 to 5 one band each. Nothing is copied while
+/// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
+/// tilemap (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the
+/// whole tilemap, bits 1 to 5 one band each. Nothing is copied while
 /// holdTilemapUpload holds the upload off.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = WINDOW_WORK;

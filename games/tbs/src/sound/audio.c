@@ -92,9 +92,9 @@ void MPlayContinue(struct MusicPlayerInfo *player) {
 
 /// Starts a fade with the music player's ident raised, resuming the music
 /// player for fade-ins: FadeOutBody moves the level 16 of 0x100 every `period`
-/// frames, so a whole fade takes 16 * period frames. pret writes this body out
-/// in each of MPlayFadeOut, m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn; the
-/// name is ours.
+/// VBlanks, so a whole fade takes 16 * period VBlanks. pret writes this body
+/// out in each of MPlayFadeOut, m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn;
+/// the name is ours.
 static __inline__ void MPlayStartFade(struct MusicPlayerInfo *player,
                                       u16 period, u16 volume) {
   if (player->ident == ID_NUMBER) {

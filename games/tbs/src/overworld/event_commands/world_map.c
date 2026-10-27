@@ -108,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
-  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(gPersistentState.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
@@ -231,14 +231,14 @@ void WorldPicture_UpdateMarkers(void) {
   s32 angle;
 
 #if WORLD_PICTURE_CURSOR_SNAPS
-  leader = gSaveBlock.leaderActorId;
+  leader = gPersistentState.leaderActorId;
   work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
   place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
 #else
   work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
-  leader = gSaveBlock.leaderActorId;
+  leader = gPersistentState.leaderActorId;
   place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
   marker = work->markers;
@@ -248,11 +248,11 @@ void WorldPicture_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // SceneManager_Run creates the selected actor before raised trigger -888
+  // FieldLoop_Run creates the selected actor before raised trigger -888
   // opens this screen. No actor task removes it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
-    areaActor = Actor_Lookup(gSaveBlock.leaderActorId);
+    areaActor = Actor_Lookup(gPersistentState.leaderActorId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
     // A missing selected actor violates the screen's lifetime contract;
@@ -437,7 +437,7 @@ void WorldPicture_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// SceneManager_Run reaches this for raised trigger -888 in World Map mode. The
+/// FieldLoop_Run reaches this for raised trigger -888 in World Map mode. The
 /// marker task stops before map graphics are restored, so neither uses the
 /// other's scratch storage. The picture argument is unused; the resource is
 /// fixed.
@@ -525,7 +525,7 @@ void Field_UpdateActorVisibilityBounds(void) {
 
   // The selected actor lookup has no used result; the bounds follow the
   // camera.
-  Actor_GetById(gSaveBlock.leaderActorId);
+  Actor_GetById(gPersistentState.leaderActorId);
   object = gFieldWork->camera;
   x = object->x.fixed;
   left = x - (320 << 16);
@@ -554,7 +554,7 @@ void Field_UpdateActorVisibilityBounds(void) {
 
 /// On the World Map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
-/// times as far (FieldEffect_ScheduleRatioTransition). SceneManager_Run runs it
+/// times as far (FieldEffect_ScheduleRatioTransition). FieldLoop_Run runs it
 /// for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =

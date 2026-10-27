@@ -232,11 +232,11 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by SceneManager_Run on entering a scene, and by
+/// Called by FieldLoop_Run on entering a scene, and by
 /// Event_RunActorUpdateAndWait.
 /// Empties every actor slot and table first, without releasing the
 /// actors in them; sets work->camera, the map's origin and
-/// gSaveBlock.movementMode.
+/// gPersistentState.movementMode.
 void Actor_ResetForLeader(struct ActorTemplate *table) {
   struct FieldWork *work;
   struct ActorTemplate *entry;
@@ -249,7 +249,7 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   s32 height;
 
   work = gFieldWork;
-  leader = gSaveBlock.leaderActorId;
+  leader = gPersistentState.leaderActorId;
   // Build the leader's temporary actor template before the scene's placed
   // actors. The two-row table, the leader's row and an end row, lives in
   // the field work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
@@ -261,22 +261,22 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   Actor_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  SET_POSITION(entry, gSaveBlock.x, 0, gSaveBlock.z);
-  entry->facing = gSaveBlock.heading;
+  SET_POSITION(entry, gPersistentState.x, 0, gPersistentState.z);
+  entry->facing = gPersistentState.heading;
   Event_SpawnActorTemplates(entry, leader);
   Event_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
-  // gSaveBlock.layer keeps the leader's map grid layer (SceneManager_Run saves
-  // its layer there). Its cell: 16 pixels square, 128 to a row, so above is the
-  // cell north of it.
-  object->layer = gSaveBlock.layer;
+  // gPersistentState.layer keeps the leader's map grid layer (FieldLoop_Run
+  // saves its layer there). Its cell: 16 pixels square, 128 to a row, so above
+  // is the cell north of it.
+  object->layer = gPersistentState.layer;
   pos = (object->x.fixed / 0x100000) + (object->z.fixed / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
-  if (gSaveBlock.y != 0 && cell->behavior == MB_CLIMB &&
+  if (gPersistentState.y != 0 && cell->behavior == MB_CLIMB &&
       above->behavior == MB_CLIMB) {
-    gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
+    gPersistentState.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
                                          object->z.fixed - 0x100000) -
              0x200000;
@@ -286,7 +286,7 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
     Actor_SetSpriteFlagsFar(object, 0);
     Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
   } else {
-    gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
+    gPersistentState.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
@@ -519,7 +519,7 @@ void *Actor_Lookup(u32 actorIndex) {
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
 ///
-/// Called by SceneManager_Run before a random battle, by saving the game
+/// Called by FieldLoop_Run before a random battle, by saving the game
 /// through Save_CaptureActorsFar, and by two scenes (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void Actor_Snapshot(void) {
@@ -576,7 +576,7 @@ void Actor_Snapshot(void) {
 /// Puts back the actors Actor_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by SceneManager_Run when the party keeps its position
+/// Called by FieldLoop_Run when the party keeps its position
 /// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
 /// Actor_RestoreFar. Only actors whose slots are filled again are
 /// restored; the leader is set idle.
@@ -595,7 +595,7 @@ void Actor_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gSaveBlock.leaderActorId;
+  s32 *leaderId = &gPersistentState.leaderActorId;
   struct FieldWork **fieldWork = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 

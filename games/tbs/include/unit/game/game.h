@@ -23,7 +23,7 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 void Unit_Calculate(s32 unitId);
 void GameFlag_RefreshLureCap(void);
 u32 BuildStamp_GetTime(void);
-void SaveBlock_InitializeDefaults(void);
+void PersistentState_InitializeDefaults(void);
 void Party_StartChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);

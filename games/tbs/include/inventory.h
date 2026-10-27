@@ -10,8 +10,8 @@
 #include "farcall.h"
 
 /// The item the battle spoils could not fit in the inventory. It is
-/// gSaveBlock.pendingItem under a second name (system/ewram.s places it at
-/// that offset), which SceneManager_Run gives on the return to the field when
+/// gPersistentState.pendingItem under a second name (system/ewram.s places it
+/// at that offset), which FieldLoop_Run gives on the return to the field when
 /// the party has room.
 extern u16 gOverflowItem;
 

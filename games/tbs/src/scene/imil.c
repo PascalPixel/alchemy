@@ -67,7 +67,7 @@
 #include "script_operands.h"
 #include "animspr.h"
 #include "version.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "keystate.h"
 #include "scene_ids.h"
 #include "unit/scene/imil.h"
@@ -304,7 +304,7 @@ static s32 Imil_UpdateShiver(struct Actor *interpreter) {
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
-  if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
+  if (gPersistentState.sceneId == (s32)&SceneId_IceRooms) {
     return gImil_InteriorEntrances;
   }
   return gImil_TownEntrances;
@@ -320,7 +320,7 @@ const u32 *Imil_GetExits(void) { return gImil_Exits; }
 const struct ActorTemplate *Imil_GetActorTemplates(void) {
   struct ActorTemplate *script;
 
-  if (gSaveBlock.sceneId == ((s32)&SceneId_IceRooms)) {
+  if (gPersistentState.sceneId == ((s32)&SceneId_IceRooms)) {
     script = gImil_InteriorActorTemplates;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -350,7 +350,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct Trigger *Imil_GetTriggers(void) {
-  if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
+  if (gPersistentState.sceneId == (s32)&SceneId_IceRooms) {
     return gImil_InteriorTriggers;
   }
   return gImil_TownTriggers;
@@ -822,7 +822,7 @@ s32 Imil_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 
-  if (gSaveBlock.sceneId == (s32)&SceneId_Imil) {
+  if (gPersistentState.sceneId == (s32)&SceneId_Imil) {
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -840,14 +840,14 @@ s32 Imil_Initialize(void) {
       Imil_PlaceMovedSnowman();
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        gSaveBlock.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
+        gPersistentState.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
+  } else if (gPersistentState.sceneId == (s32)&SceneId_IceRooms) {
     // Restore each interior's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    entrance = gSaveBlock.entrance;
+    entrance = gPersistentState.entrance;
     if (entrance == ICE_ROOMS_HOUSE_SOUTHWEST) {
       Actor_ConfigureSpriteColor(ACTOR_CRATE, SPRITE_COLOR_HIDDEN);
       Actor_GetById(ACTOR_CRATE)->collisionFlags |= 8;
@@ -1578,7 +1578,7 @@ static void Imil_RunIceSlide(void) {
   s32 x;
   u8 *layer;
 
-  subject = Actor_Lookup(gSaveBlock.leaderActorId);
+  subject = Actor_Lookup(gPersistentState.leaderActorId);
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];

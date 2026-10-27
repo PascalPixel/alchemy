@@ -171,7 +171,7 @@ battle, or else to the last Sanctum.
 ### How a sequence finds its way back
 
 Sequences pass nothing to each other directly. Everything goes through the
-save block, `gSaveBlock`:
+save block, `gPersistentState`:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -184,10 +184,10 @@ save block, `gSaveBlock`:
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gSaveBlock.sequenceResult` for the scene that comes back.
+result stays in `gPersistentState.programResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
-**Reference:** `SequenceManager_Run` · `Scene_ReturnFromSequence`
+**Reference:** `Monitor_Run` · `Scene_ReturnFromSequence`
 
 ## Waiting in place
 
@@ -313,7 +313,7 @@ new area. It starts the area's music and unpacks the scene's code, its
 arranges the place as the story has left it, and the screen fades in.
 
 **Reference:** `Scene_Arrive` · `Scene_ChooseMusic` · `Scene_LoadOverlay` ·
-`SceneManager_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
+`FieldLoop_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
 
 ## The scene manager
 
@@ -428,8 +428,8 @@ Requests are handled in this order. An exit ends the scene. A random battle
 names the battle as the next sequence and ends the scene too, which is why the
 party returns from a battle to the same spot.
 
-**Reference:** `SceneManager_Run` in
-[scene_manager.c](src/overworld/overworld/scene_manager.c) ·
+**Reference:** `FieldLoop_Run` in
+[field_loop.c](src/overworld/overworld/field_loop.c) ·
 `PaletteFade_Update` · `Actor_UpdateAllThumb` · `MapGrid_UpdateLayerScroll` ·
 `ActorSystem_PlaceSprites` · `TilesetAnim_Update` · `WindowSystem_Update` ·
 `Field_CheckConfiguredKeys` · `Field_UpdateWalking` ·

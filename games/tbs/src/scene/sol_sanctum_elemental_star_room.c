@@ -37,7 +37,7 @@
 /// grows with him: the platform's actor, ACTOR_PLATFORM_SHADOW,
 /// draws that shadow.
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/import.h"
 #include "unit/scene/sol_sanctum_elemental_star_room.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -2156,7 +2156,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gSaveBlock.entrance ==
+    if (gPersistentState.entrance ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }

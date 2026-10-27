@@ -48,7 +48,7 @@ stopped while a request is handled, an event is one routine that plays from
 start to end while the party waits; whatever must keep moving meanwhile moves
 on its own, as an actor script ([below](#everything-that-moves-runs-an-actor-script)).
 
-`SceneManager_Run` runs the loop and `Field_UpdateWalking` checks the
+`FieldLoop_Run` runs the loop and `Field_UpdateWalking` checks the
 ground under the leader once a frame; [Running a
 scene](../overworld/README.md#the-scene-manager-serves-requests) has
 the requests themselves.

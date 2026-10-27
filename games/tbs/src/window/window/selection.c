@@ -1399,7 +1399,7 @@ void Resource_ResetPendingTransfer(void) {
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
-/// UBFIX); its one caller, SceneManager_Run, ignores the result. Its case for
+/// UBFIX); its one caller, FieldLoop_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the field work's
 /// examineCell, is unreachable.
 s32 FieldMenu_Run(void) {

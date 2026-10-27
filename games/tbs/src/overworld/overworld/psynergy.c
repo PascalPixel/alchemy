@@ -14,11 +14,11 @@
 /// the Psynergy aim at the actor ahead, and the Psynergy that acts on it
 /// (Force, Frost, Reveal) finds it itself. An after trigger whose subject
 /// has TRIGGER_SUBJECT_OWN_EFFECT plays the Psynergy itself. Called by
-/// SceneManager_Run for the Psynergy request (work->psynergy); sets
+/// FieldLoop_Run for the Psynergy request (work->psynergy); sets
 /// work->psynergyActing while the Psynergy plays. On the World Map, placed
 /// actors far from the view are released for the Psynergy, and all placed
 /// actors are placed again afterwards. Returns 0 whatever happens;
-/// SceneManager_Run ignores it.
+/// FieldLoop_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = gFieldWork;
@@ -35,7 +35,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gSaveBlock.leaderActorId);
+  Actor_Lookup(gPersistentState.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -67,7 +67,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct SaveBlock *state = &gSaveBlock;
+      struct PersistentState *state = &gPersistentState;
       s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
       state->sceneId = sceneId;
@@ -107,8 +107,8 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target =
-        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, abilityGroup);
+    target = Field_FindNearbyPsynergyTarget(gPersistentState.leaderActorId,
+                                            abilityGroup);
     // The after event plays the Psynergy itself.
     if (after && (after->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       GameFlag_ClearFar(FLAG_PLAY_PSYNERGY_CAST);
@@ -122,7 +122,7 @@ s32 Field_UsePsynergy(u32 code) {
     Actor_ClearOutOfBounds();
   FieldPsynergy_LoadResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, target);
+  FieldPsynergy_SetupActorPair(gPersistentState.leaderActorId, target);
   FieldPsynergy_StartCast();
 
   Field_RunPsynergyEvent(before, userId, target);

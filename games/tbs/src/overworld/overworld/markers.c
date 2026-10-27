@@ -48,7 +48,7 @@ enum {
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for an examine trigger giving one, until it is taken. A treasure spot
 /// with no such event takes no slot. The actors are kept in
-/// work->treasureSpots, not in actor slots. Called by SceneManager_Run on scene
+/// work->treasureSpots, not in actor slots. Called by FieldLoop_Run on scene
 /// load; clears and fills work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;

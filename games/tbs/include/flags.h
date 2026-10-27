@@ -45,14 +45,14 @@
 /// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field loop handles its requests, and cleared while the party
-/// walks (SceneManager_Run); the deserts' heat gauges and the Colosso's wall
+/// walks (FieldLoop_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// Set while the field menu is open; scenes hold their moving actors
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the Pause menu, or pressing a shortcut,
-/// raises FIELD_RAISED_TRIGGER_MENUS instead (SceneManager_Run,
+/// raises FIELD_RAISED_TRIGGER_MENUS instead (FieldLoop_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
@@ -74,7 +74,7 @@
 /// Jupiter Lighthouse is lit; no scene in The Broken Seal sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
-/// The next scene keeps the music that is playing; sequence_manager.c clears
+/// The next scene keeps the music that is playing; monitor.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
 /// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
@@ -132,7 +132,7 @@
 /// area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
-/// In debug mode, steps on the field are not processed (SceneManager_Run) and
+/// In debug mode, steps on the field are not processed (FieldLoop_Run) and
 /// the world map's places do not react to the leader; debug entrances
 /// set it.
 #define FLAG_DEBUG_STEPS_OFF 0x163
@@ -246,8 +246,8 @@
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gSaveBlock.returnMusic resumes if there is one (a
-/// random battle clears it, so the scene's own music plays). SceneManager_Run
+/// and the music saved in gPersistentState.returnMusic resumes if there is one
+/// (a random battle clears it, so the scene's own music plays). FieldLoop_Run
 /// clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The scene shows its area's name once it is on screen; entering a new

@@ -171,25 +171,25 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gSaveBlock. Called by FieldPsynergy_Run and
+/// first animation's param in gPersistentState. Called by FieldPsynergy_Run and
 /// FieldPsynergy_Dispatch for Halt, which then record the id in
-/// gSaveBlock.haltedActor, and by the Colosso scenes to stop their operators.
-/// Sets gSaveBlock.pausedUpdate and pausedPose, the actor's update and paused
-/// fields, and stops its animation. gSaveBlock keeps one actor's state, so
-/// Halt resumes the one it stopped before it stops another; the paused
-/// actor flickers through random sprite params meanwhile.
+/// gPersistentState.haltedActor, and by the Colosso scenes to stop their
+/// operators. Sets gPersistentState.pausedUpdate and pausedPose, the actor's
+/// update and paused fields, and stops its animation. gPersistentState keeps
+/// one actor's state, so Halt resumes the one it stopped before it stops
+/// another; the paused actor flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnim *entry;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gSaveBlock.pausedUpdate = (u32)actor->update;
-    gSaveBlock.pausedPose = 0;
+    gPersistentState.pausedUpdate = (u32)actor->update;
+    gPersistentState.pausedPose = 0;
     if (actor->spriteStorageKind == 1) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gSaveBlock.pausedPose = entry->colorMode;
+        gPersistentState.pausedPose = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -199,16 +199,16 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 }
 
 /// Resumes actor id with the update and param kept by
-/// FieldPsynergy_HaltActor. Called for gSaveBlock.haltedActor by
+/// FieldPsynergy_HaltActor. Called for gPersistentState.haltedActor by
 /// FieldPsynergy_Run and FieldPsynergy_Dispatch before Halt stops
 /// another actor, and by Scene_TalkToActor after talking to the paused
-/// actor. Clears gSaveBlock.pausedUpdate and the actor's paused field,
+/// actor. Clears gPersistentState.pausedUpdate and the actor's paused field,
 /// and restarts its animation at speed 16.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != 0) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
-      struct SaveBlock *state = &gSaveBlock;
+      struct PersistentState *state = &gPersistentState;
       actor->update = (void (*)(struct Actor *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Anim_ApplyChildValuesFar(actor, state->pausedPose);

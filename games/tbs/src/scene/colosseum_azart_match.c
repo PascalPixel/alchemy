@@ -57,7 +57,7 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
 #include "vram_cache.h"
@@ -406,7 +406,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gSaveBlock.leaderActorId);
+  leader = Actor_GetById(gPersistentState.leaderActorId);
   actor = Actor_GetById(actorId);
   Event_Start();
   {
@@ -446,7 +446,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   s32 row;
   s32 offset;
 
-  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(gPersistentState.leaderActorId);
   row = actor->z.fixed >> 20;
   offset = -48;
   if (row <= 8) {
@@ -468,7 +468,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   s32 offset;
   s32 direction;
 
-  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(gPersistentState.leaderActorId);
   column = actor->x.fixed >> 20;
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
@@ -525,7 +525,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   struct Actor *actor;
   s32 none;
 
-  leaderId = gSaveBlock.leaderActorId;
+  leaderId = gPersistentState.leaderActorId;
   leader = Actor_GetById(leaderId);
   actor = Actor_GetById(ACTOR_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
@@ -785,7 +785,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
-  switch (gSaveBlock.entrance) {
+  switch (gPersistentState.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, PIXELS(1304),
                            PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
@@ -982,7 +982,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gPersistentState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
@@ -1055,7 +1055,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   struct Actor *second;
   struct Actor *first;
 
-  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gPersistentState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Event_Start();
@@ -1116,7 +1116,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
 static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gPersistentState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
   } else {
     Event_Start();
@@ -1160,7 +1160,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
 static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   s32 path;
 
-  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gPersistentState.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(actorId);
     return;
   }
@@ -1458,7 +1458,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   flag = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(gPersistentState.leaderActorId);
 
   if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1500,7 +1500,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
     MessageArgument_Push(secondItem, 2);
   }
 
-  MessageArgument_Push(gSaveBlock.leaderActorId, 1);
+  MessageArgument_Push(gPersistentState.leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   Actor_WaitForScriptEnd(actor);
 
@@ -1524,7 +1524,7 @@ static void ColosseumAzartMatch_PushActorAhead(void) {
   s32 zero;
   s32 actorId;
 
-  actorId = gSaveBlock.leaderActorId;
+  actorId = gPersistentState.leaderActorId;
   subject = Actor_GetById(actorId);
 
   direction = subject->facing >> 12;

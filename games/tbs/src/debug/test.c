@@ -1,4 +1,4 @@
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/import.h"
 #include "unit/debug/test.h"
 #include "unit/overworld/overworld.h"
@@ -129,7 +129,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   struct Window *window;
   s32 messageIndex;
 
-  gSaveBlock.messageSpeed = 2;
+  gPersistentState.messageSpeed = 2;
   window = Portrait_OpenWindow(125, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
@@ -790,7 +790,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero. The room's
-/// initialize entry, which SceneManager_Run runs on every entry and whose
+/// initialize entry, which FieldLoop_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
 /// party member is below 30 (Isaac 50 outside Japanese).
@@ -819,7 +819,7 @@ s32 MenuTest_Initialize(void) {
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
-  gSaveBlock.coins = 777777;
+  gPersistentState.coins = 777777;
 #endif
 #if TBS_PATCH_1
   Unit_LevelUpTo(ISAAC, 50);

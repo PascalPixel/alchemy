@@ -19,7 +19,7 @@ struct UnitHpPoisonView {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by SceneManager_Run while it sets a scene up.
+/// Called by FieldLoop_Run while it sets a scene up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -42,7 +42,7 @@ void Field_ClearRequests(void) {
 /// Returns the sum of the field's twelve pending requests (counting the talk
 /// request twice): non-zero while any request is pending.
 ///
-/// SceneManager_Run tests it to stop walking and to leave its request loop.
+/// FieldLoop_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -80,7 +80,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = work->actors[gSaveBlock.leaderActorId];
+  leader = work->actors[gPersistentState.leaderActorId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -132,7 +132,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's exit value for SceneManager_Run, plays the exit sound and starts
+/// region's exit value for FieldLoop_Run, plays the exit sound and starts
 /// leaving the scene. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
@@ -192,19 +192,20 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// the party, the leader flinches and characters who fall are listed in the
 /// field work.
 ///
-/// Called by SceneManager_Run each frame while the party walks (in debug mode,
+/// Called by FieldLoop_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->stepTrigger, pushCell, encounter, psynergy and
 /// raisedTrigger
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
-/// fallenOwners and survivorCount, and gSaveBlock's hazard and Avoid counts.
+/// fallenOwners and survivorCount, and gPersistentState's hazard and Avoid
+/// counts.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
    * alias set keeps the load order and the 44-byte frame; as struct Unit, 2 of
    * 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gSaveBlock.leaderActorId;
+  s32 leaderId = gPersistentState.leaderActorId;
   struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
@@ -233,7 +234,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // Note each character's HP, to see who falls.
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = Unit_GetFar(gSaveBlock.party[i])->hp;
+    previousHp[i] = Unit_GetFar(gPersistentState.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
@@ -258,7 +259,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
-  if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
+  if (gPersistentState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
       leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the World Map's encounter region and
     // battle environment, or from the ground the leader stands on.
@@ -303,20 +304,20 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     // frame walked on it adds the leader's speed limit in whole pixels, so
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
-    if (gSaveBlock.hazardMode == HAZARD_COUNT_ON_CELLS &&
+    if (gPersistentState.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == MB_DESERT_SAND) {
       if (work->previousCell->behavior == MB_DESERT_SAND)
-        gSaveBlock.hazardSteps += leader->speedLimit / Q16_ONE;
+        gPersistentState.hazardSteps += leader->speedLimit / Q16_ONE;
       else
-        gSaveBlock.hazardSteps = gSaveBlock.hazardLimit / 2;
+        gPersistentState.hazardSteps = gPersistentState.hazardLimit / 2;
     }
 
     // Avoid wears off with distance, outside towns.
-    if (gSaveBlock.avoidDistance != 0 &&
-        gSaveBlock.sceneType != SCENE_TYPE_TOWN) {
-      gSaveBlock.avoidDistance -= leader->speedLimit;
-      if (gSaveBlock.avoidDistance <= 0) {
-        gSaveBlock.avoidDistance = 1;
+    if (gPersistentState.avoidDistance != 0 &&
+        gPersistentState.sceneType != SCENE_TYPE_TOWN) {
+      gPersistentState.avoidDistance -= leader->speedLimit;
+      if (gPersistentState.avoidDistance <= 0) {
+        gPersistentState.avoidDistance = 1;
         // Raise Avoid as a Psynergy request that pays no PP; Avoid's end
         // handler says it wore off.
         if (work->psynergy == 0)
@@ -330,19 +331,19 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
   // sprite priority 1); at the limit it is removed (0x100) and the party takes
   // the hazard's damage.
-  if (gSaveBlock.hazardMode == HAZARD_COUNT_FRAMES) {
-    gSaveBlock.hazardSteps++;
-    if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit / 2)
+  if (gPersistentState.hazardMode == HAZARD_COUNT_FRAMES) {
+    gPersistentState.hazardSteps++;
+    if (gPersistentState.hazardSteps == gPersistentState.hazardLimit / 2)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_ATTACH);
-    if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit)
+    if (gPersistentState.hazardSteps == gPersistentState.hazardLimit)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_REMOVE);
   }
-  if (gSaveBlock.hazardSteps >= gSaveBlock.hazardLimit) {
+  if (gPersistentState.hazardSteps >= gPersistentState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
-    amount = gSaveBlock.hazardDamage;
-    gSaveBlock.hazardSteps = 0;
+    amount = gPersistentState.hazardDamage;
+    gPersistentState.hazardSteps = 0;
     Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
@@ -350,7 +351,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // frame is listed, loses its poison and raises
-  // FIELD_RAISED_TRIGGER_PARTY_FELL, which SceneManager_Run handles.
+  // FIELD_RAISED_TRIGGER_PARTY_FELL, which FieldLoop_Run handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -359,14 +360,15 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
-      unitVitals = Unit_GetFar(gSaveBlock.party[i]);
+      unitVitals = Unit_GetFar(gPersistentState.party[i]);
 #else
-      unitVitals = (struct UnitHpPoisonView *)Unit_GetFar(gSaveBlock.party[i]);
+      unitVitals =
+          (struct UnitHpPoisonView *)Unit_GetFar(gPersistentState.party[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gSaveBlock.party[i];
+        work->fallenOwners[work->fallenCount++] = gPersistentState.party[i];
         work->raisedTrigger = -1;
         unitVitals->poison = 0;
       }
@@ -385,7 +387,7 @@ void Party_AddPp(s32 amount, s32 unused) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    Unit_AddPpFar(gSaveBlock.party[partyIndex], amount);
+    Unit_AddPpFar(gPersistentState.party[partyIndex], amount);
 }
 
 // The fallback drops the damage's sign, so a damaging percentage that
@@ -418,7 +420,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
+    unit = Unit_GetFar(gPersistentState.party[partyIndex]);
     if (!percent) {
       hpDelta = amount;
     } else {
@@ -429,7 +431,7 @@ void Party_AddHp(s32 amount, s32 percent) {
           hpDelta = -hpDelta;
       }
     }
-    Unit_AddHpFar(gSaveBlock.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gPersistentState.party[partyIndex], hpDelta);
   }
 }
 
@@ -447,7 +449,7 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    struct Unit *unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
+    struct Unit *unit = Unit_GetFar(gPersistentState.party[partyIndex]);
     s32 hpDelta;
 
     switch (unit->poison) {
@@ -469,7 +471,7 @@ s32 Party_ApplyPoisonDamage(void) {
       hpDelta = 0;
       break;
     }
-    Unit_AddHpFar(gSaveBlock.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gPersistentState.party[partyIndex], hpDelta);
   }
 
   if (worstPoison != 0) {
@@ -485,7 +487,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by SceneManager_Run around the handling of most requests, by the
+/// Called by FieldLoop_Run around the handling of most requests, by the
 /// joining of a Djinni and by the World Map's overlay; each call is paired with
 /// WorldMap_Unfreeze. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return

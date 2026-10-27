@@ -7,8 +7,8 @@
 #include "types.h"
 
 /// BattleWork.firstStrike: rolled as a battle opens when nothing set its
-/// start (gSaveBlock.battleType 0), and set back to normal after the first
-/// round (Battle_Run).
+/// start (gPersistentState.battleType 0), and set back to normal after the
+/// first round (Battle_Run).
 enum BattleFirstStrike {
   FIRST_STRIKE_NONE = 0,
   /// 1 in 16, and always in the Djinn tutorial: no enemy acts in the first

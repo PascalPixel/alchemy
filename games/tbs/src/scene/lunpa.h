@@ -140,7 +140,8 @@ enum GateActorId {
 /// How the switch's sparkle is stretched while Reveal shows it.
 enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
 
-/// Where Retreat at the gates sends the party (SaveBlock.retreatEntrance).
+/// Where Retreat at the gates sends the party
+/// (PersistentState.retreatEntrance).
 enum { GATE_RETREAT_ENTRANCE = 10 };
 
 enum CatchMessage {

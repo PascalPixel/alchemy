@@ -148,7 +148,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct Actor *spark;
   struct Sprite *sprite;
 
-  point = gFieldWork->actors[gSaveBlock.leaderActorId];
+  point = gFieldWork->actors[gPersistentState.leaderActorId];
   spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
                             point->z.fixed);
   if (spark != NULL) {
@@ -197,7 +197,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   leader = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-               ->actors[gSaveBlock.leaderActorId];
+               ->actors[gPersistentState.leaderActorId];
   if ((u32)state->levels > 2)
     return;
   Event_Start();
@@ -295,7 +295,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  actor = work->actors[gSaveBlock.leaderActorId];
+  actor = work->actors[gPersistentState.leaderActorId];
   flags = &actor->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
@@ -404,7 +404,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   point = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-              ->actors[gSaveBlock.leaderActorId];
+              ->actors[gPersistentState.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {

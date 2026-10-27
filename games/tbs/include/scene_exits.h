@@ -3452,8 +3452,8 @@ enum {
       24, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
   /// Where a defeat in the monster attacks or the Kraken battle returns the
-  /// party (gSaveBlock.restartEntrance): the voyage's flags are cleared and the
-  /// party goes up on deck.
+  /// party (gPersistentState.restartEntrance): the voyage's flags are cleared
+  /// and the party goes up on deck.
   SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
 };
 /// SceneId_ShipRooms's exits.

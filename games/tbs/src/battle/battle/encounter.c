@@ -25,13 +25,13 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each round.
 ///
-/// Reached through its far stub from SequenceManager_Run's sequence switch
-/// (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
+/// Reached through its far stub from Monitor_Run's sequence switch
+/// (PROGRAM_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
 /// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
-/// party's battle state, sets gSaveBlock.battleType back to BATTLE_TYPE_NORMAL
-/// and releases heap block 10. A broken link also sets flag
+/// party's battle state, sets gPersistentState.battleType back to
+/// BATTLE_TYPE_NORMAL and releases heap block 10. A broken link also sets flag
 /// FLAG_AREA_TEMP_E8, which the Battle Arena reads
 /// (BattleArena_RunRoundResult).
 s32 Battle_Run(s32 enemyGroup) {
@@ -151,7 +151,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
   // The battle music: the song an event set for this battle, or the usual
   // battle songs.
-  cue = gSaveBlock.battleMusic;
+  cue = gPersistentState.battleMusic;
   if (cue != 0) {
     Sound_PlaySongFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
@@ -199,7 +199,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->firstStrike = FIRST_STRIKE_NONE;
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     battle->firstStrike = FIRST_STRIKE_PARTY;
-  } else if (gSaveBlock.battleType == BATTLE_TYPE_NORMAL) {
+  } else if (gPersistentState.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->firstStrike = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
@@ -350,7 +350,7 @@ party_lost:
   Battle_ClearSerialTransferPayload();
   Sound_PlaySongFar(MUS_DEFEAT);
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(gSaveBlock.party[0], MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(gPersistentState.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)
     BattleMessage_ShowAndWaitFar(MsgGoesDownInDefeat);
   else
@@ -400,7 +400,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 unitId = gSaveBlock.party[index];
+    s32 unitId = gPersistentState.party[index];
 
     if (unitIds != 0)
       *unitIds++ = unitId;

@@ -28,7 +28,7 @@ A random battle is a way out of the scene too: the game remembers where
 everyone stood, loads the battle as if it were the next scene, and afterwards
 loads the scene again with everyone put back where they were.
 
-`SceneManager_Run` runs one scene and `struct FieldWork` holds the
+`FieldLoop_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
 scene](src/overworld/README.md#the-scene-manager-serves-requests) lists
 all twelve requests in the order they are handled.

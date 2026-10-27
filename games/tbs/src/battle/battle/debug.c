@@ -139,7 +139,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 /// range, and B alternates between the ranges, moving on one message each
 /// time it leaves the first. A closes the window and shows the message again.
 /// Called by DebugBattle_RunMenu when Start is pressed. Renames party member
-/// 0, sets REG_DISPCNT and gSaveBlock.messageSpeed, and clears the window
+/// 0, sets REG_DISPCNT and gPersistentState.messageSpeed, and clears the window
 /// work's message busy byte after each window.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
@@ -169,7 +169,7 @@ void DebugBattle_ViewMessages(void) {
       REG_DISPCNT = control;
     }
     // The fastest text speed (window/message_speed.c: 0 to 2, slowest first).
-    gSaveBlock.messageSpeed = 2;
+    gPersistentState.messageSpeed = 2;
     for (;;) {
       // Sample arguments for the message's placeholders.
       MessageArgument_ClearAllFar();
@@ -251,7 +251,7 @@ void DebugBattle_RunMenu(void) {
   s32 preset;
   s32 loadedPreset;
 
-  SaveBlock_InitializeDefaultsFar();
+  PersistentState_InitializeDefaultsFar();
 restart:
   Window_LoadGraphics();
   DebugText_Clear();
@@ -291,19 +291,19 @@ restart:
           Battle_SetType(BATTLE_TYPE_DEBUG);
         }
         if (preset != loadedPreset) {
-          SaveBlock_InitializeDefaultsFar();
+          PersistentState_InitializeDefaultsFar();
           DebugParty_LoadPreset(preset);
           loadedPreset = preset;
         }
         WaitTicks(1);
       }
       // A fights: Down still held makes it a link battle. The battle's
-      // background comes from gSaveBlock.special
+      // background comes from gPersistentState.special
       // (Event_GetSpecialValueFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);
-      gSaveBlock.special = (s32)&ResourceId_SuhallaGateBackdrop;
+      gPersistentState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetFar(FLAG_DJINN_LESSON);
       GameFlag_SetFar(FLAG_DEBUG_BATTLE);

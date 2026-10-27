@@ -93,7 +93,7 @@ writes down what was chosen and closes, and the scene decides what Move does to
 that pillar.
 
 The screen writes its choice into the field work (`gFieldWork`), and
-`SceneManager_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
+`FieldLoop_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
 
 ## The Pause menu and saving
 

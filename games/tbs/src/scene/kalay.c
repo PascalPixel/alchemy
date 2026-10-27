@@ -87,7 +87,7 @@
 /// tables; the cave and the passage have no actor templates, and an
 /// empty set serves any other scene.
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
 #include "scene_ids.h"
@@ -386,7 +386,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 const struct SceneEntrance *Kalay_GetEntrances(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownEntrances;
@@ -417,7 +417,7 @@ const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
 const struct ActorTemplate *Kalay_GetActorTemplates(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownActorTemplates;
@@ -455,7 +455,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 
 /// The conversations, exits and Psynergy targets of each scene.
 const struct Trigger *Kalay_GetTriggers(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
     return gKalay_TownTriggers;
@@ -1191,7 +1191,7 @@ s32 Kalay_Initialize(void) {
   s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
-  sceneId = gSaveBlock.sceneId;
+  sceneId = gPersistentState.sceneId;
   if (sceneId == (s32)&SceneId_Kalay) {
     Kalay_PrepareTown();
   } else if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
@@ -1228,7 +1228,7 @@ static void Kalay_PrepareTown(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
-  if (gSaveBlock.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
+  if (gPersistentState.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     Actor_SetPosition(ACTOR_TOWN_STATUE, PIXELS(424), PIXELS(88));
   }
   // The second guide shares the first's sprite, drawn with its green and blue
@@ -1273,7 +1273,7 @@ static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
-  if (gSaveBlock.entrance != ENTRANCE_DEFAULT) {
+  if (gPersistentState.entrance != ENTRANCE_DEFAULT) {
     if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
@@ -1294,7 +1294,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
     guard = Actor_GetById(ACTOR_TUNNEL_GUARD);
     guard->facing = 0;
   }
-  if (gSaveBlock.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
+  if (gPersistentState.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
   }
 }
@@ -1319,7 +1319,7 @@ static void Kalay_StartWindowTransition(void) {
     MapGrid_CenterOnFollowedPoint();
     WaitTicks(1);
   }
-  if (gSaveBlock.entrance <=
+  if (gPersistentState.entrance <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
   }
@@ -1368,7 +1368,7 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-    if (gSaveBlock.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+    if (gPersistentState.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
       ((struct FadeOverlayWork *)
            workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
           ->actor = NULL;
@@ -1394,7 +1394,8 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->actor = (struct Actor *)trackingValue;
 #endif
-  } else if (gSaveBlock.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+  } else if (gPersistentState.entrance ==
+             KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
     ((struct FadeOverlayWork *)
          workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
         ->actor = NULL;
@@ -1468,7 +1469,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, 44);
   } else {
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -1499,7 +1500,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellsTo(102, 14, 102, 44, 8, 12);
     MapGrid_CopyCellAttributes(37, 13, 10, 12, 37, 43);
   } else {
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
       Scene_QueueMusic(SE_AMBIENT_WATER);

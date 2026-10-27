@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "scene.h"
-#include "save_block.h"
+#include "persistent_state.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
@@ -14,7 +14,7 @@ void *Colosso_FindActorAhead(void) {
   struct FieldPosition position;
   struct Actor *occupant;
 
-  record = Actor_GetById(gSaveBlock.leaderActorId);
+  record = Actor_GetById(gPersistentState.leaderActorId);
 
   facing = (record->facing + 0x2000) & 0xc000;
 

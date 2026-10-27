@@ -1,7 +1,7 @@
 #include "unit/field/field.h"
 #include "types.h"
 #include "actor.h"
-#include "save_block.h"
+#include "persistent_state.h"
 
 // Imil and Fuchin Falls, and Vale's cave.
 
@@ -14,7 +14,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor = Actor_GetById(gPersistentState.leaderActorId);
   other = Actor_GetById(id);
   Event_Start();
   {

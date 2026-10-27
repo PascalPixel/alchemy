@@ -246,7 +246,8 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
 
 /// Sets up all eight characters for a new game: names from the message table,
 /// starting equipment equipped, class and elements worked out, and levels
-/// raised to their starting level. Called by SaveBlock_InitializeDefaults.
+/// raised to their starting level. Called by
+/// PersistentState_InitializeDefaults.
 void Party_InitializeCharacters(void) {
   struct Unit *unit;
   struct CharacterDefinition *character;

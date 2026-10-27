@@ -3,12 +3,12 @@
 
 /// Runs the scene the party entered by entrance until it leaves,
 /// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
-/// gSaveBlock already holds the next scene.
-s32 SceneManager_RunFar(s32 entrance);
+/// gPersistentState already holds the next scene.
+s32 FieldLoop_RunFar(s32 entrance);
 /// The sequence manager, which never returns; mode, an enum GameStart,
 /// picks the first scene. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
-void SequenceManager_RunFar(s32 mode);
+void Monitor_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void Event_WaitTicksFar(s32 ticks);
 /// Opens an event: closes any area name window, stops the leader and resets the
@@ -190,7 +190,7 @@ void MapGrid_SetCameraBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Battle Arena and the debug menus use it as well as a few scenes.
 void Event_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's exit request; 999 leaves for the scene and entrance
-/// in gSaveBlock.
+/// in gPersistentState.
 void Event_SetExitRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the event that asked for it has returned.
@@ -391,7 +391,7 @@ void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
                                         s32 z_offset);
 /// Makes an actor follow another through the linked actor script.
 void Actor_LinkAndSetScriptFar(u32 actorId, u32 linked_object_id);
-/// Pauses an actor, keeping its update and pose in gSaveBlock for later;
+/// Pauses an actor, keeping its update and pose in gPersistentState for later;
 /// Halt and the Colosso operators use it.
 void FieldPsynergy_HaltActorFar(s32 id);
 /// Captures up to 32 actors into gActorSnapshot, for

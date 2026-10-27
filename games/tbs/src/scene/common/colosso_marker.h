@@ -95,8 +95,8 @@ void Colosso_RestoreWarrior(s32 id) {
 
   system = gActorSystemWork;
   actor = Actor_GetById(id);
-  if (gSaveBlock.movementMode == 1) {
-    gSaveBlock.movementMode = 0;
+  if (gPersistentState.movementMode == 1) {
+    gPersistentState.movementMode = 0;
     Import_ActorSetAnimation(id, 1);
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);

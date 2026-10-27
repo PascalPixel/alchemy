@@ -77,7 +77,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
     Shop_ShowKeeperMessage(messageBase +
                            (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
     Window_CloseFar(state->window, 2);
-  } else if (roomPrice > (u32)gSaveBlock.coins) {
+  } else if (roomPrice > (u32)gPersistentState.coins) {
     Shop_ShowKeeperMessage(
         messageBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
     Window_CloseFar(state->window, 2);

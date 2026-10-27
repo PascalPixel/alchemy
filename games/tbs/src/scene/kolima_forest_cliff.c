@@ -37,7 +37,7 @@
 
 #include "pushed_actor.h"
 #include "actor.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "event_layer.h"
 #include "scene_tables.h"
 #include "songs.h"

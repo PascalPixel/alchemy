@@ -43,7 +43,7 @@ own setup run, which may send the party on at once. Then the scene fades in, and
 the area's name is shown if the party has come into a new
 [area](../../glossary.md#area).
 
-`SceneManager_Run` runs one scene, and its state, the requests among it, is
+`FieldLoop_Run` runs one scene, and its state, the requests among it, is
 `struct FieldWork`, reached through `gFieldWork`. `Actor_Snapshot`
 remembers where everyone stood before a battle and `Actor_Restore` puts
 them back. The requests, in the order the loop takes them:
@@ -189,9 +189,9 @@ matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-`SequenceManager_Run` is the game's sequence manager; [the front
+`Monitor_Run` is the game's sequence manager; [the front
 page](../../README.md#the-sequence-manager) describes it. For a scene it clears the
-scene's flags, loads the overlay and runs `SceneManager_Run`; for a battle or minigame it
+scene's flags, loads the overlay and runs `FieldLoop_Run`; for a battle or minigame it
 runs that and then loads the scene again. The overlay supplies the scene's tables
 and setup, and calls back into this folder through its
 [import table](../../glossary.md#entry-table-and-import-table) for the

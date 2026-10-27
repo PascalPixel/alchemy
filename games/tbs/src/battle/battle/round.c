@@ -172,7 +172,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  if (gSaveBlock.battleType == BATTLE_TYPE_NO_ESCAPE) {
+  if (gPersistentState.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;

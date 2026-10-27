@@ -57,8 +57,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gSaveBlock.windowColor[0] + 12) % 24 * 4;
-  bias = gSaveBlock.windowColor[1] - 7;
+  phase = (gPersistentState.windowColor[0] + 12) % 24 * 4;
+  bias = gPersistentState.windowColor[1] - 7;
   red = gWindowColor_WaveTable[(phase % 96)];
   green = gWindowColor_WaveTable[(phase + 32) % 96];
   blue = gWindowColor_WaveTable[(phase + 64) % 96];
@@ -152,7 +152,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// saved ones when the screen is cancelled. The file list
 /// (FileList_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The File Screen
-/// (menu/file_screen.c), the sequence manager's start (SequenceManager_Run),
+/// (menu/file_screen.c), the sequence manager's start (Monitor_Run),
 /// the end of the Mind Read wave (FieldPsynergy_RestoreMindReadPalette) and
 /// Vale and the world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {
@@ -227,16 +227,16 @@ UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gSaveBlock.messageSpeed != 0)
-      gSaveBlock.messageSpeed--;
+    if (gPersistentState.messageSpeed != 0)
+      gPersistentState.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gSaveBlock.windowColor[0] != 0)
-      gSaveBlock.windowColor[0]--;
+    if (gPersistentState.windowColor[0] != 0)
+      gPersistentState.windowColor[0]--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gSaveBlock.windowColor[1] != 0)
-      gSaveBlock.windowColor[1]--;
+    if (gPersistentState.windowColor[1] != 0)
+      gPersistentState.windowColor[1]--;
     break;
   }
 }
@@ -246,16 +246,16 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gSaveBlock.messageSpeed <= 1)
-      gSaveBlock.messageSpeed++;
+    if (gPersistentState.messageSpeed <= 1)
+      gPersistentState.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gSaveBlock.windowColor[0] <= 23)
-      gSaveBlock.windowColor[0]++;
+    if (gPersistentState.windowColor[0] <= 23)
+      gPersistentState.windowColor[0]++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gSaveBlock.windowColor[1] <= 14)
-      gSaveBlock.windowColor[1]++;
+    if (gPersistentState.windowColor[1] <= 14)
+      gPersistentState.windowColor[1]++;
     break;
   }
 }
@@ -317,15 +317,15 @@ void SettingsMenu_InitializeWork(void) {
 
   work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  work->option[0] = gSaveBlock.windowColor[0];
+  work->option[0] = gPersistentState.windowColor[0];
   work->optionCount[0] = 24;
-  work->option[1] = gSaveBlock.windowColor[1];
+  work->option[1] = gPersistentState.windowColor[1];
   work->optionCount[1] = 15;
-  work->option[2] = gSaveBlock.messageSpeed;
+  work->option[2] = gPersistentState.messageSpeed;
   work->optionCount[2] = 3;
-  work->option[3] = gSaveBlock.speech;
+  work->option[3] = gPersistentState.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gSaveBlock.idleSleepEnabled;
+  work->option[4] = gPersistentState.idleSleepEnabled;
   work->optionCount[4] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
@@ -630,14 +630,15 @@ s32 SettingsMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gSaveBlock.windowColor[0] = work->option[0];
-    gSaveBlock.windowColor[1] = work->option[1];
-    gSaveBlock.messageSpeed = work->option[2];
-    gSaveBlock.speech = work->option[3];
-    gSaveBlock.idleSleepEnabled = work->option[4];
-    gIdleSleepEnabled = gSaveBlock.idleSleepEnabled;
+    gPersistentState.windowColor[0] = work->option[0];
+    gPersistentState.windowColor[1] = work->option[1];
+    gPersistentState.messageSpeed = work->option[2];
+    gPersistentState.speech = work->option[3];
+    gPersistentState.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gPersistentState.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
+    WindowColor_Apply(gPersistentState.windowColor[0],
+                      gPersistentState.windowColor[1]);
   }
   SettingsMenu_Release();
   WaitTicks(1);

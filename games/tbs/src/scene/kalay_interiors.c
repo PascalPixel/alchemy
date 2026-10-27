@@ -28,7 +28,7 @@
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "scene_ids.h"
 #include "unit/scene/kalay_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -185,7 +185,7 @@ static void KalayInteriors_ApplyRoomState(void);
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     return gKalayInteriors_HouseEntrances;
@@ -203,10 +203,10 @@ const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 /// The inn's rooms share one actor template table and the houses
 /// another, chosen by entrance and clipped to the current view.
 const struct ActorTemplate *KalayInteriors_GetActorTemplates(void) {
-  s32 sceneId = gSaveBlock.sceneId;
+  s32 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 entrance = gSaveBlock.entrance;
+    s32 entrance = gPersistentState.entrance;
     struct ActorTemplate *table;
 
     switch (entrance) {
@@ -236,10 +236,10 @@ const struct ActorTemplate *KalayInteriors_GetActorTemplates(void) {
 /// Selects room dialogue with the same entrance grouping as the
 /// actor templates.
 const struct Trigger *KalayInteriors_GetTriggers(void) {
-  s32 sceneId = gSaveBlock.sceneId;
+  s32 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 entrance = gSaveBlock.entrance;
+    s32 entrance = gPersistentState.entrance;
 
     switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -390,7 +390,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 s32 KalayInteriors_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gSaveBlock.sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (gPersistentState.sceneId == (s32)&SceneId_StuccoRoomsA) {
     KalayInteriors_ApplyRoomState();
   }
   return 0;
@@ -404,7 +404,7 @@ s32 KalayInteriors_Initialize(void) {
 /// otherwise show at the bottom edge of the view (the room's render with and
 /// without the copy).
 static void KalayInteriors_ApplyRoomState(void) {
-  s16 entrance = gSaveBlock.entrance;
+  s16 entrance = gPersistentState.entrance;
 
   switch (entrance) {
   case STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER: {

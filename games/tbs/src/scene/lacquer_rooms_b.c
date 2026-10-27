@@ -26,7 +26,7 @@
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/scene/lacquer_rooms_b.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
@@ -145,7 +145,8 @@ const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 /// replaces with whether each actor stands inside the view bounds of the
 /// room entered.
 const struct ActorTemplate *LacquerRoomsB_GetActorTemplates(void) {
-  if (gSaveBlock.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gPersistentState.entrance ==
+      LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorTemplates;
   }
   Scene_AssignViewFlags(gLacquerRoomsB_ActorTemplates);
@@ -278,7 +279,8 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own triggers.
 const struct Trigger *LacquerRoomsB_GetTriggers(void) {
-  if (gSaveBlock.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gPersistentState.entrance ==
+      LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
   }
   return gLacquerRoomsB_Triggers;
@@ -295,7 +297,7 @@ s32 LacquerRoomsB_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gSaveBlock.entrance;
+  entrance = gPersistentState.entrance;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||

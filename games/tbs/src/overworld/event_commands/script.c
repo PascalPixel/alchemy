@@ -65,20 +65,20 @@ void Event_WaitTicks(s32 ticks) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// Event_Start, by SceneManager_Run before it handles several requests,
+/// Event_Start, by FieldLoop_Run before it handles several requests,
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the World Map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(gSaveBlock.leaderActorId);
+  actor = Actor_Lookup(gPersistentState.leaderActorId);
   actor->speedLimit = Q16_ONE;
   actor->acceleration = 0x8000;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
+  if (gPersistentState.movementMode == LEADER_MOVEMENT_CLIMB) {
     Actor_SelectAnimationFar(actor, 0xC);
     return;
   }
@@ -112,7 +112,7 @@ void Event_Start(void) {
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gSaveBlock.leaderActorId;
+  runtime->speaker = gPersistentState.leaderActorId;
   runtime->messageWindow = 0;
 }
 
@@ -121,7 +121,7 @@ void Event_Start(void) {
 /// event that opens with Event_Start closes with it.
 void Event_End(void) {
   Task_Remove(Event_UpdateDebugSkip);
-  FieldCamera_FollowActor(gSaveBlock.leaderActorId, 1);
+  FieldCamera_FollowActor(gPersistentState.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -140,7 +140,7 @@ void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   WaitTicks(1);
   // XXX (no evidence): why the leader's actor is fetched and dropped; no
   // code calls this function, so no caller reads a result.
-  Actor_Lookup(gSaveBlock.leaderActorId);
+  Actor_Lookup(gPersistentState.leaderActorId);
 }
 
 /// Spawns the actors of an actor template table after the last
@@ -198,14 +198,14 @@ s32 Event_ValidatePackedId(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gSaveBlock.firstShortcut or secondShortcut. Called whenever the party or
-/// what it knows may have changed: by Party_RemoveMemberRestored,
+/// gPersistentState.firstShortcut or secondShortcut. Called whenever the party
+/// or what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void Event_ClearInvalidPackedValues(void) {
-  if (Event_ValidatePackedId(gSaveBlock.firstShortcut) != 0)
-    gSaveBlock.firstShortcut = 0;
-  if (Event_ValidatePackedId(gSaveBlock.secondShortcut) != 0)
-    gSaveBlock.secondShortcut = 0;
+  if (Event_ValidatePackedId(gPersistentState.firstShortcut) != 0)
+    gPersistentState.firstShortcut = 0;
+  if (Event_ValidatePackedId(gPersistentState.secondShortcut) != 0)
+    gPersistentState.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -229,12 +229,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gSaveBlock.party[partyIndex]);
+    vitals = Unit_GetFar(gPersistentState.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gSaveBlock.leaderActorId);
+    vitals = Unit_GetFar(gPersistentState.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -243,8 +243,8 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// Checks whether the party can carry one more of item: each party member
 /// carries at most 30 of one item. When they are all full, says `Isaac's party
 /// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
-/// possible.` and returns -1; otherwise returns 0. SceneManager_Run calls it
-/// before it gives gSaveBlock.pendingItem with PartyInventory_GiveItem.
+/// possible.` and returns -1; otherwise returns 0. FieldLoop_Run calls it
+/// before it gives gPersistentState.pendingItem with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -252,7 +252,8 @@ s32 Party_CheckItemLimit(s32 item) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    heldQuantity += Inventory_CountItemFar(gSaveBlock.party[partyIndex], item);
+    heldQuantity +=
+        Inventory_CountItemFar(gPersistentState.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -269,7 +270,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the party member who received the item, or -1
 /// when it was left behind. Events reach it (about 24 of them);
-/// SceneManager_Run gives the pending item and the debug test menu gives items
+/// FieldLoop_Run gives the pending item and the debug test menu gives items
 /// through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
@@ -344,7 +345,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlaySongFar(MUS_TREASURE_FOUND);
-      if (owner == gSaveBlock.leaderActorId) {
+      if (owner == gPersistentState.leaderActorId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -361,7 +362,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gSaveBlock.leaderActorId) {
+    if (owner != gPersistentState.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
@@ -508,14 +509,14 @@ void Event_WaitTransitionFrames(void) {
 }
 
 /// Makes the event leave for the given entrance of the given scene:
-/// raises the exit request EXIT_KEEP_DESTINATION and writes gSaveBlock.sceneId
-/// and entrance. Called by the Title, the File Screen, the Battle Arena, the
-/// debug battle command and five events (the Lemurian ship and the World
-/// Map among them).
+/// raises the exit request EXIT_KEEP_DESTINATION and writes
+/// gPersistentState.sceneId and entrance. Called by the Title, the File Screen,
+/// the Battle Arena, the debug battle command and five events (the Lemurian
+/// ship and the World Map among them).
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gSaveBlock.sceneId = sceneId;
-  gSaveBlock.entrance = entrance;
+  gPersistentState.sceneId = sceneId;
+  gPersistentState.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart
@@ -524,12 +525,12 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;
-  gSaveBlock.restartScene = sceneId;
-  gSaveBlock.restartEntrance = entrance;
+  gPersistentState.restartScene = sceneId;
+  gPersistentState.restartEntrance = entrance;
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gSaveBlock's sceneId and entrance). Events reach it as
+/// for gPersistentState's sceneId and entrance). Events reach it as
 /// Import_EventSetExitRequest (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

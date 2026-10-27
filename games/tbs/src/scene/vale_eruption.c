@@ -26,7 +26,7 @@
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// scene does (sol_sanctum_entrance.c).
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/scene/vale_eruption.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -120,11 +120,11 @@ const struct Trigger *ValeEruption_GetTriggers(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// SceneManager_Run once the actors are placed;
+/// FieldLoop_Run once the actors are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
-  if (gSaveBlock.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
+  if (gPersistentState.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
   }
   return 0;

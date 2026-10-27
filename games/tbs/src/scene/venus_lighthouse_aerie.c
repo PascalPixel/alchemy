@@ -55,7 +55,7 @@
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
 #include "script_operands.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse_aerie.h"
@@ -462,7 +462,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);
 
-  entrance = gSaveBlock.entrance;
+  entrance = gPersistentState.entrance;
 
   switch (entrance) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:

@@ -48,7 +48,7 @@
 #include "fixed_math.h"
 #include "keystate.h"
 #include "scene.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"

@@ -78,7 +78,7 @@
 
 #include "script_operands.h"
 #include "animspr.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "heap_slots.h"
 #include "heap.h"
 #include "keystate.h"
@@ -433,8 +433,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       MB_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gSaveBlock.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gPersistentState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gPersistentState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
@@ -443,7 +443,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each entrance restores its route or plays its one-time arrival.
-  switch (gSaveBlock.entrance) {
+  switch (gPersistentState.entrance) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man event.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
@@ -479,7 +479,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       WaitTicks(1);
       MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     }
-    if (gSaveBlock.entrance !=
+    if (gPersistentState.entrance !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
     arrivalSeen = Event_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);

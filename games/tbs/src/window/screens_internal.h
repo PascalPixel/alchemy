@@ -38,7 +38,7 @@
 #include "resource.h"
 #include "output.h"
 #include "glyph.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "battle_work.h"
 #include "heap.h"
 #include "text_font.h"

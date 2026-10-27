@@ -46,7 +46,7 @@ enum FieldRaisedTrigger {
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 
-/// A field scene's work: SceneManager_Run allocates it in heap slot
+/// A field scene's work: FieldLoop_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field loop,
 /// the event commands and the scene overlays all reach it through gFieldWork.
 /// The twelve requests from stepTrigger to raisedTrigger are handled by the
@@ -180,7 +180,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 0xcc6);
 STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
 STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
-/// The running field scene's work, heap slot HEAP_SLOT_FIELD; SceneManager_Run
+/// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldLoop_Run
 /// takes it and frees it.
 extern struct FieldWork *gFieldWork;
 

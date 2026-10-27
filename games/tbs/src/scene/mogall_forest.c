@@ -56,7 +56,7 @@
 /// settles are SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
 #include "script_operands.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "engine_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
@@ -437,7 +437,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Entrances;
@@ -457,7 +457,7 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorTemplate *MogallForest_GetActorTemplates(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ActorTemplates;
@@ -1355,7 +1355,7 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *MogallForest_GetTriggers(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Triggers;
@@ -1385,11 +1385,11 @@ s32 MogallForest_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  sceneId = gSaveBlock.sceneId;
+  sceneId = gPersistentState.sceneId;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
     // crossing.
-    entrance = gSaveBlock.entrance;
+    entrance = gPersistentState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
@@ -1474,7 +1474,7 @@ s32 MogallForest_Initialize(void) {
     }
   } else if (sceneId == (s32)&SceneId_MogallForestQuartz) {
     // Restore revealed guides, moved rocks and the second crossing.
-    entrance = gSaveBlock.entrance;
+    entrance = gPersistentState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
@@ -1543,7 +1543,7 @@ s32 MogallForest_Initialize(void) {
   } else if (sceneId == (s32)&SceneId_MogallForestKillerApe) {
     // Restore both crossing logs and the creatures leading to the final
     // encounter.
-    entrance = gSaveBlock.entrance;
+    entrance = gPersistentState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:

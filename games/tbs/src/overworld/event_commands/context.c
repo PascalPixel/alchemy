@@ -51,11 +51,11 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and scene_manager.c ignores it; as void, the
+// UB: no value is returned, and field_loop.c ignores it; as void, the
 // epilogue changes.
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by SceneManager_Run when it
+/// fading it to black over 16 frames. Called by FieldLoop_Run when it
 /// handles work->encounter; clears work->transitionActive once the screen is
 /// closed.
 #ifdef UBFIX
@@ -67,7 +67,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 i;
   s32 level;
 
-  Sound_PlaySongFar(gSaveBlock.battleMusic);
+  Sound_PlaySongFar(gPersistentState.battleMusic);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -111,7 +111,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  actor = Actor_Lookup(gSaveBlock.leaderActorId);
+  actor = Actor_Lookup(gPersistentState.leaderActorId);
   context = actor->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -159,7 +159,7 @@ void Exit_StartStairsDown(void) {
 void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gPersistentState.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -191,7 +191,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
 /// ANIM_LEADER_ARRIVE, returns 1) or a EXIT_STYLE_STAIRS_DOWN one
 /// (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by SceneManager_Run as the
+/// Returns 0 when there is nothing to play. Called by FieldLoop_Run as the
 /// scene fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 Entrance_PlayArrival(void) {
@@ -215,7 +215,7 @@ s32 Entrance_PlayArrival(void) {
         struct Actor *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gSaveBlock.leaderActorId;
+        leaderId = gPersistentState.leaderActorId;
         leader = Actor_Lookup(leaderId);
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels

@@ -13,7 +13,7 @@
 /// Powers the game up: stops any HBlank DMA left running, sets the cartridge
 /// wait states, clears IWRAM, installs the interrupt handlers and the resident
 /// IWRAM code, loads the window graphics and the sound driver, then enters
-/// SequenceManager_Run and never returns. The C entry point (pret's AgbMain),
+/// Monitor_Run and never returns. The C entry point (pret's AgbMain),
 /// called once by System_Entry after it has set the stacks; it clears the debug
 /// switches, enables the OAM copy and sleep, and clears gCartridgeResetMarker,
 /// which a soft reset leaves set.
@@ -59,7 +59,7 @@ void System_Initialize(void) {
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
   WaitTicks(10);
-  SequenceManager_RunFar(0);
+  Monitor_RunFar(0);
 }
 
 /// Unused: waits out frames forever; the frame loop still runs the

@@ -1,4 +1,4 @@
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/debug/level.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -164,7 +164,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gSaveBlock.leaderActorId);
+  unit = Unit_Get(gPersistentState.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = MsgDebugRaiseEveryonesLevel;
@@ -480,7 +480,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 
 /// Starts the window transition and edition-specific actor
 /// scale/animation setup. Returns zero through the exported scene entry. The
-/// room's initialize entry, which SceneManager_Run runs on entry and whose
+/// room's initialize entry, which FieldLoop_Run runs on entry and whose
 /// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.

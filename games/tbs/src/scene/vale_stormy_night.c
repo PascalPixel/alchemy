@@ -54,7 +54,7 @@
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "script_operands.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/import.h"
 #include "unit/scene/vale_stormy_night.h"
 #include "unit/scene/common/effect_psynergy.h"
@@ -534,7 +534,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBEast(void) {
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
 /// event and the Boulder from their flags, starts the storm, and plays the
 /// event with Dora and Kyle on the first arrival by
-/// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by SceneManager_Run
+/// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by FieldLoop_Run
 /// once the actors are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
@@ -696,7 +696,8 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gSaveBlock.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
+  if (gPersistentState.entrance !=
+          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -721,7 +722,8 @@ s32 ValeStormyNight_Initialize(void) {
   }
   WaitTicks(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gSaveBlock.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
+      gPersistentState.entrance ==
+          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValeStormyNight_DoraSendsIsaacToThePlaza();
     return 0;
   }

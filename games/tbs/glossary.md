@@ -383,7 +383,7 @@ them through one inline each in `event_inline.h`
 
 ### Destination
 
-The scene and entrance the sequence manager runs next (`gSaveBlock.sceneId`
+The scene and entrance the sequence manager runs next (`gPersistentState.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

@@ -33,7 +33,7 @@
 /// always answers first, and the entrance
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "event_layer.h"
 #include "unit/import.h"
 #include "unit/scene/timber_rooms_a.h"
@@ -525,7 +525,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  if (gSaveBlock.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
+  if (gPersistentState.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

@@ -44,8 +44,8 @@ void InventorySnapshot_Save(void) {
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gSaveBlock.firstShortcut;
-    secondShortcut = gSaveBlock.secondShortcut;
+    firstShortcut = gPersistentState.firstShortcut;
+    secondShortcut = gPersistentState.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = 0; unitId < 4; unitId++) {
       unit = Unit_Get(unitId);
@@ -65,10 +65,10 @@ void InventorySnapshot_Save(void) {
     *save++ = secondShortcut;
 #ifdef UBFIX
     // Party order is a byte array; pack its two saved halfwords explicitly.
-    save[0] = gSaveBlock.party[0] | (gSaveBlock.party[1] << 8);
-    save[1] = gSaveBlock.party[2] | (gSaveBlock.party[3] << 8);
+    save[0] = gPersistentState.party[0] | (gPersistentState.party[1] << 8);
+    save[1] = gPersistentState.party[2] | (gPersistentState.party[3] << 8);
 #else
-    inventory = (s16 *)gSaveBlock.party;
+    inventory = (s16 *)gPersistentState.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
 #endif
@@ -100,17 +100,17 @@ void InventorySnapshot_Restore(void) {
       unitId++;
     } while (unitId <= 3);
 
-    gSaveBlock.firstShortcut = *source++;
-    gSaveBlock.secondShortcut = *source++;
+    gPersistentState.firstShortcut = *source++;
+    gPersistentState.secondShortcut = *source++;
 #ifdef UBFIX
-    gSaveBlock.party[0] = source[0];
-    gSaveBlock.party[1] = source[0] >> 8;
-    gSaveBlock.party[2] = source[1];
-    gSaveBlock.party[3] = source[1] >> 8;
+    gPersistentState.party[0] = source[0];
+    gPersistentState.party[1] = source[0] >> 8;
+    gPersistentState.party[2] = source[1];
+    gPersistentState.party[3] = source[1] >> 8;
     source++;
 #else
-    *(u16 *)gSaveBlock.party = *source++;
-    *(u16 *)((u8 *)gSaveBlock.party + 2) = *source;
+    *(u16 *)gPersistentState.party = *source++;
+    *(u16 *)((u8 *)gPersistentState.party + 2) = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

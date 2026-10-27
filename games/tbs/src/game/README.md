@@ -157,7 +157,7 @@ with a counter); `Item_AdjustCounter` changes them.
 Code in the other banks calls this one's functions by their far-call names,
 and a scene's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
-`gSaveBlock`, the state of the game in progress, directly, as the save
+`gPersistentState`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `abilities.c` beside its own tables,
 which choose how an ability is drawn ([Battle](../../battle.md)). The flags
 and the units are part of the save file.
@@ -178,9 +178,9 @@ and the units are part of the save file.
 
 - **unit id** and **unit**: a unit id is a number, and a unit the
   `struct Unit` `Unit_Get` returns for it, as the opening says. The
-  characters' units are kept in `gSaveBlock.units` (`character_ids.h`).
+  characters' units are kept in `gPersistentState.units` (`character_ids.h`).
 - **party**: the characters travelling together. `FLAG_IN_PARTY(character)`
-  says who is in it and `gSaveBlock.party` lists them in order.
+  says who is in it and `gPersistentState.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
 - **ability**: a row of `abilities.c`. Psynergy, a Djinni's and a summon's

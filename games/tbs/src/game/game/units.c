@@ -32,8 +32,8 @@ struct StatWork {
 /// Starts a new game: clears the save block and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_RestartQuest(void) {
-  SaveBlock_InitializeDefaults();
-  SequenceManager_RunFar(0);
+  PersistentState_InitializeDefaults();
+  Monitor_RunFar(0);
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
@@ -45,7 +45,7 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);
   }
-  return &gSaveBlock.summonMask;
+  return &gPersistentState.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -63,7 +63,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gSaveBlock.party[partyIndex])->level;
+    totalLevels += Unit_Get(gPersistentState.party[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
@@ -85,7 +85,7 @@ struct Unit *Unit_Get(u32 unitId) {
      * instructions differ in tbs-en. */
     __asm__("" : : "l"(caller));
   }
-  states = gSaveBlock.units;
+  states = gPersistentState.units;
   if (unitId <= PIERS) {
     unit = &states[unitId];
     return unit;
@@ -453,7 +453,7 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a scene (Scene_Arrive, SceneManager_Run) and at the end of
+/// entering a scene (Scene_Arrive, FieldLoop_Run) and at the end of
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
@@ -465,7 +465,7 @@ void GameFlag_RefreshLureCap(void) {
     struct Unit *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gSaveBlock.party[partyIndex]);
+    unit = Unit_Get(gPersistentState.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct EquipEffect *effect;
@@ -488,8 +488,8 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
-/// file list (FileList_SelectFile, Save_BuildFileSummary) and the main
+/// PersistentState_InitializeDefaults stores it as a new game's start stamp,
+/// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
   u8 *digits;
@@ -534,10 +534,10 @@ u32 BuildStamp_GetTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gSceneLocalState on, which SaveBlock_InitializeDefaults
-/// writes one byte through. gSceneLocalState's 0x78 bytes and
-/// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
-/// of gActorSnapshot.
+/// A view of EWRAM from gSceneLocalState on, which
+/// PersistentState_InitializeDefaults writes one byte through.
+/// gSceneLocalState's 0x78 bytes and gInventorySnapshot's 0x8c come first, so
+/// firstSnapshotSlot is the first byte of gActorSnapshot.
 struct MapLocalStateSnapshotView {
   u8 mapAndInventory[0x100]; ///< gSceneLocalState, then most of
                              ///< gInventorySnapshot
@@ -554,17 +554,17 @@ struct MapLocalStateSnapshotView {
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the File Screen's new game, by
-/// Game_RestartQuest and SequenceManager_Run, and by the debug battle menu.
-void SaveBlock_InitializeDefaults(void) {
+/// Game_RestartQuest and Monitor_Run, and by the debug battle menu.
+void PersistentState_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene state, flags and save metadata in DMA order:
-  // 0xb0 words are gSaveBlock up to the characters (units, which
+  // 0xb0 words are gPersistentState up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
-  START_DMA(&zero, &gSaveBlock,
+  START_DMA(&zero, &gPersistentState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
   START_DMA(&zero, gSceneLocalState,
@@ -580,47 +580,47 @@ void SaveBlock_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
-  gSaveBlock.aKeys = KEY_A;
-  gSaveBlock.bKeys = KEY_B;
-  gSaveBlock.selectKeys = KEY_SELECT;
-  gSaveBlock.startKeys = KEY_START;
-  gSaveBlock.firstShortcutKeys = KEY_L;
-  gSaveBlock.secondShortcutKeys = KEY_R;
-  gSaveBlock.dashKeys = KEY_B;
-  gSaveBlock.firstShortcut = 0;
-  gSaveBlock.secondShortcut = 0;
-  gSaveBlock.leaderActorId = 0;
+  gPersistentState.aKeys = KEY_A;
+  gPersistentState.bKeys = KEY_B;
+  gPersistentState.selectKeys = KEY_SELECT;
+  gPersistentState.startKeys = KEY_START;
+  gPersistentState.firstShortcutKeys = KEY_L;
+  gPersistentState.secondShortcutKeys = KEY_R;
+  gPersistentState.dashKeys = KEY_B;
+  gPersistentState.firstShortcut = 0;
+  gPersistentState.secondShortcut = 0;
+  gPersistentState.leaderActorId = 0;
   Party_AddMember(0);
-  gSaveBlock.coins = 0;
-  gSaveBlock.messageSpeed = 1;
-  gSaveBlock.speech = 1;
-  gSaveBlock.unusedAfterSpeech = 1;
-  gSaveBlock.windowColor[0] = 0;
-  gSaveBlock.windowColor[1] = 8;
-  gSaveBlock.buildStamp = 0;
-  gSaveBlock.startStamp = BuildStamp_GetTime();
+  gPersistentState.coins = 0;
+  gPersistentState.messageSpeed = 1;
+  gPersistentState.speech = 1;
+  gPersistentState.unusedAfterSpeech = 1;
+  gPersistentState.windowColor[0] = 0;
+  gPersistentState.windowColor[1] = 8;
+  gPersistentState.buildStamp = 0;
+  gPersistentState.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
-  gSaveBlock.playTime = 0;
+  gPersistentState.playTime = 0;
   gIdleSleepEnabled = 0;
-  gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
+  gPersistentState.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   // Three prizes share each successive slot-machine weight.
-  gSaveBlock.prizeWeights[0] = 4;
-  gSaveBlock.prizeWeights[1] = 4;
-  gSaveBlock.prizeWeights[2] = 4;
-  gSaveBlock.prizeWeights[3] = 8;
-  gSaveBlock.prizeWeights[4] = 8;
-  gSaveBlock.prizeWeights[5] = 8;
-  gSaveBlock.prizeWeights[6] = 16;
-  gSaveBlock.prizeWeights[7] = 16;
-  gSaveBlock.prizeWeights[8] = 16;
-  gSaveBlock.prizeWeights[9] = 32;
-  gSaveBlock.prizeWeights[10] = 32;
-  gSaveBlock.prizeWeights[11] = 32;
-  gSaveBlock.prizeWeights[12] = 64;
-  gSaveBlock.prizeWeights[13] = 64;
-  gSaveBlock.prizeWeights[14] = 64;
+  gPersistentState.prizeWeights[0] = 4;
+  gPersistentState.prizeWeights[1] = 4;
+  gPersistentState.prizeWeights[2] = 4;
+  gPersistentState.prizeWeights[3] = 8;
+  gPersistentState.prizeWeights[4] = 8;
+  gPersistentState.prizeWeights[5] = 8;
+  gPersistentState.prizeWeights[6] = 16;
+  gPersistentState.prizeWeights[7] = 16;
+  gPersistentState.prizeWeights[8] = 16;
+  gPersistentState.prizeWeights[9] = 32;
+  gPersistentState.prizeWeights[10] = 32;
+  gPersistentState.prizeWeights[11] = 32;
+  gPersistentState.prizeWeights[12] = 64;
+  gPersistentState.prizeWeights[13] = 64;
+  gPersistentState.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -677,7 +677,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gSaveBlock.coins += 300;
+  gPersistentState.coins += 300;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -691,7 +691,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gSaveBlock.party[partyIndex]);
+    unit = Unit_Get(gPersistentState.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -717,7 +717,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gSaveBlock.party[partyIndex];
+    unitId = gPersistentState.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {

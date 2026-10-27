@@ -15,7 +15,7 @@
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "scene.h"
 #include "battle_system.h"
 #include "battle.h"
@@ -96,7 +96,7 @@
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// Scene ids above the field scenes, which SequenceManager_Run runs without a
+/// Scene ids above the field scenes, which Monitor_Run runs without a
 /// layout; each returns a result to Scene_ReturnFromSequence instead of an
 /// exit. A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers

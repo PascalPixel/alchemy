@@ -276,8 +276,8 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   counts letters in its `s32` value rather than in `i` or `j`.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches: Crossbone Isle's
-  `CrossboneIsle_MovePillar` takes `&state->sceneId` with `state = &gSaveBlock`,
-  because `&gSaveBlock.sceneId` folds into one literal.
+  `CrossboneIsle_MovePillar` takes `&state->sceneId` with `state = &gPersistentState`,
+  because `&gPersistentState.sceneId` folds into one literal.
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move constants and addresses out of the loop,
   strength-reduce its counters and delete it when it is empty, and they let

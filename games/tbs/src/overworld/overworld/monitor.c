@@ -17,12 +17,12 @@
 #define EXIT_ID_ANY 0xff
 
 /// Chooses the scene and entrance to go to when the party leaves the
-/// current scene. exitId is the kind of exit SceneManager_Run ended on; the
+/// current scene. exitId is the kind of exit FieldLoop_Run ended on; the
 /// scene's exit table gives the first exit of that kind (or of any kind) whose
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by SequenceManager_Run with SceneManager_Run's result; sets
-/// gSaveBlock.sceneId and .entrance, and leaves them alone for
+/// Called by Monitor_Run with FieldLoop_Run's result; sets
+/// gPersistentState.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
 void Scene_TakeExit(s32 exitId) {
@@ -37,7 +37,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gSaveBlock.sceneId;
+  currentMap = gPersistentState.sceneId;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -82,13 +82,13 @@ void Scene_TakeExit(s32 exitId) {
 
   // Commit the chosen exit only after a matching scene was found.
   if (destinationScene != EXIT_KEEP_DESTINATION) {
-    gSaveBlock.sceneId = destinationScene;
-    gSaveBlock.entrance = destinationEntrance;
+    gPersistentState.sceneId = destinationScene;
+    gPersistentState.entrance = destinationEntrance;
   }
 }
 
 /// Chooses where the game continues after a battle or anything else that is
-/// not a scene (see SequenceManager_Run). result is its result:
+/// not a scene (see Monitor_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the story battle's defeat point
@@ -97,18 +97,19 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the after-battle destination an event set, or to the return
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// SequenceManager_Run after each scene from SEQUENCE_NONE on; stores result in
-/// gSaveBlock.sequenceResult and sets gSaveBlock.sceneId and .entrance.
+/// Monitor_Run after each scene from PROGRAM_NONE on; stores result in
+/// gPersistentState.programResult and sets gPersistentState.sceneId and
+/// .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 sceneId;
   s32 entrance;
 
-  gSaveBlock.sequenceResult = result;
+  gPersistentState.programResult = result;
   if (result == -1) {
     // Revive the leader before choosing the restart point.
-    unit = Unit_GetFar(gSaveBlock.leaderActorId);
+    unit = Unit_GetFar(gPersistentState.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -121,37 +122,37 @@ void Scene_ReturnFromSequence(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    sceneId = gSaveBlock.defeatScene;
-    entrance = gSaveBlock.defeatEntrance;
+    sceneId = gPersistentState.defeatScene;
+    entrance = gPersistentState.defeatEntrance;
     if (sceneId == -1 && entrance == -1) {
-      gSaveBlock.sceneId = gSaveBlock.restartScene;
-      gSaveBlock.entrance = gSaveBlock.restartEntrance;
+      gPersistentState.sceneId = gPersistentState.restartScene;
+      gPersistentState.entrance = gPersistentState.restartEntrance;
     } else {
       if (sceneId != -1)
-        gSaveBlock.sceneId = sceneId;
+        gPersistentState.sceneId = sceneId;
       else
-        gSaveBlock.sceneId = gSaveBlock.returnScene;
+        gPersistentState.sceneId = gPersistentState.returnScene;
       if (entrance != -1)
-        gSaveBlock.entrance = entrance;
+        gPersistentState.entrance = entrance;
       else
-        gSaveBlock.entrance = gSaveBlock.returnEntrance;
+        gPersistentState.entrance = gPersistentState.returnEntrance;
     }
   } else {
     // An after-battle destination an event set overrides the return point.
-    sceneId = gSaveBlock.afterBattleScene;
-    entrance = gSaveBlock.afterBattleEntrance;
+    sceneId = gPersistentState.afterBattleScene;
+    entrance = gPersistentState.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
-        gSaveBlock.sceneId = sceneId;
+        gPersistentState.sceneId = sceneId;
       else
-        gSaveBlock.sceneId = gSaveBlock.returnScene;
+        gPersistentState.sceneId = gPersistentState.returnScene;
       if (entrance != -1)
-        gSaveBlock.entrance = entrance;
+        gPersistentState.entrance = entrance;
       else
-        gSaveBlock.entrance = gSaveBlock.returnEntrance;
+        gPersistentState.entrance = gPersistentState.returnEntrance;
     } else {
-      gSaveBlock.sceneId = gSaveBlock.returnScene;
-      gSaveBlock.entrance = gSaveBlock.returnEntrance;
+      gPersistentState.sceneId = gPersistentState.returnScene;
+      gPersistentState.entrance = gPersistentState.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -173,7 +174,7 @@ enum {
 /// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
 /// Alloc copy freed afterwards. Returns the minigame's result, 0, for
 /// Scene_ReturnFromSequence.
-static __inline__ s32 SequenceManager_RunLuckyDice(s32 entrance) {
+static __inline__ s32 Monitor_RunLuckyDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -190,8 +191,8 @@ static __inline__ s32 SequenceManager_RunLuckyDice(s32 entrance) {
 }
 
 /// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
-/// SequenceManager_RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 SequenceManager_RunLuckyWheels(s32 entrance) {
+/// Monitor_RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 Monitor_RunLuckyWheels(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -212,9 +213,9 @@ static __inline__ s32 SequenceManager_RunLuckyWheels(s32 entrance) {
 /// runtime, then either runs a battle or minigame and picks the scene to return
 /// to, or loads a scene's code, starts its music and runs it until the
 /// party takes an exit. Called with GAME_START_TITLE through
-/// SequenceManager_RunFar by System_Initialize at power-on and by
+/// Monitor_RunFar by System_Initialize at power-on and by
 /// Game_RestartQuest.
-void SequenceManager_Run(s32 mode) {
+void Monitor_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;
@@ -222,18 +223,19 @@ void SequenceManager_Run(s32 mode) {
   table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
-    gSaveBlock.sceneId = (s32)&SceneId_ValePlaza;
-    gSaveBlock.entrance = mode;
+    gPersistentState.sceneId = (s32)&SceneId_ValePlaza;
+    gPersistentState.entrance = mode;
   } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gSaveBlock.sceneId = (s32)&SceneId_FileScreen;
-    gSaveBlock.entrance = FILE_SCREEN_FROM_SANCTUM;
+    gPersistentState.sceneId = (s32)&SceneId_FileScreen;
+    gPersistentState.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
-    SaveBlock_InitializeDefaultsFar();
-    gSaveBlock.sceneId = (s32)&SceneId_Title;
-    gSaveBlock.entrance = TITLE_AFTER_RUN;
+    PersistentState_InitializeDefaultsFar();
+    gPersistentState.sceneId = (s32)&SceneId_Title;
+    gPersistentState.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
+  WindowColor_ApplyFar(gPersistentState.windowColor[0],
+                       gPersistentState.windowColor[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -244,8 +246,8 @@ void SequenceManager_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlaySongFar(SE_STOP_ACTION_SE);
-    record = &table[gSaveBlock.sceneId];
-    entrance = gSaveBlock.entrance;
+    record = &table[gPersistentState.sceneId];
+    entrance = gPersistentState.entrance;
 
     // Stop DMA 0, which a scene may have left running for an HBlank effect.
     {
@@ -265,18 +267,18 @@ void SequenceManager_Run(s32 mode) {
     VramCache_Reset();
     // A battle or minigame returns a result, not an exit: the return scene is
     // chosen from the save block, and no overlay is loaded.
-    if (gSaveBlock.sceneId >= SEQUENCE_NONE) {
-      switch (gSaveBlock.sceneId) {
-      case SEQUENCE_BATTLE:
+    if (gPersistentState.sceneId >= PROGRAM_NONE) {
+      switch (gPersistentState.sceneId) {
+      case PROGRAM_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
-      case SEQUENCE_LUCKY_DICE:
-        entrance = SequenceManager_RunLuckyDice(entrance);
+      case PROGRAM_LUCKY_DICE:
+        entrance = Monitor_RunLuckyDice(entrance);
         break;
-      case SEQUENCE_LUCKY_WHEELS:
-        entrance = SequenceManager_RunLuckyWheels(entrance);
+      case PROGRAM_LUCKY_WHEELS:
+        entrance = Monitor_RunLuckyWheels(entrance);
         break;
-      case SEQUENCE_NONE:
+      case PROGRAM_NONE:
         entrance = 0;
         break;
       }
@@ -285,7 +287,8 @@ void SequenceManager_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_Arrive(gSaveBlock.sceneId, GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
+    Scene_Arrive(gPersistentState.sceneId,
+                 GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC_ONCE for
@@ -295,27 +298,27 @@ void SequenceManager_Run(s32 mode) {
         GameFlag_ClearFar(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
-    } else if (gSaveBlock.returnMusic != -1) {
+    } else if (gPersistentState.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
-      // last opened (scene_manager.c). A random battle and every normal entry
+      // last opened (field_loop.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
-      Sound_PlaySongFar(gSaveBlock.returnMusic);
+      Sound_PlaySongFar(gPersistentState.returnMusic);
     } else {
       Scene_PlayMusic();
     }
-    gSaveBlock.mapId = record->mapIndex;
+    gPersistentState.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
-    Scene_TakeExit(SceneManager_Run(entrance));
+    Scene_TakeExit(FieldLoop_Run(entrance));
   }
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by SequenceManager_Run before SceneManager_Run.
+/// Called by Monitor_Run before FieldLoop_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
   table = gScenes;
-  Overlay_Load(table[gSaveBlock.sceneId].resourceId, &gOverlayArea);
+  Overlay_Load(table[gPersistentState.sceneId].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gScenes[id])
@@ -326,30 +329,30 @@ void Scene_LoadOverlay(s32 unused) {
 /// entering a new area so are the area's flags and step
 /// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
-/// (FLAG_AREA_VISITED) is set. Called by SequenceManager_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.area and
-/// .sceneType.
+/// (FLAG_AREA_VISITED) is set. Called by Monitor_Run before each
+/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gPersistentState.area
+/// and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = MAP_HEADER(gSaveBlock.sceneId)->area;
+  s32 area = MAP_HEADER(gPersistentState.sceneId)->area;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a scene.
     for (flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (area != gSaveBlock.area) {
+    if (area != gPersistentState.area) {
       // Area state and Retreat's destination survive moves within it.
       for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
-      gSaveBlock.encounterSteps = 0;
-      gSaveBlock.hazardSteps = 0;
+      gPersistentState.encounterSteps = 0;
+      gPersistentState.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gSaveBlock.retreatScene = gSaveBlock.sceneId;
-      gSaveBlock.retreatEntrance = gSaveBlock.entrance;
+      gPersistentState.retreatScene = gPersistentState.sceneId;
+      gPersistentState.retreatEntrance = gPersistentState.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
     // and so do the 16 after them to 0xdf, which nothing else uses.
@@ -362,20 +365,20 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
-    gSaveBlock.returnMusic = -1;
+    gPersistentState.returnMusic = -1;
   }
-  gSaveBlock.area = area;
+  gPersistentState.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
-  gSaveBlock.sceneType = MAP_HEADER(gSaveBlock.sceneId)->sceneType;
-  if (gSaveBlock.sceneType == SCENE_TYPE_TOWN)
+  gPersistentState.sceneType = MAP_HEADER(gPersistentState.sceneId)->sceneType;
+  if (gPersistentState.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 
 /// Starts the current scene's field music, chosen by
-/// Scene_ChooseMusic. Called by SequenceManager_Run, and by
+/// Scene_ChooseMusic. Called by Monitor_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
-void Scene_PlayMusic(void) { Sound_PlaySongFar(gSaveBlock.sceneMusic); }
+void Scene_PlayMusic(void) { Sound_PlaySongFar(gPersistentState.sceneMusic); }
 
 #undef EXIT_SCENE_MASK
 #undef ENTRANCE

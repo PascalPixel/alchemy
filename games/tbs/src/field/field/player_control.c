@@ -53,7 +53,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the scene manager (scene_manager.c)
+/// work->item or work->event, which the scene manager (field_loop.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -96,19 +96,19 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (gKeysPressed & gSaveBlock.selectKeys) {
+  if (gKeysPressed & gPersistentState.selectKeys) {
     work->fieldMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gSaveBlock.aKeys) {
+  } else if (gKeysPressed & gPersistentState.aKeys) {
     work->aButton = 1;
     result = 1;
-  } else if (gKeysPressed & gSaveBlock.startKeys) {
+  } else if (gKeysPressed & gPersistentState.startKeys) {
     work->pauseMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gSaveBlock.firstShortcutKeys) {
-    result = Field_RequestShortcut(gSaveBlock.firstShortcut);
-  } else if (gKeysPressed & gSaveBlock.secondShortcutKeys) {
-    result = Field_RequestShortcut(gSaveBlock.secondShortcut);
+  } else if (gKeysPressed & gPersistentState.firstShortcutKeys) {
+    result = Field_RequestShortcut(gPersistentState.firstShortcut);
+  } else if (gKeysPressed & gPersistentState.secondShortcutKeys) {
+    result = Field_RequestShortcut(gPersistentState.secondShortcut);
   }
   return result;
 }
@@ -147,7 +147,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// keys. Returns 1.
 ///
 /// Run each frame by gActor_PlayerScript, which the scene manager
-/// (scene_manager.c) starts on the leader through
+/// (field_loop.c) starts on the leader through
 /// Actor_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and timer, moves the
 /// actors it pushes, counts gFieldWork->blockedSteps and creates the
@@ -223,7 +223,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   }
   // Walk, or run with the dash keys (animation 5 instead of 2); with
   // FLAG_FAST_WALK, B moves faster still.
-  if (gKeysHeld & gSaveBlock.dashKeys) {
+  if (gKeysHeld & gPersistentState.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
     movementAnimation = 5;
@@ -429,7 +429,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gSaveBlock.leaderActorId)->hp == 0)
+    if (Unit_GetFar(gPersistentState.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -529,7 +529,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
 /// Run each frame by gActor_WorldMapScript, which the scene manager
-/// (scene_manager.c) starts on the leader through
+/// (field_loop.c) starts on the leader through
 /// Actor_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and timer, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
@@ -568,7 +568,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 #endif
   // Walk, or run with the dash keys. L, as it repeats, raises the limit
   // further; unlike the field's fast walk, no debug test or flag guards it.
-  if (gKeysHeld & gSaveBlock.dashKeys) {
+  if (gKeysHeld & gPersistentState.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = 5;

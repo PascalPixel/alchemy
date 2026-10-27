@@ -159,7 +159,7 @@ void BattleMessage_OpenFar(s32 argument);
 /// when the speaker has none.
 s32 Portrait_GetForSpeakerFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
-/// returns that screen's result; SceneManager_Run ignores it.
+/// returns that screen's result; FieldLoop_Run ignores it.
 s32 FieldMenu_RunFar(void);
 /// Runs the File Screen's menu built from the save files, New Game to Send, and
 /// returns the chosen FileAction, or -1 when cancelled.

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "keystate.h"
 #include "unit.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "fx_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"

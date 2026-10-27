@@ -39,7 +39,7 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 /// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and sprite
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
-/// SceneManager_Run allocates it on scene load (PaletteFade_Initialize),
+/// FieldLoop_Run allocates it on scene load (PaletteFade_Initialize),
 /// and gPaletteFadeWork reads it.
 struct PaletteFade {
   /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;

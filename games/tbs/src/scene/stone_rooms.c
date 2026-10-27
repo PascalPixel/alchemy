@@ -25,7 +25,7 @@
 ///   ★ Named from what the player sees: a hidden stone room of six chests
 ///   behind barred windows (its render)
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/scene/stone_rooms.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -112,7 +112,7 @@ const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gPersistentState.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerActorTemplates;
   }
   return gStoneRooms_ThiefActorTemplates;
@@ -122,7 +122,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// exit, or the prisoner's when the party came in from Vault's revisit scene,
 /// matching Scene_GetActorTemplates.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gPersistentState.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
   }
   return gStoneRooms_ThiefTriggers;
@@ -244,7 +244,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gSaveBlock.entrance;
+  entrance = gPersistentState.entrance;
 
   if (entrance == STONE_ROOMS_FROM_LUNPA) {
     // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this

@@ -23,7 +23,7 @@
 /// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout; a return that
 ///   keeps the party's position, as after a battle, draws it grown again.
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "unit/scene/suhalla.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
@@ -219,7 +219,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (gSaveBlock.entrance == SUHALLA_AFTER_BABI_SPOKE) {
+  if (gPersistentState.entrance == SUHALLA_AFTER_BABI_SPOKE) {
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 

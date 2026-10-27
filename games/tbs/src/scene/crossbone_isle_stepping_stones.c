@@ -37,7 +37,7 @@
 /// floor's in crossbone_isle.c.
 
 #include "script_operands.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "map_grid_scroll.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -561,7 +561,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #if TBS_PATCH_1
   jumpDirection = (leader->facing + 0x2000) & 0xc000;
 #endif
-  if (gSaveBlock.movementMode != LEADER_MOVEMENT_WALK) {
+  if (gPersistentState.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
   }
   position = &destination;
@@ -655,7 +655,7 @@ CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesEntrances;
@@ -681,7 +681,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleSteppingStonesExits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesActorTemplates;
@@ -1516,7 +1516,7 @@ static void CrossboneIsleSteppingStones_PushSinkingPillar(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesTriggers;
@@ -1618,13 +1618,13 @@ s32 Scene_Initialize(void) {
   s32 z;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
+  if (gPersistentState.sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 1);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 2);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
-  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
+  } else if (gPersistentState.sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
     // Rebuild the flooded room and float the logs again when the water stayed
     // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
@@ -1644,7 +1644,8 @@ s32 Scene_Initialize(void) {
       CrossboneIsleSteppingStones_DrawFloatingLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
-  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleStackedPillars) {
+  } else if (gPersistentState.sceneId ==
+             (s32)&SceneId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
     Actor_CreateConfigured(PIXELS(584), 0, PIXELS(200), SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1690,7 +1691,8 @@ s32 Scene_Initialize(void) {
         }
       }
     }
-  } else if (gSaveBlock.sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
+  } else if (gPersistentState.sceneId ==
+             (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     Import_ActorSetAnimation(ACTOR_SINKING_BOULDER, 2);

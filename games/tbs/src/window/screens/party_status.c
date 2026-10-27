@@ -266,7 +266,7 @@ void PartyStatus_Draw(s32 flags) {
   } else {
     count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
-      members[i] = gSaveBlock.party[i];
+      members[i] = gPersistentState.party[i];
     members[i] = 255;
   }
   count = i;

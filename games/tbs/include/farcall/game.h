@@ -61,7 +61,7 @@ s32 Unit_LearnPsynergyFar();
 s32 Unit_KnowsPsynergyFar(s32 owner, s32 value);
 /// Clears the save block and sets a new game's defaults: Isaac alone in the
 /// party, the standard buttons, the message speed and the play time clock.
-void SaveBlock_InitializeDefaultsFar(void);
+void PersistentState_InitializeDefaultsFar(void);
 /// Levels a character up once if its experience reaches the next level, and
 /// returns `value` filled with the gains, or NULL; the spoils call it per level
 /// reached.

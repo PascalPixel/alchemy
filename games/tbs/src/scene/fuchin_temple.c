@@ -52,7 +52,7 @@
 ///     until FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
 ///     LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///     Temple.
-#include "save_block.h"
+#include "persistent_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -262,7 +262,7 @@ static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
 /// Chooses the outside entrance table or the shared interior
 /// entrances.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gSaveBlock.sceneId;
+  s16 sceneId = gPersistentState.sceneId;
 
   if (sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEntrances;
@@ -277,10 +277,11 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 /// Selects the room's actors and applies the post-lesson actor
 /// template changes.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gPersistentState.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsActorTemplates;
   }
-  if (gSaveBlock.entrance == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
+  if (gPersistentState.entrance ==
+      LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleActorTemplatesFromLamaTemple;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
@@ -1536,10 +1537,11 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
 
 /// Selects the outdoor, school, or lesson trigger table.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
+  if (gPersistentState.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsTriggers;
   }
-  if (gSaveBlock.entrance == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
+  if (gPersistentState.entrance ==
+      LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleTriggersFromLamaTemple;
   }
   return gFuchinTempleTriggers;
@@ -2347,10 +2349,11 @@ s32 Scene_Initialize(void) {
   struct Actor *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gSaveBlock.sceneId == (s32)&SceneId_LacquerRoomsA) {
+  if (gPersistentState.sceneId == (s32)&SceneId_LacquerRoomsA) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    if (gSaveBlock.entrance == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
+    if (gPersistentState.entrance ==
+        LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
         Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
       } else {
@@ -2361,8 +2364,10 @@ s32 Scene_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
-               gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
+    } else if (gPersistentState.entrance ==
+                   LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
+               gPersistentState.entrance ==
+                   LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
@@ -2408,7 +2413,7 @@ s32 Scene_Initialize(void) {
       Actor_Prepare(PIXELS(304), PIXELS(24), PIXELS(224), SPRITE_CRATE);
       Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
       Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
-    } else if (gSaveBlock.entrance ==
+    } else if (gPersistentState.entrance ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -2421,7 +2426,7 @@ s32 Scene_Initialize(void) {
   } else {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_GetById(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
-    if (gSaveBlock.entrance ==
+    if (gPersistentState.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !GameFlag_Get(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {

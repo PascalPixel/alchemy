@@ -117,7 +117,8 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct TriggerView *trigger = (struct TriggerView *)work->triggers;
   s32 flags;
-  u32 facing = ((struct Actor *)Actor_Lookup(gSaveBlock.leaderActorId))->facing;
+  u32 facing =
+      ((struct Actor *)Actor_Lookup(gPersistentState.leaderActorId))->facing;
 
   flags = trigger->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
@@ -174,16 +175,16 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor
 /// stopped with Halt
-/// (gSaveBlock.haltedActor), its TRIGGER_TALK_HALTED event if it has one,
+/// (gPersistentState.haltedActor), its TRIGGER_TALK_HALTED event if it has one,
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
-/// Called by SceneManager_Run for the A button, to choose between talking and
+/// Called by FieldLoop_Run for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an
 /// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
   struct TriggerView *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
-  s32 pausedActorId = gSaveBlock.haltedActor;
+  s32 pausedActorId = gPersistentState.haltedActor;
 
   if (pausedActorId == id) {
     struct TriggerView *pausedTrigger =
@@ -202,10 +203,10 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// comes first; without one, a talk trigger that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
-/// stood in for it; SceneManager_Run ignores the result.
+/// stood in for it; FieldLoop_Run ignores the result.
 ///
-/// Called by SceneManager_Run for its talk request (work->talk). Resumes
-/// the stopped actor and sets gSaveBlock.haltedActor back to -1
+/// Called by FieldLoop_Run for its talk request (work->talk). Resumes
+/// the stopped actor and sets gPersistentState.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorTemplate *template = Scene_FindActorTemplate(id);
@@ -217,7 +218,7 @@ s32 Scene_TalkToActor(s32 id) {
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
-  if (gSaveBlock.haltedActor == id) {
+  if (gPersistentState.haltedActor == id) {
     actorPaused = 1;
     trigger = Scene_FindTrigger(7, id);
     if (trigger == 0) {
@@ -256,13 +257,13 @@ s32 Scene_TalkToActor(s32 id) {
       savedAngle = actor->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
-        struct Actor *leader = Actor_GetById(gSaveBlock.leaderActorId);
+        struct Actor *leader = Actor_GetById(gPersistentState.leaderActorId);
 
         leader->targetX = leader->x.fixed;
         leader->targetY = leader->y.fixed;
         leader->targetZ = leader->z.fixed;
         SET_VELOCITY(leader, 0, 0, 0);
-        Actor_LinkPair(id, gSaveBlock.leaderActorId, 0);
+        Actor_LinkPair(id, gPersistentState.leaderActorId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -281,7 +282,7 @@ s32 Scene_TalkToActor(s32 id) {
       // talk facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->scriptCursor] == 16) {
         if ((s8)template->talkFacing == 3) {
-          actor->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
+          actor->linkedActor = Actor_GetById(gPersistentState.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gActor_LinkedScript);
         } else if ((s8)template->talkFacing == 1) {
@@ -298,8 +299,8 @@ finish:
   // Both a normal event and the paused actor's fallback line release
   // the pause.
   if (actorPaused) {
-    FieldPsynergy_ResumeHaltedActor(gSaveBlock.haltedActor);
-    gSaveBlock.haltedActor = -1;
+    FieldPsynergy_ResumeHaltedActor(gPersistentState.haltedActor);
+    gPersistentState.haltedActor = -1;
   }
   return result;
 }
@@ -307,7 +308,7 @@ finish:
 /// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
-/// Called by SceneManager_Run for a positive event request (work->event).
+/// Called by FieldLoop_Run for a positive event request (work->event).
 s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
@@ -338,7 +339,7 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by SceneManager_Run for its step request (work->stepTrigger), which
+/// Called by FieldLoop_Run for its step request (work->stepTrigger), which
 /// Field_UpdateWalking raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->exit for an exit, and clears work->blockedSteps after a
 /// step trigger that needs pushing.
@@ -396,12 +397,12 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by SceneManager_Run for its push request (work->pushCell), which
+/// Called by FieldLoop_Run for its push request (work->pushCell), which
 /// Field_UpdateWalking raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
-  s32 leader = gSaveBlock.leaderActorId;
+  s32 leader = gPersistentState.leaderActorId;
 
   switch (behavior) {
   case MB_LEDGE:
@@ -437,7 +438,7 @@ s32 Field_RunPushCell(s32 behavior) {
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
-/// Called by SceneManager_Run for its search request (work->tile). Opening a
+/// Called by FieldLoop_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->encounter), give coins or an item, or restore all PP.
 s32 Field_ExamineCell(s32 tile) {
@@ -449,7 +450,7 @@ s32 Field_ExamineCell(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gSaveBlock.leaderActorId;
+  leader = gPersistentState.leaderActorId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_ExamineTriggerMessageOffsets; the unsigned compare also rejects
   // codes below MB_JAR.
@@ -489,7 +490,7 @@ s32 Field_ExamineCell(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))trigger->value)(gSaveBlock.leaderActorId);
+            ((void (*)(s32))trigger->value)(gPersistentState.leaderActorId);
           if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
@@ -549,10 +550,10 @@ s32 Field_ExamineCell(s32 tile) {
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinni,
-              // which SceneManager_Run resolves when the scene is entered again
+              // which FieldLoop_Run resolves when the scene is entered again
               // after the battle.
               if (condition != -1) {
-                condition = gSaveBlock.pendingDjinni = condition | 0x1000;
+                condition = gPersistentState.pendingDjinni = condition | 0x1000;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/round.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
@@ -563,14 +564,14 @@ s32 Field_ExamineCell(s32 tile) {
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);
-              Sound_PlaySongFar(gSaveBlock.battleMusic);
+              Sound_PlaySongFar(gPersistentState.battleMusic);
               FieldMessage_ShowFar(MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gSaveBlock.leaderActorId, 0);
+                  gPersistentState.leaderActorId, 0);
               WaitTicks(30);
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
@@ -591,7 +592,7 @@ s32 Field_ExamineCell(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gSaveBlock.leaderActorId, trigger->value & 0xfff);
+                  gPersistentState.leaderActorId, trigger->value & 0xfff);
               WaitTicks(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -611,7 +612,7 @@ s32 Field_ExamineCell(s32 tile) {
                 Sound_PlaySongFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(trigger->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
-                if (recipient == gSaveBlock.leaderActorId) {
+                if (recipient == gPersistentState.leaderActorId) {
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);

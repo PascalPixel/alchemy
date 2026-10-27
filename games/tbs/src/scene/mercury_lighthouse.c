@@ -82,7 +82,7 @@
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
 
 #include "script_operands.h"
-#include "save_block.h"
+#include "persistent_state.h"
 #include "heap.h"
 #include "iwram_call.h"
 #include "keystate.h"
@@ -400,7 +400,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "common/mercury_lighthouse_palette_cycle.h"
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
     return gMercuryLighthouseExteriorEntrances;
@@ -423,7 +423,7 @@ const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
 /// Selects the actors and obstacles for the current lighthouse scene.
 const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerActorTemplates;
@@ -476,7 +476,7 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
 
 /// Selects the puzzle interactions and dialogue for the current scene.
 const struct Trigger *MercuryLighthouse_GetTriggers(void) {
-  s16 selector = gSaveBlock.sceneId;
+  s16 selector = gPersistentState.sceneId;
 
   if (selector == (s32)&SceneId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerTriggers;
@@ -2097,7 +2097,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
   Event_Start();
-  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseLower) {
+  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseLower) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(656), 1);
@@ -2307,8 +2307,8 @@ s32 MercuryLighthouse_Initialize(void) {
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   // Set up common lighting before restoring each scene's puzzle-specific state.
-  gSaveBlock.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
+  gPersistentState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gPersistentState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
@@ -2324,9 +2324,9 @@ s32 MercuryLighthouse_Initialize(void) {
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
     MercuryLighthouse_ClearPalette();
-  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseLower) {
+  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseLower) {
     // Entrance pillars, the channel puzzle and Mia's rescue share this overlay.
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
@@ -2379,9 +2379,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseMiddle) {
     // Restore stairs, the floor-switch gate and the fountain's moved pipe.
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(Actor_GetById(ACTOR_STAIR_PIPE), 1);
@@ -2438,9 +2438,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseUpper) {
     // Restore the movable pipes and the stone doors they opened.
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST:
@@ -2541,7 +2541,8 @@ s32 MercuryLighthouse_Initialize(void) {
 #endif
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE:
-      if (gSaveBlock.entrance == MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
+      if (gPersistentState.entrance ==
+          MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
       SetEffectRecordMode(Actor_GetById(ACTOR_SLIDING_STATUE), 1);
       Actor_SetSpritePriority(ACTOR_DOOR_ROOM_PIPE, 2);
@@ -2552,7 +2553,8 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(Actor_GetById(ACTOR_FIRST_DOOR_PIPE_END + 2), 1);
       Scene_RedrawActorFootprint(ACTOR_DOOR_ROOM_PIPE);
       Scene_RedrawActorFootprint(ACTOR_DOOR_SWITCH_PIPE);
-      if (gSaveBlock.entrance != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
+      if (gPersistentState.entrance !=
+          MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         break;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
@@ -2599,9 +2601,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (gPersistentState.sceneId == (s32)&SceneId_MercuryLighthouseExterior) {
     // This scene contains Mia's entrance, the lift and the healing fountain.
-    switch (gSaveBlock.entrance) {
+    switch (gPersistentState.entrance) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       Task_AddFrame(MercuryLighthouse_CycleWaterfallPalette, TASK_PASS_FRAME);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))

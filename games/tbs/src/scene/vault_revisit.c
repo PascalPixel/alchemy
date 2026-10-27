@@ -33,7 +33,7 @@
 /// fiery rock burnt in it (render probe vault-revisit, the town before and
 /// after).
 
-#include "save_block.h"
+#include "persistent_state.h"
 #include "djinn_ids.h"
 #include "window.h"
 #include "unit/scene/vault_revisit.h"
@@ -688,16 +688,16 @@ s32 Scene_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gSaveBlock.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gPersistentState.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
-  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_SANCTUM)
+  if (gPersistentState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+  if (gPersistentState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }

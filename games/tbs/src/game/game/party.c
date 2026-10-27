@@ -117,7 +117,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 }
 
 // The party: the FLAG_IN_PARTY flags say who is in it, and
-// gSaveBlock.party lists them in order.
+// gPersistentState.party lists them in order.
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountMembers(void) {
@@ -135,7 +135,7 @@ s32 Party_CountMembers(void) {
 }
 
 /// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gSaveBlock.party unless it is already listed.
+/// appends it to gPersistentState.party unless it is already listed.
 /// Returns the party size. Called by the events where a character joins, by
 /// the party member chooser and the File Screen, and by the debug presets.
 s32 Party_AddMember(s32 unitId) {
@@ -145,16 +145,16 @@ s32 Party_AddMember(s32 unitId) {
   GameFlag_Set(FLAG_IN_PARTY(unitId));
   partyIndex = 0;
   while (partyIndex < partySize) {
-    if (gSaveBlock.party[partyIndex] == unitId)
+    if (gPersistentState.party[partyIndex] == unitId)
       return partySize;
     partyIndex++;
   }
-  gSaveBlock.party[partyIndex] = unitId;
+  gPersistentState.party[partyIndex] = unitId;
   return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gSaveBlock.party. Returns the party size.
+/// the gap it leaves in gPersistentState.party. Returns the party size.
 /// Called by the events where a character leaves, by the party member chooser
 /// and the File Screen, and by the debug presets.
 s32 Party_RemoveMember(s32 unitId) {
@@ -164,11 +164,11 @@ s32 Party_RemoveMember(s32 unitId) {
 
   GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gSaveBlock.party[removedIndex] == unitId)
+    if (gPersistentState.party[removedIndex] == unitId)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gSaveBlock.party[partyIndex] = gSaveBlock.party[partyIndex + 1];
+    gPersistentState.party[partyIndex] = gPersistentState.party[partyIndex + 1];
   return Party_CountMembers();
 }
 
@@ -185,7 +185,7 @@ s32 Party_ListMembers(s16 *unitIds) {
     index = 0;
     if (count != 0) {
       do {
-        *unitIds++ = gSaveBlock.party[index];
+        *unitIds++ = gPersistentState.party[index];
         index++;
       } while (index != count);
     }
@@ -199,10 +199,10 @@ s32 Party_ListMembers(s16 *unitIds) {
 /// by the battle spoils to pay, and by the Lucky Dice game.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
-  struct SaveBlock *work;
-  struct SaveBlock *store;
+  struct PersistentState *work;
+  struct PersistentState *store;
 
-  work = &gSaveBlock;
+  work = &gPersistentState;
   value = work->coins;
   value += amount;
   store = work;
@@ -232,7 +232,7 @@ struct TradeFlags {
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
-    struct SaveBlock *progress = &gSaveBlock;                                  \
+    struct PersistentState *progress = &gPersistentState;                      \
                                                                                \
     value = progress->field;                                                   \
     value += amount;                                                           \

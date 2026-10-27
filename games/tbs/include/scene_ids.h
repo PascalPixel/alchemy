@@ -19,7 +19,8 @@ extern char SceneId_FileScreen;
 /// ★ Named from its area name: World Map
 extern char SceneId_WorldMap;
 /// The World Map's map, row 1 of gMaps (field/scenes.s names it with
-/// the World Map's scene row), which the field compares gSaveBlock.mapId with.
+/// the World Map's scene row), which the field compares gPersistentState.mapId
+/// with.
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"

@@ -683,11 +683,13 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_End();
 }
 
-/// Pans the camera away from the leader while a patch of the floor flashes
-/// ever faster, redraws a larger block of the floor, then restores the camera.
-/// Called only from the branch of SolSanctumStatue_OpenSeal that is marked
-/// DEAD.
-static void SolSanctumStatue_UncoverStairway(void) {
+/// Unused: called only from the branch of SolSanctumStatue_OpenSeal that
+/// cannot run, since SolSanctumStatue_SelectStoryExit returns only 1 or -1.
+/// Once the northwest, southwest and southeast seals were open, the player
+/// would have seen the camera pan away from the leader while a patch of the
+/// floor flashed ever faster, then a larger block of the floor redrawn before
+/// the camera came back.
+static void SolSanctumStatue_UnusedUncoverStairway(void) {
   struct MapGridScrollWork *grid;
   struct Actor *leader;
   s32 *savedOrigin;
@@ -1631,7 +1633,7 @@ static void SolSanctumStatue_OpenSeal(void) {
           GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
         if (!Event_GetFlag(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
           GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
-          SolSanctumStatue_UncoverStairway();
+          SolSanctumStatue_UnusedUncoverStairway();
         }
       } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Import_EventSetExitRequest(

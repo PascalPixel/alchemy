@@ -1,4 +1,4 @@
-// Draft, differ 94 of 236: runs one step of the opening's vertical picture scroll. The
+// Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
 // down, each 8 lines of scroll DMA the next 30 map rows' worth of tiles

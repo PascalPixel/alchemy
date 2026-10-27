@@ -14,8 +14,8 @@ extern const u16 gData_02002418[];
 void Func_02002408(s32 cue);
 
 /// Follows the two secret button codes: each held key that matches the next
-/// key of a code advances it, a wrong key starts it again, and the end of
-/// the code unlocks the code with a sound.
+/// key of a code advances it, a wrong key starts it again, and finishing a
+/// code unlocks it with a sound.
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
     /* FAKEMATCH: the held keys pointer pinned to r4, the key to r3, and a

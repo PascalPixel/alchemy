@@ -1,4 +1,4 @@
-// Draft, differ 292 of 360: a frame callback of the opening (its state in heap
+// Draft, differ 292 of 360: a frame callback of the intro (its state in heap
 // slot 43, 0x030000ac): clears OAM, then in phase 0 steps an animation
 // through gData_081a8378 (a frame's first tile, rows, delay and offsets) along
 // the path in gData_081a84e6, drawing its 8-wide grid of 8x8 sprites, until

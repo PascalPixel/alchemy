@@ -614,7 +614,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 
 /// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
 /// A or Start ends it early. Reached through the palette far-call table from
-/// the opening. Returns 0.
+/// the intro. Returns 0.
 s32 Title_ShowCamelotLogo(void) {
   s32 result;
   u32 workIndex;

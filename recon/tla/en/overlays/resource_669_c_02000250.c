@@ -4,8 +4,8 @@
 // again, since reading it as long no longer changes anything; alchemy permute (5 to 6 minutes) and an empty asm or
 // one-pass block after any one statement do not move it.
 // Draft, differ 2 of 170: the scene setup of overlay 669, written from the
-// listing (its ☀️ twin by shape, the scene setup of a Vale house,
-// is a different scene). Left: one scheduling
+// listing (its ☀️ twin by shape, CottageRoomsA_Initialize in
+// scene/cottage_rooms_a.c, is a different scene). Left: one scheduling
 // swap at the start: the native loads gPartyState's address before it stores
 // the screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the
 // draft stores first. In sched2 the 0x209 add ranks 7 (its store anti-depends

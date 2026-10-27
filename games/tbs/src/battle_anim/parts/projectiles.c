@@ -9,7 +9,7 @@
 /// Leaves the canvas cleared for the animation that follows.
 ///
 /// The prelude of the stat boosts, the projectile volleys, the healing motes,
-/// the Djinn beams, the burst animations, Bind, Hail, Ground, Torch and Vine,
+/// the Djinn beams, the flurry, Bind, Hail, Ground, Torch and Vine,
 /// called with the work block they then use. Opens the canvas layer but does
 /// not close it: it removes the transfer and palette fade tasks, frees
 /// both blitters, clears the canvas and its VRAM, and sets REG_BLDALPHA back

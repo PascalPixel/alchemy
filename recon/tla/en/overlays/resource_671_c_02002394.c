@@ -3,8 +3,9 @@
 // and the draft hoists out of the loop (also as a goto loop); alchemy permute
 // (5 to 6 minutes) and an empty asm or one-pass block after any one statement
 // do not move it.
-// Draft, differ 10 of 177 (was 22): written from the listing (a ☀️
-// scene's particle burst is its twin). i pinned to r10 gives the
+// Draft, differ 10 of 177 (was 22): written from the listing (its ☀️ twin is
+// VenusLighthouse_LandWithRadialDust in scene/venus_lighthouse.c, without
+// the random terms). i pinned to r10 gives the
 // options pointer r8, as the native has them; a pinned i needs the do-while
 // loop (as a for loop it keeps an entry test, differ 16). Left: the velocity
 // array's address is built before the cosine call, not after it; and both

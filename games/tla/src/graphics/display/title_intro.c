@@ -34,7 +34,7 @@ s32 Func_081a6724(void);
 void Func_081a6ea0(void);
 void Ui_LoadWindowGraphics(void);
 
-/// Runs the opening's pictures in turn (Func_081a6154's steps
+/// Runs the intro's pictures in turn (Func_081a6154's steps
 /// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
 /// out early when a key cuts one short and running Func_081a6ea0 when all
 /// finish, then restores the display and the CPU-load flag it saved.

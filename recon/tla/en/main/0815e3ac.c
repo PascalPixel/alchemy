@@ -7,7 +7,7 @@
 // (str r6, [sp, #8]) before the loop's zero, here after; and a stack reload
 // (ldr r5, [sp, #12]) before the two stacked argument stores, here after.
 
-// Draft of Func_0815e3ac, the cast BattleEffect_DispatchByIdRange
+// Draft of Func_0815e3ac, the battle effect BattleEffect_DispatchByIdRange
 // runs for kinds below 100 (except 10): a beam strikes the target and
 // sparks fly from it.
 

@@ -1,4 +1,4 @@
-// Draft, differ 46 of 93: shows a picture of the opening: fills BG3's map
+// Draft, differ 46 of 93: shows a picture of the intro: fills BG3's map
 // with the blank tile, numbers rows 9 and 10's tiles in order, sets BG3 and
 // clears blending and the scroll, then fades in and out, returning 0 when a
 // key cuts the wait short and 1 when it runs out. Left: other, in the tile

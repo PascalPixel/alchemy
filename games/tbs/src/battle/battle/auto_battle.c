@@ -244,7 +244,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
     view->frames = 60;
   }
   WaitFrames(10);
-  // A roll nothing uses, which still advances the random numbers.
+  // A roll nothing uses, which still advances the random number generator.
   Random16();
   actorRecord = BattleObject_Get(unitId)->actor;
 
@@ -356,7 +356,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
     return -1;
 
   // Lookups whose results are unused, and a roll that only advances the
-  // random numbers.
+  // random number generator.
   Unit_GetFar(work.effect.user);
   Unit_GetFar(work.effect.targets[0]);
   Random16();

@@ -69,7 +69,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *args) {
   // Every spark starts free (variant 0). A bolt that throws it overwrites x,
   // y and their velocities; z and velocityZ, set only here, are never read,
   // but the two random numbers each spark takes here still advance the
-  // random numbers.
+  // random number generator.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 speed;

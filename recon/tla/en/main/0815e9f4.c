@@ -1,4 +1,4 @@
-// Draft of Func_0815e9f4, the cast BattleEffect_DispatchByIdRange
+// Draft of Func_0815e9f4, the battle effect BattleEffect_DispatchByIdRange
 // runs for kinds 201 to 209 and 211 up: a ring of sparks gathers, then a
 // burst of sparks at the target.
 

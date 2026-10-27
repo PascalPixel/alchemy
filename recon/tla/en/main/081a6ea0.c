@@ -1,4 +1,4 @@
-// Draft, differ 206 of 325: the opening's lighthouse scene: loads the
+// Draft, differ 206 of 325: the intro's lighthouse scene: loads the
 // gull sprites (resource 0x1a) and the lighthouse picture (0x19) with its
 // palette, numbers the first 20 rows of BG1's map, fades in, then scrolls the
 // picture down in three slowing steps through Func_081a68b4, starts the logo

@@ -55,12 +55,12 @@ void FieldEffect_RunPly(void) {
       object->motionFlags = 4;
       last = Object_ReplaceResourceEntry(object->animation, last);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   marker = last->vramBlock;
   Audio_PlayCue(130);
-  WaitTicks(110);
+  WaitFrames(110);
 
   target = Object_Spawn(296, 0, 0, 0);
   object = target;
@@ -73,7 +73,7 @@ void FieldEffect_RunPly(void) {
   }
 
   Audio_PlayCue(131);
-  WaitTicks(12);
+  WaitFrames(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
       /* FAKEMATCH: the native keeps object as a second register copy of the
@@ -84,7 +84,7 @@ void FieldEffect_RunPly(void) {
         Animation_ApplyChildValuesFar(object, 9);
       else
         Animation_ApplyChildValuesFar(object, 10);
-      WaitTicks(2);
+      WaitFrames(2);
     }
   }
 
@@ -94,9 +94,9 @@ void FieldEffect_RunPly(void) {
     target->update = (void (*)(void))Func_080de8d0;
     target->action = 0;
     if (scene->enabled != 0)
-      WaitTicks(128);
+      WaitFrames(128);
     else
-      WaitTicks(192);
+      WaitFrames(192);
   }
 
   if (target != 0) {

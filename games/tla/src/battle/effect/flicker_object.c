@@ -9,14 +9,14 @@ void BattleEffect_WaitForArcGroups(void) {
   s32 i = 0;
 
   while (work->age[0] <= 31 || work->age[1] <= 31) {
-    WaitTicks(1);
+    WaitFrames(1);
     i++;
     if (i > 89)
       return;
   }
 }
 
-void BattleEffect_FlickerObjectAndTick(s32 arg0) {
+void BattleEffect_FlickerObjectAndSpawnArcs(s32 arg0) {
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 7);
   } else {
@@ -27,7 +27,7 @@ void BattleEffect_FlickerObjectAndTick(s32 arg0) {
   }
 }
 
-void BattleEffect_CycleObjectAndTick(s32 arg0) {
+void BattleEffect_CycleObjectAndSpawnArcs(s32 arg0) {
   if (gFrameCount & 1)
     Animation_ApplyChildValuesFar((struct DispatchObject *)arg0,
                                   (gFrameCount >> 1) % 6);
@@ -35,15 +35,15 @@ void BattleEffect_CycleObjectAndTick(s32 arg0) {
     BattleEffect_SpawnScaledArcObjects(arg0);
 }
 
-void BattleEffect_SetObjectTickMode(struct DispatchObject *object, s32 mode) {
+void BattleEffect_SetObjectUpdateMode(struct DispatchObject *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Animation_ApplyChildValuesFar(object, 0);
   } else if (mode == 1) {
     object->update =
-        (void (*)(struct DispatchObject *))BattleEffect_FlickerObjectAndTick;
+        (void (*)(struct DispatchObject *))BattleEffect_FlickerObjectAndSpawnArcs;
   } else {
     object->update =
-        (void (*)(struct DispatchObject *))BattleEffect_CycleObjectAndTick;
+        (void (*)(struct DispatchObject *))BattleEffect_CycleObjectAndSpawnArcs;
   }
 }

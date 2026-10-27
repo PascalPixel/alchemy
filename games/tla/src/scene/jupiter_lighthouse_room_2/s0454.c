@@ -3,7 +3,7 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
@@ -40,7 +40,7 @@ void Func_02000454(void) {
       } while (0);
       angle += 0x1800;
       object->angle = angle;
-      WaitTicks(2);
+      WaitFrames(2);
     }
     Func_020022bc(12);
   }

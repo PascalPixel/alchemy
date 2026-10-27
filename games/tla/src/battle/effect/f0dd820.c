@@ -54,7 +54,7 @@ void Func_080dd820(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   BattleEffect_StartBufferInterpolation(1);
   event->active = 0;
-  WaitTicks(1);
+  WaitFrames(1);
 
   pending = Func_080ce458(REVEAL_EVENT_START, FIELD_FX_REVEAL,
                           Func_080ce31c(FIELD_FX_REVEAL));
@@ -77,7 +77,7 @@ void Func_080dd820(void) {
   Func_080cf554();
   frame = 0;
   do {
-    WaitTicks(1);
+    WaitFrames(1);
     transition->value = frame;
     frame++;
   } while (frame <= 18);

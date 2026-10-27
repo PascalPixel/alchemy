@@ -18,7 +18,7 @@
 void EventRuntime_Wait(s32 frames) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
   if (state->waitMode == 0 && frames != 0)
-    WaitTicks(frames);
+    WaitFrames(frames);
 }
 
 void EventRuntime_PrepareCurrentObject(void) {

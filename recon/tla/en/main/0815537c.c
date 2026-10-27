@@ -87,8 +87,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *pos);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -245,9 +245,9 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(2, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.

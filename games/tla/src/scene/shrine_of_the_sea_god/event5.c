@@ -19,7 +19,7 @@ void Func_020018bc(void) {
   Func_02001340(leader, pillar);
   ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 24, 22);
   ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 24, 24);
-  WaitTicks(1);
+  WaitFrames(1);
   leader->motionFlags = 3;
   ObjectMotion_SetActionVariant(16, 3);
   pillar->priorityFlags |= 2;
@@ -34,7 +34,7 @@ void Func_020018bc(void) {
   Func_02003a30(23, 0, 0);
   Func_02003a30(24, 0, 0);
   Scheduler_RemoveCallbackFar(Func_020018ac);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_020039e0();
   GameFlag_SetBit(0x232);
 }

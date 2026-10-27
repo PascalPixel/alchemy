@@ -141,7 +141,7 @@ void Ui_ClearVramBlock(void);
 void UiText_RenderWideStringAtOffset(u16 *text, struct TargetWindow *window,
                                      s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
 
 // The help window's column beside the aimed member, kept on screen.
@@ -669,17 +669,17 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = -1;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     if (redraw == 0)
       break;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_ResetEntry(cursorSlot);
   if (conditionWindow != NULL)
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
   BattlePres_SetActorModesFar(candidateIds, 0);
   NAVIGATION->targetViewOffset = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   return targetIndex;
 }

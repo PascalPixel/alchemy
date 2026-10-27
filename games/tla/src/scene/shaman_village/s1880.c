@@ -51,7 +51,7 @@ void Func_02001880(void) {
                                           gData_02004c5c);
   ObjectMotion_EnableActionAndSetCallback(15, gData_02004cac);
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   /* FAKEMATCH: one more use of the shaman's flag gives its address r5 and the
    * owner's r6; as plain C, 36 instructions differ in tla-en. */
@@ -64,7 +64,7 @@ void Func_02001880(void) {
   ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 184, 128);
   ShamanVillage_ObjWalk(15, 264, 128);
   Object_SetModeById(gPartyState.currentOwner, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02004934(gPartyState.currentOwner, 0, 0);
   Func_02004934(15, 0, 0);
   Event_FinishScreenTransition();
@@ -121,7 +121,7 @@ void Func_02001aa4(void) {
   ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
                                           gData_02004cac);
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
   /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the
    * owner's (r5, then r6), as in Func_02001880 above. */
@@ -134,7 +134,7 @@ void Func_02001aa4(void) {
   ObjectMotion_ResetAndSetPositionInMode2(15, 184, 128);
   ShamanVillage_ObjWalk(gPartyState.currentOwner, 264, 128);
   Object_SetModeById(15, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02004934(15, 0, 0);
   Func_02004934(gPartyState.currentOwner, 0, 0);
   Event_FinishScreenTransition();

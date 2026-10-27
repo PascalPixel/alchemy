@@ -171,7 +171,7 @@ Func_081197f0:
 	beq .L_0811996a
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #24
 	ble .L_0811994e
 	mov r2, r10
@@ -782,7 +782,7 @@ Func_081197f0:
 	b .L_08119f4c
 .L_08119e46:
 	movs r0, #20
-	bl WaitTicks
+	bl WaitFrames
 .L_08119e4c:
 	movs r0, #183
 	lsls r0, r0, #1
@@ -799,7 +799,7 @@ Func_081197f0:
 	b .L_08119e72
 .L_08119e6c:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_08119e72:
 	bl UiWork_IsCompleteFar
 	cmp r0, #0
@@ -808,7 +808,7 @@ Func_081197f0:
 	adds r0, r5, #0
 	bl UiWork_FinalizeFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Tutorial_GetDjinnGiveMessage
 	movs r2, #4
 	movs r3, #1
@@ -823,7 +823,7 @@ Func_081197f0:
 	movs r1, #1
 	bl UiWork_FinalizeFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_08119eb0:
 	ldr r1, [sp, #32]
 	adds r1, #1
@@ -974,7 +974,7 @@ Func_081197f0:
 .L_08119ff2:
 	bl BattleParty_ResetActiveRuntimeFields
 	bl Func_08124cc0
-	bl DjinnRecovery_Tick
+	bl DjinnRecovery_CountDown
 	ldr r3, .L_0811a030
 	movs r1, #166
 	lsls r1, r1, #1

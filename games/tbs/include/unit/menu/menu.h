@@ -83,7 +83,7 @@ void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
 void Window_HoldTilemapUpload(void);
 void Window_ReleaseTilemapUpload(void);
 s32 Audio_PlayCueReturnOne(s32 cue);
-void Menu_CancelSoundTick(void);
+void Menu_UpdateCancelSound(void);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
 void WindowPalette_SetNormalTextColor(void);

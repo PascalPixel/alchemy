@@ -59,7 +59,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     UiText_CopyMessageString((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
     UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
     do {
-      WaitTicks(1);
+      WaitFrames(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
              *(s32 *)((u8 *)((void **)Ram_HeapSlots)[57] + 0x4C) != 0);
     UiWork_Finalize(work, 1);

@@ -4567,7 +4567,7 @@ Func_08173aac:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	ldr r2, [sp, #52]
 	cmp r2, #1
 	bne .L_08175f0c
@@ -4590,7 +4590,7 @@ Func_08173aac:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #32]
 	movs r7, #1
 	add r11, r7

@@ -247,7 +247,7 @@ static void Vault_IvanStaysBehind(void) {
     FieldCamera_WaitForArrival();
   }
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
@@ -257,7 +257,7 @@ static void Vault_IvanStaysBehind(void) {
     Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Vault_ReturnIsaacsDjinni();
-    WaitTicks(20);
+    WaitFrames(20);
   }
   Party_RemoveMemberRestored(IVAN);
   Import_EventSetExitRequest(work->stepTrigger -
@@ -389,7 +389,7 @@ static void Vault_PityIvan(void) {
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer &= 1;
 }
@@ -407,7 +407,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer &= 1;
 }
@@ -422,7 +422,7 @@ static void Vault_LookForRoofer(void) {
                          2);
   FieldEffect_SpawnAttached(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
                             EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   FieldMessage_ShowAtActor(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
   Event_End();
 }
@@ -498,7 +498,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer &= 1;
 }
@@ -516,7 +516,7 @@ static void Vault_ThankForCapturingThieves(void) {
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer &= 1;
 }
@@ -574,7 +574,7 @@ static void Vault_ThankBeforeDeparture(void) {
   Vault_FaceActorAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ACTOR_PARTY_LEADER,
                          2);
   Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
   Event_End();
 }
@@ -659,7 +659,7 @@ static void Vault_ReadDogMind(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
     Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
-    Event_WaitTicks(2);
+    Event_WaitFrames(2);
   } else if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Event_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
   } else {
@@ -790,7 +790,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   Actor_SetPositionAndCommit(actorId, x, z);
   Import_ActorSetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
-    WaitTicks(1);
+    WaitFrames(1);
     if ((actor->velocityY >> 16) == 0)
       break;
   }
@@ -805,16 +805,16 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 static void Vault_RingBell(void) {
   Event_Start();
   Event_PlaySong(SE_BELL);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    Event_WaitTicks(12);
+    Event_WaitFrames(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
@@ -828,20 +828,20 @@ static void Vault_RingBell(void) {
 static void Vault_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 392);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
   Event_End();
@@ -921,7 +921,7 @@ s32 Scene_Initialize(void) {
           Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
           Event_WaitTransitionFrames();
-          Event_WaitTicks(30);
+          Event_WaitFrames(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           Event_SetMessageId(MsgVaultWelcomeBackTwo);
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
@@ -954,7 +954,7 @@ s32 Scene_Initialize(void) {
           Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
           Event_WaitTransitionFrames();
-          Event_WaitTicks(30);
+          Event_WaitFrames(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           Event_SetMessageId(MsgVaultWelcomeBackTwo);
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
@@ -989,12 +989,12 @@ s32 Scene_Initialize(void) {
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
   Event_ShowMessageAndWait(actorId, 0);
-  Event_WaitTicks(delay);
+  Event_WaitFrames(delay);
 }
 
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
   Actor_LinkPair(actorId, other, 0);
-  Event_WaitTicks(delay);
+  Event_WaitFrames(delay);
 }
 
 /// Applies drift and gradually damps both rates toward zero.

@@ -63,7 +63,7 @@ redraw:
     *tileEntry = ((rgb555 >> 10) & 31) + EDITOR_HEX_DIGIT;
     swatchColumn++;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   for (;;) {
     if (gKeysRepeat & KEY_UP) {
       channel--;
@@ -134,7 +134,7 @@ redraw:
       rgb555 = *paletteColor;
       red = 0;
       for (;;) {
-        WaitTicks(1);
+        WaitFrames(1);
         if (!(gKeysHeld & KEY_START))
           break;
         if (red == 0)
@@ -153,7 +153,7 @@ redraw:
     if (gKeysRepeat & KEY_SELECT)
       break;
     gFrameCount; // a read whose value is not used
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Window_LoadGraphics();
   DebugText_Clear();

@@ -526,7 +526,7 @@ BattleEffect_RunBind:
 	ldr r2, [sp, #60]
 	movs r0, #1
 	str r2, [r3]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #64]
 	ldr r1, [sp, #76]
 	adds r3, #1

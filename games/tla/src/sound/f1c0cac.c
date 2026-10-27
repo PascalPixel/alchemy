@@ -107,7 +107,7 @@ void AudioCommand_Play(s32 id) {
 
 /// Steps the music volume toward its target and the pitch toward its target,
 /// each by its step, after the jingle's restore delay runs out, as The Broken
-/// Seal's without the DMA restart tick.
+/// Seal's without the DMA restart count.
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
   s32 delta;
 

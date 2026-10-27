@@ -47,7 +47,7 @@ Func_080ddda0:
 	str r0, [sp, #4]
 	movs r0, #15
 	mov r8, sp
-	bl WaitTicks
+	bl WaitFrames
 	mov r6, r8
 	movs r5, #1
 .L_080dde08:
@@ -103,7 +103,7 @@ Func_080ddda0:
 	ldr r3, [r7, #12]
 	adds r3, r3, r1
 	str r3, [r7, #12]
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #128
 	lsls r3, r3, #14
 	adds r2, r5, r3

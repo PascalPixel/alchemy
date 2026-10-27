@@ -46,7 +46,7 @@ extern char Sound_MaxLines[];
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
 void AudioEngine_SetMode(u32 mode);
-void AudioEngine_RunMixerTick(void);
+void SoundMain(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StartSong(struct SoundPlayer *player,
@@ -127,7 +127,7 @@ void Audio_Initialize(void) {
   }
 }
 
-void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
+void AudioEngine_RunMixer(void) { SoundMain(); }
 
 /// Starts the song on the player selected by its song-table entry.
 void Audio_PlaySound(u16 songId) {

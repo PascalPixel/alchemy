@@ -16,7 +16,7 @@ void Func_02003684(void) {
   Func_02005370(0);
   Func_02005388(162);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  WaitTicks_(1);
+  WaitFrames_(1);
   leader->motionFlags = 0;
   Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),
                                     0x1b80000, -0x140000, 0xc80000);
@@ -45,7 +45,7 @@ rise:
   first->y += 0x40000;
   leader->y += 0x40000;
   Func_02000cd8(15, 0x4ccc, 0x4ccc);
-  WaitTicks_(1);
+  WaitFrames_(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
   if (*(volatile s32 *)&first->y < 0)
     goto rise;
@@ -66,7 +66,7 @@ void Func_020037e0(void) {
   Func_02005370(0);
   Func_02005388(162);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  WaitTicks_(1);
+  WaitFrames_(1);
   leader->motionFlags = 0;
   Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),
                                     0x2580000, -0x140000, 0xe80000);
@@ -95,7 +95,7 @@ rise:
   first->y += 0x40000;
   leader->y += 0x40000;
   Func_02000cd8(16, 0x4ccc, 0x4ccc);
-  WaitTicks_(1);
+  WaitFrames_(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
   if (*(volatile s32 *)&first->y < 0)
     goto rise;
@@ -116,7 +116,7 @@ void Func_0200393c(void) {
 rise:
   object->y -= 0x40000;
   Func_02000cf8(15, 0x4ccc, 0x4ccc);
-  WaitTicks(1);
+  WaitFrames(1);
   /* FAKEMATCH: a volatile read for the test keeps GCSE from carrying y around
    * the loop in r2; the native loads it again at the top (differ 13 plain). */
   if (*(volatile s32 *)&object->y > -0x140000)
@@ -138,7 +138,7 @@ void Func_020039a8(void) {
 rise:
   object->y -= 0x40000;
   Func_02000cf8(16, 0x4ccc, 0x4ccc);
-  WaitTicks(1);
+  WaitFrames(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test (differ 13
    * plain). */
   if (*(volatile s32 *)&object->y > -0x140000)

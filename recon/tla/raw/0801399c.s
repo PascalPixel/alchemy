@@ -197,7 +197,7 @@ Func_0801399c:
 .L_08013b14:
 	.4byte gInput
 .L_08013b18:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_08013b1c:
 	.4byte gData_03001138
 .L_08013b20:

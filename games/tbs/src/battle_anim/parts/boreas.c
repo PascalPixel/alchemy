@@ -95,7 +95,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
   drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   gProjection.centerY = 240;
   BattleAnim_SelectLivingTargets(work->args);
-  WaitTicks(1);
+  WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The formation: nine sprites of SPRITE_BOREAS, sprite priority 1.

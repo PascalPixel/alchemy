@@ -381,7 +381,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_08125130:
 	adds r0, r6, #0
-	bl BattleUnit_TickAgilityModifier
+	bl BattleUnit_CountDownAgilityModifier
 	cmp r0, #0
 	beq .L_0812515a
 	adds r0, r6, #0
@@ -397,7 +397,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_0812515a:
 	adds r0, r6, #0
-	bl BattleUnit_TickAttackModifier
+	bl BattleUnit_CountDownAttackModifier
 	cmp r0, #0
 	beq .L_08125184
 	adds r0, r6, #0
@@ -413,7 +413,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_08125184:
 	adds r0, r6, #0
-	bl BattleUnit_TickDefenseModifier
+	bl BattleUnit_CountDownDefenseModifier
 	cmp r0, #0
 	beq .L_081251ae
 	adds r0, r6, #0
@@ -429,7 +429,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_081251ae:
 	adds r0, r6, #0
-	bl BattleUnit_TickResistanceModifier
+	bl BattleUnit_CountDownResistanceModifier
 	cmp r0, #0
 	beq .L_081251d8
 	adds r0, r6, #0
@@ -445,7 +445,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_081251d8:
 	adds r0, r6, #0
-	bl BattleUnit_TickDelusion
+	bl BattleUnit_CountDownDelusion
 	cmp r0, #0
 	beq .L_08125202
 	adds r0, r6, #0
@@ -461,7 +461,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_08125202:
 	adds r0, r6, #0
-	bl BattleUnit_TickConfusion
+	bl BattleUnit_CountDownConfusion
 	cmp r0, #0
 	beq .L_0812522c
 	adds r0, r6, #0
@@ -477,7 +477,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_0812522c:
 	adds r0, r6, #0
-	bl BattleUnit_TickCharm
+	bl BattleUnit_CountDownCharm
 	cmp r0, #0
 	beq .L_08125256
 	adds r0, r6, #0
@@ -493,7 +493,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_08125256:
 	adds r0, r6, #0
-	bl BattleUnit_TickStun
+	bl BattleUnit_CountDownStun
 	cmp r0, #0
 	beq .L_08125286
 	adds r0, r6, #0
@@ -511,7 +511,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_08125286:
 	adds r0, r6, #0
-	bl BattleUnit_TickSleep
+	bl BattleUnit_CountDownSleep
 	cmp r0, #0
 	beq .L_081252b6
 	adds r0, r6, #0
@@ -561,7 +561,7 @@ Func_08124e20:
 	bl BattlePresentation_WaitForAdvance
 .L_0812530a:
 	adds r0, r6, #0
-	bl BattleUnit_TickReflect
+	bl BattleUnit_CountDownReflect
 	cmp r0, #0
 	beq .L_08125334
 	adds r0, r6, #0

@@ -8,7 +8,7 @@
 typedef s32 (*KeyCallbackFn)(void);
 #endif
 
-// Tasks: up to 20 routines run each frame by WaitTicks or each VBlank, kept
+// Tasks: up to 20 routines run each frame by WaitFrames or each VBlank, kept
 // sorted by their priority (see TASK_PASS_FRAME).
 
 /// Empties the task table: every slot gets no routine, priority
@@ -295,7 +295,7 @@ s32 Task_ResumeOverlayTasks(void) {
 
 /// Runs one pass of the tasks: every task whose priority's high byte matches
 /// `key`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
-/// Called once a frame by WaitTicks and once a VBlank by
+/// Called once a frame by WaitFrames and once a VBlank by
 /// System_VBlankHandler. Nothing runs until Task_ResetAll has set
 /// gTasksInitialized.
 void Task_RunPass(s32 key) {

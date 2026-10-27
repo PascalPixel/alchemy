@@ -31,7 +31,7 @@ s32 Func_080d1eac(s32 sprite);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 packed);
 s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 s32 UiWork_IsCompleteFar(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
@@ -182,7 +182,7 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
       column = 29 - margin;
 
     if (win[4] != 0) {
-      WaitTicks(8);
+      WaitFrames(8);
       if (extra != 0)
         handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
                                              18);
@@ -203,7 +203,7 @@ s32 UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     else
       portrait = Func_080380f8(sprite, 0, column, portraitTop);
     while (!UiWork_IsCompleteFar())
-      WaitTicks(1);
+      WaitFrames(1);
   }
   work->objectStatus = handle;
   *(s32 *)((u8 *)work + 0x1e8) = portrait;

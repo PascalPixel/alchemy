@@ -29,9 +29,9 @@ void Func_020003ac(void) {
   Func_02000a30();
   ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xa000, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_Launch(8, 6, 20);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02000a08(8, 0, 10);
   {
     s32 x = 256;
@@ -44,7 +44,7 @@ void Func_020003ac(void) {
   }
   Func_02000a08(8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_02000a08(8, 0, 10);
   ObjectMotion_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);

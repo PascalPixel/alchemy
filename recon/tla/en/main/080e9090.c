@@ -3,7 +3,7 @@
 // other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
 // ROM keeps a copy of the shake phase in its own slot for the object loop and
 // walks the objects and offsets with pointers that loop.c starts there, so
-// every slot of the work, event, tick and phase sits 4 bytes higher. Measured:
+// every slot of the work, event, frame count and phase sits 4 bytes higher. Measured:
 // pointer walks and the phase copy as source variables, at function or block
 // scope (185-190: the copy coalesces and the frame stays 28); the offset as
 // s32 (162). Permute 5 min, 2 jobs: 79 only with (amplitude + 1) > 1, not
@@ -50,9 +50,9 @@ struct ObjectSprite {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 // Sways the view from side to side, with a sound every 16 frames: the swing
@@ -65,7 +65,7 @@ void Func_080e9090(void) {
       Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 ticks;
+  s32 frameCount;
   s32 phase;
   s32 shakePhase;
   s32 i;
@@ -74,19 +74,19 @@ void Func_080e9090(void) {
   s32 frames;
 
   BattleEffect_InitializeSharedScene();
-  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
-  WaitTicks(10);
+  WaitFrames(10);
 
   phase = 0;
-  ticks = 0;
+  frameCount = 0;
   shakePhase = 0;
   amplitude = SWAY_START;
   state = SWAY_GROW;
   frames = 0;
   do {
-    if ((ticks & 15) == 15)
+    if ((frameCount & 15) == 15)
       Audio_PlayCue(SE_SWAY);
 
     // Shake the gathered objects' sprites with the view.
@@ -137,8 +137,8 @@ void Func_080e9090(void) {
         state = SWAY_DONE;
       break;
     }
-    WaitTicks(1);
-    ticks++;
+    WaitFrames(1);
+    frameCount++;
     frames++;
   } while (state != SWAY_DONE);
 

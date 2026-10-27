@@ -85,9 +85,9 @@ s32 FieldLoop_Run(s32 entrance) {
   work->transitionFrames = 16;
   work->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
-  // distance counted towards PP and poison ticks: 0x10000 / 0x199 makes a
-  // tick about every 160 pixels walked. Towns turn it off and
-  // block Retreat.
+  // distance counted towards PP, Djinn recovery and poison: 0x10000 / 0x199
+  // makes one round of them about every 160 pixels walked. Towns turn it off
+  // and block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
   if (gCommon.sceneType == SCENE_TYPE_TOWN) {
@@ -126,7 +126,7 @@ s32 FieldLoop_Run(s32 entrance) {
         // (Entrance_PlayArrival) plays through the fade; with none,
         // wait out half of it.
         if (Entrance_PlayArrival() == 0)
-          WaitTicks((work->transitionFrames + 1) / 2);
+          WaitFrames((work->transitionFrames + 1) / 2);
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
@@ -348,7 +348,7 @@ s32 FieldLoop_Run(s32 entrance) {
               } while (--n != 0);
               if (free - 136 < 0) {
                 ctrl->wait = 1;
-                WaitTicks(1);
+                WaitFrames(1);
               }
               PauseMenu_RunFar(0);
               ctrl->wait = 0;
@@ -379,7 +379,7 @@ s32 FieldLoop_Run(s32 entrance) {
           Actor_StartPlayerControlFar(actor);
       }
       do {
-        WaitTicks(1);
+        WaitFrames(1);
         actor = work->actors[gCommon.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
@@ -392,7 +392,7 @@ done:
   if (work->transitionActive != 0) {
     ScreenTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
-    WaitTicks(work->transitionFrames);
+    WaitFrames(work->transitionFrames);
   }
   FreeHeapSlot(HEAP_SLOT_FIELD);
   return result;

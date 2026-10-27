@@ -99,12 +99,12 @@ step:
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (((struct RideCar *)ride->car)->stopped == 0)
     goto step;
 done:
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);
   ride->active = 0;

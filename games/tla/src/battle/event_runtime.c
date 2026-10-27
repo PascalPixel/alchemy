@@ -45,7 +45,7 @@ s32 BattleEventRuntime_WaitForReady(void) {
   }
   if (state != BATTLE_PLAYBACK_READY) {
     do {
-      WaitTicks(1U);
+      WaitFrames(1U);
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
   Scheduler_RemoveCallback((u32)BattleEvent_Playback);

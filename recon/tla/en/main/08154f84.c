@@ -87,8 +87,8 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 
 #define THORN_INTERVAL 8
 #define PUFF_COUNT 1024
@@ -257,9 +257,9 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Tear down: stop the transfer, free both blitters, close the layer.

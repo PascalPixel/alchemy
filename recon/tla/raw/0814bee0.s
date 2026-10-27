@@ -172,7 +172,7 @@ BattleEffect_RunZagan:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r9, r2
 	mov r3, r9
@@ -215,7 +215,7 @@ BattleEffect_RunZagan:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #146
@@ -1269,7 +1269,7 @@ BattleEffect_RunZagan:
 	str r3, [r2, #12]
 	str r3, [r2, #16]
 .L_0814c882:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #1
 	mov r3, r9
 	ands r3, r2
@@ -1285,7 +1285,7 @@ BattleEffect_RunZagan:
 	add r3, r10
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_0814c8a6:
 	movs r6, #1
 	add r9, r6

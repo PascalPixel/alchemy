@@ -97,7 +97,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 shift;
   u8 *graphics;
   struct MotionObject *object;
-  s32 tick;
+  s32 memberFrame;
   struct EffectStep *point;
   s32 size;
   s32 j;
@@ -173,9 +173,9 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      tick = frame - member * 8;
+      memberFrame = frame - member * 8;
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
-      if (tick >= 0 && tick < 96) {
+      if (memberFrame >= 0 && memberFrame < 96) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera, camera + 3);
         vector[0] = object->x;
@@ -187,17 +187,17 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 
         // The three corners turn and shrink toward the target until frame
         // 64, then hold; flares are drawn along the edges between them.
-        if (tick <= 67) {
+        if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
             point = &work->particles[member * 32 + j];
             Render_ResetTransformState();
-            if (tick <= 63) {
-              scale[0] = 0x2a000 - (tick * 3 << 9);
-              scale[1] = 0x2a000 - (tick * 3 << 9);
-              scale[2] = 0x2a000 - (tick * 3 << 9);
+            if (memberFrame <= 63) {
+              scale[0] = 0x2a000 - (memberFrame * 3 << 9);
+              scale[1] = 0x2a000 - (memberFrame * 3 << 9);
+              scale[2] = 0x2a000 - (memberFrame * 3 << 9);
               Func_080151ac(scale);
-              Func_080150e4((64 - tick) << 9);
-              SceneTransform_ApplyYaw((64 - tick) << 9);
+              Func_080150e4((64 - memberFrame) << 9);
+              SceneTransform_ApplyYaw((64 - memberFrame) << 9);
             }
             Func_080150e4(j * 0x5555);
             EffectPosition_ProjectPoint(Data_0819790c,
@@ -209,7 +209,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
             struct EffectStep *from = &work->particles[j + member * 32];
             struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
 
-            size = 5 - tick / 16;
+            size = 5 - memberFrame / 16;
             for (k = 0; k != EDGE_STEPS; k++) {
               s32 x =
                   from->velocityX + k * (to->velocityX - from->velocityX) / 24;
@@ -224,7 +224,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
         }
 
         // Landed: the rune picture, its right half mirrored from the left.
-        if (tick > 63) {
+        if (memberFrame > 63) {
           draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
           draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
         }
@@ -233,7 +233,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

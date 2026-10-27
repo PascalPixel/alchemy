@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 WaitTicks(s32);
+s32 WaitFrames(s32);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleEffect_RunSparkGroups(void *, s32);
 
@@ -15,7 +15,7 @@ struct SparkObject {
 
 void BattleEffect_LongApproachThenSpark(struct SparkObject *obj) {
   BattleMotion_ApproachTargetFar(obj->target, obj->angle, 0x18, 0xc3333);
-  WaitTicks(26);
+  WaitFrames(26);
   obj->phase = 5;
   BattleEffect_RunSparkGroups(obj, 2);
 }

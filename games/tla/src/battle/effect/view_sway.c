@@ -27,9 +27,9 @@ struct EffectScene {
 };
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 /// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
@@ -44,9 +44,9 @@ void BattleEffect_RunViewSway(void) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->effectWork;
   BattleEffect_InitializeSharedScene();
-  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_Z);
-  WaitTicks(10);
+  WaitFrames(10);
 
   phase = 0;
   amplitude = SWAY_START;
@@ -81,7 +81,7 @@ void BattleEffect_RunViewSway(void) {
         state = SWAY_DONE;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     frames++;
   } while (state != SWAY_DONE);
 

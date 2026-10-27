@@ -33,7 +33,7 @@ Func_0813fa88:
 	movs r3, #1
 	str r3, [r2, #12]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, .L_0813fae8
 	movs r2, #128
 	ldr r6, .L_0813faec
@@ -78,7 +78,7 @@ Func_0813fa88:
 	movs r3, #32
 	strh r3, [r2, #6]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #206
 	lsls r2, r2, #3
 	adds r3, r7, r2
@@ -112,7 +112,7 @@ Func_0813fa88:
 .L_0813fb62:
 	strh r1, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, .L_0813fb84
 	movs r3, #128
 	lsls r3, r3, #19
@@ -159,7 +159,7 @@ Func_0813fa88:
 	movs r3, #0
 	str r3, [r2, #12]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Func_0814355c
 	ldr r3, .L_0813fbec
 	movs r2, #128
@@ -256,7 +256,7 @@ Func_0813fa88:
 	mov lr, r5
 	.2byte 0xf800
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	mov r3, r11
 	cmp r3, #4
 	bhi .L_0813fcb8

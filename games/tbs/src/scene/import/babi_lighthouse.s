@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
-	.set import.WaitTicks, 1
+	.set import.WaitFrames, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.Actor_SelectAnimation, 1
@@ -22,7 +22,7 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.Event_WaitTicks, 1
+	.set import.Event_WaitFrames, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1

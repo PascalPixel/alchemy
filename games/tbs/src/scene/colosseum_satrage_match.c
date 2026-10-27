@@ -446,18 +446,18 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   FieldActor_SetMoveTarget(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
-    WaitTicks(1);
+    WaitFrames(1);
     rotationStep += 36;
   }
   FieldActor_SetMoveTarget(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
   for (settleRotationStep = 0x168, settleFrames = 21; settleFrames >= 0;
        settleFrames--) {
     sprite->rotation -= settleRotationStep;
-    WaitTicks(1);
+    WaitFrames(1);
     settleRotationStep += 36;
   }
   Actor_WaitForMove(obstacle);
-  Event_WaitTicks(2);
+  Event_WaitFrames(2);
   Sound_PlaySong(SE_LOG_FALL);
   {
     s32 rotation = 0;
@@ -635,13 +635,13 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   }
   Event_Start();
   Import_ActorSetAnimation(pusher, 8);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   log->speedLimit = 0x8000;
   log->acceleration = 0x3333;
   Actor_SelectAnimation(log,
                         gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   Actor_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
@@ -659,7 +659,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   Actor_SelectAnimation(log, 1);
-  Event_WaitTicks(15);
+  Event_WaitFrames(15);
   Event_End();
 }
 
@@ -854,13 +854,13 @@ static void ColosseumSatrageMatch_StartLifts(void) {
 static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
   s32 elapsedFrames;
 
-  WaitTicks(10);
+  WaitFrames(10);
 
   elapsedFrames = 0;
   while (gColosseumSatrageMatch_LiftPhase != 0 ||
          gColosseumSatrageMatch_LiftTimer !=
              COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME) {
-    WaitTicks(1);
+    WaitFrames(1);
     elapsedFrames++;
     if (elapsedFrames >= COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES) {
       return;
@@ -878,8 +878,8 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
     gColosseumSatrageMatch_LiftTimer = 0;
   }
 
-  WaitTicks(30);
-  WaitTicks(1);
+  WaitFrames(30);
+  WaitFrames(1);
 
   Task_Remove(ColosseumSatrageMatch_UpdateLifts);
 
@@ -916,17 +916,17 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
   Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 0x100);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - opponentFinishedFirst, which shares r5's 3 with
    * Battle_SetType(BATTLE_TYPE_SCRIPTED), 3 of 106 instructions differ in
@@ -973,7 +973,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
     Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
   ColosseumSatrageMatch_ShowBattleResultLettering(result);
   Event_End();
@@ -1214,7 +1214,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -1271,13 +1271,13 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 248);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
-      Event_WaitTicks(3);
+      Event_WaitFrames(3);
       actor = Actor_GetById(ACTOR_PARTY_LEADER);
       actor->velocityY = 0x40000;
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
       FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_WaitTicks(30);
+      Event_WaitFrames(30);
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1315,7 +1315,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       ColosseumSatrageMatch_StartLifts();
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1080, 264);
-      Event_WaitTicks(15);
+      Event_WaitFrames(15);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
@@ -1353,29 +1353,29 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       FieldCamera_SetSpeed(0x30000, 0x6000);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(192), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitTicks(60);
+      Event_WaitFrames(60);
       FieldCamera_SetSpeed(0x10000, 0x2000);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
       FieldCamera_WaitForArrival();
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 856, 264);
-      Event_WaitTicks(10);
+      Event_WaitFrames(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 264);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 232);
       Event_ShowMessage(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
-      Event_WaitTicks(10);
+      Event_WaitFrames(10);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 163 instructions
        * differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(ACTOR_RIDING_LOG_SOUTH, -64, 0);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-      Event_WaitTicks(10);
+      Event_WaitFrames(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
-      Event_WaitTicks(10);
+      Event_WaitFrames(10);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
@@ -1410,7 +1410,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     FieldCamera_SetSpeedParameters(0x30000, 0x6000);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(240), 1);
     FieldCamera_WaitForArrival();
-    Event_WaitTicks(45);
+    Event_WaitFrames(45);
     FieldCamera_SetSpeed(0x10000, 0x2000);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
     z = 264;
@@ -1470,13 +1470,13 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
     offsetZ = (row - obstacle->z.fixed) / 2;
   }
   Import_ActorSetAnimation(pusher, 8);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   obstacle->speedLimit = 0x8000;
   obstacle->acceleration = 0x3333;
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SelectAnimation(obstacle, 3);
   FieldActor_SetMoveTarget(obstacle, column, 0, row);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   Actor_SetSpeedParameters(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Actor_SelectAnimation(pusherActor, 2);
@@ -1488,7 +1488,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Actor_SelectAnimation(obstacle, 1);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
-  Event_WaitTicks(15);
+  Event_WaitFrames(15);
 }
 
 /// The Board Walk's attendant, stage 5 of Colosseum Final 2: the first time,
@@ -1508,7 +1508,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     FieldCamera_SetSpeedParameters(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(264), 1);
     FieldCamera_WaitForArrival();
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     FieldCamera_SetSpeed(0x18000, 0x3000);
     FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
     FieldCamera_WaitForArrival();
@@ -1587,11 +1587,11 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-    Event_WaitTicks(120);
+    Event_WaitFrames(120);
     Event_End();
     return;
   }
@@ -1604,30 +1604,30 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     s16 *openingScript = gColosseumSatrageMatch_LetteringTitle;
     *(s16 *)((u8 *)openingScript + 30) = (mode * 60);
   }
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(mode + 0x5a);
   Colosso_LoadLettering(mode);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-  Event_WaitTicks(120);
+  Event_WaitFrames(120);
 
   // Finish the opening fanfare before the final lettering pulses and start
   // signal.
   while (Sound_GetBgmRestoreDelay() != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Sound_PlaySong(SE_COLOSSO_GO);
@@ -1648,32 +1648,32 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   STORE_CONST(gColosseumSatrageMatch_LetteringLose[13]) =
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 1);
-    Event_WaitTicks(-result * 60 + 60);
+    Event_WaitFrames(-result * 60 + 60);
     reactingActorId = 0;
   } else {
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 0);
-    Event_WaitTicks(result * 60 + 60);
+    Event_WaitFrames(result * 60 + 60);
     reactingActorId = 8;
   }
   FieldEffect_SpawnAttached(reactingActorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                             0);
   while (Sound_GetBgmRestoreDelay() != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Sound_PlaySong(MUS_SILENCE);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1710,7 +1710,7 @@ static void ColosseumSatrageMatch_WaitForOpponentFinish(void) {
   s16 *mode = &((struct PathRecorder *)gSceneLocalState)->mode;
 
   while (*mode != 9) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 
@@ -1806,7 +1806,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   Actor_StartScript(warrior, gColosseumSatrageMatch_ApproachScript);
 
   while (*timer != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Assign the item on the side this warrior reached first.
@@ -1967,7 +1967,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 
   // Start the push only after all occupancy and terrain checks have passed.
   Actor_SelectAnimation(pusher, 8);
-  WaitTicks(15);
+  WaitFrames(15);
 
   obstacle->speedLimit = 0x3333;
   obstacle->acceleration = 0x3333;

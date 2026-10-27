@@ -24,7 +24,7 @@ Menu_StepRight:
 	movs r3, #33
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldrh r3, [r5]
 	movs r0, #229
 	adds r3, #1
@@ -99,7 +99,7 @@ Menu_StepRight:
 	beq .L_0803eca8
 .L_0803ec96:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #24
 	ldrsh r2, [r5, r1]
 	movs r0, #16
@@ -214,7 +214,7 @@ Menu_StepRight:
 	adds r0, r7, #0
 	bl Menu_LoadSelectionNodeResource
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #210
 	lsls r1, r1, #2
 	adds r3, r7, r1
@@ -223,7 +223,7 @@ Menu_StepRight:
 	ldrh r0, [r3, #10]
 	bl Menu_OpenSelectionWindow
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

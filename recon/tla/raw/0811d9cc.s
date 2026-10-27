@@ -90,7 +90,7 @@ Func_0811d9cc:
 	lsls r3, r3, #6
 	str r3, [r6]
 	adds r0, r7, #0
-	bl WaitTicks
+	bl WaitFrames
 .L_0811da82:
 	mov r2, r11
 	movs r1, #6
@@ -439,7 +439,7 @@ Func_0811d9cc:
 	bne .L_0811dd68
 	bl BattlePresentation_WaitForAdvance
 	movs r0, #3
-	bl WaitTicks
+	bl WaitFrames
 .L_0811dd68:
 	movs r0, #0
 	movs r1, #0

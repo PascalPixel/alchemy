@@ -7,7 +7,7 @@
 	.set import.Actor_SetBlendMode, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Clear, 1
-	.set import.Event_WaitTicks, 1
+	.set import.Event_WaitFrames, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Scene_AssignViewFlags, 1

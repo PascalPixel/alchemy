@@ -15,7 +15,7 @@ void Script_WaitForEventTimeout(void *fieldObject) {
 
   waitedFrames = 0;
   while (waitedFrames < 600 && Object_IsTargetUnset(fieldObject) == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     waitedFrames++;
   }
 }

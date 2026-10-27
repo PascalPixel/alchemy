@@ -37,11 +37,11 @@ void Func_02000718(void) {
   Func_02004d10(0x10000, 0x2000);
   Camera_SetBounds(0xa80000, 0, 0x2980000, 1);
   Func_02004d20();
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02004d10(0x40000, 0x8000);
   Camera_SetBounds(0x1d80000, 0, 0x2980000, 1);
   Func_02004d20();
-  FieldEvent_WaitTicks(90);
+  FieldEvent_WaitFrames(90);
   Func_02004cb0();
 }
 
@@ -89,7 +89,7 @@ void Func_020008f4(s32 unused, s32 id) {
     struct ObjectRuntime *object = Object_GetById(8);
 
     if (object->x >> 20 == 20) {
-      FieldEvent_WaitTicks(5);
+      FieldEvent_WaitFrames(5);
       object->z += 0x10000;
       BYTE_AT(object, 98) = 1;
       Flag_Set(0xa4f);

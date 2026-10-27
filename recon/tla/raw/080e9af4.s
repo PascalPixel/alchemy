@@ -92,14 +92,14 @@ Func_080e9af4:
 	bl Object_SetPositionAndResetMotionFar
 	adds r0, r7, #0
 	movs r1, #0
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 	movs r1, #5
 	adds r0, r7, #0
 	bl Object_SetMode
 	movs r0, #130
 	bl Audio_PlayCue
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #128
 	lsls r3, r3, #5
 	adds r3, #48
@@ -185,7 +185,7 @@ Func_080e9af4:
 	cmp r2, #0
 	beq .L_080e9cf4
 	movs r0, #5
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #246
 	bl Audio_PlayCue
 	movs r6, #128
@@ -198,11 +198,11 @@ Func_080e9af4:
 	str r3, [r6]
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #31
 	ble .L_080e9c8a
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #8]
 	cmp r3, #0
 	beq .L_080e9cb6
@@ -224,11 +224,11 @@ Func_080e9af4:
 	str r3, [r6]
 	movs r0, #1
 	subs r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #0
 	bne .L_080e9cc0
 	movs r0, #5
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, .L_080e9dac
 	bl Scheduler_RemoveCallback
 	movs r3, #128
@@ -287,7 +287,7 @@ Func_080e9af4:
 	str r3, [r6]
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #31
 	ble .L_080e9d30
 	movs r3, #4

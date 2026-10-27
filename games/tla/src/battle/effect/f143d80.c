@@ -58,5 +58,5 @@ void Func_08143d80(void) {
   REG_BLDALPHA = 0x100e;
   ClearWords_(canvas, 0x4000);
   ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
-  WaitTicks(1);
+  WaitFrames(1);
 }

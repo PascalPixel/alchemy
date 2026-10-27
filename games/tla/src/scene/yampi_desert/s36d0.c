@@ -35,5 +35,5 @@ void Func_0200371c(void) {
   }
   Func_02003da0(0, 240);
   Func_02003e3c(0, 9, 0, 0, 64);
-  WaitTicks(10);
+  WaitFrames(10);
 }

@@ -83,8 +83,8 @@ s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -255,9 +255,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

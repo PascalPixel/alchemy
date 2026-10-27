@@ -187,7 +187,7 @@ void DebugBattle_ViewMessages(void) {
         message = DEBUG_SECOND_FORM;
         messageWindow = Message_OpenWindowFar(index + message, 2, 2, 4);
       }
-      WaitTicks(10);
+      WaitFrames(10);
 
       // Wait for a key that picks another message, or for A once the
       // message has been shown in full.
@@ -220,7 +220,7 @@ void DebugBattle_ViewMessages(void) {
           break;
         if (TextPrinter_AllFinishedFar() != 0 && (gKeysRepeat & KEY_A))
           break;
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Window_CloseAllFar(1);
       // Close the window and free the message system for the next one.
@@ -266,7 +266,7 @@ restart:
     preset = 0;
     for (;;) {
       GameFlag_ClearFar(FLAG_CHILDHOOD);
-      WaitTicks(1);
+      WaitFrames(1);
       for (;;) {
         if (gKeysRepeat & KEY_RIGHT)
           encounter++;
@@ -295,7 +295,7 @@ restart:
           DebugParty_LoadPreset(preset);
           loadedPreset = preset;
         }
-        WaitTicks(1);
+        WaitFrames(1);
       }
       // A fights: Down still held makes it a link battle. The battle's
       // background comes from gCommon.special

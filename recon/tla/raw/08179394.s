@@ -716,7 +716,7 @@ BattleEffect_RunRagingHeat:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7
@@ -725,7 +725,7 @@ BattleEffect_RunRagingHeat:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #56]
 	adds r6, #1
 	str r6, [sp, #56]

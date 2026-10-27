@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -247,7 +247,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       actor[3] += 0x100000;
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   actor[18] = 0xab85;
   actor[3] = 0;
@@ -579,10 +579,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     } else {
       gBgScroll[1].y = work->savedBg1Y;
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     WAIT_TRANSFER(work);
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   count = -1;
   Render_BuildQuadStrip(Data_02012000, 8, 16, 32);
@@ -612,7 +612,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   work->transferPending = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   Iwram_FillWords(canvas, 0x4000, 0);
   REG_BG2CNT = 0x786;
   BattleBackground_LoadFar(1, 0x45, 0);
@@ -644,7 +644,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           ((struct RuinObject *)work->objects[k * 9 + j])->tile;
     }
   }
-  WaitTicks(1);
+  WaitFrames(1);
   level = 0;
   for (frame = 0; frame != 102; frame++, level += 2) {
     if ((gInput.repeat & 3) && frame <= 84 && count == -1) {
@@ -865,7 +865,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
                                           (s32 *)&req, 0);
       }
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     WAIT_TRANSFER(work);
     if (work->shakeFrames > 0) {
       gBgScroll[1].y = (Random16() & 7) + 28;
@@ -874,7 +874,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = work->savedBg1Y;
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     if (count > 0 && --count == 0) {
       break;
     }
@@ -884,7 +884,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  WaitTicks(1);
+  WaitFrames(1);
   gCameraSceneParameters[4] = 120;
   Audio_PlayCue(390);
   for (i = 0; i != 18; i++) {
@@ -1021,7 +1021,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Func_08158ce0(r, r);
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   Palette_LoadBasicObjColors();

@@ -59,7 +59,7 @@ BattleEffect_RunTripleChomp:
 .L_0818b8d4:
 	bl BattleEffect_SetApproachMotion
 	movs r0, #8
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #23
 	movs r0, #104
 	bl BattleEffect_LoadBlitter
@@ -430,7 +430,7 @@ BattleEffect_RunTripleChomp:
 	movs r1, #8
 	movs r0, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #240
 	ldr r3, [sp, #56]
 	lsls r0, r0, #7
@@ -439,7 +439,7 @@ BattleEffect_RunTripleChomp:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #48]
 	adds r1, #1
 	str r1, [sp, #48]

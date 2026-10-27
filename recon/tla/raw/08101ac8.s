@@ -152,7 +152,7 @@ DjinnMenu_DrawPage:
 	strb r3, [r1, #3]
 	strb r2, [r1, #6]
 	movs r0, #3
-	bl WaitTicks
+	bl WaitFrames
 	add sp, #28
 	pop {r3, r5, r6, r7}
 	mov r8, r3

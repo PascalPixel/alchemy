@@ -434,7 +434,7 @@ BattleEffect_RunTriangleStrike:
 	adds r3, r2, r4
 	str r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #68]
 	ldr r3, [sp, #80]
 	adds r1, #1

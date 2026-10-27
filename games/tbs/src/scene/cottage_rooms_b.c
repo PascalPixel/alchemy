@@ -355,7 +355,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(speakerId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);
@@ -392,21 +392,21 @@ const struct Trigger *CottageRoomsB_GetTriggers(void) {
 static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Event_Start();
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 2);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Event_SetMessageId(MsgValeHeyBoy);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
   FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_OpenMessage(ACTOR_MASKED_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 4);
   Event_End();
 }
@@ -595,13 +595,13 @@ s32 CottageRoomsB_Initialize(void) {
               ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))
                   ->loud = 1;
               Weather_LastLightning();
-              WaitTicks(30);
+              WaitFrames(30);
               Event_StartScreenTransition();
               Event_WaitTransitionFrames();
               Weather_ResumeLightning();
             } else {
               MapGrid_CenterOnFollowedPoint();
-              WaitTicks(1);
+              WaitFrames(1);
             }
           }
         }
@@ -659,12 +659,12 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Message_SetVoiceFromActor(ACTOR_DORA);
   firstMessage = MsgValeWake;
   FieldMessage_ShowCentered(firstMessage, 1, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Message_SetVoiceFromActor(ACTOR_DORA);
   FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // Widen the camera bounds and reveal the lightning outside.
   grid->minX = PIXELS(328);
   grid->minY = PIXELS(600);
@@ -674,7 +674,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   viewCenter->y.fixed = 0;
   viewCenter->z.fixed = PIXELS(691);
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
   (*eventSlot)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
@@ -682,7 +682,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
       ->loud = 1;
   Weather_LastLightning();
-  WaitTicks(30);
+  WaitFrames(30);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
@@ -693,15 +693,15 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
   TilesetAnim_Pause(7);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   TilesetAnim_Resume(8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
@@ -709,7 +709,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 1);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
@@ -718,7 +718,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                     0);
   CottageRoomsB_DemonstrateCatch();
@@ -730,28 +730,28 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 542, 680);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 534, 688);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
   Actor_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
@@ -765,14 +765,14 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     (*eventSlot)->message++;
   }
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
   Event_FinishScreenTransition();
@@ -834,7 +834,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Weather_StartLightning();
   ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))->loud = 1;
   Weather_LastLightning();
-  WaitTicks(30);
+  WaitFrames(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -860,18 +860,18 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
   Actor_ResetAndSetPositionInMode2(ACTOR_KYLE, 415, 589);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
   Sound_PlaySong(SE_RUN_BACK);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
   // (gCottageRoomsB_FlameRisesScript) as SE_FLAME_FLARE plays.
   Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameRisesScript);
@@ -881,33 +881,33 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   i = 0;
 ramp:
   *alpha = BLEND_ALPHA(14, 16) + i;
-  WaitTicks(1);
+  WaitFrames(1);
   if (++i <= 3)
     goto ramp;
   Sound_PlaySong(SE_FLAME_FLARE);
-  WaitTicks(10);
+  WaitFrames(10);
   for (i = 0; i <= 15; i++) {
     SetBlendAlpha(BLEND_ALPHA(15, 16) - i);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   // Dora and Isaac look back, startled, then nod to each other.
   Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(80);
+  Event_WaitFrames(80);
   Import_ActorSetPosition(ACTOR_KYLE, 0, 0);
   Actor_LinkPair(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
@@ -1016,16 +1016,16 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_StartRepeatedMotion(ACTOR_DORA, 1);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  Event_WaitTicks(80);
+  Event_WaitFrames(80);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
   Actor_ResetAndSetPosition(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
-  Event_WaitTicks(80);
+  Event_WaitFrames(80);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -1034,14 +1034,14 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
@@ -1054,7 +1054,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   if (Event_GetFlag(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
@@ -1067,7 +1067,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   if (GameFlag_Get(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0);
   FieldEffect_SpawnAttached(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
@@ -1075,26 +1075,26 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_SetMessageId(firstMessage + 3);
   Event_ShowMessageAndWait(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   leader->facing = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
   Actor_SetPositionAndCommit(ACTOR_DORA, 586, 400);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1111,7 +1111,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   GameFlag_Set(FLAG_VISITED_SICK_DORA);
   GameFlag_Set(FLAG_VALE_DORA_OUT_OF_BED);
@@ -1130,12 +1130,12 @@ static void CottageRoomsB_TalkToDora(void) {
     Actor_SetTargetAndCallback(ACTOR_DORA,
                                ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                gCottageRoomsB_DoraFacesIsaacScript);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_SetMessageId(MsgValeDontWorryBest);
     Event_ShowMessageAndWait(ACTOR_DORA, 0);
   } else {
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     message = MsgValeUnnOhhKyle;
     Event_SetMessageId(message);
     Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
@@ -1167,10 +1167,10 @@ static void CottageRoomsB_ShowMythrilBag(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(480), PIXELS(202));
-  WaitTicks(1);
+  WaitFrames(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
   clear = 0;
   actor = FieldActor_Create(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
@@ -1198,7 +1198,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Actor_WaitForScriptEnd(actor);
   Actor_StartScript(actor, gCottageRoomsB_MythrilBagWobblesScript);
   Actor_WaitForScriptEnd(actor);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_Release(actor);
   Actor_Jump(ACTOR_KRADEN, 2, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);

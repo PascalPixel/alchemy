@@ -14,10 +14,10 @@ void Func_020040b4(void) {
   z >>= 20;
   ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitTicks(1);
+  WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitTicks(4);
+  FieldEvent_WaitFrames(4);
   Func_020048fc()->y -= 0x80000;
 }
 
@@ -61,5 +61,5 @@ void Func_0200413c(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_020040b4();
   Func_020049c4(161);
   Func_0200473c(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitTicks(12);
+  FieldEvent_WaitFrames(12);
 }

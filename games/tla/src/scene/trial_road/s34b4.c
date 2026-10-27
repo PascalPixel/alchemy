@@ -7,7 +7,7 @@ struct ActorSolid {
   u8 solid : 8;
 };
 
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Task_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -56,7 +56,7 @@ void Func_020034b4(void) {
   Object_SetModeById(14, 6);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_02005938((s32)MsgTrialRoadHeroesProven);
   ObjectMotion_SetVariantCallback(13, 2);
   Task_Wait(4);
@@ -65,21 +65,21 @@ void Func_020034b4(void) {
   Motion_SetVarCbAndRefresh(8, 2);
   Func_02005940(8, 0);
   Object_SetModeById(8, 7);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
   Object_SetModeById(13, 7);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(14, 7);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Object_SetModeById(8, 1);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
   ObjectMotion_ArmCallback(8, Func_02002d50(0x8000), 0);
   Object_SetModeById(13, 1);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_ArmCallback(13, Func_02002d50(0x8000), 0);
   Object_SetModeById(14, 1);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   ObjectMotion_ArmCallback(14, Func_02002d50(0x8000), 0);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02005940(8, 0);
   ObjectMotion_SetSpeedParameters(8, 0x10000, 0x8000);
@@ -91,18 +91,18 @@ void Func_020034b4(void) {
   ObjectMotion_SetAngleToward(7, 4, 0);
   ObjectMotion_SetAngleToward(6, 4, 0);
   ObjectMotion_SetAngleToward(5, 4, 0);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02005860(65);
   PartyInventory_GiveItem(215, 0);
   ObjectMotion_SetAngleToward(4, 8, 0);
   OBJECT_BYTE(Object_GetById(8), 0x5a) &= ~1;
   ObjectMotion_SetPositionAndReset(8, Func_02002d20(35), 264);
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   /* FAKEMATCH: the bit is set through the 8-bit field, as in overlay 685: read
    * as a plain byte the store takes the order of a store that aliases what
    * follows. */
   ((struct ActorSolid *)Object_GetById(8))->solid |= 1;
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02005960(8, 261, 10);
   Func_02005940(8, 0);
   Func_02005950(8, Func_02002d50(0));

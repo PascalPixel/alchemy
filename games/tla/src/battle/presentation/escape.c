@@ -30,11 +30,11 @@ s32 BattleEscape_PlayRun(void *action) {
       do {
         BattleMotion_SetupEscapeObject(party_members[member_slot]);
         animated++;
-        WaitTicks(8);
+        WaitFrames(8);
         member_slot++;
       } while (animated != party_size);
     }
-    WaitTicks(22);
+    WaitFrames(22);
     return 1;
   }
   UiText_ShowMessageAndWaitCoreFar((s32)MsgCannotEscape);

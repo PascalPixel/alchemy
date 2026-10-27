@@ -98,10 +98,10 @@ s32 Func_0804e3f4(void) {
       UiText_DrawNumberInWindow(index, 2, window, 0, 0);
       UiText_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   UiWork_Finalize((struct UiWindow *)window, 2);
   UiWork_Finalize((struct UiWindow *)portrait, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   return 0;
 }

@@ -8,7 +8,7 @@ extern char SceneId_Ov6B0Room4;
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 frames);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void Event_FinishScreenTransition(void);
@@ -44,7 +44,7 @@ void Func_02001518(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, x, z);
   }
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 10);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;
    * called directly the three share one register, two instructions shorter
@@ -58,7 +58,7 @@ void Func_02001518(void) {
   Object_SetSpritePriority(leader, 1);
   Object_SetSpritePriority(object, 1);
   Func_02003310(object, object->x, object->y + 0x800000, object->z);
-  FieldEvent_WaitTicks(80);
+  FieldEvent_WaitFrames(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020033a0();

@@ -217,7 +217,7 @@ Func_080daecc:
 .L_080db060:
 	movs r0, #1
 	str r4, [sp, #0]
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #128
 	lsls r0, r0, #9
 	adds r5, #1

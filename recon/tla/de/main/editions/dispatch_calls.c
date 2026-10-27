@@ -49,7 +49,7 @@ void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
-s32 WaitTicks(s32);
+s32 WaitFrames(s32);
 
 extern const s32 gObjectDispatch_CameraScript[];
 extern const s32 gObjectDispatch_EndScript[];

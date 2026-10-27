@@ -323,14 +323,14 @@ Func_0813e7e0:
 	adds r1, r2, #0
 	bl Func_08164b2c
 .L_0813ea6a:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232
 	add r3, r10
 	str r6, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r5, #1
 .L_0813ea80:
 	movs r2, #250
@@ -386,7 +386,7 @@ Func_0813e7e0:
 	movs r0, #2
 	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_0813eb68
 	ldr r0, .L_0813eb6c
 	ldrh r3, [r0]

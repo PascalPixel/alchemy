@@ -167,7 +167,7 @@ BattleEffect_RunNeptune:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_081695bc
 	movs r0, #1
 	movs r2, #0
@@ -1335,7 +1335,7 @@ BattleEffect_RunNeptune:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r8
-	bl WaitTicks
+	bl WaitFrames
 	cmp r6, #244
 	beq .L_08169e2e
 	cmp r6, #16
@@ -1808,7 +1808,7 @@ BattleEffect_RunNeptune:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #60]
 	lsls r4, r4, #7
@@ -1820,7 +1820,7 @@ BattleEffect_RunNeptune:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r8
-	bl WaitTicks
+	bl WaitFrames
 	cmp r6, #144
 	beq .L_0816a1c6
 	b .L_08169f54

@@ -4,7 +4,7 @@
 #include "call.h"
 
 void Camera_MoveWithinMapBounds();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02002698();
 void Func_02003c28();
 void Func_02003c30();
@@ -43,7 +43,7 @@ void Func_02002dd4(void) {
   Call3(ObjectMotion_SetPositionAndReset, 16, 0x2f8, 200);
   Call2(ObjectDispatch_SetSingleChildFlags,
         Value1((s32 (*)())Object_GetById, 16), 1);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call1(Func_02003df8, 153);
   actor->velocityY = 0x80000;
   Call2(ObjectDispatch_SetSingleChildFlags,
@@ -59,9 +59,9 @@ void Func_02002dd4(void) {
   Call3(ObjectMotion_SetPositionAndReset, 16, 0x338, 200);
   Call2(ObjectDispatch_SetSingleChildFlags,
         Value1((s32 (*)())Object_GetById, 16), 1);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Object_LinkObjectAndSetCallback, 16, gPartyState.currentOwner);
   Call1(ObjectMotion_EnableActionAndResetMotion, gPartyState.currentOwner);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Func_02003c30();
 }

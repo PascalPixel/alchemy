@@ -159,7 +159,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
 struct ModelDraw *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *out, s32 count);
 void Render_DrawModelList(struct ModelDraw *draw);
@@ -167,7 +167,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 // The body of 21 strike and column effects.
 
@@ -662,9 +662,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(8, 8);
     else
       Func_08158ce0(2, 4);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

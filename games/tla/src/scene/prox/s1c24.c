@@ -12,7 +12,7 @@ s32 Func_02004464();
 s32 Func_020045ec();
 s32 ObjectDispatch_SetSingleChildFlags();
 s32 Object_SetPositionAndResetMotion();
-s32 WaitTicks();
+s32 WaitFrames();
 s32 Event_StartScreenTransition();
 s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_SetSpeedParameters();
@@ -33,7 +33,7 @@ void Func_02001c24(s32 a0) {
           Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532)), 0);
     Call4(Object_SetPositionAndResetMotion, t0, (FIELD_AT(t0, s32, 8) + -65536),
           FIELD_AT(t0, s32, 12), (FIELD_AT(t0, s32, 16) + -393216));
-    Call1(WaitTicks, 1);
+    Call1(WaitFrames, 1);
     Event_StartScreenTransition();
     Call2(Motion_SetModeAndWaitAnimation, FIELD_AT(gPartyState, s32, 532),
           0x17);
@@ -41,7 +41,7 @@ void Func_02001c24(s32 a0) {
     Call4(Object_SetPositionAndResetMotion, t0,
           (FIELD_AT(t0, s32, 8) + 0x10000), FIELD_AT(t0, s32, 12),
           (FIELD_AT(t0, s32, 16) + -393216));
-    Call1(WaitTicks, 1);
+    Call1(WaitFrames, 1);
     Event_StartScreenTransition();
     Call2(Motion_SetModeAndWaitAnimation, FIELD_AT(gPartyState, s32, 532),
           0x18);

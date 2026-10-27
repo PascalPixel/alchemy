@@ -13,7 +13,7 @@ void *Unit_Get(s32 owner);
 void *Djinn_GetRecoveryTable(s32 which);
 s32 Func_0200193c(void);
 void Ui_AdjustValueWithoutLimit(s32 message, u16 *buffer);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 extern const u8 MsgEnemyLabel[];
 
@@ -41,7 +41,7 @@ waitRecord:
     result = -1;
     goto done;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   if (--timeout < 0 || (gLinkStatus & 3) != 3) {
     if (++tries > 24) {
       result = -1;
@@ -59,7 +59,7 @@ testRecord:
   if (record[0x12a] != 0) {
     result++;
   }
-  WaitTicks(2);
+  WaitFrames(2);
   Ui_AdjustValueWithoutLimit((s32)MsgEnemyLabel, namePrefix);
   nameIndex = 0;
   if (namePrefix[nameIndex] != 0) {
@@ -109,7 +109,7 @@ waitRecovery:
     result = -1;
     goto done;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   if (--timeout < 0 || (gLinkStatus & 3) != 3) {
     if (++tries > 24) {
       result = -1;
@@ -123,7 +123,7 @@ testRecovery:
   if (gSerialReceivedSize != 0x154) {
     result = -1;
   } else {
-    WaitTicks(2);
+    WaitFrames(2);
   }
   goto done;
 second:

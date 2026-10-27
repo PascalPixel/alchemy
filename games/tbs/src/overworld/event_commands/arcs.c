@@ -137,7 +137,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
 /// Per-frame update: flashes an actor between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldPsynergy_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
-void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
+void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 2) != 0) {
     Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_WHITE);

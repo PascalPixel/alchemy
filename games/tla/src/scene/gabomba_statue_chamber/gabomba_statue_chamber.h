@@ -61,11 +61,11 @@ struct GabombaStatueChamberEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 struct GabombaStatueChamberObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct GabombaStatueChamberObject *object,
                                       s32 x, s32 y, s32 z);
@@ -187,7 +187,7 @@ static inline void GabombaStatueChamber_MapCopy(s32 a, s32 b, s32 c, s32 d,
 
 static inline void GabombaStatueChamber_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void GabombaStatueChamber_SePlay(s32 cue) {
@@ -195,9 +195,9 @@ static inline void GabombaStatueChamber_SePlay(s32 cue) {
   Func_02001f10(cue);
 }
 
-static inline void GabombaStatueChamber_WaitTicks(s32 ticks) {
+static inline void GabombaStatueChamber_WaitFrames(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(ticks);
+  WaitFrames(frames);
 }
 
 #define GABOMBA_STATUE_CHAMBER_TASK_ADD(callback, priority)                    \

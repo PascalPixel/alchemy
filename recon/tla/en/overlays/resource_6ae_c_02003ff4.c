@@ -18,7 +18,7 @@ s32 Camera_MoveWithinMapBounds();
 s32 Event_AskYesNoWithActorAnimation();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_02000610();
 s32 Func_02000640();
 s32 Func_0200558c();
@@ -56,7 +56,7 @@ s32 Object_SetPartAttribute();
 s32 Object_SetPositionAndResetMotion();
 s32 Scheduler_RemoveCallbackFar();
 s32 UiText_OpenMessageAtObject();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Func_020004a4[];
 extern u8 MsgWhatCouldHe[];
 extern u8 gData_020061d4[];
@@ -100,7 +100,7 @@ L_0200c05c:
   FIELD_AT(t9, u16, 6) = v_r5;
   t10 = Value1(Object_GetById, 2);
   FIELD_AT(t10, u16, 6) = v_r5;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Object_SetModeById, 20, 8);
   Call2(Object_SetModeById, 21, 8);
   Call2(Object_SetModeById, 22, 7);
@@ -108,18 +108,18 @@ L_0200c05c:
   Call3(Func_0200567c, 1, 0x21a0000, 0x1400000);
   t17 = *(s32 *)v_r6;
   Call3(Func_0200567c, t17, 0x1fa0000, 0x1180000);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   t21 = Value0(Func_0200573c);
   FIELD_AT(t21, u8, 85) = v_r10;
   Call4(Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1200000, 0);
   Func_0200558c();
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   t25 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t25, s32, 428) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0, 0);
   t31 = *(s32 *)v_r6;
@@ -160,7 +160,7 @@ L_0200c05c:
   Call2(Object_SetModeById, 2, 3);
   Call2(Motion_SetModeAndWaitAnimation, 1, 3);
   Call2(Func_0200571c, 19, 0x102);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_020056f4, 19, 0);
   Call2(Func_020056f4, 7, 0);
   Call2(Func_02005704, 19, 0xb000);
@@ -170,7 +170,7 @@ L_0200c05c:
   t76 = Value1(Object_GetById, 28);
   Call2(Object_SetPartAttribute, t76, 15);
   Call3(Func_0200567c, 28, 0x2000000, 0x1680000);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Func_02005764, 0x10000, 0);
   Call2(Func_0200578c, 23, 24);
   Call2(Func_020056f4, 28, 0);
@@ -207,7 +207,7 @@ L_0200c05c:
   t113 = Value1(Object_GetById, 5);
   FIELD_AT(t113, u16, 6) = 0x6000;
   Call2(Object_SetModeById, 5, 22);
-  Call1(FieldEvent_WaitTicks, 10);
+  Call1(FieldEvent_WaitFrames, 10);
   Call2(ObjectMotion_SetVariantCallback, 5, 2);
   Call2(Func_020056f4, 5, 0);
   Call2(Func_0200578c, 23, 24);
@@ -237,7 +237,7 @@ L_0200c4a0:
   Call2(Func_0200578c, 23, 24);
   Call2(Func_020056f4, 28, 0);
   Func_02005794();
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1280000, 1);
   Call3(ObjectMotion_ArmCallback, 19, 0x5000, 20);
   Call3(ObjectMotion_ArmCallback, 19, v_r8, 40);
@@ -263,7 +263,7 @@ L_0200c4a0:
   Call1(Func_020057dc, 78);
   Call1(Func_020057dc, 141);
   Call3(Func_020055c4, 0x10000, 0x10000, 0x10000);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   t168 = *(s32 *)v_r6;
   Call1(Func_02000610, t168);
   Call1(Func_02000610, 5);
@@ -274,7 +274,7 @@ L_0200c4a0:
   Call1(Func_02000610, 1);
   Call1(Func_02000610, 2);
   Call1(Func_02000610, 3);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02005724, 0x19999, 0x3333);
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1200000, 1);
   Func_02005734();
@@ -323,13 +323,13 @@ L_0200c66c:
 L_0200c72a:
   t215 = FIELD_AT(v_r7, s32, 24);
   FIELD_AT(v_r7, s32, 24) = (t215 + 0x400);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   v_r6 = (v_r6 + 1);
   if ((u32)v_r6 <= (u32)39)
     goto L_0200c66c;
   Call1(Func_020057dc, 63);
   Call2(ObjectMotion_EnableActionAndSetCallback, 23, (s32)gData_020061d4);
-  Call1(FieldEvent_WaitTicks, 80);
+  Call1(FieldEvent_WaitFrames, 80);
   Call3(ObjectMotion_Launch, 1, 4, 10);
   Call3(ObjectMotion_Launch, 1, 6, 10);
   Call2(Func_02005704, 1, 0x8000);
@@ -411,7 +411,7 @@ L_0200c9e8:
   t292 = Value1(Object_GetById, 1);
   FIELD_AT(t292, u8, 90) &= 254;
   Call3(ObjectMotion_SetPositionAndReset, 1, 0x21e, 0x148);
-  Call1(FieldEvent_WaitTicks, 1);
+  Call1(FieldEvent_WaitFrames, 1);
   t296 = Value1(Object_GetById, 1);
   FIELD_AT(t296, u8, 90) |= 1;
   Call2(Func_020056f4, 1, 0);
@@ -431,7 +431,7 @@ L_0200c9e8:
   Func_02005714(3, 0x100, 20);
   Call2(Func_020056f4, 3, 0);
   Call2(Func_0200571c, 7, 0x102);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_020056f4, 7, 0);
   Call3(ObjectMotion_Launch, 5, 4, 10);
   Call2(Func_020056f4, 5, 0);
@@ -442,15 +442,15 @@ L_0200c9e8:
   Call2(Func_020056f4, 19, 0);
   Call1(Func_020057dc, 0x12a);
   Call1(Func_020057dc, 78);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call1(Func_020057dc, 140);
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 20);
-  Call1(WaitTicks, 240);
+  Call1(WaitFrames, 240);
   *(u16 *)0x4000000 = 0;
   Call2(Func_0200575c, 0, 0);
   Call1(Func_0200576c, 8);
-  Call1(WaitTicks, 8);
+  Call1(WaitFrames, 8);
   Call1(Func_02005744, 4);
   return;
 }

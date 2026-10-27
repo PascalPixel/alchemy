@@ -90,7 +90,7 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // The user lunges, a streak of fire leaves them, and the target bursts into
@@ -133,7 +133,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
 
   // The shards start inside the target; each group of four lives two frames
@@ -247,9 +247,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == FLASH_FRAME)
       Func_0814cd48(effect->actors[0], 10, -1, -1, 0);
     Func_08158ce0(16, 16);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

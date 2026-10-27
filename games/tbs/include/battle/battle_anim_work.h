@@ -121,7 +121,7 @@ struct BattleAnimWork {
   ///@}
   struct Sprite *animations[16]; ///< the animation's sprites
   /// Each target's flash timer in frames, for args->targets[n]: set by
-  /// BattleAnim_TintBattler, counted down by BattleAnim_TickBattlerTints.
+  /// BattleAnim_TintBattler, counted down by BattleAnim_CountDownBattlerTints.
   u8 actorTimers[8];
   s32 framesSinceTransfer; ///< 1 on a canvas copy's frame, then counts up
   /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas

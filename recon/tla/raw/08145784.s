@@ -576,7 +576,7 @@ BattleEffect_RunCondemn:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r6, [sp, #36]
 	lsls r1, r1, #7
@@ -585,7 +585,7 @@ BattleEffect_RunCondemn:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r8, r2
 	mov r3, r8

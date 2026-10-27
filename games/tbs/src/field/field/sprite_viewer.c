@@ -166,7 +166,7 @@ restart:
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
-  WaitTicks(1);
+  WaitFrames(1);
   heldKeys = &gKeysHeld;
   repeatedKeys = &gKeysRepeat;
   for (;;) {
@@ -385,7 +385,7 @@ next:
       }
       goto restart;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 

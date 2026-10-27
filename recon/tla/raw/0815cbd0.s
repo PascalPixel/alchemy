@@ -212,7 +212,7 @@ BattleEffect_RunSpiderWeb:
 	cmp r5, r3
 	bne .L_0815cd5a
 .L_0815cd7e:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -221,7 +221,7 @@ BattleEffect_RunSpiderWeb:
 	str r3, [r2]
 	movs r0, #1
 	adds r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #63
 	beq .L_0815cd9c
 	b .L_0815cc66

@@ -176,7 +176,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
   }
   palette = Resource_GetTableEntry(paletteId);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  WaitTicks(1);
+  WaitFrames(1);
 
   Projection_ScaledUnit(work->args->targets[0], &targetPos);
   // Trails: each transfer keeps 3/4 of every canvas level.

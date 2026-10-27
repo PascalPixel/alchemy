@@ -10,7 +10,7 @@
 #include "text/msg_ids.h"
 #include "edition.h"
 
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_02001080();
@@ -75,7 +75,7 @@ void Func_0200087c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call2(Motion_SetVarCbAndRefresh, 21, 2);
-  Call1(FieldEvent_WaitTicks, 5);
+  Call1(FieldEvent_WaitFrames, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 263, 30)
@@ -96,15 +96,15 @@ void Func_0200087c(void) {
   Call2(Motion_SetModeAndWaitAnimation, 21, 4);
   Call3(Func_02001148, 21, 0, 5);
   Call2(Motion_SetModeAndWaitAnimation, 19, 3);
-  Call1(FieldEvent_WaitTicks, 10);
+  Call1(FieldEvent_WaitFrames, 10);
   Call3(Func_02001148, 19, 0, 5);
   Call2(Func_02001170, 0x8000, 0x1000);
   Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0x1750000, 1);
-  Call1(FieldEvent_WaitTicks, 100);
+  Call1(FieldEvent_WaitFrames, 100);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 261, 1)
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02001190, (s16)gPartyState.savedScene,
         (s16)gPartyState.savedEntrance);
   ((struct {

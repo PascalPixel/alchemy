@@ -25,7 +25,7 @@ void Func_08040cb0(void);
 struct UiWindow *Func_08040cc4(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
@@ -38,7 +38,7 @@ s32 Func_08040d70(s32 index) {
 
   Func_08040c78();
   work = Ram_HeapSlots->unkd0[0];
-  WaitTicks(1);
+  WaitFrames(1);
   moved = -1;
   window = Func_08040cc4();
   do {
@@ -55,7 +55,7 @@ s32 Func_08040d70(s32 index) {
         Func_08108040(work->panel, x, y, 3);
       moved = 0;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     if (PRESSED & 2) {
       Audio_PlayCue(113);
       index = -1;
@@ -79,6 +79,6 @@ s32 Func_08040d70(s32 index) {
 done:
   UiWork_Finalize(window, 2);
   Func_08040cb0();
-  WaitTicks(1);
+  WaitFrames(1);
   return index;
 }

@@ -22,10 +22,10 @@ PartyInventory_FindOwner:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020021c4
 	.thumb_func
 Func_020021c4:
@@ -185,7 +185,7 @@ Func_020022f4:
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
-	overlay_veneer BattleEffect_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02002304
 	.thumb_func
 Func_02002304:

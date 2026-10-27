@@ -87,7 +87,7 @@ void BattleEffect_FetchRectangleBlitters(
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // Two lime columns burst out of the ground under the target and a spray of
@@ -231,9 +231,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(16, 16);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

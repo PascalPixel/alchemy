@@ -146,19 +146,19 @@ collects them.
 
 ### Frame
 
+One step of the game: every queued [task](#task) runs once and one picture is
+prepared, then the game sleeps until the next [VBlank](#vblank) shows it. Code
+lets time pass with `WaitFrames(n)`, and every wait, walk and animation is
+counted in frames. A frame normally lasts one VBlank; one whose work overruns
+lasts two or more, which is the game's slowdown
+([The front page](README.md#when-a-frame-runs-long)).
+
+### VBlank
+
 One refresh of the screen. The console draws about 59.73 a second, then
 pauses in the vertical blank (VBlank), whose interrupt mixes the sound and
-reads the buttons whatever the game is doing. The music keeps time in frames
+reads the buttons whatever the game is doing. The music keeps time in VBlanks
 ([Engine](engine.md)).
-
-### Tick
-
-One step of the game: every queued [task](#task) runs once and one picture is
-prepared, then the game sleeps until the next frame shows it. Code lets time
-pass with `WaitTicks(n)`, and every wait, walk and animation is counted in
-ticks. A tick normally lasts one frame; one whose work overruns lasts two or
-more, which is the game's slowdown
-([The front page](README.md#when-a-tick-runs-long)).
 
 ### IWRAM and EWRAM
 
@@ -230,11 +230,12 @@ again, such as the running scene's state (`gHeapSlots`).
 
 ### Task
 
-A short job run once every [tick](#tick), or once every [frame](#frame),
+A short job run once every [frame](#frame), or once every [VBlank](#vblank),
 until it is removed: the windows' typing, the map's scrolling, the lightning
 over Vale on the stormy night. Each runs in one of two passes,
-`TASK_PASS_FRAME`, which `WaitTicks` runs once a tick, or `TASK_PASS_VBLANK`,
-which the VBlank handler runs once a frame; up to 20 at a time run, in the order of their priority
+`TASK_PASS_FRAME`, which `WaitFrames` runs once a frame, or `TASK_PASS_VBLANK`,
+which the VBlank handler runs once a VBlank; up to 20 at a time run, in the
+order of their priority
 ([Runtime](src/runtime/README.md#the-task-runner)).
 
 ### Song

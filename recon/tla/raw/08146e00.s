@@ -1570,7 +1570,7 @@ BattleEffect_RunProcne:
 .L_08147a14:
 	.4byte 0xfffff000
 .L_08147a18:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #88]
 	lsls r5, r5, #7
@@ -1579,7 +1579,7 @@ BattleEffect_RunProcne:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #84]
 	movs r7, #200
 	adds r6, #1

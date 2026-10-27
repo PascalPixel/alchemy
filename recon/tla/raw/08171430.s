@@ -876,7 +876,7 @@ BattleEffect_RunLightSurge:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7
@@ -885,7 +885,7 @@ BattleEffect_RunLightSurge:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #56]
 	adds r0, #1
 	str r0, [sp, #56]

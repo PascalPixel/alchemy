@@ -78,7 +78,7 @@ beside its own buttons and returns as if the player had backed out, so the
 loops unwind one after another without any of them knowing how deep the
 player was. The Djinn screen checks for Start in its own choosers instead.
 
-The watcher is `Menu_CancelSoundTick`, and the flag
+The watcher is `Menu_UpdateCancelSound`, and the flag
 `FLAG_MENU_START_PRESSED`.
 
 ### Psynergy and items used on the field

@@ -283,17 +283,17 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   height = 2;
   Event_PlaySong(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
-  WaitTicks(10);
+  WaitFrames(10);
   MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
-  WaitTicks(10);
+  WaitFrames(10);
   MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
-  WaitTicks(10);
+  WaitFrames(10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
@@ -326,10 +326,10 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
 /// The room shakes as stone shifts; the leader looks around and jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
@@ -337,7 +337,7 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 20);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 40);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
 }
 
 /// Sol Sanctum: using the Small Jewel on the first relief sets it in, and a
@@ -361,10 +361,10 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       Event_PlaySong(SE_GEM_SET);
       MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       MapGrid_CenterOnFollowedPoint();
-      Event_WaitTicks(40);
+      Event_WaitFrames(40);
       message = MsgSolSanctumSetSmallGem;
       FieldMessage_Show(message, 1);
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       reliefWidth = 3;
       Event_PlaySong(SE_STONE_RUMBLE);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
@@ -422,10 +422,10 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     Sound_PlaySong(SE_GEM_SET);
     MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
     MapGrid_CenterOnFollowedPoint();
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     message = MsgSolSanctumSetSmallGem;
     FieldMessage_Show(message, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Sound_PlaySong(SE_STONE_RUMBLE);
     MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
     MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
@@ -616,7 +616,7 @@ static void SolSanctumEntrance_PushStatue(void) {
     // Move only after the statue's proposed position passes collision.
     if (FieldActor_CheckMovementCollision(statue, destination) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
-      WaitTicks(15);
+      WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       statue->speedLimit = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
@@ -810,7 +810,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-  Event_WaitTicks(4);
+  Event_WaitFrames(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -843,9 +843,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -854,7 +854,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   // it." No: "I doubt that..."
   Event_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -945,17 +945,17 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -16);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -32);
   Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -965,7 +965,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(1585), -1, PIXELS(150), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   FieldCamera_MoveTo(PIXELS(1621), -1, PIXELS(100), 1);
   FieldCamera_WaitForArrival();
@@ -974,12 +974,12 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
 
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
@@ -1001,18 +1001,18 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_LinkPair(ACTOR_PARTY_LEADER, 5, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
@@ -1025,14 +1025,14 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   // Kraden: "If there is a hidden passage, then maybe it leads to..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
@@ -1059,13 +1059,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 30);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
 
@@ -1075,16 +1075,16 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, 48);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1127,7 +1127,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -1137,22 +1137,22 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Event_WaitTicks(6);
+  Event_WaitFrames(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(1880), -1, PIXELS(524), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
   // Kraden: "More statues... It doesn't look like we can reach them".

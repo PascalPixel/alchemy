@@ -146,7 +146,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     }
     sparks = (struct EffectStep *)Ram_MapCellBuffer;
     BattleEffect_SelectLivingTargets(work->effect);
-    WaitTicks(1);
+    WaitFrames(1);
     BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION_RESOURCE, 2);
 
     for (frame = 0; frame != 124; frame++) {
@@ -294,7 +294,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     // Tear down: the formation bursts where it stands and is released.

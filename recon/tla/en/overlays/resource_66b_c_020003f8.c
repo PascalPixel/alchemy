@@ -18,7 +18,7 @@ void Func_02001214(void);
 void Func_020012e4(s32 skip);
 void Func_020011d4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Math_Cosine(s32 angle);
 void Func_020003cc(void);
 void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
@@ -49,7 +49,7 @@ void Func_020003f8(s32 unused, s32 id) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
-      WaitTicks(1);
+      WaitFrames(1);
       sprite = actor->animation;
       sprite->rotation += -256;
       actor->x -= Math_Cosine(((struct FieldSprite *)actor->animation)->rotation) / 2;

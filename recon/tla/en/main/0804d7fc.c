@@ -89,7 +89,7 @@ s32 Func_0804d7fc(s32 mode) {
   RenderOutput_PrepareForRedraw(work->lowerWindow);
   UiWork_Finalize(*upper, 2);
   UiWork_Finalize(work->lowerWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   Menu_EndResourceSelection();
   return result;
 }

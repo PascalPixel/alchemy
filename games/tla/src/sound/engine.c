@@ -26,7 +26,7 @@ void AudioCommand_InvokeSlot35(void *block) {
   func(block);
 }
 
-void MusicPlayer_Tick(struct SoundPlayer *player);
+void MPlayMain(struct SoundPlayer *player);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void AudioEngine_SetMode(u32 mode);
 
@@ -215,13 +215,13 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
     count--;
     tracks++;
   }
-  if (work->tick != NULL) {
-    player->nextTick = work->tick;
-    player->nextTickPlayer = work->tickPlayer;
-    work->tick = NULL;
+  if (work->MPlayMainHead != NULL) {
+    player->MPlayMainNext = work->MPlayMainHead;
+    player->musicPlayerNext = work->musicPlayerHead;
+    work->MPlayMainHead = NULL;
   }
-  work->tickPlayer = player;
-  work->tick = MusicPlayer_Tick;
+  work->musicPlayerHead = player;
+  work->MPlayMainHead = MPlayMain;
   work->lock = SOUND_LOCK;
   player->lock = SOUND_LOCK;
 }
@@ -250,7 +250,7 @@ start:
   player->header = header;
   player->voices = header->voices;
   player->priority = header->priority;
-  player->ticks = 0;
+  player->clock = 0;
   player->tempo = 150;
   player->tempoStep = 150;
   player->tempoScale = 256;
@@ -455,7 +455,7 @@ scale:
 
 void Cgb_UpdateChannels(void) {
   s32 channel;
-  s32 tick;
+  s32 prevC15;
   struct SoundWork *work = SOUND_WORK;
   struct CgbNote *note;
   volatile u8 *reg0;
@@ -466,10 +466,10 @@ void Cgb_UpdateChannels(void) {
   s32 envelope;
   u32 byteMask = 0xff;
 
-  if (work->cgbTick)
-    work->cgbTick--;
+  if (work->c15)
+    work->c15--;
   else
-    work->cgbTick = 14;
+    work->c15 = 14;
 
   for (channel = 1, note = work->cgbNotes; channel <= 4; channel++, note++) {
     if (!(note->state & CGB_NOTE_ON))
@@ -506,7 +506,7 @@ void Cgb_UpdateChannels(void) {
       break;
     }
 
-    tick = work->cgbTick;
+    prevC15 = work->c15;
     envelope = *reg2;
 
     if (note->state & CGB_NOTE_START) {
@@ -633,8 +633,8 @@ void Cgb_UpdateChannels(void) {
       }
     count_down:
       note->counter--;
-      if (tick == 0) {
-        tick--;
+      if (prevC15 == 0) {
+        prevC15--;
         goto step;
       }
     }

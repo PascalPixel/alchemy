@@ -432,7 +432,7 @@ BattleEvent_Playback:
 .L_08123070:
 	.4byte gInput
 .L_08123074:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_08123078:
 	cmp r3, #5
 	beq .L_0812307e
@@ -955,7 +955,7 @@ BattleEvent_Playback:
 .L_0812347c:
 	.4byte gInput
 .L_08123480:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_08123484:
 	.4byte gLagFramesShown
 .L_08123488:

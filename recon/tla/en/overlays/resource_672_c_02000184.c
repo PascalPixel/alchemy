@@ -1,7 +1,7 @@
 // 26 October 2026, under -mthumb-slow-loads: differ 10 of 895: the rise loop's
 // count, the palette address register and, at the end, the native issues a load
 // one slot later after a store, where alchemy-gcc issues it at once; an empty
-// asm after the rise loop's WaitTicks leaves 6; alchemy permute (5 to 6
+// asm after the rise loop's WaitFrames leaves 6; alchemy permute (5 to 6
 // minutes) and a second asm or block does not move it.
 // Draft, differ 14 of 895: the long scene in the Gabomba Statue's chamber
 // (message MsgOhYoungWitch on): the statue object rises 40 pixels, actors 9,
@@ -10,7 +10,7 @@
 // yes-or-no questions count up the event work's halfword 0x1c4, the screen
 // fades out to MsgCarriedTheMessage, flags 0x8ff, 0x86b and 0x8f2 change and
 // the retreat and saved places become Kibombo. Left: the native counts up in
-// the rise loop after building WaitTicks' argument, keeps the palette address
+// the rise loop after building WaitFrames' argument, keeps the palette address
 // in r5, and reloads two literal pool values in another order.
 #include "types.h"
 #include "ram_buffer.h"
@@ -35,7 +35,7 @@ void Object_SetModeById();
 void Func_02001ec0();
 void Func_02001eb8();
 s32 Func_02001ec8();
-void WaitTicks();
+void WaitFrames();
 s32 Func_02001e88();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetPositionAndReset();
@@ -50,7 +50,7 @@ void ObjectMotion_Launch();
 s32 Object_GetById();
 #define OBJECT(id) ((struct ObjectRuntime *)Value1(Object_GetById, (id)))
 void Func_02001e10();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Object_SetActionCallbackAndRefreshById();
 void Func_02001d88();
 void Func_02001e58();
@@ -86,9 +86,9 @@ void Func_02000184(void) {
   Call2(Func_02001ec0, 0x10000, 1);
   Call2(Func_02001eb8, 0x403108, 1);
   Value1(Func_02001ec8, 40);
-  Call1(WaitTicks, 40);
+  Call1(WaitFrames, 40);
   Call1(Func_02001f10, 197);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   if (gData_02002058 != 0) {
     i = 0;
   rise:
@@ -96,7 +96,7 @@ void Func_02000184(void) {
       Value3(Func_02001e88, 10, 0x100, 0);
     gData_02002058->y += 0x8000;
     i++;
-    WaitTicks(1);
+    WaitFrames(1);
     if (i <= 79)
       goto rise;
     gData_02002058->motionFlags = 4;
@@ -107,7 +107,7 @@ void Func_02000184(void) {
   Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 358, 108);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
   Call2(Func_02001e20, 9, gPartyState.currentOwner);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndReset, 9, 364, 124);
   Call3(ObjectMotion_ArmCallback, 9, 0xd000, 0);
@@ -134,24 +134,24 @@ void Func_02000184(void) {
   Call3(ObjectMotion_ArmCallback, 10, 0x3000, 20);
   object = OBJECT(14);
   object->angle = OBJECT(10)->angle;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Func_02001e20, 14, 10);
   Call3(Func_02001e10, 10, 0, 0);
   Call1(Func_02001f10, 110);
   Call2(Object_SetModeById, 14, 5);
-  Call1(FieldEvent_WaitTicks, 60);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 60);
+  Call1(FieldEvent_WaitFrames, 20);
   Call3(ObjectMotion_ArmCallback, 14, 0xb000, 0);
   Call2(Object_SetModeById, 8, 1);
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Call2(Object_SetModeById, 8, 3);
   Call1(Func_02001f10, 110);
   Call2(Object_SetModeById, 14, 6);
-  Call1(FieldEvent_WaitTicks, 60);
+  Call1(FieldEvent_WaitFrames, 60);
   Call2(Object_SetModeById, 14, 1);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Object_SetModeById, 8, 1);
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Func_02000100();
   Call3(ObjectMotion_Launch, 14, 2, 10);
   Call3(ObjectMotion_Launch, 14, 4, 10);
@@ -169,14 +169,14 @@ void Func_02000184(void) {
   Call3(ObjectMotion_ArmCallback, 9, 0, 0);
   OBJECT(12)->motionFlags = 0;
   Call2(Object_SetActionCallbackAndRefreshById, 12, gData_02001f9c);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Func_02000100();
   Value3(Func_02001e88, gPartyState.currentOwner, 257, 0);
   Value3(Func_02001e88, 9, 257, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xd000, 0x50);
   Func_02000100();
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Func_02000100();
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 20);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 40);
@@ -185,13 +185,13 @@ void Func_02000184(void) {
   Call2(Func_02001ec0, 0x10000, 2);
   Call2(Func_02001eb8, 0x10003, 2);
   Value1(Func_02001ec8, 10);
-  Call1(WaitTicks, 10);
+  Call1(WaitFrames, 10);
   *(u16 *)0x0500021e = 0x7fff;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call3(Func_02001d88, (s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
   Call2(Func_02001eb8, 0x10000, 2);
   Value1(Func_02001ec8, 20);
-  Call1(WaitTicks, 20);
+  Call1(WaitFrames, 20);
   Call2(Object_SetModeById, 8, 1);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
   Value3(Func_02001e88, gPartyState.currentOwner, 0x100, 40);
@@ -242,24 +242,24 @@ void Func_02000184(void) {
   Call3(Func_02001e10, 13, 0x1a80000, 0x680000);
   Call2(Func_02001eb8, 0x7fff, 0);
   Value1(Func_02001ec8, 40);
-  Call1(WaitTicks, 40);
+  Call1(WaitFrames, 40);
   Func_02001094();
   Call3(Func_02001e10, 13, 0, 0);
-  Call1(FieldEvent_WaitTicks, 1);
+  Call1(FieldEvent_WaitFrames, 1);
   Call2(Func_02001eb8, 0x10000, 2);
   Call2(Func_02001eb8, 0x403108, 1);
   Value1(Func_02001ec8, 60);
-  Call1(WaitTicks, 60);
+  Call1(WaitFrames, 60);
   Func_02000100();
   Call2(Func_02001eb8, 0x10000, 1);
   Value1(Func_02001ec8, 20);
-  Call1(WaitTicks, 20);
+  Call1(WaitFrames, 20);
   gData_02002058->motionFlags = 3;
-  Call1(FieldEvent_WaitTicks, 10);
+  Call1(FieldEvent_WaitFrames, 10);
   Call1(Func_02001f10, 309);
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Call1(Func_02001f10, 25);
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 0);
   Call2(Func_02001e70, 9, 0xb000);
   Call2(Func_02001e60, 9, 0);
@@ -294,7 +294,7 @@ void Func_02000184(void) {
     Call2(Func_02001e60, 9, 0);
   }
   Call3(ObjectMotion_SetPositionAndReset, 9, 376, 124);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02001e60, 9, 0);
   Call2(Func_02001e70, 9, 0xd000);
   Value2(UiText_OpenMessageAtObject, 9, 0);
@@ -315,13 +315,13 @@ void Func_02000184(void) {
   Call2(Func_02001e60, 9, 0);
   Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
   Call2(ObjectMotion_EnableActionAndSetCallback, 9, gData_0200200c);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner,
         gData_0200200c);
-  Call1(FieldEvent_WaitTicks, 40);
+  Call1(FieldEvent_WaitFrames, 40);
   Call2(Func_02001eb8, 0, 0);
   Value1(Func_02001ec8, 60);
-  Call1(WaitTicks, 0x40);
+  Call1(WaitFrames, 0x40);
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
   *(s32 *)(EVENT_WORK + 0x1b4) = 10;
   Event_FinishScreenTransition();

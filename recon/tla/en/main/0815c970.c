@@ -67,7 +67,7 @@ extern const u8 gData_081986c8[];
 extern const s8 gData_081986ec[];
 extern const u8 gData_081986ce[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -75,7 +75,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
@@ -181,9 +181,9 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Teardown.

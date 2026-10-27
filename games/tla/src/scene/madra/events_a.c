@@ -6,8 +6,8 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -211,6 +211,6 @@ void Func_02000210(s32 arg) {
 void Func_02000294(void) {
   Func_02002bd0((s32)&MsgIfYouDon);
   Motion_SetModeAndWaitAnimation(33, 4);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02002be0(33, 0, 10);
 }

@@ -23,8 +23,8 @@ struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
@@ -62,7 +62,7 @@ found:
   secondSprite = second->animation;
   second->motionFlags = busy;
   second->y += -0x1c0000;
-  WaitTicks(1);
+  WaitFrames(1);
   entry = &gResourceTableEntries[secondSprite->vramBlock];
   second->linkedObject = (void *)(entry->offset + 0x6010000);
   entry = &gResourceTableEntries[firstSprite->vramBlock];
@@ -85,7 +85,7 @@ step:
   leader->y += -0x38000;
   leader->terrainHeight = leader->y;
   first->scaleY += -0x1f00;
-  WaitTicks(1);
+  WaitFrames(1);
   i++;
   if (i != 8)
     goto step;
@@ -98,6 +98,6 @@ step:
   Func_02005d5c(second, ((struct FieldSprite *)second->animation)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_02005e1c();
 }

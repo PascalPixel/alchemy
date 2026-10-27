@@ -15,7 +15,7 @@ struct TimedNoticeWork {
 
 #define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
-void UiTimedNotice_Tick(void);
+void UiTimedNotice_Update(void);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 extern u8 MsgDebugEntryName;
@@ -52,10 +52,10 @@ void UiTimedNotice_Create(void) {
   work->window = window;
   UiText_DrawResource(resource, window, 0, 0);
   work->countdown = 90;
-  Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0x480);
+  Scheduler_AddOrUpdateCallback(UiTimedNotice_Update, 0x480);
 }
 
-void UiTimedNotice_Tick(void) {
+void UiTimedNotice_Update(void) {
   struct TimedNoticeWork *work;
   u16 *countdown;
   s32 count;
@@ -70,7 +70,7 @@ void UiTimedNotice_Tick(void) {
   *countdown = count;
   if ((count << 16) == 0) {
     UiWork_Finalize(work->window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Tick);
+    Scheduler_RemoveCallback(UiTimedNotice_Update);
   }
 }
 
@@ -80,6 +80,6 @@ void UiTimedNotice_CloseIfActive(void) {
   window = TIMED_NOTICE_WORK->window;
   if (window != NULL && window->flags != 0) {
     UiWork_Finalize(window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Tick);
+    Scheduler_RemoveCallback(UiTimedNotice_Update);
   }
 }

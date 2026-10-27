@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -1307,11 +1307,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     MemFree(verts);
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     if (mode == 1)
       WAIT_TRANSFER(work) {}
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (mode == 0 || mode == 6)

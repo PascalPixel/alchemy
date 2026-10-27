@@ -19,7 +19,7 @@ void Func_02002898(void);
 void Func_02002968(s32 mode);
 s32 Func_02002850(struct ObjectRuntime *object, struct Vector3 *position);
 void Func_02000428(s32 hole);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_020004c8(s32 hole) {
   struct ObjectRuntime *leader;
@@ -72,6 +72,6 @@ void Func_020004c8(s32 hole) {
       slip = -0x10000;
     leader->x -= slip;
     leader->angle += 0x1000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

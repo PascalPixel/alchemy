@@ -285,7 +285,7 @@ Func_08153c30:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #36]
 	adds r3, #1
 	str r3, [sp, #36]

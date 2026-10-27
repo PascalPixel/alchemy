@@ -48,7 +48,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   // Each hand faces the target (angle 0x8000 on the right, 0 on the left) and
   // moves 14 pixels that way.
-  WaitTicks(15);
+  WaitFrames(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];
     if (hand != NULL)
@@ -67,7 +67,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
       ((struct Actor *)pair[0])->y.fixed += 0x4000;
       ((struct Actor *)pair[1])->y.fixed += 0x4000;
       target->y.fixed += 0x4000;
-      WaitTicks(1);
+      WaitFrames(1);
     } while (target->y.fixed <= startY + 0x200000);
   }
 
@@ -109,7 +109,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
         fragment->scaleY = scale;
         fragment->scaleX = scale;
         fragment->facing += 0x2000; // 1/8 turn
-        WaitTicks(1);
+        WaitFrames(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }

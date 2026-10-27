@@ -115,7 +115,7 @@ void Func_080ddbd8(void) {
       Object_SetPosition((struct ObjectRuntime *)obj, pos[0], pos[1], pos[2]);
     }
     Audio_PlayCue(131);
-    WaitTicks(2);
+    WaitFrames(2);
   }
-  WaitTicks(8);
+  WaitFrames(8);
 }

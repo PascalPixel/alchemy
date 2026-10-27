@@ -908,7 +908,7 @@ BattleEffect_RunThor:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #24]
 	ldr r0, [sp, #20]
 	ldr r1, [sp, #16]
@@ -1835,7 +1835,7 @@ BattleEffect_RunThor:
 	movs r1, #4
 	bl Func_08158ce0
 .L_08159c1a:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #112]
 	lsls r1, r1, #7
@@ -1844,7 +1844,7 @@ BattleEffect_RunThor:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #100]
 	adds r2, #1
 	str r2, [sp, #100]

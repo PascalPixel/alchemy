@@ -53,7 +53,7 @@ BattleEffect_RunAnnihilation:
 	movs r3, #0
 	bl BattleMotion_ApproachTargetFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	mov r1, r9
 	movs r3, #36
 	ldrsh r0, [r1, r3]
@@ -421,7 +421,7 @@ BattleEffect_RunAnnihilation:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #240
 	ldr r3, [sp, #40]
 	lsls r0, r0, #7
@@ -430,7 +430,7 @@ BattleEffect_RunAnnihilation:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #8]
 	ldr r3, [sp, #32]
 	movs r2, #216

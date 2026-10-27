@@ -107,7 +107,7 @@ s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
 s32 PartyInventory_CountItemFar(s32 item);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 extern char ResourceId_FarCall00C;
 extern char ResourceId_ParticleSpritesD;
@@ -417,7 +417,7 @@ void ReelGame_Run(void) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     for (j = 0; j != 17; j++) {
@@ -425,7 +425,7 @@ void ReelGame_Run(void) {
                            0x100);
       Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000,
                            0x10000 - (j << 12), 0x100);
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Runtime_ReleaseHeapBlock(188);
     Runtime_ReleaseHeapBlock(104);

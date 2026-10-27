@@ -31,7 +31,7 @@ Func_0200013c:
 	movs r5, #0
 	strb r3, [r6]
 	movs r0, #5
-	bl WaitTicks
+	bl WaitFrames
 	strb r5, [r6]
 	movs r3, #128
 	lsls r3, r3, #11
@@ -125,7 +125,7 @@ Func_0200013c:
 	bl Animation_ApplyChildValue
 .L_0200823e:
 	movs r0, #3
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
@@ -179,7 +179,7 @@ Func_0200013c:
 	strb r3, [r6, #9]
 .L_020082ae:
 	movs r0, #15
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #1
 	negs r1, r1
 	add r9, r1
@@ -187,7 +187,7 @@ Func_0200013c:
 	cmp r2, #0
 	bge .L_0200825e
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #1
 	mov r0, r10
 	strb r3, [r0]
@@ -373,7 +373,7 @@ Func_020004c8:
 	adds r3, r3, r2
 	strh r3, [r5, #6]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_02008610:
 	ldr r3, [r5, #8]
 	mov r1, sp
@@ -436,7 +436,7 @@ Func_02000d2c:
 	mov r11, r0
 .L_02008d52:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	mov r1, r9
 	ldr r2, [r1, #80]
 	ldr r0, .L_02008f80
@@ -619,7 +619,7 @@ Func_02000d2c:
 	ldr r0, .L_02008f90
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #40
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #230
 	movs r1, #224
 	lsls r0, r0, #8
@@ -649,7 +649,7 @@ Func_02000d2c:
 	movs r0, #50
 	bl Func_02002838
 	movs r0, #8
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	negs r2, r2
 	add r11, r2
@@ -662,15 +662,15 @@ Func_02000d2c:
 	ldr r0, .L_02008f94
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #60
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008f98
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #24
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #120
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	bl Func_020028a0
 	movs r0, #204
 	lsls r0, r0, #2
@@ -1609,7 +1609,7 @@ Func_02001ff0:
 	str r0, [r5, #4]
 	bl Func_02002810
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	pop {r5, r6, r7, pc}
 .L_0200a078:
 	.4byte gMapCellBuffer
@@ -1761,7 +1761,7 @@ Func_02002144:
 	strb r3, [r6, #9]
 .L_0200a25a:
 	movs r0, #15
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #1
 	negs r1, r1
 	add r11, r1
@@ -1769,7 +1769,7 @@ Func_02002144:
 	cmp r2, #0
 	bge .L_0200a1f2
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [sp, #0]
 	ldrb r2, [r7, #17]
 	movs r3, #1

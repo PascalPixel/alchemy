@@ -61,7 +61,7 @@ void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Camera_WorldToScreen(s32 *position);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -122,7 +122,7 @@ void Func_080e82cc(void) {
     Runtime_ReleaseHeapBlock(96);
     picture = Runtime_AllocateBlock(96, 0x2000);
     Iwram_FillWords(picture, 0x2000, 0);
-    WaitTicks(1);
+    WaitFrames(1);
     Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
             REG_DMA3);
     REG_BG0CNT = 0x480;
@@ -150,7 +150,7 @@ void Func_080e82cc(void) {
     event[0xcad] = 1;
     *(s16 *)(event + 0xcae) = 999;
     Scheduler_AddOrUpdateCallback(Func_080e807c, 0x480);
-    WaitTicks(1);
+    WaitFrames(1);
     work->cycling = 0;
     phase = 0;
     timer = 0;
@@ -209,7 +209,7 @@ void Func_080e82cc(void) {
           phase = 999;
         break;
       }
-      WaitTicks(1);
+      WaitFrames(1);
       timer++;
     } while (phase != 999);
 

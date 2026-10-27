@@ -72,7 +72,7 @@ extern const u8 gUi_LvString[];
 struct BattleUnit *Unit_Get(s32 owner);
 s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 mode);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
                                     s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const u8 *text, struct RenderInput *window,
@@ -121,7 +121,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
     if (!created) {
-      WaitTicks(1);
+      WaitFrames(1);
       UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, 32, 0);
@@ -155,7 +155,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   }
 
   if (!created) {
-    WaitTicks(1);
+    WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 32, 88, 80);
   }
   RenderOutput_ClearListFar(window);

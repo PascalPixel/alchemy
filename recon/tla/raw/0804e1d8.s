@@ -24,7 +24,7 @@ Func_0804e1d8:
 	ldrh r2, [r2]
 	movs r0, #1
 	strh r2, [r3, #4]
-	bl WaitTicks
+	bl WaitFrames
 .L_0804e206:
 	ldr r2, .L_0804e3dc
 	ldr r3, [r2, #12]
@@ -242,7 +242,7 @@ Func_0804e1d8:
 	ble .L_0804e32e
 .L_0804e3b2:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0804e206
 .L_0804e3ba:
 	mov r0, r10

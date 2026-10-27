@@ -38,10 +38,10 @@ Party_AdjustCoins:
 	.thumb_func
 Func_020009a0:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020009b0
 	.thumb_func
 Func_020009b0:

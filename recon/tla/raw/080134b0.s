@@ -91,7 +91,7 @@ System_WaitForFrameInterrupt:
 .L_08013550:
 	.4byte 0x04000208
 .L_08013554:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_08013558:
 	.4byte gData_03007ff0
 .L_0801355c:

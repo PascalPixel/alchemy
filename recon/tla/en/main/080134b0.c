@@ -12,14 +12,14 @@
 #include "audio_engine.h"
 
 struct FrameSoundState {
-  u8 tick;
+  u8 lastVBlank;
   u8 transferCountdown;
   u8 interruptOnly;
   u8 updating;
 };
 extern volatile struct FrameSoundState gData_03001138;
 extern volatile u16 gData_0300121c;
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern struct SoundWork *gData_03007ff0;
 void Func_081c0088(void);
 s32 SoundDriver_EnterFrameUpdate(void);
@@ -40,7 +40,7 @@ void System_WaitForFrameInterrupt(void) {
     saved = *ime;
     *ime = (u32)ime;
     gData_0300121c &= ~1;
-    gData_03001138.tick = gFrameTick;
+    gData_03001138.lastVBlank = gVBlankCount;
     gData_03001138.updating = 1;
     sound = gData_03007ff0;
     count = sound->transferCountdown;

@@ -154,7 +154,7 @@ BattleEffect_RunNereid:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #197
 	lsls r1, r1, #1
 	adds r1, #255
@@ -727,7 +727,7 @@ BattleEffect_RunNereid:
 	movs r0, #1
 	str r3, [r2]
 	add r9, r7
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, r9
 	cmp r0, #124
 	beq .L_081489f6

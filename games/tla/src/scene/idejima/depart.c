@@ -14,7 +14,7 @@
 #include "text/msg_ids.h"
 
 void GameFlag_SetBit();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 s32 Event_AskYesNoWithActorAnimation();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_EnableActionAndSetCallback();
@@ -168,14 +168,14 @@ void Idejima_RunAlexDeparture(void) {
   Object_LinkObjectAndSetCallback(5, 6);
   Call3(ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
   Call3(ObjectMotion_SetPositionAndReset, 6, 86, 0x2ec);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Value3(Engine_ActorShowEmote, 6, 0x109, 80);
   Call2(Engine_EventShowMessage, 0x2008, 0);
   ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
   ObjectMotion_EnableActionAndResetMotion(8);
   ObjectMotion_EnableActionAndResetMotion(5);
   Motion_SetModeAndWaitAnimation(6, 3);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Engine_ActorSetAnimation(5, 4);
   Engine_EventShowMessage(5, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
@@ -230,7 +230,7 @@ void Idejima_RunAlexDeparture(void) {
   }
   Value3(Engine_ActorShowEmote, 8, 0x109, 40);
   Motion_SetModeAndWaitAnimation(6, 4);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Call2(Engine_EventShowMessage, 0x2008, 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Call3(ObjectMotion_ArmCallback, 8, 0x8000, 20);

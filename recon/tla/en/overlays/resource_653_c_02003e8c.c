@@ -33,10 +33,10 @@ void Func_02003e8c(void) {
   Call1((void (*)())Func_02005370, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call3((void (*)())Func_02005230, gPartyState.currentOwner, 0x1900000,
         0x31c0000);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Event_StartScreenTransition();
   Call3((void (*)())ObjectMotion_SetPositionAndReset, gPartyState.currentOwner,
         400, 752);
@@ -52,33 +52,33 @@ void Func_02003e8c(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 13, 2);
   Call1((void (*)())Func_020053d8, 131);
   Call2((void (*)())Func_02005270, 13, 0x100);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_02005270, 13, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   object = Object_GetById(13);
   sprite = object->animation;
   object->motionFlags = 0;
   i = 0;
 rise13:
   object->y += 0xccc;
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   i++;
   if (i <= 63)
     goto rise13;
   Func_02003e34(sprite, 32, 32);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020052d0, 13, 0x102);
   Func_02003e34(sprite, 32, -64);
   Func_02003e34(sprite, 32, 64);
   Func_02003e34(sprite, 64, 32);
   Call2((void (*)())Func_020052d0, 13, 0x102);
-  Call1((void (*)())FieldEvent_WaitTicks, 60);
+  Call1((void (*)())FieldEvent_WaitFrames, 60);
   object->motionFlags = 3;
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call1((void (*)())Func_020053d8, 159);
   object->velocityY = 0x30000;
   sprite->rotation = 0;
-  Call1((void (*)())FieldEvent_WaitTicks, 60);
+  Call1((void (*)())FieldEvent_WaitFrames, 60);
   Call2((void (*)())Func_02005298, 13, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1b40000, 0x480000, 0x2980000,
         1);
@@ -96,7 +96,7 @@ rise13:
         1);
   Func_020052e8();
   Call3((void (*)())Func_02005230, 12, 0x1480000, 0x2880000);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 326, 664);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 12, 320, 664);
   Call3((void (*)())ObjectMotion_ArmCallback, 12, 0x5000, 0);
@@ -107,16 +107,16 @@ rise13:
   Call2((void (*)())Motion_SetVarCbAndRefresh, 14, 2);
   Call1((void (*)())Func_020053d8, 131);
   Call2((void (*)())Func_02005270, 14, 0x100);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_02005270, 14, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020052d0, 14, 0x101);
   object = Object_GetById(14);
   object->motionFlags = 0;
   i = 0;
 rise14:
   object->y += 0x2666;
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   i++;
   if (i <= 63)
     goto rise14;
@@ -124,13 +124,13 @@ rise14:
   Func_02003e60(object, 128, -0x1000);
   Func_02003e60(object, 128, 0x1000);
   Func_02003e60(object, 64, -0x1000);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020052d0, 14, 0x100);
   object->motionFlags = 3;
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call1((void (*)())Func_020053d8, 159);
   object->velocityY = 0x30000;
-  Call1((void (*)())FieldEvent_WaitTicks, 60);
+  Call1((void (*)())FieldEvent_WaitFrames, 60);
   Call2((void (*)())Func_02005298, 14, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x16c0000, 0x480000, 0x2980000,
         1);
@@ -143,35 +143,35 @@ rise14:
   Call2((void (*)())Motion_SetVarCbAndRefresh, 15, 2);
   Call1((void (*)())Func_020053d8, 131);
   Call2((void (*)())Func_02005270, 15, 0x100);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_02005270, 15, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   object = Object_GetById(15);
   sprite = object->animation;
   object->motionFlags = 0;
   i = 0;
 rise15:
   object->y += 0x3333;
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   i++;
   if (i <= 63)
     goto rise15;
   Func_02003e34(sprite, 32, 64);
   sprite->rotation = 0;
   Call2((void (*)())Motion_SetVarCbAndRefresh, 15, 1);
-  Call1((void (*)())FieldEvent_WaitTicks, 60);
+  Call1((void (*)())FieldEvent_WaitFrames, 60);
   Func_02003e34(sprite, 32, -64);
   sprite->rotation = 0;
   Call2((void (*)())Motion_SetVarCbAndRefresh, 15, 1);
-  Call1((void (*)())FieldEvent_WaitTicks, 60);
+  Call1((void (*)())FieldEvent_WaitFrames, 60);
   i = 0;
 fall15:
   object->y += -0x3333;
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   i++;
   if (i <= 63)
     goto fall15;
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Value3((s32 (*)())Func_020052c8, 15, 0x108, 0);
   Call3((void (*)())Func_02005290, 15, 0, 20);
   Call2((void (*)())Func_02005298, 0x100c, 0);
@@ -203,7 +203,7 @@ fall15:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1900000, 0, 0x2b00000, 1);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 15, 0xcccc, 0x6666);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 15, 400, 644);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())Func_020053d8, 188);
   Func_02001f3c();
   Call2((void (*)())Func_02005298, 12, 0);

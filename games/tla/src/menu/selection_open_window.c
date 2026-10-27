@@ -73,7 +73,7 @@ void Resource_ResetOwnerEntries(void) {
 
   Resource_ScheduleOwnerReset();
   UiWork_Finalize(state->window, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   node = state->head;
   while (node != 0) {
     if (node->kind != 0) {

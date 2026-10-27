@@ -251,7 +251,7 @@ s32 Credits_Run(void) {
              &REG_BLDCNT);
   // Give the names a five-second lead before the first picture.
   Credits_InitTextSprites();
-  WaitTicks(300);
+  WaitFrames(300);
   // Alternate the hidden layer after each 64-frame crossfade. Loading it
   // cannot overwrite the picture that is still showing.
   for (slide = 0;
@@ -267,9 +267,9 @@ s32 Credits_Run(void) {
         Io_Write16((alpha << 8) | (16 - alpha), &REG_BLDALPHA);
       else
         Io_Write16(((16 - alpha) << 8) | alpha, &REG_BLDALPHA);
-      WaitTicks(4);
+      WaitFrames(4);
     }
-    WaitTicks(267);
+    WaitFrames(267);
   }
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);

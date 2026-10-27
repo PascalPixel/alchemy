@@ -9,7 +9,7 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_020009f0();
 s32 Func_02000a10();
 s32 Func_02000a50();
@@ -29,7 +29,7 @@ s32 Runtime_AllocateHeapBlockFar();
 s32 Runtime_BumpAllocateAlternatePool();
 s32 Runtime_ReleaseHeapBlock();
 s32 VramCache_Load();
-s32 WaitTicks();
+s32 WaitFrames();
 s32 __divsi3();
 s32 __modsi3();
 extern u8 Field_Palette685[];
@@ -190,7 +190,7 @@ L_02008958:
   v_r5 = (v_r5 + 16);
   if (v_r5 <= (v_r10 + 0x5f0))
     goto L_020088ae;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   v_r6 = (v_r6 + 1);
   if (v_r6 > 149)
     goto L_02008972;
@@ -198,7 +198,7 @@ L_02008958:
 L_02008972:
   Call1((void (*)())Resource_ResetEntry, v_r11);
   Call1((void (*)())MemFree, v_r10);
-  Call1((void (*)())FieldEvent_WaitTicks, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Func_02000a50(0, 0, 0);
   t53 = FIELD_AT(sp_, s32, 12);
   Call1((void (*)())Resource_ResetEntry, t53);

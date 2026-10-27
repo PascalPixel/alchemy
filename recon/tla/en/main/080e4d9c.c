@@ -7,7 +7,7 @@
 // and its timer (0x1502): without a target, the glow grows, then shakes the
 // screen in bursts for 128 frames and ends with a big shake and ten bursts
 // (phase 999 after 72 frames); with one, a shorter version: one shake and
-// burst, and the caster's tick mode restored at frame 5 of the last phase.
+// burst, and the caster's update mode restored at frame 5 of the last phase.
 // Left: the palette ripple keeps 0x7c00 and 31 in r8 and r9 in the native
 // (as separate locals they measure 314: the allocation shifts), and
 // register choice elsewhere.
@@ -69,7 +69,7 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct GlowParticle *particle);
 void Audio_PlayCue(s32 cue);
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
-void BattleEffect_SetObjectTickMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -315,7 +315,7 @@ void Func_080e4d9c(void) {
       break;
     case 4:
       if (work->timer == 5)
-        BattleEffect_SetObjectTickMode(scene->mainObject, 0);
+        BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
       if (work->timer == 20) {
         work->phase = 999;
         work->timer = -1;

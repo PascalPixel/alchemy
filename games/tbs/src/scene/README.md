@@ -252,7 +252,7 @@ this exit, waits until the event has finished.
 
 An event is plain C written in the calls of `event_layer.h`,
 `event_inline.h` and `engine_call.h`. A step that takes time runs the
-game's frames itself through `WaitTicks` before it returns ([Engine](../../engine.md#waiting-and-tasks)
+game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
 explains it). A task is added with `Task_AddFrame`.
 
 ## State that cleans itself up

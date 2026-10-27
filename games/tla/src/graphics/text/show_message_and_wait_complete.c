@@ -8,6 +8,6 @@ s32 UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 
   result = UiText_OpenMessageWindow(message, x, y, 1);
   while (UiWork_IsComplete() == 0)
-    WaitTicks(1);
+    WaitFrames(1);
   return result;
 }

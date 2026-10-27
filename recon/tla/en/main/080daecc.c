@@ -149,7 +149,7 @@ void Func_080daecc(s32 objectId, s32 grow) {
         drop += frame << 16;
         link = link->next;
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   slot->active = 1;

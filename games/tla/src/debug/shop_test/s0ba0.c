@@ -6,7 +6,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 struct ObjectRuntime *Func_02000c88(s32 type, s32 x, s32 y, s32 z);
 void Func_02000e20(s32 scene, s32 entrance);
 
@@ -35,7 +35,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < 0x10000) {
-        WaitTicks(1);
+        WaitFrames(1);
         scale = object->scaleX + 0x51e;
         {
           /* FAKEMATCH(temporary): the turn is added as a word, so its step

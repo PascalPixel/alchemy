@@ -10,9 +10,9 @@
 // pairs and volatile asm after them measured 4, 10 and 73 (2026-10-18).
 // Finishes an effect object's run (heap slot 0xe0 effect work): the
 // object takes mode 20 and holds still where it is; with the work's sound
-// byte set it plays cue 212 and ticks in mode 1. When the quantity byte is
+// byte set it plays cue 212 and updates in mode 1. When the quantity byte is
 // set, the others act while MsgBlank2 (3522) shows the work's quantity. Flag
-// 320 then sends the object to mode 21 (tick mode 2 with the sound byte
+// 320 then sends the object to mode 21 (update mode 2 with the sound byte
 // set), otherwise the current effect object stops; the event work's byte
 // 0xcb7 is set either way.
 #include "types.h"
@@ -35,7 +35,7 @@ struct FinishWork {
 extern char MsgBlank2;
 
 s32 GameFlag_Test(s32 flag);
-void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
                                     s32 groupMode, s32 action);
 void UiText_DrawQuantity(s32, s32);
@@ -60,7 +60,7 @@ void Func_080dc6d8(void) {
   } while (0);
   if (work->sound != 0) {
     Audio_PlayCue(212);
-    BattleEffect_SetObjectTickMode(object, 1);
+    BattleEffect_SetObjectUpdateMode(object, 1);
   }
   if (work->showQuantity != 0) {
     work->messageShown = 1;
@@ -72,7 +72,7 @@ void Func_080dc6d8(void) {
   }
   if (GameFlag_Test(320)) {
     if (work->sound != 0)
-      BattleEffect_SetObjectTickMode(object, 2);
+      BattleEffect_SetObjectUpdateMode(object, 2);
     Object_SetMode(object, 21);
   } else {
     EffectRuntime_StopCurrentObject();

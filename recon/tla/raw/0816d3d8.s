@@ -377,7 +377,7 @@ BattleEffect_RunStoneJustice:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -385,7 +385,7 @@ BattleEffect_RunStoneJustice:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r9, r2
 	mov r3, r9

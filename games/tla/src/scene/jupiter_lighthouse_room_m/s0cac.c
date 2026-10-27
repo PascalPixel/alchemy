@@ -150,20 +150,20 @@ void Func_02000cac(s32 arg) {
   Event_WaitTransitionFrames();
   Func_0200488c(MsgAhhhh2);
   Func_020049c4(124);
-  FieldEvent_WaitTicks(26);
+  FieldEvent_WaitFrames(26);
   Func_020049c4(217);
   ObjectMotion_EnableActionAndSetCallback(4, gData_020056ec);
   if (arg != 0) {
     I_Func_020048bc(3, 20, 9, 15, 8, 1, 20, 2, 15, 1, 25);
     Func_020049c4(310);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Func_020049c4(144);
     I_Func_020048bc(3, 21, 9, 16, 8, 1, 21, 2, 16, 1, 0);
     I_Func_020048bc(0, 20, 9, 15, 8, 2, 20, 2, 15, 1, 0);
   } else {
     I_Func_020048bc(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 25);
     Func_020049c4(310);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Func_020049c4(144);
     I_Func_020048bc(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 0);
     I_Func_020048bc(0, 5, 9, 0, 8, 2, 5, 2, 0, 1, 0);
@@ -186,19 +186,19 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_ArmCallback(4, 0, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Object_SetModeById(28, 3);
-    FieldEvent_WaitTicks(20);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitFrames(10);
     Func_0200489c(28, 0, 5);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
     Object_SetModeById(28, 4);
-    FieldEvent_WaitTicks(33);
+    FieldEvent_WaitFrames(33);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Func_0200489c(28, 0, 5);
   }
   Motion_SetVarCbAndRefresh(5, 2);
   I_ObjectMotion_ArmCallback(4, 0x4000, 0);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(5, 0, 5);
   I_Func_020048cc(6, 0x101, 30);
   Func_0200489c(6, 0, 5);
@@ -206,17 +206,17 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_SetSpeedParameters(4, 0x00013333, 0x9999);
   ObjectMotion_EnableActionAndSetCallback(4, arg != 0 ? gData_02005748
                                                       : gData_0200578c);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   I_ObjectMotion_ArmCallback(6, 0x8000, 0);
   I_ObjectMotion_ArmCallback(5, 0, 0);
   I_ObjectMotion_ArmCallback(28, 0, 0);
   I_ObjectMotion_ArmCallback(7, 0x8000, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(6, 3);
   Object_SetModeById(7, 3);
   Object_SetModeById(5, 3);
   Object_SetModeById(28, 3);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   I_ObjectMotion_SetSpeedParameters(5, 0x10000, 0x8000);
   I_ObjectMotion_SetSpeedParameters(7, 0x10000, 0x8000);
   I_ObjectMotion_SetSpeedParameters(6, 0x10000, 0x8000);
@@ -242,14 +242,14 @@ void Func_02000cac(s32 arg) {
   Object_RefreshSelectorById(5);
   Object_RefreshSelectorById(6);
   Object_RefreshSelectorById(28);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   angle = 0x2000;
   I_Func_0200484c(2, 0x02e50000, 0xe80000, angle);
   Func_020048e4(0x40000, 0x8000);
   I_Motion_CamBounds(0x3200000, 0, 0x10e0000, 1);
   Func_020048f4();
   Func_020049c4(39);
-  FieldEvent_WaitTicks(50);
+  FieldEvent_WaitFrames(50);
   Motion_SetVarCbAndRefresh(0, 2);
   Func_0200489c(0, 0, 5);
   Object_SetModeById(3, 0);
@@ -259,14 +259,14 @@ void Func_02000cac(s32 arg) {
   Object_SetModeById(3, 9);
   Func_0200489c(3, 0, 5);
   Motion_SetVarCbAndRefresh(1, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(1, 0, 5);
   ObjectMotion_SetVariantCallback(3, 3);
   I_Func_020048d4(3, 258);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_0200489c(3, 0, 5);
   Motion_SetVarCbAndRefresh(1, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(1, 0, 5);
   Object_GetById(3)->actionFlags &= 0xfe;
   I_ObjectMotion_SetSpeedParameters(3, 0x1999, 0xccc);
@@ -286,7 +286,7 @@ void Func_02000cac(s32 arg) {
   ObjectMotion_CommitCurrentPositionAndActivate(3);
   Object_SetModeById(3, 9);
   Motion_SetVarCbAndRefresh(3, 2);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   I_ObjectMotion_OffsetPositionAndResetMotion(3, 0, -2);
   ObjectMotion_CommitCurrentPositionAndActivate(3);
   I_ObjectMotion_SetSpeedParameters(3, 0x20000, 0x10000);
@@ -298,7 +298,7 @@ void Func_02000cac(s32 arg) {
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 2 of 1568 instructions differ in tla-en. */
   do {
-    FieldEvent_WaitTicks(33);
+    FieldEvent_WaitFrames(33);
   } while (0);
   Func_0200489c(3, 0, 5);
   Object_GetById(3)->actionFlags |= 1;
@@ -306,12 +306,12 @@ void Func_02000cac(s32 arg) {
   ObjectMotion_CommitCurrentPositionAndActivate(3);
   Object_SetModeById(3, 1);
   I_Func_020048b4(3, 0xa000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(3, 0, 5);
   Object_SetModeById(0, 1);
   Object_SetModeById(2, 1);
   Object_LinkPair(0, 2, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048cc(0, 0x102, 30);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
@@ -319,8 +319,8 @@ void Func_02000cac(s32 arg) {
     Func_0200489c(0, 0, 5);
   } while (0);
   Object_SetModeById(2, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_EnableActionAndSetCallback(3, gData_02005548);
   I_Func_0200484c(26, 0x02990000, 0x800000, angle);
   I_Func_0200484c(27, 0x02810000, 0x800000, angle);
@@ -330,7 +330,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(2, 0x100, 30);
   I_ObjectMotion_ArmCallback(0, 0xa000, 0);
   I_Func_020048b4(2, 0xa000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Motion_CamBounds(0x2d00000, 0, 0xd20000, 1);
   I_ObjectMotion_SetSpeedParameters(26, 0x4000, angle);
   I_ObjectMotion_SetSpeedParameters(27, 0x4000, angle);
@@ -338,7 +338,7 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_ResetAndSetPositionInMode2(27, 698, 209);
   ObjectMotion_EnableActionAndSetCallback(26, gData_020049cc);
   ObjectMotion_EnableActionAndSetCallback(27, gData_020049dc);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   I_Func_020048cc(2, 0x102, 30);
   Func_0200489c(2, 0, 5);
   Func_020049c4(34);
@@ -355,7 +355,7 @@ void Func_02000cac(s32 arg) {
     Object_RefreshSelectorById(27);
   } while (0);
   Object_SetModeById(27, 4);
-  FieldEvent_WaitTicks(33);
+  FieldEvent_WaitFrames(33);
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(2, 0x100, 30);
   Func_0200489c(2, 0, 5);
@@ -364,7 +364,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(2, 0x101, 0);
   I_Func_020048cc(0, 0x101, 30);
   Object_LinkPair(0, 2, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048cc(0, 0x106, 30);
   I_ObjectMotion_ArmCallback(2, 0xa000, 0);
   I_Func_020048b4(0, 0xa000);
@@ -374,24 +374,24 @@ void Func_02000cac(s32 arg) {
     Func_0200489c(0, 0, 5);
   } while (0);
   Object_SetModeById(27, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(2, 0x102, 30);
   Func_0200489c(2, 0, 5);
   I_Func_020048b4(26, 0xa000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(26, 0, 5);
   Motion_SetVarCbAndRefresh(26, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(0, 0x109, 30);
   Func_0200489c(0, 0, 5);
   Motion_SetVarCbAndRefresh(27, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(27, 0, 5);
   I_Func_020048b4(26, angle);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(2, 0x107, 30);
   Func_0200489c(2, 0, 5);
@@ -406,18 +406,18 @@ void Func_02000cac(s32 arg) {
     Func_0200489c(26, 0, 5);
   } while (0);
   Object_SetModeById(27, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(27, 0, 5);
   Motion_SetVarCbAndRefresh(2, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(2, 0, 5);
   Object_SetModeById(27, 4);
   Object_SetModeById(26, 4);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
   do {
-    FieldEvent_WaitTicks(33);
+    FieldEvent_WaitFrames(33);
   } while (0);
   I_Func_020048cc(2, 0x107, 30);
   Func_0200489c(2, 0, 5);
@@ -430,15 +430,15 @@ void Func_02000cac(s32 arg) {
   Object_SetModeById(0, 38);
   I_Motion_CamBounds(0x3100000, 0, 0x1120000, 1);
   Func_020048f4();
-  FieldEvent_WaitTicks(60);
+  FieldEvent_WaitFrames(60);
   I_Motion_CamBounds(0x2d00000, 0, 0xd20000, 1);
   Func_020048f4();
   Object_SetModeById(0, 1);
   I_Func_020048b4(0, 0xa000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(0, 0, 5);
   Object_LinkPair(26, 27, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048cc(26, 0x108, 0);
   I_Func_020048cc(26, 0x108, 30);
   I_Func_020048cc(2, 0x101, 30);
@@ -460,27 +460,27 @@ void Func_02000cac(s32 arg) {
     I_Func_020048b4(27, angle);
   } while (0);
   Object_SetModeById(26, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
   do {
     Func_0200489c(26, 0, 5);
   } while (0);
   Object_SetModeById(27, 4);
-  FieldEvent_WaitTicks(33);
+  FieldEvent_WaitFrames(33);
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(2, 0x103, 30);
   Func_0200489c(2, 0, 5);
   I_Func_020048cc(26, 0x108, 30);
   Func_0200489c(26, 0, 5);
   Motion_SetVarCbAndRefresh(0, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(0, 0, 5);
   I_Func_020048cc(27, 0x108, 30);
   Func_0200489c(27, 0, 5);
   I_Func_020048b4(2, 0xe000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(2, 0, 5);
   I_Func_020048cc(26, 0x109, 30);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
@@ -492,34 +492,34 @@ void Func_02000cac(s32 arg) {
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 2 of 1568 instructions differ in tla-en. */
   do {
-    FieldEvent_WaitTicks(33);
+    FieldEvent_WaitFrames(33);
   } while (0);
   Func_0200489c(27, 0, 5);
   I_Func_020048b4(27, 0xa000);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   I_Func_020048cc(27, 0x101, 30);
   I_ObjectMotion_SetSpeedParameters(27, 0x20000, 0x10000);
   I_ObjectMotion_CommitPositionAndActivate(27, -24, -24);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   I_Func_020048b4(27, 0x8000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048b4(27, 0xc000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048b4(27, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048b4(27, 0xc000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048cc(27, 0x102, 30);
   Func_0200489c(27, 0, 5);
   Func_0200489c(26, 0, 5);
   I_Func_020048b4(27, angle);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(27, 0, 5);
   I_Func_020048b4(26, 0xa000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_0200489c(26, 0, 5);
   Object_LinkPair(0, 2, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048bc(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
   I_ObjectMotion_ArmCallback(0, 0xa000, 0);
   I_ObjectMotion_ArmCallback(2, 0xa000, 0);
@@ -528,7 +528,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(26, 0x107, 30);
   Func_0200489c(26, 0, 5);
   I_Func_020048b4(26, angle);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   I_Func_020048cc(26, 0x108, 30);
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(27, 0x108, 30);
@@ -543,8 +543,8 @@ void Func_02000cac(s32 arg) {
   do {
     Object_SetModeById(27, 3);
   } while (0);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(30);
   I_ObjectMotion_SetSpeedParameters(26, 0x30000, 0x18000);
   I_ObjectMotion_SetSpeedParameters(27, 0x30000, 0x18000);
   I_ObjectMotion_SetSpeedParameters(0, 0x30000, 0x18000);
@@ -553,7 +553,7 @@ void Func_02000cac(s32 arg) {
   I_ObjectMotion_ResetAndSetPositionInMode2(27, 731, 213);
   ObjectMotion_EnableActionAndSetCallback(27, gData_020049fc);
   ObjectMotion_EnableActionAndSetCallback(26, gData_02004a18);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   I_ObjectMotion_ResetAndSetPositionInMode2(0, 776, 202);
   I_ObjectMotion_ResetAndSetPositionInMode2(2, 731, 232);
   ObjectMotion_EnableActionAndSetCallback(0, gData_02004a34);
@@ -562,13 +562,13 @@ void Func_02000cac(s32 arg) {
   Object_RefreshSelectorById(2);
   Object_RefreshSelectorById(26);
   Object_RefreshSelectorById(27);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02000b48();
-  FieldEvent_WaitTicks(200);
+  FieldEvent_WaitFrames(200);
   Camera_FollowActor(4, 1);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Motion_SetVarCbAndRefresh(28, 2);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Func_0200489c(28, 0, 5);
   I_Func_020048cc(6, 0x109, 30);
   Func_0200489c(6, 0, 5);
@@ -577,19 +577,19 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(5, 0x109, 30);
   Func_0200489c(5, 0, 5);
   I_Func_020048b4(28, 0x4000);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
   do {
     Func_0200489c(28, 0, 5);
   } while (0);
   Object_SetModeById(4, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_SetAngleToward(5, 4, 0);
   ObjectMotion_SetAngleToward(7, 4, 0);
   ObjectMotion_SetAngleToward(6, 4, 0);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Object_SetModeById(7, 3);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 2 of 1568 instructions differ in tla-en. */
@@ -597,8 +597,8 @@ void Func_02000cac(s32 arg) {
     Object_SetModeById(6, 3);
   } while (0);
   Object_SetModeById(5, 3);
-  FieldEvent_WaitTicks(20);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(7, 2);
   object = Object_GetById(4);
   if (object != NULL)

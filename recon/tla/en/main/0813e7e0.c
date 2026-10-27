@@ -65,8 +65,8 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
 // Seal's iwram_call.h layer calls them.
@@ -168,9 +168,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
       break;
     if (frame <= 63)
       Func_08164b2c(frame / 2 - 31, frame / 2 - 31, frame / 2 - 31);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Put the background and the display back.
@@ -181,7 +181,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattlePresentation_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
-  WaitTicks(1);
+  WaitFrames(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(SLOT_BATTLE_CANVAS);

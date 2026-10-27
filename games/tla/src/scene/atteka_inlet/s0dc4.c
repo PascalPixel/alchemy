@@ -23,7 +23,7 @@ void Func_02000bb8(void);
 
 void Func_02000bf0(void);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02000ff8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Scheduler_AddOrUpdateCallback_(void (*callback)(void),
@@ -95,7 +95,7 @@ void Func_02000ed0(void) {
     Func_02000ff8(1, 16, 1, 1, 4, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 20);
     Func_02000ff8(1, 16, 1, 1, 4, 21);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (GameFlag_Test(0x300))
     Func_02001060_(14, 120 << 16, 376 << 16);

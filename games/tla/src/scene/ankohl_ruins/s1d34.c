@@ -6,11 +6,11 @@ void Func_02001d34(void) {
   if (done == 0) {
     Func_02002edc(0);
     Func_02002eec(584);
-    FieldEvent_WaitTicks(15);
+    FieldEvent_WaitFrames(15);
     Func_02002eec(202);
     AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 66);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-    FieldEvent_WaitTicks(15);
+    FieldEvent_WaitFrames(15);
     gData_02003780 = 7;
     gData_02003782 = done;
     gData_02003784 = 200;
@@ -29,7 +29,7 @@ void Func_02001ddc(void) {
     Func_02002e44();
     Func_02002edc(0);
     AnkohlRuins_Call2df4(26, 70, 1, 3, 14, 65);
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     Func_02002eec(181);
     AnkohlRuins_Call2df4(26, 67, 1, 3, 14, 65);
     AnkohlRuins_Call2dfc(15, 5, 1, 1, 14, 5);
@@ -43,11 +43,11 @@ void Func_02001e54(void) {
   if (done == 0) {
     Func_02002edc(0);
     Func_02002eec(584);
-    FieldEvent_WaitTicks(15);
+    FieldEvent_WaitFrames(15);
     Func_02002eec(202);
     AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
     AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-    FieldEvent_WaitTicks(15);
+    FieldEvent_WaitFrames(15);
     gData_02003780 = 3;
     gData_02003782 = done;
     gData_02003784 = 100;
@@ -66,7 +66,7 @@ void Func_02001f04(void) {
     Func_02002e44();
     Func_02002edc(0);
     AnkohlRuins_Call2df4(26, 70, 1, 3, 2, 83);
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     Func_02002eec(181);
     AnkohlRuins_Call2df4(26, 67, 1, 3, 2, 83);
     AnkohlRuins_Call2dfc(1, 23, 1, 1, 2, 23);

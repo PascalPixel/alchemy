@@ -36,7 +36,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02001c4c(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02002830(void);
 void Func_020029c4(void);
 void Event_StartScreenTransition(void);
@@ -69,7 +69,7 @@ void Func_0200329c(void) {
     if (!GameFlag_Test(265)) {
       Func_02003ee4(9, 0x980000, 0x3000000, 0x4000);
       Func_02003edc(10, 0xb00000, 0x3090000);
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   if (!GameFlag_Test(265)) {

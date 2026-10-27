@@ -531,7 +531,7 @@ Func_08144628:
 	beq .L_08144a3e
 	b .L_08144848
 .L_08144a3e:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #64]
 	lsls r3, r3, #7
@@ -540,7 +540,7 @@ Func_08144628:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #36]
 	ldr r2, .L_08144aa0
 	adds r3, #1

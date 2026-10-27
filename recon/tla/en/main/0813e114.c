@@ -59,8 +59,8 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void WaitFrames(s32 frames);
 
 // A rain of daggers on the first target (unused).
 
@@ -179,9 +179,9 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
         Audio_PlayCue(133);
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

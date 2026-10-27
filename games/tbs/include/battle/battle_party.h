@@ -37,7 +37,7 @@ enum BattleSideMask {
 /// (DJINN_RECOVERY_SUMMONED), both in
 /// BattleTurn_Build; a party member who does not fight has it set as the
 /// next battle starts, outside a link battle
-/// (DjinnRecovery_Reconcile). DjinnRecovery_Tick counts down only
+/// (DjinnRecovery_Reconcile). DjinnRecovery_CountDown counts down only
 /// positive turns.
 #define DJINN_RECOVERY_AFTER_BATTLE -1
 

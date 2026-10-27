@@ -26,7 +26,7 @@ struct BattleFxScene;
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
@@ -168,7 +168,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Audio_PlayCue(134);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
@@ -199,7 +199,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Audio_PlayCue(145);
   } else if (state == 4) {
     if (EffectSlot_HasPendingTarget(effect) == 0)

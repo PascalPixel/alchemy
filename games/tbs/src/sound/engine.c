@@ -255,10 +255,10 @@ void m4aSoundVSyncOn(void) {
   work->ident = ident - 10;
 }
 
-/// Deactivates up to sixteen tracks and links the music player into the mixer
-/// tick chain. Called by m4aSoundInit for each row of gMPlayTable; does nothing
-/// for no tracks or while the driver's ident is raised, and leaves the music
-/// player paused with its ident free (ID_NUMBER).
+/// Deactivates up to sixteen tracks and links the music player into the
+/// MPlayMain chain. Called by m4aSoundInit for each row of gMPlayTable; does
+/// nothing for no tracks or while the driver's ident is raised, and leaves the
+/// music player paused with its ident free (ID_NUMBER).
 void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
                u8 trackCount) {
   struct SoundInfo *work;
@@ -282,14 +282,14 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
     trackCount--;
     tracks++;
   }
-  // Prepend this music player to the existing mixer tick chain.
-  if (work->tick != NULL) {
-    player->nextTick = work->tick;
-    player->nextTickPlayer = work->tickPlayer;
-    work->tick = NULL;
+  // Prepend this music player to the existing MPlayMain chain.
+  if (work->MPlayMainHead != NULL) {
+    player->MPlayMainNext = work->MPlayMainHead;
+    player->musicPlayerNext = work->musicPlayerHead;
+    work->MPlayMainHead = NULL;
   }
-  work->tickPlayer = player;
-  work->tick = MPlayMain;
+  work->musicPlayerHead = player;
+  work->MPlayMainHead = MPlayMain;
   work->ident = ID_NUMBER;
   player->ident = ID_NUMBER;
 }
@@ -319,12 +319,12 @@ void MPlayStart(struct MusicPlayerInfo *player,
 
   player->ident++;
   // Reset song timing and fade state before assigning track streams: tempo
-  // 150 runs a tick a frame until the song's tempo command.
+  // 150 runs a tick a VBlank until the song's tempo command.
   player->status = 0;
   player->header = header;
   player->voices = header->voices;
   player->priority = header->priority;
-  player->ticks = 0;
+  player->clock = 0;
   player->tempo = 150;
   player->tempoStep = 150;
   player->tempoScale = 256;
@@ -574,7 +574,7 @@ void CgbModVol(struct CgbChannel *note) {
 /// MPlayExtender; the mixer calls it.
 void CgbSound(void) {
   s32 channel;
-  s32 extraEnvelopeTick;
+  s32 prevC15;
   struct SoundInfo *work = SOUND_INFO_PTR;
   struct CgbChannel *note;
   volatile u8 *sweepOrWaveControl;
@@ -588,10 +588,10 @@ void CgbSound(void) {
   // A second software envelope step once in every 15 frames, 16 steps in 15
   // frames: 63.7 a second, close to the 64 a second the hardware steps its own
   // envelopes, where one step a frame would give 59.7.
-  if (work->cgbTick)
-    work->cgbTick--;
+  if (work->c15)
+    work->c15--;
   else
-    work->cgbTick = 14;
+    work->c15 = 14;
 
   for (channel = CGB_CHANNEL_SQUARE_1, note = work->cgbNotes;
        channel <= SOUND_CGB_CHANNEL_COUNT; channel++, note++) {
@@ -630,7 +630,7 @@ void CgbSound(void) {
       break;
     }
 
-    extraEnvelopeTick = work->cgbTick;
+    prevC15 = work->c15;
     envelopeControl = *volumeEnvelopeRegister;
 
     // A new note initializes its waveform and enters the attack phase.
@@ -772,8 +772,8 @@ void CgbSound(void) {
       }
     count_down:
       note->counter--;
-      if (extraEnvelopeTick == 0) {
-        extraEnvelopeTick--;
+      if (prevC15 == 0) {
+        prevC15--;
         goto step;
       }
     }
@@ -834,7 +834,7 @@ void CgbSound(void) {
 }
 
 /// Sets the tempo multiplier (0x100 the song's own tempo) and updates the
-/// number of ticks advanced per frame. Called by the music layer's tempo and
+/// number of ticks advanced per VBlank. Called by the music layer's tempo and
 /// pitch ramp and Sound_SetBgmTempo (sound.c); does nothing while the music
 /// player's ident is raised.
 void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {

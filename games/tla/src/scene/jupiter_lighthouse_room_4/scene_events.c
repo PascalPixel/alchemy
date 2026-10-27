@@ -75,7 +75,7 @@ void Func_02000114(s32 unused, s32 id) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
       object->y += 0x20000;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Func_02000724(id);
     GameFlag_SetBit(0xa06);

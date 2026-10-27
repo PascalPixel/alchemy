@@ -200,7 +200,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     pair[0] = spawn(pos.x + 0x200000, pos.y, pos.z, 0x8000);                   \
     pair[1] = spawn(pos.x - 0x200000, pos.y, pos.z, 0);                        \
                                                                                \
-    WaitTicks(15);                                                             \
+    WaitFrames(15);                                                            \
     walk = pair;                                                               \
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \

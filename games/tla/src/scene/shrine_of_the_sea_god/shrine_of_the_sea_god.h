@@ -62,8 +62,8 @@ struct ShrineOfTheSeaGodMapWork {
 };
 
 struct ShrineOfTheSeaGodObject *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -197,7 +197,7 @@ static inline void ShrineOfTheSeaGod_ObjModeWait(s32 actor, s32 mode) {
 
 static inline void ShrineOfTheSeaGod_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void ShrineOfTheSeaGod_ObjVar(s32 actor, s32 value) {

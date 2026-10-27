@@ -12,7 +12,7 @@ extern u16 gDisplayScroll_Position;
 extern s16 gDisplayScroll_Busy;
 extern s16 gDisplayScroll_LastPosition;
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern const void *gDisplayScroll_LineTable[];
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
@@ -45,7 +45,7 @@ void Func_081a0cac(void) {
   }
   Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,
           (volatile u32 *)0x040000d4);
-  if (gFrameTick % 3 == 0)
+  if (gVBlankCount % 3 == 0)
     gDisplayScroll_Position++;
 }
 

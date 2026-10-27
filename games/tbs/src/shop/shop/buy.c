@@ -115,12 +115,12 @@ next_page:
       if (selectionIndex > stockCount - 1)
         selectionIndex = stockCount - 1;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Window_CloseFar(messageWindow, 2);
   Window_CloseFar(stockWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   if (selectionResult != 0)
     goto close;
 
@@ -187,7 +187,7 @@ next_page:
         }
       }
       Sound_PlaySongFar(SE_MENU_CONFIRM);
-      WaitTicks(1);
+      WaitFrames(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
       if (quantity == -1)
@@ -212,13 +212,13 @@ next_page:
       selectionIndex++;
       redraw = 1;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Menu_ReleaseEntryActorsFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   // Artifact quantities are consumed only after the purchase completes.
   if (selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
@@ -234,7 +234,7 @@ next_page:
 close:
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(shop->moneyWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   return 0;
 }
 
@@ -374,7 +374,7 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
     WindowSprite_RedrawSavedRectFar(window);
 #else
     WindowSprite_ClearListFar(window);
-    WaitTicks(1);
+    WaitFrames(1);
 #endif
     SHOP_DRAW_MESSAGE(message, window, 0, 0);
   }
@@ -688,9 +688,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Text_DrawMessageAsTilesFar(unitMessageBase - 1, window, 144, 0);
 #endif
         }
-        WaitTicks(1);
+        WaitFrames(1);
       }
-      WaitTicks(1);
+      WaitFrames(1);
       Window_CloseFar(window, 2);
     }
   }
@@ -773,7 +773,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     TextPrinter_CloseFinishedWindowsFar();
     Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
     while (TextPrinter_AllFinishedFar() == 0) {
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
 

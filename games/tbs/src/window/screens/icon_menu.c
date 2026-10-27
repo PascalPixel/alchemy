@@ -265,7 +265,7 @@ void IconMenu_Close(void) {
     VramCache_FreeEntry(work->entries[i].slot);
   }
   FreeHeapSlot(HEAP_SLOT_ICON_MENU);
-  WaitTicks(1U);
+  WaitFrames(1U);
 }
 
 /// Selects an icon position with wrapped directional input. A returns the
@@ -288,7 +288,7 @@ redraw:
     resource = work->commandIcons[work->selection] + MsgCommandName;
   Text_DrawMessageAsTiles(resource, work->window, 0, 0);
   for (;;) {
-    WaitTicks(1);
+    WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlaySongFar(SE_MENU_CONFIRM);
       return work->selection;
@@ -364,7 +364,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
     stepDelays = gMenu_SelectionStepDelays;
     diff = selection - goal;
     distance = AbsoluteDifference(diff, selection, goal);
-    WaitTicks(stepDelays[distance] + delay);
+    WaitFrames(stepDelays[distance] + delay);
 
     if (position == goal)
       break;
@@ -375,7 +375,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
     position += step;
   }
 
-  WaitTicks(48);
+  WaitFrames(48);
   Sound_PlaySongFar(SE_MENU_CONFIRM);
   return goal;
 }
@@ -802,7 +802,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   WindowSprite_PrepareForRedraw(work->lowerWindow);
   Window_Close(*upper, 2);
   Window_Close(work->lowerWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   IconMenu_Close();
   return result;
 }

@@ -1,4 +1,4 @@
-@ MusicPlayer2000's frame tick, pret's MPlayMain: runs a player's callback,
+@ MusicPlayer2000's MPlayMain, run once a VBlank: runs a player's callback,
 @ steps its fade and, as often as its tempo allows, every track's song
 @ commands and notes, then updates each channel's volume and pitch.
 @ Handwritten (S1): it saves the high registers without lr, keeps r11 as
@@ -8,9 +8,9 @@
 
 .syntax unified
 	.thumb
-	.global MusicPlayer_Tick
+	.global MPlayMain
 	.thumb_func
-MusicPlayer_Tick:
+MPlayMain:
 	ldr r2, .L_081c0c14
 	ldr r3, [r0, #52]
 	cmp r2, r3

@@ -15,7 +15,7 @@ void Func_020027f4(struct FieldActor *object, s32 mode);
 void Func_020027fc(struct FieldActor *object, const void *script);
 struct FieldActor *Object_GetById(s32 id);
 void Func_02002924(s32 cue);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 
 struct SpriteFrames {
   u8 unk00[5];
@@ -48,12 +48,12 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
     Func_020027fc(object, gData_02002dec);
     object->motionFlags = 0;
     {
-      s32 ticks = timer;
+      s32 timerValue = timer;
 
       /* FAKEMATCH: the native loads the timer argument before the zero for
        * nextFrame (differ 2 without the temporary and barrier). */
       __asm__("");
-      ((struct SpawnedActor *)object)->timer = ticks;
+      ((struct SpawnedActor *)object)->timer = timerValue;
     }
     sprite->nextFrame = 0;
     sprite->rotation = rotation;

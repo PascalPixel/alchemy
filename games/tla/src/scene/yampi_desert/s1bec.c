@@ -7,13 +7,13 @@ void Func_02001bec(void) {
   Func_020041b8(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Object_SetModeById(gPartyState.currentOwner, 28);
   object = Func_02001b70();
   PartyInventory_GiveItem(209, 0);
   if (object != 0) {
     Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, 0, 0, 0);
-    WaitTicks(1);
+    WaitFrames(1);
     Func_02003fc8(object);
   }
   Object_SetModeById(gPartyState.currentOwner, 1);

@@ -88,8 +88,8 @@ void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
+void WaitFrames(s32 frames);
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
@@ -226,9 +226,9 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       }
       fleck->variant++;
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);

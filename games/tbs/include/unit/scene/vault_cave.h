@@ -37,7 +37,7 @@ extern struct Trigger gVaultCaveMouth_Triggers[];
 extern u32 gVaultCave_ScheduleFrames[];
 extern s32 gVaultCave_ScheduleTimer;
 extern s32 gVaultCave_ScheduleIndex;
-extern s32 gVaultCave_TickCounter;
-extern s32 gVaultCave_TickValue;
+extern s32 gVaultCave_DropFrames;
+extern s32 gVaultCave_SelectedDrop;
 
 #endif

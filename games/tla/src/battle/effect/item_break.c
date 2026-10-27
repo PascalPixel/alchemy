@@ -31,7 +31,7 @@ void FieldEffect_RunMove(void) {
   BattleEffect_SnapScaleToFull(object);
   if (object != 0) {
     Object_SetMode(object, 4);
-    WaitTicks(30);
+    WaitFrames(30);
   }
   BattleEffect_PrepareBufferInterpolation();
   UpdateRisingParticleBurst(object);

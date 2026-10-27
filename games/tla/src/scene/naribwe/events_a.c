@@ -72,10 +72,10 @@ void Func_020001a8(void) {
   Func_02000584(msg);
   UiText_OpenMessageAtObject(19, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     Func_02000584(msg + 1);
   } else {
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     Func_02000584(msg + 2);
   }
   Func_02000594(19, 0);

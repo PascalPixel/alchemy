@@ -1185,7 +1185,7 @@ BattleEffect_RunSerac:
 	movs r0, #8
 	str r5, [r3, #16]
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #240
 	ldr r6, [sp, #56]
 	lsls r0, r0, #7
@@ -1194,7 +1194,7 @@ BattleEffect_RunSerac:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #52]
 	adds r1, #1
 	str r1, [sp, #52]

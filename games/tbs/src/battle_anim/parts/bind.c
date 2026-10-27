@@ -85,7 +85,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
-    WaitTicks(1);
+    WaitFrames(1);
     // DEAD: never true, as the edge reaches only line 186 by the 27th frame;
     // the ROM keeps the test. Every column (120 lines, at most 63 late) is
     // done once the edge passes line 182.
@@ -109,7 +109,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   } while (i != BATTLE_BACKGROUND_BYTES);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                   BATTLE_BACKGROUND_BYTES);
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
@@ -149,7 +149,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
   u8 *graphics;
   u8 *palette;
   struct Actor *actor;
-  s32 tick;
+  s32 memberFrame;
   struct Particle *point;
   s32 size;
   s32 j;
@@ -224,9 +224,9 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
 
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
-      tick = frame - member * 8;
+      memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      if (tick >= 0 && tick < 96) {
+      if (memberFrame >= 0 && memberFrame < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = actor->x.fixed;
         position.world.y = actor->y.fixed;
@@ -241,17 +241,17 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
         // fields; each side is 24 flares. Over 64 frames the scale falls from
         // 2.625 by 3/128 a frame while its roll and yaw turn steadily back
         // from half a turn to 0; frames 64 to 67 hold it still.
-        if (tick <= 67) {
+        if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
             Transform_Reset();
-            if (tick <= 63) {
-              scale.x = 0x2a000 - (tick * 3 << 9);
-              scale.y = 0x2a000 - (tick * 3 << 9);
-              scale.z = 0x2a000 - (tick * 3 << 9);
+            if (memberFrame <= 63) {
+              scale.x = 0x2a000 - (memberFrame * 3 << 9);
+              scale.y = 0x2a000 - (memberFrame * 3 << 9);
+              scale.z = 0x2a000 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - tick) << 9);
-              Transform_ApplyYaw((64 - tick) << 9);
+              Transform_ApplyRoll((64 - memberFrame) << 9);
+              Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
             Projection_Point(gBind_Vertex, &position.projected);
@@ -263,7 +263,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
             struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
 
             // Flares shrink from size 5 to 1, a size every 16 frames.
-            size = 5 - tick / 16;
+            size = 5 - memberFrame / 16;
             for (k = 0; k != 24; k++) {
               s32 x =
                   from->velocityX + k * (to->velocityX - from->velocityX) / 24;
@@ -277,7 +277,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *args) {
           }
         }
         // Then the rune, in two mirrored halves.
-        if (tick > 63) {
+        if (memberFrame > 63) {
           draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
           draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
         }
@@ -325,7 +325,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
   u8 *graphics;
   u8 *palette;
   struct Actor *actor;
-  s32 tick;
+  s32 memberFrame;
   struct Particle *point;
   s32 size;
   s32 j;
@@ -375,9 +375,9 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
 
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
-      tick = frame - member * 8;
+      memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      if (tick >= 0 && tick < 96) {
+      if (memberFrame >= 0 && memberFrame < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = actor->x.fixed;
         position.world.y = actor->y.fixed;
@@ -385,17 +385,17 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
         Projection_Point(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
-        if (tick <= 67) {
+        if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
             Transform_Reset();
-            if (tick <= 63) {
-              scale.x = 0x2a000 - (tick * 3 << 9);
-              scale.y = 0x2a000 - (tick * 3 << 9);
-              scale.z = 0x2a000 - (tick * 3 << 9);
+            if (memberFrame <= 63) {
+              scale.x = 0x2a000 - (memberFrame * 3 << 9);
+              scale.y = 0x2a000 - (memberFrame * 3 << 9);
+              scale.z = 0x2a000 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - tick) << 9);
-              Transform_ApplyYaw((64 - tick) << 9);
+              Transform_ApplyRoll((64 - memberFrame) << 9);
+              Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
             Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
@@ -406,7 +406,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
             struct Particle *from = &work->particles[j + member * 32];
             struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
 
-            size = 5 - tick / 16;
+            size = 5 - memberFrame / 16;
             for (k = 0; k != 24; k++) {
               s32 x =
                   from->velocityX + k * (to->velocityX - from->velocityX) / 24;
@@ -420,7 +420,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
           }
         }
         // Then the rune, in two mirrored halves.
-        if (tick > 63) {
+        if (memberFrame > 63) {
           draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
           draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
         }

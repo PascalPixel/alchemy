@@ -57,18 +57,18 @@ Func_081180e8:
 	.thumb_func
 ColorBuffer_ScaleFar:
 	overlay_veneer ColorBuffer_Scale
-	.global DjinnRecovery_TickFar
+	.global DjinnRecovery_CountDownFar
 	.thumb_func
-DjinnRecovery_TickFar:
-	overlay_veneer DjinnRecovery_Tick
+DjinnRecovery_CountDownFar:
+	overlay_veneer DjinnRecovery_CountDown
 	.global BattleMotion_GetSlotPaletteFar
 	.thumb_func
 BattleMotion_GetSlotPaletteFar:
 	overlay_veneer BattleMotion_GetSlotPalette
-	.global DjinnRecovery_TickTwentyFar
+	.global DjinnRecovery_CountDownTwentyFar
 	.thumb_func
-DjinnRecovery_TickTwentyFar:
-	overlay_veneer DjinnRecovery_TickTwenty
+DjinnRecovery_CountDownTwentyFar:
+	overlay_veneer DjinnRecovery_CountDownTwenty
 	.global DebugParty_LoadPresetFar
 	.thumb_func
 DebugParty_LoadPresetFar:

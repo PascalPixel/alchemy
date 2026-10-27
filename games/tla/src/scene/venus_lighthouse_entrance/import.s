@@ -6,10 +6,10 @@
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -106,10 +106,10 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Func_020028a4:
 	overlay_veneer Func_080ad208
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020028b4
 	.thumb_func
 Func_020028b4:
@@ -325,7 +325,7 @@ Func_02002a54:
 	.global Func_02002a5c
 	.thumb_func
 Func_02002a5c:
-	overlay_veneer BattleEffect_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

@@ -58,7 +58,7 @@ void System_Initialize(void) {
   gCartridgeResetMarker = 0;
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
-  WaitTicks(10);
+  WaitFrames(10);
   Monitor_RunFar(0);
 }
 
@@ -67,7 +67,7 @@ void System_Initialize(void) {
 UNUSED void System_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 

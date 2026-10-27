@@ -168,7 +168,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
     }
     embers = EMBERS;
     BattleEffect_SelectLivingTargets(work->effect);
-    WaitTicks(1);
+    WaitFrames(1);
     BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
 
     for (frame = 0; frame != SCENE_FRAMES; frame++) {
@@ -314,7 +314,7 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

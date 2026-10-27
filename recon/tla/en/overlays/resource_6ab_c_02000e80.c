@@ -9,7 +9,7 @@
    } *)(base))                                                                 \
        ->v)
 s32 Camera_MoveWithinMapBounds();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_020041e4();
 s32 Func_020041ec();
 s32 Func_02004204();
@@ -44,7 +44,7 @@ s32 Scheduler_AddOrUpdateCallback();
 s32 Scheduler_RemoveCallbackFar();
 s32 UiText_ShowPositionedMessageAndWait();
 s32 VramCache_Load();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Data_02004cec[];
 extern u8 Func_02001424[];
 extern u8 MsgMarsStar09[];
@@ -69,7 +69,7 @@ L_02008ea2:
   Call1((void (*)())Func_0200444c, 0);
   Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgMarsStar09, 1);
   Call1((void (*)())Func_0200446c, 78);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200446c, 182);
   t7 = Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000, 0x80000, 0x930000);
   *(s32 *)(s32)Data_02004cec = t7;
@@ -95,7 +95,7 @@ L_02008ea2:
   Call3((void (*)())VramCache_Load, t14, 128, v_r5);
   Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02008f48:
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r6 = ((s32)gPartyState + 0x214);
   t18 = *(s32 *)v_r6;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, t18, 0xcccc, 0x6666);
@@ -125,7 +125,7 @@ L_02008f48:
   t33 = *(s32 *)v_r7;
   Call1((void (*)())Func_0200420c, t33);
 L_02008fe6:
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   t36 = *(s32 *)v_r6;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, t36, 0x19999, 0xcccc);
   t38 = *(s32 *)v_r6;
@@ -134,7 +134,7 @@ L_02008fe6:
   FIELD_AT(t39, u8, 90) = (254 & t40);
   t41 = *(s32 *)v_r6;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, t41, 0x29e, 170);
-  Call1((void (*)())FieldEvent_WaitTicks, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   t44 = *(s32 *)v_r6;
   t45 = Value1((s32 (*)())Object_GetById, t44);
   t46 = FIELD_AT(t45, u8, 90);
@@ -155,7 +155,7 @@ L_0200905c:
   Call1((void (*)())Func_0200444c, 0);
   Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgMarsStar09, 1);
   Call1((void (*)())Func_0200446c, 78);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200446c, 182);
   t60 = Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000, 0x80000, 0x930000);
   *(s32 *)(s32)Data_02004cec = t60;
@@ -182,7 +182,7 @@ L_0200905c:
   Call3((void (*)())VramCache_Load, t67, 128, v_r5);
   Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02009112:
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r7 = ((s32)gPartyState + 0x214);
   t71 = *(s32 *)v_r7;
   ObjectMotion_SetSpeedParameters(t71, 0xcccc, 0x6666);
@@ -193,29 +193,29 @@ L_02009112:
   Call1((void (*)())Func_0200446c, 0);
   Call1((void (*)())Func_0200446c, 141);
   Call3((void (*)())Func_02004264, 0x20000, 0x20000, 0x10000);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   t81 = *(s32 *)v_r7;
   Call2((void (*)())Func_020043bc, t81, 0x102);
   Call3((void (*)())Func_02004264, 0x10000, 0x10000, 0x10000);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_0200440c, 0x10000, 0);
   Call2((void (*)())Func_02004404, 0x10006, 0);
   Call1((void (*)())Func_02004414, 80);
-  Call1((void (*)())FieldEvent_WaitTicks, 80);
+  Call1((void (*)())FieldEvent_WaitFrames, 80);
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001424, 0x480);
   Call2((void (*)())Func_020043c4, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0x1e00000, 1);
   Func_020043d4();
-  Call1((void (*)())FieldEvent_WaitTicks, 80);
+  Call1((void (*)())FieldEvent_WaitFrames, 80);
   Call3((void (*)())Func_02004264, -1, -1, 0xe666);
   Call1((void (*)())Func_0200446c, 0x186);
   Call2((void (*)())Func_02004404, 0x7fff, 0);
   Call1((void (*)())Func_02004414, 80);
-  Call1((void (*)())WaitTicks, 60);
+  Call1((void (*)())WaitFrames, 60);
   Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)Func_02001424);
-  Call1((void (*)())WaitTicks, 20);
+  Call1((void (*)())WaitFrames, 20);
   Call3((void (*)())Func_02004264, 0, 0, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
@@ -225,10 +225,10 @@ L_02009112:
   *(u16 *)v_r11 = v_r8;
   Call2((void (*)())Func_02004404, 0x10000, 0);
   Call1((void (*)())Func_02004414, 120);
-  Call1((void (*)())WaitTicks, 160);
+  Call1((void (*)())WaitFrames, 160);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0xba0000, 1);
   Func_020043d4();
-  Call1((void (*)())FieldEvent_WaitTicks, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   t115 = *(s32 *)v_r9;
   v_r0 = t115;
   v_r10 = (s32)gPartyState;
@@ -250,7 +250,7 @@ L_02009112:
   t122 = *(s32 *)v_r9;
   Call1((void (*)())Func_0200420c, t122);
 L_0200932e:
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   t125 = *(s32 *)v_r7;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, t125, 0x19999, 0xcccc);
   t127 = *(s32 *)v_r7;
@@ -259,7 +259,7 @@ L_0200932e:
   FIELD_AT(t128, u8, 90) = (254 & t129);
   t130 = *(s32 *)v_r7;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, t130, 0x29e, 170);
-  Call1((void (*)())FieldEvent_WaitTicks, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   t133 = *(s32 *)v_r7;
   t134 = Value1((s32 (*)())Object_GetById, t133);
   t135 = FIELD_AT(t134, u8, 90);

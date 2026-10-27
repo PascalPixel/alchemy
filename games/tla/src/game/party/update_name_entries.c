@@ -39,7 +39,7 @@ s32 LinkBattle_ReceiveParty(void) {
     if (name_entry[298] != 0) {
       named_count += 1;
     }
-    WaitTicks(2);
+    WaitFrames(2);
     Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
     i = 0;
     if (name_text[i] != 0) {
@@ -70,7 +70,7 @@ s32 LinkBattle_ReceiveParty(void) {
   buffer = Runtime_BumpAllocateAlternatePool(340);
   if (SerialRuntime_StartReceive(Resource_FarCall005(1)) != -1) {
     SerialRuntime_WaitForReceive();
-    WaitTicks(2);
+    WaitFrames(2);
   }
   MemFree(buffer);
   return named_count;
@@ -127,14 +127,14 @@ s32 LinkBattle_SendParty(void) {
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
-    WaitTicks(2);
+    WaitFrames(2);
   }
   for (; i <= 2; i++) {
     ((struct LinkUnit *)buffer)->side = 0;
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
-    WaitTicks(2);
+    WaitFrames(2);
   }
   size = LINK_PARTY_OFFER_BYTES;
   MemFree(buffer);
@@ -157,8 +157,8 @@ s32 LinkBattle_SendParty(void) {
   }
   if (SerialRuntime_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     SerialRuntime_WaitForSend();
-    WaitTicks(1);
-    WaitTicks(2);
+    WaitFrames(1);
+    WaitFrames(2);
   }
   MemFree(buffer);
 }

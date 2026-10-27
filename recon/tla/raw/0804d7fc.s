@@ -148,7 +148,7 @@ Func_0804d7fc:
 	ldr r0, [r7, #124]
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Menu_EndResourceSelection
 	adds r0, r5, #0
 	add sp, #4

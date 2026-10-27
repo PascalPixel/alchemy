@@ -21,7 +21,7 @@ struct UiWindow {
 };
 
 extern u32 gInput[];
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern s8 gData_02002438[];
 extern u8 gData_02002440[];
 extern u8 gData_02002454[];
@@ -55,7 +55,7 @@ u8 *RenderOutput_Create(s32 entry, s32 address, struct UiWindow *window,
 s32 Resource_FindFreeEntry(void);
 void Party_RemoveActiveOwner(s32 id);
 void Party_AddActiveOwner(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02000a70(s32 code, u16 *glyph);
 void Func_02000db4(struct UiWindow *window, s32 column, s32 row, s32 mode,
                    s32 a, s32 b);
@@ -221,7 +221,7 @@ s32 Func_02000e44(void) {
     Func_020023f0(sprite[1]);
     {
       s32 cell = cursor % 50;
-      s32 frame = (gFrameTick >> 1) & 7;
+      s32 frame = (gVBlankCount >> 1) & 7;
       s32 col = cell % 10;
 
       y = (cell / 10 * 2 + grid->y) * 8 - 2;
@@ -284,7 +284,7 @@ s32 Func_02000e44(void) {
                                          0, 0);
             Func_02002408(112);
             do
-              WaitTicks(1);
+              WaitFrames(1);
             while (!(gInput[1] & 1));
             Func_02002408(112);
             Func_02002350();
@@ -304,7 +304,7 @@ s32 Func_02000e44(void) {
             Func_02002310(gPartyState.paletteGlow[0],
                           gPartyState.paletteGlow[1]);
             Func_02002408(74);
-            WaitTicks(6);
+            WaitFrames(6);
             Func_020022f8(0);
             Func_020023e8();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
@@ -314,7 +314,7 @@ s32 Func_02000e44(void) {
           UiText_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
                                        0);
           do
-            WaitTicks(1);
+            WaitFrames(1);
           while (!(gInput[1] & 1) && !(gInput[1] & 2));
           UiWork_Finalize(box, 2);
           RenderOutput_RedrawSavedRect(window);
@@ -382,6 +382,6 @@ s32 Func_02000e44(void) {
         Iwram_ClearWordsEntry(work->cells[i], 128);
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

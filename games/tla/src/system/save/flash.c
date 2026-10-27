@@ -92,11 +92,11 @@ extern u16 *gFlashTimerReg;
 /// Counts down the active flash timeout and marks its expiration.
 void FlashTimerIntr(void) {
   if (gFlashTimerCount != 0) {
-    s32 ticksRemaining = gFlashTimerCount;
+    s32 countLeft = gFlashTimerCount;
 
-    ticksRemaining -= 1;
-    gFlashTimerCount = ticksRemaining;
-    if (((u32)ticksRemaining << 16) == 0) {
+    countLeft -= 1;
+    gFlashTimerCount = countLeft;
+    if (((u32)countLeft << 16) == 0) {
       gFlashTimeoutFlag = 1;
     }
   }

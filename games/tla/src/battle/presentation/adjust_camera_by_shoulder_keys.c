@@ -46,11 +46,11 @@ s32 BattlePres_RunAction(s16 *action) {
       return 1;
     break;
   case 3:
-    WaitTicks(45);
+    WaitFrames(45);
     BattlePres_ShowDefendMessage(action);
     break;
   case 2:
-    WaitTicks(45);
+    WaitFrames(45);
     Func_0811ca54(action);
     break;
   case 0:

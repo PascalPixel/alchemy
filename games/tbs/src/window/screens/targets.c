@@ -772,17 +772,17 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = -1;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     if (redraw == 0)
       break;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != 0)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, 0);
   gBattleMenuWork->targetViewOffset = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   return targetIndex;
 }

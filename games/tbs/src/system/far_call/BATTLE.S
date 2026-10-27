@@ -33,9 +33,9 @@ FarCall_BattleTable:
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
 	export BattlePlayback_StartFar, BattlePlayback_Start
 	export Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped
-	export DjinnRecovery_TickFar, DjinnRecovery_Tick
+	export DjinnRecovery_CountDownFar, DjinnRecovery_CountDown
 	export BattleObject_GetPaletteFar, BattleObject_GetPalette
-	export DjinnRecovery_TickTwentyFar, DjinnRecovery_TickTwenty
+	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
 	export BattleObject_PutFar, BattleObject_Put
 	overlay_veneer ReleaseBattleObjectRecords

@@ -25,7 +25,7 @@ void Func_02001650(void) {
   Func_02002cd8(6, gPartyState.currentOwner);
   Func_02002cd8(5, gPartyState.currentOwner);
   Func_02002cd8(8, gPartyState.currentOwner);
-  LemurianShip_WaitTicks(1);
+  LemurianShip_WaitFrames(1);
   LemurianShip_ObjSpeed(7, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(5, 0xcccc, 0x6666);

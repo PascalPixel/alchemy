@@ -47,7 +47,7 @@ s32 Battle_Run(s32 enemyGroup) {
   s32 i;
   s32 result;
   struct Window *tutorialWindow;
-  s32 linkWaitTicks;
+  s32 linkWaitFrames;
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
@@ -124,17 +124,17 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   if (battle->isLink != 0) {
     /* FAKEMATCH(one-pass): the seed's store in a one-pass block, which keeps
-     * it ahead of linkWaitTicks' zero; as a plain assignment, 7 of 645
+     * it ahead of linkWaitFrames' zero; as a plain assignment, 7 of 645
      * instructions differ in tbs-en. */
     do {
       gBattleRandomSeed = 0;
     } while (0);
-    for (linkWaitTicks = 0;;) {
+    for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
-      WaitTicks(1);
-      linkWaitTicks++;
-      if (linkWaitTicks > LINK_MAX_MISSED_FRAMES) {
+      WaitFrames(1);
+      linkWaitFrames++;
+      if (linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
         battle->linkPaused = 1;
         break;
       }
@@ -286,7 +286,7 @@ s32 Battle_Run(s32 enemyGroup) {
       if (LinkBattle_SyncTurn() < 0)
         goto aborted;
     } else {
-      WaitTicks(20);
+      WaitFrames(20);
     }
     if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
@@ -296,13 +296,13 @@ s32 Battle_Run(s32 enemyGroup) {
     // the cursor, at pixel (92, 24).
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (TextPrinter_AllFinishedFar() == 0)
-      WaitTicks(1);
+      WaitFrames(1);
     Window_CloseFar(tutorialWindow, 1);
-    WaitTicks(1);
+    WaitFrames(1);
     tutorialWindow = Message_OpenWindowFar(MsgTutorialStandby, 10, 4, 1);
     BattleMessage_WaitForAdvanceAt(92, 24);
     Window_CloseFar(tutorialWindow, 1);
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
 won:
@@ -373,7 +373,7 @@ finished:
   // and the per-frame sorting and the affine scanlines (block 10) go.
   BattleParty_ResetActiveRuntimeFields();
   Battle_ReservedNoOpF674();
-  DjinnRecovery_Tick();
+  DjinnRecovery_CountDown();
   Battle_SetType(BATTLE_TYPE_NORMAL);
   Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();

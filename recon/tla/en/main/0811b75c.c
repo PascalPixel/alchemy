@@ -84,7 +84,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
     }
   }
   if (gSchedulerStatus == 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
   for (unitIndex = 0; unitIndex < 14 && (unitId = unitIds[unitIndex]) != 255;
        unitIndex++) {

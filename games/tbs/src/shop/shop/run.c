@@ -156,7 +156,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
         Shop_SelectBuy();
       } else {
         Shop_ShowKeeperMessage(MsgOutOfStock);
-        WaitTicks(1);
+        WaitFrames(1);
       }
     } else if (action == SHOP_ACTION_REPAIR) {
       Shop_ShowKeeperMessage(MsgFixDamaged);
@@ -204,7 +204,7 @@ s32 Shop_OpenDebugShop(s32 unused) {
 /// for a fanfare.
 void Sound_WaitForFanfare(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 
@@ -239,8 +239,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
   while (TextPrinter_AllFinishedFar() == 0)
-    WaitTicks(1);
-  WaitTicks(1);
+    WaitFrames(1);
+  WaitFrames(1);
 }
 
 /// Shows a shopkeeper's line as Shop_ShowKeeperMessage does, hiding the hand
@@ -275,9 +275,9 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   Message_OpenWindowFar(resolvedMessage, 5, 0,
                         (portraitResource << 0x10) | 0x22);
   while (TextPrinter_AllFinishedFar() == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   shop->cursor.anchor->motion = savedCursorMode;
 }
 

@@ -20,14 +20,14 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *, u32);
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Object_SetMode(ObjectTable_Get(objectId), 5);
   Audio_PlayCue(125);
-  WaitTicks(12);
+  WaitFrames(12);
 }
 
 void ObjectEvent_Spring(u32 objectId) {
   struct ObjectRuntime *object;
 
   object = ObjectTable_Get(objectId);
-  WaitTicks(18);
+  WaitFrames(18);
   Object_SetMode(object, 7);
   Audio_PlayCue(146);
   if (object != 0) {
@@ -39,7 +39,7 @@ void ObjectEvent_Spring(u32 objectId) {
 void ObjectEvent_SetMode4WithCue(u32 objectId) {
   Object_SetMode(ObjectTable_Get(objectId), 4);
   Audio_PlayCue(124);
-  WaitTicks(12);
+  WaitFrames(12);
 }
 
 void ObjectEvent_SetMode2(u32 objectId) {
@@ -49,7 +49,7 @@ void ObjectEvent_SetMode2(u32 objectId) {
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
   Object_SetMode(ObjectTable_Get(objectId), 6);
   Audio_PlayCue(124);
-  WaitTicks(12);
+  WaitFrames(12);
 }
 
 struct ObjectRuntime *ObjectEvent_GetObject(u32 objectId) {

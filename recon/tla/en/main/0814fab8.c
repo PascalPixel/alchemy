@@ -64,7 +64,7 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -451,9 +451,9 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

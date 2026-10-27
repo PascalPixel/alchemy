@@ -44,7 +44,7 @@ void Func_08138018(struct BattlePresentationWork *work);
 void BattleEventRuntime_WaitForReady(void);
 void BattleEvent_Playback(void);
 void ObjMotRst(s32 slot);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
@@ -117,7 +117,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
         battle->brightness = value;
         ColorBuffer_Scale(palette, 0x050000c0, value, 128);
       }
-      WaitTicks(1);
+      WaitFrames(1);
       targetOrFadeIndex++;
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
@@ -126,7 +126,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     else
       Func_08138018(&work);
   } else {
-    WaitTicks(60);
+    WaitFrames(60);
   }
   BattleEventRuntime_WaitForReady();
   Object_SetMode(object, 1);

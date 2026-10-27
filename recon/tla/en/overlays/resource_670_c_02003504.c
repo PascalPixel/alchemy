@@ -23,9 +23,9 @@ void Func_02003504(void) {
   Func_02005c9c(154);
   for (i = 0; i <= 7; i++) {
     Object_SetPartAttribute(Object_GetById(17), 7);
-    WaitTicks(2);
+    WaitFrames(2);
     Object_SetPartAttribute(Object_GetById(17), 0);
-    WaitTicks(2);
+    WaitFrames(2);
   }
   Func_02005c9c(209);
   for (i = 0, angle = 0; i <= 15; i++, angle += 0x160000) {

@@ -601,7 +601,7 @@ BattleEffect_RunWyrdCurse:
 	movs r0, #4
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -609,7 +609,7 @@ BattleEffect_RunWyrdCurse:
 	add r2, r10
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #28]
 	adds r3, #1
 	str r3, [sp, #28]

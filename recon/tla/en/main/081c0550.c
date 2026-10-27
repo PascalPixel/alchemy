@@ -5,7 +5,7 @@ void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
 void CgbAudio_Initialize(struct CgbNote *notes);
 void AudioEngine_SetMode(u32 mode);
-void AudioEngine_RunMixerTick(void);
+void SoundMain(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StartSong(struct SoundPlayer *player,

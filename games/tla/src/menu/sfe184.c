@@ -19,7 +19,7 @@ struct OwnerMenuState {
 };
 
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 a, s32 b, s32 c, s32 d);
@@ -36,7 +36,7 @@ s32 Func_080fe184(void) {
 
   Ram_HeapSlots->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  WaitTicks(1);
+  WaitFrames(1);
   UiWindow_InitializeWork(0);
 
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
@@ -61,7 +61,7 @@ s32 Func_080fe184(void) {
   RenderOutput_ClearListFar(state->statusWindow);
   ItemMenu_Close();
   Ram_HeapSlots->objectSystem->suspended = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   Runtime_ReleaseHeapBlock(220);
   return result;
 }

@@ -84,7 +84,7 @@ BattleEffect_RunKirin:
 	subs r2, #8
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #0
 	ldr r1, .L_08168b20
 	movs r0, #1
@@ -644,7 +644,7 @@ BattleEffect_RunKirin:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r4, #1
 	add r11, r4
 .L_08168f3a:
@@ -1165,7 +1165,7 @@ BattleEffect_RunKirin:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7
@@ -1174,7 +1174,7 @@ BattleEffect_RunKirin:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #16]
 	movs r3, #1
 	add r11, r3

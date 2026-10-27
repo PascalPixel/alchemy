@@ -3,8 +3,8 @@
 @ Func_0200020c, called with 4, unpacks both streams into a work buffer. It
 @ copies the second stream's 8,192 bytes to video memory 0x06000000, 256 tiles
 @ of 16 colours, and the first stream's eleven tilemaps of 32 x 20 cells to
-@ 0x06002000 one at a time: the first seven for four ticks each, the last four
-@ at ticks 70, 72, 74 and 76. The cells name BG palettes 14 and 15, where it
+@ 0x06002000 one at a time: the first seven for four frames each, the last four
+@ at frames 70, 72, 74 and 76. The cells name BG palettes 14 and 15, where it
 @ puts pal_b and pal_c. beams.png is drawn as those eleven screens show the
 @ tiles, one under another, in pal_b and pal_c; the two rows below them hold
 @ the tiles no screen shows. Called with 0 to 3 the routine builds a tilemap

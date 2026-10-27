@@ -2,9 +2,9 @@
 
 void Func_02003610(void) {
   Scheduler_RemoveCallbackFar(Func_02002ccc);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02005bb4();
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   if (gData_02007950 != 0)
     Func_02003504();
 }

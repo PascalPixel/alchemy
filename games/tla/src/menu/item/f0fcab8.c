@@ -35,7 +35,7 @@ void *BattleAction_Get(s32 action);
 void RenderOutput_ClearListFar(void *window);
 void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 /// A second item picker an event script opens, built as Func_080f94a4: opens
 /// the item menu over the field and runs its command loop; when that returns 1,
@@ -55,7 +55,7 @@ s32 Func_080fcab8(void) {
   screen = Runtime_AllocateHeapBlock(220, 0xcec);
   Ram_HeapSlots->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  WaitTicks(1);
+  WaitFrames(1);
   UiWindow_InitializeWork(0);
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
   Func_080fa368(0, 3, 0, 7);
@@ -81,7 +81,7 @@ s32 Func_080fcab8(void) {
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;
   Event_ClearInvalidPackedValuesFar();

@@ -29,7 +29,7 @@ extern u8 gData_020040ac[];
 extern u8 Func_02001598[];
 s32 Object_GetById();
 s32 Func_02003ef4();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02003e44();
 void Camera_MoveWithinMapBounds();
 void Func_02003d44();
@@ -46,7 +46,7 @@ void Func_02003cc4();
 void ObjectDispatch_SetSingleChildFlags();
 void Animation_SetStateFlags();
 void Func_02003ccc();
-void WaitTicks();
+void WaitFrames();
 void Vector_AddPolarOffsetFar();
 void Func_02003ebc();
 
@@ -63,7 +63,7 @@ s32 Func_02001620(s32 a0, s32 a1, s32 a2) {
   v1 = Object_GetById(r11);
   r10 = v1;
   Call1((void (*)())Func_02003ef4, 78);
-  Call1((void (*)())FieldEvent_WaitTicks, 30);
+  Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call2((void (*)())Func_02003e44, 0x8000, 0x1000);
   Call4((void (*)())Camera_MoveWithinMapBounds, (*(s16 *)(r7 + 10)) << 16,
         (*(s16 *)(r7 + 14)) << 16, (*(s16 *)(r7 + 18)) << 16, 1);
@@ -77,7 +77,7 @@ s32 Func_02001620(s32 a0, s32 a1, s32 a2) {
   FIELD_AT(r7, s32, 48) = 0x3333;
   ObjectMotion_EnableActionAndSetCallback(r9, (s32)gData_02004034);
   Call1((void (*)())Func_02003ef4, 194);
-  Call1((void (*)())FieldEvent_WaitTicks, 45);
+  Call1((void (*)())FieldEvent_WaitFrames, 45);
   Call2((void (*)())Func_02003e04, r9, 0x100);
   FIELD_AT(67108946, u16, 0) = 4104;
   FIELD_AT(67108944, u16, 0) = 16144;
@@ -106,13 +106,13 @@ L_020096f8:
   r6 = r6 << 19;
   r6 = r6 + 82;
   FIELD_AT(r6, u16, 0) = 4100;
-  Call1((void (*)())WaitTicks, 2);
+  Call1((void (*)())WaitFrames, 2);
   FIELD_AT(r6, u16, 0) = r5;
-  Call1((void (*)())WaitTicks, 2);
+  Call1((void (*)())WaitFrames, 2);
   FIELD_AT(r6, u16, 0) = 4112;
-  Call1((void (*)())WaitTicks, 2);
+  Call1((void (*)())WaitFrames, 2);
   FIELD_AT(r6, u16, 0) = r5;
-  Call1((void (*)())WaitTicks, 2);
+  Call1((void (*)())WaitFrames, 2);
   r8 = r8 + 1;
   r3 = r8;
   goto L_020097bc;
@@ -120,7 +120,7 @@ L_020097bc:
   if (r3 != 16)
     goto L_020096f8;
   FIELD_AT(r6, u16, 0) = 4104;
-  Call1((void (*)())WaitTicks, 30);
+  Call1((void (*)())WaitFrames, 30);
   r8 = 0;
 L_020097ce:
   v5 = Engine_ObjectCreate(0x2a0, FIELD_AT(r10, s32, 8), FIELD_AT(r10, s32, 12),
@@ -160,7 +160,7 @@ L_0200985c:
     FIELD_AT(r10, s32, 48) = 0x3333;
     ObjectMotion_EnableActionAndSetCallback(r11, (s32)gData_02004058);
   }
-  Call1((void (*)())WaitTicks, 8);
+  Call1((void (*)())WaitFrames, 8);
   r8 = r8 + 1;
   r3 = 1;
   if (r8 == 16)
@@ -168,7 +168,7 @@ L_0200985c:
   goto L_020097ce;
 L_020098c2:
   Call1((void (*)())Func_02003ef4, 220);
-  Call1((void (*)())WaitTicks, 16);
+  Call1((void (*)())WaitFrames, 16);
   r8 = 2;
 L_020098d2:
   v8 = Engine_ObjectCreate(0x2a0, FIELD_AT(r10, s32, 8),
@@ -199,10 +199,10 @@ L_02009960:
   if (r8 != 32)
     goto L_020098d2;
   Call1((void (*)())Func_02003ef4, 220);
-  Call1((void (*)())WaitTicks, 50);
+  Call1((void (*)())WaitFrames, 50);
   Call2((void (*)())Func_02003e74, 0x7fff, 0);
   Call1((void (*)())Func_02003e84, 8);
-  Call1((void (*)())WaitTicks, 16);
+  Call1((void (*)())WaitFrames, 16);
   Call3((void (*)())Func_02003d44, 0, 0, 0);
   Call2((void (*)())Func_02003e04, r9, 0);
   Call2((void (*)())Func_02003e04, r11, 0);
@@ -212,11 +212,11 @@ L_02009960:
   ObjectMotion_EnableActionAndSetCallback(r9, (s32)gData_0200407c);
   ObjectMotion_EnableActionAndSetCallback(r11, (s32)gData_020040ac);
   FIELD_AT(r10, s32, 108) = (s32)Func_02001598;
-  Call1((void (*)())WaitTicks, 120);
+  Call1((void (*)())WaitFrames, 120);
   FIELD_AT(r10, s32, 108) = r6;
   v10 = Func_02003ef4(0x186);
   Func_02003ebc();
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   /* add (s32)stack, #12 */
   return v11;
 }

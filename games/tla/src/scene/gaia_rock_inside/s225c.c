@@ -14,8 +14,8 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void FieldEvent_WaitTicks(s32 ticks);
-void WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
+void WaitFrames(s32 frames);
 void Func_02004df4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02004dfc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -51,20 +51,20 @@ void Func_0200225c(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 12, 528, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
-  FieldEvent_WaitTicks(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
-  WaitTicks(30);
+  WaitFrames(30);
   Object_SetModeById(8, 2);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 3);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bd)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
     ObjectMotion_OffsetPositionAndResetMotion(8, 24, 0);
@@ -74,7 +74,7 @@ void Func_0200225c(void) {
     if (object->unk56 != 0) {
       do {
         object->velocityY = Random16Far();
-        WaitTicks(1);
+        WaitFrames(1);
         if (++i > 299)
           break;
       } while (object->unk56 != 0);
@@ -82,11 +82,11 @@ void Func_0200225c(void) {
     Call6(Func_02004df4, 2, 93, 1, 5, 28, 85);
     for (i = 9; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Func_02005014(564);
     Object_SetModeById(8, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -96,7 +96,7 @@ void Func_0200225c(void) {
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x308);
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -106,11 +106,11 @@ void Func_0200225c(void) {
   } else {
     for (i = 119; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -139,20 +139,20 @@ void Func_020024b8(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 12, 672, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
-  FieldEvent_WaitTicks(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(9, 5);
-  WaitTicks(30);
+  WaitFrames(30);
   Object_SetModeById(9, 2);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(9, 3);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9be)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Call3(ObjectMotion_SetSpeedParameters, 9, 0x4000, 0xccc);
     Call3(ObjectMotion_ResetAndSetPosition, 9, 608, 352);
@@ -162,7 +162,7 @@ void Func_020024b8(void) {
     if (object->unk56 != 0) {
       do {
         object->velocityY = Random16Far();
-        WaitTicks(1);
+        WaitFrames(1);
         if (++i > 299)
           break;
       } while (object->unk56 != 0);
@@ -170,11 +170,11 @@ void Func_020024b8(void) {
     Call6(Func_02004df4, 2, 93, 1, 5, 36, 85);
     for (i = 9; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Func_02005014(564);
     Object_SetModeById(9, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -184,7 +184,7 @@ void Func_020024b8(void) {
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x309);
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -194,11 +194,11 @@ void Func_020024b8(void) {
   } else {
     for (i = 119; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(9, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -227,20 +227,20 @@ void Func_02002718(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 14, 336, 396);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(14);
-  FieldEvent_WaitTicks(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
-  WaitTicks(30);
+  WaitFrames(30);
   Object_SetModeById(8, 2);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 3);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bc)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Call3(ObjectMotion_SetSpeedParameters, 8, 0x4000, 0xccc);
     Call3(ObjectMotion_OffsetPositionAndResetMotion, 8, -16, 0);
@@ -250,7 +250,7 @@ void Func_02002718(void) {
     if (object->unk56 != 0) {
       do {
         object->velocityY = Random16Far();
-        WaitTicks(1);
+        WaitFrames(1);
         if (++i > 299)
           break;
       } while (object->unk56 != 0);
@@ -258,11 +258,11 @@ void Func_02002718(void) {
     Call6(Func_02004df4, 1, 85, 1, 4, 25, 85);
     for (i = 9; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Func_02005014(564);
     Object_SetModeById(8, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
@@ -272,7 +272,7 @@ void Func_02002718(void) {
     Func_02004ebc(14, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x307);
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -282,11 +282,11 @@ void Func_02002718(void) {
   } else {
     for (i = 119; i >= 0; i--) {
       object->velocityY = Random16Far();
-      WaitTicks(1);
+      WaitFrames(1);
     }
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),

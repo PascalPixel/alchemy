@@ -52,7 +52,7 @@ s32 Save_InitializeWork(void) {
   for (index = 0; index < SAVE_FLASH_IDENTIFY_ATTEMPTS; index++) {
     if ((u16)IdentifyFlash() == 0)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (index >= SAVE_FLASH_IDENTIFY_ATTEMPTS)
     return 1;

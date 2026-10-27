@@ -1,7 +1,7 @@
 // Overlay 6ad's copy of resource_698_c_020005e4.c, with this overlay's symbols:
 // differ 16 of 197. That draft's header follows. Draft, differ 16 of 197:
 // shared by thirteen overlays (698 to 6a4): the update of an object that
-// carries the leader. While no event runs it animates, ticks a sound every 32
+// carries the leader. While no event runs it animates, plays a sound every 32
 // frames, takes the leader's sprite priority and moves along its angle; when
 // the leader stands close enough (and flag 260 is clear) it links the leader to
 // itself. Off its track it stops, takes its rest script and clears the ride.

@@ -106,7 +106,7 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
@@ -160,7 +160,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   BattleEffect_SelectLivingTargets(work->effect);
   REG_WININ = 0x2737;
   REG_WIN0H = 0xca;
-  WaitTicks(1);
+  WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
   Func_08163c2c(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -334,7 +334,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = 32;
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Act two: the charge.
@@ -492,9 +492,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       }
 
       Func_08158ce0(8, 8);
-      ObjectGroup_TickMemberTimers();
+      ObjectGroup_CountDownMemberTimers();
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
       frame++;
     } while (frame != 96);
   }

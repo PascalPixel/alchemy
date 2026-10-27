@@ -328,7 +328,7 @@ void BattleAnim_ApplyWindowBlendRegisters(void);
 void Display_ApplyBg2Reference(void);
 void Palette_StepFadeTransfer(void);
 void BattleAnim_ClearActorTimers(void);
-void BattleAnim_TickBattlerTints(void);
+void BattleAnim_CountDownBattlerTints(void);
 void BattleAnim_StartCanvasLayer(s32 bgControl);
 void BattleAnim_OpenCanvasLayer(s32 bgControl);
 void BattleAnim_StartTiledCanvas(s32 bgControl);

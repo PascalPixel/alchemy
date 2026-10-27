@@ -24,7 +24,7 @@ void Func_020029d8();
 struct FieldActor *Object_GetById();
 s32 GameFlag_Test();
 void GameFlag_SetBit();
-void WaitTicks();
+void WaitFrames();
 void Func_02000e04();
 u32 __umodsi3();
 void Animation_ApplyChildValues();
@@ -81,10 +81,10 @@ void Func_020000c8(struct FieldActor *object) {
 }
 
 void Func_02000120(struct FieldActor *object) {
-  u32 tick = gFrameCount;
+  u32 frameCount = gFrameCount;
 
-  if (tick & 1)
-    Animation_ApplyChildValues(object, (tick >> 1) % 6);
+  if (frameCount & 1)
+    Animation_ApplyChildValues(object, (frameCount >> 1) % 6);
 }
 
 void Func_02000148(struct FieldActor *object) {

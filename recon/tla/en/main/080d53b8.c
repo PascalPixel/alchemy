@@ -33,7 +33,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void EventRuntime_Start(void);
 void EventRuntime_End(void);
 void EventRuntime_Wait(s32 frames);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_08020258(s32 *position);
 s32 Runtime_CheckRadiusOverlapFar(s32 *position, s32 radius, s32 *other,
@@ -88,20 +88,20 @@ s32 Func_080d53b8(void) {
     leader->actionFlags = result;
     ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, gridX, gridZ);
     Object_SetMode(leader, 6);
-    WaitTicks(4);
+    WaitFrames(4);
     Object_SetMode(leader, 7);
     leader->velocityY = 0x40000;
-    WaitTicks(4);
+    WaitFrames(4);
     leader->motionFlags = result;
     spriteFlags &= 0xfe;
     ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
     leader->speedLimit = 0x10000;
     leader->velocityY = result;
     Object_SetMode(leader, 12);
-    WaitTicks(4);
+    WaitFrames(4);
     gPartyState.renderMode = 2;
     leader->actionFlags = 1;
-    WaitTicks(8);
+    WaitFrames(8);
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
     struct ObjectRuntime *entry;

@@ -333,7 +333,7 @@ UiText_OpenMessageAtObject:
 	cmp r3, #0
 	beq .L_080d3f28
 	movs r0, #8
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #20]
 	cmp r2, #0
 	beq .L_080d3f1e
@@ -388,7 +388,7 @@ UiText_OpenMessageAtObject:
 	b .L_080d3f72
 .L_080d3f6c:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_080d3f72:
 	bl UiWork_IsCompleteFar
 	cmp r0, #0

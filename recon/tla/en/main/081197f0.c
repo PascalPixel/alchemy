@@ -90,7 +90,7 @@ void ObjectSystem_InitializeFar(s32 mode);
 void UiWork_InitializeFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void BattleParty_AssignMemberSlots(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
@@ -152,7 +152,7 @@ void Fade_Wait(void);
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void Func_0811843c(void);
 void BattleParty_ResetActiveRuntimeFields(void);
-void DjinnRecovery_Tick(void);
+void DjinnRecovery_CountDown(void);
 void Func_081263f0(void);
 
 s32 Func_081197f0(s32 enemyGroup) {
@@ -166,7 +166,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   s32 i;
   s32 result;
   s32 window;
-  s32 linkWaitTicks;
+  s32 linkWaitFrames;
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
@@ -214,12 +214,12 @@ s32 Func_081197f0(s32 enemyGroup) {
   }
   if (battle->twoSided != 0) {
     gBattleRandomSeed = 0;
-    for (linkWaitTicks = 0;;) {
+    for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & 3) == 3)
         break;
-      linkWaitTicks++;
-      WaitTicks(1);
-      if (linkWaitTicks > 24) {
+      linkWaitFrames++;
+      WaitFrames(1);
+      if (linkWaitFrames > 24) {
         battle->linkPaused = 1;
         break;
       }
@@ -380,7 +380,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       if (BattlePres_SyncTurn() < 0)
         goto aborted_scripted;
     } else {
-      WaitTicks(20);
+      WaitFrames(20);
     }
     if (GameFlag_Test(0x16e) == 0)
       continue;
@@ -388,14 +388,14 @@ s32 Func_081197f0(s32 enemyGroup) {
     window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
                                          0, 4, 1);
     while (UiWork_IsCompleteFar() == 0)
-      WaitTicks(1);
+      WaitFrames(1);
     UiWork_FinalizeFar(window, 1);
-    WaitTicks(1);
+    WaitFrames(1);
     window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
                                          10, 4, 1);
     Func_08120060(44, 24);
     UiWork_FinalizeFar(window, 1);
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
 won:
@@ -468,7 +468,7 @@ finished:
     Func_0811843c();
   BattleParty_ResetActiveRuntimeFields();
   Func_08124cc0();
-  DjinnRecovery_Tick();
+  DjinnRecovery_CountDown();
   gPartyState.battleStart = 0;
   Scheduler_RemoveCallback(Func_0811b9fc);
   Func_081263f0();

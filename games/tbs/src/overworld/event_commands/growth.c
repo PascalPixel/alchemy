@@ -64,9 +64,9 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     target->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    WaitTicks(10);
+    WaitFrames(10);
     Sound_PlaySongFar(SE_RECOVERY);
-    WaitTicks(40);
+    WaitFrames(40);
     FieldPsynergy_FadeFromCastColor();
   }
 }
@@ -104,10 +104,10 @@ void FieldPsynergy_Growth(void) {
       Actor_StartScriptFar(particle, gFieldEffect_BurstParticleActorScript);
       particle->motionFlags = ACTOR_FALLS;
     }
-    WaitTicks(((Random16() * 2) >> 16) + 2);
+    WaitFrames(((Random16() * 2) >> 16) + 2);
     remainingActors--;
   } while (remainingActors >= 0);
-  WaitTicks(30);
+  WaitFrames(30);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -178,9 +178,9 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Actor_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }
     Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
-    WaitTicks(2);
+    WaitFrames(2);
   }
-  WaitTicks(8);
+  WaitFrames(8);
 }
 
 #undef GROWTH_PARTICLE_MAX

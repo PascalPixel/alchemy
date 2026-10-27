@@ -31,7 +31,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_020022e0(struct ObjectRuntime *object, s32 mode);
 void Func_02002470(s32 sound);
@@ -70,12 +70,12 @@ void Func_02001050(struct PushTarget target) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.currentOwner,
         0x8000, 0x1999);
   Object_SetModeById(gPartyState.currentOwner, 8);
-  WaitTicks(15);
+  WaitFrames(15);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner,
                                             (target.x - from[0]) >> 17,
                                             (target.z - from[2]) >> 17);
   Object_GetById(gPartyState.currentOwner)->update = Func_02001300;
-  WaitTicks(4);
+  WaitFrames(4);
   Func_020022e0(object, 2);
   Func_02002470(239);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, target.id, 0x8000, 0x1999);

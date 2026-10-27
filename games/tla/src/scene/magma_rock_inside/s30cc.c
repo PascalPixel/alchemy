@@ -54,7 +54,7 @@ void Func_020030cc(void) {
           0x5999);
     Call3(ObjectMotion_SetSpeedParameters, 5, 0xb333, 0x5999);
     Call2(Func_02004da8, 5, gPartyState.currentOwner);
-    Call1(FieldEvent_WaitTicks, 1);
+    Call1(FieldEvent_WaitFrames, 1);
     Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.currentOwner,
           0x100, 0x88);
     Call3(ObjectMotion_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
@@ -63,23 +63,23 @@ void Func_020030cc(void) {
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 5);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
-    Call1(FieldEvent_WaitTicks, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Func_02004de0, 5, 0);
     Call2(Object_SetModeById, gPartyState.currentOwner, 3);
-    Call1(FieldEvent_WaitTicks, 0x1e);
+    Call1(FieldEvent_WaitFrames, 0x1e);
     Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x100,
           0x98);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Object_SetModeById, 5, 3);
-    Call1(FieldEvent_WaitTicks, 0x1e);
+    Call1(FieldEvent_WaitFrames, 0x1e);
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_SetPositionAndReset, 5, 0x108, 0x89);
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     UiText_ShowPositionedMessageAndWait(MsgBlazeTabletInscription + 3, 1);
 #else
@@ -92,10 +92,10 @@ void Func_020030cc(void) {
     Call2(UiText_DrawQuantityPairWithCue, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
     Call3(Object_LinkPair, gPartyState.currentOwner, 5, 0);
-    Call1(FieldEvent_WaitTicks, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetModeById, 5, 3);
     Call2(Object_SetModeById, gPartyState.currentOwner, 3);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2(Object_SetModeById, 5, 2);
     object = Object_GetById(gPartyState.currentOwner);

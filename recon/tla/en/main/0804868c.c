@@ -144,7 +144,7 @@ void Runtime_PushSlotEntry(void *sprite, s32 depth);
 void Resource_ResetEntry(s32 slot);
 void Func_08041b68(void);
 void MemFree(void *block);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 s32 Func_0804868c(s32 member) {
   struct DjinnMenuOam cursorSprite;
@@ -595,7 +595,7 @@ s32 Func_0804868c(s32 member) {
       Iwram_FillWords((void *)0x06006500, 32, 0x44444444);
       Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   partyStatus = Ram_HeapSlots->windowLayout;
@@ -609,6 +609,6 @@ s32 Func_0804868c(s32 member) {
   Func_08041b68();
   UiWork_SetAltFlagAndClearTable(0);
   MemFree(djinnEntries);
-  WaitTicks(1);
+  WaitFrames(1);
   return encodedDjinn;
 }

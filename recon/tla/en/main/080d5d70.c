@@ -22,7 +22,7 @@ struct ContextEffect {
 };
 
 void *ResourceMetadata_RegisterFar(void *, s32);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_080d5d70(s32 id, s32 side) {
   u32 zero;
@@ -51,5 +51,5 @@ void Func_080d5d70(s32 id, s32 side) {
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   Object_SetMode(object, mode);
-  WaitTicks(18);
+  WaitFrames(18);
 }

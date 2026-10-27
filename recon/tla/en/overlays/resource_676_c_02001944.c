@@ -30,7 +30,7 @@ s32 Object_GetById();
 void Func_02002520();
 void Func_02002538();
 void ObjectMotion_EnableActionAndResetMotion();
-void WaitTicks();
+void WaitFrames();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_EnableActionAndSetCallback();
 s32 Func_02002570();
@@ -58,7 +58,7 @@ void Func_02001d14(void);
 void Func_02002530();
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02002578();
 
 void Func_02001944(void) {
@@ -72,7 +72,7 @@ void Func_02001944(void) {
   Call1(ObjectMotion_EnableActionAndResetMotion, 10);
   ((struct ObjectRuntime *)Value1(Object_GetById, 9))->update = 0;
   ((struct ObjectRuntime *)Value1(Object_GetById, 10))->update = 0;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call3(ObjectMotion_SetSpeedParameters, 9, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
   Call2(ObjectMotion_EnableActionAndSetCallback, 9, gData_0200277c);
@@ -97,7 +97,7 @@ void Func_02001944(void) {
   Call2(ObjectMotion_EnableActionAndSetCallback, 10, gData_020028dc);
   Call2(Object_SetActionCallbackAndRefreshById, 11, gData_02002948);
   Call3(Func_020024f8, 5, 0x1280000, 0x3680000);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xe000, 0);
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call3(ObjectMotion_SetPositionAndReset, 5, 312, 854);
@@ -136,27 +136,27 @@ void Func_02001944(void) {
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   if (*count != 34)
     goto wait1;
   actor->unk66 = 2;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait2:
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   if (actor->action != 42)
     goto wait2;
   actor->unk66 = 2;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait3:
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   if (actor->action != 108)
     goto wait3;
   actor->unk66 = 3;
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(Func_02002538, 8, 0);
   Func_02001730();
   Call3(ObjectMotion_Launch, 8, 4, 0);
@@ -177,7 +177,7 @@ wait3:
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Call1(Func_020025a0, 123);
-    Call1(FieldEvent_WaitTicks, 40);
+    Call1(FieldEvent_WaitFrames, 40);
     Call1(Func_02002578, 15);
   }
 }

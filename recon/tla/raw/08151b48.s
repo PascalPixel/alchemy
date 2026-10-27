@@ -548,7 +548,7 @@ BattleEffect_RunRay:
 	movs r0, #2
 	movs r1, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #36]
 	lsls r1, r1, #7
@@ -557,7 +557,7 @@ BattleEffect_RunRay:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #28]
 	adds r2, #1
 	str r2, [sp, #28]

@@ -4,8 +4,8 @@ gHeapSlots:
 	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
 	.space 0x00000060
-	.global gFrameTick
-gFrameTick:
+	.global gVBlankCount
+gVBlankCount:
 	.space 0x00000008
 	.global gSchedulerStatus
 gSchedulerStatus:

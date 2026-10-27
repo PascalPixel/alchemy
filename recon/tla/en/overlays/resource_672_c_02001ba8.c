@@ -44,7 +44,7 @@ void Func_02001ba8(void) {
         back->y += 0x10000;
       }
       Func_02001d40();
-      WaitTicks(1);
+      WaitFrames(1);
     }
   } else if (gPartyState.entrance == 2) {
     Func_02000be8();

@@ -13,6 +13,6 @@
 
 void AudioCommand_WaitForStateByteClear(void) {
   while (Audio_Check() != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

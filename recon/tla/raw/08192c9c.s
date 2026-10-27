@@ -158,7 +158,7 @@ BattleEffect_RunIris:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, .L_08192e10
 	movs r2, #128
 	lsls r2, r2, #19
@@ -326,7 +326,7 @@ BattleEffect_RunIris:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #168]
 	movs r0, #193
 	ldr r3, [r6]
@@ -421,7 +421,7 @@ BattleEffect_RunIris:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl .L_081956a0
 .L_08192fec:
 	.4byte 0x3f3f3f3f
@@ -1025,7 +1025,7 @@ BattleEffect_RunIris:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #237
 	ldr r6, [sp, #200]
 	lsls r0, r0, #3
@@ -5442,7 +5442,7 @@ BattleEffect_RunIris:
 	adds r3, r3, r0
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl .L_08192ec8
 .L_081956a0:
 	add r1, sp, #188
@@ -5479,7 +5479,7 @@ BattleEffect_RunIris:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, .L_0819570c
 	movs r2, #128
 	lsls r2, r2, #19

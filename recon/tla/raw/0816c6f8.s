@@ -1253,7 +1253,7 @@ BattleEffect_RunGeode:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0816d0ae:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #80]
 	lsls r1, r1, #7
@@ -1262,7 +1262,7 @@ BattleEffect_RunGeode:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r11, r2
 	mov r3, r11

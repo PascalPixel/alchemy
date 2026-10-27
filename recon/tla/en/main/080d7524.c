@@ -27,7 +27,7 @@ struct DjinniSprite {
 struct ObjectRuntime *Object_GetById(s32 id);
 void EventRuntime_Start(void);
 void EventRuntime_End(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
@@ -58,15 +58,15 @@ void Func_080d7524(s32 djinniId) {
   leader = Object_GetById(gPartyState.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
   EventRuntime_Start();
-  WaitTicks(10);
+  WaitFrames(10);
   Audio_PlayCue(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   Audio_PlayCue(175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  WaitTicks(10);
+  WaitFrames(10);
   back = dir + 0x8000;
   ObjectMotion_ArmCallback(djinniId, back, 0);
-  WaitTicks(10);
+  WaitFrames(10);
   djinni->angle = back;
   Func_080d47b4(djinniId, 0x103, 50);
   Object_GetById(djinniId)->actionFlags &= ~1;
@@ -75,14 +75,14 @@ void Func_080d7524(s32 djinniId) {
   Audio_PlayCue(152);
   djinni->gravity = 0x4000;
   djinni->velocityY = 0x48000;
-  WaitTicks(33);
+  WaitFrames(33);
   ((struct DjinniSprite *)djinni->animation)->priority = 0;
   Audio_PlayCue(152);
   djinni->velocityY = 0x4cccc;
-  WaitTicks(35);
+  WaitFrames(35);
   Audio_PlayCue(152);
   djinni->velocityY = 0x4e666;
-  WaitTicks(38);
+  WaitFrames(38);
 
   sprite = *((struct DjinniSprite *)djinni->animation)->entries[0];
   djinni->update = NULL;
@@ -122,11 +122,11 @@ void Func_080d7524(s32 djinniId) {
   Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
   Audio_PlayCue(153);
   ObjectMotion_Launch(djinniId, 6, 5);
-  WaitTicks(24);
+  WaitFrames(24);
   for (i = 0; i < 120; i++) {
     if (ABS(djinni->y - leader->y) < 0x140000)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   djinni->motionFlags = 0;
   djinni->velocityX = 0;

@@ -361,7 +361,7 @@ BattleEffect_RunVenus:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -369,7 +369,7 @@ BattleEffect_RunVenus:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, .L_08158068
 	ldr r1, [sp, #16]
 	ldr r3, [sp, #36]

@@ -3,9 +3,9 @@
 @ which Func_080eb824 copies to OBJ video memory. Func_080e572c, 080e5d5c,
 @ 080e7844 and overlay 685 unpack it there. In Func_080e572c the callback
 @ Func_080e4d9c writes 32 colours it computes from the sine table to OBJ
-@ palettes 14 and 15 each tick, from a counter the scene starts at 0; the
+@ palettes 14 and 15 each frame, from a counter the scene starts at 0; the
 @ picture carries the shared OBJ palette and those colours of the first
-@ tick.
+@ frame.
 	.section .rodata
 	.global FieldEffect_GlowDisc
 FieldEffect_GlowDisc:

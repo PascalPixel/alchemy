@@ -561,7 +561,7 @@ Func_02001690:
 	movs r0, #9
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #0
@@ -577,7 +577,7 @@ Func_02001690:
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -737,7 +737,7 @@ Func_02001690:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02004128
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #208
 	movs r0, #8
 	lsls r1, r1, #8
@@ -880,7 +880,7 @@ Func_02001690:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #12
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -903,7 +903,7 @@ Func_02001690:
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #9
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -912,14 +912,14 @@ Func_02001690:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #11
 	bl Object_SetActionCallbackAndRefreshById
 	ldr r0, [r6]
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -1371,7 +1371,7 @@ Func_02002ebc:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02003fd8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, .L_0200b084
 	adds r7, r6, #0
 	ldr r0, [r2]
@@ -1412,7 +1412,7 @@ Func_02002ebc:
 	str r3, [r1, #12]
 	str r2, [r1, #72]
 	str r5, [r1, #68]
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -1435,7 +1435,7 @@ Func_02002ebc:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #24
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r2, [r6, #16]
 	ldr r1, [r6, #12]
 	ldr r0, [r6, #8]
@@ -1460,7 +1460,7 @@ Func_02002ebc:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #24
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	mov r3, r8
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
@@ -1475,14 +1475,14 @@ Func_02002ebc:
 	lsls r1, r1, #8
 	bl ObjectMotion_ArmCallback
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #147
 	bl Func_020041f8
 	movs r1, #3
 	movs r0, #8
 	bl Object_SetModeById
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #128
 	mov r2, r8
 	lsls r3, r3, #12

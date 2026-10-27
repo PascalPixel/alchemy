@@ -129,7 +129,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 void Func_080cb05c(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 BattleEffect_SumCounters(void);
 void DisplayTransition_Start(s32 mode, s32 frames);
 void DisplayTransition_Finish(s32 mode, s32 frames);
@@ -284,7 +284,7 @@ s32 Field_RunScene(void) {
         Object_GetById(EventRuntime_GetControlledOwner()), 0);
   }
   Func_080cb05c();
-  WaitTicks(2);
+  WaitFrames(2);
   OVERLAY_CALL(1);
   result = work->warp;
   if (result != 0) {
@@ -297,19 +297,19 @@ s32 Field_RunScene(void) {
     if (n == 0) {
       if (*arrival == 1) {
         Runtime_AllocateHeapBlock(92, 0x1938);
-        WaitTicks(20);
+        WaitFrames(20);
         Runtime_ReleaseHeapBlock(92);
       }
       DisplayTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (*arrival == 1) {
         Runtime_AllocateHeapBlock(92, 0x1938);
-        WaitTicks(20);
+        WaitFrames(20);
         Runtime_ReleaseHeapBlock(92);
       }
       *(volatile u16 *)0x05000000 = n;
       if (!ObjectEffect_RunPendingFlagEvent())
-        WaitTicks((work->transitionFrames + 1) / 2);
+        WaitFrames((work->transitionFrames + 1) / 2);
     }
     n = *(s8 *)&gPartyState.unk2c2;
     if (n == 1) {
@@ -530,7 +530,7 @@ s32 Field_RunScene(void) {
         UiTimedNotice_CloseIfActiveFar();
         if (packed == 0) {
           Func_080cb82c();
-          WaitTicks(1);
+          WaitFrames(1);
         }
         Func_080ce61c(work->psynergy);
         if (packed == 0)
@@ -567,7 +567,7 @@ s32 Field_RunScene(void) {
             } while (--n != 0);
             if (freeBlocks - 136 < 0) {
               *(u16 *)(objects + 4) = 1;
-              WaitTicks(1);
+              WaitFrames(1);
             }
             Func_08038358(0);
             *(u16 *)(objects + 4) = 0;
@@ -584,7 +584,7 @@ s32 Field_RunScene(void) {
     if (Func_080cb8e8() != NULL)
       Func_080200b0();
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       leader = Func_080cb8e8();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
         if (Data_020004ac == 0 || (leader->action == 0 && leader->unk66 == 0))
@@ -597,9 +597,9 @@ done:
   if (work->transitionActive != 0) {
     DisplayTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
-    WaitTicks(work->transitionFrames);
+    WaitFrames(work->transitionFrames);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   Runtime_ReleaseHeapBlock(108);
   return result;
 }

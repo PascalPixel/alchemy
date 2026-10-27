@@ -20,20 +20,20 @@ static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 actor,
 void Func_020005e8(s32 actor) {
   ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 648, 200);
   Func_02003534(gPartyState.currentOwner, 0);
-  FieldEvent_WaitTicks(5);
+  FieldEvent_WaitFrames(5);
   Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 6);
-  FieldEvent_WaitTicks(7);
+  FieldEvent_WaitFrames(7);
   Func_0200361c(10, actor);
   Func_020034d4(10, 648 << 16, 196 << 16);
   Object_GetById(gPartyState.currentOwner)->unk5a[0] &= ~1;
   ObjectMotion_CommitPositionAndActivate(gPartyState.currentOwner, -16, -8);
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   /* FAKEMATCH: the bit is set through the 8-bit field: read as a plain byte the
    * store aliases the owner's load that follows, which the scheduler then puts
    * before the zero (differ 2). */
   ((struct ActorSolid *)Object_GetById(gPartyState.currentOwner))->solid |= 1;
   Func_02003534(gPartyState.currentOwner, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
 }
 
 void Func_0200067c(s32 value) {
@@ -45,20 +45,20 @@ void Func_0200067c(s32 value) {
   ObjectMotion_SetSpeedParameters(8, 0xcccc, 0x6666);
   Object_GetById(8)->unk5a[0] &= mask;
   ObjectMotion_CommitPositionAndActivate(8, 0, 6);
-  FieldEvent_WaitTicks(1);
+  FieldEvent_WaitFrames(1);
   ((struct ActorSolid *)Object_GetById(8))->solid |= bit;
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(8, 8);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
   Func_020034d4(10, 0, 0);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
   Object_SetModeById(8, 1);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
   if (value == 0) {
     Object_GetById(8)->unk5a[0] &= mask;
     ObjectMotion_CommitPositionAndActivate_(8, 0, -6);
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
     ((struct ActorSolid *)Object_GetById(8))->solid |= bit;
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
   }
 }

@@ -1140,7 +1140,7 @@ BattleEffect_RunOdyssey:
 	bl MemFree
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r6, #240
 	ldr r3, [sp, #56]
 	lsls r6, r6, #7
@@ -1151,7 +1151,7 @@ BattleEffect_RunOdyssey:
 	movs r0, #1
 	str r3, [r2]
 	add r11, r7
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, r11
 	cmp r0, #114
 	beq .L_081914b2

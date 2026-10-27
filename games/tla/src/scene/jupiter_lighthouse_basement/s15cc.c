@@ -21,8 +21,8 @@ struct CellTarget {
 };
 
 s32 GameFlag_Test(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 value);
@@ -58,10 +58,10 @@ void Func_020015cc(void) {
   z >>= 20;
   ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitTicks(1);
+  WaitFrames(1);
   Object_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitTicks(4);
+  FieldEvent_WaitFrames(4);
   Func_02001cdc()->y -= 0x80000;
 }
 
@@ -97,5 +97,5 @@ void Func_02001654(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_020015cc();
   Func_02001d4c(161);
   Func_02001c34(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitTicks(12);
+  FieldEvent_WaitFrames(12);
 }

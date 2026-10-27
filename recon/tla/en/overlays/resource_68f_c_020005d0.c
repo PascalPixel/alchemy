@@ -19,7 +19,7 @@ void Func_02003048();
 void Func_02003148();
 void Func_020031a8();
 void Func_02002fc0();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 void ObjectMotion_SetPositionAndReset();
@@ -50,9 +50,9 @@ s32 Func_020005d0(s32 a0, s32 a1, s32 a2, s32 a3) {
   r8 = 1;
   r5 = 2;
   Call6((void (*)())Func_02002fc0, 30, 38, r6, 49, 1, r5);
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call6((void (*)())Func_02002fc0, 32, 38, r6, 49, r8, r5);
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   r6 = (s32)&gPartyState;
   r6 = r6 + 532;
   Call3((void (*)())ObjectMotion_SetSpeedParameters, FIELD_AT(r6, s32, 0),
@@ -75,7 +75,7 @@ s32 Func_020005d0(s32 a0, s32 a1, s32 a2, s32 a3) {
   r5_2 = r5_2 << 3;
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
         FIELD_AT(r6, s32, 0), r5_2, ((*(s16 *)(v4 + 18)) | r8) - 16);
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   ObjectMotion_CommitCurrentPositionAndActivate(FIELD_AT(r6, s32, 0));

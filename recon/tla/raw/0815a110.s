@@ -193,7 +193,7 @@ BattleEffect_RunBurstScene:
 	movs r2, #8
 	bl BattleMotion_ApproachTargetFar
 	movs r0, #7
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0815a2a0
 .L_0815a290:
 	ldr r3, [sp, #68]
@@ -205,7 +205,7 @@ BattleEffect_RunBurstScene:
 	bl BattleMotion_ApproachTargetFar
 .L_0815a2a0:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #68]
 	mov r3, sp
 	adds r3, #128
@@ -1054,7 +1054,7 @@ BattleEffect_RunBurstScene:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #60]
 	lsls r5, r5, #7
@@ -1063,7 +1063,7 @@ BattleEffect_RunBurstScene:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #52]
 	ldr r3, [sp, #40]
 	adds r0, #1

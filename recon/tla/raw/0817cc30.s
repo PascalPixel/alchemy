@@ -635,7 +635,7 @@ BattleEffect_RunOceanFist:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0817d11c:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #24]
 	lsls r4, r4, #7
@@ -644,7 +644,7 @@ BattleEffect_RunOceanFist:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #8]
 	movs r1, #1
 	add r11, r1

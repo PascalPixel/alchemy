@@ -48,7 +48,7 @@ void ObjectMotion_ArmCallback();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 s32 UiText_OpenMessageAtObject();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
@@ -127,11 +127,11 @@ void Func_02000200(s32 mode, s32 id) {
     object->gravity = 0x170a;
     object->motionFlags = 3;
     ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
-    WaitTicks(5);
+    WaitFrames(5);
     for (i = 0; i < 60 && object->y > 0; i++)
-      WaitTicks(1);
+      WaitFrames(1);
     Func_02004c9c(298);
-    WaitTicks(1);
+    WaitFrames(1);
     Func_02004c9c(240);
     object->collisionFlags = 0;
     /* FAKEMATCH: ⚓️ stores the cleared flags before it addresses the priority
@@ -148,12 +148,12 @@ void Func_02000200(s32 mode, s32 id) {
     ObjectDispatch_SetSingleChildFlags(spark, 0);
     Func_02004c9c(154);
     i++;
-    WaitTicks(5);
+    WaitFrames(5);
     if (i <= 2)
       goto create;
     Func_02000fa4();
     ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
-    WaitTicks(30);
+    WaitFrames(30);
     for (i = 0; i <= 2; i++)
       Func_02004a24(sparks[i]);
   }
@@ -188,20 +188,20 @@ void Func_02000514(void) {
       Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
       Object_SetModeById(15, 3);
       ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       door->gravity = 0xccc;
       door->motionFlags = 3;
       i = 0;
       while (door->y > 0) {
         i++;
-        WaitTicks(1);
+        WaitFrames(1);
         if (i > 59)
           break;
       }
       Func_02000fa4();
       Func_02004c9c(240);
       Object_SetModeById(15, 8);
-      FieldEvent_WaitTicks(60);
+      FieldEvent_WaitFrames(60);
       Camera_FollowActor(gPartyState.currentOwner, 1);
       Func_02004a9c();
     }

@@ -36,7 +36,7 @@ void Func_02004cc8(struct StagedActor *object, s32 x, s32 y, s32 z);
 void Func_02004cd0(struct StagedActor *object);
 s32 Func_02004cf8(struct StagedActor *object, s32 *position);
 void Func_02004eb8(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02004f30(s32 cue);
 
 void Func_020003b4(void) {
@@ -89,7 +89,7 @@ void Func_020003b4(void) {
 
   Func_02004c98(lead, 8);
   rate = 0x3333;
-  WaitTicks(15);
+  WaitFrames(15);
   Func_02004f30(185);
   next->moveRateX = rate;
   next->moveRateZ = rate;

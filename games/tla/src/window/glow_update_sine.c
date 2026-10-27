@@ -5,26 +5,26 @@
 #include "types.h"
 #include "fixed_math.h"
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 
-/// Updates four RGB555 colors with an eight-frame phase offset between them.
+/// Updates four RGB555 colors with an eight-VBlank phase offset between them.
 /// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
 void PaletteGlow_UpdateSine(void) {
-  s32 *tick;
+  s32 *vblankCount;
   volatile u16 *pal;
   s32 col;
   s32 s;
   s32 i;
 
-  tick = (s32 *)&gFrameTick;
+  vblankCount = (s32 *)&gVBlankCount;
   pal = (volatile u16 *)0x050001D0; // Background palette 14, color 8.
   i = 0;
   do {
 #ifdef UBFIX
-    // The unsigned frame phase wraps without overflowing signed arithmetic.
-    s = Trig_Sin((((u32)*tick + i * 8U) * 0x300U) & 0xffffU);
+    // The unsigned VBlank count wraps without overflowing signed arithmetic.
+    s = Trig_Sin((((u32)*vblankCount + i * 8U) * 0x300U) & 0xffffU);
 #else
-    s = Trig_Sin((*tick + i * 8) * 0x300);
+    s = Trig_Sin((*vblankCount + i * 8) * 0x300);
 #endif
     col = s / 16384;
     {

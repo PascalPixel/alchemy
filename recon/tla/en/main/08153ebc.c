@@ -59,7 +59,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessP
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // ObjectGroup_UpdateMembers
@@ -205,7 +205,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
@@ -348,7 +348,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // The giant leaves: the sky stops, the palette is restored and the
@@ -438,9 +438,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(4, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);

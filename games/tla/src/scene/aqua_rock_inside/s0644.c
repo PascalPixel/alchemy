@@ -12,7 +12,7 @@ void Func_02000644(s32 unused, s32 id) {
     if (x == 39) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       object->motionFlags = 3;
-      WaitTicks(15);
+      WaitFrames(15);
       object->motionFlags = 0;
       GameFlag_SetBit(0x95c);
       Func_02003d1c(41, 9, 1, 1, x, id);

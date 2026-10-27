@@ -81,7 +81,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
 
   if (work != NULL) {
     while (UiWork_IsComplete() == 0) {
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     if (flags & 0x20) {
@@ -91,7 +91,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
     if (!(flags & 4)) {
       UiWork_Finalize(work, release);
       while (UiWork_IsIdle(work) == 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       }
     }
   }
@@ -100,7 +100,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   *(u8 *)(base + TEXT_WORK_TAIL + 5) = zero;
   *(u16 *)(base + TEXT_WORK_TAIL) = zero;
   *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
-  WaitTicks(3);
+  WaitFrames(3);
 }
 
 void UiWork_ProcessAll(void) {

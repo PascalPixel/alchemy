@@ -8,7 +8,7 @@ void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 s32 Func_02004dec(s32 a, s32 x, s32 z);
 void Func_02004dfc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
@@ -40,7 +40,7 @@ void Func_02000b6c(void) {
     }
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x30a);
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {

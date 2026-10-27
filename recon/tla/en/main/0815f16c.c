@@ -208,7 +208,7 @@ s32 Trig_Sin(s32);
 void Runtime_ReleaseHeapBlock(s32);
 void MemFree(void *);
 void *Resource_GetTableEntry(s32);
-void WaitTicks(s32);
+void WaitFrames(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
@@ -230,7 +230,7 @@ void BattleEffectKernels_IntegrateVector3(struct Particle *, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void Func_08143001(void);
 void Func_08143489(void);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
@@ -659,7 +659,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                         40);
     }
     work->unk78e8 = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   if (kind == 41) {
@@ -2275,9 +2275,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (frame == 14)
       Func_0814cd48(action->actor, 7, 5, 0, 4);
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->unk78e8 = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||

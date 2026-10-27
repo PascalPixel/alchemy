@@ -51,7 +51,7 @@ void Func_02003a8c(void) {
         Func_020042b4(92);
       else
         Func_020042b4(91);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Func_0200412c((s32)MsgContigo04);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
@@ -75,7 +75,7 @@ void Func_02003a8c(void) {
         Func_020042b4(92);
       else
         Func_020042b4(91);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Func_0200412c((s32)MsgContigo04);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
@@ -92,7 +92,7 @@ void Func_02003a8c(void) {
     Func_02004204(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     if (list[0] == -1) {
       Func_02001938(1);
     } else if (list[0] == -2) {

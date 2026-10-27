@@ -42,7 +42,7 @@ Func_080e3074:
 	movs r6, #0
 	ldr r0, [r1, #16]
 	movs r1, #0
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 	ldr r3, .L_080e342c
 	mov r2, r10
 	str r3, [r2, #108]
@@ -153,7 +153,7 @@ Func_080e3074:
 	str r5, [r0, #24]
 	str r6, [r0, #28]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #207
 	bl Audio_PlayCue
 	movs r7, #0
@@ -165,7 +165,7 @@ Func_080e3074:
 	str r0, [r1, #28]
 	adds r7, #1
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #19
 	ble .L_080e31bc
 	mov r2, r8
@@ -228,7 +228,7 @@ Func_080e3074:
 	strb r3, [r2]
 	movs r0, #1
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e31e4
 	bl BattleEffect_PrepareBufferInterpolation
@@ -348,7 +348,7 @@ Func_080e3074:
 	subs r7, #1
 	strb r6, [r0]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e3326
 	movs r2, #1
@@ -378,7 +378,7 @@ Func_080e3074:
 	movs r3, #0
 	strb r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #40]
 	movs r0, #212
 	lsls r0, r0, #4
@@ -440,7 +440,7 @@ Func_080e3074:
 	bl Func_080e249c
 .L_080e33fa:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #0
 	ldrsh r3, [r6, r2]
 	adds r5, #1
@@ -501,7 +501,7 @@ Func_080e3074:
 	movs r0, #1
 	strb r6, [r2]
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e345e
 	movs r2, #1
@@ -524,7 +524,7 @@ Func_080e3074:
 	movs r3, #0
 	strb r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #208
 	ldr r4, [sp, #40]
 	lsls r0, r0, #4
@@ -585,7 +585,7 @@ Func_080e3074:
 	bl Func_080e249c
 .L_080e3520:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #0
 	ldrsh r3, [r6, r1]
 	adds r5, #1
@@ -604,7 +604,7 @@ Func_080e3074:
 	str r3, [r2, #24]
 	str r3, [r2, #28]
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e3538
 	movs r3, #0
@@ -623,7 +623,7 @@ Func_080e3074:
 	adds r3, r3, r4
 	str r3, [r1, #28]
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e3558
 	b .L_080e3422
@@ -659,7 +659,7 @@ Func_080e3074:
 	movs r0, #1
 	strb r6, [r2]
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e35a6
 	movs r3, #0
@@ -688,7 +688,7 @@ Func_080e3074:
 	bl Func_080e249c
 .L_080e35f0:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r4, #0
 	ldrsh r3, [r6, r4]
 	adds r5, #1
@@ -737,7 +737,7 @@ Func_080e3074:
 	strb r3, [r4]
 	movs r0, #1
 	subs r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #0
 	bge .L_080e3638
 	b .L_080e3664

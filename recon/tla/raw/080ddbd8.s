@@ -206,7 +206,7 @@ Func_080ddbd8:
 	movs r0, #131
 	bl Audio_PlayCue
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #0]
 	subs r2, #1
 	str r2, [sp, #0]
@@ -215,7 +215,7 @@ Func_080ddbd8:
 	b .L_080ddc06
 .L_080ddd88:
 	movs r0, #8
-	bl WaitTicks
+	bl WaitFrames
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3

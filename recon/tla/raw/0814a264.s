@@ -641,7 +641,7 @@ BattleEffect_RunVolcano:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #44]
 	lsls r3, r3, #7
@@ -650,7 +650,7 @@ BattleEffect_RunVolcano:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #36]
 	adds r5, #1
 	str r5, [sp, #36]

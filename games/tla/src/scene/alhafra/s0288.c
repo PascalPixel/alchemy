@@ -10,7 +10,7 @@
 s32 Func_02001c74();
 s32 Func_02001c84();
 s32 ObjectMotion_ArmCallback();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_02001ca4();
 s32 ObjectMotion_SetVariantCallback();
 s32 Func_02001cac();
@@ -20,12 +20,12 @@ void Func_02000288(void) {
   Call1(Func_02001c74, (s32)MsgAlhafra50);
   Call3(Func_02001c84, 0x18, 0, 0xa);
   Call3(ObjectMotion_ArmCallback, 0x13, -256, 0);
-  Call1(FieldEvent_WaitTicks, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Func_02001ca4(0x13, 0x107, 0x1e);
   Call3(Func_02001c84, 0x13, 0, 0xa);
   Call2(ObjectMotion_SetVariantCallback, 0x18, 3);
   Call2(Func_02001cac, 0x18, 0x102);
-  Call1(FieldEvent_WaitTicks, 0x28);
+  Call1(FieldEvent_WaitFrames, 0x28);
   Call3(ObjectMotion_ArmCallback, 0x13, 0x8000, 0);
   Call3(Func_02001c84, 0x18, 0, 0);
 }

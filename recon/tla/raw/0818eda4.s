@@ -974,7 +974,7 @@ BattleEffect_RunLiquifier:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #40]
 	lsls r1, r1, #7
@@ -983,7 +983,7 @@ BattleEffect_RunLiquifier:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #36]
 	adds r2, #1
 	str r2, [sp, #36]

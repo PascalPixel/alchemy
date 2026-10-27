@@ -40,7 +40,7 @@ void Game_RestartQuest(void) {
 /// to recover), or for the enemy side battle unit 0x83 itself, read as a
 /// bank. The bank also holds the summon flags Summon_ListLearned reads.
 /// Called by the battle code that sets, recovers and links Djinn
-/// (DjinnRecovery_Tick, BattleSummon_UpdateAvailability, the link battle).
+/// (DjinnRecovery_CountDown, BattleSummon_UpdateAvailability, the link battle).
 void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);

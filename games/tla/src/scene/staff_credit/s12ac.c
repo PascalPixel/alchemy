@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Func_0200209c(void);
 void Func_020020b4(s32 cue);
 void Func_02001274(struct ObjectRuntime *object, s32 mode);
@@ -20,7 +20,7 @@ void Func_020012ac(void) {
 
     if (hit != 0 && Func_020020a4(2, hit) != 0)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_02001274(object, 2);
 }

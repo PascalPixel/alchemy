@@ -73,7 +73,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 extern char ResourceId_SpiderWebSheet;
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // The middle between the first and the last target.
@@ -83,7 +83,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
@@ -157,9 +157,9 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       if (frame == 10)
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != 63);
 

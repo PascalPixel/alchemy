@@ -470,7 +470,7 @@ Func_0813e3d0:
 	adds r5, #28
 	cmp r2, #32
 	bne .L_0813e6f0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -478,7 +478,7 @@ Func_0813e3d0:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #1
 	add r10, r3
 	mov r4, r10

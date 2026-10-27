@@ -71,40 +71,41 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
-/// Frame counts used by the sleep transitions.
+/// Durations used by the sleep transitions: the first two in frames, the last
+/// two in VBlanks, since the sleep waits on VBlankIntrWait alone.
 enum {
   SLEEP_IDLE_FRAMES = 3 * 60 * 60, ///< three minutes with no key held
   SLEEP_COMBO_FRAMES = 3 * 60,     ///< three seconds holding only L and R
-  SLEEP_WHITE_FRAMES = 60,         ///< the white screen shown before the Stop
-  SLEEP_WAKE_FRAMES = 10           ///< waited after waking, screen restored
+  SLEEP_WHITE_VBLANKS = 60,        ///< the white screen shown before the Stop
+  SLEEP_WAKE_VBLANKS = 10          ///< waited after waking, screen restored
 };
 
 /// Frames the debug CPU-load display holds a peak.
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
-/// The game's tick loop: runs `ticks` ticks and returns. Each tick runs the
+/// The game's frame loop: runs `frames` frames and returns. Each frame runs the
 /// TASK_PASS_FRAME tasks, builds the OAM list, measures CPU load for the
 /// debug display, counts idle time for sleep, steps the debug pause, waits for
-/// the next frame's VBlank and then reads the keys; a tick whose work overruns
-/// a frame lasts two frames or more, the game's slowdown. Holding L and R for
+/// the next VBlank and then reads the keys; a frame whose work overruns
+/// spans two VBlanks or more, the game's slowdown. Holding L and R for
 /// three seconds, or three idle minutes with idle sleep on, puts the system
 /// into Stop until L and R are pressed again. A soft reset requested by the
 /// keypad interrupt happens here. Called everywhere the game waits: every
 /// scene, menu and battle that lets time pass goes through it. Events wait with
-/// Event_WaitTicks instead, which debug fast-forward can skip.
+/// Event_WaitFrames instead, which debug fast-forward can skip.
 ///
-/// Code may call WaitTicks deep inside its own call chains, so a caller
+/// Code may call WaitFrames deep inside its own call chains, so a caller
 /// whose stack has grown below the frame-wait stack top has its stack copied
 /// aside into gSavedStack first, and the loop runs at that top; the copy is
-/// put back on return. Each tick it allocates and releases the frame scratch
+/// put back on return. Each frame it allocates and releases the frame scratch
 /// heap slot, sets gFrameRenderPending, and counts up gFrameCount and
 /// gPlayTimeFrames.
-void WaitTicks(s32 ticks) {
+void WaitFrames(s32 frames) {
   u8 *sp;
-  u32 tickIndex;
+  u32 frameIndex;
   u8 *base;
   u32 line;
-  s32 delayFrame;
+  s32 delayVBlank;
   s16 savedDisplayControl;
   s16 savedBackdropColor;
 
@@ -121,7 +122,7 @@ void WaitTicks(s32 ticks) {
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
   }
-  for (tickIndex = 0; tickIndex < ticks; tickIndex++) {
+  for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_FRAME);
@@ -130,8 +131,8 @@ void WaitTicks(s32 ticks) {
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the
-      // last VBlank, plus 256 for each frame it overran; the peak is held
-      // for 30 ticks
+      // last VBlank, plus 256 for each VBlank it overran; the peak is held
+      // for 30 frames
       line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
@@ -147,7 +148,7 @@ void WaitTicks(s32 ticks) {
         gCpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
       }
     }
-    // Count idle ticks and the L+R hold that request sleep
+    // Count idle frames and the L+R hold that request sleep
     if (gSleepDisabled == 0) {
       if (gIdleSleepEnabled) {
         if (gKeysHeld)
@@ -218,7 +219,8 @@ void WaitTicks(s32 ticks) {
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
         Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
-        for (delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES; delayFrame++) {
+        for (delayVBlank = 0; delayVBlank < SLEEP_WHITE_VBLANKS;
+             delayVBlank++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
@@ -232,7 +234,7 @@ void WaitTicks(s32 ticks) {
         gSleepActive = 0;
         Io_Write16((u16)savedDisplayControl, &REG_DISPCNT);
         Io_Write16((u16)savedBackdropColor, &PLTT_BACKDROP);
-        for (delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES; delayFrame++) {
+        for (delayVBlank = 0; delayVBlank < SLEEP_WAKE_VBLANKS; delayVBlank++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
@@ -253,7 +255,8 @@ void WaitTicks(s32 ticks) {
 
     if (*size) {
       /* FAKEMATCH(dead): the read also takes the old base as an input ("+r"),
-       * which keeps base in sl and the frame at 8 bytes; as an output only
+       * which keeps base in sl and the stack frame at 8 bytes; as an output
+       * only
        * ("=r"), 44 of 403 instructions differ in tbs-en. */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "+r"(base));
@@ -292,7 +295,7 @@ void WaitTicks(s32 ticks) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, called by WaitTicks. When the repeat timer
+/// Runs once a frame after VBlank, called by WaitFrames. When the repeat timer
 /// has run out, the held keys repeat into gKeysRepeat. gKeysRepeatDirected is
 /// the same keys with at most one D-pad direction: of several held directions
 /// it keeps the one added last (gKeysDirection remembers it), and with all
@@ -382,8 +385,8 @@ void System_VBlankHandler(void) {
   // The display writes come first, while the blank lasts: OAM can be written
   // only in a blank, and a palette or scroll changed while lines are drawn
   // shows half changed. The mixer comes last: it prepares the samples the
-  // hardware plays during the next frame, so it need only finish before then.
-  // Stop any HBlank DMA effect left running from the last frame
+  // hardware plays until the next VBlank, so it need only finish before then.
+  // Stop any HBlank DMA effect left running since the last VBlank
   {
     volatile u16 *dma0 = REG_DMA0;
 

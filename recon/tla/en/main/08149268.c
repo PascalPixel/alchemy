@@ -64,7 +64,7 @@ extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);         // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ☀️ ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void);         // ☀️ ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ☀️ ObjectGroup_CountDownMemberTimers
 void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);    // ☀️ BattleEvent_StartPhaseFar
 void BattleEffect_FetchRectangleBlitters(
@@ -197,9 +197,9 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(effect->variant * 2 + 4, effect->variant * 4 + 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Tear down.

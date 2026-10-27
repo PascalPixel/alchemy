@@ -29,7 +29,7 @@ void Func_0200106c(void) {
   Func_02002910(object, 40);
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
-    WaitTicks(1);
+    WaitFrames(1);
     if (object->y <= object->terrainHeight)
       break;
   }

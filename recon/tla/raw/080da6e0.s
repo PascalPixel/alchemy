@@ -102,7 +102,7 @@ Func_080da6e0:
 	movs r1, #3
 	bl Object_SetMode
 	movs r0, #4
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #24]
 	movs r2, #0
 	str r2, [sp, #20]
@@ -252,7 +252,7 @@ Func_080da6e0:
 	b .L_080da7d4
 .L_080da8d6:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #20]
 	ldr r2, [sp, #24]
 	adds r1, #1

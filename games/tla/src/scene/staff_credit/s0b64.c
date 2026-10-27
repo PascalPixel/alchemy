@@ -9,7 +9,7 @@ extern char SceneId_Ov6b4;
 
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_0200020c(s32 stage);
 void Func_0200101c(void);
 void Func_02001f8c(s32 resource);
@@ -27,7 +27,7 @@ s32 Func_02000b64(void) {
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0;
   work->delay = 16;
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02002044(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_0200101c();

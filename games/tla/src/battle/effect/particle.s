@@ -6,7 +6,7 @@
 @ 0x0d loop, 0x16 set, 0x26 free, 0x27 argument.
 
 @ The Broken Seal's gBattleEffect_PulseScales without its unread third word:
-@ two scales in 16.16 fixed point that alternate every four ticks
+@ two scales in 16.16 fixed point that alternate every four frames
 	.global gData_080f0bfc
 gData_080f0bfc:
 	.4byte 0x10000, 0xf851

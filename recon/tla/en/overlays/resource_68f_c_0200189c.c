@@ -28,7 +28,7 @@ s32 Func_02002f80();
 void ObjectDispatch_SetAnimationSpeed();
 void Func_02002fb8();
 s32 Func_02003028();
-void WaitTicks();
+void WaitFrames();
 
 s32 Func_0200189c(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 v0, r7, r0, r10, v1, r6, r8, v2, r5, v3, r9, r3, v4, v5, r11, v6, v7, v8,
@@ -164,11 +164,11 @@ L_02009aec:
   FIELD_AT(r7, s32, 52) = 0x10000;
   Func_02002fb0(r7, stack[5], FIELD_AT(r7, s32, 12), stack[4]);
   Func_02002fb8(r7);
-  Call1((void (*)())WaitTicks, 2);
+  Call1((void (*)())WaitFrames, 2);
   r0 = v10;
   goto L_020098bc;
 L_02009b12:
-  Call1((void (*)())WaitTicks, 10);
+  Call1((void (*)())WaitFrames, 10);
 L_02009b18:
   FIELD_AT(r7, s32, 108) = 0;
   FIELD_AT(r7, u8, 90) = 1 | (FIELD_AT(r7, u8, 90));

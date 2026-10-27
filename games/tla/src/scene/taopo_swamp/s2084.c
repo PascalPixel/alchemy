@@ -12,15 +12,15 @@ void Func_02002084(s32 fade) {
      * register address; without it, 2 instructions differ in tla-en. */
     do {
     } while (0);
-    WaitTicks(10);
+    WaitFrames(10);
     Blend_SetAlpha(0xd04);
-    WaitTicks(10);
+    WaitFrames(10);
     Blend_SetAlpha(0xd02);
-    WaitTicks(10);
+    WaitFrames(10);
     Blend_SetAlpha(0xc01);
-    WaitTicks(10);
+    WaitFrames(10);
     Blend_SetAlpha(0xc00);
-    WaitTicks(10);
+    WaitFrames(10);
   }
   Func_02001ff0_(100, 50);
   Blend_SetAlpha(0xc07);

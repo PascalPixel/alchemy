@@ -2041,7 +2041,7 @@ BattleEffect_RunHaures:
 	ldr r0, [sp, #32]
 	bl MemFree
 .L_08187dfc:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	ldr r1, [sp, #88]
 	lsls r2, r2, #7
@@ -2061,7 +2061,7 @@ BattleEffect_RunHaures:
 	str r2, [r3]
 .L_08187e22:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #16]
 	ldr r0, [sp, #12]
 	ldr r1, [sp, #76]
@@ -3000,7 +3000,7 @@ BattleEffect_RunHaures:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #88]
 	lsls r4, r4, #7
@@ -3009,7 +3009,7 @@ BattleEffect_RunHaures:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #20]
 	ldr r7, [sp, #76]
 	adds r5, #8

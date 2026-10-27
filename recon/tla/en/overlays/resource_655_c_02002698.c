@@ -13,7 +13,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -64,7 +64,7 @@ struct EffectView {
 
 extern const u8 gData_02003f14[];
 
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Effect_AdvanceMotion(struct ObjectRuntime *object);
 
 void Func_02002698(s32 id, s32 center, s32 flag) {
@@ -74,10 +74,10 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
 
   Func_02003df8(125);
   Object_SetPartAttribute(Object_GetById(id), 7);
-  WaitTicks(2);
+  WaitFrames(2);
   Object_SetModeById(id, 0);
   Object_SetPartAttribute(Object_GetById(id), 7);
-  WaitTicks(4);
+  WaitFrames(4);
   Object_SetPartAttribute(Object_GetById(id), 0);
   leader = Object_GetById(center);
   frame = 0;
@@ -116,5 +116,5 @@ skip:
   if (i <= 7)
     goto loop;
   GameFlag_SetBit(flag);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
 }

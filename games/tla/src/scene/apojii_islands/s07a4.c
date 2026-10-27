@@ -8,7 +8,7 @@ void Func_02001cc4(void);
 void Func_02001dcc(s32 skip);
 void Func_02000780(void);
 void Func_02001e2c(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02001ad8(void);
 void Func_02001ba0(s32 a);
 void Func_02001dec(s32 a);
@@ -51,7 +51,7 @@ void Func_020007a4(s32 unused, s32 id) {
   Func_02001dcc(0);
   actor->update = Func_02000780;
   Func_02001e2c(78);
-  WaitTicks(30);
+  WaitFrames(30);
   Func_02001e2c(21);
   Func_02001ad8();
   Func_02001ba0(17);
@@ -65,17 +65,17 @@ void Func_020007a4(s32 unused, s32 id) {
 flash:
   ApojiiIslands_Flash(Random16Far() & 0x7fff, 0);
   Func_02001dac(15);
-  WaitTicks(10);
+  WaitFrames(10);
   ApojiiIslands_Flash(0x10000, 0);
   Func_02001dac(10);
   i--;
-  WaitTicks(10);
+  WaitFrames(10);
   if (i >= 0)
     goto flash;
   Func_02001de4();
   IO_WRITE_QUEUE_PUSH(0x04000050, 0xf00, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
-  WaitTicks(1);
+  WaitFrames(1);
   Scheduler_RemoveCallbackFar(Func_02000540);
   Scheduler_AddOrUpdateCallback(Func_020006bc, 0x480);
   Func_020017bc();
@@ -83,7 +83,7 @@ flash:
   i = 1;
 blend:
   IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
-  WaitTicks(4);
+  WaitFrames(4);
   i++;
   if (i <= 6)
     goto blend;

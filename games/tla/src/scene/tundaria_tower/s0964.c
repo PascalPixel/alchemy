@@ -5,7 +5,7 @@ extern const u8 gData_02003370[];
 void Func_02003118(s32 frames);
 void Func_020031a8(s32 cue);
 void Func_02002f90(struct ObjectRuntime *object, const void *script);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 
@@ -22,7 +22,7 @@ void Func_02000964(void) {
   Func_020031a8(132);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
-  FieldEvent_WaitTicks(2);
+  FieldEvent_WaitFrames(2);
   TundariaTower_FadeTo(0x10000, 0);
   Func_02003118(2);
   object->actionFlags = 0;

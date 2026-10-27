@@ -10,10 +10,10 @@ __divsi3:
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -202,10 +202,10 @@ Func_02005548:
 	.thumb_func
 Party_CountActiveOwners:
 	overlay_veneer Party_CountActiveOwnersFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02005560
 	.thumb_func
 Func_02005560:

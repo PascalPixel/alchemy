@@ -78,7 +78,7 @@ void Map_WaitForShakeToSettle(void) {
   if (work[1] > 255 || work[2] > 255) {
     goto body;
   body:
-    WaitTicks(1);
+    WaitFrames(1);
     ++cnt;
     if (cnt >= 300) {
       goto done;

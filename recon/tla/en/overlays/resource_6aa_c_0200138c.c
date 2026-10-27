@@ -14,7 +14,7 @@
 s32 Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_020002bc();
 s32 Func_02000414();
 s32 Func_02000798();
@@ -43,7 +43,7 @@ s32 ObjectMotion_EnableActionAndSetCallback();
 s32 ObjectMotion_SetActionVariant();
 s32 Object_GetById();
 s32 Scheduler_AddOrUpdateCallback();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Data_02006878[];
 extern u8 Func_02001254[];
 extern u8 Func_020012bc[];
@@ -203,13 +203,13 @@ L_020095b4:
   v_r5 = 2;
 L_0200963c:
   Call1((void (*)())Func_02000414, 18);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto L_0200963c;
   Call1((void (*)())GameFlag_SetBit, 0xa3e);
   Call3((void (*)())Func_02004c50, -1, -1, 0xe666);
-  Call1((void (*)())FieldEvent_WaitTicks, 120);
+  Call1((void (*)())FieldEvent_WaitFrames, 120);
   Call1((void (*)())Func_02004d30, 20);
   Call1((void (*)())GameFlag_SetBit, 0x109);
   goto L_020098be;

@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_0200015c(s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
@@ -10,11 +10,11 @@ void Func_0200015c(s32 id) {
 
   object->motionFlags = 3;
   while (n != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     if (object->velocityY == 0)
       break;
     n--;
   }
-  WaitTicks(10);
+  WaitFrames(10);
   object->motionFlags = 0;
 }

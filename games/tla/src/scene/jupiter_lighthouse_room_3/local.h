@@ -26,8 +26,8 @@ struct PushedBlock {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
@@ -77,14 +77,14 @@ static __inline__ void GameFlag_ClearBit_(s32 flag) {
   GameFlag_ClearBit(flag);
 }
 
-static __inline__ void WaitTicks_(s32 frames) {
+static __inline__ void WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(frames);
+  WaitFrames(frames);
 }
 
-static __inline__ void FieldEvent_WaitTicks_(s32 frames) {
+static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {

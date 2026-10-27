@@ -59,7 +59,7 @@ Func_081a6ea0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, .L_081a6f78
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -78,7 +78,7 @@ Func_081a6ea0:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r6, r6, r0
@@ -95,7 +95,7 @@ Func_081a6ea0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, .L_081a6f80
 	b .L_081a6f84
 .L_081a6f6c:
@@ -188,7 +188,7 @@ Func_081a6ea0:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
@@ -336,7 +336,7 @@ Func_081a6ea0:
 	cmp r0, #0
 	bne .L_081a7172
 	movs r0, #120
-	bl Title_WaitTicksOrPress
+	bl Title_WaitFramesOrPress
 	b .L_081a7172
 .L_081a715e:
 	movs r0, #0
@@ -345,7 +345,7 @@ Func_081a6ea0:
 	movs r0, #10
 	bl PaletteFade_Start
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_081a7172:
 	movs r3, #0
 	mov r0, r11
@@ -363,7 +363,7 @@ Func_081a6ea0:
 	movs r0, #172
 	bl Runtime_ReleaseHeapBlock
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #1
 	add sp, #36
 	pop {r3, r5, r6, r7}

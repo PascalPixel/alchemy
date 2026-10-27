@@ -19,7 +19,7 @@ struct EffectPosition {
   s32 z;
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern s8 gMenu_CursorBobOffsets[];
 extern u8 gData_0805c9c4[];
 
@@ -112,7 +112,7 @@ void MenuSelection_DrawFrame(void) {
     te->priority = 0;
     te->tile = transfer->tile;
     te->x = node->x - 4;
-    te->y = node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+    te->y = node->y + (gMenu_CursorBobOffsets[(gVBlankCount >> 1) & 15] >> 1) - 4;
     if (transfer->scale != transfer->scaleEnd) {
       state->transform.scaleX = transfer->scale;
       state->transform.scaleY = transfer->scale;
@@ -170,7 +170,7 @@ void MenuSelection_DrawFrame(void) {
   if (cursor->kind != 0) {
     cnt = (s32)gData_0805c9c4;
     {
-      void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
+      void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
 
       cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
     }
@@ -190,7 +190,7 @@ void MenuSelection_DrawFrame(void) {
       }
     }
     cursorEntry->y =
-        cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+        cursor->y + gMenu_CursorBobOffsets[(gVBlankCount >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_Test(0x103) != 0) {
       if (state->records[14].kind == 1) {

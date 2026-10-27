@@ -362,17 +362,17 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Cleanup
-  WaitTicks(1);
+  WaitFrames(1);
   for (index = 0; index < 4; index++)
     VramCache_FreeEntry(iconSlots[index]);
   VramCache_FreeEntry((u16)cursorHandle);
   Window_Close(counts, 1);
   Window_Close(description, 1);
   Window_Close(window, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }

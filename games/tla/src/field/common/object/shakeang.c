@@ -25,7 +25,7 @@ void Object_ShakeAngle(u32 objectId) {
     b >>= 4;
     a >>= 4;
     object->angle = cur + (a - b);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   object->angle = angle;
 }

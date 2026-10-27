@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 WaitTicks(s32);
+s32 WaitFrames(s32);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleEffect_RunSparkGroups(void *, s32);
 
@@ -15,7 +15,7 @@ struct Object080eceac {
 
 void Object_WaitTwelveFramesThenSetField18(struct Object080eceac *obj) {
   BattleMotion_ApproachTargetFar(obj->field08, obj->field24, 0x18, 0x73333);
-  WaitTicks(0xC);
+  WaitFrames(0xC);
   obj->field18 = 3;
   BattleEffect_RunSparkGroups(obj, 2);
 }

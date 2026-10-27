@@ -51,7 +51,7 @@ struct DjinnMenuWork {
 };
 
 void Func_08101638(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Menu_SetFirstObjectRowCoordinates(s32 offset);
 void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
 s32 Func_08102008(s32 mode);
@@ -104,7 +104,7 @@ s32 Func_0810106c(void) {
   cursor->active = 13;
   cursor->animStep = 0;
   Func_08101638();
-  WaitTicks(1);
+  WaitFrames(1);
   step = 2;
   do {
     switch (step) {

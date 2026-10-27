@@ -22,7 +22,7 @@ struct BattleFxScene;
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();

@@ -24,7 +24,7 @@ s32 Math_Sine();
 s32 OverlayObject_PrepareObject();
 s32 OverlayObject_WaitUntilIdle();
 s32 Random16Far();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Func_020007ec[];
 extern u8 Func_02000848[];
 
@@ -68,7 +68,7 @@ L_020088de:
   FIELD_AT(v_r7, u8, 34) = 2;
   FIELD_AT(v_r7, u8, 85) = 3;
   FIELD_AT(v_r7, s32, 68) = 0;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   t12 = FIELD_AT(v_r7, s32, 8);
   t13 = FIELD_AT(v_r7, s32, 16);
   t14 = Value3((s32 (*)())Func_020010a4, 2, t12, t13);
@@ -98,7 +98,7 @@ L_02008960:
   FIELD_AT(v_r7, s32, 12) = v_r8;
   FIELD_AT(v_r7, s32, 8) = v_r8;
   Call1((void (*)())Func_0200108c, v_r5);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   *(u16 *)v_r6 = v_r8;
   goto L_02008a1e;
 L_0200897a:

@@ -518,7 +518,7 @@ BattleEffect_RunPrism:
 	adds r1, #8
 	adds r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r7, #240
 	ldr r5, [sp, #28]
 	lsls r7, r7, #7
@@ -527,7 +527,7 @@ BattleEffect_RunPrism:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #20]
 	ldr r1, .L_081496c0
 	adds r0, #1

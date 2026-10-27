@@ -25,7 +25,7 @@ void Func_020056b4(void);
 void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_020044b4(s32 mode);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -67,7 +67,7 @@ void Func_02004530(void) {
         register s32 *offset asm("r2") = &state->statueOffset;
 
         *offset -= 0x333;
-        WaitTicks(1);
+        WaitFrames(1);
         i--;
       } while (i >= 0);
       Func_020044d0(0);

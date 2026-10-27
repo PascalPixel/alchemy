@@ -18,7 +18,7 @@ void UiText_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
                                s32 y);
 void UiWork_Finalize(void *window, s32 mode);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_0200017c(s32 delta);
 void Func_0200073c(s32 cue);
 
@@ -78,7 +78,7 @@ void Func_020001a8(void) {
     if ((KEYS_PRESSED & 2) != 0) {
       Func_0200073c(113);
       RenderOutput_RedrawSavedRect(win);
-      WaitTicks(1);
+      WaitFrames(1);
       UiWork_Finalize(win, 1);
 
       Unit_Calculate(0);
@@ -88,6 +88,6 @@ void Func_020001a8(void) {
       return;
     }
 
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

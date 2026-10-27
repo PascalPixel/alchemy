@@ -19,7 +19,7 @@ void Func_02001620(s32 id);
 #define SINK(frames, label)                                                    \
   i = (frames);                                                                \
   label:                                                                       \
-  FieldEvent_WaitTicks(1);                                                    \
+  FieldEvent_WaitFrames(1);                                                    \
   object->y -= 0x20000;                                                        \
   i--;                                                                         \
   if (i > 0)                                                                   \
@@ -42,14 +42,14 @@ void Func_0200138c(void) {
     object->motionFlags = 0;
     SINK(32, sink1);
     Func_02001620(10);
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
   } else if (!Flag_Test(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
     Flag_Set(0x205);
     GameFlag_SetBit(0x221);
     SINK(48, sink2);
     Func_02001620(10);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
   } else if (column == 19 && row == 15) {
     Func_02002030(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
@@ -59,16 +59,16 @@ void Func_0200138c(void) {
     if (!GameFlag_Test(102)) {
       Func_020020c0(11, 0, 0);
       ObjectMotion_EnableActionAndSetCallback(10, gData_0200232c);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
     }
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
   } else if (!GameFlag_Test(0x204) && column == 13 && row == 15) {
     Func_02002030(1, 3, 1, 1, 12, row);
     Func_02002030(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
     SINK(16, sink4);
     Func_02001620(10);
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     GameFlag_SetBit(0x204);
   } else if (column == 14 && row == 15) {
     Func_02002030(1, 3, 1, 1, 12, row);

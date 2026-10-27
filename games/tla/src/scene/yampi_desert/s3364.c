@@ -11,7 +11,7 @@ void Func_02003364(void) {
   Func_02003820(gData_020047d2);
   if (Scene_FlagTest(0x20b)) {
     Func_020006ac();
-    WaitTicks(10);
+    WaitFrames(10);
   }
   Func_02003338(12);
   Func_02003338(13);

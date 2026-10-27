@@ -12,11 +12,11 @@ void Func_02003398(void);
 void Func_02003488(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02003308(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020034b8(s32 sound);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -47,7 +47,7 @@ void Func_02002f48(void) {
   Func_02003488(0);
   CamBounds(-1, -1, -1, 0);
   Func_02003308();
-  WaitTicks(1);
+  WaitFrames(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
   actor->bounce = 0;
@@ -57,7 +57,7 @@ void Func_02002f48(void) {
   Event_WaitTransitionFrames();
   Func_020034b8(204);
   actor->motionFlags = 3;
-  FieldEvent_WaitTicks(24);
+  FieldEvent_WaitFrames(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -87,7 +87,7 @@ void Func_02002f48(void) {
   Func_02003410(gPartyState.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(gPartyState.currentOwner, 1);
   Func_020033a0();
 }

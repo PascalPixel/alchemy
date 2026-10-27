@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -86,10 +86,10 @@ Animation_SetStateFlags:
 	.thumb_func
 Func_020010cc:
 	overlay_veneer Func_08020360
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020010dc
 	.thumb_func
 Func_020010dc:

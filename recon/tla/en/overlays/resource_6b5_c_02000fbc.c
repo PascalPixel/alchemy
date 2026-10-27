@@ -27,7 +27,7 @@ s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void RenderOutput_PrepareForRedraw(s32 window);
 void UiText_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_Finalize(s32 window, s32 release);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_02000fbc(s32 actor) {
   s32 window;
@@ -79,7 +79,7 @@ keys:
     goto chosen;
   if (gInput.pressed & 2)
     goto cancel;
-  WaitTicks(1);
+  WaitFrames(1);
   goto redraw;
 chosen:
   UiWork_Finalize(window, 1);
@@ -92,10 +92,10 @@ cancel:
   goto chosen;
 done:
   Func_02001ad4(78);
-  WaitTicks(120);
+  WaitFrames(120);
   Func_02001ad4(0x2c5);
   Func_02001a64((s32)MsgComeBackWhen);
   Func_02001a74(actor, 0);
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02001a1c();
 }

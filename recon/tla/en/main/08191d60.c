@@ -84,14 +84,14 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_08158ce0(s32 randomMask, u32 range);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 struct RenderModel *Render_AllocateModelList(s32 count);
@@ -146,7 +146,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
   focus.x = 128 << 16;
   focus.y = 64 << 16;
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitTicks(1);
+  WaitFrames(1);
   BattleEffect_SpawnObjects(12, 654, 2);
 
   for (frame = 0; frame != SUMMON16_FRAMES; frame++) {
@@ -403,9 +403,9 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

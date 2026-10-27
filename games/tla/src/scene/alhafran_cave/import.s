@@ -50,10 +50,10 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_02001420:
 	overlay_veneer Func_08020360
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001430
 	.thumb_func
 Func_02001430:
@@ -275,7 +275,7 @@ Func_020015c0:
 	.global Func_020015c8
 	.thumb_func
 Func_020015c8:
-	overlay_veneer BattleEffect_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_020015d0
 	.thumb_func
 Func_020015d0:

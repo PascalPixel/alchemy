@@ -75,7 +75,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
 // Seal's iwram_call.h layer calls them.
@@ -104,19 +104,19 @@ void Func_0813fa88(s32 kind) {
   // Turn BG2 into a 128x128 canvas, one step a frame.
   Func_0813ba50();
   view->secondMode = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
-  WaitTicks(1);
+  WaitFrames(1);
   BattlePresentation_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BG2CNT = 0x784;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
   view->secondMode = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   Func_0814355c();
   REG_BG2PA = 0x100;
   REG_WININ = 0x3537;
@@ -133,7 +133,7 @@ void Func_0813fa88(s32 kind) {
   }
   ClearWords(canvas, 0x4000);
   ClearWords((void *)0x06004000, 0x4000);
-  WaitTicks(1);
+  WaitFrames(1);
 
   switch (kind) {
   case 0:

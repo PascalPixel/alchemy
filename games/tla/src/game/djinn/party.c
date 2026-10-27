@@ -45,7 +45,7 @@ void Djinn_ActivateOfferedForParty(void) {
   s32 element;
   s32 djinn;
 
-  DjinnRecovery_TickTwentyFar();
+  DjinnRecovery_CountDownTwentyFar();
   for (i = 0; i < count; i++) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {

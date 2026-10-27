@@ -80,7 +80,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 group);
 s32 Object_GetSpriteShape(s32 id);
 s32 Party_FindOwnerWithActionFar(s32 action);
 struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Party_AdjustCoinsFar(s32 amount);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
@@ -249,7 +249,7 @@ s32 Func_080ccec8(s32 id) {
           shown->update = Marker_MoveLeaderAwayFromEmitter;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
-          WaitTicks(30);
+          WaitFrames(30);
           if (type == 128)
             ObjectEvent_SetMode2(index);
         }
@@ -279,7 +279,7 @@ s32 Func_080ccec8(s32 id) {
         shown->update = Marker_MoveLeaderAwayFromEmitter;
       } else {
         shown = BattleEffect_StartRandomParticleEmitter(index, contents);
-        WaitTicks(30);
+        WaitFrames(30);
       }
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {

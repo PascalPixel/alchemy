@@ -43,7 +43,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         object->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
-          WaitTicks(1);
+          WaitFrames(1);
         }
         Audio_PlayCue(159);
         object->y = object->terrainHeight;

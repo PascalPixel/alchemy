@@ -52,7 +52,7 @@ struct SparkleFrame {
 extern const struct SparkleFrame gFieldEffect_SparkleFrames[32];
 
 void Event_UpdateDebugSkip(void);
-void Event_WaitTicks(s32 ticks);
+void Event_WaitFrames(s32 frames);
 void Leader_StopMoving(void);
 void Event_Start(void);
 void Event_End(void);
@@ -300,7 +300,7 @@ void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value);
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor);
 void FieldEffect_UpdateScaledArcActorB(struct Actor *actor);
 void FieldEffect_SpawnScaledArcActors(struct Actor *linked);
-void FieldEffect_FlickerActorAndTick(struct Actor *actor);
+void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor);
 void FieldEffect_CycleActorValueByCounter(struct Actor *actor);
 void FieldEffect_UpdateAllEffectSlots(void);
 void FieldPsynergy_LoadResources(s32 abilityId, s32 mode);

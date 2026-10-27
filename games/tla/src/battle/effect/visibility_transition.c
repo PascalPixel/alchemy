@@ -6,7 +6,7 @@
 extern const u8 gData_080f1140[];
 
 void EventRuntime_PrepareCurrentObject(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
 void BattleEffect_RunVisibilityTransition(void) {
@@ -16,7 +16,7 @@ void BattleEffect_RunVisibilityTransition(void) {
     EventRuntime_PrepareCurrentObject();
     Func_080d46a4(0x9d89, 6);
     while (gInput.held & 0x200)
-      WaitTicks(1);
+      WaitFrames(1);
     party = &gPartyState;
     /* FAKEMATCH: a one-pass block loads the party state before its offset is
      * built (one reordered row). */

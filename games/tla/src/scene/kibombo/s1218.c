@@ -12,7 +12,7 @@ void Func_02001218(void) {
   Func_02005b1c(7, gPartyState.currentOwner);
   ObjectMotion_SetActionVariant(
       7, Object_GetById(gPartyState.currentOwner)->sprite->priority);
-  WaitTicks(1);
+  WaitFrames(1);
   Kibombo_ObjArm(gPartyState.currentOwner, 0xa000, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 62, 444);

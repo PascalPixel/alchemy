@@ -137,7 +137,7 @@ s32 SaveState_DeleteSelectedSlot(void) {
     } else {
       UiText_OpenMessageWindow((s32)&MsgEraseConfirm, ERASE_CONFIRM_X, 1, 2);
       while (UiWork_IsComplete() == 0)
-        WaitTicks(1);
+        WaitFrames(1);
       if (Menu_RunConfirmSelection(1, 0, 3, 1) != 0) {
         UiWork_FinalizePendingCore();
       } else {

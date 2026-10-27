@@ -80,7 +80,7 @@ void Serial_Initialize(void) {
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialWork.transferEnabled. Nothing in ☀️ calls it; WaitTicks does the
+/// gSerialWork.transferEnabled. Nothing in ☀️ calls it; WaitFrames does the
 /// same inline.
 void Serial_EnableTransferTimer(void) {
   struct SerialWork *state = &gSerialWork;
@@ -166,7 +166,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   return result;
 }
 
-/// As Serial_PollAndTransfer, without exchanging data: WaitTicks calls
+/// As Serial_PollAndTransfer, without exchanging data: WaitFrames calls
 /// it once a frame while gSerialExchangeActive is set, and the VBlank handler
 /// does the exchange.
 s32 Serial_PollStatus(void) {
@@ -457,7 +457,7 @@ void Serial_RemoveIrqHandlers(void) {
 u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
     } while ((mask & gLinkStatus) != mask);
   }
   return (REG_SIOCNT << 0x1A) >> 0x1E;
@@ -519,7 +519,7 @@ s32 Serial_StartReceive(void *destination) {
                                                                                \
     if (pending != 0) {                                                        \
       do {                                                                     \
-        WaitTicks(1);                                                          \
+        WaitFrames(1);                                                         \
         count++;                                                               \
       } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && pending != 0);        \
     }                                                                          \
@@ -535,7 +535,7 @@ void Serial_WaitForTransfers(void) {
 
   count = 0;
   while (gSerialSendSource != 0 || gSerialReceiveDestination != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     count++;
     if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
       return;
@@ -703,7 +703,7 @@ void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
   s32 n;
-  s32 tick;
+  s32 delay;
 
   Sound_PlaySongFar(MUS_PALACE);
   Serial_Initialize();
@@ -729,18 +729,18 @@ restart:
     if (gKeysHeld & KEY_B)
       Serial_StartSend((void *)(Rom_Start + 0x1000), 0x280);
     if (gKeysHeld & KEY_START) {
-      tick = 9999;
+      delay = 9999;
       do {
-        tick--;
+        delay--;
         SerialTest_Delay();
-      } while (tick >= 0);
+      } while (delay >= 0);
     }
     if (gSerialReceiveDestination == 0) {
       Dma_Set(gMapGridCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
               REG_DMA3);
       goto restart;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 

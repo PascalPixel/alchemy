@@ -14,7 +14,7 @@ void Func_020005f8(s32 skip);
 void Func_02000610(s32 cue);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 s32 Func_020004c4(void) {
   if (gPartyState.entrance == 12) {
@@ -25,7 +25,7 @@ s32 Func_020004c4(void) {
     Func_02000610(201);
     Func_020005d0(0x7fff, 0);
     Func_020005d8(20);
-    WaitTicks(20);
+    WaitFrames(20);
     Func_020005c8(9);
   } else {
     Func_020001b0();

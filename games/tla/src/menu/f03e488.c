@@ -34,12 +34,12 @@ struct MenuSelection {
   u8 unk68[0x27a];
   u16 mode;
 };
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u8 gData_0805c5c4[], gData_0805c1c4[];
 extern s32 GameFlag_Test(s32 flag);
 
 void Func_0803e488(struct MenuSelection *state, s32 index) {
-  u32 frame = (gFrameTick >> 2) & 7;
+  u32 frame = (gVBlankCount >> 2) & 7;
   struct SlotEntry *entry;
   u8 *frames;
   u8 *tmp;

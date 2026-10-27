@@ -74,7 +74,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_08104ef8(s32 first);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
@@ -121,7 +121,7 @@ s32 Func_080fa870(s32 mode) {
           ((selection * 3 + menu->pageWindow->x) << 3) - 2;
       if (redraw == 2) {
         Func_08104ef8(selection / 4 * 4);
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);
       if (mode == 1) {
@@ -168,7 +168,7 @@ s32 Func_080fa870(s32 mode) {
       redraw = 0;
     }
     Func_080f8a44(selection % 4 * 24 - 10, 16);
-    WaitTicks(1);
+    WaitFrames(1);
     if (gInput.pressed & 1) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
         Audio_PlayCue(114);
@@ -189,7 +189,7 @@ s32 Func_080fa870(s32 mode) {
   UiIcon_PrepareObject(marker);
   marker->state = 13;
   Func_080fac58();
-  WaitTicks(1);
+  WaitFrames(1);
   menu->paneIndex[1] = selection;
   menu->selectedOwner = menu->ownerIds[selection];
   menu->paneOwner[1] = menu->ownerIds[selection];

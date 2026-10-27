@@ -82,11 +82,11 @@ struct EffectScene {
 extern char ResourceId_ShakeTiles;
 
 void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_SetObjectTickMode(void *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *frames, void *buffer, s32 size);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
@@ -106,7 +106,7 @@ void Func_080e8db0(void) {
   s32 shown;
   s32 width;
   s32 showing;
-  s32 ticks;
+  s32 frameCount;
   s32 phase;
   s32 shakePhase;
   s32 i;
@@ -132,7 +132,7 @@ void Func_080e8db0(void) {
     work->sprites[i].depth = 240;
     work->particles[i].timer = -1;
   }
-  BattleEffect_SetObjectTickMode(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
     Func_080e43a4(targetSprite->frames, work->picture,
@@ -140,19 +140,19 @@ void Func_080e8db0(void) {
   }
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
-  WaitTicks(10);
+  WaitFrames(10);
 
   shown = -1;
   width = targetSprite->width;
   showing = 0;
   phase = 0;
-  ticks = 0;
+  frameCount = 0;
   shakePhase = 0;
   amplitude = SWAY_START;
   state = SWAY_GROW;
   frames = 0;
   do {
-    if ((ticks & 15) == 15)
+    if ((frameCount & 15) == 15)
       Audio_PlayCue(SE_SWAY);
 
     // Shake the gathered objects' sprites with the view.
@@ -210,8 +210,8 @@ void Func_080e8db0(void) {
     if (showing == -1 && shown >= 0)
       shown -= 2;
 
-    WaitTicks(1);
-    ticks++;
+    WaitFrames(1);
+    frameCount++;
     frames++;
   } while (state != SWAY_DONE);
 

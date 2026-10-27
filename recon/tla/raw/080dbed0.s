@@ -83,7 +83,7 @@ Func_080dbed0:
 	str r0, [r6, #24]
 	str r0, [r6, #28]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #8
 	adds r7, #1

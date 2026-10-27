@@ -195,7 +195,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, animation);
     Sound_PlaySongFar(sound);
-    WaitTicks(12);
+    WaitFrames(12);
   }
 }
 
@@ -218,7 +218,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
   if (slotIndex != -1) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     actor = marker->actor;
-    WaitTicks(18);
+    WaitFrames(18);
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlaySongFar(SE_ENEMY_CRY);

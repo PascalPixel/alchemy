@@ -450,7 +450,7 @@ void BattleBackground_FadeAlphaOut(void) {
     // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
     // code.
     REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 
@@ -466,7 +466,7 @@ void BattleBackground_FadeAlphaIn(void) {
   // code.
   for (step = 1; step <= 16; step += 2) {
     REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 
@@ -519,7 +519,7 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
       if (gKeysPressed & KEY_A)
         selectedValue = battle->debugValue;
       else {
-        WaitTicks(1);
+        WaitFrames(1);
         continue;
       }
       break;
@@ -599,7 +599,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// Lightens the opaque sprites, the highlighted units, by the next step of
 /// gBattleHighlight_BlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
-/// and over. Runs each frame as a task in the VBlank pass
+/// and over. Runs each VBlank as a task in the VBlank pass
 /// (priority TASK_PASS_VBLANK), added by BattleHighlight_SetModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
@@ -642,7 +642,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     Task_Remove(BattleBackground_StepHighlightBlend);
     REG_BLDY = mode;
     BattleHighlight_ClearAllSpriteModes();
-    WaitTicks(1);
+    WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   if (battle != 0 && mode != HIGHLIGHT_OFF) {
@@ -670,7 +670,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
         } while (unitId != BATTLE_UNIT_LIST_END);
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
     Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_VBLANK);
   }

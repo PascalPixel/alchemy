@@ -12,7 +12,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Engine_AudioPlayCue(s32 cue);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -29,7 +29,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
   Func_02002a44();
   Func_02002a5c(Object_GetById(5), 2);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_020023a4(object);
   Func_02002a5c(Object_GetById(5), 0);
   Func_02002a54();

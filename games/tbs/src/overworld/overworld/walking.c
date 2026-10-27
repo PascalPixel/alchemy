@@ -294,7 +294,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       amount = accumulatedDistance / Q16_ONE;
       work->walkingDistance = accumulatedDistance & 0xffff;
       Party_AddPp(amount, 0);
-      if (DjinnRecovery_TickFar())
+      if (DjinnRecovery_CountDownFar())
         Sound_PlaySongFar(SE_DJINNI_SET);
       Event_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
@@ -440,7 +440,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 /// (POISON_NORMAL or POISON_VENOM), after a flash; Field_UpdateWalking counts a
 /// non-zero result as the party being hurt.
 ///
-/// Called by Field_UpdateWalking at each tick of the distance walked.
+/// Called by Field_UpdateWalking each time the distance walked passes 0x10000.
 s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountMembersFar();

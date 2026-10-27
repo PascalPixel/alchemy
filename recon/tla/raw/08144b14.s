@@ -692,7 +692,7 @@ Func_08144b14:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #48]
 	mov r1, r11
 	adds r0, #1

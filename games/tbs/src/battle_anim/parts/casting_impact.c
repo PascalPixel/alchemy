@@ -1086,7 +1086,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
       }
     } else if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
                mode == CASTING_IMPACT_IMPACT_BARRAGE) {
-      // Six 32x64 frames per particle, two ticks each.
+      // Six 32x64 patterns per particle, two frames each.
       struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
         // 16 flash bursts rise, two starting each frame from frame 4.

@@ -411,7 +411,7 @@ BattleEffect_RunSpire:
 	movs r1, #4
 	movs r0, #2
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #28]
 	lsls r4, r4, #7
@@ -420,7 +420,7 @@ BattleEffect_RunSpire:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_0815a034
 	ldr r2, [sp, #12]
 	movs r6, #1

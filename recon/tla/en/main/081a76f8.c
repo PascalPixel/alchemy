@@ -39,7 +39,7 @@ s32 Title_ShowAnimatedSplash(void) {
   Scheduler_ResetTaskTable();
   Fade_ToBlack(1);
   DebugText_Clear();
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
   gBgScroll[2].y = 0;
@@ -73,7 +73,7 @@ s32 Title_ShowAnimatedSplash(void) {
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   return 0;
 }

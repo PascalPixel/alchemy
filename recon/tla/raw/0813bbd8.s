@@ -597,7 +597,7 @@ BattleEffect_RunIce:
 	adds r5, #28
 	cmp r2, #32
 	bne .L_0813bfc2
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
@@ -608,7 +608,7 @@ BattleEffect_RunIce:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #20]
 	mov r7, r10
 	adds r3, #1

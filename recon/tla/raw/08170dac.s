@@ -807,7 +807,7 @@ BattleEffect_RunVoidBeam:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #72]
 	lsls r3, r3, #7
@@ -816,7 +816,7 @@ BattleEffect_RunVoidBeam:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #12]
 	ldr r5, [sp, #64]
 	adds r4, #8

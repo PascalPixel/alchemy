@@ -222,7 +222,7 @@ void Func_0813ba50(void);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
-void WaitTicks(s32);
+void WaitFrames(s32);
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
@@ -262,7 +262,7 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
 void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
 void Camera_ApplyVerticalShake(s32);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void Scheduler_RemoveCallback(void *);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -330,7 +330,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleActor_SpawnObjectsForListFar(&local264, 0);
   REG_WININ = 0x2737;
   REG_WIN0H = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   Palette_LoadBasicObjColors();
   scene->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
@@ -1248,7 +1248,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     work->frameDone = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Audio_PlayCue(162);
@@ -1266,7 +1266,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Runtime_ReleaseHeapBlock(104);
   Palette_LoadBasicObjColors();
   REG_DISPCNT = 0x141;
-  WaitTicks(1);
+  WaitFrames(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
   CpuFill(canvas, 0x4000, 0);
@@ -1664,9 +1664,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       MemFree(texture);
     }
     Camera_ApplyVerticalShake(8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->frameDone = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != 180);
   for (i = 0; i != arg->count; i++) {

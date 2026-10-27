@@ -660,7 +660,7 @@ BattleEffect_RunFume:
 	adds r0, r6, #0
 	bl MemFree
 .L_0817cbd4:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	ldr r2, [sp, #80]
 	ldr r1, [r2, #24]
 	lsls r1, r1, #1
@@ -675,7 +675,7 @@ BattleEffect_RunFume:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #56]
 	adds r0, #1
 	str r0, [sp, #56]

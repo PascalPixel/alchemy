@@ -57,7 +57,7 @@ void Shop_DrawItemCount(void *window, s32 item);
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32 messageId, s32 x, s32 y, s32 flags);
 s32 UiWork_IsCompleteFar(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 extern u8 MsgEquipNowPrompt[];
 extern u8 MsgBecameCursed[];
 extern u8 MsgLookBolder[];
@@ -118,7 +118,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       UiText_OpenMessageWindowFar((s32)MsgBecameCursed, x, y, flags);
     }
     while (UiWork_IsCompleteFar() == 0)
-      WaitTicks(1);
+      WaitFrames(1);
   }
 
   Func_0810857c((s32)MsgLookBolder);

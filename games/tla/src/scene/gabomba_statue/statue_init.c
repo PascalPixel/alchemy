@@ -11,7 +11,7 @@ void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02005754(s32 message);
 void Func_02005764(s32 id, s32 value);
 void Func_02005714(s32 id, s32 a, s32 b);

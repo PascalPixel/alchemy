@@ -153,7 +153,7 @@ extern u8 gData_08197498[];
 extern const u8 Data_0819861b[];
 
 u32 Random16(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -188,7 +188,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Arms the H-blank DMA of the work's line table into BG2X.
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -275,11 +275,11 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   if (variant == 12) {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8,
                                    0x60000);
-    WaitTicks(7);
+    WaitFrames(7);
   } else {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
   }
-  WaitTicks(1);
+  WaitFrames(1);
 
   EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
@@ -476,9 +476,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Teardown.

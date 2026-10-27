@@ -23,7 +23,7 @@ extern u8 Func_020015ac[];
 extern u8 gData_02002ff0[];
 s32 Object_GetById();
 void Func_02002e24();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02002eec();
 void Func_02002df4();
 void Func_02002e04();
@@ -49,7 +49,7 @@ s32 Func_020019a0(s32 a0, s32 a1, s32 a2, s32 a3) {
   FIELD_AT(r6, u8, 85) = 0;
   r10 = 85 + r6;
   Call3((void (*)())Func_02002e24, 0x50000, 0x50000, 0x10000);
-  Call1((void (*)())FieldEvent_WaitTicks, 30);
+  Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call1((void (*)())Func_02002eec, 0x22c);
   stack[1] = 84;
   r5_1 = 7;
@@ -63,7 +63,7 @@ L_02009a2a:
   r5_1 = 128;
   r5_1 = r5_1 << 9;
 L_02009a38:
-  Call1((void (*)())FieldEvent_WaitTicks, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   r5_1 = r5_1 + 65536;
   if ((r5_1 >> 16) < (FIELD_AT((s32)gData_02003780, s16, 0)))
     goto L_02009a38;
@@ -87,7 +87,7 @@ L_02009a52:
     FIELD_AT(r6, s32, 12) = (FIELD_AT(r6, s32, 12)) + r0;
     FIELD_AT(r6, s32, 20) = (FIELD_AT(r6, s32, 12)) + r0;
   }
-  Call1((void (*)())FieldEvent_WaitTicks, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   if (r8 != 2)
     goto L_02009ade;
   if (stack[4] != 0)
@@ -108,7 +108,7 @@ L_02009afe:
   if ((((stack[4] + 1) << 16) >> 16) <= 15)
     goto L_02009a2a;
   Call3((void (*)())Func_02002e24, -1, -1, 0xe666);
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   r4 = r10;
   FIELD_AT(r4, u8, 0) = 3;
   if ((FIELD_AT(r7, s32, 4)) < 0x200000) {

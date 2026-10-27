@@ -139,7 +139,7 @@ Func_0810b7b4:
 	lsls r0, r0, #2
 	bl Func_080f8058
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_0810b8d2:
 	ldr r1, [sp, #12]
 	movs r2, #0
@@ -152,7 +152,7 @@ Func_0810b7b4:
 	mov r8, r2
 .L_0810b8e8:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_0810b9bc
 	movs r3, #1
 	ldr r2, [r1, #4]
@@ -237,7 +237,7 @@ Func_0810b7b4:
 	ldr r0, [r7, #36]
 	bl UiWork_FinalizeFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Func_0810824c
 	adds r0, r6, #0
 	add sp, #16

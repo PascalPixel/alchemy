@@ -15,13 +15,13 @@ void Func_020010e4(void) {
   Call2((void (*)())Func_02003250, 0x10000, 0);
   Call2((void (*)())Func_02003248, 0x10003, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   *color = 0x7fff;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Func_020031c0((s32)MsgMankindWithThe, 0, 0);
   Call2((void (*)())Func_02003248, 0x10000, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   Func_020031e8();
 }
 
@@ -33,13 +33,13 @@ void Func_02001154(void) {
   Call2((void (*)())Func_02003250, 0x10000, 0);
   Call2((void (*)())Func_02003248, 0x10003, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   *color = 0x7fff;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Func_020031c0((s32)MsgFishWithCold, 0, 0);
   Call2((void (*)())Func_02003248, 0x10000, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   Func_020031e8();
 }
 
@@ -51,13 +51,13 @@ void Func_020011c4(void) {
   Call2((void (*)())Func_02003250, 0x10000, 0);
   Call2((void (*)())Func_02003248, 0x10003, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   *color = 0x7fff;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Func_020031c0((s32)MsgDragonsBurningWith, 0, 0);
   Call2((void (*)())Func_02003248, 0x10000, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   Func_020031e8();
 }
 
@@ -69,13 +69,13 @@ void Func_02001234(void) {
   Call2((void (*)())Func_02003250, 0x10000, 0);
   Call2((void (*)())Func_02003248, 0x10003, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   *color = 0x7fff;
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Func_020031c0((s32)MsgBirdOnThe, 0, 0);
   Call2((void (*)())Func_02003248, 0x10000, 0);
   Func_02003258(20);
-  WaitTicks(20);
+  WaitFrames(20);
   Func_020031e8();
 }
 
@@ -112,7 +112,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
     pz = z + ((u32)(Random16Far() * 12) >> 16) - 6;
     Func_020012a4(px, pz, 0);
   }
-  WaitTicks(4);
+  WaitFrames(4);
   Func_02003148(c, d, e + 64, f, 1, 1);
 }
 
@@ -131,17 +131,17 @@ void Func_020013a0(void) {
       Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x400000,
             0xd80000, 1);
       Func_02003228();
-      Call1((void (*)())FieldEvent_WaitTicks, 20);
+      Call1((void (*)())FieldEvent_WaitFrames, 20);
       Call2((void (*)())Func_02003250, 0x10000, 0);
       Call2((void (*)())Func_02003248, 0x10003, 0);
       Call1((void (*)())Func_02003258, 20);
-      Call1((void (*)())WaitTicks, 20);
+      Call1((void (*)())WaitFrames, 20);
       *color = 0x7fff;
-      Call1((void (*)())WaitTicks, 1);
+      Call1((void (*)())WaitFrames, 1);
       Func_020031c0((s32)MsgIfYouDo, 0, 4);
       Call2((void (*)())Func_02003248, 0x10000, 0);
       Call1((void (*)())Func_02003258, 20);
-      Call1((void (*)())WaitTicks, 20);
+      Call1((void (*)())WaitFrames, 20);
       Call1((void (*)())GameFlag_SetBit, 0xa2f);
       Func_020031e8();
     }
@@ -160,28 +160,28 @@ void Func_020013a0(void) {
     Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x400000, 0xd80000,
           1);
     Func_02003228();
-    Call1((void (*)())FieldEvent_WaitTicks, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call2((void (*)())Func_02003250, 0x10000, 0);
     Call2((void (*)())Func_02003248, 0x10003, 0);
     Call1((void (*)())Func_02003258, 20);
-    Call1((void (*)())WaitTicks, 20);
+    Call1((void (*)())WaitFrames, 20);
     *color = 0x7fff;
-    Call1((void (*)())WaitTicks, 1);
+    Call1((void (*)())WaitFrames, 1);
     message = (s32)MsgYouWhoHold;
     Func_020031c0(message, 0, 4);
     message++;
-    Call1((void (*)())WaitTicks, 10);
+    Call1((void (*)())WaitFrames, 10);
     Func_020031c0(message, 0, 3);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x580000, 0xd80000,
           1);
     Func_02003228();
-    Call1((void (*)())FieldEvent_WaitTicks, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call1((void (*)())Func_020032b8, 560);
     Func_0200080c();
-    Call1((void (*)())FieldEvent_WaitTicks, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call2((void (*)())Func_02003248, 0x10000, 0);
     Call1((void (*)())Func_02003258, 20);
-    Call1((void (*)())WaitTicks, 40);
+    Call1((void (*)())WaitFrames, 40);
     Call1((void (*)())GameFlag_SetBit, 0xa2e);
     Func_020031e8();
   }

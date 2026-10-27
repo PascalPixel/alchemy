@@ -160,7 +160,7 @@ BattleEffect_RunAzul:
 	cmp r8, r1
 	bne .L_0815cf14
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #163
 	lsls r1, r1, #2
 	movs r0, #12
@@ -237,7 +237,7 @@ BattleEffect_RunAzul:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #186
 	str r2, [sp, #64]
 	ldr r3, .L_0815cff8
@@ -2443,7 +2443,7 @@ BattleEffect_RunAzul:
 	ldr r4, [sp, #64]
 	cmp r4, #185
 	ble .L_0815e0c0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 .L_0815e0c0:
 	ldr r6, [sp, #76]
 	movs r7, #240
@@ -2453,7 +2453,7 @@ BattleEffect_RunAzul:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #64]
 	adds r0, #1
 	str r0, [sp, #64]

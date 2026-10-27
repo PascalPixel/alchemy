@@ -7,7 +7,7 @@
 extern u8 IwramClearWords[];
 
 /// Starts a new frame of sprites: frees the affine matrices and empties the
-/// 256 depth slots sprites are linked into. Called by WaitTicks after each
+/// 256 depth slots sprites are linked into. Called by WaitFrames after each
 /// VBlank.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
@@ -82,7 +82,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
 
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
 /// frame. The entry's first word becomes its link to the next entry. Called
-/// by everything that draws a sprite, before WaitTicks builds the OAM list.
+/// by everything that draws a sprite, before WaitFrames builds the OAM list.
 void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;
@@ -98,7 +98,7 @@ void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
 }
 
 /// Builds this frame's OAM list in `work` from the sprites linked into the
-/// depth slots, with a RAM copy of the ARM builder. Called by WaitTicks into
+/// depth slots, with a RAM copy of the ARM builder. Called by WaitFrames into
 /// the frame scratch heap slot.
 void Oam_BuildBuffer(void *work) {
   OamBuildRoutine routine;

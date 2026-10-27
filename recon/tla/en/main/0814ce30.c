@@ -96,7 +96,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);            // ☀️ ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);            // ☀️ ObjectGroup_CountDownMemberTimers
 
 // Summon 5, the thorn vines: thorns fly in, vines grow up under the targets
 // and lift them while the ground throws up debris; the picture is erased
@@ -566,9 +566,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       Func_08158ce0(4, 4);
     else
       Func_08158ce0(4, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -1,4 +1,4 @@
-// Draft, differ 92 of 120: the palette cycle's tick, the partner of
+// Draft, differ 92 of 120: the palette cycle's update, the partner of
 // Func_02000038: when its countdown (gData_02001a1c) runs out it reloads
 // it from gData_02001a20 (which shortens to 2), writes this step's colours
 // (row gData_02001a34 of the slot table gData_02001a18, gData_02001a30

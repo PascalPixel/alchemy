@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
-	.set import.WaitTicks, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.AllocHeapSlotEwram, 1
@@ -57,7 +57,7 @@
 	.set import.Event_StartScreenTransition, 1
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1
-	.set import.DjinnRecovery_TickTwenty, 1
+	.set import.DjinnRecovery_CountDownTwenty, 1
 	.set import.DebugParty_LoadPreset, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

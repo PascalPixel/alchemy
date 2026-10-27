@@ -102,7 +102,7 @@ void Event_WaitForZoomTransition(void) {
     frames = 0;
     if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
       do {
-        WaitTicks(1);
+        WaitFrames(1);
         frames++;
       } while (frames < 300 && *(s16 *)&perspective->zoomTransitionFrames != 0);
     }
@@ -203,7 +203,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
         SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
-    Event_WaitTicks(wait);
+    Event_WaitFrames(wait);
   }
 }
 

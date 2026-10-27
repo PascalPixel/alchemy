@@ -38,7 +38,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -79,7 +79,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -216,7 +216,7 @@ void BattleEffect_RunJudgment(void) {
     cells += 0x400;
   }
   gCameraSceneParameters[4] = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   Func_08163c2c(0, 1);
@@ -458,7 +458,7 @@ void BattleEffect_RunJudgment(void) {
     }
 
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
 
@@ -466,7 +466,7 @@ void BattleEffect_RunJudgment(void) {
   for (i = 0; i < 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   Palette_LoadBasicObjColors();
   {
     volatile u32 *dma = (volatile u32 *)0x040000d4;
@@ -885,9 +885,9 @@ void BattleEffect_RunJudgment(void) {
     if (frame > 63) {
       gBgScroll[1].y = (Random16() & 3) + 30;
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   for (i = 0; i < 16; i++) {

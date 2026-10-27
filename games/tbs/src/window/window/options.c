@@ -494,7 +494,7 @@ s32 SettingsMenu_Run(void) {
   settingsWindow = SettingsMenu_Open();
   // Picture 7 of gMenuTitlePictures, the Setup heading.
   pair = MenuTitle_Create(7, settingsWindow, 64, -48);
-  WaitTicks(1);
+  WaitFrames(1);
   hue = &work->option[0];
   brightness = &work->option[1];
 
@@ -580,7 +580,7 @@ s32 SettingsMenu_Run(void) {
       Text_DrawMessage(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
     }
     MenuTitle_Bob(pair);
-    WaitTicks(1);
+    WaitFrames(1);
 
     // SELECT steps through the six colour presets (window/scales.c).
     if (gKeysPressed & KEY_SELECT) {
@@ -640,7 +640,7 @@ s32 SettingsMenu_Run(void) {
     WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
   }
   SettingsMenu_Release();
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 
@@ -800,7 +800,7 @@ s32 PauseMenu_Choose(void) {
 #else
   pair = MenuTitle_Create(6, window, 0x28, -0x18);
 #endif
-  WaitTicks(1);
+  WaitFrames(1);
   // The cursor starts where the block's page is, 0 after the fill.
   selectedEntry = work->page;
   if (settingsOnly != 0) {
@@ -839,7 +839,7 @@ s32 PauseMenu_Choose(void) {
       MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
     }
     MenuTitle_Bob(pair);
-    WaitTicks(1);
+    WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;
       Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -862,7 +862,7 @@ s32 PauseMenu_Choose(void) {
   }
   Window_Close(window, 2);
   PauseMenu_Release();
-  WaitTicks(1);
+  WaitFrames(1);
   // In the Battle Arena only Change settings shows: count from Save your quest.
   if (result >= 0) {
     result += first;

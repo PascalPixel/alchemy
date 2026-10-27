@@ -148,7 +148,7 @@ Func_02000384:
 	mov r8, r1
 	bl Event_StartScreenTransition
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r3, [r6, #12]
 	movs r5, #0
 	cmp r3, #0
@@ -166,7 +166,7 @@ Func_02000384:
 	strh r3, [r6, #6]
 	movs r0, #2
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #89
 	bgt .L_0200846c
 	ldr r3, [r6, #12]
@@ -196,7 +196,7 @@ Func_02000384:
 	ldr r0, [r5]
 	bl Object_SetModeById
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r6, #72]
@@ -420,7 +420,7 @@ Func_02000778:
 	movs r0, #1
 	eors r3, r2
 	strb r3, [r1]
-	bl WaitTicks
+	bl WaitFrames
 	mov r2, r8
 	ldrb r3, [r2]
 	cmp r3, #0
@@ -523,7 +523,7 @@ Func_02000778:
 .L_020088dc:
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #59
 	bgt .L_020088f6
 	ldr r3, [r6, #20]
@@ -543,7 +543,7 @@ Func_02000778:
 .L_02008904:
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #59
 	bgt .L_02008916
 	ldr r3, [r6, #40]
@@ -1997,7 +1997,7 @@ Func_02001888:
 	str r5, [sp, #4]
 	bl Func_02001df0
 	movs r0, #12
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #128
 	ldr r2, .L_02009930
 	lsls r3, r3, #7
@@ -2041,7 +2041,7 @@ Func_02001888:
 	movs r1, #28
 	bl Object_SetModeById
 	movs r0, #16
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 .L_02009950:
 	cmp r7, #5
 	bne .L_0200995a
@@ -2062,7 +2062,7 @@ Func_02001888:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	adds r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #39
 	ble .L_02009950
 	ldr r3, .L_020099c4
@@ -2130,7 +2130,7 @@ Func_02001a20:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02001dd0
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #130
 	lsls r3, r3, #16
 	str r3, [r7, #12]
@@ -2158,7 +2158,7 @@ Func_02001a20:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	add r2, sp, #28
 	movs r3, #7
 	str r3, [r2, #4]
@@ -2265,7 +2265,7 @@ Func_02001a20:
 	lsls r3, r3, #7
 	str r3, [r7, #68]
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #1
 	bl Object_SetModeById

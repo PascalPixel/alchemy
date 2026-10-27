@@ -41,12 +41,12 @@ void Func_02001b14(void) {
   Func_02001e80(8);
   Func_02001e80(9);
   Func_02001e80(10);
-  WaitTicks(1);
+  WaitFrames(1);
   if (GameFlag_Test(0x8fd)) {
     Func_02001010();
     Func_02001064();
     GabombaStatueChamber_ObjPosSet(8, 0x1a80000, 0x980000);
-    WaitTicks(1);
+    WaitFrames(1);
     Func_02000f00();
   } else {
     s32 entrance;

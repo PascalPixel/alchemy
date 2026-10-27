@@ -12,8 +12,8 @@ void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
@@ -71,7 +71,7 @@ void Func_02000468(void) {
     if (p->scaleX <= 0xffff)
       p->scaleX += 0xa00;
     p->scaleY = p->scaleX;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   p->angle = 0x3000;
   p->scaleY = 0x10000;

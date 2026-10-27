@@ -8,11 +8,11 @@ struct EffectSceneWork {
   struct DispatchObject *mainObject;
 };
 
-void BattleEffect_SetObjectTickMode(struct DispatchObject *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct DispatchObject *object, s32 mode);
 
 void EffectRuntime_StopCurrentObject(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
-  BattleEffect_SetObjectTickMode(work->mainObject, 0);
-  WaitTicks(1);
+  BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
+  WaitFrames(1);
 }

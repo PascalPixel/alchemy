@@ -59,7 +59,7 @@ void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
 void Func_02001608(void);
 void Func_020032a8(void);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_0200166c(void);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_0200055c(void);
@@ -76,7 +76,7 @@ void Func_02000abc(void) {
     party[706] = 2;
   }
   Func_02003238(1);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_0200166c();
   Scheduler_RemoveCallbackFar(Func_0200055c);
 }

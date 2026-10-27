@@ -112,11 +112,11 @@ s32 Shop_SelectRepair(s32 unitId) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     Window_CloseFar(descriptionWindow, 2);
-    WaitTicks(1);
+    WaitFrames(1);
     if (result != 0)
       break;
 
@@ -184,15 +184,15 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   TextPrinter_CloseFinishedWindowsFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
   // 360 frames (six seconds) from the first wait to the last.
-  WaitTicks(10);
+  WaitFrames(10);
   Sound_PlaySongFar(SE_BELL);
-  WaitTicks(110);
+  WaitFrames(110);
   Sound_PlaySongFar(SE_BELL);
-  WaitTicks(110);
+  WaitFrames(110);
   Sound_PlaySongFar(SE_BELL);
-  WaitTicks(110);
+  WaitFrames(110);
   Sound_PlaySongFar(SE_MENU_CONFIRM);
-  WaitTicks(20);
+  WaitFrames(20);
   // Restore the entry, repair it, charge the fee and offer equipment changes.
   unit->inventory[slot] = savedEntry;
   Inventory_RepairFar(unitId, slot);

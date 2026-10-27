@@ -4,7 +4,7 @@
 FarCall_OverworldTable:
 	export FieldLoop_RunFar, FieldLoop_Run
 	export Monitor_RunFar, Monitor_Run
-	export Event_WaitTicksFar, Event_WaitTicks
+	export Event_WaitFramesFar, Event_WaitFrames
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End
 	overlay_veneer Event_RunActorUpdateAndWait

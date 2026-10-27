@@ -53,12 +53,12 @@ s32 Battle_ClearSerialTransferPayload(void);
 s32 Battle_Run(s32 enemyGroup);
 void BattleCamera_AdjustByShoulderKeys(void);
 void BattleCamera_AdjustByShoulderKeysAlt(void);
-s32 BattleUnit_TickDefenseStage(s32 unitId);
-s32 BattleUnit_TickResistanceStage(s32 unitId);
-s32 BattleUnit_TickDelusion(s32 unitId);
-s32 BattleUnit_TickCharm(s32 unitId);
-s32 BattleUnit_TickStun(s32 unitId);
-s32 BattleUnit_TickSleep(s32 unitId);
+s32 BattleUnit_CountDownDefenseStage(s32 unitId);
+s32 BattleUnit_CountDownResistanceStage(s32 unitId);
+s32 BattleUnit_CountDownDelusion(s32 unitId);
+s32 BattleUnit_CountDownCharm(s32 unitId);
+s32 BattleUnit_CountDownStun(s32 unitId);
+s32 BattleUnit_CountDownSleep(s32 unitId);
 
 /// Pushes a message to show, waiting for the player to read it.
 #define PUSH_MESSAGE(message) BattlePlayback_Push(PLAYBACK_MESSAGE, (message))
@@ -277,14 +277,14 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
-s32 BattleUnit_TickAttackStage(s32 unitId);
-s32 BattleUnit_TickConfusion(s32 unitId);
+s32 BattleUnit_CountDownAttackStage(s32 unitId);
+s32 BattleUnit_CountDownConfusion(s32 unitId);
 s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
-s32 BattleUnit_TickRegenerate(s32 unitId);
-s32 BattleUnit_TickReflect(s32 unitId);
-s32 BattleUnit_TickAgilityStage(s32 unitId);
-s32 DjinnRecovery_Tick(void);
-s32 DjinnRecovery_TickTwenty(void);
+s32 BattleUnit_CountDownRegenerate(s32 unitId);
+s32 BattleUnit_CountDownReflect(s32 unitId);
+s32 BattleUnit_CountDownAgilityStage(s32 unitId);
+s32 DjinnRecovery_CountDown(void);
+s32 DjinnRecovery_CountDownTwenty(void);
 void Battle_ReservedNoOpF674(void);
 #ifdef UBFIX
 void Battle_ProcessRoundEnd(void);

@@ -17,11 +17,11 @@ void Map_LoadDefaultCellsAndUpdateBlock(void) {
   gData_030011f8 = Map_ShowBg1FromBuffer;
   work->windowTop = 0;
   work->windowBottom = 0x9f;
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
       Ram_MapCellBuffer);
   Map_UpdateCurrentTileBlock();
   Scheduler_ResumeTasks(MapAnimation_Update);
-  WaitTicks(1);
+  WaitFrames(1);
 }

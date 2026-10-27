@@ -267,11 +267,11 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
   Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
                   EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_RunRepeatedMotion(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Event_SetMessageId(MsgBilibinAaaah);
   FieldEvent_ShowMessageThenWait(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 0, 20);
   Actor_FaceActor(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, ACTOR_PARTY_LEADER, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 0, 10);
   Actor_FaceDirection(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
                       FACING_NORTHWEST + FACING_STEP, 10);
@@ -384,14 +384,14 @@ static void McCoyPalace_WalkThroughDoor(void) {
     TilesetAnim_Resume(2);
   }
   Event_Start();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == 9)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   else
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
-  Event_WaitTicks(16);
+  Event_WaitFrames(16);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_End();
   TilesetAnim_Pause(1);
@@ -500,7 +500,7 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
       Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHWEST + FACING_STEP, 10);
       Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       Event_SetMessageId(MsgBilibinPleaseTakeYourRewardBefore);
       Event_ShowMessage(ACTOR_CAPTAIN, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -523,9 +523,9 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTHEAST + FACING_STEP, 20);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 3);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_CAPTAIN, ACTOR_PARTY_LEADER, 0);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
     Event_SetMessageId(MsgBilibinAlwaysWelcomeInPalaceLord);
     FieldEvent_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -653,10 +653,10 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   // Stage the first audience, or place the leader for a return visit.
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
-  WaitTicks(1);
+  WaitFrames(1);
   Import_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
   if (Event_GetFlag(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
@@ -665,19 +665,19 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
   }
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (GameFlag_Get(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
-    Event_WaitTicks(80);
+    Event_WaitFrames(80);
     Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(894), PIXELS(798));
     FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkTo(ACTOR_CAPTAIN, 894, 696);
-    Event_WaitTicks(80);
+    Event_WaitFrames(80);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
     Actor_WaitForMoveById(ACTOR_CAPTAIN);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 842, 696);
@@ -685,9 +685,9 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 20);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 876, 634);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     // The captain announces the warriors before they enter the audience.
     Event_SetMessageId(MsgBilibinMatter);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
@@ -698,7 +698,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
@@ -706,16 +706,16 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
                                    10);
     FieldEffect_SetAttached(ACTOR_CAPTAIN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitTicks(60);
+    Event_WaitFrames(60);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 726);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
@@ -744,7 +744,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
     Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
@@ -761,7 +761,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
                                    10);
     FieldEffect_SetAttached(ACTOR_CAPTAIN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     // Let the party accept the assignment or leave after McCoy refuses them.
@@ -816,7 +816,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 894, 684);
-  Event_WaitTicks(80);
+  Event_WaitFrames(80);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveWithinMapBounds(PIXELS(894), -1, PIXELS(664), 1);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -845,7 +845,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
@@ -884,11 +884,11 @@ accepted:
     Import_ActorSetPosition(ACTOR_BARRICADE_KEY, actor->x.fixed,
                             actor->z.fixed);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
   Actor_SetSpeed(ACTOR_BARRICADE_KEY, PIXELS(2), PIXELS(1));
   Actor_MoveToAndWait(ACTOR_BARRICADE_KEY, 894, 668);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -922,7 +922,7 @@ accepted:
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -938,7 +938,7 @@ accepted:
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
@@ -951,7 +951,7 @@ accepted:
     Event_SetMessageId(MsgBilibinComeSaidYoud);
     FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
@@ -974,20 +974,20 @@ accepted:
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
   Import_ActorSetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
@@ -1000,7 +1000,7 @@ accepted:
   }
   Actor_WaitForMoveById(ACTOR_BARRICADE_KEY);
   Import_ActorSetPosition(ACTOR_BARRICADE_KEY, 0, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1009,7 +1009,7 @@ accepted:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
@@ -1017,7 +1017,7 @@ accepted:
                                  20);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -1042,13 +1042,13 @@ accepted:
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                   ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
@@ -1125,19 +1125,19 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
   Event_PlaySong(SE_THUMP);
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
   Import_ActorSetPosition(ACTOR_CAPTAIN, PIXELS(256), PIXELS(632));
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 256, 644);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_SetMessageId(MsgBilibinNameSorryRejected);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1155,7 +1155,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
@@ -1196,15 +1196,15 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   // Reveal the approach, then walk the leader and the captain into the
   // audience.
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   viewCenter = FieldCamera_GetActor();
   advanceAlternateReply = 0;
   viewCenter->motionFlags = advanceAlternateReply;
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -1212,7 +1212,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(888), PIXELS(798));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(904), PIXELS(798));
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -1221,12 +1221,12 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkTo(ACTOR_CAPTAIN, 888, 720);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 904, 736);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_WaitForMoveById(ACTOR_CAPTAIN);
   Import_ActorSetAnimation(ACTOR_CAPTAIN, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   // Present the returning warriors, using the reply for their earlier
   // reception.
@@ -1268,13 +1268,13 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_RefreshSelectorById(ACTOR_CAPTAIN);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
 
   advanceAlternateReply = 1;
   if (Event_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
@@ -1302,12 +1302,12 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   // Let the companions answer McCoy\'s thanks in turn.
   McCoyPalace_FaceCompanionsForDiscussion();
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   } else {
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
   }
 
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 10);
@@ -1319,7 +1319,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -1337,7 +1337,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     }
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
     McCoyPalace_FaceCompanionsForAudience();
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     if (advanceAlternateReply != 0) {
@@ -1372,7 +1372,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
                                  10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   McCoyPalace_FaceCompanionsForAudience();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
@@ -1380,7 +1380,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
@@ -1410,7 +1410,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
   FieldEvent_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -1425,7 +1425,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
 
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1448,7 +1448,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                   ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
@@ -1458,7 +1458,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   FieldEvent_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 886, 708);
   Actor_WalkTo(ACTOR_CAPTAIN, 894, 764);
@@ -1509,7 +1509,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_GetById(ACTOR_PSY_CRYSTAL_CHEST)->y.fixed = -PIXELS(4);
   Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -PIXELS(4);
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gFieldWork->transitionFrames = 16;
@@ -1520,7 +1520,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_WalkTo(ACTOR_CAPTAIN, 628, 764);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 612, 764);
   Import_ActorSetAnimation(ACTOR_CAPTAIN, ANIM_STAND);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   // The captain and the keeper explain that only one chest may be chosen.
   Event_SetMessageId(MsgBilibinLordMccoyOrdered);

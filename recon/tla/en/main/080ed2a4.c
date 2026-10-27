@@ -68,7 +68,7 @@ void EventRuntime_FinishScreen(void);
 void EventRuntime_WaitDelay(void);
 void Scheduler_ResetTaskTable(void);
 void UiWork_InitializeWithResourceCountersFar(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_080ebf94(void);
 void Func_080ece20(void);
 void Func_080ed0a0(void);
@@ -121,7 +121,7 @@ s32 Func_080ed2a4(s32 mode) {
     layer = (struct MapLayerFlags *)((u8 *)layer + 12);
   }
   *(u16 *)(objects + 4) = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   mapWork[0x972] = 1;
   blend = (s16)REG_BLDALPHA;
   goto setup;
@@ -136,7 +136,7 @@ full:
   Scheduler_ResetTaskTable();
   UiWork_InitializeWithResourceCountersFar();
   *(u16 *)(objects + 4) = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   blend = (s16)REG_BLDALPHA;
   map = (u32 *)0x06003000;
   tiles = 0x01810180;
@@ -170,7 +170,7 @@ setup:
 redraw:
   Data_0202a640 = zoomed;
   Func_080ece20();
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BG1CNT = 0x8682;
   REG_DISPCNT = 0x1340;
   if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
@@ -180,7 +180,7 @@ redraw:
   for (;;) {
     Func_080ed0a0();
     Func_080ec4d4();
-    WaitTicks(1);
+    WaitFrames(1);
     if ((gInput.repeat & 8) && !gliding) {
       Func_080ec1d0(&screenX, &screenY);
       Data_0202a644 = screenX << 16;

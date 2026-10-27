@@ -115,9 +115,9 @@ static void MenuTest_ShowMessageAndWait(s32 messageId) {
   TextPrinter_CloseFinishedWindows();
   Message_OpenWindow(messageId, 5, 0, 0x22);
   while (TextPrinter_AllFinished() == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// Browses sample dialogue with A/Down and Up; B closes the window. Shows the
@@ -151,7 +151,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
         break;
       }
       if (gKeysHeld == 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       } else {
         break;
       }
@@ -661,7 +661,7 @@ static void MenuTest_SelectItem(void) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  WaitTicks(1);
+  WaitFrames(1);
   while (1) {
     if (redraw) {
       redraw = 0;
@@ -724,10 +724,10 @@ static void MenuTest_SelectItem(void) {
       redraw = 1;
       Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   WindowSprite_RedrawSavedRect(window);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_Close(window, 1);
   Window_Close(details, 1);
 }

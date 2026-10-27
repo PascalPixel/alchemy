@@ -41,7 +41,7 @@ void Func_0200093c(void) {
     party[0x2c2] = 2;
   }
   Func_02004d30(14);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02004718();
 }
 

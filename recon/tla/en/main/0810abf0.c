@@ -43,7 +43,7 @@ s32 Shop_CanServe(s32 unitId, s32 serviceKind);
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Shop_DrawServiceParty(void *window, s32 memberIndex);
 void Shop_DrawSelectMsg(void *window, s32 unitId);
 void Audio_PlayCue(s32 cue);
@@ -103,14 +103,14 @@ s32 Func_0810abf0(void) {
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Shop_DrawServiceParty(listWindow, memberIndex);
       Shop_DrawSelectMsg(priceWindow, unitId);
       redraw = 0;
     }
     if (gInput.pressed & 1) {
-      WaitTicks(1);
+      WaitFrames(1);
       price = Shop_ServicePrice(unitId, serviceKind);
       if (Shop_CanServe(unitId, serviceKind) == 0) {
         Audio_PlayCue(113);
@@ -151,12 +151,12 @@ s32 Func_0810abf0(void) {
       break;
     } else {
       redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   Menu_ReleaseEntryObjectsFar();
   UiWork_FinalizeFar(priceWindow, 2);
   UiWork_FinalizeFar(listWindow, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   return 0;
 }

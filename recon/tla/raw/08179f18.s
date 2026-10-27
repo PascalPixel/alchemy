@@ -337,7 +337,7 @@ BattleEffect_RunFlora:
 	movs r4, #1
 	str r4, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #160]
 	adds r5, #1
 	str r5, [sp, #160]
@@ -2532,7 +2532,7 @@ BattleEffect_RunFlora:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #160]
 	movs r6, #150
 	adds r5, #1
@@ -2918,7 +2918,7 @@ BattleEffect_RunFlora:
 	movs r0, #2
 	movs r1, #2
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r6, #240
 	ldr r5, [sp, #172]
 	lsls r6, r6, #7
@@ -2927,7 +2927,7 @@ BattleEffect_RunFlora:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #160]
 	adds r0, #1
 	str r0, [sp, #160]

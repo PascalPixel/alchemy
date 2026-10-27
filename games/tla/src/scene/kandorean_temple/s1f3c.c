@@ -2,9 +2,9 @@
 
 void Func_02001f3c(void) {
   Func_02005170(39, 39, 24, 38, 2, 2);
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02005170(39, 41, 24, 38, 2, 2);
-  WaitTicks(20);
+  WaitFrames(20);
   GameFlag_SetBit(0x212);
 }
 
@@ -43,12 +43,12 @@ void Func_02002014(void) {
                                      0);
   for (i = 0; i < 8; i++) {
     leader->z += 0x10000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Object_SetModeById(gPartyState.currentOwner, 13);
   for (i = 0; i < 8; i++) {
     leader->y -= 0x10000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -124,9 +124,9 @@ void Func_02002248(void) {
   Func_020053d8(132);
   Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 10);
   leader->velocityY = 0x60000;
-  WaitTicks(20);
+  WaitFrames(20);
   while (leader->velocityY != 0)
-    WaitTicks(1);
+    WaitFrames(1);
   Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 0);
   Func_020051c8();
 }
@@ -137,7 +137,7 @@ void Func_020022c0(void) {
   Func_020053d8(188);
   Func_02005170(77, 33, 77, 24, 2, 2);
   Func_02005178_(32, 30, 2, 1, 17, 25);
-  WaitTicks(10);
+  WaitFrames(10);
   GameFlag_SetBit(0x212);
   Func_020051c8();
 }
@@ -153,13 +153,13 @@ void Func_02002314(void) {
   ObjectMotion_ArmCallback_(4, 0x2000, 0);
   Func_02005378(14, 16, 16, 0xa000);
   ObjectMotion_CommitCurrentPositionAndActivate(14);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02005280((s32)&MsgKandoreanTemple12);
   Func_02005298(14, 0);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   ObjectMotion_SetSpeedParameters_(14, 0x13333, 0x9999);
   Object_SetModeById(14, 2);
   object = Object_GetById(4);

@@ -177,7 +177,7 @@ Func_08191958:
 	movs r3, #1
 	str r3, [r1]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, r9
 	bne .L_08191abc
 	ldr r2, [sp, #8]

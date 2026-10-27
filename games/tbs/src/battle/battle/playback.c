@@ -259,7 +259,7 @@ void BattlePlayback_Run(void) {
     } else if (events->phase == PLAY_ADVANCE) {
       // Show the arrow, as BattleMessage_WaitForAdvance does, and wait
       // for the player: B held or an advance key pressed goes on; after ten
-      // ticks, a held advance key does too. The arrow is an 8 by 16,
+      // VBlanks, a held advance key does too. The arrow is an 8 by 16,
       // 256-colour sprite (attribute 0 0xa000, which unlike that function's
       // is not semi-transparent) cycling eight frames of
       // gBattleMessage_AdvanceArrowTiles, one every four frames, in the
@@ -472,7 +472,7 @@ s32 BattlePlayback_WaitForReady(void) {
   }
   if (state != BATTLE_PLAYBACK_PHASE_READY) {
     do {
-      WaitTicks(1U);
+      WaitFrames(1U);
     } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
   }
   Task_Remove(BattlePlayback_Run);

@@ -637,7 +637,7 @@ BattleEffect_RunStarMine:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #44]
 	lsls r5, r5, #7
@@ -646,7 +646,7 @@ BattleEffect_RunStarMine:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #40]
 	adds r7, #1
 	str r7, [sp, #40]

@@ -5,7 +5,7 @@
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void MemFree(void *);
-void WaitTicks(s32);
+void WaitFrames(s32);
 void *Resource_FarCall005(s32);
 
 extern char MsgEnemyLabel;
@@ -31,7 +31,7 @@ s32 LinkBattle_ReceiveParty(void) {
     if (name_entry[298] != 0) {
       named_count += 1;
     }
-    WaitTicks(2);
+    WaitFrames(2);
     Ui_AdjustValueWithoutLimitFar((s32)&MsgEnemyLabel, name_text);
     i = 0;
     if (name_text[i] != 0) {
@@ -56,7 +56,7 @@ s32 LinkBattle_ReceiveParty(void) {
   buffer = Runtime_BumpAllocateAlternatePool(340);
   if (SerialRuntime_StartReceive(Resource_FarCall005(1)) != -1) {
     SerialRuntime_WaitForReceive();
-    WaitTicks(2);
+    WaitFrames(2);
   }
   MemFree(buffer);
   return named_count;

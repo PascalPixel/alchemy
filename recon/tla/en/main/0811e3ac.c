@@ -45,7 +45,7 @@ struct SavedBattleObj {
 
 extern u32 Data_02018000[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 void BattleObject_Reset();
@@ -192,7 +192,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   Audio_PlayCue(154);
-  WaitTicks(10);
+  WaitFrames(10);
   if (single) {
     BattlePres_SetActorRecordMode(saved->unitId, 1);
   } else {
@@ -202,7 +202,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = (i << 8) | (16 - i);
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   battleObject = BattleObject_Get(saved->unitId);
@@ -248,7 +248,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
     object->angle += 0x2222;
     if (i <= 15)
       REG_BLDALPHA = ((16 - i) << 8) | i;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   BattlePres_SetActorRecordMode(saved->unitId, 0);
   return saved;

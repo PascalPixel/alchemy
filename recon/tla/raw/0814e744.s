@@ -319,7 +319,7 @@ BattleEffect_RunBreak:
 	cmp r1, r3
 	bne .L_0814e90e
 .L_0814e9cc:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #32]
 	lsls r4, r4, #7
@@ -328,7 +328,7 @@ BattleEffect_RunBreak:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	mov r1, r11
 	ldr r3, [r1, #20]
 	movs r0, #1

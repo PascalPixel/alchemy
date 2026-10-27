@@ -47,7 +47,7 @@ Func_080dc6d8:
 	bl Audio_PlayCue
 	adds r0, r6, #0
 	movs r1, #1
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 .L_080dc738:
 	adds r3, r7, #0
 	adds r3, #35
@@ -96,7 +96,7 @@ Func_080dc6d8:
 	beq .L_080dc7a2
 	adds r0, r6, #0
 	movs r1, #2
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 .L_080dc7a2:
 	adds r0, r6, #0
 	movs r1, #21

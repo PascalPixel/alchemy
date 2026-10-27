@@ -46,7 +46,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
 void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
                                          s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(u32 actor);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
@@ -108,14 +108,14 @@ void Func_080e4730(void) {
   owner->angle = 0x4000;
   Object_SetMode(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
-  WaitTicks(1);
+  WaitFrames(1);
   Animation_ApplyChildValueToFirstFar(owner->animation, 0);
   Func_080e43a4(*(void **)((u8 *)owner->animation + 40), work, 0x400);
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
-  WaitTicks(1);
+  WaitFrames(1);
   ripple = 0;
   for (frame = 0; frame < 78; frame++) {
     if (frame == 0)
@@ -153,7 +153,7 @@ void Func_080e4730(void) {
       sprite += 40;
       particle += 28;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     ripple += 3;
   }
   ObjectGroup_SetActionForOthers(owner, 0, 16);

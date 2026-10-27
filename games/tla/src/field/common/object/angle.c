@@ -5,7 +5,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 count);
+void WaitFrames(s32 count);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);
 void Audio_PlayCue(s32 cue);
@@ -19,7 +19,7 @@ void Event_NoOp(void);
 /// frame (none for -1), and is then let fall back, waiting up to 180 frames for
 /// it to land unless `particle` has flag 0x1000.
 // No ☀️ twin found. The landing wait matches only as a guarded do-while: as
-// while (y > ground) { WaitTicks(1); if (++i >= 180) break; } agscc keeps
+// while (y > ground) { WaitFrames(1); if (++i >= 180) break; } agscc keeps
 // the test at the top and jumps back to it (differ 18), where the native has
 // the test copied below the body as loop rotation would place it.
 void BattleEffect_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
@@ -33,20 +33,20 @@ void BattleEffect_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
     return;
   frame = ((struct FieldSprite *)object->animation)->nextFrame;
   Object_SetMode(object, mode);
-  WaitTicks(10);
+  WaitFrames(10);
   Object_SetMode(object, 1);
   ObjectDispatch_SetSingleChildFlagsFar(object, 0);
   object->motionFlags |= 2;
   object->velocityY = 0x40000;
   Object_SetPosition(object, x, object->y, z + 0xc0000);
-  WaitTicks(6);
+  WaitFrames(6);
   Audio_PlayCue(217);
   ObjectMotion_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     object->y -= 0x20000;
     object->targetY = object->y;
-    WaitTicks(1);
+    WaitFrames(1);
     if (particle != -1 && (i & 1))
       Func_080d3378(object, particle);
   }
@@ -55,19 +55,19 @@ void BattleEffect_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
   Object_SetPosition(object, x, object->y, z + 0x100000);
   Object_CommitPosition(object);
   if (particle & 0x1000) {
-    WaitTicks(4);
+    WaitFrames(4);
     return;
   }
   i = 0;
   if (object->y > object->terrainHeight) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       if (++i >= 180)
         break;
     } while (object->y > object->terrainHeight);
   }
   ObjectDispatch_SetSingleChildFlagsFar(object, frame);
-  WaitTicks(2);
+  WaitFrames(2);
   Event_NoOp();
 }
 

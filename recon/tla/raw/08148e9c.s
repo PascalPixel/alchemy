@@ -97,7 +97,7 @@ BattleEffect_RunWhirlwind:
 	adds r2, #82
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #141
 	bl Audio_PlayCue
 	movs r1, #0
@@ -446,7 +446,7 @@ BattleEffect_RunWhirlwind:
 	ldrb r0, [r1, r3]
 	lsls r1, r0, #1
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #240
 	ldr r2, [sp, #36]
 	lsls r0, r0, #7
@@ -455,7 +455,7 @@ BattleEffect_RunWhirlwind:
 	movs r1, #1
 	str r1, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r11, r2
 	mov r3, r11

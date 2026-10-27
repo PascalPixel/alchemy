@@ -1,7 +1,7 @@
 #include "trial_road.h"
 #include "text/msg_ids.h"
 
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Task_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -44,7 +44,7 @@ void Func_020037c8(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(7), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_02005938((s32)MsgTrialRoadLeaveVillage);
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02005940(8, 0);
@@ -54,5 +54,5 @@ void Func_020037c8(void) {
   Task_Wait(2);
   ObjectMotion_SetVariantCallback(5, 2);
   ObjectMotion_SetVariantCallback(7, 2);
-  FieldEvent_WaitTicks(15);
+  FieldEvent_WaitFrames(15);
 }

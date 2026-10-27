@@ -1213,7 +1213,7 @@ BattleEffect_RunTrident:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #240
 	ldr r7, [sp, #52]
 	lsls r0, r0, #7
@@ -1222,7 +1222,7 @@ BattleEffect_RunTrident:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #1
 	add r11, r1
 	mov r2, r11

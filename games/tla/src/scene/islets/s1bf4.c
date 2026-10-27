@@ -21,7 +21,7 @@ void Func_02001a68(void) {
   Call1((void (*)())Func_02003fa4, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner,
         0);
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Func_02003fc4();
@@ -43,7 +43,7 @@ void Func_02001a68(void) {
     Call2((void (*)())Object_SetPartAttribute,
           Object_GetById(gPartyState.currentOwner), 15);
     Call2((void (*)())Object_SetModeById, 9, 3);
-    Call1((void (*)())FieldEvent_WaitTicks, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Func_02003fc4();
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x19999, 0xcccc);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
@@ -57,15 +57,15 @@ void Func_02001a68(void) {
     object->update = update;
     Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9,
           (s32)gData_020045a4);
-    Call1((void (*)())FieldEvent_WaitTicks, 30);
+    Call1((void (*)())FieldEvent_WaitFrames, 30);
     Object_GetById(10)->update = update;
     Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10,
           (s32)gData_020045f0);
     do {
-      Call1((void (*)())WaitTicks, 1);
+      Call1((void (*)())WaitFrames, 1);
     } while (*done == 0);
     Func_020034ec();
-    Call1((void (*)())WaitTicks, 1);
+    Call1((void (*)())WaitFrames, 1);
     ((struct IsletsEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

@@ -371,7 +371,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 
   Message_OpenWindow(MsgOverwriteConfirm, 8, 12, 2);
   while (TextPrinter_AllFinished() == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (YesNoMenu_Run(1, 0, 0, 1)) {
     TextPrinter_CloseFinishedWindows();
@@ -460,7 +460,7 @@ s32 Save_EraseSelectedFile(void) {
     } else {
       Message_OpenWindow(MsgEraseConfirm, 8, 1, 2);
       while (TextPrinter_AllFinished() == 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       }
       if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
         TextPrinter_CloseFinishedWindows();
@@ -491,21 +491,21 @@ s32 Save_EraseSelectedFile(void) {
 /// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
 /// 85 frames. FileList_StartPulse runs it while the file list is open.
 void FileList_UpdatePulse(void) {
-  s32 *tick;
+  s32 *vblankCount;
   volatile u16 *palette;
   s32 colour;
   s32 sine;
   s32 i;
 
-  tick = (s32 *)&gVBlankCount;
+  vblankCount = (s32 *)&gVBlankCount;
   palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
   i = 0;
   do {
 #ifdef UBFIX
     // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
-    sine = Trig_Sin((((u32)*tick + i * 8U) * 0x300U) & 0xffffU);
+    sine = Trig_Sin((((u32)*vblankCount + i * 8U) * 0x300U) & 0xffffU);
 #else
-    sine = Trig_Sin((*tick + i * 8) * 0x300);
+    sine = Trig_Sin((*vblankCount + i * 8) * 0x300);
 #endif
     colour = sine / 16384;
     {
@@ -1083,13 +1083,13 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
         FileList_DrawSummary(summaryWindow, &save->summary[selectedFile]);
-        WaitTicks(1);
+        WaitFrames(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
         FileList_HidePartySprites();
         FileList_ShowPartySprites(partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
-        WaitTicks(1);
+        WaitFrames(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
                 (s8)save->summary[selectedFile].djinn[1] +
                 (s8)save->summary[selectedFile].djinn[2] +
@@ -1131,7 +1131,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     MenuCursor_AdvanceFar(&fileCursor);
 #endif
     MenuTitle_Bob(modePicture);
-    WaitTicks(1);
+    WaitFrames(1);
     // Up and down move to the previous or next file the mode allows; saving
     // allows every file, an empty one too.
     if (gKeysRepeat & KEY_UP) {
@@ -1186,7 +1186,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
   FreeHeapSlot(HEAP_SLOT_MENU);
   WindowColor_Apply(gCommon.windowColor[0], gCommon.windowColor[1]);
-  WaitTicks(1);
+  WaitFrames(1);
 done:
   return result;
 }
@@ -1219,7 +1219,7 @@ s32 Save_ToChosenFile(void) {
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
         while (TextPrinter_AllFinished() == 0) {
-          WaitTicks(1);
+          WaitFrames(1);
         }
         if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
           TextPrinter_CloseFinishedWindows();
@@ -1233,7 +1233,7 @@ s32 Save_ToChosenFile(void) {
                                        FIELD_MESSAGE_KEEP_OPEN |
                                        FIELD_MESSAGE_LOWER);
       while (TextPrinter_AllFinished() == 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Save_BuildFileSummary();
       Save_CaptureActorsFar();

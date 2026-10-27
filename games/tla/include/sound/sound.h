@@ -28,7 +28,7 @@ void Audio_StopAllPlayers(void);
 u32 Audio_UmulHigh32(u32 left, u32 right);
 void AudioEngine_Initialize(struct SoundWork *work);
 void AudioEngine_ResumeDirectSound(void);
-void AudioEngine_RunMixerTick(void);
+void SoundMain(void);
 void AudioEngine_SetMode(u32 mode);
 void AudioEngine_SetPcmRate(u32 mode);
 void AudioEngine_SuspendDirectSound(void);
@@ -40,7 +40,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StepFade(struct SoundPlayer *player);
 void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_Tick(struct SoundPlayer *player);
+void MPlayMain(struct SoundPlayer *player);
 void MusicTrack_CalculateOutput(struct SoundPlayer *player,
                                 struct SoundTrack *track);
 void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player,

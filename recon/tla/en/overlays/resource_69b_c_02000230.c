@@ -21,7 +21,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Camera_FollowActor(s32 id, s32 a);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);
 void Func_020021b4(struct ObjectRuntime *object, s32 a);
@@ -64,21 +64,21 @@ void Func_02000230(s32 kind) {
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   leader->scaleX = 0;
   effect->scaleX = 0;
   while (leader->y < 0x900000) {
     leader->y += 0x10000;
     effect->y += 0x10000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   effect->scaleX = 0x8000;
   effect->scaleY = 0xc000;
   for (i = 31; i >= 0; i--) {
     effect->scaleX += 0x800;
     effect->scaleY += 0x200;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
@@ -91,7 +91,7 @@ spin:
   leader->scaleX += 0x800;
   leader->scaleY = leader->scaleX;
   i--;
-  WaitTicks(1);
+  WaitFrames(1);
   if (i >= 0)
     goto spin;
   Func_020021d4(effect);

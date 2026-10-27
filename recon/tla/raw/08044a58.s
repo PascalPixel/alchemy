@@ -106,7 +106,7 @@ Func_08044a58:
 	mov r0, r8
 	bl Runtime_PushSlotEntry
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Audio_Check
 	cmp r0, #0
 	beq .L_08044b4c
@@ -119,7 +119,7 @@ Func_08044a58:
 	movs r1, #2
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #16]
 	bl Resource_ResetEntry
 .L_08044b60:

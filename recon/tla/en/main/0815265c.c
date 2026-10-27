@@ -55,7 +55,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
@@ -747,9 +747,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
     Func_08158ce0(4, 4);
     if (mode != 6)
-      ObjectGroup_TickMemberTimers();
+      ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

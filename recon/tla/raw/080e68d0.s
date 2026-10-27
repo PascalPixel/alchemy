@@ -214,12 +214,12 @@ Func_080e68d0:
 	mov r0, r11
 	bl Func_080dbed0
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, r11
 	movs r1, #1
 	bl Object_SetMode
 	movs r0, #15
-	bl WaitTicks
+	bl WaitFrames
 	movs r4, #9
 	mov r8, r4
 .L_080e6a8a:
@@ -229,7 +229,7 @@ Func_080e68d0:
 	adds r3, r3, r1
 	str r3, [r0, #12]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	negs r2, r2
 	add r8, r2
@@ -333,7 +333,7 @@ Func_080e68d0:
 	cmp r0, #0
 	beq .L_080e6b96
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #15
 	mov r8, r1
 .L_080e6b70:
@@ -351,7 +351,7 @@ Func_080e68d0:
 	movs r0, #114
 	bl Audio_PlayCue
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080e70ce
 .L_080e6b96:
 	mov r3, r10
@@ -824,7 +824,7 @@ Func_080e68d0:
 	bne .L_080e6fa8
 .L_080e6f74:
 	movs r0, #6
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #200
 	lsls r3, r3, #5
 	adds r3, #52
@@ -834,7 +834,7 @@ Func_080e68d0:
 	lsls r3, r3, #9
 	str r3, [r2, #24]
 	movs r0, #4
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080e6fae
 	.2byte 0x0000
 .L_080e6f94:
@@ -849,7 +849,7 @@ Func_080e68d0:
 	.4byte 0x000001e9
 .L_080e6fa8:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_080e6fae:
 	movs r5, #200
 	movs r3, #200
@@ -893,7 +893,7 @@ Func_080e68d0:
 	bl Func_080e716c
 .L_080e7000:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #0
 	ldrsh r3, [r5, r1]
 	adds r6, #1
@@ -930,7 +930,7 @@ Func_080e68d0:
 .L_080e704a:
 	movs r0, #1
 	movs r5, #0
-	bl WaitTicks
+	bl WaitFrames
 	cmp r6, #30
 	bne .L_080e7058
 	movs r5, #1

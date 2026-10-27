@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -66,10 +66,10 @@ Func_0200147c:
 	.thumb_func
 Func_02001484:
 	overlay_veneer Func_08038348
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -205,7 +205,7 @@ Func_02001584:
 	.global Func_0200158c
 	.thumb_func
 Func_0200158c:
-	overlay_veneer BattleEffect_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02001594
 	.thumb_func
 Func_02001594:

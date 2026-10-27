@@ -64,11 +64,11 @@ struct LemurianShipEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 struct LemurianShipObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct LemurianShipObject *object, s32 x,
                                       s32 y, s32 z);
@@ -179,7 +179,7 @@ static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static inline void LemurianShip_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void LemurianShip_SePlay(s32 cue) {
@@ -187,9 +187,9 @@ static inline void LemurianShip_SePlay(s32 cue) {
   Func_02002de0(cue);
 }
 
-static inline void LemurianShip_WaitTicks(s32 ticks) {
+static inline void LemurianShip_WaitFrames(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(ticks);
+  WaitFrames(frames);
 }
 
 #define LEMURIAN_SHIP_TASK_ADD(callback, priority)                             \

@@ -31,7 +31,7 @@ void ObjectMotion_ArmCallback();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 s32 UiText_OpenMessageAtObject();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
@@ -80,30 +80,30 @@ void Func_02000730(void) {
   Func_02004b3c(MsgWhatSYour);
   Func_02004b6c(22, 0x101, 40);
   ObjectMotion_SetAngleToward(22, gPartyState.currentOwner, 0);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Call3((void (*)())Func_02004b4c, 22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   UiText_OpenMessageAtObject(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     Call3((void (*)())Func_02004b4c, 22, 0, 0);
   } else {
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     UiText_OpenMessageAtObject(22, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       Call3((void (*)())Func_02004b4c, 22, 0, 0);
     } else {
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
       UiText_OpenMessageAtObject(22, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-        FieldEvent_WaitTicks(30);
+        FieldEvent_WaitFrames(30);
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
       } else {
-        FieldEvent_WaitTicks(20);
+        FieldEvent_WaitFrames(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
         Call3((void (*)())Func_02004b4c, 22, 0, 0);
       }
@@ -141,7 +141,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Object_SetModeById(gPartyState.currentOwner, 2);
   Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2,
         -8);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_02004bac(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -169,7 +169,7 @@ run:
   Call3(ObjectMotion_SetPositionAndReset, 4, 488, 440);
   Call4((void (*)())Func_02004bec, 5, -16, 0, 0);
   Func_02004b5c(4, 0x8000);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02004b3c(MsgIDonTKnowWhatWe);
   Call3((void (*)())Func_02004b4c, 5, 0, 5);
   Object_SetModeById(5, 2);

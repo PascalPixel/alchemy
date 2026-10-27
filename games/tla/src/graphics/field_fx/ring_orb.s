@@ -3,8 +3,8 @@
 @ Func_080e9af4 unpacks them into one block of OBJ video memory and makes a
 @ 32x32 sprite that shows the first two in turn. Its callback Func_080e9940
 @ writes sixteen colours it computes from the table gData_080f0fe0 to OBJ
-@ palette 14 each tick, from a counter that starts at 0. The picture
-@ carries the shared OBJ palette, those colours of the first tick, and black
+@ palette 14 each frame, from a counter that starts at 0. The picture
+@ carries the shared OBJ palette, those colours of the first frame, and black
 @ for palette 15, which it does not use.
 	.section .rodata
 	.global FieldEffect_RingOrb

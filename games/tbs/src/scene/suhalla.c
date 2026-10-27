@@ -138,7 +138,7 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);
@@ -155,7 +155,7 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);

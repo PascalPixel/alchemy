@@ -428,7 +428,7 @@ Func_0814b350:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r9, r2
 	mov r3, r9
@@ -766,7 +766,7 @@ Func_0814b350:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #72]
 	movs r5, #1
 	ldr r3, [r6, #20]

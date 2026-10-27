@@ -116,7 +116,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     BattlePres_SetActorRecordMode(actor, 1);
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = (16 - i) | 0x1000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   if (plan->failure != 0) {
@@ -192,11 +192,11 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = i | 0x1000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   for (i = 0; i != count; i++)
     BattlePres_SetActorRecordMode(units[i], 0);
   BattlePres_SetupTransitionScene(0, 0, 0, 100);
-  WaitTicks(1);
+  WaitFrames(1);
   return 0;
 }

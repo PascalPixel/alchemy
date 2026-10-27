@@ -90,7 +90,7 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -109,7 +109,7 @@ void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
@@ -462,9 +462,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     MemFree(projected);
 
     Camera_ApplyVerticalShake(8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // The battle's own scene again.

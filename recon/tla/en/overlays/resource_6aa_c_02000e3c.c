@@ -9,7 +9,7 @@
        ->v)
 s32 Event_FinishScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_02000df0();
 s32 Func_02004bc0();
 s32 Func_02004ca8();
@@ -21,7 +21,7 @@ s32 ObjectDispatch_SetAnimationSpeed();
 s32 ObjectDispatch_SetSingleChildFlags();
 s32 Object_GetById();
 s32 Object_SetModeById();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 gMapCellBuffer[];
 extern u8 gPartyState[];
 
@@ -43,7 +43,7 @@ void Func_02000e3c(s32 p0) {
   Func_02004d00(t7, 0x100, 0);
   Func_02004bc0(t1, 27);
   ObjectDispatch_SetAnimationSpeed(t1, 48);
-  WaitTicks(30);
+  WaitFrames(30);
   FIELD_AT(t1, u16, 6) = 0x4000;
   FIELD_AT(t1, u8, 85) = 0;
   t12 = FIELD_AT(t1, s32, 8);
@@ -72,7 +72,7 @@ L_02008ed4:
 L_02008f0a:
   t20 = FIELD_AT((s32)gPartyState, s32, 532);
   Object_SetModeById(t20, 28);
-  FieldEvent_WaitTicks(16);
+  FieldEvent_WaitFrames(16);
   v_r5 = 0;
 L_02008f22:
   if (v_r5 != 5)
@@ -88,7 +88,7 @@ L_02008f48:
   FIELD_AT(v_r6, s32, 28) = (t25 + v_r2);
   t26 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(v_r6, s32, 12) = (t26 - 0x9999);
-  WaitTicks(1);
+  WaitFrames(1);
   v_r5 = (v_r5 + 1);
   if (v_r5 <= 39)
     goto L_02008f22;

@@ -56,7 +56,7 @@ Func_020003f8:
 	movs r5, #0
 .L_02008456:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [r7, #80]
 	ldr r1, .L_02008578
 	ldrh r3, [r2, #18]

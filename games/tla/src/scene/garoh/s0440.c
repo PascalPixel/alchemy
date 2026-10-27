@@ -112,7 +112,7 @@ loop:
     else
       CenterOnColumn_(owner, 2, -4);
   }
-  FieldEvent_WaitTicks(6);
+  FieldEvent_WaitFrames(6);
   Func_020052c4(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

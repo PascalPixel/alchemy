@@ -35,7 +35,7 @@
 	import Math_RemainderUnsigned, IwramUnsignedRemainder
 	import __umodsi3, IwramUnsignedRemainder
 @ Runtime bank (far_call/RUNTIME.S)
-	import WaitTicks, WaitTicksFar
+	import WaitFrames, WaitFramesFar
 	import Task_Add, Task_AddFar
 	import Task_Remove, Task_RemoveFar
 	import Import_RandomNext, Random16Far
@@ -213,7 +213,7 @@
 	import InventorySnapshot_Save, InventorySnapshot_SaveFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 @ Overworld bank (far_call/OVERWORLD.S)
-	import Event_WaitTicks, Event_WaitTicksFar
+	import Event_WaitFrames, Event_WaitFramesFar
 	import Event_Start, Event_StartFar
 	import Event_End, Event_EndFar
 	import Event_CallWithLastActiveActorId, Event_CallWithLastActiveActorIdFar
@@ -359,7 +359,7 @@
 	import Sound_WaitForFanfare, Sound_WaitForFanfareFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
-	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
+	import DjinnRecovery_CountDownTwenty, DjinnRecovery_CountDownTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Credits bank (far_call/CREDITS.S)
 	import Import_CreditsRun, Credits_RunFar

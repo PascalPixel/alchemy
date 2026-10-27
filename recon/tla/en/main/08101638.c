@@ -69,7 +69,7 @@ extern char ResourceId_ShopGemTiles;
 
 s32 UiWindow_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
                             s32 height, s32 frame);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 void *Palette_GetBasicObjColors(void);
 void Graphics_AdjustPaletteBank(s32 bank);
@@ -106,7 +106,7 @@ void Func_08101638(void) {
   s32 y;
 
   UiWindow_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
-  WaitTicks(1);
+  WaitFrames(1);
   CopyWords_(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   CopyWords_(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   FillWords_(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);

@@ -40,11 +40,11 @@ void Func_02000ae4(s32 rise) {
   VramCache_Load(sprite->vramBlock, 128, block);
   Runtime_ReleaseHeapBlock(68);
   if (rise) {
-    WaitTicks(1);
+    WaitFrames(1);
     Data_02004cec->velocityY = 0x28000;
-    WaitTicks(4);
+    WaitFrames(4);
     Func_0200446c(135);
-    WaitTicks(8);
+    WaitFrames(8);
     Func_0200446c(135);
   }
 }

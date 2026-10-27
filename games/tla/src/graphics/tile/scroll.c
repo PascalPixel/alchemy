@@ -1,7 +1,7 @@
 #include "types.h"
 #include "bg_scroll.h"
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 
 /// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
 /// 48 more of 0x01ff01ff and 192 zeros.
@@ -28,8 +28,8 @@ void DisplayScroll_BuildHblankWordTable(u32 *table) {
     *table++ = 0;
 }
 
-void DisplayScroll_StepPositionEveryFourFrames(void) {
-  if ((gFrameTick & 3) == 0) {
+void DisplayScroll_StepPositionEveryFourVBlanks(void) {
+  if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
 
     gBgScroll[2].x += decrement;

@@ -65,7 +65,7 @@ extern struct Trigger gAltinPeak_JunctionTriggers[];
 extern struct Trigger gAltinPeak_FallingRocksTriggers[];
 extern struct Trigger gAltinPeak_HydrosStatueTriggers[];
 extern struct Trigger gAltinPeak_WestExitTriggers[];
-extern s32 gAltinPeak_RumbleTicks;
+extern s32 gAltinPeak_RumbleFrames;
 extern u32 gAltinPeak_RollRadii[];
 
 #endif

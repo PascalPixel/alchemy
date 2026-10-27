@@ -617,12 +617,12 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   case TRANSITION_FADE:
     ScreenFade_ToBlack(0);
     ScreenFade_FromBlack(frames);
-    WaitTicks(1);
+    WaitFrames(1);
     break;
   case TRANSITION_BACKDROP_FADE:
     PaletteFade_SetSource(PALETTE_TINT_FROM_SOURCE, PLTT_BACKDROP);
     PaletteFade_StartInterpolation(frames);
-    WaitTicks(1);
+    WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_16);
     PaletteFade_SetBackdrop(0);
@@ -638,7 +638,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->active = 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
-    WaitTicks(1);
+    WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_16);
     state->start = 0;
@@ -653,7 +653,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(15);
-    WaitTicks(1);
+    WaitFrames(1);
     Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_16);
@@ -670,7 +670,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state = ScreenTransition_AllocateAndClearState();
     display->firstLine = 80;
     display->secondLine = 80;
-    WaitTicks(1);
+    WaitFrames(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
@@ -727,7 +727,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->active = 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
-    WaitTicks(1);
+    WaitFrames(1);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -740,7 +740,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
-    WaitTicks(1);
+    WaitFrames(1);
     Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
     state->start = 32;
     state->end = 64;
@@ -1034,5 +1034,5 @@ void ScreenTransition_InitializeState(s32 value) {
   state->mode = value;
   state->value = 0;
   Task_Add(ScreenTransition_UpdateFrame, TASK_PASS_FRAME);
-  WaitTicks(0x78);
+  WaitFrames(0x78);
 }

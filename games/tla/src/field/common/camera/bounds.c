@@ -10,7 +10,7 @@
 #include "callback_scheduler.h"
 #include "macros.h"
 
-void WaitTicks(s32);
+void WaitFrames(s32);
 void Camera_MoveWithinMapBounds(s32 requested_x, s32 requested_y,
                                 s32 requested_z, s32 use_setter);
 s32 __divsi3(s32, s32);
@@ -115,7 +115,7 @@ void Func_080d4714(void) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {
-        WaitTicks(1);
+        WaitFrames(1);
         frames++;
       } while (frames <= 0x12b && map->zoomFrames != 0);
     }

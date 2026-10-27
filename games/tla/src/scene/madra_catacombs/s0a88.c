@@ -28,9 +28,9 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
@@ -70,7 +70,7 @@ void Func_02000cf4(void);
 
 static __inline__ void Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(frames);
+  WaitFrames(frames);
 }
 
 static __inline__ void Cue(s32 cue) {

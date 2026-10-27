@@ -8,7 +8,7 @@ struct TrapEntry {
   u16 flag;
 };
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z);
 void Func_02004d40(void);
@@ -41,18 +41,18 @@ void Func_02004200(const void *data, s32 id) {
         Func_02004f30(185);
         Func_02005838_(0x10000, 0x40000, 0x10000);
         Func_020046e8(0);
-        WaitTicks(8);
+        WaitFrames(8);
         Func_02004c98(object, 2);
         Func_02004934(-4, OBJECT_BYTE(object, 34), id);
         Func_020046e8(1);
-        WaitTicks(16);
+        WaitFrames(16);
         Func_02005838_(-1, -1, 0xe666);
-        WaitTicks(8);
+        WaitFrames(8);
         Object_SetPositionAndResetMotion(object, 0, 0, 0);
-        WaitTicks(2);
+        WaitFrames(2);
         Func_02004f30(188);
         Func_0200481c();
-        WaitTicks(20);
+        WaitFrames(20);
         GameFlag_SetBit(flag);
         GameFlag_SetBit(flag + 1);
       }

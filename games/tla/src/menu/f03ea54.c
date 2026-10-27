@@ -47,7 +47,7 @@ void Func_0803ea54(struct SelectionScreen *screen) {
   }
   Menu_ReloadNodeResource(screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
-  WaitTicks(1);
+  WaitFrames(1);
   screen->cursor++;
   if (screen->cursor == SELECTION_ROWS && end + 1 < screen->count) {
     screen->cursor--;
@@ -61,7 +61,7 @@ void Func_0803ea54(struct SelectionScreen *screen) {
   }
   screen->status = NODE_STATUS_SHOWN;
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
-  WaitTicks(1);
+  WaitFrames(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);
-  WaitTicks(1);
+  WaitFrames(1);
 }

@@ -14,7 +14,7 @@
 	.set import.GameFlag_Clear, 1
 	.set import.Party_AdjustCoins, 1
 	.set import.Inventory_Discard, 1
-	.set import.Event_WaitTicks, 1
+	.set import.Event_WaitFrames, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1

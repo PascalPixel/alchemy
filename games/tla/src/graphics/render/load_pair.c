@@ -53,22 +53,22 @@ struct BobPairObject {
   u8 y;
 };
 
-/// The frame counter, advanced by the vblank interrupt.
-extern volatile u32 gFrameTick;
+/// Counted up by every VBlank.
+extern volatile u32 gVBlankCount;
 extern const u8 gUi_PairBobOffsets[];
 
 /// Bobs the object and the one after it by the same step of an eight-step
-/// table, advanced every four frames.
+/// table, advanced every four VBlanks.
 void Func_08045018(struct BobPairObject *object) {
   s32 value;
 
-  value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
+  value = object->baseY + gUi_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
   /* FAKEMATCH: tying the object to an empty asm loads the next object before
-   * the second tick is shifted, as native; plainly, 2 instructions differ in
+   * the second count is shifted, as native; plainly, 2 instructions differ in
    * tla-en. */
   asm("" : "+r"(object));
   object = object->next;
-  value = object->baseY + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
+  value = object->baseY + gUi_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
 }

@@ -72,7 +72,7 @@ Func_080dbf94:
 	str r0, [r5, #24]
 	str r0, [r5, #28]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, .L_080dc040
 	adds r6, #1
 	add r11, r0

@@ -186,7 +186,7 @@ BattleEffect_RunAtalanta:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_08154100
 	movs r0, #1
 	movs r2, #0
@@ -873,7 +873,7 @@ BattleEffect_RunAtalanta:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #44]
 	adds r0, #1
 	str r0, [sp, #44]
@@ -1228,7 +1228,7 @@ BattleEffect_RunAtalanta:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -1236,7 +1236,7 @@ BattleEffect_RunAtalanta:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #44]
 	adds r3, #1
 	str r3, [sp, #44]

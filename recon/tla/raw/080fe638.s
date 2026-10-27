@@ -83,7 +83,7 @@ Func_080fe638:
 	cmp r2, #0
 	bge .L_080fe6ca
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080fe826
 .L_080fe6e4:
 	.4byte 0x00000038
@@ -102,7 +102,7 @@ Func_080fe638:
 	mov r0, r8
 	bl RenderOutput_RedrawSavedRectFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #11
 	str r3, [sp, #0]
 	mov r0, r8
@@ -199,7 +199,7 @@ Func_080fe638:
 	ldr r0, .L_080fe800
 	bl Link_DrawShiftedTilePairFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_080fe804
 	movs r2, #7
 	ldr r3, [r1, #4]

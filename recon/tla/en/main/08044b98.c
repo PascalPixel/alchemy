@@ -62,10 +62,10 @@ void Func_08044b98(s32 member) {
     Audio_PlayCue(81);
     do {
       Runtime_PushSlotEntry(entry, 250);
-      WaitTicks(1);
+      WaitFrames(1);
     } while (Audio_Check() != 0 && (gInput.pressed & 0x303) == 0);
     UiWork_Finalize(window, 2);
-    WaitTicks(1);
+    WaitFrames(1);
     Resource_ResetEntry(handle);
   }
 }

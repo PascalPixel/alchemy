@@ -231,7 +231,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *args) {
   // Trails keep half a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
-  WaitTicks(1);
+  WaitFrames(1);
   Sound_PlaySongFar(SE_RUMBLE);
 
   for (frame = 0; frame != 80; frame++) {

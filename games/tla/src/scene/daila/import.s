@@ -17,7 +17,7 @@ Func_02000c48:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer FieldEvent_WaitTicksFar
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Engine_EventStart
 	.thumb_func
 Engine_EventStart:

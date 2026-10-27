@@ -156,7 +156,7 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *args) {
       IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1),
                           DMA_COPY_HALFWORDS(63));
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);

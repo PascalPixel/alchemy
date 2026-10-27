@@ -99,7 +99,7 @@ BattleEffect_RunCharon:
 	adds r3, #64
 	strh r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Palette_LoadBasicObjColors
 	movs r7, #237
 	ldr r5, [sp, #68]
@@ -3321,7 +3321,7 @@ BattleEffect_RunCharon:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #20]
 	ldr r5, [sp, #16]
 	ldr r6, [sp, #80]
@@ -3424,7 +3424,7 @@ BattleEffect_RunCharon:
 	lsls r2, r2, #19
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r5, #237
 	ldr r4, [sp, #68]
 	lsls r5, r5, #3
@@ -4989,7 +4989,7 @@ BattleEffect_RunCharon:
 .L_081785f6:
 	movs r0, #8
 	bl Camera_ApplyVerticalShake
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r7, #240
 	ldr r6, [sp, #92]
 	lsls r7, r7, #7
@@ -4998,7 +4998,7 @@ BattleEffect_RunCharon:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #80]
 	adds r0, #1
 	str r0, [sp, #80]

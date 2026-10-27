@@ -43,7 +43,7 @@ The call is `Sound_PlaySong`, or `Sound_PlaySongFar` from outside the sound
 During a night at the inn the town's music falls silent, the inn's short tune
 plays over the black screen, and the music fades back in once it has ended,
 from where it had got to. The music never stopped: only its volume went to
-zero. Once a frame the song layer checks whether the fanfare has finished
+zero. Once a VBlank the song layer checks whether the fanfare has finished
 and, when it has, turns the music back up over about a second, so the code
 that played the fanfare does nothing more. The inn waits for it before
 opening the screen again.
@@ -53,7 +53,7 @@ use more, among them the world map's and Kalay's, and their extra tracks keep
 playing under a fanfare.
 
 The volume is stepped by `Sound_UpdateBgmRamps`, which the blank runs every
-frame; the inn waits with `Sound_WaitForFanfare`.
+VBlank; the inn waits with `Sound_WaitForFanfare`.
 
 ## The driver's ident
 
@@ -61,7 +61,7 @@ The game starts and stops songs during the frame, and the mixer runs in the
 blank, which can arrive in the middle of one of those calls. If the mixer read
 the driver while a call was halfway through changing it, it could play
 nonsense, so the two share a lock: a call takes it while it works, and the
-mixer, finding it taken, leaves that frame's work for the next. A second call
+mixer, finding it taken, leaves that VBlank's work for the next. A second call
 that finds the lock taken is simply dropped, not delayed; in practice no two
 calls ever meet (see [Evidence](#evidence)).
 
@@ -72,12 +72,12 @@ spells `Smsh` in memory. It is the first field of the driver's work,
 ## The mixer's code is chosen per song
 
 Some of the game's sounds are recordings, samples, which the driver mixes in
-software a frame at a time into the buffers the hardware plays from. The last
-step of that mixing decides how much of each frame carries into the next, in
-effect an echo, which MusicPlayer2000 calls reverb, and the game keeps five
-versions of it. Starting a piece of music copies one into place: the title
-and ending music carry the most, most music a little less, and a link battle
-none at all. The audio test can step through all five.
+software a VBlank at a time into the buffers the hardware plays from. The last
+step of that mixing decides how much of each VBlank's sound carries into the
+next, in effect an echo, which MusicPlayer2000 calls reverb, and the game
+keeps five versions of it. Starting a piece of music copies one into place:
+the title and ending music carry the most, most music a little less, and a
+link battle none at all. The audio test can step through all five.
 
 The versions are `enum SoundReverbCode`, copied into place by
 `Sound_LoadReverbCode`. When the mixer clips a sample that comes out too loud,
@@ -106,7 +106,7 @@ runs from [IWRAM](../../glossary.md#iwram-and-ewram).
 Every part of the game plays sound through `Sound_PlaySongFar`: scenes name
 their music on entry, menus click, battle animations play their impacts. The
 blank's code in [Runtime](../runtime/README.md#the-frame-loop) steps the
-music's volume and enters the mixer every frame, and the mixer's resident
+music's volume and enters the mixer every VBlank, and the mixer's resident
 code is part of what start-up copies into IWRAM
 ([System](../system/README.md#memory-map)). The songs and samples themselves
 are data in `games/tbs/sound`.
@@ -129,7 +129,7 @@ are data in `games/tbs/sound`.
 - **floating effect**: a sound effect that takes the first idle one of the
   four shared music players.
 - **ramp**: the music's volume, or its combined tempo and pitch, stepped
-  towards a target once a frame.
+  towards a target once a VBlank.
 - **ident**: the driver's and each music player's signature and lock word.
 - **reverb code**: one of the five versions of the mixer's last step, copied
   in when music starts.

@@ -556,7 +556,7 @@ BattleEffect_RunFirePuppet:
 	adds r0, r6, #0
 	bl MemFree
 .L_0817c202:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
@@ -568,7 +568,7 @@ BattleEffect_RunFirePuppet:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #56]
 	adds r1, #1
 	str r1, [sp, #56]

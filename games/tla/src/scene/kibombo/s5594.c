@@ -27,7 +27,7 @@ void Func_02005594(void) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   switch (gPartyState.entrance) {
   case 10:
     Func_020040cc();

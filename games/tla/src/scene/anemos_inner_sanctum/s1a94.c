@@ -4,7 +4,7 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02003310(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02003318(struct ObjectRuntime *object);
 void Func_02003328(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y, s32 width,
@@ -55,9 +55,9 @@ void Func_02001a94(void) {
   Func_02003318(object);
   Func_020034b8(188);
   Func_02003328_(18, 4, column, 4, 1, 2);
-  WaitTicks(5);
+  WaitFrames(5);
   Func_02003328_(18, 7, column, 4, 1, 2);
-  WaitTicks(5);
+  WaitFrames(5);
   Func_02003380(column << 20, 0x580000, 0, 0);
   Func_020033a0();
 }

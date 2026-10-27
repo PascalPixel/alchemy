@@ -81,7 +81,7 @@ static __inline__ s32 Sqrt_(s32 value) { return Iwram_Sqrt(value); }
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *pair); // BattleEffect_FetchRectangleBlitters
@@ -512,9 +512,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
         }
       }
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

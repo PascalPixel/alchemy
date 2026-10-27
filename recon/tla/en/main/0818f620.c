@@ -50,7 +50,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -59,7 +59,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void Func_08158ce0(s32 randomMask, u32 range);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
@@ -337,9 +337,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -364,9 +364,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
-    WaitTicks(1);
+    WaitFrames(1);
     BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

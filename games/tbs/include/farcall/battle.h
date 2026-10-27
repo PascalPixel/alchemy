@@ -73,14 +73,14 @@ void BattlePlayback_StartFar(s32 cue);
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
                                    s32 count);
 /// Brings each recovering Djinni of a party member with HP a turn nearer to
-/// being set again, and returns 1 when any was; walking in the field ticks it
-/// too.
-s32 DjinnRecovery_TickFar(void);
+/// being set again, and returns 1 when any was; walking in the field counts it
+/// down too.
+s32 DjinnRecovery_CountDownFar(void);
 /// Returns the palette of a unit's battle object.
 s32 BattleObject_GetPaletteFar(s32 id);
 /// Sets every recovering Djinni of a party member with HP at once, as the
 /// Battle Arena and Vault's scenes do; returns 0.
-s32 DjinnRecovery_TickTwentyFar(void);
+s32 DjinnRecovery_CountDownTwentyFar(void);
 /// Debug: replaces the party with one of the preset parties, levels, Djinn,
 /// abilities and items included; returns 1 past the table's end.
 s32 DebugParty_LoadPresetFar(s32 preset);

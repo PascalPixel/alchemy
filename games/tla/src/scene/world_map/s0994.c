@@ -10,7 +10,7 @@ struct EventDestination {
   s16 scene;
 };
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
@@ -97,7 +97,7 @@ void Func_02000994(void) {
     if (seen) {
       Func_02004df8_(0x16666, 6);
       Func_02004c98(5, gPartyState.currentOwner);
-      WaitTicks(1);
+      WaitFrames(1);
       ObjectMotion_SetPositionAndReset_(5, x + 24, z - 12);
       ObjectMotion_ArmCallback_(5, 0x6000, 0);
       Func_02004d00_(gPartyState.currentOwner, 0xe000);
@@ -106,13 +106,13 @@ void Func_02000994(void) {
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      WaitTicks(1);
+      WaitFrames(1);
       ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
       Func_02004df8_(0x10000, 6);
     } else {
       Func_02004df8_(0x16666, 6);
       Func_02004c98(5, gPartyState.currentOwner);
-      WaitTicks(1);
+      WaitFrames(1);
       z -= 12;
       ObjectMotion_SetPositionAndReset_(5, x + 24, z);
       ObjectMotion_ArmCallback_(5, 0x6000, 0);
@@ -134,12 +134,12 @@ void Func_02000994(void) {
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      WaitTicks(1);
+      WaitFrames(1);
       ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 7312, 0x2000);
       Flag_Set(0x9b3);
       Func_02004df8_(0x10000, 6);
     }
-    WaitTicks(8);
+    WaitFrames(8);
     Func_02004c28();
   } else {
     struct EventDestination *work = Ram_HeapSlots->eventWork;

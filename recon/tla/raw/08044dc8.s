@@ -62,7 +62,7 @@ Func_08044dc8:
 	adds r5, #255
 .L_08044e42:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Audio_Check
 	cmp r0, #0
 	beq .L_08044e58
@@ -75,7 +75,7 @@ Func_08044dc8:
 	movs r1, #2
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #0
 	str r3, [sp, #0]
 	movs r0, #3
@@ -154,7 +154,7 @@ Func_08044dc8:
 	adds r5, #255
 .L_08044f06:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [r6, #4]
 	ands r3, r5
 	cmp r3, #0
@@ -163,7 +163,7 @@ Func_08044dc8:
 	movs r1, #2
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #4]
 	bl Resource_ResetEntry
 .L_08044f28:

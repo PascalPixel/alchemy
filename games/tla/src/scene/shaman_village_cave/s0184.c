@@ -4,7 +4,7 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02001080();
 void Func_02001088();
 void Func_020011e0();
@@ -60,13 +60,13 @@ void Func_02000184(void) {
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
     Call3(ObjectMotion_Launch, 17, 4, 20);
     Call2(Func_02001168, 17, 258);
-    Call1(FieldEvent_WaitTicks, 30);
+    Call1(FieldEvent_WaitFrames, 30);
     Object_GetById(17)->actionFlags &= ~1;
     Call3(ObjectMotion_OffsetPositionAndReset, 17, 8, 0);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 17);
-    Call1(FieldEvent_WaitTicks, 30);
+    Call1(FieldEvent_WaitFrames, 30);
     Call3(Func_02001160, 17, 258, 0);
-    Call1(FieldEvent_WaitTicks, 30);
+    Call1(FieldEvent_WaitFrames, 30);
     Func_02001088();
     Call1(GameFlag_SetBit, 516);
     return;

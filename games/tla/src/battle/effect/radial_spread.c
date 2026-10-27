@@ -9,7 +9,7 @@ struct EffectVector {
   s32 z;
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 
 void *Object_GetById(s32 id);
 u32 Random16(void);
@@ -69,7 +69,7 @@ void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Audio_PlayCue(0x90);
   } else if (state == 1) {
     if (EffectSlot_HasPendingTarget(effect) == 0)

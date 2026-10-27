@@ -51,7 +51,7 @@ void MapAnimation_Start(void) {
     Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
   Dma_Set((void *)0x06004000, gData_0201c000, 0x84000800, REG_DMA3);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_0802dd08(pages + (gFrameCount & one) * 0x1400 + 0xc80,
                 Ram_MapCellBuffer);
   work->windowTop = 200;

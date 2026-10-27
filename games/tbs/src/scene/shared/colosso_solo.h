@@ -184,7 +184,7 @@ static void Colosso_TakePlaceForMatch(void) {
   transition = &work->transition;
   *transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   // Each supporter has one saved map cell in the group's byte flags.
@@ -284,7 +284,7 @@ static void Colosso_AskReadyToRace(s32 actorId) {
       InitializeActorZero();
       InitializeSelectedActor(actorId);
       Actor_ResetAndSetPositionInMode2(actorId, x, z + 64);
-      Event_WaitTicks(15);
+      Event_WaitFrames(15);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
       Event_FinishScreenTransition();
@@ -415,7 +415,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
     }
     if (mode == COLOSSO_GUIDE_CHEER) {
       answer = 0;
-      WaitTicks(6);
+      WaitFrames(6);
     } else {
       Event_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
       Event_OpenMessage(guide, 0);

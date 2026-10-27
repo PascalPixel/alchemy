@@ -74,7 +74,7 @@ Func_080450fc:
 .L_08045184:
 	.4byte 0x000001ff
 .L_08045188:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_0804518c:
 	.4byte gUi_ObjectPulseScales
 .L_08045190:

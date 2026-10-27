@@ -98,7 +98,7 @@ BattleEffect_CleanupSceneObjects:
 .L_080dc89e:
 	movs r0, #1
 	adds r7, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r7, #89
 	bgt .L_080dc8b2
 	movs r3, #0

@@ -16,7 +16,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Func_02004c98(struct ObjectRuntime *object, s32 mode);
@@ -111,9 +111,9 @@ end:
                     ((Random16Far() & 31) - 16) << 13, 0,
                     ((Random16Far() & 31) - 16) << 13, 0x1320000, &options);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
-  WaitTicks(24);
+  WaitFrames(24);
   if (cell == 222) {
     Func_02001350();
     Func_02004d48();
@@ -121,7 +121,7 @@ end:
   }
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02004e20();
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02004d48();
   return;
 hit:
@@ -139,6 +139,6 @@ hit:
   GameFlag_ClearBit(752);
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02004e20();
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02004d48();
 }

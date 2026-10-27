@@ -465,7 +465,7 @@ BattleEffect_RunPlasma:
 	movs r0, #8
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #36]
 	lsls r4, r4, #7
@@ -474,7 +474,7 @@ BattleEffect_RunPlasma:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #8]
 	ldr r0, [sp, #20]
 	movs r5, #1

@@ -34,7 +34,7 @@ Func_08101638:
 	movs r3, #30
 	bl UiWindow_UpdateOrCreate
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, .L_081017c4
 	mov r0, r8
 	movs r2, #128

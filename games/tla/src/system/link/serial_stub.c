@@ -16,7 +16,7 @@ void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
   s32 n;
-  s32 tick;
+  s32 delay;
   /* FAKEMATCH: each key test loads the held keys into the register it masks, as
    * ☀️'s volatile gKeysHeld does; read plainly, regmove copies the mask instead
    * (differ 16) */
@@ -44,16 +44,16 @@ restart:
     if (*held & 2)
       SerialRuntime_StartSend((void *)(Cartridge_Restart + 0x1000), 0x280);
     if (*held & 8) {
-      tick = 9999;
+      delay = 9999;
       do {
-        tick--;
+        delay--;
         Func_08016bd8();
-      } while (tick >= 0);
+      } while (delay >= 0);
     }
     if (gSerialReceiveDest == 0) {
       Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
       goto restart;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

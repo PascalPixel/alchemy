@@ -20,7 +20,7 @@
 
 void Menu_SendNodeCountList(struct SelectionScreen *screen);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Resource_ResetPendingTransfer(void);
 s32 Resource_ResetEntry(u32 entry);
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
@@ -36,7 +36,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   Menu_SendNodeCountList(screen);
   Menu_ReloadNodeResource(screen, screen->cursorIndex);
   screen->status = 33;
-  WaitTicks(1);
+  WaitFrames(1);
   screen->records[0].kind = 0;
   screen->records[1].kind = 0;
   screen->records[14].kind = 0;
@@ -55,7 +55,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
       other->dx = (node->x - other->x) >> 1;
     }
   }
-  WaitTicks(2);
+  WaitFrames(2);
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
       Resource_ResetEntry(other->slot);
@@ -77,7 +77,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   node->dx = (node->targetX - node->x) >> 1;
   screen->unk39a = 0;
   screen->cursorIndex |= 0x80;
-  WaitTicks(2);
+  WaitFrames(2);
   other = Resource_FindFreeTransferEntry(1);
   other->kind = node->kind;
   other->message = node->message;

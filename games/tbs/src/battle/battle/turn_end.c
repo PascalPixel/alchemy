@@ -9,7 +9,7 @@
 /// early, and returns 1 when it does.
 /// The chance is `luck * 3 - turns * 5 + bias` percent, so a lucky unit and a
 /// counter near its end recover sooner; a chance above 100 always ends it.
-/// Called by the turn-end Tick functions below, each with its own bias.
+/// Called by the turn-end CountDown functions below, each with its own bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *unit = Unit_GetFar(unitId);
 
@@ -27,7 +27,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// Clears attackStage when the turns run out, and clears attackStage and
 /// attackTurns when a lowered Attack recovers early (bias 30). Called by
 /// Battle_ProcessRoundEnd, which then shows `MsgAtkNormal`.
-s32 BattleUnit_TickAttackStage(s32 unitId) {
+s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
 
   if (unit->attackTurns != 0) {
@@ -49,10 +49,11 @@ s32 BattleUnit_TickAttackStage(s32 unitId) {
   return 0;
 }
 
-/// Defines a stat change's turn-end tick, as BattleUnit_TickAttackStage is
-/// with bias 20: clears `level` and returns 1 when `counter` runs out, or
-/// clears both when a lowered stat recovers early.
-#define DEFINE_TICK_MODIFIER(name, counter, level)                             \
+/// Defines a stat change's turn-end countdown, as
+/// BattleUnit_CountDownAttackStage is with bias 20: clears `level` and returns
+/// 1 when `counter` runs out, or clears both when a lowered stat recovers
+/// early.
+#define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level)                       \
   s32 name(s32 unitId) {                                                       \
     struct Unit *state = Unit_GetFar(unitId);                                  \
                                                                                \
@@ -74,15 +75,16 @@ s32 BattleUnit_TickAttackStage(s32 unitId) {
 
 /// Counts down a Defense change; Battle_ProcessRoundEnd shows `MsgDefNormal`
 /// when it returns 1.
-DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseStage, defenseTurns, defenseStage)
+DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownDefenseStage, defenseTurns,
+                           defenseStage)
 /// Counts down a Resistance change; Battle_ProcessRoundEnd shows
 /// `MsgResNormal` when it returns 1.
-DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceStage, resistanceTurns,
-                     resistanceStage)
+DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownResistanceStage, resistanceTurns,
+                           resistanceStage)
 
-/// Defines a status's turn-end tick: returns 1 when `counter` runs out, or
+/// Defines a status's turn-end countdown: returns 1 when `counter` runs out, or
 /// clears it and returns 1 when the status ends early at `bias`.
-#define DEFINE_TICK_STATUS(name, counter, bias)                                \
+#define DEFINE_COUNT_DOWN_STATUS(name, counter, bias)                          \
   s32 name(s32 unitId) {                                                       \
     struct Unit *state = Unit_GetFar(unitId);                                  \
     if (state->counter != 0) {                                                 \
@@ -99,14 +101,14 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceStage, resistanceTurns,
 
 /// Counts down delusion, which may end early at bias 30;
 /// Battle_ProcessRoundEnd shows `MsgCureDelusion` when it returns 1.
-DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownDelusion, delusion, 30)
 
 /// Counts down confusion, which may end early at bias 60;
 /// Battle_ProcessRoundEnd shows `MsgConscious` when it returns 1.
-s32 BattleUnit_TickConfusion(s32 unitId) {
+s32 BattleUnit_CountDownConfusion(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
   // Unit.confusion is counted down here as a u8, unlike the statuses
-  // DEFINE_TICK_STATUS ticks, as are its reads in targeting.c and
+  // DEFINE_COUNT_DOWN_STATUS counts down, as are its reads in targeting.c and
   // battle_calc.c; the plain s8 reads below and in round.c match too. It runs
   // from 0 to STATUS_TURNS, so its sign never shows.
   if ((u8)unit->confusion != 0) {
@@ -123,13 +125,13 @@ s32 BattleUnit_TickConfusion(s32 unitId) {
 
 /// Counts down charm, which may end early at bias 70; Battle_ProcessRoundEnd
 /// shows `MsgConscious2` when it returns 1.
-DEFINE_TICK_STATUS(BattleUnit_TickCharm, charm, 70)
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownCharm, charm, 70)
 /// Counts down stun, which may end early at bias 40; Battle_ProcessRoundEnd
 /// shows `MsgCureStun` when it returns 1.
-DEFINE_TICK_STATUS(BattleUnit_TickStun, stun, 40)
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, 40)
 /// Counts down sleep, which may end early at bias 50; Battle_ProcessRoundEnd
 /// shows `MsgWakes` when it returns 1.
-DEFINE_TICK_STATUS(BattleUnit_TickSleep, sleep, 50)
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, 50)
 
 /// Counts down both seals packed in Unit.psySeal and returns 1 when the
 /// last ends.
@@ -173,7 +175,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
 
 /// Counts down Unit.regenerate and returns 1 when it runs out; it never
 /// ends early. Battle_ProcessRoundEnd then shows `MsgRefrainEnd`.
-s32 BattleUnit_TickRegenerate(s32 unitId) {
+s32 BattleUnit_CountDownRegenerate(s32 unitId) {
   u8 *turns = &Unit_GetFar(unitId)->regenerate;
   if (*turns != 0) {
     (*turns)--;
@@ -186,7 +188,7 @@ s32 BattleUnit_TickRegenerate(s32 unitId) {
 
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
 /// Battle_ProcessRoundEnd then shows `MsgReflectEnd`.
-s32 BattleUnit_TickReflect(s32 unitId) {
+s32 BattleUnit_CountDownReflect(s32 unitId) {
   u8 *turns = (u8 *)&Unit_GetFar(unitId)->reflect;
   if (*turns != 0) {
     (*turns)--;
@@ -200,7 +202,7 @@ s32 BattleUnit_TickReflect(s32 unitId) {
 /// Counts down an Agility change, clearing agilityStage and returning 1 when
 /// it runs out; unlike the other stats it never ends early.
 /// Battle_ProcessRoundEnd then shows `MsgAgiNormal`.
-s32 BattleUnit_TickAgilityStage(s32 unitId) {
+s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
   u8 *turns = &unit->agilityTurns;
   if (*turns != 0) {
@@ -219,8 +221,8 @@ s32 BattleUnit_TickAgilityStage(s32 unitId) {
 /// off the party's recovery list and its unit's stats worked out again
 /// (Unit_Calculate). Called once at the end of every battle by
 /// Battle_Run, and outside battle by Field_UpdateWalking as the party
-/// walks, by the Djinn menu's tutorial and by DjinnRecovery_TickTwenty.
-s32 DjinnRecovery_Tick(void) {
+/// walks, by the Djinn menu's tutorial and by DjinnRecovery_CountDownTwenty.
+s32 DjinnRecovery_CountDown(void) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
@@ -266,17 +268,17 @@ s32 DjinnRecovery_Tick(void) {
   return removed;
 }
 
-/// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
-/// of a party member with HP; those on standby stay so. Returns 0.
+/// Runs DjinnRecovery_CountDown twenty times, which sets every recovering
+/// Djinni of a party member with HP; those on standby stay so. Returns 0.
 /// Called by the Battle Arena when it restores the party, and by Vault's event
 /// before Ivan hands back Isaac's Djinni.
-s32 DjinnRecovery_TickTwenty(void) {
+s32 DjinnRecovery_CountDownTwenty(void) {
   s32 turns;
 
   turns = 19;
   do {
     turns--;
-    DjinnRecovery_Tick();
+    DjinnRecovery_CountDown();
   } while (turns >= 0);
   return 0;
 }
@@ -295,7 +297,7 @@ struct BattleSideOrder {
 /// Ends a round: sets recovered Djinn, then gives each unit its regeneration
 /// and counts down its stat changes and statuses, showing each that ends.
 /// Called by Battle_Run once every unit has acted. Changes HP, PP,
-/// Unit.ready, the Djinn recovery lists and the counters the Tick
+/// Unit.ready, the Djinn recovery lists and the counters the CountDown
 /// functions clear, and puts the background back in BATTLE_BACKGROUND_ZOOMED.
 #ifdef UBFIX
 void Battle_ProcessRoundEnd(void) {
@@ -331,7 +333,7 @@ s32 Battle_ProcessRoundEnd(void) {
         timedEntry++;
       } while (recoveryIndex < list->count);
     }
-    // Set each recovered Djinni, as DjinnRecovery_Tick does, with its
+    // Set each recovered Djinni, as DjinnRecovery_CountDown does, with its
     // message, the unit's POSE_CAST and its element's animation. As there, the
     // cursor stays on a removed entry; it would stay for ever on one whose
     // unit is off the field, but only a unit on the field counts down to 0
@@ -442,56 +444,56 @@ s32 Battle_ProcessRoundEnd(void) {
         }
         // Each counter that ends rebuilds the unit's status icons and shows
         // its message; the end of stun or sleep also sets the unit standing.
-        if (BattleUnit_TickAgilityStage(unitId) != 0) {
+        if (BattleUnit_CountDownAgilityStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgAgiNormal);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickAttackStage(unitId) != 0) {
+        if (BattleUnit_CountDownAttackStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgAtkNormal);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickDefenseStage(unitId) != 0) {
+        if (BattleUnit_CountDownDefenseStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgDefNormal);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickResistanceStage(unitId) != 0) {
+        if (BattleUnit_CountDownResistanceStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgResNormal);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickDelusion(unitId) != 0) {
+        if (BattleUnit_CountDownDelusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgCureDelusion);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickConfusion(unitId) != 0) {
+        if (BattleUnit_CountDownConfusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgConscious);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickCharm(unitId) != 0) {
+        if (BattleUnit_CountDownCharm(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgConscious2);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickStun(unitId) != 0) {
+        if (BattleUnit_CountDownStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleObject_UpdatePose(unitId);
           BattleMessage_ShowAndWaitFar(MsgCureStun);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickSleep(unitId) != 0) {
+        if (BattleUnit_CountDownSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleObject_UpdatePose(unitId);
@@ -504,13 +506,13 @@ s32 Battle_ProcessRoundEnd(void) {
           BattleMessage_ShowAndWaitFar(MsgCureSeal);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickRegenerate(unitId) != 0) {
+        if (BattleUnit_CountDownRegenerate(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgRefrainEnd);
           BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickReflect(unitId) != 0) {
+        if (BattleUnit_CountDownReflect(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgReflectEnd);

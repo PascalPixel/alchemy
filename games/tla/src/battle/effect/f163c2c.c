@@ -36,7 +36,7 @@ void Func_08163c2c(s32 mode, s32 value) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     } while (front <= 256);
   } else if (mode != 3) {
     s32 front;
@@ -58,7 +58,7 @@ void Func_08163c2c(s32 mode, s32 value) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     } while (front <= 191);
   }
 }

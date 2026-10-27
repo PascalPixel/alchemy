@@ -83,7 +83,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 s32 Func_080fd80c(struct MenuResult *result, s32 index);
 void Func_080f8a44(s32 x, s32 y);
 void UiIcon_PrepareObject(struct MenuIcon *icon);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Func_080fd968(s32 window, s32 unused, struct MenuResult *state);
 s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
@@ -151,7 +151,7 @@ s32 Func_080fdad4(s32 paneIndex) {
           UiIcon_PrepareObject(menu->entryIcons[previous]);
         if (redraw != 0) {
           redraw = 0;
-          WaitTicks(1);
+          WaitFrames(1);
           Func_080fd968(window, 0, &state);
         }
         Func_080fd8a0(window, work, &state);
@@ -167,7 +167,7 @@ s32 Func_080fdad4(s32 paneIndex) {
           Animation_ApplyChildArgumentFar(menu->tabObjects[i], 1);
       }
 
-      WaitTicks(1);
+      WaitFrames(1);
       previous = state.selectedIndex;
 
       if ((gInput.held & 4) == 0)
@@ -263,7 +263,7 @@ s32 Func_080fdad4(s32 paneIndex) {
         Menu_HighlightPageEntry(menu->rowWindow, member, ownerCount);
         menu->arrows[0]->active = 13;
         menu->arrows[1]->active = 13;
-        WaitTicks(1);
+        WaitFrames(1);
         Func_080f8170(menu->statusWindow, menu->ownerTable[member], 0, 0);
         PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[member]);
         break;
@@ -310,6 +310,6 @@ s32 Func_080fdad4(s32 paneIndex) {
   menu->paneAction[paneIndex] = result;
   if (GameFlag_Test(0x150) != 0)
     result = -1;
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }

@@ -43,7 +43,7 @@ s32 SaveState_SaveToSlot(u32 slot) {
     ObjectTable_SnapshotFar();
     found = Func_08042f10(slot, gData_02000000);
     while (UiWork_IsComplete() == 0)
-      WaitTicks(1);
+      WaitFrames(1);
     UiWork_FinalizePendingCore();
     if (found != 0) {
       UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
@@ -85,7 +85,7 @@ s32 Func_08043690(void) {
       if (work->summary[slot].level != 0) {
         UiText_ShowPositionedMessageAndWait((s32)&MsgOverwriteConfirm, 13);
         while (UiWork_IsComplete() == 0)
-          WaitTicks(1);
+          WaitFrames(1);
         if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0) {
           UiWork_FinalizePendingCore();
           goto done;

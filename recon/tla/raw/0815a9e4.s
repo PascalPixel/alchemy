@@ -1067,7 +1067,7 @@ BattleEffect_RunGaia:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0815b1e6:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #48]
 	lsls r3, r3, #7
@@ -1076,7 +1076,7 @@ BattleEffect_RunGaia:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #40]
 	adds r4, #1
 	str r4, [sp, #40]

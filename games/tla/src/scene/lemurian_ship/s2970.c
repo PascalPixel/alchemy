@@ -51,7 +51,7 @@ void Func_02002970(void) {
     else
       Object_SetModeById(9, 2);
   }
-  LemurianShip_WaitTicks(1);
+  LemurianShip_WaitFrames(1);
   Func_02002db8(gData_02003014);
   LemurianShip_TaskAdd(Func_02001464, 0x480);
   if (!LemurianShip_FlagCheck(0x210))

@@ -17,7 +17,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-s32 BattleUnit_TickAttackModifier(s32 unitId) {
+s32 BattleUnit_CountDownAttackModifier(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->attackTurns != 0) {
@@ -39,7 +39,7 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickDefenseModifier(s32 unitId) {
+s32 BattleUnit_CountDownDefenseModifier(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->defenseTurns != 0) {
@@ -58,7 +58,7 @@ s32 BattleUnit_TickDefenseModifier(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickResistanceModifier(s32 unitId) {
+s32 BattleUnit_CountDownResistanceModifier(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
   if (state->resistanceTurns != 0) {
@@ -78,7 +78,7 @@ s32 BattleUnit_TickResistanceModifier(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickDelusion(s32 unitId) {
+s32 BattleUnit_CountDownDelusion(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->delusion != 0) {
     state->delusion--;
@@ -92,7 +92,7 @@ s32 BattleUnit_TickDelusion(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickConfusion(s32 unitId) {
+s32 BattleUnit_CountDownConfusion(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if ((u8)state->confusion != 0) {
     (*(u8 *)&state->confusion)--;
@@ -106,7 +106,7 @@ s32 BattleUnit_TickConfusion(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickCharm(s32 unitId) {
+s32 BattleUnit_CountDownCharm(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->charm != 0) {
     state->charm--;
@@ -120,7 +120,7 @@ s32 BattleUnit_TickCharm(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickStun(s32 unitId) {
+s32 BattleUnit_CountDownStun(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->stun != 0) {
     state->stun--;
@@ -134,7 +134,7 @@ s32 BattleUnit_TickStun(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_TickSleep(s32 unitId) {
+s32 BattleUnit_CountDownSleep(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->sleep != 0) {
     state->sleep--;

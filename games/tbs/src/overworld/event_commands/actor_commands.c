@@ -397,7 +397,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
     sprite = actor->sprite;
     saved = sprite->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
-      WaitTicks(1);
+      WaitFrames(1);
       if (saved != sprite->lastNo) {
         break;
       }
@@ -441,7 +441,7 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
     } else {
       Sound_PlaySongFar(SE_JUMP);
     }
-    Event_WaitTicks(frames);
+    Event_WaitFrames(frames);
   }
 }
 
@@ -568,7 +568,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   if (actor != 0) {
     Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
     Actor_SelectAnimationFar(actor, pose);
-    WaitTicks(10);
+    WaitFrames(10);
 
     // Hop up and forward 12 pixels.
     objectFlags = &actor->motionFlags;
@@ -581,7 +581,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     actor->velocityY = 0x40000;
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + 0xC0000);
-    WaitTicks(6);
+    WaitFrames(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
     // flight: no motion flags, so it neither falls nor follows the ground.
@@ -594,7 +594,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
       nextY = actor->y.fixed + 0xFFFE0000;
       actor->y.fixed = nextY;
       actor->targetY = nextY;
-      WaitTicks(1);
+      WaitFrames(1);
       if ((param != -1) && (pose & 1)) {
         FieldEffect_SpawnBurstParticle(actor, param);
       }
@@ -610,9 +610,9 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     Actor_WaitForMoveFar(actor);
     for (pose = 0; (u32)pose <= 0xB3 && actor->y.fixed > actor->groundHeight;
          pose++) {
-      WaitTicks(1);
+      WaitFrames(1);
     }
-    WaitTicks(2);
+    WaitFrames(2);
     Scene_PlayQueuedMusic();
   }
 }
@@ -630,7 +630,7 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   if (first != 0 && second != 0) {
     first->facing = ArcTan2(second->z.fixed - first->z.fixed,
                             second->x.fixed - first->x.fixed);
-    Event_WaitTicks(wait);
+    Event_WaitFrames(wait);
   }
 }
 
@@ -644,7 +644,7 @@ void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 
   if (first != NULL && second != NULL) {
     Actor_TurnPairToFaceEachOther(first, second);
-    Event_WaitTicks(wait);
+    Event_WaitFrames(wait);
   }
 }
 
@@ -689,7 +689,7 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
     }
     if (actorsTurning == 0)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }
 
@@ -868,7 +868,7 @@ void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait) {
   if (actor != NULL) {
     actor->timer = angle;
     Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
-    Event_WaitTicks(wait);
+    Event_WaitFrames(wait);
   }
 }
 

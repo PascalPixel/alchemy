@@ -12,7 +12,7 @@ struct ContigoEventCount {
 extern u8 gSceneState[];
 
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 mode);
 void Field_SetDestination(s32 scene, s32 entrance);
@@ -50,7 +50,7 @@ void Func_02001abc(void) {
     Func_02004144(14, 0);
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
-    WaitTicks(1);
+    WaitFrames(1);
     Field_SetDestination(0x1fd, 0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 19);
   } else {
@@ -83,7 +83,7 @@ void Func_02001b84(void) {
     Func_02004144(8, 0);
     GameFlag_SetBit(0x109);
     GameFlag_SetBit(0x9e5);
-    WaitTicks(1);
+    WaitFrames(1);
     Field_SetDestination(0x1fb, 0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 18);
   } else {

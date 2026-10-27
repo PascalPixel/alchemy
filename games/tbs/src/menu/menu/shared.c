@@ -158,7 +158,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     // A window that already existed still shows the last party member: clear
     // its top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
-      WaitTicks(1);
+      WaitFrames(1);
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
@@ -193,7 +193,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
 
   // Clear the lower part and redraw the party member's portrait.
   if (!created) {
-    WaitTicks(1);
+    WaitFrames(1);
     Window_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
   }
   WindowSprite_ClearListFar(window);
@@ -723,7 +723,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
         (fineY >> 4) + ((menu->auxiliaryWindow)->y << 3) - 56;
     steps--;
     if (steps != 0)
-      WaitTicks(1);
+      WaitFrames(1);
   } while (steps != 0);
 }
 
@@ -846,9 +846,9 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   Text_DrawMessageFar(message, window, 0, 0);
 #endif
   if (x != -1) {
-    WaitTicks(1);
+    WaitFrames(1);
     do {
-      WaitTicks(1);
+      WaitFrames(1);
     } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
              !(gKeysPressed & KEY_START));
 #if TBS_PATCH_1
@@ -1273,29 +1273,29 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 
 /// Task while a menu runs: on Start, plays the cancel sound,
 /// sets FLAG_MENU_START_PRESSED and removes itself.
-void Menu_CancelSoundTick(void) {
+void Menu_UpdateCancelSound(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlaySongFar(SE_MENU_CANCEL);
     // XXX (no evidence): why this is a game flag rather than a variable;
     // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
-    Task_Remove(Menu_CancelSoundTick);
+    Task_Remove(Menu_UpdateCancelSound);
   }
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_CancelSoundTick. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
+/// Menu_UpdateCancelSound. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
   // TASK_PASS_FRAME: once a frame in the main loop.
-  Task_Add(Menu_CancelSoundTick, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdateCancelSound, TASK_PASS_FRAME);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
-    Task_Remove(Menu_CancelSoundTick);
+    Task_Remove(Menu_UpdateCancelSound);
   }
 }
 

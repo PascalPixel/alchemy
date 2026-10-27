@@ -51,7 +51,7 @@ Func_080dd950:
 	movs r0, #30
 	bl BattleEffect_StartBufferInterpolation
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	bl Func_080ce31c
 	adds r2, r0, #0
@@ -93,7 +93,7 @@ Func_080dd950:
 	add r3, r8
 	strb r2, [r3]
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080dda28
 .L_080dda20:
 	.4byte 0x00000000

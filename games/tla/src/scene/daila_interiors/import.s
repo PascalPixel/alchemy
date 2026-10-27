@@ -82,10 +82,10 @@ Inventory_CountItem:
 	.thumb_func
 Func_02000d14:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Engine_EventStart
 	.thumb_func
 Engine_EventStart:

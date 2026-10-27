@@ -11,7 +11,7 @@ static void Actor_WaitUntilIdle(struct Actor *actor) {
 
   cnt = 60;
   while (cnt != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     busy = actor->velocityY;
     cnt--;
     if (busy == 0)

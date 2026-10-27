@@ -214,7 +214,7 @@ BattleEffect_RunMegaera:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #0
 	str r1, [sp, #76]
 .L_0817052e:
@@ -1222,7 +1222,7 @@ BattleEffect_RunMegaera:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r7, #240
 	ldr r6, [sp, #80]
 	lsls r7, r7, #7
@@ -1231,7 +1231,7 @@ BattleEffect_RunMegaera:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #76]
 	adds r0, #1
 	str r0, [sp, #76]

@@ -498,9 +498,9 @@ MPlayMain:
 	ldr	r2, [pc, #608]
 	ldr	r3, [r0, #52]
 	cmp	r2, r3
-	beq.n	.Ltick_owned
+	beq.n	.Lident_matches
 	bx	lr
-.Ltick_owned:
+.Lident_matches:
 	adds	r3, #1
 	str	r3, [r0, #52]
 	push	{r0, lr}

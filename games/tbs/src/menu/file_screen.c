@@ -467,10 +467,10 @@ s32 FileScreen_Run(void) {
         goto L_ask;
       }
     }
-    Event_WaitTicks(60);
+    Event_WaitFrames(60);
     Event_FinishScreenTransition();
     Sound_PlaySong(SONG_FADE_OUT_BGM);
-    Event_WaitTicks(0x12c);
+    Event_WaitFrames(0x12c);
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
@@ -493,9 +493,9 @@ menu_top:;
   // No save file: fade the menu layers in, once, and start a new game.
   if (v6 == 0) {
     if (blendStarted == 0) {
-      WaitTicks(30);
+      WaitFrames(30);
       Task_AddFrame(FileScreen_UpdateBlend, TASK_PASS_FRAME);
-      WaitTicks(1);
+      WaitFrames(1);
       blendStarted = 1;
     }
   }
@@ -516,7 +516,7 @@ menu_top:;
     v5 = 1;
     v7 = 0;
     for (;;) {
-      WaitTicks(6);
+      WaitFrames(6);
       v6 = NameEntry_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
@@ -661,7 +661,7 @@ menu_top:;
       Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
       Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
       Serial_Initialize();
-      WaitTicks(10);
+      WaitFrames(10);
       {
         u16 *sync = (u16 *)gSerialTransfer.payload;
 
@@ -703,7 +703,7 @@ menu_top:;
             }
           }
         }
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Window_Close((struct Window *)v6, 2);
       if (v7 == 0) {
@@ -714,9 +714,9 @@ menu_top:;
                               WINDOW_FLAG_INSTANT);
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
-      WaitTicks(10);
+      WaitFrames(10);
       Serial_StartSend(gSaveBuffer, 0x1004);
-      WaitTicks(10);
+      WaitFrames(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
       v5 = 0;
@@ -734,7 +734,7 @@ menu_top:;
         if (gSerialSendSource == 0) {
           break;
         }
-        WaitTicks(1);
+        WaitFrames(1);
       }
       if (linkConnectionOk == 0) {
         WindowSprite_PrepareForRedraw((struct Window *)v6);
@@ -742,15 +742,15 @@ menu_top:;
         // Wait for A: v5 is KEY_A here.
         v5 = 1;
         do {
-          WaitTicks(1);
+          WaitFrames(1);
         } while ((gKeysPressed & v5) == 0);
       }
-      WaitTicks(10);
+      WaitFrames(10);
       Serial_RemoveIrqHandlers();
-      WaitTicks(10);
+      WaitFrames(10);
 #if TBS_PATCH_4
       Window_Close((struct Window *)v6, 2);
-      WaitTicks(1);
+      WaitFrames(1);
 #else
       WindowSprite_PrepareForRedraw((struct Window *)v6);
       Window_Close((struct Window *)v6, 2);
@@ -829,7 +829,7 @@ menu_top:;
             Window_Close(pageWindow, 2);
             Window_Close(helpWindow, 2);
             Window_Close(headingWindow, 2);
-            WaitTicks(1);
+            WaitFrames(1);
             goto menu_top;
           }
           Sound_PlaySong(SE_MENU_CURSOR_MOVE);
@@ -927,19 +927,19 @@ menu_top:;
           }
           v7 = 0;
         }
-        WaitTicks(1);
+        WaitFrames(1);
       }
     }
-    WaitTicks(0x12c);
+    WaitFrames(0x12c);
     goto menu_top;
   }
 leave:;
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   return 0;
 }
 

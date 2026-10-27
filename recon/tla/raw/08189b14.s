@@ -811,7 +811,7 @@ BattleEffect_RunLegend:
 	movs r1, #4
 	movs r0, #4
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r6, #240
 	ldr r5, [sp, #48]
 	lsls r6, r6, #7
@@ -820,7 +820,7 @@ BattleEffect_RunLegend:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #40]
 	ldr r1, [sp, #52]
 	adds r0, #1

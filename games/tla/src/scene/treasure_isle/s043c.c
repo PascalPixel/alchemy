@@ -18,7 +18,7 @@ void Func_02000fb4(s32 a, s32 b, s32 c);
 void Func_0200106c(s32 sound);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02000f9c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
 
@@ -75,10 +75,10 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   }
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   SetCells(6, 100, 3, 4, cell->x + 63, cell->z - 2);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   SetCells(3, 100, 3, 4, cell->x + 63, cell->z - 2);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   Func_020003fc(cells, index);
 }

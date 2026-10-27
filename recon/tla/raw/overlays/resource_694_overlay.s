@@ -381,7 +381,7 @@ Func_020015ac:
 	movs r0, #17
 	bl Func_020040d4
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	add r2, sp, #28
 	movs r3, #2
 	str r3, [r2]
@@ -463,7 +463,7 @@ Func_020015ac:
 	movs r0, #17
 	bl ObjectMotion_SetPositionAndCommit
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r3, .L_02009720
 	movs r4, #133
 	lsls r4, r4, #2
@@ -510,7 +510,7 @@ Func_020015ac:
 	movs r2, #0
 	bl Object_LinkPair
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #231
@@ -648,7 +648,7 @@ Func_02003a8c:
 	bl Func_020042b4
 .L_es_0200bb92:
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_es_0200bcb4
 	bl Func_0200412c
 	adds r0, r5, #0
@@ -685,7 +685,7 @@ Func_02003a8c:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #0
 	ldrsb r3, [r7, r3]
 	movs r5, #1

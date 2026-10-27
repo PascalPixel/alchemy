@@ -10,7 +10,7 @@ void Func_020054e0(void) {
     Func_02003640(1, 0);
     Func_020036e0(1, 5);
   }
-  WaitTicks(1);
+  WaitFrames(1);
   entrance = gPartyState.entrance;
   if (entrance == 99) {
     Func_02003640(0, 0);

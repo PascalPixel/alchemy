@@ -12,8 +12,8 @@ void Func_0200406c(void);
 void Func_02004074(void);
 void Func_02004204(s32 value);
 void Func_020040d4(s32 id, s32 a, s32 b);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020042b4(s32 sound);
 void Func_0200401c(s32 a, s32 b, s32 c);
 s32 Math_Cosine(s32 angle);
@@ -41,7 +41,7 @@ void Func_020015ac(void) {
   Func_0200406c();
   Func_02004204(0);
   Func_020040d4(17, 0x380000, 0x2ba0000);
-  WaitTicks(1);
+  WaitFrames(1);
   options.priority = 2;
   Func_020042b4(188);
   Func_0200401c(0x10000, 0x20000, 0x10000);
@@ -60,7 +60,7 @@ void Func_020015ac(void) {
   ObjectMotion_SetSpeedParameters(17, 0x30000, 0x18000);
   object->velocityY = 0xc0000;
   ObjectMotion_SetPositionAndCommit(17, 40, 680);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   leader = Object_GetById(gPartyState.currentOwner);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
@@ -71,7 +71,7 @@ void Func_020015ac(void) {
   }
   Func_0200401c(0, 0, 0);
   Object_LinkPair(gPartyState.currentOwner, 17, 0);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   GameFlag_SetBit(2535);
   Func_02004074();
 }

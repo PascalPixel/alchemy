@@ -5,10 +5,10 @@
 void Func_0200061c(struct ObjectRuntime *object) {
   object->motionFlags = 3;
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   } while (object->velocityY != 0);
   Func_02003ef4(188);
-  WaitTicks(10);
+  WaitFrames(10);
   object->motionFlags = 0;
 }
 #endif

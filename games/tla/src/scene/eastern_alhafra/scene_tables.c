@@ -84,7 +84,7 @@ void Func_020000c8(s32 mode, s32 arg) {
     do {
       Func_02004c24(1, 18, 19);
       Func_02004c24(2, 20, 21);
-      WaitTicks(1);
+      WaitFrames(1);
       Func_02004c8c(1);
       Func_02004c8c(2);
       if (Func_02004a7c(a) != 0 && Func_02004a7c(b) != 0)

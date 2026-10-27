@@ -21,7 +21,7 @@ Func_02000494:
 	ldr r0, [r5]
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	bl Object_GetById
 	adds r0, #90
@@ -34,13 +34,13 @@ Func_02000494:
 	movs r2, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #0
 	movs r2, #16
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #154
 	movs r2, #228
 	movs r0, #13
@@ -91,7 +91,7 @@ Func_02000494:
 	movs r0, #13
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	movs r2, #10
@@ -104,7 +104,7 @@ Func_02000494:
 	movs r0, #15
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r2, #10
 	movs r0, #15
 	movs r1, #0

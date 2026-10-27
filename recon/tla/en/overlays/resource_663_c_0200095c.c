@@ -36,7 +36,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
 void Func_02003b58(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02003b60(struct ObjectRuntime *object);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 u32 Random16Far(void);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02000840(void);
@@ -79,7 +79,7 @@ void Func_0200095c(void) {
   Func_02003b58(gust, target->x, target->y, target->z + 0xffff0000);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
   }
   Func_02003b60(gust);
   gust->z = (*(struct ObjectRuntime **)(effect + 20))->z + 0xffff0000;
@@ -107,7 +107,7 @@ void Func_0200095c(void) {
     } else {
       Object_SetPartAttribute(*(struct ObjectRuntime **)(effect + 20), 4);
     }
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
   }
   Object_SetPartAttribute(*(struct ObjectRuntime **)(effect + 20), 0);
   Func_02003cd8(136);
@@ -146,7 +146,7 @@ void Func_0200095c(void) {
                    EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                    &leaves);
     }
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
   }
   if (hit == 255) {
     Func_02003cd8(136);
@@ -187,7 +187,7 @@ void Func_0200095c(void) {
         }
         Func_02003b50();
       }
-      FieldEvent_WaitTicks(1);
+      FieldEvent_WaitFrames(1);
     }
     if (hit == 2) {
       Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], x, z, 1,
@@ -206,10 +206,10 @@ void Func_0200095c(void) {
     gust->scaleX -= 0x2666;
     gust->scaleY -= 0x4000;
     gust->y += 0x38000;
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
   }
   Func_02003b48(gust);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_02003c38(gPartyState.currentOwner, 1);
   Func_02003c30();
   Func_02003bd0();

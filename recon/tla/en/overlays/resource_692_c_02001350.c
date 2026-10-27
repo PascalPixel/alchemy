@@ -20,8 +20,8 @@ extern const s32 gData_02005050[];
 extern const s32 gData_0200502c[];
 
 s32 GameFlag_Test(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02004f30(s32 sound);
 void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_02004d18(void);
@@ -92,7 +92,7 @@ void Func_02001350(void) {
                   (Random16Far() & 31) << 12, 0, 0, 0x3a0001, &options);
     Func_02004d10(0x50000, 0x50000, 0x10000);
     Func_02004d10(-1, -1, 0xe666);
-    FieldEvent_WaitTicks(8);
+    FieldEvent_WaitFrames(8);
   }
   Func_02004f30(148);
   options.priority = 1;
@@ -110,7 +110,7 @@ void Func_02001350(void) {
   }
   Func_02004cd8(68, 70, srcX, srcZ, 3, 6);
   Shake();
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_02004cd8(71, 70, srcX, srcZ, 3, 6);
   options.type = 403;
   options.priority = 1;
@@ -118,7 +118,7 @@ void Func_02001350(void) {
   options.script = gData_0200502c;
   if (open != 0) {
     Func_02004cd8(68, 70, srcX, srcZ, 3, 6);
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     position[2] -= 0x280000;
   } else {
     Func_02004d10(0x20000, 0x10000, 0x10000);
@@ -130,7 +130,7 @@ void Func_02001350(void) {
                       position[2] + (i << 18) + 0x80000, 0, 0x10000, 0,
                       0x330000, &options);
       }
-      WaitTicks(3);
+      WaitFrames(3);
       Func_02004cd8(74, 70, srcX, srcZ, 3, (i >> 2) + 6);
     }
     Func_02004cd8(74, 70, srcX, srcZ, 3, 8);
@@ -145,7 +145,7 @@ void Func_02001350(void) {
       if (t == 0) {
         *(s32 *)(layer + 12) -= 0x200000;
         Func_02004cc0();
-        FieldEvent_WaitTicks(1);
+        FieldEvent_WaitFrames(1);
       } else if ((u32)t <= 63) {
         REG_BLDALPHA = ((t >> 2) << 8) | (16 - (t >> 2));
         REG_BLDCNT = 0x3f44;
@@ -158,7 +158,7 @@ void Func_02001350(void) {
       } else if (t == 128) {
         Func_02004d10(-1, -1, 0xe666);
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Func_02004d18();
   }
@@ -174,7 +174,7 @@ void Func_02001350(void) {
   Shake();
   Func_02004cd8(68, 64, srcX, srcZ, 3, 6);
   Func_02004d18();
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   *(s32 *)(layer + 12) = 0;
   scene = gPartyState.scene;
   if (scene == (s32)&SceneId_Ov692Room2)

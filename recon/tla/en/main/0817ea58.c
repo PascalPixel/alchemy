@@ -147,7 +147,7 @@ void Resource_LoadAndDecompress(s32, void *, s32, s32);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
-void WaitTicks(s32);
+void WaitFrames(s32);
 void Runtime_ReleaseHeapBlock(s32);
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
@@ -166,7 +166,7 @@ void Func_0801521c(s32);
 void Render_TransformVertices(const void *, void *, s32);
 void Render_DrawModelList(s32 *);
 void MemFree(void *);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
@@ -375,7 +375,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     bgX += 4;
     *(s32 *)0x04000028 = bgX << 8;
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(104);
@@ -950,9 +950,9 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     *(s32 *)0x030011f0 = 120 - v;
     if (work->shake > 0)
       work->shake--;
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(Func_0813baec);
@@ -1076,9 +1076,9 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);

@@ -1599,7 +1599,7 @@ BattleEffect_RunCybele:
 	movs r1, #8
 	bl Func_08158ce0
 .L_0814da76:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #64]
 	lsls r4, r4, #7
@@ -1608,7 +1608,7 @@ BattleEffect_RunCybele:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #56]
 	movs r1, #183
 	adds r0, #1

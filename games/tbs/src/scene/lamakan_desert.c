@@ -659,7 +659,7 @@ static void LamakanDesert_BatheInOasis(void) {
         frames = 1;
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
   } while (frames != 0);
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -678,7 +678,7 @@ static void LamakanDesert_BatheInOasis(void) {
   Event_PlaySong(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
   *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
   HeatGauge_SetHeld(0);
@@ -782,11 +782,11 @@ static void LamakanDesert_FallIntoPit(void) {
   // Face the pit, then reverse the walking direction while being pulled in.
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -806,9 +806,9 @@ static void LamakanDesert_FallIntoPit(void) {
     Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
                               record->z.part.pixel);
   }
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -862,10 +862,10 @@ static void LamakanDesert_SlideDownDune(void) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     Actor_WaitForMove(actor);
     do {
-      WaitTicks(1);
+      WaitFrames(1);
     } while (actor->y.fixed != actor->groundHeight);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
-    WaitTicks(3);
+    WaitFrames(3);
     return;
   }
   // Probe ahead and on both diagonals before advancing actor and camera.
@@ -928,11 +928,11 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetZ = ACTOR_NO_TARGET;
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
-      Event_WaitTicks(40);
+      Event_WaitFrames(40);
       Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_WaitTicks(40);
+      Event_WaitFrames(40);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;
       // Step backward without turning away from the emerging Manticore.
@@ -945,12 +945,12 @@ static void LamakanDesert_MeetManticore(void) {
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
                                  backwardOffset.z / 0x10000);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Event_WaitTicks(2);
+      Event_WaitFrames(2);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-      Event_WaitTicks(30);
+      Event_WaitFrames(30);
       Event_PlaySong(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);

@@ -127,23 +127,23 @@ Func_0810a2d8:
 	bl Func_0810857c
 	bl UiWork_FinalizePendingCoreFar
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #100
 	bl Audio_PlayCue
 	movs r0, #110
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #100
 	bl Audio_PlayCue
 	movs r0, #110
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #100
 	bl Audio_PlayCue
 	movs r0, #110
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #112
 	bl Audio_PlayCue
 	movs r0, #20
-	bl WaitTicks
+	bl WaitFrames
 	mov r2, r8
 	strh r6, [r2, r5]
 	ldr r1, [sp, #12]

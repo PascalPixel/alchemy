@@ -548,7 +548,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       UiText_DrawQuantity(abilityId, 4);
       Audio_PlayCue(114);
       UiText_ShowMessageAndWaitCoreFar((s32)&MsgDjinnInRecovery);
-      WaitTicks(60);
+      WaitFrames(60);
       return -1;
     }
     {

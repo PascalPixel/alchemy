@@ -39,14 +39,14 @@ scatter:
   }
   if (++i <= 21)
     goto scatter;
-  FieldEvent_WaitTicks(60);
+  FieldEvent_WaitFrames(60);
   Func_02002958(64, 69, 11, 4, 87, 53);
   ObjectMotion_ResetAndSetPosition_(17, 392, 824);
   ObjectMotion_ResetAndSetPosition_(18, 424, 824);
   ObjectMotion_ResetAndSetPosition_(19, 456, 824);
   ObjectMotion_ResetAndSetPosition_(20, 488, 824);
   ObjectMotion_ResetAndSetPosition_(21, 520, 824);
-  FieldEvent_WaitTicks(240);
+  FieldEvent_WaitFrames(240);
   Func_02002958(64, 66, 11, 7, 87, 50);
   i = 17;
 settle:
@@ -54,7 +54,7 @@ settle:
   if (++i <= 21)
     goto settle;
   Func_02002a70(298);
-  FieldEvent_WaitTicks(60);
+  FieldEvent_WaitFrames(60);
   {
     struct ObjectRuntime *object = Object_GetById(21);
 

@@ -17,7 +17,7 @@ s32 Func_0803dc1c();
 void Ui_ClearWorkStateAndWaitFrame(void) {
   Func_0803dc1c();
   Resource_ClearOwnerListAndCounters();
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 void SelectionScreen_BuildEntries(u32);

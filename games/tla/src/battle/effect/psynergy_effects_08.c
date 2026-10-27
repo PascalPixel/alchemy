@@ -16,7 +16,7 @@ void Func_080e7844(void);
 void Func_080e9af4(void);
 void Func_080e74d8(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
 /// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
@@ -24,7 +24,7 @@ s32 EventRuntime_GetControlledOwner(void);
 void Func_080e7804(void) {
   Func_080e74d8();
   BattleEffect_PrepareBufferInterpolation();
-  WaitTicks(10);
+  WaitFrames(10);
 }
 
 /// Field Psynergy kind 30's targeted handler.

@@ -49,7 +49,7 @@ void Func_080d793c(s32 capture) {
           struct MapActor *found =
               (struct MapActor *)Scene_FindActorPlacement(actor);
           if (found != 0 && found->event - 48 == flag - 300) {
-            WaitTicks(40);
+            WaitFrames(40);
             Func_080d7788(actor, element, index);
             break;
           }

@@ -17,7 +17,7 @@ void BattlePresentation_WaitForAdvance(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 void BattleMotion_SetupEscapeObject(s32 objectId);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 void BattleActor_RemoveFromLists(s32 unitId);
 void BattleObject_MarkForRelease(s32 objectId);
@@ -60,7 +60,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
 
         if (unit->stun == 0 && unit->sleep == 0) {
           BattleMotion_SetupEscapeObject(unitIds[index]);
-          WaitTicks(8);
+          WaitFrames(8);
         }
         index--;
       }
@@ -72,7 +72,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     event[0] = plan->actorId;
     event[1] = 0xff;
     BattleMotion_SetupEscapeObject(event[0]);
-    WaitTicks(8);
+    WaitFrames(8);
     BattleActor_RemoveFromLists(plan->actorId);
     BattleObject_MarkForRelease(plan->actorId);
   } else {

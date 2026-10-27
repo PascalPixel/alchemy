@@ -18,7 +18,7 @@ extern const u8 gData_02003fc4[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
@@ -73,7 +73,7 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(frames);
+  WaitFrames(frames);
 }
 
 void Func_020013b0(void) {

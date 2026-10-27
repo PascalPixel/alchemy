@@ -113,7 +113,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 
 // The opening every Djinn effect shares: sparks gather from around the
@@ -428,7 +428,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
       }
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);

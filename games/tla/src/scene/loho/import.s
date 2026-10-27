@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -94,10 +94,10 @@ Func_020012c8:
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020012e0
 	.thumb_func
 Func_020012e0:

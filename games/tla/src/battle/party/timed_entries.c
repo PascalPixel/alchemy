@@ -72,7 +72,7 @@ s32 sub_08124af8(s32 id) {
   return 0;
 }
 
-s32 BattleUnit_TickReflect(s32 id) {
+s32 BattleUnit_CountDownReflect(s32 id) {
   u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
   if (*value != 0) {
     (*value)--;
@@ -83,7 +83,7 @@ s32 BattleUnit_TickReflect(s32 id) {
   return 0;
 }
 
-s32 BattleUnit_TickAgilityModifier(s32 id) {
+s32 BattleUnit_CountDownAgilityModifier(s32 id) {
   struct BattleUnit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
@@ -96,7 +96,7 @@ s32 BattleUnit_TickAgilityModifier(s32 id) {
   return 0;
 }
 
-s32 DjinnRecovery_Tick(void) {
+s32 DjinnRecovery_CountDown(void) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
@@ -139,13 +139,13 @@ s32 DjinnRecovery_Tick(void) {
   return removed;
 }
 
-s32 DjinnRecovery_TickTwenty(void) {
+s32 DjinnRecovery_CountDownTwenty(void) {
   s32 turns;
 
   turns = 19;
   do {
     turns--;
-    DjinnRecovery_Tick();
+    DjinnRecovery_CountDown();
   } while (turns >= 0);
   return 0;
 }
@@ -160,12 +160,12 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 
-/// Ticks one side's Djinn recovery at the round's end: an owner must be in the
+/// Counts down one side's Djinn recovery at the round's end: an owner must be in the
 /// battle; each Djinni that comes back plays its event (its icon, sound 175,
 /// the flash and its message) before it is Set. The message is
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
-// ☀️'s DjinnRecovery_Tick with ⚓️'s presentation.
+// ☀️'s DjinnRecovery_CountDown with ⚓️'s presentation.
 s32 Func_08124cc4(s32 side) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;

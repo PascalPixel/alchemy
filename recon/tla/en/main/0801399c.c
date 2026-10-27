@@ -6,7 +6,7 @@
 // the decrement (as if the input record were volatile here; through a
 // volatile pointer, differ 115, the pointer then stays in a register), keeps
 // keys in r0 and gInput in r1 (swapped here), and takes the low byte of the
-// frame tick from its register (lsls/lsrs) where the draft reloads it as a
+// VBlank count from its register (lsls/lsrs) where the draft reloads it as a
 // byte. IwramSoundRenderFrame is reached through lr as a long call.
 #include "types.h"
 #include "io_reg.h"
@@ -20,7 +20,7 @@
 #include "callback_scheduler.h"
 
 struct SoundFrameState {
-  u8 lastTick;
+  u8 lastVBlank;
   u8 unk01;
   u8 unk02;
   u8 unk03;
@@ -33,7 +33,7 @@ struct BgScrollRegs {
 extern volatile struct SoundFrameState gData_03001138;
 extern u8 *gData_03007ff0;
 extern void (*gData_030011f8)(void);
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u16 gData_0300121c;
 extern volatile u8 gBlendDuration;
 
@@ -46,7 +46,7 @@ void IwramSoundRenderFrame(s32) __attribute__((long_call));
 
 void Func_0801399c(void) {
   u32 keys;
-  u32 tick;
+  u32 vblankCount;
   void (*hook)(void);
 
   {
@@ -97,16 +97,16 @@ void Func_0801399c(void) {
     gInput.repeatTimer--;
   }
 
-  tick = gFrameTick;
+  vblankCount = gVBlankCount;
   gInput.previousVblankHeld = keys;
-  if (gData_03001138.lastTick != (u8)tick && gData_03001138.unk03 == 0) {
+  if (gData_03001138.lastVBlank != (u8)vblankCount && gData_03001138.unk03 == 0) {
     gData_03001138.unk01 = gData_03007ff0[4];
     Func_081c0088();
     if (SoundDriver_EnterFrameUpdate() == 0)
       IwramSoundRenderFrame(8);
-    gData_03001138.lastTick = tick;
+    gData_03001138.lastVBlank = vblankCount;
   }
-  gFrameTick = tick + 1;
+  gVBlankCount = vblankCount + 1;
   gLagFrameCount++;
   gData_0300121c = 1;
 }

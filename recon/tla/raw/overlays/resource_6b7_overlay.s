@@ -109,7 +109,7 @@ Func_020002cc:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_02008334:
 	mov r3, r9
 	cmp r3, #0
@@ -345,13 +345,13 @@ Func_020002cc:
 	movs r2, #0
 	movs r0, #1
 	mov r10, r2
-	bl WaitTicks
+	bl WaitFrames
 	b .L_02008334
 .L_02008520:
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRect
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r0, r7, #0
 	movs r1, #1
 	bl UiWork_Finalize

@@ -51,7 +51,7 @@ s32 Func_081a71c8(void) {
   cpuLoad = saved;
   Func_08014b70();
   VramCache_Reset();
-  WaitTicks(1);
+  WaitFrames(1);
   Scheduler_ResetTaskTable();
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
@@ -61,12 +61,12 @@ s32 Func_081a71c8(void) {
       (result = Func_081a6154(2)) == 0) {
     PaletteFade_SetTarget(0, 0);
     PaletteFade_Start(10);
-    WaitTicks(10);
+    WaitFrames(10);
   }
   if (result)
     Func_081a6ea0();
   gRenderOamEnabled = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   // The result's register counts the backgrounds (a separate counter takes
   // other registers).
   for (result = 0; result < 4; result++)
@@ -133,7 +133,7 @@ s32 Func_081a729c(s32 prompt) {
   Fade_ToWhite(1);
   Func_08014b70();
   VramCache_Reset();
-  WaitTicks(1);
+  WaitFrames(1);
   {
     /* FAKEMATCH(pin): the native loads the control word from the pool before
      * it starts the register address; as REG_BG2CNT = 0x681, 2 of 254
@@ -252,7 +252,7 @@ column:
       }
     }
     Random16();
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(172);
   {
@@ -267,7 +267,7 @@ column:
     REG_BLDCNT = zero;
     REG_BLDALPHA = zero;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 

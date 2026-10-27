@@ -17,8 +17,8 @@ struct WarpTarget {
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 ArcTan2(s32, s32);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Animation_SetIndexAndInitializeObjects(struct ObjectRuntime *object, s32 index);
@@ -74,14 +74,14 @@ static __inline__ void GameFlag_SetBit_(s32 flag) {
   GameFlag_SetBit(flag);
 }
 
-static __inline__ void WaitTicks_(s32 frames) {
+static __inline__ void WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(frames);
+  WaitFrames(frames);
 }
 
-static __inline__ void FieldEvent_WaitTicks_(s32 frames) {
+static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ s32 ArcTan2_(s32 a0, s32 a1) {
@@ -271,7 +271,7 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else
     ObjectMotion_OffsetPositionAndResetMotion_(id, 0, -8);
-  FieldEvent_WaitTicks_(10);
+  FieldEvent_WaitFrames_(10);
   Func_02001cd4(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

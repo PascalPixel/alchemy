@@ -31,7 +31,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_02000458(struct PushMove move) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -56,12 +56,12 @@ void Func_02000458(struct PushMove move) {
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x1999);
   Object_SetModeById(gPartyState.currentOwner, 8);
-  WaitTicks(15);
+  WaitFrames(15);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner,
                                             (move.x - from[0]) >> 17,
                                             (move.z - from[2]) >> 17);
   Object_GetById(gPartyState.currentOwner)->update = Func_02000754;
-  WaitTicks(4);
+  WaitFrames(4);
   Func_02001828(object, 2);
   Func_02001960(239);
   ObjectMotion_SetSpeedParameters(move.slot, 0x8000, 0x1999);

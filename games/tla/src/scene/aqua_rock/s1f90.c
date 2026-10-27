@@ -37,7 +37,7 @@ void Func_02001f90(s32 arg0) {
     object->angle = angle;
     if ((i & 7) == 0)
       Func_02001d30(Object_GetById(15));
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_020029a0();
   Func_02002a18(arg0);

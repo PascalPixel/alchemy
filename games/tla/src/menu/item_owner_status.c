@@ -29,7 +29,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 void UiWork_SetParamNibbleFar(s32 color);
 struct BattleUnit *Unit_Get(s32 owner);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 // The Japanese edition draws the Lv, HP and PP labels through
 // UiText_DrawStringInWindowFar, and the four stats a digit wider, starting a
@@ -71,7 +71,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
   UiText_DrawNumberInWindowFar(unit->experience, 8, window, 80, 8);
   if (flags == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     UiWindow_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
   UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 23, window, 152, 0);

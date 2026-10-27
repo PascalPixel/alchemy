@@ -122,7 +122,7 @@ Func_080fd2e8:
 	lsls r0, r0, #2
 	bl Func_08104ef8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_080fd3dc:
 	ldr r0, [r6, #16]
 	ldr r1, [sp, #0]
@@ -179,7 +179,7 @@ Func_080fd2e8:
 	subs r0, #10
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_080fd528
 	movs r2, #1
 	ldr r3, [r1, #4]
@@ -228,7 +228,7 @@ Func_080fd2e8:
 	bl UiIcon_PrepareObject
 	strb r7, [r5, #5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #0]
 	movs r2, #129
 	strb r3, [r6, #29]

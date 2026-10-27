@@ -36,7 +36,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 }
 
 /// Debug only: while debug mode is on, R makes every event wait
-/// (Event_WaitTicks) end at once and L restores normal waits. Runs as a
+/// (Event_WaitFrames) end at once and L restores normal waits. Runs as a
 /// task for the length of an event (Event_Start). R also
 /// skips the actors' messages, which open nothing while fastForward is
 /// set (FieldMessage_ShowAtActor).
@@ -53,12 +53,12 @@ void Event_UpdateDebugSkip(void) {
   }
 }
 
-/// Waits the requested ticks through WaitTicks, unless debug fast-forward
+/// Waits the requested frames through WaitFrames, unless debug fast-forward
 /// (Event_UpdateDebugSkip) is on: the wait events use. This object's actor,
 /// message, camera and climbing commands wait through it too.
-void Event_WaitTicks(s32 ticks) {
-  if (gFieldWork->fastForward == 0 && ticks != 0) {
-    WaitTicks(ticks);
+void Event_WaitFrames(s32 frames) {
+  if (gFieldWork->fastForward == 0 && frames != 0) {
+    WaitFrames(frames);
   }
 }
 
@@ -137,7 +137,7 @@ void Event_NoOpUpdate(void) {}
 void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
-  WaitTicks(1);
+  WaitFrames(1);
   // XXX (no evidence): why the leader's actor is fetched and dropped; no
   // code calls this function, so no caller reads a result.
   Actor_Lookup(gCommon.leaderActorId);
@@ -398,7 +398,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
     u8 *animationNumber = &actor->sprite->lastNo;
 
     while (frames <= 89) {
-      WaitTicks(1);
+      WaitFrames(1);
       if (animation != *animationNumber) {
         break;
       }
@@ -424,12 +424,12 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
 
   // Wait for every button to be released and the message to finish.
   while (gKeysPressed != 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
   while (TextPrinter_AllFinishedFar() == 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
-  WaitTicks(3);
+  WaitFrames(3);
 
   // The question goes above the message windows when they reach past row 15,
   // so it does not cover them.
@@ -504,7 +504,7 @@ void Event_FinishScreenTransition(void) {
 /// The event command "wait for screen": waits as long as the transition runs
 /// (work->transitionFrames). Events reach it.
 void Event_WaitTransitionFrames(void) {
-  WaitTicks(gFieldWork->transitionFrames);
+  WaitFrames(gFieldWork->transitionFrames);
 }
 
 /// Makes the event leave for the given entrance of the given scene:

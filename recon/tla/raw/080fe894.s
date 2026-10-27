@@ -161,7 +161,7 @@ Func_080fe894:
 	lsls r0, r0, #2
 	bl Func_08104ef8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_080fe9e4:
 	mov r2, r8
 	ldr r0, [r7, #16]
@@ -186,7 +186,7 @@ Func_080fe894:
 	subs r0, #10
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, .L_080feb54
 	movs r3, #1
 	ldr r2, [r1, #4]
@@ -265,7 +265,7 @@ Func_080fe894:
 	bl Audio_PlayCue
 .L_080feab6:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080feae8
 .L_080feabe:
 	ldr r3, [r1, #4]

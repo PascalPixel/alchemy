@@ -7,7 +7,7 @@ void Func_0200567c(s32 id, s32 a1, s32 a2);
 void GameFlag_SetBit(s32 flag);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_02004bc4(void) {
   Func_0200560c();
@@ -37,16 +37,16 @@ void Func_02004c94(void) {
   Func_0200560c();
   Func_02005784(0);
   Func_0200567c(18, 0x2000000, 0xe80000);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_020056dc(MsgWillYouCast);
   UiText_OpenMessageAtObject(18, 0);
   if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {
     Func_0200567c(18, 0, 0);
-    WaitTicks(1);
+    WaitFrames(1);
     Func_02003658();
   }
   Func_0200567c(18, 0, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   GameFlag_SetBit(0x202);
   Func_02005614();
 }

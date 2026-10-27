@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global AudioEngine_RunMixerTick
+	.global SoundMain
 	.thumb_func
-AudioEngine_RunMixerTick:
+SoundMain:
 	ldr	r0, [pc, #104]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #104]

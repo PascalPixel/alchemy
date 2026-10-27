@@ -29,7 +29,7 @@ struct ObjectRuntime *Object_GetById(u32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02005d84(void);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02004f3c(void);
@@ -69,9 +69,9 @@ s32 Func_020051f8(void) {
     Func_02002770();
     if (gPartyState.entrance == 16 && !GameFlag_Test(265)) {
       Object_GetById(gPartyState.currentOwner)->terrainId = 1;
-      WaitTicks(8);
+      WaitFrames(8);
       Func_02005d84();
-      WaitTicks(1);
+      WaitFrames(1);
     }
     if (gPartyState.entrance <= 11 || gPartyState.entrance == 16) {
       Scheduler_AddOrUpdateCallback(Func_02004f3c, 0x480);

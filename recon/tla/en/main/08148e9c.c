@@ -66,7 +66,7 @@ extern u8 gData_08197498[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                  // ☀️ BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);                  // ☀️ ObjectGroup_CountDownMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
@@ -118,7 +118,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BLDALPHA = 0x1000;
-  WaitTicks(1);
+  WaitFrames(1);
   Audio_PlayCue(141);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
@@ -190,9 +190,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     work->shakeFrames = 1;
     Func_08158ce0(gData_081979ae[effect->variant * 3 + 2],
                   gData_081979ae[effect->variant * 3 + 2] * 2);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Tear down.

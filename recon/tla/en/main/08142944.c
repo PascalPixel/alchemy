@@ -113,7 +113,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);            // ObjectGroup_CountDownMemberTimers
 void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
@@ -126,7 +126,7 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 roll);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 // Rings and crystals gather on the user, for the scenes.
 
@@ -354,9 +354,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

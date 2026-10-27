@@ -191,7 +191,7 @@ Func_08044558:
 	ldr r1, [sp, #24]
 	bl UiText_DrawPaddedLabel
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	b .L_08044a0c
 	.2byte 0x0000
 .L_080446f4:
@@ -255,7 +255,7 @@ Func_08044558:
 	mov r0, r10
 	bl UiWindow_SetTilemapFlagRect
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	movs r3, #15
 	str r2, [sp, #0]
@@ -340,7 +340,7 @@ Func_08044558:
 .L_08044814:
 	.4byte 0x000001ff
 .L_08044818:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_0804481c:
 	.4byte gNameEntry_CaretWave
 .L_08044820:
@@ -617,7 +617,7 @@ Func_08044558:
 	ldr r0, [sp, #48]
 	bl Func_0803d450
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, .L_08044a50
 	ldr r3, [r2]
 	cmp r3, #0
@@ -625,7 +625,7 @@ Func_08044558:
 	adds r5, r2, #0
 .L_08044a32:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [r5]
 	cmp r3, #0
 	bne .L_08044a32

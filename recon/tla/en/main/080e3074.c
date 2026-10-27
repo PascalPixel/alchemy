@@ -40,11 +40,11 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void Func_080e2264(void);
-void BattleEffect_SetObjectTickMode(struct ObjectRuntime *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 void BattleEffect_SpinObject(void);
 void Camera_WorldToScreen(s32 *position);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
@@ -83,7 +83,7 @@ void Func_080e3074(void) {
 
   BattleEffect_InitializeSharedScene();
   Func_080e2264();
-  BattleEffect_SetObjectTickMode(*(struct ObjectRuntime **)(effect + 16), 0);
+  BattleEffect_SetObjectUpdateMode(*(struct ObjectRuntime **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->action = owner->angle;
   palette = (u16 *)0x050003c0;
@@ -111,11 +111,11 @@ void Func_080e3074(void) {
   Object_SetMode(ring, 2);
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   Audio_PlayCue(207);
   for (i = 0; i < 20; i++) {
     ring->scaleY = (i << 16) / 20;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   for (i = 0; i < 60; i++) {
     for (j = 0; j < 4; j++)
@@ -127,7 +127,7 @@ void Func_080e3074(void) {
     step = step * 123 / 128;
     canvas->angle += 0x400;
     canvas->command = 3;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   BattleEffect_PrepareBufferInterpolation();
   work->follower = ring;
@@ -154,7 +154,7 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
     Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
@@ -162,7 +162,7 @@ void Func_080e3074(void) {
     frame = 0;
     ObjectMotion_SetActionVariant(*(s16 *)(effect + 24), 1);
     owner->motionFlags = 0;
-    WaitTicks(1);
+    WaitFrames(1);
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
@@ -170,7 +170,7 @@ void Func_080e3074(void) {
     while (work->state != 999) {
       if (frame == 30)
         Func_080e249c();
-      WaitTicks(1);
+      WaitFrames(1);
       frame++;
     }
     Scheduler_RemoveCallback(Func_080e2ec0);
@@ -185,13 +185,13 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
     Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     ObjectDispatch_SetSingleChildFlagsFar(owner, 0);
     owner->motionFlags = 0;
-    WaitTicks(1);
+    WaitFrames(1);
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
     work->to[1] = owner->y;
     work->to[2] = *(s16 *)(event + 0xd3e) << 16;
@@ -200,20 +200,20 @@ void Func_080e3074(void) {
     while (work->state != 999) {
       if (frame == 30)
         Func_080e249c();
-      WaitTicks(1);
+      WaitFrames(1);
       frame++;
     }
     Scheduler_RemoveCallback(Func_080e2d64);
     for (i = 0; i < 16; i++) {
       owner->scaleX += -0x800;
       owner->scaleY = owner->scaleX;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     owner->scaleX = 0;
     for (i = 0; i < 32; i++) {
       ring->scaleX += -0x800;
       ring->scaleY += -0x200;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     ring->scaleX = 0;
     if (work->kind)
@@ -226,7 +226,7 @@ void Func_080e3074(void) {
     for (i = 0; i < 16; i++) {
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     owner->update = NULL;
     owner->angle = owner->action;
@@ -234,7 +234,7 @@ void Func_080e3074(void) {
     while (work->count != 0) {
       if (frame == 30)
         Func_080e249c();
-      WaitTicks(1);
+      WaitFrames(1);
       frame++;
     }
     if (work->kind)
@@ -246,7 +246,7 @@ void Func_080e3074(void) {
       owner->angle += 0x1000;
       canvas->angle += 0x400;
       canvas->command = 3;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   Audio_PlayCue(136);

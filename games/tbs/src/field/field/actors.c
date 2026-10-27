@@ -75,7 +75,7 @@ void SpriteDissolve_Run(u8 *sprite) {
     SpriteDissolve_Step(sprite, step + 2);
     SpriteDissolve_Step(sprite, step + 3);
     step += 4;
-    WaitTicks(1);
+    WaitFrames(1);
   } while (step <= 127);
 }
 
@@ -108,7 +108,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
         SpriteDissolve_Step(*spriteCursor++, fourthDissolveStep);
       } while (spritesRemaining != 0);
     }
-    WaitTicks(1U);
+    WaitFrames(1U);
     step += 4;
   } while (step <= 0x7fU);
 }
@@ -518,7 +518,7 @@ void Actor_WaitForScriptEnd(void *rawActor) {
   waitedFrames = 0;
   if (interpreter->script[interpreter->scriptCursor] != SC_END) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       waitedFrames++;
       if (waitedFrames > 299)
         break;
@@ -571,7 +571,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_ProjectSprites);
   PaletteFade_SetTargetFar(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolationFar(1);
-  WaitTicks(1);
+  WaitFrames(1);
   REG_DISPCNT =
       (REG_DISPCNT & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
       DISPCNT_OBJ_ON;

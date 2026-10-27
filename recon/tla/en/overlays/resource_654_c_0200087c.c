@@ -27,5 +27,5 @@ void Func_0200087c(void) {
   object8->z += 0x8000;
   object9->z += 0x8000;
   object10->z += 0x8000;
-  WaitTicks(4);
+  WaitFrames(4);
 }

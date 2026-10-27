@@ -31,11 +31,11 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
-  WaitTicks(30);
+  WaitFrames(30);
   // Turn to face the camera (angle 0x4000), then bounce three times, a rising
   // note on each.
   Actor_ArmCallback(djinniId, FACING_SOUTH, 0);
-  WaitTicks(20);
+  WaitFrames(20);
   Sound_PlaySongFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_MID);
@@ -43,11 +43,11 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Sound_PlaySongFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
-  WaitTicks(20);
+  WaitFrames(20);
   Sound_PlaySongFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
-  WaitTicks(80);
+  WaitFrames(80);
   djinni->update = FieldEffect_ShrinkActorAndDestroySlow;
   Actor_SelectAnimationFar(djinni, 3);
 
@@ -69,13 +69,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     effect->scaleY = scale;
     effect->scaleX = scale;
     remaining--;
-    WaitTicks(1);
+    WaitFrames(1);
     effect++;
   } while (remaining >= 0);
 
-  WaitTicks(60);
+  WaitFrames(60);
   Actor_ArmCallback(gCommon.leaderActorId, FACING_SOUTH, 0);
-  WaitTicks(20);
+  WaitFrames(20);
   Actor_SelectAnimationFar(Actor_GetById(gCommon.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
 
@@ -84,7 +84,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   {
     s32 nextState;
 
-    WaitTicks(20);
+    WaitFrames(20);
     nextState = MARS_SPARK_STOPPING;
     slotState = &effectWork->particles[0].state;
     remaining = 23;
@@ -97,9 +97,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   }
 
   // The leader pulses while the sparks swarm it.
-  WaitTicks(60);
+  WaitFrames(60);
   leader->update = FieldEffect_SetActorAlternatingWords;
-  WaitTicks(100);
+  WaitFrames(100);
 
   // Every spark still in use goes. This loop's cursor starts as
   // the field effect plus 152, the first slot's state: written as above, the
@@ -122,13 +122,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing. Storing NULL through the cleared slot cursor,
   // as the bytes do: a plain NULL store differs by 9.
-  WaitTicks(10);
+  WaitFrames(10);
   effect = NULL;
   leader->update = (void *)effect;
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
   // Fade the palette back from the tint and free the field effect sprites.
-  WaitTicks(30);
+  WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }

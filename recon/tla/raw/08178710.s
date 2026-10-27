@@ -941,7 +941,7 @@ BattleEffect_RunRisingDragon:
 	adds r0, r6, #0
 	bl MemFree
 .L_08178e6c:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #2
 	movs r0, #2
 	bl Func_08158ce0
@@ -953,7 +953,7 @@ BattleEffect_RunRisingDragon:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #64]
 	ldr r3, [sp, #84]
 	adds r1, #1

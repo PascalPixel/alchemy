@@ -108,20 +108,20 @@ void FieldPsynergy_EndCloak(void) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
-    WaitTicks(2);
+    WaitFrames(2);
     animation->dirty = 1;
     animation->flags = 0;
-    WaitTicks(2);
+    WaitFrames(2);
   }
 
   for (i = 0; i < 5; ++i) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = 0;
-    WaitTicks(2);
+    WaitFrames(2);
     entry->colorMode = SPRITE_COLOR_NORMAL;
     animation->dirty = 1;
-    WaitTicks(2);
+    WaitFrames(2);
   }
 
   animation->flags = SPRITE_FLAG_SHADOW;
@@ -161,10 +161,10 @@ void FieldPsynergy_StartCloak(void) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
-    WaitTicks(2);
+    WaitFrames(2);
     animation->dirty = 1;
     animation->flags = 0;
-    WaitTicks(2);
+    WaitFrames(2);
     n++;
   } while (n <= 9);
   n = 0;

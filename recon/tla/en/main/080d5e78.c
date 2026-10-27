@@ -38,7 +38,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   obj->x = (obj->x & mask) + 0x80000;
   obj->z &= mask;
   Object_SetMode(obj, mode);
-  WaitTicks(30);
+  WaitFrames(30);
   ctx->count = 1;
   ResourceMetadata_ClearRecordFar(ctx->entry);
   ctx->entry = (void *)zero;

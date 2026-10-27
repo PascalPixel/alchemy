@@ -17,18 +17,18 @@ void Func_0200048c(u16 *list, s32 id) {
         Func_02001538(185);
         Call3((void (*)())Func_02001470, 0x10000, 0x40000, 0x10000);
         Func_02000974(0);
-        WaitTicks(8);
+        WaitFrames(8);
         Func_02001428(object, 2);
         Func_02000bc0(-4, object->terrainId, id);
         Func_02000974(1);
-        WaitTicks(16);
+        WaitFrames(16);
         Call3((void (*)())Func_02001470, -1, -1, 0xe666);
-        WaitTicks(8);
+        WaitFrames(8);
         Object_SetPositionAndResetMotion(object, 0, 0, 0);
-        WaitTicks(2);
+        WaitFrames(2);
         Func_02001538(188);
         Func_02000aa8();
-        WaitTicks(20);
+        WaitFrames(20);
         GameFlag_SetBit(flag);
         GameFlag_SetBit(flag + 1);
       }

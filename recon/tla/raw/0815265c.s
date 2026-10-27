@@ -2495,7 +2495,7 @@ BattleEffect_RunProjectileVolleyB:
 	mov r1, r11
 	cmp r1, #6
 	beq .L_08153924
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 .L_08153924:
 	ldr r3, [sp, #76]
 	movs r5, #240
@@ -2505,7 +2505,7 @@ BattleEffect_RunProjectileVolleyB:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r6, [sp, #24]
 	ldr r0, [sp, #72]
 	ldr r1, [sp, #64]

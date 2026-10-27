@@ -8,7 +8,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 struct ObjectRuntime *Func_080eaf28(s32 *position, s32 mode);
 s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Event_NoOp(void);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
@@ -39,19 +39,19 @@ void Func_080cdd80(void) {
   target->terrainId = terrain;
   if (result <= 0) {
     Object_SetMode(owner, 8);
-    WaitTicks(15);
+    WaitFrames(15);
     Audio_PlayCue(185);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Object_SetPosition(target, position[0], position[1], position[2]);
-    WaitTicks(2);
+    WaitFrames(2);
     acceleration = owner->acceleration;
     owner->acceleration = 0x3333;
     speed = owner->speedLimit;
     owner->speedLimit = 0x3333;
     Object_SetPosition(owner, position[0], position[1], position[2]);
     Object_CommitPosition(target);
-    WaitTicks(1);
+    WaitFrames(1);
     Event_NoOp();
     Object_SetPositionAndResetMotionFar(target, position[0], position[1],
                                         position[2]);

@@ -12,7 +12,7 @@ extern const u8 gData_02004704[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -90,7 +90,7 @@ void Func_02003720(void) {
     Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
     Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02003ffc();
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_02000038(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
 }

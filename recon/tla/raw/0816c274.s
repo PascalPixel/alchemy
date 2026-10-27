@@ -508,7 +508,7 @@ BattleEffect_RunCrystal:
 	movs r3, #120
 	str r3, [r2, #12]
 	str r3, [r2, #16]
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r4, [sp, #52]
 	lsls r1, r1, #7
@@ -517,7 +517,7 @@ BattleEffect_RunCrystal:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r9, r2
 	mov r3, r9

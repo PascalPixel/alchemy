@@ -3,7 +3,7 @@
 When an event pauses for half a second, the code that runs it simply waits,
 yet the screen keeps moving: windows still type, the [scene](../../glossary.md#scene)
 still scrolls with the camera. Everything in the game waits the same way,
-through one function, `WaitTicks`, which runs a short list of jobs, the
+through one function, `WaitFrames`, which runs a short list of jobs, the
 [tasks](../../glossary.md#task), once every [frame](../../glossary.md#frame)
 while it waits. That function and what it needs around it are the runtime:
 start-up, the frame and its hand-over to the screen, the
@@ -43,7 +43,7 @@ Changing the picture while it is drawn would show half the change, so code
 writes new positions, scroll and colours to memory during the frame, and the
 VBlank's code copies them to the hardware together.
 
-Each frame `WaitTicks` runs the frame's tasks, gathers every
+Each frame `WaitFrames` runs the frame's tasks, gathers every
 [sprite](../../glossary.md#sprite-and-oam) the code asked to show into the
 list the hardware reads, marks the frame finished and halts the processor
 until the blank. In the blank, the VBlank's code first does what has to land
@@ -59,7 +59,7 @@ mixture of two frames. Two small delays follow from the order: sprites placed
 by a blank's task show a frame later, and buttons read in the blank reach the
 game's code at the start of its next frame.
 
-The frame is `WaitTicks` and the blank `System_VBlankHandler`; the sprites
+The frame is `WaitFrames` and the blank `System_VBlankHandler`; the sprites
 are sorted by depth in `gOamDepthLists` and gathered by `Oam_BuildBuffer`.
 
 ### Buttons and sleep
@@ -79,17 +79,17 @@ for a second; after waking it waits a few frames before carrying on. Some
 moments forbid sleep altogether. In debug mode, Start and Select held pause
 the game, and A, B, Select or the D-pad then step it one frame at a time.
 
-The repeat and sleep are in `WaitTicks` and
+The repeat and sleep are in `WaitFrames` and
 `Input_UpdateKeyRepeatAndDirection`; the timings are `SLEEP_COMBO_FRAMES`,
 `SLEEP_IDLE_FRAMES` and `INPUT_KEY_REPEAT_FIRST`.
 
-## The stack switch in `WaitTicks`
+## The stack switch in `WaitFrames`
 
 The stack is the scratch memory every function call takes a little of, and it
 is small: 1,792 bytes at the top of IWRAM, which the interrupts share. Code
 can ask to wait from deep inside its own calls, when most of the stack is
 already in use, and the tasks that run while it waits need stack of their
-own. So before running any frames, `WaitTicks` copies the deepest part of
+own. So before running any frames, `WaitFrames` copies the deepest part of
 the waiting code's stack aside into ordinary memory and starts afresh from a
 fixed line 512 bytes above the stack's floor; when the wait is over it puts
 the copy back.
@@ -189,13 +189,13 @@ The sectors are written by `Save_WriteRecord` and read by
 
 ## The link cable
 
-Two consoles joined by a cable trade a small fixed message every frame, and
+Two consoles joined by a cable trade a small fixed message every VBlank, and
 anything larger, such as a [party](../../glossary.md#the-party) for a link
 battle, rides inside it in numbered pieces that are sent again when one goes
 missing. Link battles, the Battle Arena and the File Screen's transfer use it.
 
-Each frame's message carries 24 bytes each way, and larger data travels 20
-bytes a frame. The receiver keeps a piece only when its number is the one it
+Each VBlank's message carries 24 bytes each way, and larger data travels 20
+bytes a VBlank. The receiver keeps a piece only when its number is the one it
 expects, and otherwise asks for that one again; the sender then goes back and
 sends from there. A message that arrives while the hardware reports a failed
 transfer is thrown away.
@@ -226,7 +226,7 @@ renaming one touches other folders too.
 ## How it fits with the rest of the game
 
 Every other folder runs on the runtime: the field, the battles and the menus
-let time pass through `WaitTicks`, keep their per-frame work as tasks, take
+let time pass through `WaitFrames`, keep their per-frame work as tasks, take
 their memory from the heap and reach the screen through the sprite lists, the
 scroll and the write queue. Other banks call the runtime directly, and
 overlays through its far-call table
@@ -263,12 +263,12 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 - **transform**: `gTransform`, the rotation and position the battle and field
   cameras work through.
 - **record**: one save record in one 4 KB flash sector.
-- **payload** and **block**: each frame two linked consoles trade a 24-byte
+- **payload** and **block**: each VBlank two linked consoles trade a 24-byte
   payload, and larger data rides on it in 20-byte blocks.
 
 ## Evidence
 
-The names come from what the code does: `WaitTicks` from its loop, `Task_`
+The names come from what the code does: `WaitFrames` from its loop, `Task_`
 from the table it keeps, the heap's from its two pointers and its heap slots,
 the save code's from the flash records it writes. Constants such as
 `TASK_PASS_FRAME` are the values the callers pass.
@@ -282,7 +282,7 @@ the fourth.
 No task waits, and none adds a task. A call graph of the English build's
 objects, main image and overlays, from each function the code adds as a task,
 each actor update routine and each `SC_CALL` routine, finds nine tasks with a path of
-calls to `WaitTicks`, and none takes it: the scene tasks turn actors
+calls to `WaitFrames`, and none takes it: the scene tasks turn actors
 with a wait of 0 (`Actor_ArmCallback`), the world map's lighthouse
 jitter moves the camera with a glide, Lucky Wheels and the link countdown
 open instant windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite

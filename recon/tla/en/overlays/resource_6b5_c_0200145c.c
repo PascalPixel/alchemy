@@ -66,7 +66,7 @@ void Sound_LoadPresetParameters(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -98,7 +98,7 @@ s32 Func_0200145c(void) {
   Func_02001414(gPartyState.linkTallies[6]);
   Map_CopyCells(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02001994(5);
   {
     u16 *name = gData_02003a74;
@@ -206,7 +206,7 @@ s32 Func_0200145c(void) {
       Flag_Clear(1000);
       work->raisedTrigger = 2;
       Flag_Clear(0x304);
-      WaitTicks(20);
+      WaitFrames(20);
       Func_02000044();
       LinkLobby_WriteSlotValue(0);
       LinkLobby_WriteSlotValue(4);
@@ -265,7 +265,7 @@ s32 Func_0200145c(void) {
   Func_02001944(callback, 1);
   if (gPartyState.entrance != 8 || !Flag_IsSet(0x173)) {
     Func_02001a04(1);
-    DjinnRecovery_TickTwenty();
+    DjinnRecovery_CountDownTwenty();
   }
   return 0;
 }

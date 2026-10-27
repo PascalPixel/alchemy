@@ -24,7 +24,7 @@ void Func_081195ec(void) {
   if (count > reserveCount)
     count = reserveCount;
   BattlePres_SetActorModes(actors, 4);
-  WaitTicks(32);
+  WaitFrames(32);
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
     s32 id = reserves[i];
@@ -45,5 +45,5 @@ void Func_081195ec(void) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
   BattlePres_SetActorModes(reserves, 6);
-  WaitTicks(32);
+  WaitFrames(32);
 }

@@ -18,7 +18,7 @@ struct EffectVector {
   s32 z;
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u32 gData_080f0bfc[];
 
 void *Object_GetById(s32 id);
@@ -26,7 +26,7 @@ void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void BattleEffect_AdvanceSpinAngle();
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
@@ -62,12 +62,12 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   Motion_SetVarCbAndRefresh(id, 1);
   Audio_PlayCue(175);
   Motion_SetVarCbAndRefresh(id, 1);
-  WaitTicks(20);
+  WaitFrames(20);
 
   // Spin, then leap high.
   Audio_PlayCue(140);
   object->update = BattleEffect_AdvanceSpinAngle;
-  WaitTicks(40);
+  WaitFrames(40);
   Audio_PlayCue(153);
   ObjectMotion_Launch(id, 12, 22);
 
@@ -89,36 +89,36 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     slot->scaleY = scale;
     slot->scaleX = scale;
     count--;
-    WaitTicks(1);
+    WaitFrames(1);
     slot++;
   } while (count >= 0);
 
   // The current owner turns to 0x4000 and takes mode 28.
-  WaitTicks(60);
+  WaitFrames(60);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
-  WaitTicks(20);
+  WaitFrames(20);
   Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
-  WaitTicks(40);
+  WaitFrames(40);
   Audio_PlayCue(164);
-  WaitTicks(100);
+  WaitFrames(100);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
 void BattleEffect_SetObjectAlternatingWords(u8 *object) {
-  u32 *tick = &gFrameTick;
+  u32 *vblankCount = &gVBlankCount;
   u32 *table;
   u32 index;
   u32 value;
 
   asm volatile(
       ""
-      : "+l"(tick)); /* FAKEMATCH: load the tick address before the table. */
+      : "+l"(vblankCount)); /* FAKEMATCH: load the count's address before the table. */
   table = gData_080f0bfc;
-  /* FAKEMATCH: keep the tick extraction in its own block; without this
-   * boundary the table address loads after the tick (two reordered rows). */
+  /* FAKEMATCH: keep the count's extraction in its own block; without this
+   * boundary the table address loads after the count (two reordered rows). */
   do {
-    index = (*tick >> 2) & 1;
+    index = (*vblankCount >> 2) & 1;
   } while (0);
   value = index[table];
   ((struct MotionObject *)object)->scaleX = value;

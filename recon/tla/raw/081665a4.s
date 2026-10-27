@@ -648,7 +648,7 @@ BattleEffect_RunRagnarok:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	ldr r1, [sp, #52]
 	lsls r2, r2, #7
@@ -657,7 +657,7 @@ BattleEffect_RunRagnarok:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #1
 	add r9, r3
 	mov r5, r9

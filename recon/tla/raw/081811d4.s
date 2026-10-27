@@ -922,7 +922,7 @@ BattleEffect_RunVengeance:
 	mov lr, r4
 	.2byte 0xf800
 .L_081818a6:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r0, #1
 	movs r1, #4
 	bl Func_08158ce0
@@ -934,7 +934,7 @@ BattleEffect_RunVengeance:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #48]
 	adds r2, #1
 	str r2, [sp, #48]

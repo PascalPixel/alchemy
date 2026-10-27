@@ -111,7 +111,7 @@ Func_08044c80:
 	adds r0, r7, #0
 	bl Runtime_PushSlotEntry
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Audio_Check
 	cmp r0, #0
 	beq .L_08044d90
@@ -128,7 +128,7 @@ Func_08044c80:
 	mov r0, r9
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #20]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #12]

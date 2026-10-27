@@ -23,7 +23,7 @@ void Func_02002780(void) {
   Func_02003e14(object);
   object->angle = 0xc000;
   ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02004028);
-  WaitTicks(12);
+  WaitFrames(12);
   Func_02003ffc(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

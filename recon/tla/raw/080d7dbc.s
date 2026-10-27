@@ -222,4 +222,4 @@ BattleEffect_UpdatePhasedRadialParticle:
 .L_080d7f78:
 	.4byte gPartyState
 .L_080d7f7c:
-	.4byte gFrameTick
+	.4byte gVBlankCount

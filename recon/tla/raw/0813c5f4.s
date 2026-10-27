@@ -619,7 +619,7 @@ Func_0813c5f4:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #64]
 	lsls r3, r3, #7
@@ -628,7 +628,7 @@ Func_0813c5f4:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #40]
 	movs r4, #1
 	add r10, r4

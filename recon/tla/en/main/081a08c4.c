@@ -21,7 +21,7 @@ extern u16 gDisplayScroll_Position;
 extern s16 gDisplayScroll_Busy;
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern s16 Data_02007500;
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 
 void Func_081a08c4(void) {
   struct DisplayScrollObject *object;
@@ -58,9 +58,9 @@ void Func_081a08c4(void) {
   if (gDisplayScroll_Busy == 3 && (gInput.held & 3))
     gDisplayScroll_Busy = 0;
   if (gDisplayScroll_Busy == 0) {
-    if ((gFrameTick & 3) == 0)
+    if ((gVBlankCount & 3) == 0)
       gDisplayScroll_Position++;
-    if ((gInput.held & 2) && (gFrameTick & 3))
+    if ((gInput.held & 2) && (gVBlankCount & 3))
       gDisplayScroll_Position++;
   }
 }

@@ -54,18 +54,18 @@ s32 BattleParty_AssignMemberSlots(void);
 s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
-s32 BattleUnit_TickAttackModifier(s32 unitId);
-s32 BattleUnit_TickDefenseModifier(s32 unitId);
-s32 BattleUnit_TickResistanceModifier(s32 unitId);
-s32 BattleUnit_TickDelusion(s32 unitId);
-s32 BattleUnit_TickConfusion(s32 unitId);
-s32 BattleUnit_TickCharm(s32 unitId);
-s32 BattleUnit_TickStun(s32 unitId);
-s32 BattleUnit_TickSleep(s32 unitId);
+s32 BattleUnit_CountDownAttackModifier(s32 unitId);
+s32 BattleUnit_CountDownDefenseModifier(s32 unitId);
+s32 BattleUnit_CountDownResistanceModifier(s32 unitId);
+s32 BattleUnit_CountDownDelusion(s32 unitId);
+s32 BattleUnit_CountDownConfusion(s32 unitId);
+s32 BattleUnit_CountDownCharm(s32 unitId);
+s32 BattleUnit_CountDownStun(s32 unitId);
+s32 BattleUnit_CountDownSleep(s32 unitId);
 s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
-s32 BattleUnit_TickReflect(s32 unitId);
-s32 BattleUnit_TickAgilityModifier(s32 unitId);
-s32 DjinnRecovery_Tick(void);
-s32 DjinnRecovery_TickTwenty(void);
+s32 BattleUnit_CountDownReflect(s32 unitId);
+s32 BattleUnit_CountDownAgilityModifier(s32 unitId);
+s32 DjinnRecovery_CountDown(void);
+s32 DjinnRecovery_CountDownTwenty(void);
 
 #endif

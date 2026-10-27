@@ -15,7 +15,7 @@ struct DebugBattleWork {
   s32 debugValue;
 };
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
 /// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
@@ -43,7 +43,7 @@ s32 Func_081269f8(s32 value) {
         value = work->debugValue;
         break;
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   if (gInput.held & 4)

@@ -63,7 +63,7 @@ Func_080de21c:
 	str r3, [r5, #44]
 	str r3, [r5, #40]
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #1
 	negs r0, r0
 	add r8, r0
@@ -141,7 +141,7 @@ Func_080de21c:
 	str r3, [r6, #28]
 	str r3, [r6, #24]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #255
 	ldr r3, [r6, #24]
 	lsls r2, r2, #8
@@ -150,7 +150,7 @@ Func_080de21c:
 	ble .L_080de338
 .L_080de354:
 	movs r0, #3
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, sp
 	adds r0, #24
 	str r0, [sp, #4]
@@ -265,7 +265,7 @@ Func_080de21c:
 	cmp r5, #0
 	beq .L_080de45a
 	movs r0, #3
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [r7]
 	adds r0, r5, #0
 	ldr r2, [r7, #4]
@@ -288,7 +288,7 @@ Func_080de21c:
 	beq .L_080de486
 .L_080de470:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #1
 	add r8, r3
 	mov r4, r8
@@ -372,10 +372,10 @@ Func_080de21c:
 	bl EventRuntime_RunPendingEvent
 .L_080de520:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #20
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, r11
 	cmp r0, #96
 	beq .L_080de53a

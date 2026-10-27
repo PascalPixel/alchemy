@@ -73,7 +73,7 @@ extern u8 gData_08197473[];
 extern u16 gData_0819747a[];
 
 u32 Random16(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -81,7 +81,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // BattleEventRuntime_StartPhase through its far call.
@@ -239,9 +239,9 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     diveY += 8;
     frame++;
   } while (frame != 112);

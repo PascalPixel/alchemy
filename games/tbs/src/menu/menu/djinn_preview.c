@@ -57,7 +57,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   menu->memberY[menu->selectedColumn[0]] = 0x20;
 
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_CloseIfOpen(&menu->helpWindow, 1);
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
 
@@ -283,7 +283,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           MenuCursor_Slide(2, 96);
           gCommon.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0) {
-            WaitTicks(1);
+            WaitFrames(1);
           }
           Window_CloseFar(window, 1);
           Iwram_CopyWords(work, saved, size);
@@ -316,13 +316,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           MenuCursor_Slide(106, 56);
           gCommon.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0) {
-            WaitTicks(1);
+            WaitFrames(1);
           }
           Window_CloseFar(window, 1);
           Iwram_CopyWords(work, saved, size);
           Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
-          WaitTicks(1);
+          WaitFrames(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
@@ -362,7 +362,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       if ((redraw >> 1) != 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       }
 
       if (mode == DJINN_COMPARE_SET) {
@@ -536,7 +536,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             Menu_WrapIndex(selectedPages[page], pageCounts[page]);
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Restore the ordinary list drawing tasks and close the preview sides; the
@@ -547,7 +547,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
   Window_CloseIfOpen((struct Window **)&menu->window, 1);
   Window_CloseIfOpen(&menu->secondWindow, 1);
@@ -559,7 +559,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 
@@ -603,7 +603,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   for (side = 3; side >= 0; side--)
     menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
-  WaitTicks(1);
+  WaitFrames(1);
   // Count the party member's Psynergy by diffing their list with itself; saved
   // is taken and given back unused.
   counts = pageCounts;
@@ -701,12 +701,12 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       redraw = 1;
       selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
@@ -718,7 +718,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 

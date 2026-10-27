@@ -51,7 +51,7 @@ Func_0814cca8:
 	.4byte 0x06004000
 .L_0814cd04:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, .L_0814cd30
 	movs r2, #128
 	lsls r2, r2, #19

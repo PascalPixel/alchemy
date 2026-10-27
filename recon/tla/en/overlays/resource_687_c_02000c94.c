@@ -23,7 +23,7 @@ void Func_02001fac();
 void Func_02002044();
 void GameFlag_SetBit();
 void Func_02002054();
-void WaitTicks();
+void WaitFrames();
 s32 Scheduler_AddOrUpdateCallback();
 s32 Func_02001fb4();
 
@@ -35,7 +35,7 @@ s32 Func_02000c94(s32 a0) {
   Call1((void (*)())GameFlag_SetBit, 0x200);
   Call1((void (*)())Func_02002054, 0x22d);
 L_02008cb2:
-  Call1((void (*)())WaitTicks, 10);
+  Call1((void (*)())WaitFrames, 10);
   r6 = 160;
   r6 = r6 << 19;
   r5 = 0;

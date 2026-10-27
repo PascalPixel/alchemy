@@ -233,7 +233,7 @@ void BattleAnim_SetupBlendedDisplay(void) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -250,7 +250,7 @@ void BattleAnim_SetupBlendedDisplay(void) {
 /// animation: the pose each group switches to (enum BattlePose), or -1 for
 ///            none.
 /// timerSlot: the actor timer (gBattleAnimWork's actorTimers) to set, or -1;
-///            BattleAnim_TickBattlerTints restores the unit's palette
+///            BattleAnim_CountDownBattlerTints restores the unit's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
 /// The parts and animations of a unit that is fading out stay as they are,

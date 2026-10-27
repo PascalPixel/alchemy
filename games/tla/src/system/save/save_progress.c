@@ -59,14 +59,14 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
   UiText_DrawResource(message + 1, window, 40, 104);
   Audio_SetMusicVolumeTargetAndStepFar(0, 30);
   Audio_PlayCue(298);
-  WaitTicks(10);
+  WaitFrames(10);
   MemFree(tiles);
   return window;
 }
 
 /// Closes the progress screen.
 struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
-  WaitTicks(10);
+  WaitFrames(10);
   Func_080c8698();
   Audio_SetMusicVolumeTargetAndStepFar(0x100, 30);
   UiWork_Finalize(window, 0);

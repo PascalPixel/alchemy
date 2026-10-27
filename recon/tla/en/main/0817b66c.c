@@ -94,8 +94,8 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -222,9 +222,9 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     gCameraSceneParameters[4] = 120;
 
     Func_08158ce0(4, 4);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);

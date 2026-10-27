@@ -489,7 +489,7 @@ Func_0813cb34:
 	cmp r8, r3
 	bne .L_0813ceca
 .L_0813cefc:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #40]
 	lsls r4, r4, #7
@@ -498,7 +498,7 @@ Func_0813cb34:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #16]
 	movs r1, #1
 	add r11, r1

@@ -6,7 +6,7 @@
 extern const u8 MsgRaiseEveryoneS[];
 extern const u8 gData_02000e80[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void UiText_DrawResource(const u8 *message, void *window, s32 x, s32 y);
 void UiText_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
@@ -39,7 +39,7 @@ void Func_02000748(void) {
       redraw = 0;
       UiText_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
-    WaitTicks(1);
+    WaitFrames(1);
     /* FAKEMATCH: the volatile reads load the pressed keys again for each test,
      * as the native does (plain: differ 30). */
     if ((((volatile struct InputState *)&gInput)->pressed & 8) ||

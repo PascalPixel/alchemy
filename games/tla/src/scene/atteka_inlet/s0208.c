@@ -12,8 +12,8 @@ void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void FieldEvent_WaitTicks(s32 ticks);
-void WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
+void WaitFrames(s32 frames);
 void Func_02000ff8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02001010(void);
@@ -39,7 +39,7 @@ void Func_02000208(void) {
 
       Call4(Func_02001068, 9, 60 << 16, 362 << 16, angle << 8);
     }
-    Call1(WaitTicks, 1);
+    Call1(WaitFrames, 1);
     Call3(ObjectMotion_SetSpeedParameters, 9, 0x20000, 0x10000);
     Call3(ObjectMotion_Launch, 9, 6, 0);
     Call3(ObjectMotion_SetPositionAndCommit, 9, 64, 336);
@@ -51,14 +51,14 @@ void Func_02000208(void) {
 
       Call4(Func_02001068, 10, 94 << 16, 272 << 16, angle << 7);
     }
-    Call1(WaitTicks, 1);
+    Call1(WaitFrames, 1);
     Call3(ObjectMotion_SetSpeedParameters, 10, 0x20000, 0x10000);
     Call3(ObjectMotion_Launch, 10, 6, 0);
     Call3(ObjectMotion_SetPositionAndCommit, 10, 90, 288);
     Call3(ObjectMotion_SetPositionAndReset, 10, 80, 316);
     Call2(Func_020010b8, 10, 0);
     Object_GetById(9)->velocityY = 0x40000;
-    Call1(FieldEvent_WaitTicks, 10);
+    Call1(FieldEvent_WaitFrames, 10);
     Call1(Func_02001098, (s32)MsgWhereDoYouThink);
     Call2(Func_020010a8, 0x4009, 0);
     Value3(Func_020010c8, 10, 265, 0);

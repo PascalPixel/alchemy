@@ -10,7 +10,7 @@ s32 FieldLoop_RunFar(s32 entrance);
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
 void Monitor_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
-void Event_WaitTicksFar(s32 ticks);
+void Event_WaitFramesFar(s32 frames);
 /// Opens an event: closes any area name window, stops the leader and resets the
 /// message and timing state.
 void Event_StartFar(void);

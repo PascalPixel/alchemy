@@ -804,7 +804,7 @@ void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
       MapGrid_CopyMetatileIndicesRect(sourceX, (u16)sourceY, destinationX,
                                       destinationY, (u16)width, (u16)height);
       copyCommand++;
-      WaitTicks((u16)delay);
+      WaitFrames((u16)delay);
       sourceX = copyCommand->source;
       {
         u32 nextSourceCopy = sourceX;

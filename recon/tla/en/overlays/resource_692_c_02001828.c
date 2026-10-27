@@ -19,8 +19,8 @@ extern const s32 gData_0200502c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004d18(void);
@@ -60,14 +60,14 @@ void Func_02001828(void) {
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   ObjectMotion_SetPositionAndReset(gPartyState.currentOwner,
                                    position[0] >> 16, position[2] >> 16);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02004f30(584);
   flags = &leader->priorityFlags;
   *flags &= ~64;
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02004d10(0x10000, 0x20000, 0x10000);
   Func_02004f30(107);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   scene = gPartyState.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
     dstZ = 26;
@@ -127,7 +127,7 @@ void Func_02001828(void) {
   Func_02004cd8(srcX, srcZ, srcX, srcZ - 1, 3, 4);
   if (open == 0) {
     Func_02004d18();
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
   } else {
     Func_02004d10(0x20000, 0x10000, 0x10000);
     options.type = 403;
@@ -141,13 +141,13 @@ void Func_02001828(void) {
                       position[2] + (i << 18) + 0x170000, 0, 0x10000, 0,
                       0x330000, &options);
       }
-      WaitTicks(3);
+      WaitFrames(3);
       Func_02004cd8(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
     }
     for (i = 0; i != 64; i++) {
       REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
       REG_BLDCNT = 0x3f44;
-      WaitTicks(3);
+      WaitFrames(3);
     }
     Func_02004cd8(78, 64, dstX, dstZ, 3, 5);
   }
@@ -161,7 +161,7 @@ void Func_02001828(void) {
   Func_02004d18();
   Func_02004f30(584);
   *flags |= 64;
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;

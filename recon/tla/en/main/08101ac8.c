@@ -41,7 +41,7 @@ void Func_081019a4(struct DjinnList *list);
 s32 Func_08101a04(u32 entry);
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
 s32 UiWork_SetParamNibbleFar(s32 color);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
   struct DjinnMenuState *menu =
@@ -93,5 +93,5 @@ void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
   }
   tiles[3] = 1;
   tiles[6] = 0;
-  WaitTicks(3);
+  WaitFrames(3);
 }

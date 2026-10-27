@@ -302,7 +302,7 @@ BattleEffect_RunSleep:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #1
 	add r11, r0
 	mov r1, r11

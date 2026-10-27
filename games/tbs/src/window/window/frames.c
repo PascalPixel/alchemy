@@ -382,8 +382,8 @@ void BattleMessage_Open(s32 argument) {
 void BattleMessage_ShowAndWait(s32 argument) {
   BattleMessage_Open(argument);
   while (TextPrinter_AllFinished() == 0)
-    WaitTicks(1);
-  WaitTicks(1);
+    WaitFrames(1);
+  WaitFrames(1);
 }
 
 /// Types a message into an open window from its top left, keeping the window's
@@ -536,7 +536,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
 
   if (window != NULL) {
     while (TextPrinter_AllFinished() == 0) {
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     if (flags & 0x20) {
@@ -546,7 +546,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
     if (!(flags & 4)) {
       Window_Close(window, zoom);
       while (Window_IsClosed(window) == 0) {
-        WaitTicks(1);
+        WaitFrames(1);
       }
     }
   }
@@ -555,7 +555,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   state->waitingForSound = zero;
   state->voiceSound = zero;
   state->voiceCountdown = zero;
-  WaitTicks(3);
+  WaitFrames(3);
 }
 
 /// The window system's per-frame task: windows, then text printers,

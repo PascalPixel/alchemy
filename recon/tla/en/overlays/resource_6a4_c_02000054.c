@@ -11,8 +11,8 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z);
 void Func_02002b68(s32 sound);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_0200105c(struct ObjectRuntime *object);
 void AudioCommand_WaitForStateByteClear(void);
 
@@ -31,7 +31,7 @@ void Func_02000054(s32 mode) {
       rider->y += 0x7ae;
       rider->x += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   } else {
     Func_02002b68(556);
@@ -40,12 +40,12 @@ void Func_02000054(s32 mode) {
       rider->y += 0x7ae;
       rider->x += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   if ((u32)(mode - 2) > 1)
     return;
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_0200105c(left);
   Func_0200105c(right);
   Func_02002b68(522);
@@ -53,12 +53,12 @@ void Func_02000054(s32 mode) {
     Object_GetById(9)->y += 0x1999;
     Object_GetById(10)->y += 0x1999;
     rider->y += 0x1999;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_02002b68(390);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02002b68(80);
-  FieldEvent_WaitTicks(10);
+  FieldEvent_WaitFrames(10);
   AudioCommand_WaitForStateByteClear();
   left->motionFlags = 4;
   right->motionFlags = 4;

@@ -39,7 +39,7 @@ s32 Func_0801596c(void) {
   for (index = 0; index < 8; index++) {
     if ((u16)IdentifyFlash() == 0)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (index >= 8)
     return 1;

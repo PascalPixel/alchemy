@@ -818,7 +818,7 @@ Func_02000b64:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02003228
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
@@ -831,12 +831,12 @@ Func_02000b64:
 	movs r0, #20
 	bl Func_02003258
 	movs r0, #20
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, .L_02008cf8
 	ldr r3, .L_02008cd8
 	movs r0, #1
 	strh r3, [r5]
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #4
 	ldr r0, .L_02008cfc
 	movs r1, #0
@@ -848,7 +848,7 @@ Func_02000b64:
 	movs r0, #20
 	bl Func_02003258
 	movs r0, #20
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #9
@@ -887,7 +887,7 @@ Func_02000b64:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02003228
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	bl Object_GetById
 	adds r2, r0, #0
@@ -909,7 +909,7 @@ Func_02000b64:
 	str r6, [r2, #104]
 	bl Func_02002e6c
 	movs r0, #40
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -1030,7 +1030,7 @@ Func_02000b64:
 	str r5, [sp, #4]
 	bl Func_02003170
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #49
@@ -2570,7 +2570,7 @@ Func_020024e4:
 	b .L_ja_0200a648
 .L_ja_0200a592:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -2660,7 +2660,7 @@ Func_020024e4:
 	movs r3, #0
 	strh r3, [r2, #4]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_ja_0200a52c
 .L_ja_0200a648:
 	movs r3, #0
@@ -2792,7 +2792,7 @@ Func_020024e4:
 .L_0200a5ac:
 	movs r0, #1
 	adds r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #9
 	ble .L_0200a578
 	b .L_0200a6b8
@@ -2864,7 +2864,7 @@ Func_020024e4:
 	cmp r0, #0
 	blt .L_0200a648
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0200a6b8
 .L_0200a648:
 	movs r3, #1
@@ -2924,7 +2924,7 @@ Func_020024e4:
 	movs r3, #0
 	strh r3, [r2, #4]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0200a53e
 .L_0200a6b8:
 	movs r3, #0
@@ -3087,7 +3087,7 @@ Func_02002708:
 	movs r3, #0
 	strh r3, [r7, #4]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [r7, #108]
 	adds r3, #100
 	movs r2, #0
@@ -3097,7 +3097,7 @@ Func_02002708:
 .L_0200a820:
 	movs r5, #0
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	adds r0, r6, #0
 	str r5, [r6, #108]
 	movs r1, #0

@@ -12,7 +12,7 @@ s32 Func_020028b4();
 s32 Func_020029cc();
 s32 Engine_AudioPlayCue();
 s32 Object_SetModeById();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Object_GetById();
 s32 Func_02002884();
 s32 Func_02002864();
@@ -29,7 +29,7 @@ void Func_02000440(void) {
   Call1(Engine_AudioPlayCue, 0xa5);
   Call2(Object_SetModeById, 0xa, 3);
   Call2(Object_SetModeById, 0xb, 3);
-  Call1(FieldEvent_WaitTicks, 0x15);
+  Call1(FieldEvent_WaitFrames, 0x15);
   t7 = Value1(Object_GetById, 0xa);
   FIELD_AT((t7 + 0x55), u8, 0) = 0;
   FIELD_AT(t7, s32, 48) = 0x20000;

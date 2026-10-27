@@ -12,7 +12,7 @@ s32 Func_02005b94();
 s32 UiText_OpenMessageAtObject();
 void Camera_MoveWithinMapBounds();
 void Event_PrepareObjectAndApplyValue();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02005b0c();
 void Func_02005b4c();
 void Func_02005b64();
@@ -29,7 +29,7 @@ void ObjectMotion_SetSpeedParameters();
 void Object_LinkObjectAndSetCallback();
 void Object_SetActionCallbackAndRefreshById();
 void Object_SetModeById();
-void WaitTicks();
+void WaitFrames();
 void Func_02005a8c(void);
 void Func_02005bb4(void);
 s32 Func_02005bbc();
@@ -58,7 +58,7 @@ void Func_02001318(void) {
   Call3(ObjectMotion_ArmCallback, 7, 0xa000, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000, 0);
   Call2(Func_02005b9c, 7, 258);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Value2(Func_02005b6c, 0x2007, 0);
   Call2(Func_02005ba4, 0x6666, 0xccc);
   Call4(Camera_MoveWithinMapBounds, 0x600000, -1, 0x1740000, 1);
@@ -73,11 +73,11 @@ void Func_02001318(void) {
   Call3(Func_02005b0c, 26, 0x380000, 0x1740000);
   Call3(Func_02005b0c, 5, 0x380000, 0x1740000);
   Call3(Func_02005b0c, 6, 0x380000, 0x1740000);
-  Call1(WaitTicks, 1);
+  Call1(WaitFrames, 1);
   Call2(ObjectMotion_EnableActionAndSetCallback, 26, gData_02005f14);
   Call2(ObjectMotion_EnableActionAndSetCallback, 5, gData_02005f58);
   Call2(Object_SetActionCallbackAndRefreshById, 6, gData_02005f9c);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02005b64, 0x2007, 0);
   Value3(Func_02005b94, 5, 0x100, 20);
   Call2(Func_02005b64, 0x1005, 0);
@@ -245,7 +245,7 @@ void Func_02001318(void) {
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
   Call2(Func_02005b9c, 7, 258);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02005b64, 0x2007, 0);
   Value3(Func_02005b94, 6, 257, 0);
   Call2(Func_02005b64, 0x1006, 0);
@@ -290,7 +290,7 @@ void Func_02001318(void) {
   Value3(Func_02005b94, 7, 265, 40);
   Call2(Func_02005b64, 0x1007, 0);
   Call2(Func_02005b9c, 26, 258);
-  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Func_02005b64, 0x101a, 0);
   Call2(Motion_SetModeAndWaitAnimation, 7, 4);
   Call2(Func_02005b64, 0x1007, 0);
@@ -321,7 +321,7 @@ void Func_02001318(void) {
     Call2(Func_02005b64, 0x1006, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0);
     Call2(Func_02005b9c, gPartyState.currentOwner, 258);
-    Call1(FieldEvent_WaitTicks, 40);
+    Call1(FieldEvent_WaitFrames, 40);
     Func_02005c7c();
   }
   Value3(Func_02005b94, 7, 265, 40);

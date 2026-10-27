@@ -235,7 +235,7 @@ Func_08147aec:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #196
 	lsls r1, r1, #1
 	adds r1, #255
@@ -1142,7 +1142,7 @@ Func_08147aec:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -1150,7 +1150,7 @@ Func_08147aec:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #48]
 	adds r0, #1
 	str r0, [sp, #48]

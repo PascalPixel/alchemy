@@ -1490,7 +1490,7 @@ BattleEffect_RunMegiddo:
 	ldr r3, [r2]
 	cmp r3, #1
 	bls .L_08190aa8
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #92]
 	lsls r4, r4, #7
@@ -1499,7 +1499,7 @@ BattleEffect_RunMegiddo:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #84]
 	adds r0, #1
 	str r0, [sp, #84]

@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -252,7 +252,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Iwram_FillWords(canvas, 0x3c00, 0);
   Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
@@ -495,7 +495,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     Runtime_ReleaseHeapBlock(SLOT_ALT);
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Scheduler_RemoveCallback(Func_0813baec);
   gBgScroll[1].x = savedScroll;
@@ -516,7 +516,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   Iwram_FillWords(canvas, 0x4000, 0);
   Iwram_FillWords((void *)0x06004000, 0x4000, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
@@ -607,9 +607,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
       Func_08158ce0(r, r);
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   count = -1;
   transition[4] = 1;
@@ -617,7 +617,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Func_08164b2c(31, 31, 31);
   gBgScroll[1].x = 0;
   gCameraSceneParameters[4] = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_LoadAndDecompress(0xcd, work->sheet, 1, 0);
   Resource_LoadAndDecompress(0xc1, work->sheet + 0x400, 0, 0);
   Resource_LoadAndDecompress(0xca, work->sheet + 0x3840, 0, 0);
@@ -787,14 +787,14 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     MemFree(model);
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Iwram_FillWords((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gCameraSceneParameters[4] = 120;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  WaitTicks(1);
+  WaitFrames(1);
   work->transferMode = 3;
   work->transferValue = 0x02020202;
   Graphics_LoadGreyRamp();
@@ -802,7 +802,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   Func_081180e8(134);
   for (frame = 0; frame != 32; frame++) {
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);

@@ -8,7 +8,7 @@
 // Draft, differ 56 of 458 (2026-10-18): a dozen load-earlier schedules (the
 // lane's near misses), and the branch offsets they move: the native
 // function is four bytes longer, its page-arrow case placing its literal pool
-// after the frame-tick load, where this places it before.
+// after the VBlank count's load, where this places it before.
 // ☀️'s UiWork_AnimateSpriteSlots with this game's sprite modes (no
 // pulse; four hops; an off-screen test for mode 19).
 #include "types.h"
@@ -53,7 +53,7 @@ struct PopTransform {
   u32 unk06 : 16;
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern const u8 Data_0805ec84[];
 extern const u8 gUiSprite_CursorBobOffsets[];
 extern const s8 gUiSprite_WobbleOffsets[][2];
@@ -82,7 +82,7 @@ void UiWork_AnimateSpriteSlots(void) {
     if (!(window->flags & 1))
       continue;
     output = (struct AnimOutput *)window->output.head;
-    while (phase = (gFrameTick >> 2) & 7, output != NULL) {
+    while (phase = (gVBlankCount >> 2) & 7, output != NULL) {
       struct AnimSprite *sprite = &output->attr;
 
       switch (output->active) {
@@ -98,13 +98,13 @@ void UiWork_AnimateSpriteSlots(void) {
           sprite->size = 0;
           sprite->shape = 2;
           sprite->y =
-              output->y + gUiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+              output->y + gUiSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
           sprite->affineIndex = 0;
           sprite->affine = 0;
         }
         break;
       case 5:
-        if (gFrameTick & 1) {
+        if (gVBlankCount & 1) {
           sprite->x =
               output->x +
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
@@ -143,7 +143,7 @@ void UiWork_AnimateSpriteSlots(void) {
             output->y - (Trig_Cos(effect.plain.angle + 0x6800) >> 14) - 2;
         break;
       case 4:
-        if (gFrameTick & 1)
+        if (gVBlankCount & 1)
           output->animStep++;
         sprite->x =
             output->x + gUiSprite_WobbleOffsets[output->animStep % 20][0];

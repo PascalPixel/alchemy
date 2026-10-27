@@ -37,7 +37,7 @@ void Func_0810857c(s32 message);
 void Func_081084f4(s32 message);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Func_081095b0(void *window, s32 unitId, s32 item);
 s32 Inventory_AddItemFar(s32 unitId, s32 item);
@@ -74,7 +74,7 @@ void Func_0810a490(void *window, void *itemWindow) {
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
-        WaitTicks(1);
+        WaitFrames(1);
       }
       Func_0810928c(window, memberIndex, shop->selectedItem);
       Func_081095b0(itemWindow, unitId, shop->selectedItem);
@@ -105,7 +105,7 @@ void Func_0810a490(void *window, void *itemWindow) {
       break;
     } else {
       redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   shop->selectedItem = savedSelectedItem;

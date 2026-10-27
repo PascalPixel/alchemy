@@ -58,7 +58,7 @@ Func_081a06e0:
 .L_081a0754:
 	.4byte gAutoSleepEnabled
 .L_081a0758:
-	.4byte DisplayScroll_StepPositionEveryFourFrames
+	.4byte DisplayScroll_StepPositionEveryFourVBlanks
 .L_081a075c:
 	.4byte 0x06007800
 .L_081a0760:
@@ -88,7 +88,7 @@ Func_081a06e0:
 	bne .L_081a0852
 	bl Func_081a0a70
 	movs r0, #60
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #128
 	lsls r1, r1, #19
 	movs r0, #0
@@ -140,7 +140,7 @@ Func_081a06e0:
 	movs r0, #1
 	str r1, [sp, #4]
 	str r2, [sp, #0]
-	bl WaitTicks
+	bl WaitFrames
 	adds r5, #1
 	ldr r1, [sp, #4]
 	ldr r2, [sp, #0]
@@ -171,7 +171,7 @@ Func_081a06e0:
 	cmp r3, #2
 	beq .L_081a087c
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #0
 	ldrsh r3, [r6, r0]
 	cmp r3, #0
@@ -199,7 +199,7 @@ Func_081a06e0:
 	mov r8, r2
 .L_081a086a:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #0
 	ldrsh r3, [r5, r1]
 	cmp r3, r8

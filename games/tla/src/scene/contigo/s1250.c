@@ -16,6 +16,6 @@ void Func_02001250(void) {
   } while (0);
   gPartyState.unk2c2 = 2;
   Func_020041ac((s32)&SceneId_Ov6B0Room1, 99);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02000158();
 }

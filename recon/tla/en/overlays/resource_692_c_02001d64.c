@@ -12,8 +12,8 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02004e90(s32 value);
 void Func_02004da0(s32 id, s32 x, s32 z);
 
@@ -53,7 +53,7 @@ void Func_02001d64(void) {
   Func_02004e90(0);
   Func_02004f30(107);
   Func_02004d10(0x30000, 0x30000, 0x10000);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Camera_MoveWithinMapBounds(194 << 18, -1, 136 << 17, 1);
   Func_02004e20();
   options.type = 403;
@@ -96,15 +96,15 @@ void Func_02001d64(void) {
       Object_GetById(12)->update = Func_02001d04;
       Func_02004d10(-1, -1, 0xe666);
     }
-    WaitTicks(3);
+    WaitFrames(3);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(12);
   Func_02004d18();
   Func_02004f30(288);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   GameFlag_SetBit(2552);
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02004e20();
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02004d48();
 }

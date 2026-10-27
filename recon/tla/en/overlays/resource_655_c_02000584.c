@@ -14,7 +14,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -69,16 +69,16 @@ void Func_02000584(u16 *list) {
   Call2((void (*)())Func_02003c78, 8, gPartyState.currentOwner);
   Call2((void (*)())Func_02003c78, 9, gPartyState.currentOwner);
   Call2((void (*)())Func_02003c78, 10, gPartyState.currentOwner);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_0200056c, 8);
   Call1((void (*)())Func_0200056c, 9);
   Call1((void (*)())Func_0200056c, 10);
   Call2((void (*)())Object_SetModeById, 9, 0);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   Call3((void (*)())Func_02003c68, 8, 0, 0);
   Call3((void (*)())Func_02003c68, 9, 0, 0);
   Call3((void (*)())Func_02003c68, 10, 0, 0);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   goto test;
 next:
   {
@@ -110,5 +110,5 @@ next:
 test:
   if (*list != 0xffff)
     goto next;
-  Call1((void (*)())WaitTicks, 10);
+  Call1((void (*)())WaitFrames, 10);
 }

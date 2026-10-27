@@ -27,7 +27,7 @@ void Func_02001ef8();
 void Func_02001e48();
 void Func_02001ed0();
 void ObjectDispatch_SetSingleChildFlags();
-void WaitTicks();
+void WaitFrames();
 void Camera_MoveWithinMapBounds();
 struct FieldActor *Func_02001ea8();
 void Func_02001dd8();

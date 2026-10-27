@@ -7,7 +7,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Func_020014bc(s32 mode, s32 cue);
 void Func_02003aec(void);
@@ -63,7 +63,7 @@ void Func_02001b44(void) {
     Func_02003bcc(0);
     Object_GetById(party->currentOwner)->motionFlags = 0;
     ObjectMotion_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
-    FieldEvent_WaitTicks(5);
+    FieldEvent_WaitFrames(5);
     Func_02003c54(123);
     Func_02003b7c(2);
     Func_02003af4();

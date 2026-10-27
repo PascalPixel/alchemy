@@ -9,8 +9,8 @@ extern u8 MsgImilVoicesDisbeliefReply[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -38,7 +38,7 @@ void Func_020001b0(void) {
   Func_02000568();
   Func_020005f8(0);
   Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
-  WaitTicks(1);
+  WaitFrames(1);
   gData_020007e4 = 0;
   Scheduler_AddOrUpdateCallback(Func_020000f4, 0x480);
   ObjectMotion_SetActionVariant(8, 2);
@@ -46,7 +46,7 @@ void Func_020001b0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Call2((void (*)())Func_02000600, 13, 14);
   Func_02000598(MsgImilVoicesDisbeliefReply);
   Call2((void (*)())Func_020005a0, 3, 0);
@@ -120,9 +120,9 @@ void Func_020001b0(void) {
   Call2((void (*)())Func_02000600, 13, 14);
   Call2((void (*)())Func_020005a0, 6, 0);
   Func_02000608();
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   *(u16 *)0x05000000 = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 16;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x201;
   Event_FinishScreenTransition();

@@ -766,7 +766,7 @@ BattleEffect_RunDaedalus:
 	movs r7, #1
 	str r7, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #140]
 	adds r4, #1
 	str r4, [sp, #140]
@@ -3698,7 +3698,7 @@ BattleEffect_RunDaedalus:
 	subs r3, #1
 	str r3, [r4]
 .L_081806b4:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	lsls r3, r3, #7
 	adds r3, #232
@@ -3706,7 +3706,7 @@ BattleEffect_RunDaedalus:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #140]
 	movs r7, #200
 	adds r4, #1
@@ -4385,7 +4385,7 @@ BattleEffect_RunDaedalus:
 	movs r0, #8
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -4393,7 +4393,7 @@ BattleEffect_RunDaedalus:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [sp, #140]
 	adds r3, #1
 	str r3, [sp, #140]

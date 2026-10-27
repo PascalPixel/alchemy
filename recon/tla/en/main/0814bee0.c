@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -200,7 +200,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;
@@ -209,7 +209,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitTicks(1);
+  WaitFrames(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
   REG_BG2X = skip;
   REG_BG2PA = 0x80;
@@ -495,10 +495,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
     }
   next:
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     if (!(frame & 1) || !skip) {
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -224,9 +224,9 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *args) {
         BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
                                i, 8);
     }
-    BattleAnim_TickBattlerTints();
+    BattleAnim_CountDownBattlerTints();
     work->transferPending = transparent;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.

@@ -23,7 +23,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Func_02000690(u32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02005d5c(struct ObjectRuntime *object, s32 mode);
@@ -58,7 +58,7 @@ void Func_02000988(void) {
       rise += 0x1999;
     leader->angle = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_02005f94(0x120);
   if (gPartyState.scene == (s32)&SceneId_Ov664Room1 && leader->x >> 19 == 39) {
@@ -102,7 +102,7 @@ void Func_02000988(void) {
                        255)
         goto found;
       i++;
-      WaitTicks(1);
+      WaitFrames(1);
     } while (i != 60);
     dx = 0;
     leader->angle = 0xc000;
@@ -128,7 +128,7 @@ void Func_02000988(void) {
     leader->y = height;
     leader->terrainHeight = height;
     Func_02005d5c(leader, 6);
-    WaitTicks(6);
+    WaitFrames(6);
     Func_02005f94(152);
     Func_02005d5c(leader, 7);
     leader->speedLimit = 0x20000;
@@ -164,6 +164,6 @@ void Func_02000988(void) {
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02005ee4();
   GameFlag_ClearBit(0x250);
-  WaitTicks(10);
+  WaitFrames(10);
   Func_02005e1c();
 }

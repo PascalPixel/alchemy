@@ -4,7 +4,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
@@ -36,18 +36,18 @@ loop:
     Func_02003df8(185);
     Call3((void (*)())Func_02003c00, 0x10000, 0x40000, 0x10000);
     Func_02000974(0);
-    WaitTicks(8);
+    WaitFrames(8);
     Func_02003ba0(object, 2);
     Func_02000bc0(-4, object->terrainId, id);
     Func_02000974(1);
-    WaitTicks(16);
+    WaitFrames(16);
     Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
-    WaitTicks(8);
+    WaitFrames(8);
     Object_SetPositionAndResetMotion(object, 0, 0, 0);
-    WaitTicks(2);
+    WaitFrames(2);
     Func_02003df8(188);
     Func_02000aa8();
-    WaitTicks(20);
+    WaitFrames(20);
     GameFlag_SetBit(flag);
     GameFlag_SetBit(flag + 1);
   }

@@ -41,7 +41,7 @@ void Actor_WaitForMove(void *actor) {
 
   waitedFrames = 0;
   while (waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     waitedFrames++;
   }
 }

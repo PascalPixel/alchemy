@@ -117,7 +117,7 @@ void Func_08118088(s32 actor,
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
@@ -183,7 +183,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   REG_WININ = 0x2737;
   REG_WIN0H = 0xf0;
   REG_WIN1V = 0x1088;
-  WaitTicks(1);
+  WaitFrames(1);
 
   // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
@@ -383,9 +383,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Func_081180e8(PHASE_SUMMON_RESULTS);

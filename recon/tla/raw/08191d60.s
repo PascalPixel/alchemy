@@ -93,7 +93,7 @@ BattleEffect_RunMoloch:
 	str r4, [sp, #24]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #128
 	lsls r1, r1, #2
 	movs r0, #12
@@ -934,7 +934,7 @@ BattleEffect_RunMoloch:
 	movs r0, #4
 	movs r1, #8
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -944,7 +944,7 @@ BattleEffect_RunMoloch:
 	movs r0, #1
 	str r3, [r2]
 	add r9, r4
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #148
 	lsls r0, r0, #1
 	cmp r9, r0

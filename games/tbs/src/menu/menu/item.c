@@ -109,7 +109,7 @@ s32 ItemMenu_Run(void) {
   cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_ACTOR_SYSTEM];
   ((struct ActorSystemWork *)cache[0])->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_InitializeWork(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
@@ -156,10 +156,10 @@ s32 ItemMenu_Run(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
   ((struct WindowWork *)*process)->holdTilemapUpload = 0;
   Free(backup);
-  WaitTicks(1);
+  WaitFrames(1);
   Menu_ResumeFieldTasks();
 #endif
-  WaitTicks(1);
+  WaitFrames(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)*process)->holdTilemapUpload = 0;
   Event_ClearInvalidPackedValuesFar();
@@ -485,7 +485,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_RefreshMember(menu->sideMember[0], 0);
         menu->selectedItemIcon->motion = ICON_HIDDEN;
         menu->sideIcons[0]->motion = ICON_HIDDEN;
-        WaitTicks(1);
+        WaitFrames(1);
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgDroppedIt, ITEM_MODAL_SHORT_X, 13);
         menu->completionFlag = 1;
@@ -584,7 +584,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       ItemMenu_RefreshMember(menu->sideMember[1], 1);
       menu->sideIcons[0]->motion = ICON_HIDDEN;
-      WaitTicks(1);
+      WaitFrames(1);
       // Say how it went: the receiver's stack was full, the item was given,
       // or it was given and equipped (ItemMenu_ConfirmEquip returned 0).
       if (transferFailed == 1) {
@@ -702,7 +702,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedSlots[0] = result;
         targetQuantity--;
       }
-      WaitTicks(1);
+      WaitFrames(1);
       if (transferFailed == 1) {
         Item_CopyWords(ITEM_IWRAM_COPY_WORDS, sourceUnit, sourceCopy,
                        BATTLE_UNIT_SIZE);
@@ -778,7 +778,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->itemCount = ItemMenu_CollectItems(Unit_GetFar(menu->sideMember[0]),
                                               menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
-      WaitTicks(1);
+      WaitFrames(1);
       ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
                                 menu->sideMember[0]);
       WindowSprite_ClearListFar(menu->descriptionWindow);
@@ -803,7 +803,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->itemCount = ItemMenu_CollectItems(Unit_GetFar(menu->sideMember[0]),
                                               menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
-      WaitTicks(1);
+      WaitFrames(1);
       // Show the stats as they are without it.
       menu->equipPreview = 1;
       ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0], 0,
@@ -997,7 +997,7 @@ void ItemMenu_Close(void) {
   menu = gMenuWork;
   Menu_ReleaseEntryActors();
   ItemMenu_HideAllIcons();
-  WaitTicks(1);
+  WaitFrames(1);
   cursor = menu->cursor;
   cursor->motion = ICON_HIDDEN;
   Window_CloseIfOpen(&menu->mainWindow, 1);
@@ -1035,7 +1035,7 @@ s32 ItemMenu_SelectMember(s32 side) {
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
   Icon_PrepareActor(menu->sideIcons[side]);
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 
@@ -1110,7 +1110,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
         menu->memberY[memberIndex] = 30;
       menu->memberY[selection] = 26;
     }
-    WaitTicks(1);
+    WaitFrames(1);
     // L + A sorts, cycling through the four sort orders.
     if (gKeysPressed & KEY_A) {
       if (gKeysHeld & KEY_L) {
@@ -1270,7 +1270,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       }
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
-    WaitTicks(1);
+    WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       if (mode == ITEM_TARGET_GIVE && memberIndex == menu->sideIndex[0]) {
         Sound_PlaySongFar(SE_MENU_ERROR);
@@ -1303,7 +1303,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Icon_PrepareActor(targetMarker);
   targetMarker->motion = ICON_HIDDEN;
   EquipmentMenu_StopCompatibilityIndicators();
-  WaitTicks(1);
+  WaitFrames(1);
   menu->sideIndex[1] = memberIndex;
   menu->selectedMember = menu->memberIds[memberIndex];
   menu->sideMember[1] = menu->memberIds[memberIndex];
@@ -1792,7 +1792,7 @@ s32 ItemMenu_ChooseCommand(void) {
 #else
     MenuCursor_Position(column * 40 + 86, row * 8 + 30);
 #endif
-    WaitTicks(1);
+    WaitFrames(1);
 
     if ((gKeysPressed & KEY_A) != 0) {
       if (commandStates[commandIndex] == ITEM_COMMAND_STATE_DISABLED) {
@@ -2082,7 +2082,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
     cursor->motion = ICON_HIDDEN;
   }
   Palette_LoadIconsIntoHighlight();
-  WaitTicks(1);
+  WaitFrames(1);
 
   for (;;) {
     if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) != 0)
@@ -2109,12 +2109,12 @@ s32 ItemMenu_ShowDetails(s32 value) {
       counter += 1;
       changed = 1;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Close the window and bring the menu back.
   WindowSprite_RedrawSavedRectFar(window);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_CloseFar((void *)window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
@@ -2528,7 +2528,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         changed = 1;
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   WindowSprite_RedrawSavedRectFar(window);
@@ -2609,7 +2609,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       changed = 1;
       Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     selection = 1;
@@ -2693,7 +2693,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         changed = 1;
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
@@ -2770,7 +2770,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
   pageState->selectedIndex = index;
 
   MENU_RESET_DESCRIPTION_WINDOW(menu->descriptionWindow);
-  WaitTicks(1);
+  WaitFrames(1);
 
   index = pageState->selectedIndex;
   if (menu->items[index] != 0) {
@@ -2790,7 +2790,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
     row++;
   } while (row < LIST_PAGE_SIZE);
 
-  WaitTicks(1);
+  WaitFrames(1);
   return 1;
 }
 
@@ -2894,7 +2894,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           Icon_PrepareActor(icon);
         }
         if (redraw != 0) {
-          WaitTicks(1);
+          WaitFrames(1);
           ItemMenu_DrawNamePage(window, 0, &state);
           if (sideIndex == 0) {
             Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
@@ -2933,7 +2933,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         }
       }
 
-      WaitTicks(1);
+      WaitFrames(1);
       previous = state.selectedIndex;
       moved = PagedList_HandleInput(0, state.entryCount, LIST_PAGE_SIZE,
                                     &state.row, &state.page);
@@ -2965,7 +2965,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (sideIndex == 1) {
           Sound_PlaySongFar(SE_MENU_ERROR);
-          WaitTicks(1);
+          WaitFrames(1);
         } else {
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           menu->selectedIndexByMember[menu->sideMember[sideIndex]] =
@@ -3003,7 +3003,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 

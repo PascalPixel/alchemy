@@ -537,7 +537,7 @@ s32 Field_ExamineCell(s32 tile) {
               PartyStatus_CloseFar();
               Actor_SelectAnimationFar(object, 2);
               Sound_PlaySongFar(SE_GLITTER);
-              Event_WaitTicks(30);
+              Event_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, FIELD_MESSAGE_ZOOM);
               TreasureSpot_Hide(tile);
               if (condition != -1)
@@ -571,7 +571,7 @@ s32 Field_ExamineCell(s32 tile) {
 
               object = FieldEffect_StartRandomParticleEmitter(
                   gCommon.leaderActorId, 0);
-              WaitTicks(30);
+              WaitFrames(30);
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
@@ -592,7 +592,7 @@ s32 Field_ExamineCell(s32 tile) {
 
               object = FieldEffect_StartRandomParticleEmitter(
                   gCommon.leaderActorId, trigger->value & 0xfff);
-              WaitTicks(30);
+              WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
               // messageOffset is reused here as the item id's 0xffff mask.
               messageOffset = 0xffff;

@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Runtime_AllocateHeapBlockFar
 	.thumb_func
 Runtime_AllocateHeapBlockFar:
@@ -86,10 +86,10 @@ Func_02001d88:
 	.thumb_func
 Func_02001d90:
 	overlay_veneer Func_08038248
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001da0
 	.thumb_func
 Func_02001da0:

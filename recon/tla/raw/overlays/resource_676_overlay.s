@@ -1776,7 +1776,7 @@ Func_02001944:
 	bl Object_GetById
 	str r5, [r0, #108]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #204
 	lsls r2, r2, #8
 	movs r0, #9
@@ -1886,7 +1886,7 @@ Func_02001944:
 	movs r0, #5
 	bl Func_020024f8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #224
 	ldr r0, [r5]
 	lsls r1, r1, #8
@@ -2014,7 +2014,7 @@ Func_02001944:
 	adds r6, r7, #0
 	movs r0, #1
 	adds r6, #100
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #0
 	ldrsh r3, [r6, r2]
 	cmp r3, #34
@@ -2022,7 +2022,7 @@ Func_02001944:
 	movs r3, #2
 	strh r3, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	movs r1, #0
 	bl Func_02002538
@@ -2030,7 +2030,7 @@ Func_02001944:
 	strh r3, [r5]
 .L_02009be6:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #0
 	ldrsh r3, [r6, r2]
 	cmp r3, #42
@@ -2038,7 +2038,7 @@ Func_02001944:
 	movs r3, #2
 	strh r3, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	movs r1, #0
 	bl Func_02002538
@@ -2046,7 +2046,7 @@ Func_02001944:
 	strh r3, [r5]
 .L_02009c0a:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #0
 	ldrsh r3, [r6, r2]
 	cmp r3, #108
@@ -2054,7 +2054,7 @@ Func_02001944:
 	movs r3, #3
 	strh r3, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #8
 	movs r1, #0
 	bl Func_02002538
@@ -2123,7 +2123,7 @@ Func_02001944:
 	movs r0, #123
 	bl Func_020025a0
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	bl Func_02002578
 .L_02009cd6:
@@ -2200,7 +2200,7 @@ Func_020022f8:
 	subs r3, r3, r7
 	strh r3, [r2, #18]
 	subs r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r7, #40
 	cmp r5, #0
 	bge .L_0200a33c
@@ -2222,14 +2222,14 @@ Func_020022f8:
 	subs r3, r3, r7
 	strh r3, [r2, #18]
 	subs r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r7, #40
 	cmp r5, #0
 	bge .L_0200a36a
 	adds r0, r6, #0
 	bl Func_02002458
 	movs r0, #2
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #240
 	bl Func_020025a0
 	movs r5, #0

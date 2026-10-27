@@ -17,7 +17,7 @@ static void Vault_ReturnIsaacsDjinni(void) {
 #else
 static s32 Vault_ReturnIsaacsDjinni(void) {
 #endif
-  DjinnRecovery_TickTwenty();
+  DjinnRecovery_CountDownTwenty();
   if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] & 1) != 0) {
     Djinn_Transfer(IVAN, ELEMENT_VENUS, 0, ISAAC);
     Sound_PlaySong(SE_RECOVERY);

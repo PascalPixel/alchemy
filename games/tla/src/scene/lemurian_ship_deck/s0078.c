@@ -13,7 +13,7 @@ void Func_0200207c(s32 a);
 void Func_02001f2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 s32 ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -55,7 +55,7 @@ void Func_02000078(void) {
     Object_SetModeById(gPartyState.currentOwner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
     ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -4);
-    FieldEvent_WaitTicks(8);
+    FieldEvent_WaitFrames(8);
     Func_020020d4(123);
     Func_0200207c(*(s16 *)(work + 0x154));
     Event_FinishScreenTransition();

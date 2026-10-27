@@ -7,12 +7,12 @@ void Func_02002830(void) {
 
   Func_02003eec(9, gPartyState.currentOwner);
   Func_02003edc(10, 0x1110000, 0x2080000);
-  WaitTicks(1);
+  WaitFrames(1);
   object->angle = 0xc000;
   owner->update = (void (*)(void))Func_02001278;
   Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
   Object_SetModeById(9, 3);
-  WaitTicks(1);
+  WaitFrames(1);
   work = Ram_HeapSlots->eventWork;
   work->field1ac = 0x201;
   Event_StartScreenTransition();

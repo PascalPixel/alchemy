@@ -42,9 +42,9 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
-/// Runs each frame as a task (priority TASK_PASS_VBLANK + 0x7e) that
+/// Runs each VBlank as a task (priority TASK_PASS_VBLANK + 0x7e) that
 /// BattleAnim_RunParticleStreams adds for its rise and removes after it; the
-/// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
+/// rise rewrites the 160 colours, its heat lines, every VBlank. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
 void BattleAnim_ArmPaletteHBlankDma(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
@@ -225,7 +225,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
           REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
@@ -501,7 +501,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       frame++;
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
-    WaitTicks(1);
+    WaitFrames(1);
     view->busy = 0;
     Task_Remove(BattleAnim_AdvanceBg2OnInterval);
     Task_Remove(BattleAnim_ArmPaletteHBlankDma);

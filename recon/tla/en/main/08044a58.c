@@ -85,12 +85,12 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
 
     do {
       Runtime_PushSlotEntry(entry, 250);
-      WaitTicks(1);
+      WaitFrames(1);
     } while (Audio_Check() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | 0x300)) == 0);
 
     UiWork_Finalize(window, 2);
-    WaitTicks(1);
+    WaitFrames(1);
     Resource_ResetEntry(handle);
   }
 }

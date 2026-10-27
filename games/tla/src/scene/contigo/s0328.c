@@ -8,7 +8,7 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000158(void);
@@ -38,11 +38,11 @@ void Func_02000328(void) {
   Event_WaitTransitionFrames();
   Func_02000178();
   Func_02004284();
-  WaitTicks(40);
+  WaitFrames(40);
   Func_02000158();
   Func_020041cc_(0x10000, 1);
   Func_020041dc(16);
-  WaitTicks(16);
+  WaitFrames(16);
   {
     struct PartyState *party = &gPartyState;
 

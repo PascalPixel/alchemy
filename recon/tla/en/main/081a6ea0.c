@@ -48,8 +48,8 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-void WaitTicks(s32 ticks);
-s32 Title_WaitTicksOrPress(u32 frames);
+void WaitFrames(s32 frames);
+s32 Title_WaitFramesOrPress(u32 frames);
 s32 Func_081a68b4(struct TitleScroll *s);
 void Func_081a6b50(void);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
@@ -73,17 +73,17 @@ s32 Func_081a6ea0(void) {
   Resource_DecodeByteLzInRam(source + 32, gMapCellBuffer);
   Dma_Set(gMapCellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00, REG_DMA3);
-  WaitTicks(1);
+  WaitFrames(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
   Dma_Set(source, (void *)0x05000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   *(volatile u16 *)0x05000000 = 0x7fff;
-  WaitTicks(1);
+  WaitFrames(1);
   source += 0x200;
   Resource_DecodeByteLzInRam(source, gMapCellBuffer);
   Dma_Set(gMapCellBuffer, (void *)0x06000000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
-  WaitTicks(1);
+  WaitFrames(1);
 
   map = (u16 *)0x0600f800;
   tile = 0;
@@ -104,7 +104,7 @@ s32 Func_081a6ea0(void) {
   }
   Dma_Set(Ram_HeapSlots->block32, (void *)0x05000000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
-  WaitTicks(1);
+  WaitFrames(1);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x1240;
   PaletteFade_Start(10);
@@ -160,16 +160,16 @@ s32 Func_081a6ea0(void) {
   scroll.step = -5;
   scroll.frames = 1;
   if (!Func_081a68b4(&scroll))
-    Title_WaitTicksOrPress(120);
+    Title_WaitFramesOrPress(120);
   goto done;
 stopped:
   PaletteFade_SetTarget(0, 0);
   PaletteFade_Start(10);
-  WaitTicks(10);
+  WaitFrames(10);
 done:
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
   Scheduler_RemoveCallback(Func_081a6b50);
   Runtime_ReleaseHeapBlock(172);
-  WaitTicks(1);
+  WaitFrames(1);
   return 1;
 }

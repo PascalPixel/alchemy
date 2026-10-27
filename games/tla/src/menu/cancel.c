@@ -38,7 +38,7 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
   return 1;
 }
 
-void Menu_CancelSoundTick(void) {
+void Menu_UpdateCancelSound(void) {
   u32 frame;
   u32 *wait;
   struct InputState *input;
@@ -56,7 +56,7 @@ void Menu_CancelSoundTick(void) {
   if (input->pressed & mask) {
     Audio_PlayCue(113);
     GameFlag_SetBit(0x150);
-    Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
+    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateCancelSound));
   }
   wait = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
   while ((wait = (u32 *)*wait) != 0)
@@ -65,12 +65,12 @@ void Menu_CancelSoundTick(void) {
 
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearBit(0x150);
-  Scheduler_AddOrUpdateCallback((s32)Menu_CancelSoundTick, 0x480);
+  Scheduler_AddOrUpdateCallback((s32)Menu_UpdateCancelSound, 0x480);
 }
 
 void Menu_EnsureCancelSound(void) {
   if (GameFlag_Test(0x150) == 0) {
-    Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
+    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateCancelSound));
   }
 }
 

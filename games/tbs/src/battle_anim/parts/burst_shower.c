@@ -369,7 +369,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *args, s32 mode) {
     // In the grey mode the flash timers never run down, so the targets stay
     // black.
     if (mode != BURST_SHOWER_MODE_GREY) {
-      BattleAnim_TickBattlerTints();
+      BattleAnim_CountDownBattlerTints();
     }
     ANIM_PRESENT_FRAME(work);
     frame += 1;

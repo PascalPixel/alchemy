@@ -34,7 +34,7 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Camera_FollowActor();
 s32 ObjectMotion_SetPositionAndReset();
 s32 Func_020058ec();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 ObjectMotion_ArmCallback();
 s32 Func_020058dc();
 s32 ObjectMotion_OffsetPositionAndReset();
@@ -127,7 +127,7 @@ void Func_02001388(void) {
   Func_020058fc(5, 0x102, 0x1e);
   Call3(Func_020058d4, 5, 0, 0);
   Call2(Func_020058ec, 7, 0x4000);
-  Call1(FieldEvent_WaitTicks, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Call3(Func_020058d4, 7, 0, 0);
   Call2(Func_020058ec, 0x1c, 0x6000);
   Func_020058fc(0x1c, 0x107, 0x1e);
@@ -136,16 +136,16 @@ void Func_02001388(void) {
   ObjectMotion_ArmCallback(0x1c, slow, 0);
   Func_020058ec(0x1b, slow);
   Call2(Func_020058ec, 5, fast);
-  Call1(FieldEvent_WaitTicks, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Call2(Func_020058dc, 5, 0);
   Call3(ObjectMotion_OffsetPositionAndReset, 5, -8, -24);
   Call2(Func_020058ec, 4, slow);
   Call2(Object_SetModeById, 4, 3);
-  Call1(FieldEvent_WaitTicks, 0x14);
+  Call1(FieldEvent_WaitFrames, 0x14);
   Call3(ObjectMotion_ArmCallback, 7, fast, 0);
   Call2(Func_020058ec, 4, fast);
   Call2(Func_020058ec, 5, fast);
-  Call1(FieldEvent_WaitTicks, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Call3(ObjectMotion_OffsetPositionAndResetMotion, 4, -16, -8);
   Call3(ObjectMotion_OffsetPositionAndResetMotion, 7, -16, -8);
   Call3(ObjectMotion_OffsetPositionAndResetMotion, 5, -16, -8);
@@ -161,7 +161,7 @@ void Func_02001388(void) {
   FIELD_AT(t69, s32, 40) = 0x40000;
   t70 = Value1(Object_GetById, 0x1c);
   FIELD_AT(t70, s32, 40) = 0x40000;
-  Call1(FieldEvent_WaitTicks, 4);
+  Call1(FieldEvent_WaitFrames, 4);
   if (FIELD_AT(gPartyState, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }

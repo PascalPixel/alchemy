@@ -35,22 +35,22 @@ struct Object {
   u16 rest22 : 2;
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern s32 gUi_ObjectPulseScales[];
 s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 
 void Ui_ApplyTableScaleToObject(struct Object *obj) {
   s32 v;
-  u32 *tick = &gFrameTick;
+  u32 *vblankCount = &gVBlankCount;
   u32 source;
   struct Effect effect;
 
   v = (s32)gUi_ObjectPulseScales;
-  /* FAKEMATCH: the empty asm holds both addresses: the native loads the tick
-   * address and the table before it reads the tick and builds the mask 7 (two
-   * reordered rows). */
-  __asm__("" : "+l"(tick), "+l"(v));
-  v = *(s32 *)(v + (((*tick >> 1) & 7) << 2));
+  /* FAKEMATCH: the empty asm holds both addresses: the native loads the
+   * count's address and the table before it reads the count and builds the mask
+   * 7 (two reordered rows). */
+  __asm__("" : "+l"(vblankCount), "+l"(v));
+  v = *(s32 *)(v + (((*vblankCount >> 1) & 7) << 2));
 
   if (v < 0)
     v += 255;

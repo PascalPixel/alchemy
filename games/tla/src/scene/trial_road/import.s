@@ -21,7 +21,7 @@ __umodsi3:
 	.global Task_Wait
 	.thumb_func
 Task_Wait:
-	overlay_veneer WaitTicksFar
+	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -186,10 +186,10 @@ Func_02005868:
 	.thumb_func
 Func_02005870:
 	overlay_veneer Func_080ad308
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02005880
 	.thumb_func
 Func_02005880:

@@ -5,7 +5,7 @@ void Func_02000e60(void) {
   Func_02001ee8(0);
   GabombaStatueChamber_CamMove(0x1880000, -1, 0x780000, 1);
   Func_02001ea8();
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02001e48((s32)MsgIHaveFollowed);
   GabombaStatueChamber_ObjEmoteWait(10, 0x102);
   Func_02001e60(10, 0);

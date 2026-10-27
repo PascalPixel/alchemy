@@ -49,7 +49,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     transition->targetYaw = action->unitId > 4 ? 0x5000 : 0x2000;
     transition->frames = 60;
   }
-  WaitTicks(10);
+  WaitFrames(10);
   Random16();
   actorRecord = BattleObject_Get(actorId)->object;
 
@@ -66,13 +66,13 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
       Object_SetMode(actorRecord, 3);
   }
 
-  WaitTicks(30);
+  WaitFrames(30);
   REG_BLDCNT = 0x3f40;
   for (index = 0; index != sideCount; index++)
     BattlePres_SetActorRecordMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = (16 - index) | 0x1000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   PartyStatus_DrawFar(9);
 
@@ -104,18 +104,18 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     context.side = 0;
   BattleEffect_RunSceneEffectFar((s32 *)&context);
 
-  WaitTicks(10);
+  WaitFrames(10);
   BattleObject_Put();
   REG_BLDCNT = 0x3f40;
   for (index = 0; index != sideCount; index++)
     BattlePres_SetActorRecordMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = index | 0x1000;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   for (index = 0; index != sideCount; index++)
     BattlePres_SetActorRecordMode(index + sideStart, 0);
   BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
-  WaitTicks(3);
+  WaitFrames(3);
   return 0;
 }

@@ -289,7 +289,7 @@ Func_0200057c:
 .L_0200879a:
 	movs r0, #1
 	adds r7, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r7, #45
 	bne .L_020086f0
 	ldr r3, .L_02008844
@@ -385,11 +385,11 @@ Func_0200057c:
 	strb r0, [r5]
 	adds r7, #1
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r7, #64
 	bne .L_0200881a
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #192
 	movs r1, #192
 	movs r2, #128
@@ -461,7 +461,7 @@ Func_0200057c:
 	strb r0, [r5]
 	adds r7, #1
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r7, #68
 	bne .L_020088e6
 	b .L_02008928
@@ -601,7 +601,7 @@ Func_0200057c:
 	adds r5, #98
 	strb r0, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #1
 	add r9, r0
 	mov r1, r9
@@ -680,7 +680,7 @@ Func_0200057c:
 	strb r0, [r5]
 	adds r7, #1
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	b .L_02008af0
 	.2byte 0x0000
 .L_02008adc:
@@ -765,7 +765,7 @@ Func_0200057c:
 	strh r2, [r0]
 	adds r7, #1
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r7, #65
 	bne .L_02008b6e
 	ldr r0, .L_02008bac
@@ -776,7 +776,7 @@ Func_0200057c:
 	adds r0, #99
 	strb r5, [r0]
 	movs r0, #30
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #14
 	b .L_02008bb0
 .L_02008ba8:
@@ -792,7 +792,7 @@ Func_0200057c:
 	bl Object_SetPartAttribute
 	bl Func_0200486c
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #80
@@ -842,7 +842,7 @@ Func_0200057c:
 	strh r3, [r1]
 	bl Func_0200482c
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [r6]
 	movs r1, #1
 	bl Camera_FollowActor

@@ -18,7 +18,7 @@ void Func_02000e18(s32 value) {
   object->priorityFlags |= 0x20;
   Func_02003cc4(object, 18);
   Func_02003ef4(215);
-  WaitTicks(13);
+  WaitFrames(13);
   Animation_ApplyChildValues(object, 9);
   Func_02003cc4(object, 28);
   Func_02003ef4(0x236);
@@ -29,7 +29,7 @@ void Func_02000e18(s32 value) {
     object->y += speed;
     if ((i & 7) == 0)
       Func_02002bd4(Object_GetById(15));
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Func_02003d84();
   Func_02003e5c(value);

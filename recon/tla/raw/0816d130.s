@@ -287,7 +287,7 @@ BattleEffect_RunNirvana:
 	negs r3, r3
 	str r3, [r7, #24]
 .L_0816d382:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	lsls r4, r4, #7
 	adds r4, #232
@@ -295,7 +295,7 @@ BattleEffect_RunNirvana:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #1
 	add r9, r0
 	mov r2, r9

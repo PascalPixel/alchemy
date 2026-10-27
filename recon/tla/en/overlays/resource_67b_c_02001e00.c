@@ -30,11 +30,11 @@ void Func_02001e00(void) {
       Func_02002910(leader, 49);
       Func_02002938(leader);
       do {
-        WaitTicks(1);
+        WaitFrames(1);
       } while (leader->y != leader->terrainHeight);
       Func_02001d30(leader);
       Func_02002910(leader, 49);
-      WaitTicks(3);
+      WaitFrames(3);
     } else {
       position[0] = leader->x;
       position[1] = leader->y;

@@ -105,7 +105,7 @@ Func_080e8db0:
 	mov r2, r10
 	ldr r0, [r2, #16]
 	movs r1, #0
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 	ldr r3, [sp, #44]
 	cmp r3, #0
 	beq .L_080e8eae
@@ -128,7 +128,7 @@ Func_080e8db0:
 	bl Func_080e89e4
 	bl ViewMove_SaveNearbySprites
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	negs r2, r2
 	str r2, [sp, #32]
@@ -319,7 +319,7 @@ Func_080e8db0:
 	str r2, [sp, #32]
 .L_080e901a:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #20]
 	movs r2, #186
 	lsls r2, r2, #2

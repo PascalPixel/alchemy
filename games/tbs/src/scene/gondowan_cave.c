@@ -234,7 +234,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Actor_OffsetPositionAndResetMotion(ACTOR_IODEM, -8, 16);
     Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
     Event_SetMessageId(MsgKaragolWhyGoingBackIsaacDo);
     Event_OpenMessage(ACTOR_IODEM, 0);
@@ -261,7 +261,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       }
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
-      Event_WaitTicks(30);
+      Event_WaitFrames(30);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -280,7 +280,7 @@ static void GondowanCave_IodemRejoins(void) {
   Actor_SetAngleToward(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0);
@@ -294,7 +294,7 @@ static void GondowanCave_IodemRejoins(void) {
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
   Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   Event_End();
 }
@@ -410,7 +410,7 @@ static void GondowanCave_MovePillar(void) {
 
     MapGrid_CopyCellAttributes(108, 17, 1, 1, destinationCellX,
                                destinationCellZ);
-    Event_WaitTicks(8);
+    Event_WaitFrames(8);
     GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
     Event_PlaySong(SE_CAST);
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -431,7 +431,7 @@ static void GondowanCave_WaitForDescent(struct Actor *actor, s32 heightLimit) {
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     framesRemaining--;
     if (actor->y.fixed <= heightLimit) {
       break;
@@ -451,7 +451,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   // Wind up the spin while horizontal motion is disabled.
   actor->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
-    WaitTicks(1);
+    WaitFrames(1);
     actor->sprite->rotation -= 0x100;
     actor->x.fixed -= Trig_Cos(actor->sprite->rotation) / 2;
     actor->targetX = ACTOR_NO_TARGET;
@@ -489,7 +489,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Sound_PlaySong(SE_CAST);
   Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SINK);
 }
 

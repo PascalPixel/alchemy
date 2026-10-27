@@ -353,14 +353,14 @@ struct SoundPlayer {
   /// Nonzero: a song of lower priority does not replace a playing one. From
   /// gSound_PlayerSlots, 0 for every player.
   u8 checkPriority;
-  u32 ticks;      ///< Song ticks played since the song started.
+  u32 clock;      ///< Song ticks played since the song started.
   u8 unk10[8];    ///< Not named by TLA code.
   u8 *workBytes;  ///< gSound_WorkBytes, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
   /// tempo * tempoScale / 256, added to tempoCount each frame.
   u16 tempoStep;
-  /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a frame.
+  /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a VBlank.
   u16 tempoCount;
   u16 fadePeriod;  ///< Frames between fade steps; 0 when not fading.
   u16 fadeCounter; ///< Frames left until the next fade step.
@@ -370,12 +370,12 @@ struct SoundPlayer {
   u8 unk2a[2];                     ///< Not named by TLA code.
   struct SoundTrack *tracks;       ///< trackCount tracks.
   const struct SoundVoice *voices; ///< The song's voice table.
-  /// SOUND_LOCK when free; raised while the player is changed or ticked.
+  /// SOUND_LOCK when free; raised while the player is changed or run.
   u32 lock;
-  /// The tick routine and player that were first in the chain before this
-  /// player was added; this player's tick runs them first.
-  void (*nextTick)(struct SoundPlayer *player);
-  struct SoundPlayer *nextTickPlayer; ///< Passed to nextTick.
+  /// The MPlayMain routine and player that were first in the chain before this
+  /// player was added; this player's MPlayMain runs them first.
+  void (*MPlayMainNext)(struct SoundPlayer *player);
+  struct SoundPlayer *musicPlayerNext; ///< Passed to MPlayMainNext.
 };
 
 /// The sound driver's work: its lock, the mixer's rate and buffers, the PCM
@@ -395,7 +395,7 @@ struct SoundWork {
   u8 unk09;        ///< Not named by TLA code.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
-  u8 cgbTick;
+  u8 c15;
   u8 transferPeriod; ///< Frames the buffers hold: 0x630 / frameSamples.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. Sound_MaxLines, 0.
@@ -407,11 +407,11 @@ struct SoundWork {
   /// sample.
   u32 rateStep;
   struct CgbNote *cgbNotes; ///< gSound_CgbNotes; NULL before CGB setup.
-  /// First of the chain of player ticks run each mixer frame; NULL for none.
-  void (*tick)(struct SoundPlayer *player);
-  struct SoundPlayer *tickPlayer; ///< Passed to tick.
-  void (*cgbUpdate)(void);        ///< Run each mixer frame: Cgb_UpdateChannels.
-  void (*cgbMute)(u8 channel);    ///< CgbChannel_Mute, channel 1 to 4.
+  /// First of the chain of MPlayMain routines run each VBlank; NULL for none.
+  void (*MPlayMainHead)(struct SoundPlayer *player);
+  struct SoundPlayer *musicPlayerHead; ///< Passed to MPlayMainHead.
+  void (*cgbUpdate)(void);             ///< Run each VBlank: Cgb_UpdateChannels.
+  void (*cgbMute)(u8 channel);         ///< CgbChannel_Mute, channel 1 to 4.
   s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< Cgb_KeyToFrequency.
   SoundCommand *commands;                        ///< gSound_CommandTable.
   /// MusicTrack_HandleNote, run for song bytes from 0xCF up with the byte

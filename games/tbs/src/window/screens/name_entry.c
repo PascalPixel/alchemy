@@ -337,7 +337,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     // Flash the key under the cursor, then move the cursor and the caret.
     Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
                            HIGHLIGHT_PALETTE);
-    WaitTicks(1);
+    WaitFrames(1);
     Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
                            WINDOW_PALETTE);
     if (cursorDirty) {
@@ -446,7 +446,7 @@ s32 NameEntry_EditMemberName(s32 member) {
           nameCaret.sprite->motion = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawPaddedLabel(nameWindow, originalName);
-          WaitTicks(10);
+          WaitFrames(10);
         } else {
           u8 *dst = originalName;
           u8 *src = editedName;
@@ -503,7 +503,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   Window_Close(keyboardWindow, 2);
   Window_Close(nameWindow, 2);
   Portrait_CloseWindow(member);
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 #else
@@ -612,7 +612,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     // Flash the key under the cursor, then move the cursor and the caret.
     Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
                            HIGHLIGHT_PALETTE);
-    WaitTicks(1);
+    WaitFrames(1);
     Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
                            WINDOW_PALETTE);
     if (cursorDirty) {
@@ -754,7 +754,7 @@ s32 NameEntry_EditMemberName(s32 member) {
           nameCaret.sprite->motion = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawString(originalName, nameWindow, 0, 0);
-          WaitTicks(10);
+          WaitFrames(10);
         } else {
           u8 *dst;
           u8 *src;
@@ -833,7 +833,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   Window_Close(keyboardWindow, 2);
   Window_Close(nameWindow, 2);
   Portrait_CloseWindow(member);
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 #endif

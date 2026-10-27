@@ -882,7 +882,7 @@ Func_0804a134:
 	str r2, [sp, #8]
 .L_0804a80e:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0804a27e
 .L_0804a816:
 	ldr r0, [sp, #44]
@@ -892,7 +892,7 @@ Func_0804a134:
 	movs r1, #1
 	bl UiWork_Finalize
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #16]
 	movs r7, #4
 .L_0804a830:
@@ -904,7 +904,7 @@ Func_0804a134:
 	ldr r0, [sp, #52]
 	bl Resource_ResetEntry
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r0, r6, #0
 	add sp, #300
 	pop {r3, r5, r6, r7}

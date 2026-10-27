@@ -18,7 +18,7 @@ s32 Camera_MoveWithinMapBounds();
 s32 Event_AskYesNoWithActorAnimation();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitTicks();
+s32 FieldEvent_WaitFrames();
 s32 Func_020006b0();
 s32 Func_02000a30();
 s32 Func_02000a68();
@@ -44,7 +44,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 Object_SetModeById();
 s32 UiText_OpenMessageAtObject();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Func_02000064[];
 extern u8 MsgShipSafeFiringDistance[];
 
@@ -73,7 +73,7 @@ L_0200820c:
   Call1((void (*)())Func_02000ac0, (s32)MsgShipSafeFiringDistance);
   Call3((void (*)())ObjectMotion_SetPositionAndCommit, 8, 0x1d0, 216);
   Call2((void (*)())Func_02000ad8, 8, 0xc000);
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   t10 = Value1((s32 (*)())Object_GetById, 11);
   FIELD_AT(t10, s32, 24) = v_r5;
   t11 = Value1((s32 (*)())Object_GetById, 7);
@@ -109,7 +109,7 @@ L_020082ea:
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, 16);
   Call1((void (*)())Func_02000a30, v_r7);
-  Call1((void (*)())FieldEvent_WaitTicks, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   goto L_020085c6;
 L_0200832c:
   t36 = FIELD_AT(0x3000000, s32, 108);
@@ -121,7 +121,7 @@ L_0200832c:
   FIELD_AT(t40, u8, 90) &= 254;
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 8, 0, 16);
   Call1((void (*)())Func_02000b58, 144);
-  Call1((void (*)())FieldEvent_WaitTicks, 4);
+  Call1((void (*)())FieldEvent_WaitFrames, 4);
   FIELD_AT(v_r8, s32, 24) = 0x18000;
   FIELD_AT(v_r8, s32, 28) = 0x18000;
   t45 = Value1((s32 (*)())Object_GetById, 10);
@@ -139,7 +139,7 @@ L_020083da:
   FIELD_AT(v_r6, s32, 24) = (t52 + 0x800);
   t53 = FIELD_AT(v_r6, s32, 28);
   FIELD_AT(v_r6, s32, 28) = (t53 + 0x800);
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto L_020083da;
@@ -158,7 +158,7 @@ L_020083da:
   to[2] = 0x500000;
   Call3((void (*)())Func_020006b0, (s32)from, (s32)to,
         (s32)Func_02000064);
-  Call1((void (*)())FieldEvent_WaitTicks, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_02000ab0, 10, 0, 0);
   Call3((void (*)())Func_02000ab0, 9, 0, 0);
   t66 = FIELD_AT(0x3000000, s32, 108);
@@ -208,13 +208,13 @@ L_02008594:
   t96 = FIELD_AT(v_r7, s32, 28);
   FIELD_AT(v_r7, s32, 28) = (t96 - 0x900);
   FIELD_AT(v_r7, s32, 24) = (t96 - 0x900);
-  Call1((void (*)())WaitTicks, 7);
+  Call1((void (*)())WaitFrames, 7);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto L_02008594;
   FIELD_AT(v_r7, s32, 28) = 0;
   FIELD_AT(v_r7, s32, 24) = 0;
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call1((void (*)())GameFlag_SetBit, 0x90e);
   Call1((void (*)())Func_02000b00, 4);
 L_020085c6:

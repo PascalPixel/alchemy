@@ -14,10 +14,10 @@ void Func_02004cf4(void) {
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Kibombo_CamMove(192 << 17, -1, 0x2590000, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02005b14(gPartyState.currentOwner, 185 << 17, 159 << 18, 0xc000);
   Func_02005a4c();
-  WaitTicks(1);
+  WaitFrames(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Func_02005bdc(0, 0);
   Func_02005bd4(0x10002, 0);
@@ -38,7 +38,7 @@ void Func_02004cf4(void) {
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02005bd4(0x10000, 0);
   Func_02005be4(40);
-  WaitTicks(60);
+  WaitFrames(60);
   Motion_SetModeAndWaitAnimation(10, 3);
   Func_02005b4c((s32)MsgRightWellI);
   Kibombo_MessagePut(10, 0);

@@ -40,7 +40,7 @@ void Func_02004ebc(s32 id, s32 x, s32 z);
 s32 Func_02004904(void);
 void Func_02004d9c(struct ObjectRuntime *object, s32 mode);
 void Func_02004dc4(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_02004de4(void *data);
 void Func_02004274(s32 song);
 void Func_02000aac(void);
@@ -106,7 +106,7 @@ s32 Func_02004280(void) {
           Iwram_MulQ16(FIELD_AT(map, s32, 232), FIELD_AT(layer, s32, 20)) +
           FIELD_AT(layer, s32, 12);
       Func_02004dc4();
-      WaitTicks(1);
+      WaitFrames(1);
       Iwram_CopyWords(Data_0202de00, gData_020053e4, 24);
       Func_02004de4(Data_0202de00);
     }

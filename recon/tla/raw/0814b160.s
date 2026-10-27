@@ -223,7 +223,7 @@ BattleEffect_RunCurse:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	mov r4, r10
 	ldr r3, [r4, #20]
 	movs r2, #1

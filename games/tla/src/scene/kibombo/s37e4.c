@@ -92,7 +92,7 @@ void Func_02003948(void) {
     Func_02003898();
   ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
                                           gData_02005cd0);
-  WaitTicks(12);
+  WaitFrames(12);
   Func_02005c9c(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

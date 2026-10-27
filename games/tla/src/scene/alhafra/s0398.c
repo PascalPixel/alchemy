@@ -11,7 +11,7 @@ struct AlhafraEventWork {
 
 s32 GameFlag_Test();
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
@@ -33,19 +33,19 @@ void Func_02000398(s32 id) {
     Func_02001c8c(id, 0);
   } else {
     Func_02001c74(MsgAlhafra70);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     Motion_SetModeAndWaitAnimation(id, 3);
     Func_02001c84(id, 0, 10);
     Motion_SetVarCbAndRefresh(id, 2);
     UiText_OpenMessageAtObject(id, 0);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       GameFlag_SetBit(0x8b6);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Func_02001c84(id, 0, 10);
       ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
     } else {
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
       Func_02001c84(id, 0, 10);
     }

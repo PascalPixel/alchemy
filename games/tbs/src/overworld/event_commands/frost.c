@@ -151,13 +151,13 @@ void FieldPsynergy_Frost(void) {
       particle->targetZ = p->z;
     }
 
-    WaitTicks(3);
+    WaitFrames(3);
     remainingCycles--;
   } while (remainingCycles >= 0);
 
-  WaitTicks(10);
+  WaitFrames(10);
   Sound_PlaySongFar(SE_ICE);
-  WaitTicks(50);
+  WaitFrames(50);
 
   if (target != NULL && effectWork->enabled == 0) {
     Sound_PlaySongFar(SE_POWER_UP);
@@ -166,9 +166,9 @@ void FieldPsynergy_Frost(void) {
     remainingCycles = 15;
     do {
       Anim_ApplyChildValuesFar(target, SPRITE_COLOR_WHITE);
-      WaitTicks(1);
+      WaitFrames(1);
       Anim_ApplyChildValuesFar(target, SPRITE_COLOR_NORMAL);
-      WaitTicks(4);
+      WaitFrames(4);
       remainingCycles--;
     } while (remainingCycles >= 0);
 
@@ -183,7 +183,7 @@ void FieldPsynergy_Frost(void) {
     if (event != NULL) {
       Field_RunPsynergyEvent(event, gCommon.leaderActorId, eventTarget);
     }
-    WaitTicks(20);
+    WaitFrames(20);
   }
 
   FieldPsynergy_FadeFromCastColor();

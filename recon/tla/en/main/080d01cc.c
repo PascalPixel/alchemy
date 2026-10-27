@@ -28,7 +28,7 @@ struct TransitionMapWork {
   u16 secondLine;
 };
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Fade_FromBlack(s32 frames);
 void Fade_ToBlack(s32 frames);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
@@ -50,12 +50,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   case 0:
     Fade_ToBlack(0);
     Fade_FromBlack(frames);
-    WaitTicks(1);
+    WaitFrames(1);
     break;
   case 1:
     BattleEffect_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
     BattleEffect_StartBufferInterpolation(frames);
-    WaitTicks(1);
+    WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     BattleEffect_SetPrimaryBufferValue(0);
@@ -68,7 +68,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->active = (REG_WINOUT & 0xff00) | 1;
     Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
     Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
-    WaitTicks(1);
+    WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     state->start = 0;
@@ -82,7 +82,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
-    WaitTicks(1);
+    WaitFrames(1);
     Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0x480);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -99,7 +99,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state = Func_080d019c();
     display->firstLine = 80;
     display->secondLine = 80;
-    WaitTicks(1);
+    WaitFrames(1);
     if (variant == 0) {
       Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0x480);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);

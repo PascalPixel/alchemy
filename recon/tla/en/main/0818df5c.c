@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -196,7 +196,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   Iwram_FillWords(gMapCellBuffer, 0x8000, 0x01010101);
   Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
@@ -458,10 +458,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       size = 0x10000;
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
-  WaitTicks(1);
+  WaitFrames(1);
   transition[4] = 0;
   Scheduler_RemoveCallback(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
@@ -632,9 +632,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
     }
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

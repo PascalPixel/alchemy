@@ -105,7 +105,7 @@ struct MotionRecord {
   struct ChildEntry *entries[1];
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern u8 Data_0812996c[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
@@ -279,7 +279,7 @@ void BattleEvent_Playback(void) {
       } else {
         events->phase = 5;
         events->arrowResource = -1;
-        events->timer = gFrameTick;
+        events->timer = gVBlankCount;
       }
     } else if (events->phase == 5) {
       struct ArrowSprite *prompt = &events->arrow;
@@ -304,7 +304,7 @@ void BattleEvent_Playback(void) {
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
       if ((KEYS_HELD & 2) || (gInput.pendingPressed & 0x303) ||
-          ((u32)(gFrameTick - events->timer) > 10 && (KEYS_HELD & 0x303))) {
+          ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
         Audio_PlayCue(111);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;

@@ -41,6 +41,6 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 
   ret = UiText_OpenMessageWindowFar((s16)state->messageId, px, py, 1);
   while (UiWork_IsIdleFar(ret) == 0)
-    WaitTicks(1);
+    WaitFrames(1);
   state->messageId++;
 }

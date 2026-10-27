@@ -2,7 +2,7 @@
 #include "object_dispatch.h"
 #include "party_state.h"
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 extern const s32 gData_0802f098[];
 extern const s32 gData_0802f0b0[];
@@ -63,7 +63,7 @@ void Func_08023524(struct DispatchObject *object) {
     script = gData_0802f1a0;
     break;
   case 9:
-    WaitTicks(1);
+    WaitFrames(1);
     script = gData_0802f1b8;
     break;
   case 10:

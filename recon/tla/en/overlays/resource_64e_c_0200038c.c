@@ -49,7 +49,7 @@ void Func_02001b44(struct StagedActor *object, s32 x, s32 y, s32 z);
 void Func_02001b4c(struct StagedActor *object);
 s32 Func_02001b64(struct StagedActor *object, s32 *position);
 void Func_02001cbc(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Engine_AudioPlayCue(s32 cue);
 
 void Func_0200038c(void) {
@@ -102,7 +102,7 @@ void Func_0200038c(void) {
 
   Func_02001b2c(lead, 8);
   rate = 0x3333;
-  WaitTicks(15);
+  WaitFrames(15);
   Engine_AudioPlayCue(185);
   next->moveRateX = rate;
   next->moveRateZ = rate;

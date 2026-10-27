@@ -62,11 +62,11 @@ struct ShamanVillageEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 struct ShamanVillageObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct ShamanVillageObject *object, s32 x,
                                       s32 y, s32 z);
@@ -185,7 +185,7 @@ static inline void ShamanVillage_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static inline void ShamanVillage_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitTicks(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void ShamanVillage_SePlay(s32 cue) {
@@ -193,9 +193,9 @@ static inline void ShamanVillage_SePlay(s32 cue) {
   Engine_AudioPlayCue(cue);
 }
 
-static inline void ShamanVillage_WaitTicks(s32 ticks) {
+static inline void ShamanVillage_WaitFrames(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitTicks(ticks);
+  WaitFrames(frames);
 }
 
 #define SHAMAN_VILLAGE_TASK_ADD(callback, priority)                            \

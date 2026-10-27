@@ -513,10 +513,10 @@ static void CrossboneIsle_MovePillar(void) {
   // Play the moved-pillar reaction before hiding it and opening the passage.
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
-  Event_WaitTicks(8);
+  Event_WaitFrames(8);
   CrossboneIsle_SpawnPillarMovedBurst(ACTOR_SINKING_PILLAR);
   Sound_PlaySong(SE_WHOOSH);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
 
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SINKING_PILLAR), 0);
   Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
@@ -621,7 +621,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   GameFlag_Set((gCommon.sceneId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&SceneId_CrossboneIsleFirstFloor)));
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_EAST);
@@ -972,7 +972,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 
     Event_Start();
     Actor_SelectAnimation(actor, 6);
-    WaitTicks(6);
+    WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
@@ -1080,7 +1080,7 @@ static void CrossboneIsle_SlideFirstLogNorth(void) {
     CrossboneIsle_HopNorth();
     return;
   }
-  WaitTicks(2);
+  WaitFrames(2);
   {
     s32 routeEndZ = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
     s32 routeX = actorX - 1;
@@ -1094,7 +1094,7 @@ static void CrossboneIsle_SlideFirstLogNorth(void) {
 /// old row.
 static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 actorId,
                                                           s32 column, s32 row) {
-  WaitTicks(2);
+  WaitFrames(2);
   {
     s32 destinationRow = Actor_GetById(actorId)->z.fixed >> 20;
     s32 footprintColumn = column - 1;
@@ -1109,7 +1109,7 @@ static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 actorId,
 /// old one.
 static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 actorId, s32 column,
                                                         s32 row) {
-  WaitTicks(2);
+  WaitFrames(2);
   {
     s32 destinationColumn = Actor_GetById(actorId)->x.fixed >> 20;
     s32 footprintRow = row - 1;
@@ -1525,7 +1525,7 @@ static void CrossboneIsle_SlideEleventhLogNorth(void) {
   } else if (row == 9) {
     return;
   }
-  WaitTicks(2);
+  WaitFrames(2);
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
                                 Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >>
                                     20);
@@ -1583,7 +1583,7 @@ static void CrossboneIsle_SlideEleventhLogSouth(void) {
     return;
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
                                 Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >>
@@ -1661,7 +1661,7 @@ static void CrossboneIsle_SlideSecondLogNorth(void) {
   } else if ((u32)row <= 9) {
     return;
   }
-  WaitTicks(2);
+  WaitFrames(2);
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
                                 Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1724,7 +1724,7 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 16);
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
                                 Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20);
@@ -1795,7 +1795,7 @@ static void CrossboneIsle_SlideTwelfthLogWest(void) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_TWELFTH_LOG, -144, 0);
     }
   }
-  WaitTicks(2);
+  WaitFrames(2);
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
                                 Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
                                 row - 1);
@@ -1847,7 +1847,7 @@ static void CrossboneIsle_SlideTwelfthLogEast(void) {
   } else if (column == 12) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_TWELFTH_LOG, 16, 0);
   }
-  WaitTicks(2);
+  WaitFrames(2);
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
                                 Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
                                 row - 1);
@@ -1898,7 +1898,7 @@ static void CrossboneIsle_SlideSeventhLogWest(void) {
     return;
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
@@ -1944,7 +1944,7 @@ static void CrossboneIsle_SlideSeventhLogEast(void) {
     return;
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
@@ -1994,7 +1994,7 @@ static void CrossboneIsle_SlideNinthLogWest(void) {
     return;
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
@@ -2032,7 +2032,7 @@ static void CrossboneIsle_SlideNinthLogEast(void) {
     return;
   }
 
-  WaitTicks(2);
+  WaitFrames(2);
 
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
                                 Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20,

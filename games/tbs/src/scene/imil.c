@@ -409,9 +409,9 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -423,9 +423,9 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
@@ -449,7 +449,7 @@ static void Imil_TalkToOldMan(void) {
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Event_Start();
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(MsgMercuryReallySayDie);
     Event_AskYesNo(ACTOR_OLD_MAN, 0);
     Event_End();
@@ -478,12 +478,12 @@ static void Imil_TalkToOldMan(void) {
       Actor_SetScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
       Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
       Actor_RunScriptAndWait(ACTOR_OLD_WOMAN, gImil_OldWomanHurryScript);
-      Event_WaitTicks(40);
+      Event_WaitFrames(40);
       Actor_Jump(ACTOR_OLD_WOMAN, 2, 0);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       FieldEffect_SetAttached(ACTOR_OLD_WOMAN,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_WaitTicks(60);
+      Event_WaitFrames(60);
       FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
@@ -640,7 +640,7 @@ static void Imil_OpenDoorAndExit(void) {
     Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
-  Event_WaitTicks(16);
+  Event_WaitFrames(16);
   Import_EventSetExitRequest(exit);
   Event_End();
 }
@@ -660,7 +660,7 @@ static void Imil_TalkToWeaponMerchant(void) {
     }
     Event_Start();
     Actor_SetAngleToward(ACTOR_WEAPON_MERCHANT, ACTOR_PARTY_LEADER, 0);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(MsgMercuryCatchUpLostOpportunity);
     Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_WEAPON_MERCHANT, FACING_SOUTH, 10);
@@ -671,7 +671,7 @@ static void Imil_TalkToWeaponMerchant(void) {
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       Actor_RunScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryStoreClosedUntilWell);
       Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
@@ -696,7 +696,7 @@ static void Imil_TalkToArmorMerchant(void) {
     }
     Event_Start();
     Actor_SetAngleToward(ACTOR_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_SetMessageId(MsgMercuryShameStoreClosed);
     Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ARMOR_MERCHANT, FACING_SOUTH, 10);
@@ -707,7 +707,7 @@ static void Imil_TalkToArmorMerchant(void) {
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       Actor_RunScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryTooSickBusiness);
       Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
@@ -856,7 +856,7 @@ s32 Imil_Initialize(void) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
         MapGrid_CenterOnFollowedPoint();
-        WaitTicks(1);
+        WaitFrames(1);
         Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, 2);
         Import_ActorSetPosition(ACTOR_OLD_MANS_BED, 0, 0);
       } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) &&
@@ -874,7 +874,7 @@ s32 Imil_Initialize(void) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
         MapGrid_CenterOnFollowedPoint();
-        WaitTicks(1);
+        WaitFrames(1);
         if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR)) {
           Import_ActorSetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
           Actor_GetById(ACTOR_OLD_WOMAN)->facing = 0;
@@ -954,7 +954,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_MIA, PIXELS(182), PIXELS(150));
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
-  WaitTicks(1);
+  WaitFrames(1);
   FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
   work = gFieldWork;
@@ -987,10 +987,10 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldCamera_WaitForArrival();
   table = gImil_BobScript;
   Actor_SetScript(ACTOR_OLD_MAN, table);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   // Mia checks on the old man while the party enters the house.
   Event_SetMessageId(MSGNO(MsgImilHowFeeling));
@@ -1002,7 +1002,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
@@ -1016,17 +1016,17 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_OLD_MAN, 1);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
@@ -1035,47 +1035,47 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_MIA)->timer = 0;
   Actor_SetScript(ACTOR_MIA, gImil_MiaCheckRoomScript);
   while (Actor_GetById(ACTOR_MIA)->timer == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
   Actor_RefreshSelectorById(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_PlaySong(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(10);
-  WaitTicks(1);
+  WaitFrames(1);
   Event_PlaySong(SE_SHIMMER);
-  WaitTicks(40);
+  WaitFrames(40);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
-  WaitTicks(60);
+  WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_MIA, 202, 198);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_MIA, 0);
@@ -1086,7 +1086,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_GetById(ACTOR_MIA)->timer = 0;
   Actor_SetScript(ACTOR_MIA, gImil_MiaRunOutScript);
   while (Actor_GetById(ACTOR_MIA)->timer == 0) {
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -1102,7 +1102,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetDestination(ACTOR_GARET, 136, 221);
   Actor_SetDestination(ACTOR_IVAN, 122, 238);
   Actor_RefreshSelectorById(ACTOR_MIA);
-  Event_WaitTicks(80);
+  Event_WaitFrames(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1112,7 +1112,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   table = gImil_FollowMiaOutScript;
   Actor_SetScript(ACTOR_GARET, table);
   Actor_RunScriptAndWait(ACTOR_IVAN, table);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1408,23 +1408,23 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_StartRepeatedMotion(ACTOR_JUSTIN, 2);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Event_SetMessageId(MSGNO(MsgImilMia));
   FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_MEGAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_JUSTIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST + FACING_STEP, 10);
@@ -1432,16 +1432,16 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_JUSTIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_JUSTIN, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
@@ -1456,12 +1456,12 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   // Let the student approach Mia before she rejoins the party.
   Actor_GetById(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 656, 166);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
@@ -1470,7 +1470,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MEGAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
@@ -1479,11 +1479,11 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 1);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 80);
@@ -1508,17 +1508,17 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Import_ActorSetAnimation(ACTOR_JUSTIN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_MIA, 688, 200);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_GetById(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   // Restore the student's steering after the farewell walk. A byte view: as
   // the field, the next gFieldWork load moves after the constant.
   *((u8 *)Actor_GetById(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
@@ -1643,7 +1643,7 @@ static void Imil_RunIceSlide(void) {
     subject->acceleration = PIXELS(1);
     FieldActor_SetMoveTarget(subject, x, subject->y.fixed, z);
     Actor_WaitForMove(subject);
-    WaitTicks(2);
+    WaitFrames(2);
   }
 
 blocked:
@@ -1653,7 +1653,7 @@ blocked:
   subject->acceleration = PIXELS(1) / 4;
 
 tail:
-  WaitTicks(10);
+  WaitFrames(10);
   Event_End();
 }
 

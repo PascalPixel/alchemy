@@ -14,7 +14,7 @@ s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
   struct UiRenderWork *work;
@@ -46,11 +46,11 @@ void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
       UiWork_Finalize(window, 1);
     else {
       while (UiWork_IsComplete() == 0)
-        WaitTicks(1);
+        WaitFrames(1);
       if (mode != 0) {
         UiWork_Finalize(window, 0);
         while (UiWork_IsIdle(window) == 0)
-          WaitTicks(1);
+          WaitFrames(1);
       } else
         UiWork_Finalize(window, 1);
       work->speakerVoiceSound = 0;

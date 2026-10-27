@@ -89,7 +89,7 @@ BattleEffect_EndArcEffectFar:
 	.thumb_func
 BattleEffect_WaitForArcGroupsFar:
 	overlay_veneer BattleEffect_WaitForArcGroups
-	.global BattleEffect_SetObjectTickModeFar
+	.global BattleEffect_SetObjectUpdateModeFar
 	.thumb_func
-BattleEffect_SetObjectTickModeFar:
-	overlay_veneer BattleEffect_SetObjectTickMode
+BattleEffect_SetObjectUpdateModeFar:
+	overlay_veneer BattleEffect_SetObjectUpdateMode

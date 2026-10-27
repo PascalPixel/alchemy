@@ -35,15 +35,15 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni = Actor_GetById(djinniId);
   dir = (Actor_GetById(gCommon.leaderActorId)->facing + 0x2000) & 0xc000;
   Event_Start();
-  WaitTicks(10);
+  WaitFrames(10);
   Sound_PlaySongFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   back = dir + 0x8000;
-  WaitTicks(20);
+  WaitFrames(20);
   Actor_ArmCallback(djinniId, back, 0);
-  WaitTicks(10);
+  WaitFrames(10);
   // Sprite priority 0, over every background, until the end. With
   // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
   // with motionFlags bit 1 alone it falls without following the ground.
@@ -66,7 +66,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Sound_PlaySongFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 0);
   Actor_WaitForMoveFar(djinni);
-  WaitTicks(20);
+  WaitFrames(20);
 
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
@@ -110,7 +110,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16, dir + 0x8000);
   Sound_PlaySongFar(SE_WHOOSH);
   Actor_Jump(djinniId, 12, 0);
-  WaitTicks(24);
+  WaitFrames(24);
   djinni->motionFlags = 0;
   djinni->velocityX = 0;
   djinni->velocityZ = 0;
@@ -278,7 +278,7 @@ void Djinn_ResolvePending(s32 shown) {
           struct ActorTemplate *found = Scene_FindActorTemplate(actorId);
           if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
                                 flag - DJINNI_BATTLE_EVENT_FIRST) {
-            WaitTicks(40);
+            WaitFrames(40);
             Djinn_JoinParty(actorId, element, index);
             break;
           }
@@ -322,7 +322,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
       FieldEffect_ClearOwnedSlot(effect);
   }
   FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// Per-frame update: spins an actor 1/8 turn a frame.

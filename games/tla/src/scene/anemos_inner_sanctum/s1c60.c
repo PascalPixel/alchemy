@@ -8,7 +8,7 @@ struct PartyState2c2 {
   u8 value;
 };
 
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020000f4(void);
 void Func_02000158(void);
 void Func_02003448(s32 scene, s32 entrance);
@@ -27,6 +27,6 @@ void Func_02001c60(void) {
     party->value = 2;
   }
   Func_02003448((s32)&SceneId_Ov694Room1, 99);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02000158();
 }

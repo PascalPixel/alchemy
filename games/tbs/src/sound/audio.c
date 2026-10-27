@@ -141,8 +141,8 @@ void m4aSoundInit(void) {
   }
 }
 
-/// Runs one frame of the sound driver through SoundMain. Exported first in the
-/// sound far-call table as m4aSoundMainFar; nothing in ☀️ calls it by that
+/// Runs the sound driver for one VBlank through SoundMain. Exported first in
+/// the sound far-call table as m4aSoundMainFar; nothing in ☀️ calls it by that
 /// name, and the VBlank handler mixes through Mixer_Enter instead.
 void m4aSoundMain(void) { SoundMain(); }
 

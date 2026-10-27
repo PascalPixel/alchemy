@@ -19,7 +19,7 @@ extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02005f94(s32 cue);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02005ed4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
@@ -38,7 +38,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Func_020040b0(void);
 void Func_02005f3c(void);
 
@@ -49,7 +49,7 @@ void Func_02004138(s32 idA, s32 idB) {
   s32 i;
 
   Func_02005f94(78);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Call2(Func_02005ed4, 0x8000, 0x1000);
   Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
                              ((s16 *)&a->z)[1] << 16, 1);
@@ -63,7 +63,7 @@ void Func_02004138(s32 idA, s32 idB) {
   a->speedLimit = 0x3333;
   ObjectMotion_EnableActionAndSetCallback(idA, gData_020060e0);
   Func_02005f94(194);
-  FieldEvent_WaitTicks(45);
+  FieldEvent_WaitFrames(45);
   Func_02005e94(idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
@@ -82,16 +82,16 @@ void Func_02004138(s32 idA, s32 idB) {
     Animation_SetStateFlags(spark, 1);
     Func_02005d6c(spark, gData_02006094);
     REG_BLDALPHA = 0x1004;
-    WaitTicks(2);
+    WaitFrames(2);
     REG_BLDALPHA = 0x100a;
-    WaitTicks(2);
+    WaitFrames(2);
     REG_BLDALPHA = 0x1010;
-    WaitTicks(2);
+    WaitFrames(2);
     REG_BLDALPHA = 0x100a;
-    WaitTicks(2);
+    WaitFrames(2);
   }
   REG_BLDALPHA = 0x1008;
-  WaitTicks(30);
+  WaitFrames(30);
   for (i = 0; i != 16; i++) {
     spark = Engine_ObjectCreate(0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
@@ -115,10 +115,10 @@ void Func_02004138(s32 idA, s32 idB) {
       b->speedLimit = 0x3333;
       ObjectMotion_EnableActionAndSetCallback(idB, gData_02006104);
     }
-    WaitTicks(8);
+    WaitFrames(8);
   }
   Func_02005f94(220);
-  WaitTicks(16);
+  WaitFrames(16);
   for (i = 2; i != 32; i += 2) {
     spark = Engine_ObjectCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
     spark->action = Random16Far();
@@ -138,10 +138,10 @@ void Func_02004138(s32 idA, s32 idB) {
     Func_02005d6c(spark, gData_020060c0);
   }
   Func_02005f94(220);
-  WaitTicks(50);
+  WaitFrames(50);
   Value2(Func_02005f04, 0x7fff, 0);
   Value1(Func_02005f14, 8);
-  WaitTicks(16);
+  WaitFrames(16);
   Call3(Func_02005dcc, 0, 0, 0);
   Func_02005e94(idA, 0);
   Func_02005e94(idB, 0);
@@ -151,9 +151,9 @@ void Func_02004138(s32 idA, s32 idB) {
   ObjectMotion_EnableActionAndSetCallback(idA, gData_02006128);
   ObjectMotion_EnableActionAndSetCallback(idB, gData_02006158);
   b->update = Func_020040b0;
-  WaitTicks(120);
+  WaitFrames(120);
   b->update = 0;
   Func_02005f94(390);
   Func_02005f3c();
-  WaitTicks(1);
+  WaitFrames(1);
 }

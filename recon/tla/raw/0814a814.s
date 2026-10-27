@@ -807,7 +807,7 @@ BattleEffect_RunTargetMotes:
 	movs r1, #16
 	movs r0, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r2, #240
 	lsls r2, r2, #7
 	adds r2, #232
@@ -815,7 +815,7 @@ BattleEffect_RunTargetMotes:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #64]
 	ldr r2, [sp, #60]
 	adds r1, #1

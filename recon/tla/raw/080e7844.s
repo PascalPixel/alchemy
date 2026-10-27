@@ -260,7 +260,7 @@ Func_080e7844:
 	movs r0, #130
 	bl Audio_PlayCue
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #128
 	ldr r2, [sp, #72]
 	lsls r3, r3, #5
@@ -868,7 +868,7 @@ Func_080e7844:
 	str r1, [sp, #60]
 .L_080e7efc:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #56]
 	ldr r3, [sp, #52]
 	movs r0, #186

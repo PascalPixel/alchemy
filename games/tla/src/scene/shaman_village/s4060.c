@@ -14,7 +14,7 @@ void Func_02004060(void) {
     ShamanVillage_ObjPut(15, 0xa80000, 0x2380000, angle);
     ShamanVillage_ObjPut(17, 0xd80000, 0x2180000, angle);
     ShamanVillage_ObjPut(16, 0x780000, 0x2180000, angle);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Object_SetModeById(8, 2);
   Object_SetModeById(9, 2);
@@ -53,9 +53,9 @@ void Func_020041b8(void) {
   if (GameFlag_Test(0x94e)) {
     Object_SetPositionAndResetMotion(Object_GetById(14), 0x2080000, 0x200000,
                                      0xb80000);
-    WaitTicks(1);
+    WaitFrames(1);
     ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
-    WaitTicks(10);
+    WaitFrames(10);
   }
   if (GameFlag_Test(0x9e1)) {
     ShamanVillage_MapCopy(64, 0, 76, 2, 3, 3);

@@ -31,7 +31,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -247,7 +247,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     y += 4;
     REG_BG2X = y << 8;
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit = Ram_HeapSlots->unk64[1];
@@ -945,7 +945,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     while (*(volatile u32 *)&work->framesSinceTransfer <= 1) {
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
@@ -957,10 +957,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           (volatile u32 *)0x040000d4);
   *(volatile u16 *)(BG_PLTT + 0xbc) = *(volatile u16 *)(BG_PLTT + 0x1e8);
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitTicks(1);
+  WaitFrames(1);
   Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
   gCameraSceneParameters[4] = 120;
-  WaitTicks(1);
+  WaitFrames(1);
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x130), 512);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
@@ -1046,9 +1046,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     MemFree(model);
     MemFree(verts);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

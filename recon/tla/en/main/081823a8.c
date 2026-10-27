@@ -70,8 +70,8 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_08158ce0(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -250,9 +250,9 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(4, 16);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);

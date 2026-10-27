@@ -6,7 +6,7 @@ extern char SceneId_VenusLighthouseEntrance;
 extern char SceneId_SuhallaGate3;
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
@@ -22,7 +22,7 @@ void Func_020005e8(void) {
   if (owner != NULL)
     ObjectMotion_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gPartyState.battleRule24b = 2;

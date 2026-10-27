@@ -31,8 +31,8 @@ void Func_02004be4(s32 skip);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
-void FieldEvent_WaitTicks(s32 ticks);
-void WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
+void WaitFrames(s32 frames);
 void Func_02000fa4(void);
 void Func_02004c9c(s32 cue);
 void Camera_FollowActor(u32 id, s32 mode);
@@ -64,20 +64,20 @@ void Func_02000514(void) {
       Func_02004c7c(gate->x + 0x180000, gate->z, 2, 0);
       Object_SetModeById(15, 3);
       ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       gate->gravity = 0xccc;
       gate->motionFlags = 3;
       i = 0;
       while (gate->y > 0) {
         i++;
-        WaitTicks(1);
+        WaitFrames(1);
         if (i > 59)
           break;
       }
       Func_02000fa4();
       Func_02004c9c(240);
       Object_SetModeById(15, 8);
-      FieldEvent_WaitTicks(60);
+      FieldEvent_WaitFrames(60);
       Camera_FollowActor(gPartyState.currentOwner, 1);
       Func_02004a9c();
     }

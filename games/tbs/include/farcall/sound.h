@@ -1,7 +1,7 @@
 /// @file
 /// Audio mixing, playback commands and music-player updates.
 
-/// Runs one frame of the sound driver. Nothing in ☀️ calls it by this name.
+/// Runs the sound driver for one VBlank. Nothing in ☀️ calls it by this name.
 void m4aSoundMainFar(void);
 /// Starts the sound driver and clears the music ramps and the songs' state, at
 /// power-on.

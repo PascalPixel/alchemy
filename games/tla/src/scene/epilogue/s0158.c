@@ -19,7 +19,7 @@ struct EpilogueWindow *UiText_OpenMessageWindow(s32 id, s32 x, s32 y,
 struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
 s32 UiWork_IsComplete(void);
 void UiWork_Finalize(struct EpilogueWindow *window, s32 mode);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;
@@ -53,8 +53,8 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
     window->unk0a = 0;
   }
   while (!UiWork_IsComplete())
-    WaitTicks(1);
-  WaitTicks(1);
+    WaitFrames(1);
+  WaitFrames(1);
   UiWork_Finalize(window, 2);
   if (!wide) {
     UiWork_Finalize(name, 2);
@@ -64,7 +64,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
     s32 i = wait;
 
     do {
-      WaitTicks(1);
+      WaitFrames(1);
     } while (--i != 0);
   }
   gData_02000a28++;

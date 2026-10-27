@@ -8,7 +8,7 @@ void Func_020029dc(struct FieldActor *object, s32 mode);
 void Func_020029e4(struct FieldActor *object, const void *script);
 struct FieldActor *Object_GetById(s32 id);
 void Func_02002bc4(s32 cue);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;

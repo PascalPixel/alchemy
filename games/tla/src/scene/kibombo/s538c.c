@@ -18,7 +18,7 @@ void Func_0200538c(void) {
   if (GameFlag_Test(0x9ea)) {
     Kibombo_ObjSetPos(Object_GetById(11), 208 << 15, 0, 148 << 17);
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
-    WaitTicks(10);
+    WaitFrames(10);
   }
   Object_GetById(gPartyState.currentOwner)->priorityFlags |= 0x20;
   if (GameFlag_Test(0x86a))

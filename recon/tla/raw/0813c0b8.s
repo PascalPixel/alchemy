@@ -604,7 +604,7 @@ BattleEffect_RunDouse:
 	adds r5, #28
 	cmp r8, r0
 	bne .L_0813c4d8
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r3, #240
 	ldr r1, [sp, #32]
 	lsls r3, r3, #7
@@ -613,7 +613,7 @@ BattleEffect_RunDouse:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #24]
 	mov r7, r10
 	adds r4, #1

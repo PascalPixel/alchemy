@@ -13,7 +13,7 @@ void Func_020010e4();
 void Func_0200113c();
 void GameFlag_SetBit();
 
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void Func_02000d68();
 void ObjectMotion_CommitPositionAndActivate();
 void ObjectMotion_ArmCallback();
@@ -26,7 +26,7 @@ void GameFlag_Test();
 void Func_02000e20(void) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 16, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   ((void (*)())Func_02000d68)();
   return;
 }
@@ -34,14 +34,14 @@ void Func_02000e20(void) {
 void Func_02000e44(void) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
   Value3((s32 (*)())ObjectMotion_CommitPositionAndActivate, 4, -16, 0);
-  Value1((s32 (*)())FieldEvent_WaitTicks, 10);
+  Value1((s32 (*)())FieldEvent_WaitFrames, 10);
   Value0((s32 (*)())Func_02000d68);
   return;
 }
 
 void Func_02000e6c(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0xc000, 0);
-  Call1((void (*)())FieldEvent_WaitTicks, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   ((void (*)())Func_02000d68)();
   return;
 }

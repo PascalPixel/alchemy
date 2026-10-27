@@ -25,5 +25,5 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
       BattleEvent_DispatchQueued();
     }
   }
-  WaitTicks(1);
+  WaitFrames(1);
 }

@@ -92,5 +92,5 @@ void UiWork_FinalizePendingCore(void) {
     slotIndex++;
     slot++;
   } while (slotIndex != 3);
-  WaitTicks(10);
+  WaitFrames(10);
 }

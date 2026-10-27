@@ -81,7 +81,7 @@ extern char ResourceId_ParticleSpritesD;
 // gReelGame_SparkCellOffsets).
 extern const u16 Data_08197424[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
@@ -158,7 +158,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   // Setup, one step of the view's swing between each load.
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_08143d80();
   REG_BG1CNT = 0x1f80;
   if (effect->side == 0) {
@@ -178,12 +178,12 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
                              Ram_MapCellBuffer, 1, 1);
   // An enemy caster's sparks take the Mars Djinn's colours.
@@ -192,11 +192,11 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
             (void *)BG_PLTT, 0x84000020, REG_DMA3);
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
-  WaitTicks(1);
+  WaitFrames(1);
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -263,7 +263,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
         }
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     ObjectDispatch_SetAnimationSpeedFar(object, 16);
@@ -353,7 +353,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // Teardown: the background palette steps back over seven frames.
@@ -364,7 +364,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   for (frame = 0, background = (u16 *)Ram_HeapSlots->battleWork->unk670;
        frame != 7; frame++) {
     BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
-    WaitTicks(1);
+    WaitFrames(1);
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }

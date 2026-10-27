@@ -61,5 +61,5 @@ loop:
 
 void UiWindow_OpenMode1AndWaitFrame(void) {
   UiWindow_CreateWithLayoutBounds(1);
-  WaitTicks(1);
+  WaitFrames(1);
 }

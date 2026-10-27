@@ -106,11 +106,11 @@ extern u16 *gFlashTimerReg;
 /// when gFlashTimerCount reaches 0.
 void FlashTimerIntr(void) {
   if (gFlashTimerCount != 0) {
-    s32 ticksRemaining = gFlashTimerCount;
+    s32 countLeft = gFlashTimerCount;
 
-    ticksRemaining -= 1;
-    gFlashTimerCount = ticksRemaining;
-    if (((u32)ticksRemaining << 16) == 0) {
+    countLeft -= 1;
+    gFlashTimerCount = countLeft;
+    if (((u32)countLeft << 16) == 0) {
       gFlashTimeoutFlag = 1;
     }
   }
@@ -140,8 +140,8 @@ void StartFlashTimer(u8 timingIndex) {
   // Row timingIndex of the chip's max-time table (flashsst.s, flashat.s,
   // flashmx.s, in flashset.s's flash_max_time form): interrupts to count, the
   // timer's reload and its control. Every row in ☀️ but Atmel's
-  // empty row 2 reloads 0xffbd with 0xc2, an interrupt every 67 ticks of 256
-  // cycles, about a millisecond.
+  // empty row 2 reloads 0xffbd with 0xc2, an interrupt every 67 timer counts of
+  // 256 cycles, about a millisecond.
   u16 *timing = (u16 *)((u8 *)gFlashMaxTime + timingIndex * 6);
   u16 *timerRegister;
 

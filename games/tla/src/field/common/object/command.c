@@ -6,7 +6,7 @@ void ObjectDispatch_WaitForCommandEnd(struct DispatchObject *object) {
   if (object->value00 != 0 &&
       ((const s32 *)object->value00)[object->value04] != 17) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       cnt++;
       if (cnt > 599)
         break;

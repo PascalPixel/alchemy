@@ -36,7 +36,7 @@ void Func_02003f2c(s32 speaker, s32 flags);
 void Func_02003fc4(void);
 void Func_02003fbc(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
@@ -64,7 +64,7 @@ void Func_02003f7c(s32 a);
 #define STEP(actor, x, z)                                                      \
   (Object_GetById(actor)->actionFlags &= ~1,                                   \
    Call3(ObjectMotion_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_WaitTicks(1), Object_GetById(actor)->actionFlags |= 1)
+   FieldEvent_WaitFrames(1), Object_GetById(actor)->actionFlags |= 1)
 
 #define SHOW_ITEM()                                                            \
   (glow = (struct ObjectRuntime *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
@@ -195,19 +195,19 @@ void Func_020014e0(void) {
       leader->update = Func_02001278;
       Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
       Object_SetModeById(9, 3);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Func_02003f2c(9, 0);
       Func_02003fc4();
       Call3(ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
       Call3(ObjectMotion_SetSpeedParameters, 10, 0xcccc, 0x6666);
       Object_GetById(9)->update = Func_02000df8;
       ObjectMotion_ResetAndSetPosition(9, 0x120, 538);
-      FieldEvent_WaitTicks(40);
+      FieldEvent_WaitFrames(40);
       Func_02003fc4();
       Func_020034ec();
       Object_GetById(10)->update = Func_02000df8;
       ObjectMotion_ResetAndSetPositionInMode2(10, 0x120, 538);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();

@@ -59,7 +59,7 @@ extern char ResourceId_FlameballSheet;
 extern const u16 gData_08197410[];
 
 u32 Random16(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -67,7 +67,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 // BattleEventRuntime_StartPhase through its far call.
@@ -191,9 +191,9 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     }
 
     Func_08158ce0(4, 4);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     angle -= 0x800;
     frame++;
   } while (frame != 96);

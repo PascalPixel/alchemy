@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
@@ -50,10 +50,10 @@ Func_02002814:
 	.thumb_func
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_0200282c
 	.thumb_func
 Func_0200282c:

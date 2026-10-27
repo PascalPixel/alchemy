@@ -19,7 +19,7 @@ extern const u8 gData_02005b0c[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
@@ -51,7 +51,7 @@ next:
     return;
   PlaceObject(8, 0x2000000, 0x1080000);
   PlaceObject(9, 0x2000000, 0x10f0000);
-  WaitTicks(1);
+  WaitFrames(1);
   ObjectMotion_SetActionVariant(8, 1);
   object = Object_GetById(8);
   object->motionFlags = 4;

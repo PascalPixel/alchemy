@@ -3,7 +3,7 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -38,7 +38,7 @@ void Func_02003490(void) {
   Object_GetById(gPartyState.currentOwner)->update = Func_0200343c;
   Object_GetById(gPartyState.currentOwner)->acceleration = 0x2000;
   Object_GetById(gPartyState.currentOwner)->speedLimit = 0x20000;
-  WaitTicks(5);
+  WaitFrames(5);
   Func_02004df8_(0xc000, 60);
   Event_StartScreenTransition();
   ObjectMotion_SetPositionAndCommit_(gPartyState.currentOwner, 14537, 8577);

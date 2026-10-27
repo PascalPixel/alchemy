@@ -244,7 +244,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   Event_SetMessageId(text + 2);
   FieldEvent_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
   actor->facing = facing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer = 1;
   GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
@@ -264,7 +264,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   Actor_LinkPair(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);
   actor->facing = originalFacing;
-  WaitTicks(1);
+  WaitFrames(1);
   Event_End();
   actor->timer = 0;
 }
@@ -290,7 +290,7 @@ static void VaultRevisit_AskAboutJailbreak(void) {
 static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   Event_SetMessageId(MsgVaultWarriorsWhoCaptured);
@@ -312,7 +312,7 @@ static void VaultRevisit_ReadMindOnDodonpa(void) {
 static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
@@ -375,7 +375,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
     Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
     Actor_RunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_SetMessageId(MsgVaultGuysCheckJail);
     Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
@@ -410,7 +410,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetPositionAndCommit(actorId, x, z);
   Import_ActorSetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
-    WaitTicks(1);
+    WaitFrames(1);
     if ((s16)((u32)jumpingActor->velocityY >> 16) == 0)
       break;
   }
@@ -424,17 +424,17 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 static void VaultRevisit_RingBell(void) {
   Event_Start();
   Event_PlaySong(SE_BELL);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    Event_WaitTicks(12);
+    Event_WaitFrames(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     // Let the Djinni leap from hiding before it walks to the bell.
     VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
@@ -553,7 +553,7 @@ static void VaultRevisit_SapJoins(void) {
 /// Jumps at the hidden passage, then pauses so the party can see the clue.
 static inline void VaultRevisit_DogJumpAtPassage(void) {
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
 }
 
 /// Using a Bone on the dog: it takes the Bone, runs to the hidden passage at
@@ -563,18 +563,18 @@ static inline void VaultRevisit_DogJumpAtPassage(void) {
 static void VaultRevisit_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   // Repeat the clue at the concealed passage, then step back.
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 392);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
   Event_End();
@@ -604,7 +604,7 @@ static void VaultRevisit_TalkToDog(void) {
   Event_SetMessageId(MsgVaultRuffRrruff2);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Actor_LinkPair(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
-  Event_WaitTicks(2);
+  Event_WaitFrames(2);
   Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 
@@ -664,7 +664,7 @@ s32 Scene_Initialize(void) {
   // to it.
   Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
-  WaitTicks(1);
+  WaitFrames(1);
   // Resume the two walking villagers' proximity reactions.
   actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
 #ifdef UBFIX

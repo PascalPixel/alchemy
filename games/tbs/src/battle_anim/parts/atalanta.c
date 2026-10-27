@@ -100,7 +100,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *args) {
   // The projection centre moves down to line 240 for the gathering;
   // BattleAnim_SetupBlendedDisplay puts it back at 120 between the parts.
   gProjection.centerY = 240;
-  WaitTicks(1);
+  WaitFrames(1);
   // The violet sky scrolls one pixel left every four frames.
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);

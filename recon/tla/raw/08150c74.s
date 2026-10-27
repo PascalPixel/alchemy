@@ -450,7 +450,7 @@ BattleEffect_RunQuake:
 	ldrb r1, [r2, r3]
 	adds r0, r1, #0
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r4, #240
 	ldr r3, [sp, #68]
 	lsls r4, r4, #7
@@ -459,7 +459,7 @@ BattleEffect_RunQuake:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #60]
 	mov r0, r8
 	adds r5, #1

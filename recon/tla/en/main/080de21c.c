@@ -109,7 +109,7 @@ void Func_080de21c(void) {
     Animation_ApplyChildValuesToRecordFar(slot->object, 9);
     slot->scaleY = 0xb333;
     slot->scaleX = 0xb333;
-    WaitTicks(2);
+    WaitFrames(2);
     slot++;
   }
 
@@ -137,11 +137,11 @@ void Func_080de21c(void) {
       scale += 0x500;
       object->scaleY = scale;
       object->scaleX = scale;
-      WaitTicks(1);
+      WaitFrames(1);
       scale = object->scaleX;
     } while (scale <= 0xffff);
   }
-  WaitTicks(3);
+  WaitFrames(3);
 
   resource = NULL;
   for (i = 2; i >= 0; i--) {
@@ -176,14 +176,14 @@ void Func_080de21c(void) {
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
-      WaitTicks(3);
+      WaitFrames(3);
       Object_SetPosition(copy, pos.x, pos.y, pos.z);
       ObjectDispatch_InitializeFar(copy, gData_080f0e58);
     }
   }
 
   for (i = 0; i <= 59 && object->script != NULL; i++)
-    WaitTicks(1);
+    WaitFrames(1);
 
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
@@ -204,9 +204,9 @@ void Func_080de21c(void) {
   if (event != NULL)
     EventRuntime_RunPendingEvent(event, scene->firstObjectId,
                                  scene->secondObjectId);
-  WaitTicks(10);
+  WaitFrames(10);
   BattleEffect_PrepareBufferInterpolation();
-  WaitTicks(20);
+  WaitFrames(20);
   if (marker != 96)
     Resource_ResetEntry(marker);
 }

@@ -23,7 +23,7 @@ extern u8 gData_03001110;
 extern s16 gDisplayScroll_Busy;
 extern const void *gDisplayScroll_SlideResources[];
 
-void DisplayScroll_StepPositionEveryFourFrames(void);
+void DisplayScroll_StepPositionEveryFourVBlanks(void);
 void DisplayScroll_BuildHblankWordTable(u32 *table);
 void Graphics_ClearCharacterBlockAndPalette(s32 block);
 void Func_081a0a70(void);
@@ -46,7 +46,7 @@ s32 Func_081a06e0(s32 mode) {
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
   Scheduler_ResetTaskTable();
-  Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
+  Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourVBlanks,
                                 3200);
   Io_Write16(0x40, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
@@ -60,7 +60,7 @@ s32 Func_081a06e0(s32 mode) {
 
   if (mode == 1) {
     Func_081a0a70();
-    WaitTicks(60);
+    WaitFrames(60);
     for (slide = 0;; slide++) {
       odd = slide & 1;
       Func_081a052c(gDisplayScroll_SlideResources[slide], odd ^ 1);
@@ -73,7 +73,7 @@ s32 Func_081a06e0(s32 mode) {
         for (wait = 0; wait <= 3; wait++) {
           if (gInput.held & 8)
             goto done;
-          WaitTicks(1);
+          WaitFrames(1);
         }
         blend -= 0x100;
       }
@@ -83,7 +83,7 @@ s32 Func_081a06e0(s32 mode) {
             goto done;
           if (gDisplayScroll_Busy == 2)
             goto done;
-          WaitTicks(1);
+          WaitFrames(1);
         } while (Data_02007500 == 0);
       }
       Data_02007500--;
@@ -91,7 +91,7 @@ s32 Func_081a06e0(s32 mode) {
   } else {
     Func_081a0e0c(mode - 2);
     while (gDisplayScroll_Busy <= 375)
-      WaitTicks(1);
+      WaitFrames(1);
     Func_081a0fb8();
   }
 

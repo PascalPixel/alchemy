@@ -36,31 +36,31 @@ void Func_02000fd0(void) {
      */
     i = 8;
   sink:
-    FieldEvent_WaitTicks(1);
+    FieldEvent_WaitFrames(1);
     object->y -= 0x20000;
     i--;
     if (i > 0)
       goto sink;
     Func_0200156c(10);
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     Camera_MoveWithinMapBounds(0xc00000, -1, 0xe00000, 1);
     Speed(10, 0xcccc, 0x6666);
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
     ObjectMotion_CommitCurrentPositionAndActivate(10);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
     Speed(10, 0x26666, 0x13333);
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 80);
     ObjectMotion_CommitCurrentPositionAndActivate(10);
     Func_0200156c(10);
     if (!GameFlag_Test(0x204)) {
-      FieldEvent_WaitTicks(10);
+      FieldEvent_WaitFrames(10);
       Speed(10, 0xcccc, 0x6666);
       ObjectMotion_OffsetPositionAndResetMotion(10, 0, 80);
       ObjectMotion_CommitCurrentPositionAndActivate(10);
       Speed(10, 0x28000, 0x14000);
       ObjectMotion_OffsetPositionAndResetMotion(10, 0, 80);
-      FieldEvent_WaitTicks(5);
+      FieldEvent_WaitFrames(5);
       Func_020020c0(10, 0, 0);
       GameFlag_SetBit(0x206);
     } else {
@@ -68,10 +68,10 @@ void Func_02000fd0(void) {
       Func_02002018(77, 15, 75, 15, 1, 1);
       ObjectMotion_OffsetPositionAndResetMotion(10, 0, 12);
       ObjectMotion_CommitCurrentPositionAndActivate(10);
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Func_02002030(9, 11, 1, 1, 11, 11);
       Object_SetModeById(10, 2);
-      FieldEvent_WaitTicks(30);
+      FieldEvent_WaitFrames(30);
       GameFlag_SetBit(0x205);
     }
     Func_02002070();
@@ -79,7 +79,7 @@ void Func_02000fd0(void) {
     Func_02002030(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
-    FieldEvent_WaitTicks(30);
+    FieldEvent_WaitFrames(30);
     *flags = 0;
     Flag_Set(0x207);
     Func_02002070();

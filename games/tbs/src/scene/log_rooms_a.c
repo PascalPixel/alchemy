@@ -337,7 +337,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
   if (FieldActor_CheckMovementCollision(leader, position) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, 6);
-    WaitTicks(6);
+    WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = PIXELS(3);
@@ -350,7 +350,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
         ((union FieldCoordinate *)&position->z)->part.pixel);
     Actor_SelectAnimation(leader, 6);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    WaitTicks(6);
+    WaitFrames(6);
     *flags = savedMotionFlags;
     Event_End();
     return 1;
@@ -660,7 +660,7 @@ static void LogRoomsA_MayorAsksHelpForIvan(void) {
     if (GameFlag_Get(thankedForHelpingFlag) == 0) {
       Event_SetMessageId(MsgVaultYoureGoingHelpIvan);
       LogRoomsA_StandAndShowMessage(ACTOR_MAYOR);
-      Event_WaitTicks(10);
+      Event_WaitFrames(10);
       LogRoomsA_PlayAnimationAndWait(ACTOR_MAYOR, ANIM_NOD, 20);
       GameFlag_Set(thankedForHelpingFlag);
     } else {
@@ -856,9 +856,9 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
     LogRoomsA_PlayAnimationAndWait(ACTOR_MAYOR, ANIM_NOD, 20);
     LogRoomsA_ShowMessageAndWait(ACTOR_MAYOR, 30);
     Actor_FaceDirection(ACTOR_MAYOR, FACING_EAST, 0);
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_MAYOR, 20);
     LogRoomsA_PlayAnimationAndWait(ACTOR_MAYOR, ANIM_NOD, 20);
     gFieldWork->message++;
@@ -873,7 +873,7 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
   }
   Event_SetMessageId(MsgVaultHeadingOutBeyondGomaRange);
   Event_OpenMessage(ACTOR_MAYOR, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
@@ -899,14 +899,14 @@ static void LogRoomsA_OfferBones(void) {
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     if (PartyInventory_HasSpace() == 0) {
       Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
@@ -916,9 +916,9 @@ static void LogRoomsA_OfferBones(void) {
     }
   } else {
     gFieldWork->message++;
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
@@ -1026,29 +1026,29 @@ static void LogRoomsA_MeetIvan(void) {
     GameFlag_Set(FLAG_VAULT_MET_IVAN);
     // Ivan reads Isaac's mind and admits his strange powers.
     LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     LogRoomsA_EndMindRead();
     Event_SetMessageId(MsgVaultDoPossessStrangePowers);
     Event_PlaySong(MUS_IVAN);
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
     // The two start; he reads again: "You have them, too, don't you?"
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     LogRoomsA_EndMindRead();
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
     LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     // A third reading: his power is called Psynergy; then they have so much
     // in common he can trust them.
     LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     LogRoomsA_EndMindRead();
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 50);
@@ -1058,19 +1058,19 @@ static void LogRoomsA_MeetIvan(void) {
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 40);
     // He walks off a step, turns back and tells of Hammet's stolen rod.
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-    Event_WaitTicks(30);
+    Event_WaitFrames(30);
     Actor_WalkToAndWait(ACTOR_IVAN, 376, 376);
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    Event_WaitTicks(50);
+    Event_WaitFrames(50);
     LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
-    Event_WaitTicks(10);
+    Event_WaitFrames(10);
     Event_ShowMessage(ACTOR_IVAN, 0);
     // "Would you please help me get my master's rod back?"
     Event_OpenMessage(ACTOR_IVAN, 0);
@@ -1118,80 +1118,80 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
 
   // Ivan jumps for joy: "Thank you. With your help, I believe we can recover
   // the rod." Then he asks their names.
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_GetById(ACTOR_IVAN)->paused = 0;
   Actor_Jump(ACTOR_IVAN, 4, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   message = MsgVaultThankHelpBelieve;
   Event_SetMessageId(message);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   // He reads their names from Isaac's mind; Isaac backs away from him.
   Actor_WalkToAndWait(ACTOR_IVAN, 376, 392);
   LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   LogRoomsA_EndMindRead();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 424);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   // Demonstrate Mind Read and let Garet and Isaac react to Ivan's explanation.
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // "Is my Mind Read so frightening?": either answer goes on the same way.
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   FieldMessage_ShowAtActor(ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_IVAN, 0);
   Event_AskYesNoWithActorAnimation(0, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   // Ivan and Isaac clasp hands, and Garet cries out that his mind is read.
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
   Actor_WalkToAndWait(ACTOR_IVAN, 384, 408);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   FieldMessage_Show(message + 5, 1);
   Event_SetMessageId(message + 6);
   Actor_LinkPair(ACTOR_IVAN, ACTOR_GARET, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Actor_GetById(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 352, 408);
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   // Garet backs off; Ivan asks whether Isaac could read Garet's mind, and the
   // two read it together. "Just as I thought."
   Actor_WalkTo(ACTOR_IVAN, 368, 408);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 424);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1202,7 +1202,7 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_FaceEachOtherAndWait(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   LogRoomsA_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD, 30);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
@@ -1215,20 +1215,20 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // Sharing their Psynergy let Isaac read minds too; Garet protests that it
   // isn't fair, and Ivan agrees it is one-way.
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldEffect_SpawnAttached(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_PARTY_LEADER, 10);
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // Ivan and Garet clasp hands, and Garet reads Isaac's mind.
   FieldMessage_Show(message + 13, 1);
   Event_SetMessageId(message + 14);
@@ -1236,7 +1236,7 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                             0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   FieldPsynergy_RestoreMindReadPalette();
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
@@ -1247,14 +1247,14 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   LogRoomsA_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // "Let's use Mind Read to find the thieves!" Garet worries people will
   // notice.
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD, 10);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 30);
@@ -1264,7 +1264,7 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   // Only Adepts can tell when Ivan uses Psynergy; ordinary people see
   // nothing, and he promises not to read their minds again.
   FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
@@ -1272,12 +1272,12 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldEffect_SpawnAttached(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                             0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 10);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
@@ -1309,14 +1309,14 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac cuts the tied-up villager free from the ropes; he gets up and nods.
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   base = MsgVaultVaultCutFree;
   FieldMessage_Show(base, 1);
   base++;
   Event_SetMessageId(base);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Import_ActorSetAnimation(ACTOR_TIED_UP_VILLAGER, ANIM_STAND);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIM_NOD, 40);
   // Garet and Ivan come out of the leader around the tied-up villager.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 440);
@@ -1332,32 +1332,32 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   // The tied-up villager tells how he came up to fix the roof, was whacked from
   // behind and woke up tied.
   Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 30);
   Actor_RunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_SOUTHEAST + FACING_STEP,
                       0);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 30);
   // He looks around at chests he doesn't remember; Ivan guesses the stolen
   // goods are in them.
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH + FACING_STEP, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTHWEST + FACING_STEP,
                       0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH + FACING_STEP, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   LogRoomsA_FaceActorAndWait(ACTOR_TIED_UP_VILLAGER, ACTOR_PARTY_LEADER, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIM_SHAKE_HEAD, 30);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
@@ -1372,7 +1372,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_RunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 1);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
@@ -1385,43 +1385,43 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(744), PIXELS(408));
   Actor_WalkToAndWait(ACTOR_THIEF_LEADER, 792, 416);
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitTicks(70);
+  Event_WaitFrames(70);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
   Actor_SetAngleToward(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER, 0);
   Actor_SetScript(ACTOR_FIRST_THIEF, gLogRoomsA_FirstThiefEntryScript);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_SetScript(ACTOR_SECOND_THIEF, gLogRoomsA_SecondThiefEntryScript);
   Actor_RefreshSelectorById(ACTOR_SECOND_THIEF);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // The three taunt Hammet's whelp and say Hammet was caught by worse thieves
   // after fleeing to Lunpa.
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_THIEF, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_THIEF, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_ShowMessageAndWait(ACTOR_SECOND_THIEF, 40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // The tied-up villager is alarmed at the name Lunpa; Garet asks what kind of
   // place it is, and the tied-up villager and the thieves tell of Lunpa, Donpa
   // and Dodonpa.
   Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_TIED_UP_VILLAGER, 0);
@@ -1429,15 +1429,15 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIM_SHAKE_HEAD, 30);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 30);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
@@ -1449,29 +1449,29 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // "See, we're not so bad. How about it? Will you let us go?" Yes: if they
   // return the goods and repent? No: even returning everything is a crime?
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_NOD, 20);
   FieldMessage_ShowAtActor(ACTOR_THIEF_LEADER, 0);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
     Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
   } else {
-    Event_WaitTicks(40);
+    Event_WaitFrames(40);
     Actor_SetAngleToward(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
     Actor_SetAngleToward(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
     base = MsgVaultVaultThievesCaught;
     Event_SetMessageId(base);
     Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
     // Both answers go on with the same refusal.
     base -= 3;
@@ -1480,7 +1480,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   // "We stole this stuff fair and square!" They agree to keep the party quiet,
   // and the leader cries "Get 'em!!!"
   Actor_ShowEmote(ACTOR_FIRST_THIEF, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_SECOND_THIEF, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
@@ -1493,7 +1493,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
@@ -1577,19 +1577,19 @@ static void LogRoomsA_ApproachSuspects(void) {
   // weird kid is with them!"
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 696);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_SUSPECTED_THIEF, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SUSPECTED_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceActorAndWait(ACTOR_SUSPECTED_THIEF, ACTOR_PARTY_LEADER, 10);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_SetMessageId(MsgVaultWant);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
   Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 30);
@@ -1672,7 +1672,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 50);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 30);
@@ -1680,7 +1680,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   // "Isaac, you take the lead." The two walk back into him, and the suspects
@@ -1688,7 +1688,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Event_SetMessageId(MsgVaultIsaacTakeLead);
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 50);
@@ -1723,9 +1723,9 @@ static void LogRoomsA_StartCorneringSuspects(void) {
 ///
 /// Called by LogRoomsA_StartActorStops.
 static void LogRoomsA_ResetSuspectRoutes(void) {
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_SetMessageId(MsgVaultTheyreBack);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
   Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_EAST, 20);
@@ -1734,7 +1734,7 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
   Actor_SetAnimationAndWait(ACTOR_SUSPECTED_LEADER, ANIM_SHAKE_HEAD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
@@ -1801,7 +1801,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_SUSPECTED_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_SUSPECTED_THIEF, ACTOR_IVAN, 0);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   actorId = ACTOR_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
   switch (work->raisedTrigger) {
@@ -1831,17 +1831,17 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Actor_FaceActor(ACTOR_IVAN, actorId, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // "Now, Ivan!" "A-All right!" Ivan reads the cornered one's mind while the
   // two wonder what he is doing.
   Event_SetMessageId(MsgVaultNowIvan);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   LogRoomsA_StartMindRead(ACTOR_IVAN, actorId);
   FieldPsynergy_RestoreMindReadPalette();
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
@@ -1851,12 +1851,12 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   LogRoomsA_EndMindRead();
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   LogRoomsA_SetPartyImagePriority();
   gFieldWork->transitionFrames = 24;
   gFieldWork->transition =
@@ -1918,7 +1918,7 @@ static void LogRoomsA_DiscussMindReading(void) {
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   {
     struct FieldWork *work = gFieldWork;
 
@@ -1928,11 +1928,11 @@ static void LogRoomsA_DiscussMindReading(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // "What did you learn, Ivan?" It is them: they hid the stolen goods
   // somewhere in this inn, but won't let him near again.
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Event_SetMessageId(MsgVaultLearn);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
@@ -1944,11 +1944,11 @@ static void LogRoomsA_DiscussMindReading(void) {
   Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   // Garet: they have to search the inn. Each no leads to another plea, from
   // Garet and then Ivan; three noes and Garet vouches for Isaac's sense of
@@ -1956,33 +1956,33 @@ static void LogRoomsA_DiscussMindReading(void) {
   FieldMessage_ShowAtActor(ACTOR_GARET, 0);
   persistedWithQuestions = 0;
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
     LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD, 30);
     FieldMessage_ShowAtActor(ACTOR_GARET, 0);
     persistedWithQuestions = 0;
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-      Event_WaitTicks(20);
+      Event_WaitFrames(20);
       FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-      Event_WaitTicks(60);
+      Event_WaitFrames(60);
       Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
       LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_IVAN, 20);
       FieldMessage_ShowAtActor(ACTOR_IVAN, 0);
       persistedWithQuestions = 0;
       if (Event_AskYesNoWithActorAnimation(2, 0) != 0) {
-        Event_WaitTicks(20);
+        Event_WaitFrames(20);
         FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                                   0);
-        Event_WaitTicks(60);
+        Event_WaitFrames(60);
         LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
         LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 10);
         Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-        Event_WaitTicks(10);
+        Event_WaitFrames(10);
         LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 10);
         LogRoomsA_FaceActorAndWait(ACTOR_IVAN, ACTOR_GARET, 20);
         FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION,
                                   0);
-        Event_WaitTicks(60);
+        Event_WaitFrames(60);
         LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 20);
         LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 10);
         LogRoomsA_FaceEachOtherAndWait(ACTOR_GARET, ACTOR_PARTY_LEADER, 20);
@@ -2001,7 +2001,7 @@ static void LogRoomsA_DiscussMindReading(void) {
   // "Let's go, Ivan." Garet and Ivan walk back into the leader.
   FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                             0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 10);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 10);
@@ -2182,7 +2182,7 @@ s32 Scene_Initialize(void) {
   case LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT:
     // The room with the crate: the crate keeps its place once moved, and the
     // passage behind it stays open.
-    Event_WaitTicks(2);
+    Event_WaitFrames(2);
     MapGrid_CopyCellsTo(54, 2, 35, 20, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 95, 20, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 35, 80, 2, 10);
@@ -2196,7 +2196,7 @@ s32 Scene_Initialize(void) {
     }
     break;
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
-    Event_WaitTicks(2);
+    Event_WaitFrames(2);
     MapGrid_CopyCellsTo(54, 2, 44, 21, 2, 8);
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
     Event_Start();
@@ -2206,7 +2206,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Import_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
       Import_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_WALK);
-      Event_WaitTicks(1);
+      Event_WaitFrames(1);
       Import_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIM_WALK);
       break;
     }
@@ -2243,7 +2243,7 @@ s32 Scene_Initialize(void) {
     }
     Import_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
     Import_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_WALK);
-    Event_WaitTicks(1);
+    Event_WaitFrames(1);
     Import_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIM_WALK);
     break;
   }
@@ -2310,7 +2310,7 @@ static void LogRoomsA_LoseToThieves(void) {
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
   LogRoomsA_OpenWindowTransition();
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // "These kids are nothing to worry about." The tied-up villager groans.
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_NOD, 20);
   Event_SetMessageId(MsgVaultTheseKidsNothingWorryAbout);
@@ -2323,7 +2323,7 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_EAST, 0);
   Actor_WaitForMoveById(ACTOR_FIRST_THIEF);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_EAST, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   LogRoomsA_PlayAnimationAndWait(ACTOR_FIRST_THIEF, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
   LogRoomsA_FaceActorAndWait(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 30);
@@ -2358,16 +2358,16 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
   gFieldWork->transitionFrames = 32;
   LogRoomsA_OpenWindowTransition();
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Event_SetMessageId(MsgVaultWontGoAway);
   Actor_RunRepeatedMotion(ACTOR_FIRST_THIEF, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 30);
   Actor_RunRepeatedMotion(ACTOR_SECOND_THIEF, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Event_ShowMessage(ACTOR_SECOND_THIEF, 0);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_THIEF_LEADER, ACTOR_FIRST_THIEF, 30);
   Import_ActorSetAnimation(ACTOR_THIEF_LEADER, ANIM_NOD);
@@ -2378,7 +2378,7 @@ static void LogRoomsA_ConfrontThievesAgain(void) {
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // "We'll make you sorry you were ever born! Get 'em!!" and the battle.
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
@@ -2448,15 +2448,15 @@ static void LogRoomsA_DefeatThieves(void) {
   MapGrid_CenterOnFollowedPoint();
   LogRoomsA_OpenWindowTransition();
   Actor_SetScript(ACTOR_FIRST_THIEF, actions);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_SetScript(ACTOR_SECOND_THIEF, actions);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   // "They... They got us..." The tied-up villager thought they were goners; he
   // slips past Garet, cheers the win and runs for the mayor.
   Event_SetMessageId(MsgVaultTheyTheyGotUs);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 456);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2466,11 +2466,11 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_WEST, 0);
   Actor_WalkToAndWait(ACTOR_GARET, 808, 432);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 768, 408);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TIED_UP_VILLAGER, 0);
@@ -2480,13 +2480,13 @@ static void LogRoomsA_DefeatThieves(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 744, 408);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   // The thieves grumble; Garet: stealing is wrong, evil never prevails.
   Actor_RunRepeatedMotion(ACTOR_FIRST_THIEF, 2);
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
   Actor_SetScript(ACTOR_FIRST_THIEF, actions);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_THIEF, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_FIRST_THIEF, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_IVAN, ACTOR_FIRST_THIEF, 20);
@@ -2495,7 +2495,7 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
   Actor_SetScript(ACTOR_SECOND_THIEF, actions);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
   // Ivan will take the rod to Hammet in Lunpa, and asks what the two will do:
   // go after Saturos and the others.
@@ -2507,10 +2507,10 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD, 30);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
@@ -2522,37 +2522,37 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
     LogRoomsA_EndMindRead();
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   } else {
     gFieldWork->message++;
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    Event_WaitTicks(60);
+    Event_WaitFrames(60);
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
     LogRoomsA_EndMindRead();
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
   }
   // "I see... So that's what happened..." The tied-up villager comes back with
   // the mayor and two townsmen.
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 20);
   Event_SetMessageId(MsgVaultSeeThatsHappened);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
@@ -2560,12 +2560,12 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 40);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 408);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_WEST, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TIED_UP_VILLAGER, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_IVAN, ACTOR_TIED_UP_VILLAGER, 20);
   Actor_RunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2596,7 +2596,7 @@ static void LogRoomsA_DefeatThieves(void) {
   // townsmen rouse the thieves to tie them up.
   LogRoomsA_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR, ACTOR_LOFT_ESCORT, 20);
   Actor_RunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 30);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
@@ -2619,7 +2619,7 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                              ACTOR_FIRST_THIEF, 20);
   Actor_RunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                  ANIM_SHAKE_HEAD, 20);
@@ -2636,7 +2636,7 @@ static void LogRoomsA_DefeatThieves(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Event_End();
 }
 
@@ -2702,21 +2702,21 @@ static void LogRoomsA_ReturnStolenGoods(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // "Isaac, right? I won't forget this!" "Take them away!"
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
   aftermath = MsgVaultYouIsaacRightWontForget;
   Event_SetMessageId(aftermath);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Import_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIM_NOD, 20);
   Actor_StartRepeatedMotion(ACTOR_FIRST_THIEF, 2);
   Actor_StartRepeatedMotion(ACTOR_SECOND_THIEF, 2);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   // The escort leads the three thieves down the ladder, the tied-up villager
   // after them.
   Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2725,16 +2725,16 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_NORTHWEST + FACING_STEP, 0);
   Actor_SetScript(ACTOR_FIRST_THIEF, gLogRoomsA_VaultScriptB);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_THIEF_LEADER, gLogRoomsA_VaultScriptB);
-  Event_WaitTicks(15);
+  Event_WaitFrames(15);
   Actor_SetScript(ACTOR_SECOND_THIEF, gLogRoomsA_VaultScriptB);
-  Event_WaitTicks(35);
+  Event_WaitFrames(35);
   Actor_SetScript(ACTOR_TIED_UP_VILLAGER, gLogRoomsA_VaultScriptA);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_WaitForMoveById(ACTOR_LOFT_ESCORT);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // The mayor and the villager opening the chests thank the party.
   Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
@@ -2763,25 +2763,25 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_SetScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS, gLogRoomsA_VaultScriptC);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   Actor_SetScript(ACTOR_LOFT_MAYOR, gLogRoomsA_VaultScriptD);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_GARET, 792, 456);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_IVAN, 792, 408);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
   Actor_WalkToAndWait(ACTOR_GARET, 808, 456);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-  Event_WaitTicks(100);
+  Event_WaitFrames(100);
   LogRoomsA_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                              ACTOR_LOFT_MAYOR, 60);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR,
                              ACTOR_STRONGMAN_OPENING_THE_CHESTS, 40);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 40);
   Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_EAST, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   // The mayor opens the first chest and his urn rises out of it.
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 2);
   Event_PlaySong(SE_CHEST_OPEN);
@@ -2792,7 +2792,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetDestinationOffset(ACTOR_FOUND_URN, 0, -8);
   Actor_WaitForMoveById(ACTOR_FOUND_URN);
   Actor_RunRepeatedMotion(ACTOR_FOUND_URN, 2);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   FieldMessage_Show((aftermath + 5), 1);
   Import_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
   Actor_SetPosition(ACTOR_FOUND_URN, 0, 0);
@@ -2808,7 +2808,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                              40);
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST, 0);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
   Actor_RunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
@@ -2821,18 +2821,18 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetDestinationOffset(ACTOR_FOUND_STATUE, 0, -8);
   Actor_WaitForMoveById(ACTOR_FOUND_STATUE);
   Actor_RunRepeatedMotion(ACTOR_FOUND_STATUE, 2);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   FieldMessage_Show((aftermath + 8), 1);
   Import_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_WALK);
   Actor_SetPosition(ACTOR_FOUND_STATUE, 0, 0);
   gFieldWork->message++;
   Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ANIM_NOD,
                                  50);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
@@ -2841,18 +2841,18 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   // it is what Ivan was looking for, and he can return to Master Hammet.
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_NORTH + FACING_STEP, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 376);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                              ACTOR_LOFT_MAYOR, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_FaceActorAndWait(ACTOR_IVAN, ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                              30);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_IVAN, 20);
@@ -2860,7 +2860,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Event_ShowMessage(ACTOR_LOFT_MAYOR, 0);
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_SOUTH + FACING_STEP, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   LogRoomsA_FaceActorAndWait(ACTOR_IVAN, ACTOR_LOFT_MAYOR, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
@@ -2871,7 +2871,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
   // Hammet was seen heading toward Lunpa: Dodonpa must have kidnapped him.
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
@@ -2880,13 +2880,13 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 40);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 3);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
@@ -2908,36 +2908,36 @@ static void LogRoomsA_ReturnStolenGoods(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 40);
   // The mayor asks the two their names, thanks them, and asks them to come
   // see him before they leave town.
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 840, 424);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD, 20);
   Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_SOUTH + FACING_STEP, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
@@ -2969,11 +2969,11 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   temporaryActor->targetZ = ACTOR_NO_TARGET;
   Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Import_ActorSetAnimation(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ANIM_STAND);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
   Actor_WalkToAndWait(ACTOR_GARET, 808, 440);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
@@ -2983,17 +2983,17 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
   Actor_WaitForMoveById(ACTOR_LOFT_MAYOR);
   Actor_WaitForMoveById(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   // Alone, Garet tries to cheer Ivan up; Ivan only wants to rescue Hammet,
   // but has seen the two's mission in their minds and won't ask their help.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 408);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Event_WaitTicks(50);
+  Event_WaitFrames(50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 40);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 40);
@@ -3002,10 +3002,10 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
@@ -3013,17 +3013,17 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
@@ -3032,9 +3032,9 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   // and Ivan decline.
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_WaitTicks(20);
+    Event_WaitFrames(20);
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
     LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 20);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
@@ -3051,16 +3051,16 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   temporaryActor = (struct Actor *)FieldEffect_PlayCueAndStartEmitterOnTarget(
       ACTOR_IVAN, ACTOR_THIRD_CHEST, ITEM_SHAMANS_ROD);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   rod = MsgVaultIvanGotShamansRod;
   FieldMessage_Show(rod, 1);
   Actor_Release(temporaryActor);
   Import_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIM_WALK);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
   Actor_WalkToAndWait(ACTOR_IVAN, 856, 456);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
@@ -3094,10 +3094,10 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   // Ivan goes down the ladder; Garet: they'd better get moving too.
   Actor_WalkToAndWait(ACTOR_IVAN, 744, 408);
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD, 20);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -3107,7 +3107,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Event_WaitTicks(30);
+  Event_WaitFrames(30);
   // Clear the loft of everyone the event used.
   Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 0, 0);
   Actor_SetPosition(ACTOR_LOFT_MAYOR, 0, 0);
@@ -3131,24 +3131,24 @@ static void LogRoomsA_OpenWindowTransition(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitTicks(1);
+  Event_WaitFrames(1);
 }
 
 static void LogRoomsA_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Event_ShowMessageAndWait(actorId, 0);
-  Event_WaitTicks(waitFrames);
+  Event_WaitFrames(waitFrames);
 }
 
 static void LogRoomsA_FaceActorAndWait(s32 actorId, s32 targetId,
                                        s32 waitFrames) {
   Actor_SetAngleToward(actorId, targetId, 0);
-  Event_WaitTicks(waitFrames);
+  Event_WaitFrames(waitFrames);
 }
 
 static void LogRoomsA_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                            s32 waitFrames) {
   Actor_LinkPair(firstId, secondId, 0);
-  Event_WaitTicks(waitFrames);
+  Event_WaitFrames(waitFrames);
 }
 
 /// Waits for the animation to change before the following pause.
@@ -3156,7 +3156,7 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
                                            s32 waitFrames) {
   Import_ActorSetAnimation(actorId, animation, waitFrames);
   Actor_WaitForAnimationChange(actorId);
-  Event_WaitTicks(waitFrames);
+  Event_WaitFrames(waitFrames);
 }
 
 /// Begins Mind Read, chooses its target, and shows its opening effect.
@@ -3165,7 +3165,7 @@ static void LogRoomsA_StartMindRead(s32 casterId, s32 targetId) {
   FieldPsynergy_SetupActorPair(casterId, targetId);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// Finishes Mind Read and releases its event effect actors.

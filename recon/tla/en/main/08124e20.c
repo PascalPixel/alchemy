@@ -8,7 +8,7 @@
 // and announces the stat changes and conditions that wore off. ⚓️ adds the
 // reserve members to the party's list, clears each unit's byte 0x143,
 // regenerates ten times as fast for enemies 91 to 97 and 218, and announces the
-// end of the effect sub_08124af8 ticks. The ten-fold enemies are a switch (as a
+// end of the effect sub_08124af8 counts down. The ten-fold enemies are a switch (as a
 // range test the compiler folds it into one unsigned compare: 169). Left: the
 // unit list's address is built as movs r3, #20; add r3, sp natively (two bytes
 // longer, which moves the later branch offsets), and five loads or constants
@@ -74,16 +74,16 @@ void BattlePresentation_WaitForAdvance(void);
 void BattlePres_SetActorModeAndAction(s32 unitId);
 s32 sub_08124af8(s32 id);
 
-#define ANNOUNCE_END(tick, message)                                            \
-  if (tick(unitId) != 0) {                                                     \
+#define ANNOUNCE_END(test, message)                                            \
+  if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     UiText_ShowMessageAndWaitCoreFar((s32)&message);                           \
     BattlePresentation_WaitForAdvance();                                       \
   }
 
-#define ANNOUNCE_END_POSE(tick, message)                                       \
-  if (tick(unitId) != 0) {                                                     \
+#define ANNOUNCE_END_POSE(test, message)                                       \
+  if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));                 \
     UiText_DrawQuantity(unitId, 1);                                            \
     BattlePres_SetActorModeAndAction(unitId);                                  \
@@ -230,18 +230,18 @@ void Func_08124e20(void) {
             BattlePresentation_WaitForAdvance();
           }
         }
-        ANNOUNCE_END(BattleUnit_TickAgilityModifier, MsgAgiNormal);
-        ANNOUNCE_END(BattleUnit_TickAttackModifier, MsgAtkNormal);
-        ANNOUNCE_END(BattleUnit_TickDefenseModifier, MsgDefNormal);
-        ANNOUNCE_END(BattleUnit_TickResistanceModifier, MsgResNormal);
-        ANNOUNCE_END(BattleUnit_TickDelusion, MsgCureDelusion);
-        ANNOUNCE_END(BattleUnit_TickConfusion, MsgConscious);
-        ANNOUNCE_END(BattleUnit_TickCharm, MsgConscious2);
-        ANNOUNCE_END_POSE(BattleUnit_TickStun, MsgCureStun);
-        ANNOUNCE_END_POSE(BattleUnit_TickSleep, MsgWakes);
+        ANNOUNCE_END(BattleUnit_CountDownAgilityModifier, MsgAgiNormal);
+        ANNOUNCE_END(BattleUnit_CountDownAttackModifier, MsgAtkNormal);
+        ANNOUNCE_END(BattleUnit_CountDownDefenseModifier, MsgDefNormal);
+        ANNOUNCE_END(BattleUnit_CountDownResistanceModifier, MsgResNormal);
+        ANNOUNCE_END(BattleUnit_CountDownDelusion, MsgCureDelusion);
+        ANNOUNCE_END(BattleUnit_CountDownConfusion, MsgConscious);
+        ANNOUNCE_END(BattleUnit_CountDownCharm, MsgConscious2);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MsgCureStun);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MsgWakes);
         ANNOUNCE_END(Battle_AdvanceCounterAndCheckChance, MsgCureSeal);
         ANNOUNCE_END(sub_08124af8, MsgRefrainEnd);
-        ANNOUNCE_END(BattleUnit_TickReflect, MsgReflectEnd);
+        ANNOUNCE_END(BattleUnit_CountDownReflect, MsgReflectEnd);
       }
     }
   }

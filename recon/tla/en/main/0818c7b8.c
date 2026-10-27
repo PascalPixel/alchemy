@@ -73,8 +73,8 @@ void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
-void ObjectGroup_TickMemberTimers(void);
-void WaitTicks(s32 ticks);
+void ObjectGroup_CountDownMemberTimers(void);
+void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -206,9 +206,9 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Func_08158ce0(8, 8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

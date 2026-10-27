@@ -57,10 +57,10 @@ void Func_020011c0(void) {
 
 void Func_020011f8(void) {
   ObjectMotion_EnableActionAndResetMotion(17);
-  WaitTicks(1);
+  WaitFrames(1);
   ObjectMotion_Launch(17, 4, 20);
   Engine_AudioPlayCue(229);
-  WaitTicks(2);
+  WaitFrames(2);
   Object_SetActionCallbackAndRefreshById(16, gData_020050f8);
 }
 
@@ -95,12 +95,12 @@ void Func_0200122c(void) {
       Object_SetModeById(17, 5);
       Func_020049a4(17, 0);
       Func_020011f8();
-      FieldEvent_WaitTicks(20);
+      FieldEvent_WaitFrames(20);
       Object_SetModeById(17, 1);
       Object_SetModeById(17, 3);
       Func_020049a4(17, 0);
       ShamanVillage_ObjEmoteWait(17, 0x102);
-      FieldEvent_WaitTicks(40);
+      FieldEvent_WaitFrames(40);
       Func_020049a4(17, 0);
       Motion_SetVarCbAndRefresh(17, 1);
       Func_020049a4(17, 0);
@@ -143,10 +143,10 @@ void Func_02001380(void) {
     ShamanVillage_MessagePut(0x200f, 0);
     ShamanVillage_CamMove(0xb20000, -1, 0xdc0000, 1);
     Func_020049f4();
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     ShamanVillage_CamMove(0x10e0000, -1, 0xdc0000, 1);
     Func_020049f4();
-    FieldEvent_WaitTicks(20);
+    FieldEvent_WaitFrames(20);
     Func_020049a4(15, 0);
     ShamanVillage_CamMove(0xe20000, -1, 0x1180000, 1);
     Func_020049f4();
@@ -171,7 +171,7 @@ void Func_02001380(void) {
   ShamanVillage_ObjWalk2(16, 184, 128);
   ShamanVillage_ObjWalk(17, 264, 128);
   Object_SetModeById(16, 1);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02004934(16, 0, 0);
   Func_02004934(17, 0, 0);
   Event_FinishScreenTransition();

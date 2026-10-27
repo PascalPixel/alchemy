@@ -15,7 +15,7 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -53,7 +53,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   s32 sign;
   s32 org;
   s32 angle;
-  s32 tick;
+  s32 stagger;
   struct EffectStep *puff;
   struct EffectStep *p;
 
@@ -83,14 +83,14 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   }
   angle = -0x4000;
   i = 0;
-  tick = 0;
+  stagger = 0;
   puff = work->particles;
   do {
     puff->x = ((sign * ((Trig_Sin(angle) << 5) >> 16)) + org) + 20;
     puff->y = ((Trig_Cos(angle) << 4) >> 16) + 40;
-    puff->variant = tick;
+    puff->variant = stagger;
     angle += 0x1000;
-    tick -= 4;
+    stagger -= 4;
     i += 1;
     puff++;
   } while (i != FLAME_COUNT);
@@ -138,9 +138,9 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
         Func_0814cd48(effect->actors[i], 10, 5, i, 12);
       i += 1;
     }
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame += 1;
   } while (frame != 60);
   Runtime_ReleaseHeapBlock(104);

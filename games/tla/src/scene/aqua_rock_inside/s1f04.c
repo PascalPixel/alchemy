@@ -28,7 +28,7 @@ fall:
   object->angle += 0x2000;
   speed += -0xccc;
   ObjectDispatch_SetSingleChildFlags(object, 0);
-  WaitTicks(1);
+  WaitFrames(1);
   i--;
   if (i >= 0)
     goto fall;

@@ -888,7 +888,7 @@ Func_0815585c:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, [sp, #24]
 	movs r4, #1
 	add r9, r4

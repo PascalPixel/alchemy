@@ -32,7 +32,7 @@ void EventRuntime_FinishScreen(void) {
 void EventRuntime_WaitDelay(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  WaitTicks(event->delay);
+  WaitFrames(event->delay);
 }
 
 void EventRuntime_SetDestination(s32 scene, s32 entrance) {

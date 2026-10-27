@@ -23,7 +23,7 @@ again:
   value = state->delay;
   test = value;
   if (test != 0)
-    goto tick;
+    goto count_down;
 
   cursor = state->cursor;
   command = *cursor;
@@ -56,7 +56,7 @@ again:
   state->cursor += 2;
   goto again;
 
-tick:
+count_down:
   state->delay = value + 0xffff;
 }
 

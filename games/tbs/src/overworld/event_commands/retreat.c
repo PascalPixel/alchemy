@@ -116,13 +116,13 @@ void FieldPsynergy_Retreat(void) {
   Event_Start();
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldPsynergy_FadeToCastColor();
-  WaitTicks(10);
+  WaitFrames(10);
   Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
-  WaitTicks(30);
+  WaitFrames(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
-  WaitTicks(40);
+  WaitFrames(40);
 
   // Start spinning.
   Sound_PlaySongFar(SE_SHIMMER);
@@ -130,7 +130,7 @@ void FieldPsynergy_Retreat(void) {
   Actor_SelectAnimationFar(actor, 3);
   actor->update = FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
-  WaitTicks(70);
+  WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
   Actor_SetSpriteFlagsFar(actor, 0);
@@ -153,10 +153,10 @@ void FieldPsynergy_Retreat(void) {
     effect->scaleY = scale;
     effect->scaleX = scale;
     i++;
-    WaitTicks(1);
+    WaitFrames(1);
     effect++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
-  WaitTicks(70);
+  WaitFrames(70);
 
   // The flying particles vanish once they arrive.
   i = 0;
@@ -166,9 +166,9 @@ void FieldPsynergy_Retreat(void) {
       effectWork->particles[i].state = last;
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
-  WaitTicks(40);
+  WaitFrames(40);
   FieldPsynergy_FadeFromCastColor();
-  WaitTicks(10);
+  WaitFrames(10);
 }
 
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)

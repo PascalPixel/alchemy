@@ -25,11 +25,11 @@ void Func_020000d8(void) {
 
   if (Func_020037d8(&target)) {
     Func_02003a5c(target);
-    WaitTicks(5);
+    WaitFrames(5);
     object->gravity = 0x8000;
     Object_SetModeById(10, 3);
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
-    FieldEvent_WaitTicks(22);
+    FieldEvent_WaitFrames(22);
     Func_02003ffc(240);
     Object_SetModeById(10, 8);
     object->priorityFlags |= 2;

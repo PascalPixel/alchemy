@@ -66,7 +66,7 @@ UiWork_AnimateSpriteSlots:
 	.4byte .L_0803c870
 	.4byte .L_0803c8e0
 .L_0803c5dc:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_0803c5e0:
 	.4byte .L_0803c598
 .L_0803c5e4:
@@ -123,7 +123,7 @@ UiWork_AnimateSpriteSlots:
 .L_0803c648:
 	.4byte 0xfffffc00
 .L_0803c64c:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_0803c650:
 	mov r8, r2
 	ldr r2, .L_0803c6e0
@@ -560,4 +560,4 @@ UiWork_AnimateSpriteSlots:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803c9a8:
-	.4byte gFrameTick
+	.4byte gVBlankCount

@@ -394,7 +394,7 @@ Func_020015d0:
 	ldr r0, [r6]
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [r6]
 	bl Object_GetById
 	adds r0, #90
@@ -428,7 +428,7 @@ Func_020015d0:
 	movs r0, #20
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #20
 	bl Object_GetById
 	adds r0, #90
@@ -449,7 +449,7 @@ Func_020015d0:
 	lsls r0, r0, #9
 	bl Func_02004444
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -461,11 +461,11 @@ Func_020015d0:
 	movs r0, #127
 	bl Func_0200463c
 	movs r0, #30
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #146
 	bl Func_0200463c
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #6
 	movs r2, #40
 	ldr r0, [r6]
@@ -826,11 +826,11 @@ Func_0200391c:
 	adds r0, r7, #0
 	bl Func_020043fc
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0200b93c
 .L_0200bb92:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_0200bb98:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -1146,7 +1146,7 @@ Func_02003bc8:
 	b .L_ja_0200bdea
 .L_ja_0200bde2:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r5, #1
 .L_ja_0200bdea:
 	cmp r5, #179
@@ -1199,11 +1199,11 @@ Func_02003bc8:
 	adds r0, r7, #0
 	bl Func_020043fc
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	b .L_ja_0200bbc6
 .L_ja_0200be58:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_ja_0200be5e:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -1449,7 +1449,7 @@ Func_02003bc8:
 	b .L_0200bea6
 .L_0200bd76:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r5, #1
 .L_0200bd7e:
 	cmp r5, #179
@@ -1540,7 +1540,7 @@ Func_02003bc8:
 	b .L_0200be32
 .L_0200be2a:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	adds r5, #1
 .L_0200be32:
 	cmp r5, #179
@@ -1593,11 +1593,11 @@ Func_02003bc8:
 	adds r0, r7, #0
 	bl Func_020043fc
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0200bbee
 .L_0200bea0:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_0200bea6:
 	movs r3, #0
 	str r3, [r7, #108]
@@ -1871,11 +1871,11 @@ Func_02003ee8:
 	adds r0, r5, #0
 	bl Func_020043fc
 	movs r0, #2
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0200bf1a
 .L_0200c0e0:
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 .L_0200c0e6:
 	movs r3, #0
 	str r3, [r5, #108]

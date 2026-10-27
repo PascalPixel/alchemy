@@ -423,14 +423,14 @@ struct MusicPlayerInfo {
   /// Nonzero: a song of lower priority does not replace a playing one. From
   /// gMPlayTable, 0 for every player.
   u8 checkPriority;
-  u32 ticks;      ///< Song ticks played since the song started.
+  u32 clock;      ///< Song ticks played since the song started.
   u8 gap[8];      ///< Unused by this driver, as in pret's.
   u8 *workBytes;  ///< gMPlayMemAccArea, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
   /// tempo * tempoScale / 256, added to tempoCount each frame.
   u16 tempoStep;
-  /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a frame.
+  /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a VBlank.
   u16 tempoCount;
   u16 fadePeriod;  ///< Frames between fade steps; 0 when not fading.
   u16 fadeCounter; ///< Frames left until the next fade step.
@@ -440,12 +440,12 @@ struct MusicPlayerInfo {
   u8 padding[2]; ///< Up to the word tracks starts on; implicit in pret's.
   struct MusicPlayerTrack *tracks; ///< trackCount tracks.
   const struct ToneData *voices;   ///< The song's voice table.
-  /// ID_NUMBER when free; raised while the music player is changed or ticked.
+  /// ID_NUMBER when free; raised while the music player is changed or run.
   u32 ident;
-  /// The tick routine and player that were first in the chain before this
-  /// player was added; this player's tick runs them first.
-  void (*nextTick)(struct MusicPlayerInfo *player);
-  struct MusicPlayerInfo *nextTickPlayer; ///< Passed to nextTick.
+  /// The MPlayMain routine and player that were first in the chain before this
+  /// player was added; this player's MPlayMain runs them first.
+  void (*MPlayMainNext)(struct MusicPlayerInfo *player);
+  struct MusicPlayerInfo *musicPlayerNext; ///< Passed to MPlayMainNext.
 };
 
 /// The sound driver's work: its ident, the mixer's rate and buffers, the PCM
@@ -465,7 +465,7 @@ struct SoundInfo {
   u8 mode; ///< Unused by this driver, as in pret's.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
-  u8 cgbTick;
+  u8 c15;
   u8 transferPeriod; ///< Frames the buffers hold: 0x630 / frameSamples.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. gMaxLines, 0.
@@ -477,11 +477,11 @@ struct SoundInfo {
   /// sample.
   u32 rateStep;
   struct CgbChannel *cgbNotes; ///< gCgbChans; NULL before CGB setup.
-  /// First of the chain of player ticks run each mixer frame; NULL for none.
-  void (*tick)(struct MusicPlayerInfo *player);
-  struct MusicPlayerInfo *tickPlayer; ///< Passed to tick.
-  void (*cgbUpdate)(void);            ///< Run each mixer frame: CgbSound.
-  void (*cgbMute)(u8 channel);        ///< CgbOscOff, by enum CgbChannelId.
+  /// First of the chain of MPlayMain routines run each VBlank; NULL for none.
+  void (*MPlayMainHead)(struct MusicPlayerInfo *player);
+  struct MusicPlayerInfo *musicPlayerHead; ///< Passed to MPlayMainHead.
+  void (*cgbUpdate)(void);                 ///< Run each VBlank: CgbSound.
+  void (*cgbMute)(u8 channel);             ///< CgbOscOff, by enum CgbChannelId.
   s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< MidiKeyToCgbFreq.
   MPlayFunc *commands;                           ///< gMPlayJumpTable.
   /// ply_note, run for song bytes from 0xCF up with the byte

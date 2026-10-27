@@ -67,7 +67,7 @@ Func_080db0b0:
 	str r5, [r7, #4]
 	movs r0, #1
 	subs r5, #64
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #0
 	bge .L_080db128
 .L_080db136:
@@ -86,7 +86,7 @@ Func_080db0b0:
 	str r5, [r7, #4]
 	str r6, [r7, #16]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #192
 	adds r5, #64
 	lsls r1, r1, #3
@@ -115,7 +115,7 @@ Func_080db0b0:
 	mov r3, r10
 	str r3, [r7, #4]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r3, [r7, #16]
 	ands r3, r6
 	cmp r3, r5
@@ -254,7 +254,7 @@ Func_080db0b0:
 	mov r0, r8
 	bl Object_SetMode
 	movs r0, #6
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #152
 	bl Audio_PlayCue
 	mov r0, r8
@@ -280,7 +280,7 @@ Func_080db0b0:
 	mov r0, r8
 	bl ObjectDispatch_SetSingleChildFlagsFar
 	movs r0, #5
-	bl WaitTicks
+	bl WaitFrames
 	mov r0, r8
 	movs r1, #16
 	bl Object_SetMode
@@ -301,7 +301,7 @@ Func_080db0b0:
 	b .L_080db3ae
 .L_080db314:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	b .L_080db1c4
 .L_080db31c:
 	.4byte 0x00000000
@@ -373,7 +373,7 @@ Func_080db0b0:
 	ldr r0, [sp, #4]
 	strh r6, [r0, #18]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 .L_080db3ae:
 	ldr r3, [r7, #16]
 	ldr r1, [sp, #0]
@@ -409,7 +409,7 @@ Func_080db0b0:
 	adds r3, r3, r4
 	str r3, [r7, #8]
 	subs r5, #1
-	bl WaitTicks
+	bl WaitFrames
 	cmp r5, #0
 	bge .L_080db3e6
 	movs r3, #224
@@ -429,7 +429,7 @@ Func_080db0b0:
 	mov r2, r11
 	strb r1, [r2]
 	movs r0, #6
-	bl WaitTicks
+	bl WaitFrames
 .L_080db424:
 	movs r3, #1
 	str r3, [r7, #20]

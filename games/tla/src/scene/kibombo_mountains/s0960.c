@@ -5,8 +5,8 @@
 extern u8 MsgIsTheWay[];
 extern const u8 gData_020017f8[];
 
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -61,10 +61,10 @@ void Func_02000960(void) {
   Motion_SetModeAndWaitAnimation(11, 3);
   Func_0200110c(11, 0);
   Object_LinkObjectAndSetCallback(11, gPartyState.currentOwner);
-  WaitTicks(30);
+  WaitFrames(30);
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);
-  FieldEvent_WaitTicks(60);
+  FieldEvent_WaitFrames(60);
   Call3((void (*)())Func_020010d4, 27, 0, 0);
   ObjectMotion_EnableActionAndSetCallback(11, gData_020017f8);
   Func_0200108c();

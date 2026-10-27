@@ -1370,7 +1370,7 @@ BattleEffect_RunHealingMotes:
 	beq .L_0814f996
 	b .L_0814f5f4
 .L_0814f996:
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r5, #240
 	ldr r3, [sp, #72]
 	lsls r5, r5, #7
@@ -1379,7 +1379,7 @@ BattleEffect_RunHealingMotes:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r0, [sp, #8]
 	movs r1, #128
 	ldr r3, [sp, #64]

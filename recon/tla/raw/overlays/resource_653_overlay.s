@@ -1882,7 +1882,7 @@ Func_02002ec4:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02005158
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #130
 	lsls r3, r3, #16
 	str r3, [r7, #12]
@@ -1910,7 +1910,7 @@ Func_02002ec4:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	add r2, sp, #28
 	movs r3, #7
 	str r3, [r2, #4]
@@ -2017,7 +2017,7 @@ Func_02002ec4:
 	lsls r3, r3, #7
 	str r3, [r7, #68]
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #1
 	bl Object_SetModeById
@@ -2084,7 +2084,7 @@ Func_0200306c:
 	strb r3, [r0]
 	strb r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #130
 	lsls r0, r0, #2
 	bl GameFlag_SetBit
@@ -2159,7 +2159,7 @@ Func_0200306c:
 	bls .L_0200b0f6
 	bl Func_02005158
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2173,7 +2173,7 @@ Func_0200306c:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 .L_0200b194:
 	ldr r3, [r6, #12]
 	ldr r2, .L_0200b2bc
@@ -2214,7 +2214,7 @@ Func_0200306c:
 	movs r0, #16
 	bl Func_02000cf8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #16
 	bl Object_GetById
 	ldr r3, [r0, #28]
@@ -2283,7 +2283,7 @@ Func_0200306c:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2345,7 +2345,7 @@ Func_020032c8:
 	strb r3, [r0]
 	strb r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #130
 	lsls r0, r0, #2
 	bl GameFlag_ClearBit
@@ -2420,7 +2420,7 @@ Func_020032c8:
 	bls .L_0200b352
 	bl Func_02005158
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2434,7 +2434,7 @@ Func_020032c8:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #10
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 .L_0200b3f0:
 	ldr r3, [r6, #12]
 	ldr r2, .L_0200b518
@@ -2475,7 +2475,7 @@ Func_020032c8:
 	movs r0, #20
 	bl Func_02000cf8
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #20
 	bl Object_GetById
 	ldr r3, [r0, #28]
@@ -2545,7 +2545,7 @@ Func_020032c8:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
@@ -2658,7 +2658,7 @@ Func_02003e8c:
 	adds r0, #85
 	strb r3, [r0]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r5, .L_0200c268
 	movs r2, #133
 	lsls r2, r2, #2
@@ -2670,7 +2670,7 @@ Func_02003e8c:
 	ldr r0, [r5]
 	bl Func_02005230
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	bl Event_StartScreenTransition
 	movs r1, #200
 	movs r2, #188
@@ -2719,12 +2719,12 @@ Func_02003e8c:
 	movs r0, #13
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #13
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	bl Object_GetById
 	movs r3, #85
@@ -2744,7 +2744,7 @@ Func_02003e8c:
 	str r3, [r7, #12]
 	movs r0, #1
 	adds r5, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r5, #63
 	bls .L_0200bf82
 	movs r2, #32
@@ -2752,7 +2752,7 @@ Func_02003e8c:
 	adds r0, r6, #0
 	bl Func_02003e34
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #129
 	movs r0, #13
 	lsls r1, r1, #1
@@ -2775,12 +2775,12 @@ Func_02003e8c:
 	movs r0, #13
 	bl Func_020052d0
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	mov r2, r8
 	movs r3, #3
 	strb r3, [r2]
 	movs r0, #5
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #159
 	bl Func_020053d8
 	movs r3, #192
@@ -2790,7 +2790,7 @@ Func_02003e8c:
 	movs r0, #60
 	strh r5, [r6, #18]
 	mov r8, r3
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	bl Func_02005298
@@ -2867,7 +2867,7 @@ Func_02003e8c:
 	movs r0, #12
 	bl Func_02005230
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #163
 	movs r2, #166
 	movs r0, #12
@@ -2913,12 +2913,12 @@ Func_02003e8c:
 	movs r0, #14
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #14
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #14
 	adds r1, #255
@@ -2940,7 +2940,7 @@ Func_02003e8c:
 	str r3, [r7, #12]
 	movs r0, #1
 	adds r5, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r5, #63
 	bls .L_0200c15e
 	movs r3, #128
@@ -2964,7 +2964,7 @@ Func_02003e8c:
 	movs r1, #64
 	bl Func_02003e60
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r0, #14
@@ -2973,14 +2973,14 @@ Func_02003e8c:
 	movs r3, #3
 	strb r3, [r2]
 	movs r0, #5
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #159
 	bl Func_020053d8
 	movs r3, #192
 	lsls r3, r3, #10
 	str r3, [r7, #40]
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	bl Func_02005298
@@ -3024,12 +3024,12 @@ Func_02003e8c:
 	movs r0, #15
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #15
 	bl Func_02005270
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	bl Object_GetById
 	adds r7, r0, #0
@@ -3059,7 +3059,7 @@ Func_02003e8c:
 	str r3, [r7, #12]
 	movs r0, #1
 	adds r5, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r5, #63
 	bls .L_0200c27c
 	movs r2, #64
@@ -3072,7 +3072,7 @@ Func_02003e8c:
 	strh r5, [r6, #18]
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r2, #64
 	negs r2, r2
 	adds r0, r6, #0
@@ -3083,7 +3083,7 @@ Func_02003e8c:
 	movs r1, #1
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #60
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 .L_0200c2cc:
 	ldr r3, [r7, #12]
 	ldr r2, .L_0200c4cc
@@ -3091,11 +3091,11 @@ Func_02003e8c:
 	adds r3, r3, r2
 	str r3, [r7, #12]
 	adds r5, #1
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	cmp r5, #63
 	bls .L_0200c2cc
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r1, #132
 	lsls r1, r1, #1
 	movs r2, #0
@@ -3241,7 +3241,7 @@ Func_02003e8c:
 	movs r0, #15
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #20
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	movs r0, #188
 	bl Func_020053d8
 	bl Func_02001f3c
@@ -3321,7 +3321,7 @@ Func_0200482c:
 	adds r0, #85
 	strb r3, [r0]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #188
 	movs r2, #196
 	movs r0, #16
@@ -3602,7 +3602,7 @@ Func_0200482c:
 	movs r0, #12
 	bl Object_SetActionCallbackAndRefreshById
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	bl Func_02000bcc
 	movs r1, #192
 	movs r0, #16
@@ -4062,7 +4062,7 @@ Func_0200482c:
 	ldr r0, [r6]
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #192
 	movs r0, #16
 	lsls r1, r1, #6
@@ -4135,7 +4135,7 @@ Func_0200482c:
 	adds r0, #85
 	strb r3, [r0]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #188
 	movs r2, #196
 	movs r0, #16
@@ -4416,7 +4416,7 @@ Func_0200482c:
 	movs r0, #12
 	bl Object_SetActionCallbackAndRefreshById
 	movs r0, #40
-	bl FieldEvent_WaitTicks
+	bl FieldEvent_WaitFrames
 	bl Func_02000bcc
 	movs r1, #192
 	movs r0, #16
@@ -4876,7 +4876,7 @@ Func_0200482c:
 	ldr r0, [r6]
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r1, #192
 	movs r0, #16
 	lsls r1, r1, #6

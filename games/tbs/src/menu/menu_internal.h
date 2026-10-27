@@ -82,7 +82,7 @@ s32 _call_via_r3(void *, void *, s32, void *);
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
 /// the whole menu closes. Menu_CancelSoundReset clears it and
-/// Menu_CancelSoundTick sets it.
+/// Menu_UpdateCancelSound sets it.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The info window holds a message the next selection must not draw over.
 /// ItemMenu_ShowMessage sets it; the next chooser that would draw

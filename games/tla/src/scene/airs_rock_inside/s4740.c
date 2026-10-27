@@ -49,7 +49,7 @@ void Func_02004534(void) {
           0x5999);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0xb333, 0x5999);
     Call2(Func_02005e74, 6, gPartyState.currentOwner);
-    Call1(FieldEvent_WaitTicks, 1);
+    Call1(FieldEvent_WaitFrames, 1);
     Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.currentOwner,
           0x100, 0x88);
     Call3(ObjectMotion_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
@@ -58,23 +58,23 @@ void Func_02004534(void) {
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
     Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
-    Call1(FieldEvent_WaitTicks, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Func_02005eac, 6, 0);
     Call2(Object_SetModeById, gPartyState.currentOwner, 3);
-    Call1(FieldEvent_WaitTicks, 0x1e);
+    Call1(FieldEvent_WaitFrames, 0x1e);
     Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x100,
           0x98);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Object_SetModeById, 6, 3);
-    Call1(FieldEvent_WaitTicks, 0x1e);
+    Call1(FieldEvent_WaitFrames, 0x1e);
     Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_SetPositionAndReset, 6, 0x108, 0x89);
     Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
@@ -86,10 +86,10 @@ void Func_02004534(void) {
     Call2(UiText_DrawQuantityPairWithCue, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
     Call3(Object_LinkPair, gPartyState.currentOwner, 6, 0);
-    Call1(FieldEvent_WaitTicks, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetModeById, 6, 3);
     Call2(Object_SetModeById, gPartyState.currentOwner, 3);
-    Call1(FieldEvent_WaitTicks, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Object_SetModeById, 6, 2);
     object = Object_GetById(gPartyState.currentOwner);
@@ -114,7 +114,7 @@ void Func_02004740(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }
@@ -129,7 +129,7 @@ void Func_020047b0(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }
@@ -144,7 +144,7 @@ void Func_02004818(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitTicks(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }

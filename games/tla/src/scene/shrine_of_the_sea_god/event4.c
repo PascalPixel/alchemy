@@ -8,7 +8,7 @@ void Func_020016c8(void);
 
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base) {
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   } while (object->speed != 0);
   Func_02003b48(240);
   ObjectMotion_SetActionVariant(base + 21, 3);
@@ -19,7 +19,7 @@ void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base) {
                                    object->z + -0x100000);
   Object_SetModeById(base + 21, 1);
   Object_SetModeById(base + 22, 1);
-  WaitTicks(20);
+  WaitFrames(20);
 }
 
 void Func_020016c8(void) { Func_0200142c(Object_GetById(15)); }
@@ -35,7 +35,7 @@ void Func_020016d8(void) {
   Func_02001340(leader, pillar);
   ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 19, 13);
   ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 19, 33);
-  WaitTicks(1);
+  WaitFrames(1);
   leader->motionFlags = 3;
   ObjectMotion_SetActionVariant(15, 3);
   pillar->priorityFlags |= 2;
@@ -64,7 +64,7 @@ void Func_020016d8(void) {
   Object_GetById(11)->priorityFlags |= 2;
   leader->motionFlags = 3;
   Scheduler_RemoveCallbackFar(Func_020016c8);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_020039e0();
   GameFlag_SetBit(0x231);
 }

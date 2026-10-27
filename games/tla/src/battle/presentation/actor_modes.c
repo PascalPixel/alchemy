@@ -26,7 +26,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
     Scheduler_RemoveCallback(Graphics_AdvancePaletteCycle);
     Io_Write16(mode, &REG_BLDY);
     BattlePres_ClearAllActorRecordModes();
-    WaitTicks(1);
+    WaitFrames(1);
     QueueIoWriteDelay2(0x04000050, 0);
   }
   if (battle != NULL && mode != 0) {
@@ -54,7 +54,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode) {
         } while (actor != 0xff);
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
     QueueIoWriteDelay2(0x04000050, 0);
     Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0xc80);
   }

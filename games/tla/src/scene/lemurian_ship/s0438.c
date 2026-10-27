@@ -27,7 +27,7 @@ void Func_02000438(void) {
     leader->facing = 0xc000;
     ObjectMotion_EnableActionAndSetCallback(party->currentOwner,
                                             gData_02002de8);
-    WaitTicks(12);
+    WaitFrames(12);
     Func_02002de0(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();

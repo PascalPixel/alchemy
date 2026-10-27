@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "render_placement.h"
 
-extern s32 gFrameTick;
+extern s32 gVBlankCount;
 
 struct ProbeShape {
   u8 unk00[4];
@@ -28,7 +28,7 @@ void Func_0802e4c8(s32 x, s32 z, struct SpritePlacement *out) {
   angle = 0;
   kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
   if ((gInput.held & 2) != 0)
-    angle = (s16)(gFrameTick << 8);
+    angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
   case 3:
     for (i = 0; i < 6; i++) {

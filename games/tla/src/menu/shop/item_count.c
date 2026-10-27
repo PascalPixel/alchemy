@@ -52,7 +52,7 @@ s32 Inventory_GetQuantityFar(s32 unitId, s32 slot);
 void Func_081084f4(s32 messageId);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 s32 Func_081096f8(s32 minimum, s32 maximum, s32 price);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiIcon_PrepareObjectFar(struct RenderOutput *object);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -93,7 +93,7 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
     shop->mode = 12;
     Shop_PlaceCursor(NULL, QUANTITY_CURSOR_X, 0x30);
     result = Func_081096f8(0, selection, price);
-    WaitTicks(1);
+    WaitFrames(1);
     UiIcon_PrepareObjectFar(shop->cursor.anchor);
     Shop_PlaceCursor(NULL, savedX, savedY);
   }

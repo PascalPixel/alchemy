@@ -41,7 +41,7 @@ void Func_02000c84(void) {
     party[0x2c2] = 2;
   }
   Func_02004d30(12);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02004718();
 }
 
@@ -58,7 +58,7 @@ void Func_02000cb4(void) {
     party[0x2c2] = 2;
   }
   Func_02004d30(13);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02004718();
 }
 
@@ -67,7 +67,7 @@ void Func_02000ce4(s32 unused, s32 id) {
     struct ObjectRuntime *object = Object_GetById(8);
 
     if (object->x >> 20 == 5) {
-      FieldEvent_WaitTicks(5);
+      FieldEvent_WaitFrames(5);
       object->z += 0x10000;
       Flag_Set(0xa4e);
     }

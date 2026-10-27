@@ -11,7 +11,7 @@ void Func_020032f4(void) {
   Func_02003820(gData_0200478e);
   if (GameFlag_Test(0x20b)) {
     Func_020006ac();
-    WaitTicks(10);
+    WaitFrames(10);
   }
   Scene_TaskAdd(Func_02002010, 0x480);
   Scene_TaskAdd(Func_020032c4, 0x480);

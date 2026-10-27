@@ -48,8 +48,8 @@ void Func_020000c8(struct FieldActor *object) {
 }
 
 void Func_02000120(struct FieldActor *object) {
-  u32 tick = gFrameCount;
+  u32 frameCount = gFrameCount;
 
-  if (tick & 1)
-    Animation_ApplyChildValues(object, (tick >> 1) % 6);
+  if (frameCount & 1)
+    Animation_ApplyChildValues(object, (frameCount >> 1) % 6);
 }

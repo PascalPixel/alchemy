@@ -2206,7 +2206,7 @@ main	rom_main_05	recon/tla/de/rom	.rom.000ee024	de
 main	rom_main_05	recon/tla/raw/080e1024	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e0fe0	ja
 main	rom_main_05	games/tla/src/battle/effect/arcmsg	.text
-main	rom_main_05	games/tla/src/battle/effect/flicker_object_and_tick	.text
+main	rom_main_05	games/tla/src/battle/effect/flicker_object	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000e143c	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e1500	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e643c	fr
@@ -4454,7 +4454,7 @@ main	rom_main_15	recon/tla/de/rom	.rom.001c075a	de
 main	rom_main_15	recon/tla/raw/081c075a		en
 main	rom_main_15	recon/tla/ja/rom	.rom.001c075a	ja
 main	rom_main_15	games/tla/src/sound/driver/handle_note
-main	rom_main_15	games/tla/src/sound/driver/player_tick
+main	rom_main_15	games/tla/src/sound/driver/mplay_main
 main	rom_main_15	games/tla/src/sound/sound_stub	.text
 main	rom_main_15	games/tla/src/sound/f1c0cac	.text
 main	rom_main_15	games/tla/src/sound/music_set_pitch	.text

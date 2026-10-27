@@ -32,7 +32,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
-  WaitTicks(30);
+  WaitFrames(30);
   // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
   Sound_PlaySongFar(SE_JUMP);
@@ -40,7 +40,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Sound_PlaySongFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
-  WaitTicks(30);
+  WaitFrames(30);
   djinni->update = FieldEffect_AdvanceSpinAngle;
   Sound_PlaySongFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
@@ -49,12 +49,12 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
-  WaitTicks(90);
+  WaitFrames(90);
   Actor_ArmCallback(gCommon.leaderActorId, FACING_SOUTH, 0);
-  WaitTicks(20);
+  WaitFrames(20);
   Actor_SelectAnimationFar(Actor_GetById(gCommon.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
-  WaitTicks(30);
+  WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position.x = djinni->x.fixed;
@@ -73,12 +73,12 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     effect->scaleX = 0x8000;
     effect->scaleY = Random16() + 0x18000;
     remaining--;
-    WaitTicks(1);
+    WaitFrames(1);
     effect++;
   } while (remaining >= 0);
 
   // After 140 frames every particle still in use stops rising.
-  WaitTicks(140);
+  WaitFrames(140);
   // Walking whole slots instead of their state bytes grows native English
   // from 0x2dc to 0x2e0 bytes.
   {
@@ -98,9 +98,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   // A shake of 1/65536 pixel: in effect the shake stops.
-  WaitTicks(20);
+  WaitFrames(20);
   MapGrid_SetScreenShakeFar(1, 1, 1);
-  WaitTicks(30);
+  WaitFrames(30);
 
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
@@ -121,9 +121,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     }
   }
 
-  WaitTicks(100);
+  WaitFrames(100);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
-  WaitTicks(1);
+  WaitFrames(1);
   Sound_PlaySongFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;
   position.y = leader->y.fixed + 0x120000;
@@ -148,7 +148,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     Actor_StartScriptFar(djinni, gFieldEffect_CommonParticleScript);
   }
 
-  WaitTicks(15);
+  WaitFrames(15);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }

@@ -8,7 +8,7 @@ static void Actor_WaitBelowHeight(struct Actor *actor, s32 height) {
   s32 frames = 60;
 
   while (frames != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     frames--;
     if (actor->y.fixed <= height)
       break;

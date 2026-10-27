@@ -9,7 +9,7 @@ extern const u8 MsgGrrrrrRrrruffRrufff[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_ResetTargetsAndVelocity(s32 id);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
@@ -44,7 +44,7 @@ void Func_02000da8(s32 id) {
   Func_0200110c(id, 0);
   Call2((void (*)())Func_02001124, owner, 0x101);
   Object_SetModeById(id, 4);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_0200110c(id, 0);
   Call2((void (*)())Func_02001124, owner, 0x100);
   Func_02000d80();
@@ -63,7 +63,7 @@ void Func_02000e28(s32 id) {
   Func_0200110c(id, 0);
   Call2((void (*)())Func_02001124, owner, 0x101);
   Object_SetModeById(id, 4);
-  FieldEvent_WaitTicks(30);
+  FieldEvent_WaitFrames(30);
   Func_0200110c(8, 0);
   Call2((void (*)())Func_02001124, owner, 0x100);
   Func_02000d80();

@@ -239,11 +239,11 @@ Func_0816a2d8:
 	cmp r1, #4
 	bne .L_0816a4b4
 	movs r0, #8
-	bl WaitTicks
+	bl WaitFrames
 	b .L_0816a4ba
 .L_0816a4b4:
 	movs r0, #16
-	bl WaitTicks
+	bl WaitFrames
 .L_0816a4ba:
 	ldr r2, [sp, #16]
 	ldr r3, [r2, #4]
@@ -471,7 +471,7 @@ Func_0816a2d8:
 	movs r0, #16
 	movs r1, #16
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r3, [sp, #8]
 	lsls r1, r1, #7
@@ -480,7 +480,7 @@ Func_0816a2d8:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r2, #1
 	add r10, r2
 	mov r3, r10

@@ -189,7 +189,7 @@ void Func_02003134(void) {
      * differs 2. */
     angle = 0x8000;
     ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
-    WaitTicks(1);
+    WaitFrames(1);
     ObjectMotion_EnableActionAndSetCallback(11, gData_02003c10);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 1);
     Object_GetById(11)->collisionFlags = 1;
@@ -238,7 +238,7 @@ void Func_0200320c(void) {
     ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
   }
   Func_02003b00(0);
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 void Func_02003354(void) {

@@ -9,11 +9,11 @@ void Func_02000670(void) {
   Func_020055d0(0x20000, 0x4000);
   Camera_SetBounds(0xf80000, -1, 0x2c80000, 1);
   Func_020055e0();
-  WaitTicks(20);
+  WaitFrames(20);
   Func_020055d0(0x50000, 0xa000);
   Camera_SetBounds(0xf80000, -1, 0x3680000, 1);
   Func_020055e0();
-  FieldEvent_WaitTicks(120);
+  FieldEvent_WaitFrames(120);
   Func_02005568();
 }
 
@@ -62,10 +62,10 @@ void Func_020007f0(s32 unused, s32 id) {
         Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
       s32 frames;
 
-      WaitTicks(2);
+      WaitFrames(2);
       for (frames = 0; frames < 30 && object->y > object->terrainHeight;
            frames++)
-        WaitTicks(1);
+        WaitFrames(1);
       Func_020056c0(133);
     }
     Func_020054f0_(71, 24, 7, 1, 71, 5);
@@ -105,7 +105,7 @@ void Func_02000944(void) {
   Func_02005608();
   ObjectDispatch_SetSingleChildFlags(object, 0);
   Object_SetModeById(gPartyState.currentOwner, 28);
-  FieldEvent_WaitTicks(16);
+  FieldEvent_WaitFrames(16);
   frame = 0;
 step:
   if (frame == 5)
@@ -118,7 +118,7 @@ step:
   object->scaleX += delta;
   object->scaleY += -0x300;
   object->y += -0x9999;
-  WaitTicks(1);
+  WaitFrames(1);
   if (++frame <= 39)
     goto step;
   /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots'

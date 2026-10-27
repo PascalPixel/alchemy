@@ -35,7 +35,7 @@ void Func_02005204(struct PushEvent *event) {
   Func_0200510c();
   Func_020059f4(229);
   Func_0200579c(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_WaitTicks(12);
+  FieldEvent_WaitFrames(12);
   {
     u32 zero = 0;
 
@@ -56,14 +56,14 @@ void Func_02005204(struct PushEvent *event) {
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
   Object_SetModeById(gPartyState.currentOwner, 28);
-  FieldEvent_WaitTicks(16);
+  FieldEvent_WaitFrames(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
       Func_020059f4(204);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   do {
     Object_GetById(gPartyState.currentOwner)->animationKind = 0;

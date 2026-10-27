@@ -57,7 +57,7 @@ void FieldPsynergy_Force(void) {
     Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = 0xb333; // 0.7
     effect->scaleX = 0xb333;
-    WaitTicks(2);
+    WaitFrames(2);
     effect++;
   }
 
@@ -87,11 +87,11 @@ void FieldPsynergy_Force(void) {
       scale += 0x500;
       projectile->scaleY = scale;
       projectile->scaleX = scale;
-      WaitTicks(1);
+      WaitFrames(1);
       scale = projectile->scaleX;
     } while (scale <= 0xffff);
   }
-  WaitTicks(3);
+  WaitFrames(3);
 
   // Three afterimages, sharing one set of graphics.
   sharedAnimation = NULL;
@@ -135,7 +135,7 @@ void FieldPsynergy_Force(void) {
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
-      WaitTicks(3);
+      WaitFrames(3);
       Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
       Actor_StartScriptFar(copy, gFieldEffect_CommonParticleScript + 1);
     }
@@ -143,7 +143,7 @@ void FieldPsynergy_Force(void) {
 
   // Wait, at most 60 frames, for the shot's script to end.
   for (i = 0; i <= 59 && (projectile)->script != NULL; i++)
-    WaitTicks(1);
+    WaitFrames(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
   // way: the ground there must be within a step (MapGrid_CheckCollision 0) and
@@ -170,9 +170,9 @@ void FieldPsynergy_Force(void) {
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunPsynergyEvent(event, gCommon.leaderActorId, eventTarget);
-  WaitTicks(10);
+  WaitFrames(10);
   FieldPsynergy_FadeFromCastColor();
-  WaitTicks(20);
+  WaitFrames(20);
   // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)
     VramCache_FreeEntry(resourceSlot);

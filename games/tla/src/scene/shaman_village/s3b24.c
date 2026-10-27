@@ -5,7 +5,7 @@ void Func_02003b24(void) {
   Engine_AudioPlayCue(131);
   Func_02004a54();
   Func_02004a6c(Object_GetById(6), 2);
-  FieldEvent_WaitTicks(40);
+  FieldEvent_WaitFrames(40);
   Func_02004a6c(Object_GetById(6), 0);
   Func_02004a64();
   Func_02004a5c();
@@ -25,7 +25,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   else
     ShamanVillage_SePlay(158);
   ShamanVillage_MapCopy(a, b, c, d, mode, f);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
     object = Object_GetById(gPartyState.currentOwner);
@@ -37,7 +37,7 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   }
   ObjectMotion_EnableActionAndSetCallback(gPartyState.currentOwner,
                                           gData_02004c08);
-  ShamanVillage_WaitTicks(12);
+  ShamanVillage_WaitFrames(12);
   ShamanVillage_SePlay(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

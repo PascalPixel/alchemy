@@ -38,7 +38,7 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 void Func_08163c2c(s32 page, s32 value);        // Func_08163c2c
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
@@ -72,7 +72,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -388,7 +388,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(188);
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   // The lightning part.
@@ -621,9 +621,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       } else {
         Func_08158ce0(4, 4);
       }
-      ObjectGroup_TickMemberTimers();
+      ObjectGroup_CountDownMemberTimers();
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     Runtime_ReleaseHeapBlock(104);

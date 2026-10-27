@@ -44,7 +44,7 @@ struct CloakEvent {
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void FieldEffect_CheckCloakTile(void);
 void Func_080debd8(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 #define SE_CLOAK 130
 
@@ -76,10 +76,10 @@ void Func_080decb8(void) {
     entry->param = CLOAK_FLICKER_PALETTE;
     sprite->dirty = 1;
     sprite->blend = 2;
-    WaitTicks(2);
+    WaitFrames(2);
     sprite->dirty = 1;
     sprite->blend = 0;
-    WaitTicks(2);
+    WaitFrames(2);
   }
 
   /* FAKEMATCH(temporary): the callback order through a local set before the

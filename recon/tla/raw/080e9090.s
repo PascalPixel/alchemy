@@ -27,12 +27,12 @@ Func_080e9090:
 	bl BattleEffect_InitializeSharedScene
 	movs r1, #0
 	ldr r0, [r5, #16]
-	bl BattleEffect_SetObjectTickMode
+	bl BattleEffect_SetObjectUpdateMode
 	movs r0, #1
 	bl Func_080e89e4
 	bl ViewMove_SaveNearbySprites
 	movs r0, #10
-	bl WaitTicks
+	bl WaitFrames
 	movs r0, #0
 	movs r1, #128
 	str r0, [sp, #16]
@@ -196,7 +196,7 @@ Func_080e9090:
 	mov r10, r3
 .L_080e9206:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r1, [sp, #20]
 	movs r2, #186
 	lsls r2, r2, #2

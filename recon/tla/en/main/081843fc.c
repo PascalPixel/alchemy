@@ -36,7 +36,7 @@ struct RenderModel {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void); // ObjectGroup_CountDownMemberTimers
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
@@ -77,7 +77,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -1011,7 +1011,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       Func_0818caa8(gMapCellBuffer, 62, y, r);
     }
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     spinA += 12192;
     spinB += 1096;
     frame++;
@@ -1321,7 +1321,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = work->savedBg1Y;
       }
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
       phase += 3;
       frame++;
     } while (frame != 160 && !(gInput.repeat & 3));
@@ -1330,7 +1330,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   slideStep = 0;
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   work->transferPending = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   gBgScroll[1].x = savedScroll;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   Func_08164b2c(-16, -16, -4);
@@ -1583,10 +1583,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyVerticalShake(8);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     frame++;
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   } while (frame != 104);
   transition[4] = 0;
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

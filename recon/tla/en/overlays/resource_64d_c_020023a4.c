@@ -78,7 +78,7 @@ struct ObjectRuntime *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
 void Func_0200285c(struct ObjectRuntime *object, s32 mode);
 void Func_02002874(struct ObjectRuntime *object);
 void Engine_AudioPlayCue(s32 cue);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_02001fd0(void);
@@ -130,7 +130,7 @@ void Func_020023a4(s32 id) {
   Scheduler_AddOrUpdateCallback(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:
-    WaitTicks(1);
+    WaitFrames(1);
     if (work->stage != 999)
       goto wait;
   }

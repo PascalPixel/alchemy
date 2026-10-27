@@ -10,10 +10,10 @@ __divsi3:
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global WaitTicks
+	.global WaitFrames
 	.thumb_func
-WaitTicks:
-	overlay_veneer WaitTicksFar
+WaitFrames:
+	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -162,10 +162,10 @@ Party_CountActiveOwners:
 	.thumb_func
 Func_02001a04:
 	overlay_veneer Func_080ad208
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001a14
 	.thumb_func
 Func_02001a14:
@@ -254,10 +254,10 @@ Func_02001ab4:
 	.thumb_func
 Func_02001abc:
 	overlay_veneer Func_08108010
-	.global DjinnRecovery_TickTwenty
+	.global DjinnRecovery_CountDownTwenty
 	.thumb_func
-DjinnRecovery_TickTwenty:
-	overlay_veneer DjinnRecovery_TickTwentyFar
+DjinnRecovery_CountDownTwenty:
+	overlay_veneer DjinnRecovery_CountDownTwentyFar
 	.global DebugParty_LoadPreset
 	.thumb_func
 DebugParty_LoadPreset:

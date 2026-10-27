@@ -84,7 +84,7 @@ extern const u8 Data_08198528[];
 extern const u8 Data_08198531[];
 
 u32 Random16(void);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
@@ -110,7 +110,7 @@ void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 // An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
 // Flashes an actor in a palette for some frames.
@@ -291,9 +291,9 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
         }
       }
       Func_08158ce0(16, 16);
-      ObjectGroup_TickMemberTimers();
+      ObjectGroup_CountDownMemberTimers();
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
 

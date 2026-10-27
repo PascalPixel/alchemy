@@ -55,7 +55,7 @@ s32 PsynergyMenu_Run(void) {
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
-  WaitTicks(1);
+  WaitFrames(1);
   Window_InitializeWork(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
@@ -97,10 +97,10 @@ s32 PsynergyMenu_Run(void) {
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
   Free(saved);
-  WaitTicks(1);
+  WaitFrames(1);
   Menu_ResumeFieldTasks();
 #endif
-  WaitTicks(1);
+  WaitFrames(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
@@ -168,7 +168,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     // Choose one of their Psynergy; in the shortcut modes, set it as the L or
     // R shortcut and start again.
     case PSYNERGY_STEP_LIST:
-      WaitTicks(1);
+      WaitFrames(1);
       Unit_GetFar(menu->memberIds[0]);
       step = PSYNERGY_STEP_MEMBER;
       if (menu->psynergyCount != 0) {
@@ -370,7 +370,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
   Icon_PrepareActor(icon);
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 
@@ -435,7 +435,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
       }
     }
     MenuCursor_Position(selection * 24 - 10, 16);
-    WaitTicks(1);
+    WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -563,7 +563,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       }
     }
     MenuCursor_Position(selection * 24 - 10, 16);
-    WaitTicks(1);
+    WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlaySongFar(SE_MENU_CONFIRM);
       result = menu->memberTable[selection];
@@ -590,7 +590,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   menu->tabIndex[1] = selection;
   Icon_PrepareActor(marker);
   marker->motion = ICON_HIDDEN;
-  WaitTicks(1);
+  WaitFrames(1);
   menu->tabIndex[1] = selection;
   menu->selectedMember = menu->memberTable[selection];
   menu->memberIds[1] = menu->memberTable[selection];
@@ -948,7 +948,7 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
 
   if (GameFlag_GetFar(FLAG_MENU_INFO_KEPT) == 0) {
     MENU_RESET_DESCRIPTION_WINDOW(menu->infoWindow);
-    WaitTicks(1);
+    WaitFrames(1);
 
     actionIndex = state->selectedIndex;
     if (menu->psynergies[actionIndex] != 0) {
@@ -980,7 +980,7 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
     rowIndex++;
   } while (rowIndex < LIST_PAGE_SIZE);
 
-  WaitTicks(1);
+  WaitFrames(1);
   return 1;
 }
 
@@ -1114,7 +1114,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         }
         if (redraw != 0) {
           redraw = 0;
-          WaitTicks(1);
+          WaitFrames(1);
           PsynergyMenu_DrawActionPage(window, 0, &state);
         }
         PsynergyMenu_DrawDetailPage(window, work, &state);
@@ -1133,7 +1133,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         }
       }
 
-      WaitTicks(1);
+      WaitFrames(1);
       previous = state.selectedIndex;
 
       if ((gKeysHeld & KEY_SELECT) == 0) {
@@ -1291,7 +1291,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 

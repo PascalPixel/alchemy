@@ -34,10 +34,10 @@ Object_SetPositionAndResetMotion:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global FieldEvent_WaitTicks
+	.global FieldEvent_WaitFrames
 	.thumb_func
-FieldEvent_WaitTicks:
-	overlay_veneer FieldEvent_WaitTicksFar
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02003130
 	.thumb_func
 Func_02003130:
@@ -217,7 +217,7 @@ Func_02003288:
 	.global Func_02003290
 	.thumb_func
 Func_02003290:
-	overlay_veneer BattleEffect_SetObjectTickModeFar
+	overlay_veneer BattleEffect_SetObjectUpdateModeFar
 	.global Func_02003298
 	.thumb_func
 Func_02003298:

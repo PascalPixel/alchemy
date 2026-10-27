@@ -164,7 +164,7 @@ Func_081a08c4:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_081a09f4:
-	.4byte gFrameTick
+	.4byte gVBlankCount
 .L_081a09f8:
 	.4byte gDisplayScroll_Position
 .L_081a09fc:

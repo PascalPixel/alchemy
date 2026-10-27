@@ -7,8 +7,8 @@ void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
-void FieldEvent_WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct FieldActor *Func_02001ea8(void);
 
 void Func_02001790(void) {
@@ -25,10 +25,10 @@ void Func_02001790(void) {
   z >>= 20;
   ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitTicks(1);
+  WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitTicks(4);
+  FieldEvent_WaitFrames(4);
   Func_02001ea8()->y += 0xfff80000;
 }
 
@@ -72,5 +72,5 @@ void Func_02001818(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_02001790();
   Func_02001f08(161);
   Func_02001df0(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitTicks(12);
+  FieldEvent_WaitFrames(12);
 }

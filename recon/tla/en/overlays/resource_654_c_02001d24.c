@@ -37,7 +37,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjWalk(gPartyState.currentOwner, 344, 184);
   ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x2000, 0);
   ShrineOfTheSeaGod_ObjPlace(14, 344 << 16, 184 << 16);
-  WaitTicks(1);
+  WaitFrames(1);
   ShrineOfTheSeaGod_ObjWalk(14, 356, 196);
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Func_02003a70((s32)MsgFieldPraiseRopeWork);
@@ -92,7 +92,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_ObjMode(13, 3);
   ShrineOfTheSeaGod_ObjPlace(12, 394 << 16, 286 << 16);
-  WaitTicks(1);
+  WaitFrames(1);
   ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjWalk(12, 394, 248);
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
@@ -162,7 +162,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_Wait(40);
   ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
   ObjectMotion_EnableActionAndResetMotion(14);
-  WaitTicks(1);
+  WaitFrames(1);
   Func_02003a78(14, 0, 40);
   ShrineOfTheSeaGod_ObjPlace(13, 0, 0);
   ShrineOfTheSeaGod_ObjPlace(12, 0, 0);

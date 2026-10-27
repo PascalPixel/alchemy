@@ -18,7 +18,7 @@ s32 Func_02004ca8();
 s32 Func_02004ce8();
 s32 Func_02004da0();
 s32 Object_GetById();
-s32 WaitTicks();
+s32 WaitFrames();
 extern u8 Func_02002614[];
 extern u8 gData_020023c4[];
 extern u8 gPartyState[];
@@ -82,7 +82,7 @@ L_0200a6d0:
   FIELD_AT(v_r6, s32, 44) = 0;
   goto L_0200a810;
 L_0200a704:
-  WaitTicks(1);
+  WaitFrames(1);
   v_r5 = (v_r5 + 1);
   if (v_r5 <= 9)
     goto L_0200a6d0;
@@ -126,7 +126,7 @@ L_0200a770:
   t35 = Func_02004c78((v_r5 + 8), v_r11, ((s32)sp_ + 4), (t34 - 2));
   if (t35 < 0)
     goto L_0200a7a0;
-  WaitTicks(1);
+  WaitFrames(1);
   goto L_0200a810;
 L_0200a7a0:
   v_r8 = (v_r8 + 1);
@@ -167,7 +167,7 @@ L_0200a7fe:
   FIELD_AT(v_r6, s32, 16) = (v_r5 - v_r2);
   t41 = *(s32 *)sp_;
   FIELD_AT(t41, u16, 4) = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   goto L_0200a696;
 L_0200a810:
   FIELD_AT(v_r6, s32, 108) = 0;

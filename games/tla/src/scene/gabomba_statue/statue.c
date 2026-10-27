@@ -23,7 +23,7 @@ void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_02005854(s32 sound);
 void Func_02005624(struct ObjectRuntime *object, s32 mode);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 s32 Func_020053a0(void);
 void Func_02005784(s32 id);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -43,7 +43,7 @@ void Func_02001a8c(void) {
 
   Func_020056b4(object);
   Func_0200580c(0);
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02005854(214);
   Func_02005624(object, 5);
   object->scaleY = 0x10000;

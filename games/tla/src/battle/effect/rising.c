@@ -3,7 +3,7 @@
 #include "mem.h"
 
 s32 EventRuntime_GetControlledOwner(void);
-void WaitTicks(s32);
+void WaitFrames(s32);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
@@ -40,7 +40,7 @@ void Func_080cf350(struct ObjectRuntime *object) {
   }
   Object_SetPosition(object, owner->x, owner->y + 0x240000, owner->z);
   ObjectDispatch_SetSpritePriorityFar(object, 1);
-  WaitTicks(3);
+  WaitFrames(3);
   Object_SetMode(owner, 28);
   ObjectDispatch_InitializeFar(object, gData_080f0074);
   owner->angle = 0x4000;
@@ -59,11 +59,11 @@ void EffectRuntime_RunRisingObjectSequence(struct ObjectRuntime *object, s32 fla
       object->update = Marker_MoveLeaderAwayFromEmitter;
     }
     if (flags == 3)
-      WaitTicks(60);
+      WaitFrames(60);
     if (flags & 2)
       Func_080cf350(object);
     if (flags == 3)
-      WaitTicks(80);
+      WaitFrames(80);
     Object_SetMode(owner, 1);
   }
 }
@@ -120,7 +120,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
     if (flags & 2)
       Func_080cf350(object);
 
-    WaitTicks(80);
+    WaitFrames(80);
     Object_SetMode(owner, 1);
     Object_Destroy(object);
   }

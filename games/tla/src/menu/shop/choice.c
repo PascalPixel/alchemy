@@ -56,8 +56,8 @@ void Func_081084f4(s32 first) {
     message += MsgItemShopWelcome - MsgWeaponShopWelcome;
   UiText_OpenMessageWindowFar(message, 5, 0, (value << 16) | 0x22);
   while (UiWork_IsCompleteFar() == 0)
-    WaitTicks(1);
-  WaitTicks(1);
+    WaitFrames(1);
+  WaitFrames(1);
 }
 
 void Func_0810857c(s32 messageId) {
@@ -88,8 +88,8 @@ void Func_0810857c(s32 messageId) {
   UiWork_FinalizePendingCoreFar();
   UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
   while (UiWork_IsCompleteFar() == 0)
-    WaitTicks(1);
-  WaitTicks(1);
+    WaitFrames(1);
+  WaitFrames(1);
   state->anchor->active = saved;
 }
 

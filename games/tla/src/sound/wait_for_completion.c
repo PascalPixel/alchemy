@@ -8,7 +8,7 @@ void AudioCommand_WaitForCompletion(void) {
   do {
     if (gMusicRestoreDelay == 0)
       break;
-    WaitTicks(1);
+    WaitFrames(1);
     wait_count++;
   } while (wait_count <= 299);
 }

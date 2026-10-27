@@ -18,7 +18,7 @@ void Func_02000a8c(void) {
    * and the address kept in r5 */
   goto test;
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   test:;
   } while (gData_02004808 == 210);
   Func_02004048();

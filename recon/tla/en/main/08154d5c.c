@@ -56,14 +56,14 @@ extern char ResourceId_GreenVineSheet;
 // middle of the targets.
 extern const s8 Data_08198422[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_CountDownMemberTimers(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -176,9 +176,9 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
       vine++;
     } while (i != VINE_COUNT);
     Func_08158ce0(4, 4);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != VINE_FRAMES);
 

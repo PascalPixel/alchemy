@@ -38,14 +38,14 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
-  WaitTicks(30);
+  WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
   Sound_PlaySongFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
-  WaitTicks(20);
+  WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
   Sound_PlaySongFar(SE_JUMP);
@@ -54,7 +54,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   Actor_Jump(djinniId, 5, 16);
   Sound_PlaySongFar(SE_JUMP);
   Actor_Jump(djinniId, 7, 18);
-  WaitTicks(20);
+  WaitFrames(20);
 
   // Eight afterimages of the same sprite at 15/16 size, each closing half
   // the distance to the one before it every frame, sharing one VRAM cache
@@ -92,7 +92,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y.fixed += 8 << 16;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Actor_ReleaseFar(djinni);
   list = copies;
@@ -100,12 +100,12 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     Actor_ReleaseFar((*list++));
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
-  WaitTicks(10);
+  WaitFrames(10);
   Actor_ArmCallback(gCommon.leaderActorId, FACING_SOUTH, 0);
-  WaitTicks(20);
+  WaitFrames(20);
   Actor_SelectAnimationFar(Actor_GetById(gCommon.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
-  WaitTicks(20);
+  WaitFrames(20);
 
   // The droplets (sprite 240), one a frame, from where the Djinni was on
   // screen (FieldEffect_UpdateRandomTargetParticle moves them).
@@ -122,14 +122,14 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     remaining--;
-    WaitTicks(1);
+    WaitFrames(1);
     effect++;
   } while (remaining >= 0);
 
   // After 120 frames every droplet still in use takes its last fall.
   // Walking whole slots instead of their state bytes grows native English
   // from 0x23c to 0x240 bytes.
-  WaitTicks(120);
+  WaitFrames(120);
   {
     s32 nextState;
 
@@ -147,7 +147,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   }
 
   // Restore the colours.
-  WaitTicks(50);
+  WaitFrames(50);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }

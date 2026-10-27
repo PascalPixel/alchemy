@@ -221,7 +221,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     // voice; spoken messages zoom open (option bit 0) with the speaker's
     // voice in bits 16 and up.
     if (win->mindRead != 0) {
-      WaitTicks(8);
+      WaitFrames(8);
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1, 18);
       else
@@ -240,7 +240,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!TextPrinter_AllFinishedFar())
-      WaitTicks(1);
+      WaitFrames(1);
   }
   work->messageWindow = (s32)handle;
   work->sideWindow = portrait;
@@ -265,7 +265,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   u32 frames;
 
   frames = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   // A party member the scene does not place has its portrait under its
   // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_ReadActiveValue(actorId);
@@ -280,7 +280,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
 
   if (runtime->fastForward == 0) {
     while (Window_IsClosedFar(window) == 0) {
-      WaitTicks(1);
+      WaitFrames(1);
       frames++;
       if (frames > 600 || ((gKeysHeld & KEY_SELECT) && (gKeysHeld & KEY_R) &&
                            (gKeysHeld & KEY_L) && (gKeysHeld & KEY_A))) {
@@ -289,14 +289,14 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
     }
   }
 
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// The event command "show message and wait": shows the message, then waits
 /// wait frames.
 void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
   Event_ShowMessageAndWait(actorId, flags);
-  Event_WaitTicks(wait);
+  Event_WaitFrames(wait);
 }
 
 /// The event command "ask yes or no": opens the question at actorId, lets
@@ -396,7 +396,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
       win = (s32)Message_OpenWindowFar(state->message, px, py, 1);
       state->messageWindow = win;
       while (Window_IsClosedFar((struct Window *)win) == 0)
-        WaitTicks(1);
+        WaitFrames(1);
 #ifdef UBFIX
     }
 #endif
@@ -435,7 +435,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 
   window = (s32)Message_OpenWindowFar(state->message, px, py, 1);
   while (Window_IsClosedFar((struct Window *)window) == 0)
-    WaitTicks(1);
+    WaitFrames(1);
   state->message++;
 }
 
@@ -470,24 +470,24 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (TextPrinter_AllFinishedFar() == 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
-  WaitTicks(1);
+  WaitFrames(1);
   while ((gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
-  WaitTicks(1);
+  WaitFrames(1);
   Portrait_CloseWindowFar(firstSprite);
   Portrait_CloseWindowFar(secondSprite);
   TextPrinter_CloseFinishedWindowsFar();
-  WaitTicks(1);
+  WaitFrames(1);
 
   while (Window_IsClosedFar((struct Window *)firstWindow) == 0)
-    WaitTicks(1);
+    WaitFrames(1);
   while (Window_IsClosedFar((struct Window *)secondWindow) == 0)
-    WaitTicks(1);
+    WaitFrames(1);
 
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 /// Sets the voice of the messages that follow to that of actorId's sprite,

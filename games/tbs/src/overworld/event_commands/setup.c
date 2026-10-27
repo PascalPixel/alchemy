@@ -110,7 +110,7 @@ void FieldPsynergy_StopCasterUpdate(void) {
 
   user->update = NULL;
   Anim_ApplyChildValuesFar(user, SPRITE_COLOR_NORMAL);
-  WaitTicks(1);
+  WaitFrames(1);
 }
 
 #define SETUP_OBJECT_SLOTS (gActors)
@@ -176,7 +176,7 @@ void FieldPsynergy_End(void) {
 
       if (active != 0) {
         waited++;
-        WaitTicks(1);
+        WaitFrames(1);
       }
     } while (active != 0 && waited <= 29);
 
@@ -220,7 +220,7 @@ void FieldPsynergy_StartCast(void) {
   SET_VELOCITY(caster, 0, 0, 0);
   if (effectWork->visible != 0) {
     Sound_PlaySongFar(SE_POWER_UP);
-    caster->update = FieldEffect_FlickerActorAndTick;
+    caster->update = FieldEffect_FlickerActorAndSpawnArcs;
   }
   if (effectWork->active != 0) {
     Actor_SetOthersPaused(caster, 1, 0);

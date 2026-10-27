@@ -5,7 +5,7 @@ void SerialRuntime_WaitForSend(void) {
 
   if (gSerialSendSource != 0) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       count++;
     } while (count <= 0x927bf && gSerialSendSource != 0);
   }
@@ -16,7 +16,7 @@ void SerialRuntime_WaitForReceive(void) {
 
   if (gSerialReceiveDest != 0) {
     do {
-      WaitTicks(1);
+      WaitFrames(1);
       count++;
     } while (count <= 0x927bf && gSerialReceiveDest != 0);
   }
@@ -26,7 +26,7 @@ void SerialRuntime_WaitForTransfers(void) {
   u32 count = 0;
 
   while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {
-    WaitTicks(1);
+    WaitFrames(1);
     count++;
     if (count >= 600000)
       return;

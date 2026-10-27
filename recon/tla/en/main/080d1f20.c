@@ -65,6 +65,6 @@ void Func_080d1f20(s32 heading) {
     left -= 5;
     right += 5;
     REG_WIN0H = (left << 8) | right;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 }

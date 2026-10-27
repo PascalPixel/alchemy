@@ -49,7 +49,7 @@ struct BurstEvent {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Ui_LoadWindowGraphics(void);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
@@ -79,7 +79,7 @@ void Func_080e87c4(void) {
   event->unkcad = 0;
   event->unkcae = 0;
   Scheduler_RemoveCallback(Func_080e807c);
-  WaitTicks(1);
+  WaitFrames(1);
   Audio_PlayCue(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
   Ui_LoadWindowGraphics();
@@ -94,7 +94,7 @@ void Func_080e87c4(void) {
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
-  WaitTicks(1);
+  WaitFrames(1);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                         work);
   slot = Resource_FindFreeEntry();
@@ -119,7 +119,7 @@ void Func_080e87c4(void) {
     sprite->oam.priority = 0;
     sprite->depth = 240;
   }
-  WaitTicks(1);
+  WaitFrames(1);
 
   for (frame = 0; frame < 40; frame++) {
     mote = work->motes;
@@ -136,7 +136,7 @@ void Func_080e87c4(void) {
       }
       mote->timer++;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   Resource_ResetEntry(slot);
   Resource_ResetEntry(work->resource);

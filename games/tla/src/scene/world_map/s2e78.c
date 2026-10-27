@@ -13,7 +13,7 @@ struct EventCounters {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitTicks(s32 ticks);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
@@ -29,7 +29,7 @@ s32 Func_02004d08(s32 actor, s32 value, s32 frames);
 void Func_02004da8(void);
 void Func_02004db0(void);
 void Func_02004db8(s32 value);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02004d20(s32 a, s32 b);
 void Func_02004d38(s32 scene, s32 b);
@@ -47,7 +47,7 @@ void Func_02002e00(void) {
                                      0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitTicks(20);
+  FieldEvent_WaitFrames(20);
   Func_02004d20(0x40000, 0x8000);
   {
     /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y,
@@ -60,7 +60,7 @@ void Func_02002e00(void) {
   // gInput hoisted (differ 17).
   goto wait;
   do {
-    WaitTicks(1);
+    WaitFrames(1);
   wait:;
   } while (gInput.held == 0);
   Func_02004d38((s32)&SceneId_Ov667, 80);
@@ -81,7 +81,7 @@ void Func_02002e78(void) {
     Event_WaitTransitionFrames();
     Func_02004da8();
     Func_02004cd8((s32)MsgTakeTheTiller);
-    FieldEvent_WaitTicks(40);
+    FieldEvent_WaitFrames(40);
     Func_02004ce8(7, 0, 10);
     Func_02004d08_(8, 256, 30);
     Func_02004ce8(4, 0, 10);

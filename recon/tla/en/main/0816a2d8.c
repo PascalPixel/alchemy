@@ -81,7 +81,7 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
 void Audio_PlayCue(s32 cue);
@@ -172,9 +172,9 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   } else
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
   if (variant == 4)
-    WaitTicks(8);
+    WaitFrames(8);
   else
-    WaitTicks(16);
+    WaitFrames(16);
 
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
@@ -243,9 +243,9 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
       Func_08118088(effect->actors[0], 4);
     }
     Func_08158ce0(16, 16);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_BLITTER);

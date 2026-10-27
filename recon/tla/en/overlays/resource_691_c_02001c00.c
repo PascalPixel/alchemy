@@ -25,9 +25,9 @@ void Object_SetPartAttribute();
 void Object_SetActionById();
 s32 Random16Far();
 void Func_0200015c();
-void WaitTicks();
+void WaitFrames();
 void Camera_MoveWithinMapBounds();
-void FieldEvent_WaitTicks();
+void FieldEvent_WaitFrames();
 void ObjectDispatch_SetSingleChildFlags();
 s32 Func_02003ac4();
 void Func_02003acc();
@@ -75,7 +75,7 @@ L_02009c6c:
   r5 = 0;
   Func_0200015c(r4, (FIELD_AT(r7, s32, 12)) + ((v3 & r5) << 16),
                 FIELD_AT(r7, s32, 16), 0, 0x13333, r5, 0xb0000, r9);
-  Call1((void (*)())WaitTicks, 5);
+  Call1((void (*)())WaitFrames, 5);
   r10 = r10 + 1;
   r2 = 1;
   if (r10 != 8)
@@ -85,7 +85,7 @@ L_02009c6c:
   FIELD_AT(r7, u8, 85) = 3;
   FIELD_AT(r7, s32, 72) = 0xcccc;
   FIELD_AT(r7, s32, 68) = r5;
-  Call1((void (*)())FieldEvent_WaitTicks, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   FIELD_AT(r7, u16, 6) = 0xc000;
   r10 = 60;
 L_02009d02:
@@ -102,7 +102,7 @@ L_02009d02:
     Func_0200015c(r4, (FIELD_AT(r7, s32, 12)) + ((v5 & r5) << 16),
                   FIELD_AT(r7, s32, 16), 0, 0x13333, r6, 0xb0000, r9);
   }
-  Call1((void (*)())WaitTicks, 1);
+  Call1((void (*)())WaitFrames, 1);
   r3 = FIELD_AT(r7, s32, 40);
   if ((FIELD_AT(r7, s32, 40)) != 0) {
     r10 = r10 - 1;

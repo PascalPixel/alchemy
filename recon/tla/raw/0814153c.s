@@ -227,7 +227,7 @@ BattleEffect_RunEclipse:
 	movs r1, #1
 	str r1, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #84]
 	adds r2, #1
 	str r2, [sp, #84]
@@ -1283,7 +1283,7 @@ BattleEffect_RunEclipse:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #84]
 	adds r7, #1
 	str r7, [sp, #84]
@@ -1416,7 +1416,7 @@ BattleEffect_RunEclipse:
 	.4byte 0x06004000
 .L_08142070:
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	movs r7, #128
 	movs r0, #128
 	lsls r7, r7, #19
@@ -1768,7 +1768,7 @@ BattleEffect_RunEclipse:
 .L_08142330:
 	adds r0, r1, #0
 	bl Func_08158ce0
-	bl ObjectGroup_TickMemberTimers
+	bl ObjectGroup_CountDownMemberTimers
 	movs r1, #240
 	ldr r0, [sp, #96]
 	lsls r1, r1, #7
@@ -1777,7 +1777,7 @@ BattleEffect_RunEclipse:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r2, [sp, #84]
 	adds r2, #1
 	str r2, [sp, #84]
@@ -1805,7 +1805,7 @@ BattleEffect_RunEclipse:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #96]
 	movs r2, #224
 	lsls r2, r2, #3
@@ -2400,7 +2400,7 @@ BattleEffect_RunEclipse:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #84]
 	adds r7, #1
 	str r7, [sp, #84]
@@ -2434,7 +2434,7 @@ BattleEffect_RunEclipse:
 	movs r0, #1
 	bl BattleBackground_LoadFar
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r7, [sp, #96]
 	movs r0, #239
 	lsls r0, r0, #7
@@ -2466,7 +2466,7 @@ BattleEffect_RunEclipse:
 .L_081428da:
 	str r6, [r5]
 	movs r0, #1
-	bl WaitTicks
+	bl WaitFrames
 	ldr r4, [sp, #84]
 	adds r4, #1
 	str r4, [sp, #84]

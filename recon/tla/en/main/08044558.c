@@ -30,7 +30,7 @@ struct NameCursor {
   u8 rest[12];
 };
 
-extern u32 gFrameTick;
+extern u32 gVBlankCount;
 extern char ResourceId_01fa, ResourceId_0202;
 extern const s8 gNameEntry_CaretWave[];
 extern const u8 gNameEntry_KeyboardTilemap[];
@@ -53,7 +53,7 @@ void Func_08108030(struct NameCursor *cursor);
 void Func_08108038(struct NameCursor *cursor);
 s32 UiText_SetRenderString(const u8 *str);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiWindow_SetTilemapFlagRect(struct UiWindow *window, s32 x, s32 y,
                                  s32 width, s32 height, s32 palette);
 void Audio_PlayCue(s32 cue);
@@ -139,7 +139,7 @@ s32 Func_08044558(s32 member) {
     }
     UiWindow_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 14);
-    WaitTicks(1);
+    WaitFrames(1);
     UiWindow_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 15);
     if (cursorDirty) {
@@ -154,7 +154,7 @@ s32 Func_08044558(s32 member) {
     Func_08108030(&keyCursor);
     Func_08108038(&nameCaret);
     {
-      u32 frame = (gFrameTick >> 1) & 7;
+      u32 frame = (gVBlankCount >> 1) & 7;
 
       output = nameCaret.output;
       output->oam.x = output->x + gNameEntry_CaretWave[frame];
@@ -236,7 +236,7 @@ s32 Func_08044558(s32 member) {
           nameCaret.output->active = 13;
           RenderOutput_PrepareForRedraw(nameWindow);
           UiText_DrawPaddedLabel(nameWindow, originalName);
-          WaitTicks(10);
+          WaitFrames(10);
         } else {
           u8 *dst = originalName;
           u8 *src = editedName;
@@ -273,8 +273,8 @@ s32 Func_08044558(s32 member) {
   UiWork_Finalize(keyboardWindow, 2);
   UiWork_Finalize(nameWindow, 2);
   Func_0803d450(member);
-  WaitTicks(1);
+  WaitFrames(1);
   while (gInput.held != 0)
-    WaitTicks(1);
+    WaitFrames(1);
   return result;
 }

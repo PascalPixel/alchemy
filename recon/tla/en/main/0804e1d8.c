@@ -23,7 +23,7 @@ extern u8 gData_0805f900[];
 extern u8 gData_0805f908[];
 extern u8 gData_0805f910[];
 
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
@@ -55,7 +55,7 @@ s32 Func_0804e1d8(void) {
   mode = 0;
   redraw = 1;
   Ram_HeapSlots->objectSystem->suspended = redraw;
-  WaitTicks(1);
+  WaitFrames(1);
 
   while (1) {
     if (gInput.repeat & 0x20) {
@@ -114,7 +114,7 @@ s32 Func_0804e1d8(void) {
         }
       }
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   UiWork_Finalize(window, 2);
   Ram_HeapSlots->objectSystem->suspended = 0;

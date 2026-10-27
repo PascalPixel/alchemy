@@ -83,7 +83,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 
 // A blade of fire swings down over the targets and strikes twice, each
@@ -306,9 +306,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     } while (col != 2);
 
     Func_08158ce0(16, 16);
-    ObjectGroup_TickMemberTimers();
+    ObjectGroup_CountDownMemberTimers();
     work->transferPending = 1;
-    WaitTicks(1);
+    WaitFrames(1);
     frame++;
   } while (frame != BLADE_FRAMES);
 

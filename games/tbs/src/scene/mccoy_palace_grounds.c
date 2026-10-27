@@ -261,7 +261,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
       Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
-      Event_WaitTicks(1);
+      Event_WaitFrames(1);
       Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
       Actor_SetSpeed(ACTOR_WEST_GUARD, 0x9999, 0x4ccc);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
@@ -301,7 +301,7 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-  Event_WaitTicks(16);
+  Event_WaitFrames(16);
   Import_EventSetExitRequest(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
   Event_End();
 }
@@ -368,7 +368,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
   MapGrid_CenterOnFollowedPoint();
-  WaitTicks(1);
+  WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(320), PIXELS(372));
   Event_StartScreenTransition();
   FieldCamera_SetSpeedParameters(0x3333, 0x666);
@@ -402,12 +402,12 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
     FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
   }
-  Event_WaitTicks(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
-  Event_WaitTicks(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Event_SetMessageId(MsgBilibinUnderArrest);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
@@ -417,12 +417,12 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitTicks(60);
+  Event_WaitFrames(60);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
     Actor_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
     Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetPositionAndReset(ACTOR_EAST_GUARD, 346, 263);
-    Event_WaitTicks(1);
+    Event_WaitFrames(1);
     {
       struct Actor *guard = Actor_GetById(ACTOR_EAST_GUARD);
 
@@ -436,7 +436,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
   Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
   McCoyPalaceGrounds_OpenGate();
-  Event_WaitTicks(40);
+  Event_WaitFrames(40);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
   Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);

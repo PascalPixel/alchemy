@@ -56,7 +56,7 @@ struct IntroWork {
   s32 backRows;  ///< rows of the far background copied in as it scrolls
   s32 frontRows; ///< rows of the near background copied in
   s32 frame;
-  s32 tick;
+  s32 frameCount;
   s32 state; ///< an enum IntroState
   s32 rise;  ///< how far the sprites have risen
   union {
@@ -132,7 +132,7 @@ void Title_UpdateIntroSprites(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   spriteCount = 0;
   if (gDebugPaused == 0) {
-    if ((++work->tick & 3) == 0)
+    if ((++work->frameCount & 3) == 0)
       work->rise++;
   }
   slopeBaseY = 48 - gBgScroll[1].y;
@@ -140,7 +140,7 @@ void Title_UpdateIntroSprites(void) {
   // Alternating the two groups fits six shapes into twelve OAM entries;
   // each group is visible every other frame.
   if (work->frame < 0x118) {
-    if ((work->tick & 1) == 0) {
+    if ((work->frameCount & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);
       MIRRORED_QUAD(spriteCount, 16, 0x40000000, 232);
       spriteCount += 4;
@@ -260,7 +260,7 @@ void Title_LoadIntroBackgrounds(void) {
   work->frame = 0;
   work->backRows = 0;
   work->frontRows = 0;
-  work->tick = 0;
+  work->frameCount = 0;
   work->rise = 0;
   work->state = INTRO_STATE_SCROLLING;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
@@ -320,7 +320,7 @@ s32 Title_ShowIntro(s32 prompt) {
   work = AllocHeapSlot(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
   VramCache_Reset();
-  WaitTicks(1);
+  WaitFrames(1);
   Task_ResetAll();
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
@@ -340,7 +340,7 @@ s32 Title_ShowIntro(s32 prompt) {
   for (;;) {
     s32 frame;
     s32 nextFrame;
-    s32 tick;
+    s32 frameCount;
 
     // A skip retains the final approach to the flash rather than replacing
     // the animated screen at an arbitrary scroll position.
@@ -354,11 +354,11 @@ s32 Title_ShowIntro(s32 prompt) {
     nextFrame = frame + 1;
     work->frame = nextFrame;
     if (nextFrame <= 278) {
-      // The back layer (BG1) scrolls a pixel every third tick, the front
+      // The back layer (BG1) scrolls a pixel every third frame, the front
       // (BG2) every other one; each new row of eight pixels copies the next
       // band of the picture from the decode buffer before it becomes visible.
-      tick = work->tick;
-      if (tick % 3 == 0) {
+      frameCount = work->frameCount;
+      if (frameCount % 3 == 0) {
         s32 y;
 
         gBgScroll[1].y--;
@@ -368,10 +368,10 @@ s32 Title_ShowIntro(s32 prompt) {
                   (u8 *)0x06004b00 - work->backRows * 960,
                   DMA_ENABLE << 16 | 0x1e0, REG_DMA3);
           work->backRows++;
-          tick = work->tick;
+          frameCount = work->frameCount;
         }
       }
-      if ((tick & 1) == 0) {
+      if ((frameCount & 1) == 0) {
         s32 y;
 
         gBgScroll[2].y--;
@@ -412,7 +412,7 @@ s32 Title_ShowIntro(s32 prompt) {
       ScreenFade_ToWhite(1);
       Task_Remove(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
-      WaitTicks(1);
+      WaitFrames(1);
       REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
@@ -428,7 +428,7 @@ s32 Title_ShowIntro(s32 prompt) {
       i = 0;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   // Blank the two off-screen columns so the 30-tile picture occupies a
   // complete 32-tile hardware map row.
@@ -506,13 +506,13 @@ s32 Title_ShowIntro(s32 prompt) {
       result = 1;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   gCpuLoadDisplayEnabled = savedCpuLoadDisplay;
   FreeHeapSlot(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
-  WaitTicks(1);
+  WaitFrames(1);
   return result;
 }
 
@@ -540,7 +540,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   result = 0;
@@ -577,7 +577,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
         result = -1;
         break;
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
     return result;
   }
@@ -588,7 +588,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
       result = -1;
       break;
     }
-    WaitTicks(1);
+    WaitFrames(1);
   }
   if (result != 0)
     ScreenFade_FromBlack(8);
@@ -601,7 +601,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
         result = -1;
         break;
       }
-      WaitTicks(1);
+      WaitFrames(1);
     }
   }
   if (result != 0)
@@ -627,7 +627,7 @@ s32 Title_ShowCamelotLogo(void) {
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
-  WaitTicks(1);
+  WaitFrames(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
@@ -665,7 +665,7 @@ s32 Title_ShowCamelotLogo(void) {
             BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
       break;
-    WaitTicks(1);
+    WaitFrames(1);
   }
   return result;
 }

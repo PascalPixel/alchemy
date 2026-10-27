@@ -52,7 +52,7 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);                   // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
-void ObjectGroup_TickMemberTimers(void);                   // ObjectGroup_TickMemberTimers
+void ObjectGroup_CountDownMemberTimers(void);                   // ObjectGroup_CountDownMemberTimers
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
@@ -185,7 +185,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       PARTICLES[i].variant = -1;
     if (mode == 0) {
       BattleEffect_SelectLivingTargets(work->effect);
-      WaitTicks(1);
+      WaitFrames(1);
       BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
     }
 
@@ -453,9 +453,9 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       Func_08158ce0(8, 8);
-      ObjectGroup_TickMemberTimers();
+      ObjectGroup_CountDownMemberTimers();
       work->transferPending = 1;
-      WaitTicks(1);
+      WaitFrames(1);
     }
 
     // Tear down: the formation bursts where it stands and is released.

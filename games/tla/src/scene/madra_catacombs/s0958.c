@@ -5,7 +5,7 @@ void Func_0200113c(s32 actor, s32 target);
 void Object_SetModeById(s32 actor, s32 mode);
 void Func_020010dc(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void WaitTicks(s32 ticks);
+void WaitFrames(s32 frames);
 
 static inline void MadraCatacombs_ObjPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct
@@ -23,7 +23,7 @@ static inline void MadraCatacombs_CopyAttributes(s32 a, s32 b, s32 c, s32 d,
 static inline void MadraCatacombs_Wait(s32 frames) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer, as the
    * draft of this function had it. */
-  WaitTicks(frames);
+  WaitFrames(frames);
 }
 
 /// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them one

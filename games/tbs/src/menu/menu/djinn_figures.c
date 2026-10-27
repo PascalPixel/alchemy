@@ -5,7 +5,7 @@
 
 #include "../menu_internal.h"
 
-/// Replaces the four displayed objects and starts their projected-position
+/// Replaces the four displayed sprites and starts their projected-position
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
 /// animation 2, at (16, 32) until the screen moves them, placed each frame by
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
@@ -36,7 +36,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
 
-/// Releases the four objects and removes their task. It defines
+/// Releases the four sprites and removes their task. It defines
 /// DjinnFigures_ReleaseTopRow (the Status menu's row) and
 /// DjinnFigures_ReleaseBottomRow (the Djinn menu's).
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
@@ -66,7 +66,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 #define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
 #define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
 
-/// Projects the four objects at full scale from their saved row positions.
+/// Projects the four sprites at full scale from their saved row positions.
 /// Task, each frame from DjinnFigures_InitializeTopRow. The
 /// image stands at (positionsX, positionsY); verticalOrigins, which is the
 /// party figures' memberY, only moves the depth slot.
@@ -152,7 +152,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   } while (objectIndex <= 3);
 }
 
-/// Replaces the bottom row's four objects and starts its easing task: one
+/// Replaces the bottom row's four sprites and starts its easing task: one
 /// Djinni figure of each element in animation 2, at full size, at (16, 200)
 /// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
 /// and DjinnFigures_ReleaseBottomRow releases them.
@@ -206,7 +206,7 @@ s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
 #endif
 }
 
-/// Replaces one displayed object and selects its animation: figure index
+/// Replaces one displayed sprite and selects its animation: figure index
 /// becomes the Djinni figure of element resourceKind
 /// (gDjinnFigures_SpriteIds) in animation value. Returns 1.
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {

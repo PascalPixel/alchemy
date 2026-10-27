@@ -60,7 +60,7 @@ s32 BattleParty_PrepareMembersFar(u16 *owners);
 /// Sets the camera to the fixed view shown while commands are chosen, raised
 /// by `pos` pixels.
 void BattleCamera_SetCommandViewFar(s32 pos);
-/// Returns one of an object's sprites, or null when it has no such sprite.
+/// Returns one of an actor's sprites, or null when it has no such sprite.
 void *GetMotionRecordFar(struct Actor *actor, s32 record_index);
 /// Highlights the units in `actors` by turning every other unit's sprites
 /// semi-transparent, or stops the highlight with HIGHLIGHT_OFF.
@@ -72,13 +72,14 @@ void BattlePlayback_StartFar(s32 cue);
 /// 1), to darken a palette; returns 0.
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
                                    s32 count);
-/// Brings each recovering Djinni of a member with HP a turn nearer to being set
-/// again, and returns 1 when any was; walking in the field ticks it too.
+/// Brings each recovering Djinni of a party member with HP a turn nearer to
+/// being set again, and returns 1 when any was; walking in the field ticks it
+/// too.
 s32 DjinnRecovery_TickFar(void);
 /// Returns the palette of a unit's battle object.
 s32 BattleObject_GetPaletteFar(s32 id);
-/// Sets every recovering Djinni of a member with HP at once, as the Battle
-/// Arena and Vault's map do; returns 0.
+/// Sets every recovering Djinni of a party member with HP at once, as the
+/// Battle Arena and Vault's scenes do; returns 0.
 s32 DjinnRecovery_TickTwentyFar(void);
 /// Debug: replaces the party with one of the preset parties, levels, Djinn,
 /// abilities and items included; returns 1 past the table's end.

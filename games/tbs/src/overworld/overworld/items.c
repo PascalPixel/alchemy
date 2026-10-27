@@ -4,11 +4,11 @@
 
 #include "../overworld_internal.h"
 
-/// The function a map's item trigger may name instead of a message, called
+/// The function a scene's item trigger may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
 typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
-/// Returns the map's item trigger (TRIGGER_ITEM) for item that applies to
+/// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
 /// names an actor (TRIGGER_ITEM_ON_ACTOR) or a metatile behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
@@ -57,15 +57,15 @@ s32 Field_FindItemTrigger(s32 item) {
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
-/// it); slot is its inventory slot. The map's item trigger for what the leader
-/// faces runs if there is one; otherwise an item with a field action uses it
-/// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
-/// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
-/// Returns 0 when the map's event ran or Retreat was declined, else -1, the
-/// item's own action included; SceneManager_Run ignores it.
-/// Called by SceneManager_Run for the item request (work->item and
-/// work->itemSlot). Retreat sets gSaveBlock.sceneId and .entrance to the
-/// Retreat point and raises work->exit.
+/// it); slot is its inventory slot. The scene's item trigger for what the
+/// leader faces runs if there is one; otherwise an item with a field action
+/// uses it (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS
+/// still set afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes
+/// the item. Returns 0 when the scene's event ran or Retreat was declined, else
+/// -1, the item's own action included; SceneManager_Run ignores it. Called by
+/// SceneManager_Run for the item request (work->item and work->itemSlot).
+/// Retreat sets gSaveBlock.sceneId and .entrance to the Retreat point and
+/// raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -120,7 +120,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
-    // The map's event: a message, or a function. A value below 0x10000 is
+    // The scene's event: a message, or a function. A value below 0x10000 is
     // a message number; anything else is a code address. Trigger bit 0x400
     // skips the "uses the item" message.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
@@ -202,14 +202,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-/// Returns the map's Psynergy trigger (TRIGGER_PSYNERGY) for Psynergy of the
+/// Returns the scene's Psynergy trigger (TRIGGER_PSYNERGY) for Psynergy of the
 /// given group that applies to what the leader faces, or NULL; stores the
 /// actor the Psynergy would target in *target. eventFlags gives the
 /// event's phase and kind (PSYNERGY_TRIGGER_ANY for any phase). The event may
 /// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
 /// (TRIGGER_PSYNERGY_ON_ACTOR) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEndEvents, and by the
-/// Force, Frost and Reveal effects (event_commands/) for their own phases.
+/// Force, Frost and Reveal (event_commands/) for their own phases.
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -252,7 +252,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   return NULL;
 }
 
-/// Runs the map's events for Psynergy without paying its PP or showing its
+/// Runs the scene's events for Psynergy without paying its PP or showing its
 /// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
 /// the kind's ending), as for a
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and

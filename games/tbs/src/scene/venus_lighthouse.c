@@ -1,10 +1,10 @@
 /// @file
-/// Venus Lighthouse, six maps in one overlay: the approach outside, the floor
+/// Venus Lighthouse, six scenes in one overlay: the approach outside, the floor
 /// the front door opens onto, and the four floors of the climb that ends in the
-/// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each map has its own
-/// entrance, actor template and trigger tables
+/// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each scene has its
+/// own entrance, actor template and trigger tables
 /// (VenusLighthouseGroundFloor's entrances are the fallback table), all
-/// share one exit table, and VenusLighthouse_Initialize redraws each map's
+/// share one exit table, and VenusLighthouse_Initialize redraws each scene's
 /// puzzles as their flags left them, case by entrance. Inside, only the
 /// actors of the room entered are placed (CONDITION_IN_VIEW).
 ///
@@ -68,10 +68,10 @@
 /// (MB_VENUS_LIGHTHOUSE_LOCKED_DOOR). The wall and gate flags
 /// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)
 /// and the Psynergy Stones' flags are area flags: they last while the
-/// party stays in the maps of the climb (SceneId_VenusLighthouseFirstFloor to
+/// party stays in the scenes of the climb (SceneId_VenusLighthouseFirstFloor to
 /// SceneId_VenusLighthouseAerie, one area), so the floors stay solved
-/// between them. The FLAG_MAP_TEMP_ states last only until the next change of
-/// map other than a return from battle. Every arrival sets
+/// between them. The FLAG_SCENE_TEMP_ states last only until the next change of
+/// scene other than a return from battle. Every arrival sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
 
 #include "script_operands.h"
@@ -252,13 +252,13 @@ static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
-// The lighthouse's map flags: FLAG_SCENE_TEMP_00: in the room with the floor
+// The lighthouse's scene flags: FLAG_SCENE_TEMP_00: in the room with the floor
 // switch, the pillar holds the switch down; in the room of floating pillars,
 // FLAG_SCENE_TEMP_00 plus a pillar's number (0 to 3): that pillar is set down
 // in its place. FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH: the leader stands
 // on the floor switch.
 
-// Each map numbers its actors by the rows of its own actor
+// Each scene numbers its actors by the rows of its own actor
 // template table, so each has an enum of its own; a row drawn as one of the
 // party's characters (Garet in VenusLighthouseGroundFloor) is that party member
 // in his own slot and takes no number.
@@ -358,7 +358,7 @@ enum VenusLighthouseSecondFloorActorId {
   /// ★ Named from what the player sees: a grey pillar carved with spirals on
   /// the track before the gate (its render)
   ACTOR_GATE_PILLAR,
-  /// SPRITE_PARTICLE, the kind of object
+  /// SPRITE_PARTICLE, the kind of actor
   /// VenusLighthouse_CreateLight makes: once the pillar sinks it
   /// travels gVenusSecondFloorLightToGate to the gate, which opens, and stays
   /// there
@@ -483,11 +483,11 @@ static void VenusLighthouse_ConfigurePassageEffect(struct Actor *actor,
 }
 
 /// Creates a mask over a hole as the leader or a pillar falls through the
-/// floor: an object of sprite type (SPRITE_CRATE or SPRITE_CAPPED_PILLAR) drawn
+/// floor: an actor of sprite type (SPRITE_CRATE or SPRITE_CAPPED_PILLAR) drawn
 /// solid black (SPRITE_COLOR_BLACK) and translucent in front of the
 /// actors, which shows the background through whatever falls behind it, so that
 /// it vanishes below the hole's edge. Babi Lighthouse's PIT_MASK is the same
-/// object, and its render without the mask shows the leader whole.
+/// actor, and its render without the mask shows the leader whole.
 static struct Actor *
 VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *effect;
@@ -502,7 +502,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// Creates an object that keeps the leader on screen while a pillar sinks
+/// Creates an actor that keeps the leader on screen while a pillar sinks
 /// into its socket with him standing north of it, where the sinking code puts
 /// his sprite at priority 3. It is a SPRITE_CHEST drawn in
 /// SPRITE_COLOR_HIDDEN, so it shows nothing itself; in tbs-en, with this
@@ -528,7 +528,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 #include "ability_ids.h"
 #include "actor_script.h"
 
-/// The map's names for the bytes Actor keeps for map code: a statue
+/// The scene's names for the bytes Actor keeps for scene code: a statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
 /// (VenusLighthouse_PushAdjacentPillar), and a light sets
 /// SW_VENUS_LIGHT_ARRIVED as it reaches its gate, which then opens.
@@ -675,7 +675,7 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *interpreter) {
 }
 
 // Pulse the child effect and play its timed sound.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 6 bytes of the 56-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
@@ -699,7 +699,7 @@ static s32 VenusLighthouse_PulseChildEffect(struct Actor *updated) {
 }
 
 // Emit a rising particle near the actor every eight frames.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 14 bytes of the 172-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
@@ -742,7 +742,7 @@ static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
 }
 
 // Emit the two particle patterns used by the leader's passage trail.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 14 bytes of the 180-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
@@ -932,9 +932,9 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 /// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
 
-// A light's update hook: every four frames a shrinking particle around it,
+// A light's update routine: every four frames a shrinking particle around it,
 // and now and then a sound while it moves.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 172 bytes (extent 196 to 192 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
@@ -1089,7 +1089,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   return 0;
 }
 
-/// Selects the map's entrances; VenusLighthouseGroundFloor takes the
+/// Selects the scene's entrances; VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -1112,13 +1112,13 @@ const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
   return gVenusLighthouseEntrancesOther;
 }
 
-/// These maps supply no exit regions.
+/// These scenes supply no exit regions.
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void) { return 0; }
 
-/// Returns the packed exits shared by the six maps.
+/// Returns the packed exits shared by the six scenes.
 const u32 *VenusLighthouse_GetExits(void) { return gVenusLighthouseExits; }
 
-/// Selects the map's actor templates. Inside the lighthouse,
+/// Selects the scene's actor templates. Inside the lighthouse,
 /// Scene_AssignViewFlags first gives each row with condition 0 whether it
 /// lies inside the view bounds, so only the room entered is populated.
 const struct ActorTemplate *VenusLighthouse_GetActorTemplates(void) {
@@ -2116,7 +2116,7 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
 }
 
 // Keep a stacked pillar sixteen pixels above its supporting actor.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 7 bytes (extent 34 to 32 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
@@ -2687,7 +2687,7 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 }
 
 /// Selects the puzzle interactions and dialogue for the current lighthouse
-/// map.
+/// scene.
 const struct Trigger *VenusLighthouse_GetTriggers(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
@@ -2734,7 +2734,7 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   }
 }
 
-/// Visits the four pillar actors through the object lookup service.
+/// Visits the four pillar actors through the actor lookup.
 static void VenusLighthouse_VisitPillarActors(void) {
   u32 actorId;
 
@@ -2746,7 +2746,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 }
 
 /// Restores puzzle progress, actors and entrance effects for all
-/// six maps, by map and entrance; on every arrival it sets
+/// six scenes, by scene and entrance; on every arrival it sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT and, after a battle, restores the scripted
 /// actors' child values. VenusLighthouseGroundFloor's
 /// VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR, with
@@ -3617,7 +3617,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 }
 
 // Emit rising particles around the actor every four frames.
-// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// UB: update routines return void. In tbs-en venus_lighthouse, plain
 // void differs in 14 bytes of the 196-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
@@ -3955,7 +3955,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The lady statues' object script: drawn grey (VENUS_COLOR_MARK), and never
+/// The lady statues' actor script: drawn grey (VENUS_COLOR_MARK), and never
 /// pushed (SW_VENUS_IMMOVABLE).
 s32 gVenusGreyStatueScript[] = {
     SC_SET(SW_TIMER, VENUS_COLOR_MARK(SPRITE_COLOR_GREY)),
@@ -3964,14 +3964,14 @@ s32 gVenusGreyStatueScript[] = {
     SC_END,
 };
 
-/// The first floor's capped pillars' object script: drawn grey.
+/// The first floor's capped pillars' actor script: drawn grey.
 s32 gVenusGreyPillarScript[] = {
     SC_SET(SW_TIMER, VENUS_COLOR_MARK(SPRITE_COLOR_GREY)),
     SC_CALL(VenusLighthouse_UpdateChildFromTimer),
     SC_END,
 };
 
-/// The leader's action script after he jumps down from the ledge
+/// The leader's actor script after he jumps down from the ledge
 /// (VenusLighthouse_JumpDown): he swells and shrinks ten times, flashing
 /// (VenusLighthouse_PulseChildEffect).
 s32 gVenusLeaderDazedScript[] = {
@@ -3990,7 +3990,7 @@ s32 gVenusLeaderDazedScript[] = {
     SC_END,
 };
 
-/// The object script of the world map's picture of Venus Lighthouse, placed
+/// The actor script of the World Map's picture of Venus Lighthouse, placed
 /// in the ground floor's statue room at three fifths of its size, with no
 /// collision: a small purple tower standing among the floor lamps the statue's
 /// routes light (the room's render).
@@ -4003,7 +4003,7 @@ s32 gVenusMiniatureLighthouseScript[] = {
 };
 
 /// A drop of the spray that carries the leader up to the aerie: it pulses
-/// from full size to a quarter four times, then is freed.
+/// from full size to a quarter four times, then is released.
 s32 gVenusSprayScript[] = {
     SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_SET(SW_SCALE_X, Q16_ONE),
@@ -4024,7 +4024,7 @@ s32 gVenusSprayScript[] = {
     SC_RELEASE,
 };
 
-/// The object scripts that give a spiral pillar its piece of track.
+/// The actor scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {
     SC_ANIMATION(VENUS_TRACK_NORTH_SOUTH),
     SC_END,
@@ -4110,7 +4110,7 @@ s32 gVenusThirdFloorLightToSoutheast[] = {
     SC_END,
 };
 
-/// A light that cannot go on: it stops trailing particles and is freed ten
+/// A light that cannot go on: it stops trailing particles and is released ten
 /// frames later.
 s32 gVenusLightGoesOut[] = {
     SC_SET(SW_HOOK, 0),

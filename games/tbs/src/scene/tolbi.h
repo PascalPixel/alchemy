@@ -25,9 +25,9 @@
 /// sprout (its render)
 #define FLAG_TOLBI_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
 
-// Map flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the sprout,
-// FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset when
-// the party leaves the town.
+// Scene flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the
+// sprout, FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset
+// when the party leaves the town.
 
 /// Actors, numbered in the order of the actor templates from
 /// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
@@ -164,7 +164,7 @@ enum TolbiMetatileBehavior {
   MB_TOLBI_GATE_TO_SPRING = 239
 };
 
-/// The running children keep these flags in Actor.timer, their map
+/// The running children keep these flags in Actor.timer, their scene
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
 enum {
   /// Set on the older brother, who runs after ACTOR_TOLBI_YOUNGER_SISTER.

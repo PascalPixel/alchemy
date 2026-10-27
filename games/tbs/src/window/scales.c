@@ -45,7 +45,7 @@ const u8 gWindowColor_WaveTable[121] = {
     41, 44, 47, 49, 52, 54, 57, 60, 62,
 };
 
-/// The option menu's sprite frames for each setting's choices: message
+/// The settings menu's sprite frames for each setting's choices: message
 /// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
 /// Each is a frame number for CommandIcon_Create, in the order of the
 /// setting's values.
@@ -61,7 +61,7 @@ const s8 gSettingsMenu_SleepFrames[2] = {
     0x27, 0x28,
 };
 
-/// The window colour presets SELECT cycles through on the option menu: the
+/// The window colour presets SELECT cycles through on the settings menu: the
 /// colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each.
 const u8 gSettingsMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
@@ -71,7 +71,7 @@ const u8 gSettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 
-/// The sprite frame of each entry's icon in the pause menu (Save your quest,
+/// The sprite frame of each entry's icon in the Pause menu (Save your quest,
 /// Sleep, Change settings, and the debug entries after them). The menu shows
 /// at most six; nothing reads the last two.
 const s8 gPauseMenu_IconFrames[8] = {

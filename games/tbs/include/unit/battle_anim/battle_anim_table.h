@@ -218,13 +218,13 @@ extern s8 gVolcano_Depths[][4];
 extern u8 gVolcano_StartFrames[];
 extern u8 gTargetMotes_GlintFlips[];
 
-/// Cybele's face as she spits the thorns: the animations of objects 3 and 4,
+/// Cybele's face as she spits the thorns: the animations of sprites 3 and 4,
 /// the left and right halves of the middle row of SUMMON_FORMATION_CYBELE, as
 /// the cast's recording shows them. Her mouth, in the left half, opens and
 /// shuts; her far eye, in the right, stays as it is.
 enum {
-  CYBELE_POSE_FACE_LEFT, ///< object 3's animation: the half with her mouth
-  CYBELE_POSE_FACE_RIGHT ///< object 4's animation
+  CYBELE_POSE_FACE_LEFT, ///< sprite 3's animation: the half with her mouth
+  CYBELE_POSE_FACE_RIGHT ///< sprite 4's animation
 };
 extern u8 gCybele_ObjectPoses[][2];
 

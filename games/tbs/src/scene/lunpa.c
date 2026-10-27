@@ -1,10 +1,10 @@
 /// @file
 /// Lunpa, the town of the noble thief's family, sealed by Dodonpa's men while
 /// he holds Hammet for ransom in Lunpa Fortress. Two areas share this
-/// overlay, each a map of its own:
+/// overlay, each a scene of its own:
 ///
 /// - Lunpa (SceneId_Lunpa, area name Lunpa): the town. Two guards keep the road
-///   in from the world map; doors lead into the homes, shops, inn and temple
+///   in from the World Map; doors lead into the homes, shops, inn and temple
 ///   (RockRooms, rock_rooms.c), roads to West Lunpa Cave and up to
 ///   the Lunpa Fortress Gates, and a hidden passage to Lunpa's hidden room
 ///   (LUNPA_TO_STONE_ROOMS, in StoneRooms, whose area name there is Lunpa).
@@ -24,7 +24,7 @@
 /// (Lunpa_HideSecrets): a Psynergy Stone, a puddle that Frost freezes
 /// into a pillar to stand on, and the sparkle of a switch. Searching the switch
 /// opens the passage to the hidden room, which can be walked through only while
-/// Reveal shows it (Lunpa_EnterHiddenPassage). Its map temp flags:
+/// Reveal shows it (Lunpa_EnterHiddenPassage). Its scene temp flags:
 ///
 /// - FLAG_LUNPA_PUDDLE_FROZEN: Frost has frozen the puddle.
 /// - FLAG_LUNPA_SECRETS_HIDDEN: the secrets are hidden, Reveal not shining.
@@ -41,7 +41,7 @@
 /// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
 /// the fortress starts over. Between Donpa's judgment and the reunion in West
 /// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going
-/// back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its map temp flags:
+/// back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its scene temp flags:
 ///
 /// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR: the guards stand before the
 ///   door.
@@ -113,7 +113,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
 /// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
-/// frames, then it moves away and is freed.
+/// frames, then it moves away and is released.
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, 0), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_RELEASE,

@@ -21,7 +21,7 @@
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
 //
-// Each match map defines its own two exits before including this file:
+// Each match scene defines its own two exits before including this file:
 // COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
 // COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
@@ -77,7 +77,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
   }
 }
 
-/// Makes the character the party's only member, the one the player moves and
+/// Makes the character the only party member, the one the player moves and
 /// the camera follows, with full HP and PP and no poison. The gauges are the
 /// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
@@ -122,7 +122,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Event_ClearInvalidPackedValues();
 }
 
-/// A map callback while a friend looks around the stages alone (the visit to
+/// A task while a friend looks around the stages alone (the visit to
 /// lend a hand): when the Psynergy request names that friend and
 /// FLAG_PSYNERGY_TARGET is set, raise trigger 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {

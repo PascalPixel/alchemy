@@ -34,7 +34,7 @@ by a [far call](glossary.md#far-call). When it returns, the field scene is
 loaded again, or after a defeat the scene the defeat rules name. The debug
 battle menu is the only other way in.
 
-`SequenceManager_Run` (`src/overworld/overworld/sequence_manager.c`) sees the next scene
+`SequenceManager_Run` (`src/overworld/overworld/sequence_manager.c`) sees the next sequence
 `SEQUENCE_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
 (`src/battle/battle/encounter.c`). The formations are the rows of
 `src/battle/formations.c`, chosen by the encounter zones in
@@ -86,7 +86,7 @@ The party's actions come from the command menu (or are picked automatically
 in the auto battle), the enemies' from each enemy's habits. They are sorted
 by Agility, except that the Djinn Granite, Flash and Ground go before
 everyone. Then each action in turn is announced, staged and animated, and its
-targets take its effect; the actor's turn ends; and when every action has
+targets take its effect; the unit's turn ends; and when every action has
 played, the round ends with statuses counting down. The loop in `Battle_Run`,
 simplified:
 

@@ -21,7 +21,7 @@ source was never released.
 
 The characters travelling together, led by Isaac: in The Broken Seal, Isaac,
 Garet, Ivan and Mia. A character's or an enemy's record is a unit
-(`struct Unit`), and a unit in the party a member
+(`struct Unit`), and a unit in the party a party member
 ([Game rules](src/game/README.md#words-used-here)).
 
 ### The places, in story order
@@ -197,7 +197,7 @@ table entry and every stub of an overlay's tables is one.
 ### Overlay
 
 A packed piece of code unpacked into one 32 KB area of EWRAM, `gOverlayArea`,
-when it is needed: each holds the scripts of one scene or of a few neighbouring
+when it is needed: each holds the code of one scene or of a few neighbouring
 scenes, 96 in all for 201 scenes, and only one is loaded at a time ([Engine](engine.md#overlays)).
 
 ### Entry table and import table
@@ -223,7 +223,9 @@ again, such as the running scene's state (`gHeapSlots`).
 
 A short job run once every frame, or once every VBlank, until it is removed:
 the windows' typing, the map's scrolling, the lightning over Vale on the
-stormy night. Up to 20 at a time run, in the order of their priority
+stormy night. Each runs in one of two passes, `TASK_PASS_FRAME`, which
+`WaitFrames` runs once a frame, or `TASK_PASS_VBLANK`, which the VBlank
+handler runs; up to 20 at a time run, in the order of their priority
 ([Runtime](src/runtime/README.md#the-task-runner)).
 
 ### Song
@@ -241,15 +243,16 @@ pokeemerald, finds each entry saying what pret calls the nearest thing.
 
 ### Sequence
 
-One turn of the sequence manager, the loop the whole game runs in: a scene, a
-battle, Lucky Dice or Lucky Wheels, each running until it ends and names the
-next ([The front page](README.md#the-sequence-manager)).
+What the sequence manager, the loop the whole game runs in, runs next: a
+scene, a battle, Lucky Dice or Lucky Wheels, each running until it ends and
+names the next ([The front page](README.md#the-sequence-manager)).
 
 ### Scene
 
-One row of the scene table: a room, a town, a dungeon floor, the world map,
-or a screen such as the title or the main menu, 201 in all, each running an
-overlay's code and drawn on a map ([The front page](README.md#scenes-and-overlays)).
+One row of the scene table (`struct Scene` in `gScenes`): a room, a town, a
+dungeon floor, the World Map, or a screen such as the Title or the File
+Screen, 201 in all, each running an overlay's code and drawn on a map
+([The front page](README.md#scenes-and-overlays)).
 
 ### Area
 
@@ -288,24 +291,30 @@ it does: a wall, a ledge, a jar. One range of behaviors means whatever the
 scene's own trigger table says
 ([World](world.md#cells-and-metatile-behaviors)).
 
-### Object
-
-One of the 64 slots of `gActors` (`struct Actor`): anything in a scene that
-acts on its own, from the party and the townspeople to the camera and the
-footprints in snow ([World](world.md#objects-and-their-scripts)).
-
 ### Actor
 
-A person or thing a scene knows by its actor id: the party, and everyone its
-actor templates place. The camera and the footprints are objects but
-not actors ([Scenes](src/scene/README.md#who-stands-where)). pret calls an
-actor an object event, and its template an object event template.
+One of the 64 slots of `gActors` (`struct Actor`): anything on the field that
+moves or is drawn on its own, from the party and the townspeople to the
+camera and the footprints in snow ([World](world.md#actors-and-their-actor-scripts)).
+A scene knows the party and the actors its actor templates place by their
+actor ids; the camera and the footprints have none
+([Scenes](src/scene/README.md#who-stands-where)). pret calls the nearest
+thing an object event, and a template an object event template.
 
 ### Actor id
 
-An actor's number in its scene: 0 to 7 the party, the leader at 0, and
-from 8 (`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each
-scene names its own in an enum. pret calls it a local id.
+An actor's number in its scene, the index of `FieldWork.actors`
+(`ACTOR_ID_COUNT` of them): 0 to 7 the party, the leader at 0, and from 8
+(`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each scene names
+its own in an enum. pret calls it a local id.
+
+### Actor script
+
+The list of `SC_` commands an actor runs each frame: waits, moves, jumps,
+loops and tests of game flags. One command can hand the actor to a
+controller, a routine built into the engine that steers it every frame, such
+as player control (`SC_PLAYER`) or the camera's
+([World](world.md#actors-and-their-actor-scripts)).
 
 ### Trigger
 
@@ -341,18 +350,38 @@ Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits.
 pret calls it a warp destination.
 
+### Field request
+
+What the field loop answers once the leader stops walking: one of twelve
+`FieldWork` members asks for an exit, an encounter, a talk, an examine, an
+item, a field Psynergy, a menu or a raised trigger, and the scene manager
+serves them most urgent first ([World](world.md#the-field-loop-and-its-requests)).
+
 ### Event
 
-Whatever a trigger runs: talking to someone, opening a chest, a door, or the
-party and the camera moving through a scripted moment of the story. The engine
-draws no line between them, so each is an event, and its code an event script.
+The C routine a trigger runs, named for its scene (`Vale_EnterIsaacsHouse`):
+a cutscene, or a conversation that does more than show one message. It runs
+between `Event_Start` and `Event_End`, one step to a line, each step that
+takes time running its frames before the next starts. A trigger row that
+only shows a message runs no event ([Scenes](src/scene/README.md#events)).
 
-### Script
+### Event command
 
-A function a trigger names (`Vale_EnterIsaacsHouse`), written one step
-to a line as calls into the script layer, each step that takes time running its
-frames before the next starts. An object script is the list of `SC_` commands
-an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).
+A routine an event calls: `Event_` for speech, waits and destinations,
+`Actor_` for actors and `FieldCamera_` for the camera. An event calls most of
+them through one inline each in `event_inline.h`
+([Scenes](src/scene/README.md#events)).
+
+### Destination
+
+The scene and entrance the sequence manager runs next (`gSaveBlock.sceneId`
+and `entrance`): an exit sets it, and an event can set it itself
+(`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
+Three others are read only at given moments: after a battle the party goes to
+the after-battle destination when it won and one is set, else back to the
+return point, the scene it left; after a defeat it goes to the defeat
+destination when one is set, else to the restart point, usually the last
+Sanctum ([The front page](README.md#exits-and-entrances)).
 
 ### Game flag
 

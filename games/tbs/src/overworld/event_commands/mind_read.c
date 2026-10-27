@@ -30,7 +30,7 @@ struct MindReadWork {
 ///
 /// Abilities: Mind Read (FIELD_PSYNERGY_MIND_READ).
 ///
-/// The effect stays up until FieldPsynergy_FinishMindRead ends it
+/// The Psynergy stays up until FieldPsynergy_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
 /// (FieldPsynergy_GreyMindReadPalette sets the window mode).
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
@@ -52,7 +52,7 @@ void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
-/// releases the effect's work.
+/// releases the Psynergy's work.
 void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
@@ -68,7 +68,7 @@ void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
 /// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
-/// every 60 frames sends three particles (object 281) from the target to the
+/// every 60 frames sends three particles (sprite 281) from the target to the
 /// caster, with sound 130.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
@@ -234,8 +234,8 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
   return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
 }
 
-/// Per-frame update: once the object has arrived (no destination left on any
-/// axis), frees it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
+/// Per-frame update: once the actor has arrived (no destination left on any
+/// axis), releases it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;

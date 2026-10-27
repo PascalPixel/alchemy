@@ -1,5 +1,5 @@
 /// @file
-/// Save files and the file menu.
+/// Save files and the file list.
 // Part of screens.c.
 
 #include "../screens_internal.h"
@@ -104,7 +104,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
   ((u32)&((struct SaveFileSummary *)0)->to -                                   \
    (u32)&((struct SaveFileSummary *)0)->from)
 
-/// Loads the save file summaries for the title menu and returns how many files
+/// Loads the save file summaries for the File Screen and returns how many files
 /// there are: plus 100 when every file has its send flag set, or
 /// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
 /// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
@@ -177,7 +177,7 @@ u32 Save_BuildFileSummary(void) {
   // save buffer's second half, so this lands at offset 0x110 of the file's
   // second record (after its 16-byte header), which
   // Save_LoadFileSummaries reads back into
-  // SaveFileSummary.secondRecordPlayTime: the file menu lists a file whose two
+  // SaveFileSummary.secondRecordPlayTime: the file list lists a file whose two
   // play times differ as corrupted.
   {
     u32 *copy = (u32 *)gSceneLocalState;
@@ -252,8 +252,8 @@ u32 Save_BuildFileSummary(void) {
 /// writes both halves of the save buffer, as records gSaveSlot and
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
-/// Save_ToChosenFile it asks nothing and does not capture the object
-/// table first (Save_CaptureActorsFar).
+/// Save_ToChosenFile it asks nothing and does not capture gActors
+/// first (Save_CaptureActorsFar).
 s16 Save_WriteCurrentFile(void) {
   s16 file;
   s16 result;
@@ -386,7 +386,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   return result;
 }
 
-/// The file menu's Copy (menu/file_screen.c): lets the player choose a file,
+/// The file list's Copy (menu/file_screen.c): lets the player choose a file,
 /// reads both of its records into the save buffer, overwriting it, and writes
 /// them to the first empty file. Returns 0, -1 when cancelled, or a
 /// SAVE_ERROR_* after showing its message (the game says "Failed to erase."
@@ -439,7 +439,7 @@ s32 Save_CopyFile(void) {
   return result;
 }
 
-/// The file menu's Erase (menu/file_screen.c): lets the player choose a file,
+/// The file list's Erase (menu/file_screen.c): lets the player choose a file,
 /// asks whether to erase it and on Yes deletes both of its records. "OK to
 /// erase this?" Returns 0 (also when the player answers No), -1 when cancelled,
 /// or a SAVE_ERROR_* after showing its message.
@@ -489,7 +489,7 @@ s32 Save_EraseSelectedFile(void) {
 /// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
 /// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
 /// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
-/// 85 frames. FileList_StartPulse runs it while the file menu is open.
+/// 85 frames. FileList_StartPulse runs it while the file list is open.
 void FileList_UpdatePulse(void) {
   s32 *tick;
   volatile u16 *palette;
@@ -553,7 +553,7 @@ void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the
 /// tile entry 0xe006: tile 6 in HIGHLIGHT_PALETTE, the palette
-/// FileList_UpdatePulse animates. The file menu marks the file under
+/// FileList_UpdatePulse animates. The file list marks the file under
 /// the cursor with it.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
@@ -602,15 +602,15 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 #endif
 
-/// The file menu shows the chosen file's party as walking sprites in a
+/// The file list shows the chosen file's party as walking sprites in a
 /// row, and four Djinn sprites, one for each element, over the file's Djinn
 /// counts. Each sprite stands three tiles (24 pixels) from the one before.
 #define FILE_LIST_SPRITE_SPACING 3
 /// Task priority of the tasks that place the sprites every frame.
 #define FILE_LIST_SPRITE_PRIORITY (200 << 4)
 
-/// Shows the party of save file `summary` (up to four members) as sprites in
-/// a row from tile (x, y) inside `window`, and starts placing them every
+/// Shows the party of save file `summary` (up to four party members) as sprites
+/// in a row from tile (x, y) inside `window`, and starts placing them every
 /// frame (FileList_PlacePartySprites).
 void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
                                struct SaveFileSummary *summary) {
@@ -641,7 +641,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
   Task_Add(FileList_PlacePartySprites, priority);
 }
 
-/// Stops placing the party sprites of the file menu and releases them.
+/// Stops placing the party sprites of the file list and releases them.
 void FileList_HidePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
   s32 i;
@@ -655,7 +655,7 @@ void FileList_HidePartySprites(void) {
   }
 }
 
-/// A task: draws each party sprite of the file menu at its
+/// A task: draws each party sprite of the file list at its
 /// place and scale for this frame.
 void FileList_PlacePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
@@ -710,7 +710,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
   }
 }
 
-/// Stops placing the Djinn sprites of the file menu and releases them.
+/// Stops placing the Djinn sprites of the file list and releases them.
 void FileList_HideDjinnSprites(void) {
   struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
@@ -724,7 +724,7 @@ void FileList_HideDjinnSprites(void) {
   }
 }
 
-/// A task: draws each Djinn sprite of the file menu at its
+/// A task: draws each Djinn sprite of the file list at its
 /// place, at scale 1.0, for this frame.
 void FileList_PlaceDjinnSprites(void) {
   struct ItemMenuFiguresView *menu = gMenuWork;
@@ -828,7 +828,7 @@ void FileList_DrawSummary(struct Window *window,
   }
 }
 
-/// What the file menu is choosing a file for, which decides the files
+/// What the file list is choosing a file for, which decides the files
 /// the cursor may stop on. Each mode also indexes the heading the menu shows
 /// (gMenuTitlePictures: Save, Continue, Copy, Erase, Battle,
 /// Link).
@@ -845,7 +845,7 @@ enum FileMenuMode {
 /// FileList_SelectFile's result when no file can be chosen in its mode.
 #define FILE_LIST_NO_FILE -2
 
-// The file menu: lists the three files with each one's leader and area
+// The file list: lists the three files with each one's leader and area
 // (or why it cannot be chosen) and, for the file under the cursor, its
 // summary, its party and its Djinn, with the file's own palette glow. The
 // cursor starts on `file` and moves up and down over the files `mode` allows
@@ -1193,7 +1193,7 @@ done:
 
 /// The Save command: lets the player choose a file (the current one first),
 /// asks whether to save over it when it has data, then saves the game to it,
-/// object table included, and makes it the current file. The question is "OK
+/// gActors included, and makes it the current file. The question is "OK
 /// to save over this file?" Returns 0 (also when the player answers No), -1
 /// when cancelled, or a SAVE_ERROR_* after showing its message.
 s32 Save_ToChosenFile(void) {
@@ -1255,7 +1255,7 @@ done:
   return result;
 }
 
-/// Lets the player choose a file in file menu `mode` (see FileMenuMode) and
+/// Lets the player choose a file in file list `mode` (see FileMenuMode) and
 /// loads it into the save buffer as the current file, restoring its play time
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
 /// its message. The title's Continue (mode 1), Battle (4) and Send (5) load

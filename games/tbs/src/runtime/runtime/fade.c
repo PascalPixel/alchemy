@@ -108,8 +108,8 @@ void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gScreenFadeFramesLeft = (gScreenFadeFrames = frames);
 }
 
-/// Waits a frame at a time until the running fade has finished. Called by the
-/// title screen and the battle, and through the far-call table.
+/// Waits a frame at a time until the running fade has finished. Called by
+/// the Title and the battle, and through the far-call table.
 void ScreenFade_Wait(void) {
   if (gScreenFadeFrames != 0) {
     do {

@@ -15,7 +15,7 @@ void BattleAnim_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
-#define NEPTUNE_OBJECTS 8          ///< objects in the formation
+#define NEPTUNE_OBJECTS 8          ///< sprites in the formation
 #define NEPTUNE_PARTICLES 1024     ///< PARTICLES slots: spray, then sparks
 #define NEPTUNE_FLARE_SHEET 0x4e20 ///< the flare pictures, after the spray
 /// The 48x48 light pictures (9 * 256 bytes each), after the spray sheet's
@@ -24,17 +24,17 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// The blue flame column's 34x65 head, after its 17x104 shaft.
 #define NEPTUNE_FLAME_HEAD 0x6e8
 
-/// Over dusk clouds a formation of objects flies in through rising spray,
+/// Over dusk clouds a formation of sprites flies in through rising spray,
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
 ///
 /// Abilities: Neptune (SUMMON_ANIM_NEPTUNE).
 ///
 /// The animation runs in two stages. The first (244 frames; A or B ends it
-/// after frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
+/// after frame 16) places NEPTUNE_OBJECTS sprites at one and a half times their
 /// size, opens the window with an edge table built every frame, sprays
 /// particles under gravity, converges a ring of flares, then breaks into a
-/// burst of light; meanwhile a frame callback and an interrupt change BG2's
+/// burst of light; meanwhile a frame task and an interrupt change BG2's
 /// horizontal scale. The second stage (144 frames) drops five blue flame
 /// columns onto the targets, one every 16 frames; each throws sparks when it
 /// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
@@ -43,10 +43,10 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// Reached through BattleAnim_RunSummon, whose sheet slot holds the
 /// mote sheet here. The first stage projects with gProjection.centerY at 240
 /// and holds BG1's scroll from the battle camera; the second gives BG1's x
-/// back, removes the scale callback and interrupt, and
+/// back, removes the scale task and interrupt, and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which its
 /// BattleCamera_Shake then moves while the screen shakes. The formation's
-/// objects are released before the animation returns.
+/// sprites are released before the animation returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
 /// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
@@ -190,7 +190,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
     }
     // Over the first 16 frames the window's right edge sweeps open by a
     // growing step, ragged by 128 random offsets: frame 1 starts the
-    // callback that builds the edge table each frame, frame 15 stops it.
+    // task that builds the edge table each frame, frame 15 stops it.
     if (frame >= 0 && frame < 16) {
       u16 *phase = (u16 *)Ram_MapGridCellBuffer;
       if (frame == 1) {
@@ -211,7 +211,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
 
     // From frame 22 the formation flies in and settles around depth 132 by
     // frame 83, then drifts right while settling around depth 138, until
-    // frame 170. Its objects stand at one and a half times their offsets.
+    // frame 170. Its sprites stand at one and a half times their offsets.
     if (frame > 21) {
       scale = unitScale;
       if (frame <= 83) {
@@ -468,7 +468,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
     ANIM_PRESENT_FRAME(work);
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-  // The second stage: restore the battle background, the scale callbacks and
+  // The second stage: restore the battle background, the scale tasks and
   // the display, free the spray as sparks (variant 0), and aim the five flame
   // columns: column i drops onto target i's x (halved for the wide canvas)
   // when there is one, otherwise onto a random x from 32 to 63.
@@ -587,7 +587,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
     ANIM_END_FRAME(work);
   } while (++frame != 144);
 
-  // The finish: release the formation's objects, then the canvas.
+  // The finish: release the formation's sprites, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
     Sprite_DestroyFar(work->animations[i]);
   }

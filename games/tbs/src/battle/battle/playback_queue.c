@@ -170,12 +170,11 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
-/// falls): its HP to 0, out of the lists, and its object released.
+/// falls): its HP to 0, out of the lists, and its actor released.
 /// Reached through the PLAYBACK_REMOVE_UNIT event, which
-/// BattleAbility_ApplyToTarget queues for a self-destructing actor, from
+/// BattleAbility_ApplyToTarget queues for a self-destructing unit, from
 /// BattlePlayback_RunAll and BattlePlayback_Run. A party unit is left as
-/// it is. Clears the battle object's object and active and releases its
-/// dispatch object.
+/// it is. Releases the battle object's actor, then clears its actor and active.
 #ifdef UBFIX
 void BattleObject_DestroyTemporaryObject(s32 unitId) {
 #else

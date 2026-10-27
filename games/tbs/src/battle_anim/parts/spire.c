@@ -22,7 +22,7 @@
 /// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears
 /// the canvas, so everything is redrawn every frame.
 ///
-/// effect: the targets; its variant picks the number of boulders
+/// args: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
 void BattleAnim_RunSpire(struct BattleAnimArgs *args) {
   void **slots;

@@ -6,7 +6,7 @@
 /// Scene_GetActorTemplates and Scene_GetTriggers choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
 /// (FLAG_KALAY_REACHED) Scene_Initialize sends it straight on to the town's
-/// later map (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
+/// later scene (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
 /// vault_revisit.c).
 ///
 /// The story flags change the streets in order:
@@ -24,11 +24,11 @@
 /// - Once the thieves are jailed, the townspeople thank the party, and the
 ///   dog, given a Bone (Vault_GiveBoneToDog,
 ///   FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and jumps there three times;
-///   the passage it shows opens only in the later map.
+///   the passage it shows opens only in the later scene.
 ///
 /// Sap, a Venus Djinni, hides near the bell, and the first ring since the party
 /// came in by a gate (FLAG_VAULT_SAP_CALLED_BY_BELL) calls it out to stand
-/// beside the bell; it joins only in the later map. The well rumbles with
+/// beside the bell; it joins only in the later scene. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
 /// (SceneId_LogRoomsA), the jail (SceneId_StoneRooms) and the Vault Sanctum
@@ -160,7 +160,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // The woman wanting the roof fixed walks about looking for the man who
 // should be fixing it and stops to face
 // the leader when near, or while a conversation holds the field.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 108 to 104 bytes in tbs-en.
 #ifdef UBFIX
 static void Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
@@ -801,7 +801,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 /// In Vault, Isaac rings the bell; the first time since the party came in by a
 /// gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the bell
 /// (FLAG_VAULT_SAP_CALLED_BY_BELL). No event here lets the party talk to
-/// it; it joins in the town's later map (vault_revisit.c).
+/// it; it joins in the town's later scene (vault_revisit.c).
 static void Vault_RingBell(void) {
   Event_Start();
   Event_PlaySong(SE_BELL);
@@ -858,16 +858,16 @@ s32 Scene_Initialize(void) {
   s32 zero;
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
-  // later map, SceneId_VaultRevisit (vault_revisit.c).
+  // later scene, SceneId_VaultRevisit (vault_revisit.c).
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Import_EventSetExitRequest(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
-  // proximity callbacks.
+  // proximity update routines.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
-  // A still object on the well that shows nothing (vault_revisit.c's open
+  // A still actor on the well that shows nothing (vault_revisit.c's open
   // questions).
   Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   lowBit = 1;
@@ -1124,7 +1124,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
 
 // The three scripts of gFieldEffect_DurationScripts, which FieldEffect_Spawn
 // picks by the low bits of its flags: each holds its effect for about 24, 46 or
-// 128 frames, then frees it.
+// 128 frames, then releases it.
 s32 gVault_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,

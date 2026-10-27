@@ -1,11 +1,11 @@
 /// @file
 /// Stucco rooms B (SceneId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
 /// of them Tolbi's: its houses, inns and shops, which the area names call
-/// Tolbi, and Tolbi Sanctum, as the same map is named at STUCCO_ROOMS_B_SANCTUM
-/// and STUCCO_ROOMS_B_SANCTUM_NORTH.
+/// Tolbi, and Tolbi Sanctum, as the same scene is named at
+/// STUCCO_ROOMS_B_SANCTUM and STUCCO_ROOMS_B_SANCTUM_NORTH.
 ///
 /// - Tolbi, the rooms behind the town's doors, which Tolbi's exits
-///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this map's
+///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this scene's
 ///   exits STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
 ///   STUCCO_ROOMS_B_TO_TOLBI_WEST lead back out. During the festival one
 ///   household lines up beds and becomes a makeshift inn, visitors have

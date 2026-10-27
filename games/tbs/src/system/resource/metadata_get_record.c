@@ -9,8 +9,8 @@ extern struct AnimationMetadata gSprite_AnimationMetadata[];
 /// can pass a layer's animationId as it is, even when it carries a sprite
 /// frame cache slot in bits 12 and up (the slot's tag, slot << 12 | number;
 /// SpriteFrameCache_FindByTag, field/field/animation.c). Reached through the
-/// resource far-call table by the field's animation, objects and sprite
-/// viewer, the Psynergy effects and the battle's objects.
+/// resource far-call table by the field's animation, actors and sprite
+/// viewer, field Psynergy and the battle's objects.
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 descriptorId) {
   return &gSprite_AnimationMetadata[descriptorId & 0xfff];
 }

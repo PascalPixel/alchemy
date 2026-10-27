@@ -203,7 +203,7 @@ static void MenuTest_BrowseWarriorItemShopMessages(void) {
 #endif
 
 #if TBS_PATCH_2
-/// Sets the script's message twice, so the second, MsgValeComeOnHurry, is the
+/// Sets the event's message twice, so the second, MsgValeComeOnHurry, is the
 /// one shown, with no speaker (actor id -1), and waits until it closes. Talking
 /// to ACTOR_SECOND_FELIX while facing south, in German, Spanish, French and
 /// Italian.
@@ -216,13 +216,13 @@ static void MenuTest_RunMessageTest(void) {
 
 /// Runs the shop test's preset inventory, money and status setup. Talking
 /// to ACTOR_ARMOR_MERCHANT: the debug shop, with 200000 coins, broken
-/// equipment and afflicted members (Shop_OpenDebugShop).
+/// equipment and afflicted party members (Shop_OpenDebugShop).
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
 UNUSED static void MenuTest_NoOp(void) {}
 
-/// Opens the shop inventory selector and discards its selected member and slot.
-/// Talking to ACTOR_KRADEN: the picker a full party drops an item with.
+/// Opens the shop inventory selector and discards its selected party member and
+/// slot. Talking to ACTOR_KRADEN: the picker a full party drops an item with.
 static void MenuTest_TestItemSelection(void) {
   s32 selectedOwner;
   s32 selectedSlot;
@@ -594,9 +594,9 @@ static void MenuTest_DamageAndAfflictParty(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Adds the test equipment in each member's original inventory order. Talking
-/// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
-/// the four, from the Gaia Blade to the Glittering Tiara.
+/// Adds the test equipment in each party member's original inventory order.
+/// Talking to Jenna: `You got sturdy equipment!`, then weapons and armor for
+/// each of the four, from the Gaia Blade to the Glittering Tiara.
 static void MenuTest_GiveEquipmentTestStock(void) {
   FieldMessage_Show(MsgDebugGotSturdyEquipment, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
@@ -793,7 +793,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 /// initialize entry, which SceneManager_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
-/// member is below 30 (Isaac 50 outside Japanese).
+/// party member is below 30 (Isaac 50 outside Japanese).
 s32 MenuTest_Initialize(void) {
   // Assemble the test party before adding stock and setting levels: Jenna
   // leaves, Garet, Mia and Ivan join.
@@ -844,7 +844,7 @@ static s32 MenuTest_SelectCharacter(void) { return MemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3
-/// Forwards the selected member and shop confirmation status. Talking to
+/// Forwards the selected party member and shop confirmation status. Talking to
 /// ACTOR_SECOND_DORA in Japanese, English and German: the sanctum's service
 /// menu, with ACTOR_SECOND_DORA as its keeper, since Scene_TalkToActor
 /// passes the actor's id.

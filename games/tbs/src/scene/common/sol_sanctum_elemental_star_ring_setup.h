@@ -43,7 +43,7 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-/// A map callback, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
+/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
 /// third frame each light grows to its largest scale and shrinks to a tenth; at
 /// the smallest it vanishes for 24 steps while its drift carries on, and comes
 /// back where the drift has taken it. Its drift is a random speed on each axis,
@@ -181,7 +181,7 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is read here as FieldEffect, union ActorOrEffect's effect
   // view of the same object, the plain-C form this site matches with
   // (MATCHING.md): through Actor's sprite union, the sprite-flags address
-  // moves after the ring-entry store. The callback reads Actor.
+  // moves after the ring-entry store. The task reads Actor.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
   struct FieldEffect *light;

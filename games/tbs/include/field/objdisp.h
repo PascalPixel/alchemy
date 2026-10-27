@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJDISP_H
 
 /// @file
-/// The object dispatcher's forward declaration.
+/// The actor dispatcher's forward declaration.
 
 #include "types.h"
 #include "edition.h"

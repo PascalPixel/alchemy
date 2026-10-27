@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_SESSION_H
 
 /// @file
-/// A battle's objects and sprites, each unit's command and action, and
+/// A battle's battle objects and sprites, each unit's command and action, and
 /// the spoils.
 
 #include "types.h"
@@ -11,7 +11,7 @@
 struct Actor;
 struct SpriteAnimHeadView;
 
-/// A unit's place on the battlefield: its sprite object, resources and
+/// A unit's place on the battlefield: its actor, resources and
 /// animations, its anchor spot and scale, and the statuses it shows.
 /// BattleWork.objects holds the 14, reached by unit id through
 /// BattleObject_Get; BattleObject_Make fills one in when the unit is placed.
@@ -33,7 +33,7 @@ struct BattleObject {
   struct SpriteAnimHeadView
       *animationEntry;                    ///< the status icon's sprite, or NULL
   struct SpriteAnimHeadView *shadowEntry; ///< the shadow's sprite, or NULL
-  /// Set by BattleObject_MarkForRelease: the object is released with the
+  /// Set by BattleObject_MarkForRelease: its actor is released with the
   /// others by BattleObject_DestroyAll.
   s16 active;
   s16 fading; ///< set while a fallen enemy's picture is being removed

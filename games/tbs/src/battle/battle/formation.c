@@ -98,11 +98,11 @@ struct BattleBaseStats {
 
 /// Chooses a monster battle's formation for the party's level, and returns it
 /// with the levels its enemies must gain in outMargin.
-/// The target is the active members' average level plus the monster battles
-/// won in a row (FLAG_MONSTER_BATTLE_WINS), between 1 and 99; a formation
-/// qualifies when its average level is at most 3 above it, and one of up to
-/// 32 qualifying is chosen at random. With none, it returns formation 1 and a
-/// margin of 0. Called by BattleFormation_BuildEnemyList under
+/// The target is the active party members' average level plus the monster
+/// battles won in a row (FLAG_MONSTER_BATTLE_WINS), between 1 and 99; a
+/// formation qualifies when its average level is at most 3 above it, and one of
+/// up to 32 qualifying is chosen at random. With none, it returns formation 1
+/// and a margin of 0. Called by BattleFormation_BuildEnemyList under
 /// FLAG_MONSTER_BATTLE; clears the defeated flags of the classes in
 /// gBattleFormation_LevelMatchedEnemies, which excludes those above level 3
 /// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.

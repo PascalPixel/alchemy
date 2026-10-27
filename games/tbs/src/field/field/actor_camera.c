@@ -1,5 +1,5 @@
 /// @file
-/// The object cameras, which place every object's sprite each frame.
+/// The actor cameras, which place every actor's sprite each frame.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -7,8 +7,8 @@
 /// A map cell's word, as the camera reads it.
 struct ActorCameraTile {
   u32 block : 12;   ///< the metatile number
-  u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
-  u32 priority : 2; ///< if not 0, the priority of an object standing on it
+  u32 layer : 2;    ///< if not 0, the layer of an actor standing on it, + 1
+  u32 priority : 2; ///< if not 0, the priority of an actor standing on it
   /// MapGridCell's metatile behavior and shape; not read here.
   u32 behaviorAndCollision : 16;
 };
@@ -31,13 +31,13 @@ struct ActorCameraFixed {
   struct ActorCameraPoint *followPosition; ///< when set, used as the target
 };
 
-/// Each frame, with the scrolling camera: places every object's sprite on the
-/// screen. An object on or near the screen takes its layer and priority from
+/// Each frame, with the scrolling camera: places every actor's sprite on the
+/// screen. An actor on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
 /// ActorSystem_Initialize adds it as a task (priority TASK_PASS_FRAME,
-/// after the objects move) for every mode but 3 and 4;
+/// after the actors move) for every mode but 3 and 4;
 /// ActorSystem_SuspendProjectionAndShowSprites suspends it. Resets the
-/// system's used count, may change an object's layer and its sprite's
+/// system's used count, may change an actor's layer and its sprite's
 /// priorities, and holds the frame decoder in heap slot HEAP_SLOT_FRAME_SCRATCH
 /// only while it runs.
 void ActorSystem_PlaceSprites(void) {
@@ -103,7 +103,7 @@ void ActorSystem_PlaceSprites(void) {
       // This camera places single sprites only; groups are left.
       if (kind != ACTOR_SPRITE_ONE)
         continue;
-      // While a menu has sprite projection suspended, only held objects are
+      // While a menu has sprite projection suspended, only held actors are
       // drawn.
       if (system->suspended != 0 && actor->retainSpriteCache == 0) {
         struct Sprite *frozen = actor->sprite;
@@ -188,8 +188,8 @@ void ActorSystem_PlaceSprites(void) {
 /// Unused: returns 1; nothing calls it.
 UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
-/// Each frame, with the fixed camera: places every object's sprite, from the
-/// 64th object down, facing them by the angle from the eye to the target.
+/// Each frame, with the fixed camera: places every actor's sprite, from the
+/// 64th actor down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// Battle_GatherActions) it uses the fixed view matrix and 1.0
 /// scale. ActorSystem_Initialize adds it as a task (priority
@@ -249,7 +249,7 @@ void ActorSystem_ProjectSprites(void) {
   } else {
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
-  // The objects are placed from the last down. A sprite's layer byte is its
+  // The actors are placed from the last down. A sprite's layer byte is its
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
   actor = gActors;
   actor += ACTOR_COUNT - 1;

@@ -1,11 +1,11 @@
 /// @file
 /// Vault, before and after the thieves are caught: the two villagers who walk
 /// about together (ACTOR_BOY_ROUND_THE_WELL and ACTOR_GIRL_ROUND_THE_WELL,
-/// as both maps name them).
+/// as both scenes name them).
 #include "types.h"
 #include "actor.h"
 
-// The update hook of the two children round the well. Their timer holds two
+// The update routine of the two children round the well. Their timer holds two
 // bits: bit 0 picks the partner (set for ACTOR_BOY_ROUND_THE_WELL, whose
 // partner is ACTOR_GIRL_ROUND_THE_WELL; clear for
 // ACTOR_GIRL_ROUND_THE_WELL) and bit 1 is set while the party talks to them.
@@ -14,7 +14,7 @@
 // 376 or the render mode is set the range is 26 pixels, and a villager being
 // talked to stops whichever way it faces.
 //
-// UB: update hooks return void. In tbs-en vault_revisit, plain
+// UB: update routines return void. In tbs-en vault_revisit, plain
 // void differs in 13 bytes of the 152-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX

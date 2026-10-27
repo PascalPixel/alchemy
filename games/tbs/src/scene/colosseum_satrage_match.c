@@ -418,8 +418,8 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
-/// Force on the target over the Board Walk, before its effect plays: the effect
-/// takes its child mode.
+/// Force on the target over the Board Walk, before the Psynergy plays: the
+/// Psynergy takes its child mode.
 static void ColosseumSatrageMatch_PrepareForce(void) {
   u8 *effectWork = gFieldEffectWork;
 
@@ -726,7 +726,7 @@ static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// The shifting floor's callback: carries the selected actor on the
+/// The shifting floor's task: carries the selected actor on the
 /// lifts and alternates their routes every two seconds, until Halt stops the
 /// operator.
 static void ColosseumSatrageMatch_UpdateLifts(void) {
@@ -1538,7 +1538,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   Event_End();
 }
 
-// This map's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
 #include "common/colosso_solo.h"

@@ -13,8 +13,8 @@
 
 /// Runs the Buy and Artifacts counters: the player browses the stock seven
 /// items a page, picks one, chooses who gets it and how many, and pays. Checks
-/// room in the bag and coins first, and warns when the member cannot equip
-/// it. An artifact bought takes its stock counter down, and the list is
+/// room in the bag and coins first, and warns when the party member cannot
+/// equip it. An artifact bought takes its stock counter down, and the list is
 /// rebuilt. Repeats until B. Called by Shop_Run.
 s32 Shop_SelectBuy(void) {
   struct ShopWork *shop = gMenuWork;
@@ -380,9 +380,9 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
   }
 }
 
-/// Shows the chosen member walking and the others standing, and draws at four
-/// fifths of their size the members who cannot equip `itemId`. Called by
-/// every counter's member choice.
+/// Shows the chosen party member walking and the others standing, and draws at
+/// four fifths of their size the party members who cannot equip `itemId`.
+/// Called by every counter's party member choice.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
@@ -401,8 +401,8 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   }
 }
 
-/// Shows how Attack, Defense and Agility would change if the member wore the
-/// item: equips it in place of what it would replace, recomputes, puts the
+/// Shows how Attack, Defense and Agility would change if the party member wore
+/// the item: equips it in place of what it would replace, recomputes, puts the
 /// slot back and recomputes again, then draws both values with an arrow and
 /// the name of the item it would replace. Called by Shop_SelectBuy for
 /// weapons and armor.
@@ -479,7 +479,7 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   if (replacedItemId != -1)
     Text_DrawMessageAsTilesFar(replacedItemId + MsgItemName, window, 0, 48);
 }
-/// Shows the quantity already carried and the member's inventory icons.
+/// Shows the quantity already carried and the party member's inventory icons.
 /// Called by Shop_SelectBuy for items that are not equipment.
 void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   // A typed WindowSprite icon store kept the English text extent but changed 76
@@ -541,9 +541,9 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
 }
 
 /// Asks how many to buy when the item stacks, limited by what the coins
-/// buy, the artifact's stock and a stack of 30 less what the member carries.
-/// Returns the count (1 for other items), or -1 when cancelled. Called by
-/// Shop_SelectBuy.
+/// buy, the artifact's stock and a stack of 30 less what the party member
+/// carries. Returns the count (1 for other items), or -1 when cancelled. Called
+/// by Shop_SelectBuy.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
   struct Unit *unit;
@@ -698,8 +698,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return selectedQuantity;
 }
 
-/// Adds each item bought to the member, charging its price and adding it to
-/// the shop credit one at a time, then offers to equip it and, if equipped,
+/// Adds each item bought to the party member, charging its price and adding it
+/// to the shop credit one at a time, then offers to equip it and, if equipped,
 /// to sell what it replaced. Called by Shop_SelectBuy, which has already
 /// checked the room and the coins. The artifact counters are not touched
 /// here: Shop_SelectBuy takes them down after.
@@ -732,8 +732,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 }
 
 /// Offers to equip the item just bought, unless it is equipped already, the
-/// member cannot equip it, or what it would replace is cursed on. Equips it
-/// on Yes, redraws the grid and warns of a curse. Returns 1 when it was
+/// party member cannot equip it, or what it would replace is cursed on. Equips
+/// it on Yes, redraws the grid and warns of a curse. Returns 1 when it was
 /// equipped. Called by Shop_BuyDone.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;

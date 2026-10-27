@@ -35,8 +35,8 @@ flowchart LR
 
 The whole game is one loop, the [sequence manager](#the-sequence-manager).
 Each time round it runs one [sequence](glossary.md#sequence): a
-[scene](glossary.md#scene) (a place, or a screen such as the title or the main
-menu), a battle, Lucky Dice or Lucky Wheels. The first is the title screen;
+[scene](glossary.md#scene) (a place, or a screen such as the Title or the File
+Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
 from there each exit leads to the next scene.
 
 ## How the whole game runs
@@ -90,7 +90,7 @@ A scene's turn is `Scene_Arrive`, `Scene_ChooseMusic`,
 until something makes a request, and the requests are then handled until
 none is left, most urgent first: an exit, an event, a random battle, a step
 trigger, a push, the A button, the field menu, talking, searching, Psynergy,
-an item, the pause menu. A random battle names the battle as the next
+an item, the Pause menu. A random battle names the battle as the next
 sequence and ends the scene. A battle or a
 minigame reports a result rather than an exit, and `Scene_ReturnFromSequence`
 turns it into the scene to go back to. [Running a
@@ -108,13 +108,13 @@ scene starts its own.
 
 A battle takes a scene's place in the loop. Its code is always loaded, so
 there is nothing to unpack, and when it ends the party stands where it stood.
-After a defeat the game goes to the place a [script](glossary.md#script) chose
+After a defeat the game goes to the place an [event](glossary.md#event) chose
 for losing that battle, or else to the last Sanctum.
 
 Most games' main loops go round once a [frame](glossary.md#frame) and call
 each part of the game in turn, so anything that takes time is cut into steps
 that remember where they got to. This one goes round once per sequence, and a
-turn can last minutes. An event, a menu or a scene's script is an ordinary
+turn can last minutes. An event, a menu or a scene's code is an ordinary
 function that runs from start to finish and asks to wait a number of frames
 when time must pass; while it waits, tasks keep everything else moving
 ([Engine](engine.md#waiting-and-tasks)). Event code therefore reads top to
@@ -289,7 +289,7 @@ in [story order](glossary.md#the-places-in-story-order):
   where the last sent the party
   ([venus_lighthouse_aerie.c](src/scene/venus_lighthouse_aerie.c)).
 - **The last scene.** The Lemurian ship at the edge of Lalivero ends the game
-  by sending the party to the title screen
+  by sending the party to the Title
   ([lemurian_ship.c](src/scene/lemurian_ship.c)).
 
 [Places](src/field/scenes.s) lists every scene in story order with what
@@ -316,7 +316,7 @@ the sound code, the music and the packed pictures and maps. The nine large
 banks each have a folder, in cartridge order: `runtime`, `field`, `window`,
 `game`, `overworld`, `menu`, `shop`, `battle` and `battle_anim`; the five
 small banks' code sits in the folder it belongs with. `overworld` runs a
-scene from arrival to exit, and `field` moves and draws its objects.
+scene from arrival to exit, and `field` moves and draws its actors.
 `graphics`, `map`, `sound` and `system` are grouped by topic and linked
 wherever they are needed, and `scene` and `debug` hold overlays.
 
@@ -344,7 +344,7 @@ banks](src/system/README.md#why-the-program-is-cut-into-banks)).
   actor templates and triggers.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.
-- [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, scripts
+- [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, events
   and lines the game keeps but never plays, and why each never runs.
 - [Source](src/README.md): every file of the code, with its comments.
 - [Glossary](glossary.md): the words every page uses, from Psynergy and Djinn

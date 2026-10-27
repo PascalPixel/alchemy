@@ -42,9 +42,9 @@ named for the first ability whose row selects it, under the English release's
 name, so searching the code for a move's name finds its animation; a name
 already taken passes to the next ability (`BattleAnim_RunNova` plays Nova
 because the first Blast took `BattleAnim_RunBlast`). A family drawn by one
-routine, a runner, has small handlers that only tell the runner which member
+routine, a runner, has small handlers that only tell the runner which animation of the family
 to draw: `BattleAnim_RunCure` calls
-`BattleAnim_RunHealingMotes(effect, HEALING_MODE_CURE)`.
+`BattleAnim_RunHealingMotes(args, HEALING_MODE_CURE)`.
 
 The rows are `gAbilityAnimations` ([`../battle/ability_staging.c`](../battle/ability_staging.c)),
 the handler table `gBattleAnim_Handlers` (`battle_anim_table.c`), and the
@@ -212,8 +212,8 @@ Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche all play one
 animation, which stretches the canvas 1.25, 1.5 or 2 times across by
 strength and draws larger rocks at the higher ones ([`gaia.c`](parts/gaia.c)).
 
-Larger families have a runner that draws every member from a row of settings,
-chosen by the member's handler:
+Larger families have a runner that draws every animation of the family from a row of settings,
+chosen by its handler:
 
 | Runner | What it draws |
 | --- | --- |
@@ -332,7 +332,7 @@ They are [`plasma.c`](parts/plasma.c)'s `BattleAnim_RunSparkGroups`, reading
 Many attacks throw something at each target: fireballs, ice, feathers, comets.
 One runner draws them all, and each shot bursts when it reaches its target.
 
-The member chooses the shot's picture, its aim and its sounds, how many shots
+The mode chooses the shot's picture, its aim and its sounds, how many shots
 fly at each target, how long they take, how far apart they leave and how many
 sparks a hit throws. Each frame every shot moves and is drawn; a shot that
 passes its target hits once, starting a flash, throwing sparks, shaking the
@@ -340,7 +340,7 @@ camera and making the target reel. Heat Wave, Sleet and a Gryphon's Wing
 Flutter are volleys.
 
 The runner is `BattleAnim_RunProjectileVolley` ([`projectiles.c`](parts/projectiles.c)),
-its members `enum ProjectileVolleyMode` and their rows
+its modes `enum ProjectileVolleyMode` and their rows
 `gProjectileVolley_Modes`.
 
 ### Rushing strikes
@@ -352,7 +352,7 @@ Brute Force, Onslaught and Headbutt are one runner, each in its own colours.
 
 The user moves at the first target, strikes on the tenth of 60 frames, flares
 a ring and scatters 64 sparks. The burst picture is stored as its top half
-and drawn again upside down beneath itself, and each member lays its own
+and drawn again upside down beneath itself, and each mode lays its own
 colours over the burst's.
 
 It is [`rushing_strike.c`](parts/rushing_strike.c).
@@ -391,7 +391,7 @@ Poison's and Tonic's go out one by one. Each target turns white 36 frames into
 its swarm, and the battle shows the recovery on frame 40.
 
 The runner is `BattleAnim_RunHealingMotes` ([`healing.c`](parts/healing.c)),
-its members `enum HealingMotesMode`.
+its modes `enum HealingMotesMode`.
 
 ### Target strikes
 
@@ -430,14 +430,14 @@ every handler has:
 void BattleAnim_RunBolt(struct BattleAnimArgs *args) {
   ...
   ANIM_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1)); /* BG2 shows the canvas */
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_OFFSETS, 1, 1);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 8 + 40; frame++) {
     if (frame == 24)
       ANIM_SHOW_DAMAGE(SE_IMPACT);             /* the damage may show */
     ...                                          /* for each bolt: */
@@ -484,7 +484,7 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 - The sheet holds 27,008 bytes of pictures; an animation that doesn't use the
   per-line offsets after it may use up to 28,800.
 - The work block has 64 particles. The large pool has room for 1,170 before
-  it would run into the field's object sprites, and 1,755 in the whole map
+  it would run into the field's actor sprites, and 1,755 in the whole map
   buffer.
 - There are two blitters at a time, and each combination of canvas size,
   mirroring, clipping and way of combining needs its own.
@@ -496,7 +496,7 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
   summons' animations and `enum CastingImpact` the casting impacts. It is not the
   ability kind.
 - **runner** and **mode**: a runner draws a family of animations, and the
-  mode it is passed picks the member.
+  mode it is passed picks the animation.
 - **variant**: the ability's strength, basic, stronger or strongest. A
   particle's spare number is also called its variant, and is unrelated.
 - **side**: which side the targets stand on, the
@@ -507,7 +507,7 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 - **level**: a pixel value on the canvas, a step on a ramp of colours.
 - **prelude**: the Djinni's entrance that some animations play first.
 
-The same locals have the same names in every handler: `effect` for the
+The same locals have the same names in every handler: `args` for the
 `struct BattleAnimArgs` it is passed, `slots` and `cursor` for the walk to the
 three blocks (`ANIM_GET_SLOTS`), `work`, `canvas`, `sheet`, `draw` for its
 blitters, `frame` for the frame counter and `cell` for a picture's offset.

@@ -120,7 +120,7 @@ enum {
   /// The shop's type (enum ShopType).
   SHOP_STOCK_TYPE = 32,
   SHOP_STOCK_COLUMNS = 33,
-  /// Rows, by the stock row a script passes to Shop_Run; SHOP_STOCK_ROW_EMPTY
+  /// Rows, by the stock row an event passes to Shop_Run; SHOP_STOCK_ROW_EMPTY
   /// stands in for a row out of range.
   SHOP_STOCK_ROWS = 35
 };

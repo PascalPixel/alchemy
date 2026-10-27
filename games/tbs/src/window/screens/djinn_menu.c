@@ -32,8 +32,8 @@
 /// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
 /// and Right turn them). Returns the chosen Djinni's entry (element << 8 |
 /// number, with DJINN_ENTRY_STANDBY when on standby), or -1 when cancelled,
-/// when the link battle's time runs out, or when the member has no Djinn. A
-/// recovering Djinni, or one an earlier command this round chose
+/// when the link battle's time runs out, or when the party member has no Djinn.
+/// A recovering Djinni, or one an earlier command this round chose
 /// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
 /// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {

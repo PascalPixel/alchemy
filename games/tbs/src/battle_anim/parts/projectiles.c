@@ -11,13 +11,13 @@
 /// The prelude of the stat boosts, the projectile volleys, the healing motes,
 /// the Djinn beams, the burst animations, Bind, Hail, Ground, Torch and Vine,
 /// called with the work block they then use. Opens the canvas layer but does
-/// not close it: it removes the transfer and palette fade callbacks, frees
+/// not close it: it removes the transfer and palette fade tasks, frees
 /// both blitters, clears the canvas and its VRAM, and sets REG_BLDALPHA back
 /// to 16/16. Copies the Djinni's palette over the first 128 bytes of BG
 /// palette RAM, starts a 24-frame battle background fade (work->fadeFrames),
 /// and uses PARTICLES 0 to 63 for the sparks and work->particles for the motes.
 ///
-/// effect: the user and the targets.
+/// args: the user and the targets.
 /// element: the Djinni's element, plus DJINNI_ENTRANCE_LONG for the 84-frame
 ///          entrance instead of the 64-frame one.
 /// side: ANIM_SIDE_PARTY mirrors the pictures.
@@ -387,12 +387,12 @@ enum VolleyField {
 /// Blizzard's volley, CASTING_IMPACT_IMPACT_UNUSED_COMETS
 /// PROJECTILE_VOLLEY_IMPACT_COMETS, which no wrapper uses. With more than 63
 /// shots in all it fires at the first target only, writing
-/// work->effect->count. Writes REG_BLDCNT for Shuriken and the first 128
+/// work->args->targetCount. Writes REG_BLDCNT for Shuriken and the first 128
 /// bytes of BG palette RAM for Crazy Voice and Cutting Edge; sets
 /// work->shakeFrames on each hit but for Sleet. The second blitter is built and
 /// freed for each picture that needs it.
 ///
-/// effect: the user and the targets. variant picks Slash's comet (Cutting
+/// args: the user and the targets. variant picks Slash's comet (Cutting
 ///         Edge always fires PROJECTILE_VOLLEY_COMET_C, the impact's comets
 ///         PROJECTILE_VOLLEY_COMET_A); with prelude 1 a Mercury Djinni
 ///         enters first.
@@ -543,7 +543,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
     // to reach its target in `steps` frames: straight across for sparks and
     // Cutting Edge, at a random height near the target for the others.
     //
-    // Heights above the feet, in pixels, h being the battler's table height
+    // Heights above the feet, in pixels, h being the unit's table height
     // (BattleUnit_GetEffectHeightFar): a shot starts at 58 to 73 for Sleet,
     // h / 2 for Cutting Edge, Heat Wave and Ice Blessing, h / 2 - 15 to
     // h / 2 + 16 for Wing Flutter, Wing Beat and Blizzard, h / 2 - 31 to
@@ -980,10 +980,10 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
   ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Sends a battler back to its place (its anchor) with a hop.
+/// Sends a unit back to its place (its anchor) with a hop.
 ///
 /// Nothing calls it; BattleMotion_ReturnToSpot (battle/motion.c) sets the same
-/// motion without the hop. Sets the battler's motion object to move at up to 8
+/// motion without the hop. Sets the unit's actor to move at up to 8
 /// pixels a frame, jumping at 4 pixels a frame under the usual gravity, and
 /// selects POSE_STANDING.
 UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
@@ -1002,11 +1002,11 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   Actor_SelectAnimationFar(actor, POSE_STANDING);
 }
 
-/// Moves a battler 80% of the way to another one over a number of frames,
+/// Moves a unit 80% of the way to another one over a number of frames,
 /// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
 ///
-/// Called by BattleAnim_RunRushingStrike. Sets the battler's acceleration,
+/// Called by BattleAnim_RunRushingStrike. Sets the unit's acceleration,
 /// speed limit and gravity, turns it to face its motion, starts it moving on
 /// the ground towards that point and selects POSE_LEAP.
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {

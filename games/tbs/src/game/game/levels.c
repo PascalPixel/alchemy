@@ -24,7 +24,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
 }
 
 /// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
-/// scripts that check whether a member knows a Psynergy
+/// events that check whether a party member knows a Psynergy
 /// (Event_ValidatePackedId).
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
@@ -185,7 +185,7 @@ struct LevelUpWork {
 /// Teaches a character action `value` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full. Called by the
-/// scripts that teach Psynergy, the prologue's end, the debug presets and the
+/// events that teach Psynergy, the prologue's end, the debug presets and the
 /// debug shortcut menu.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct Unit *state = Unit_Get(stateIndex);
@@ -415,8 +415,8 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
 
 /// Levels the character up once if its experience reaches the next level.
 /// Returns `gains` filled with the gains, or NULL. Called after a battle by
-/// Battle_AwardSpoils, once for each level a member reaches. At level 99 the
-/// next level needs -1 (0xffffffff) experience, which none reaches.
+/// Battle_AwardSpoils, once for each level a party member reaches. At level 99
+/// the next level needs -1 (0xffffffff) experience, which none reaches.
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
 

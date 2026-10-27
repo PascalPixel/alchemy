@@ -1,11 +1,11 @@
 /// @file
-/// Kolima's overlay, which holds three maps. The
+/// Kolima's overlay, which holds three scenes. The
 /// village's houses and shops are another overlay (log_rooms_c.c), and so
-/// is each map of Kolima Forest.
+/// is each scene of Kolima Forest.
 ///
 /// - Kolima (SceneId_Kolima), the village of lumberjacks, to which Lord
 ///   McCoy has barricaded the road from Bilibin since the trouble began. The
-///   party's first entry from the world map (KOLIMA_FROM_WORLD_MAP) plays
+///   party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP) plays
 ///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
 ///   Forest (FLAG_KOLIMA_CURSE_WITNESSED): every villager has been turned into
 ///   a tree, sparkles fall from the sky and press the party down until domes
@@ -25,7 +25,7 @@
 ///   (ACTOR_GRANITE), waits in the village and joins when spoken to. Five
 ///   doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the houses and
 ///   shops (SceneId_LogRoomsC), KOLIMA_TO_WORLD_MAP and
-///   KOLIMA_TO_WORLD_MAP_EAST to the world map and KOLIMA_TO_KOLIMA_TUNNEL
+///   KOLIMA_TO_WORLD_MAP_EAST to the World Map and KOLIMA_TO_KOLIMA_TUNNEL
 ///   into Kolima Tunnel.
 /// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from
 ///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
@@ -38,7 +38,7 @@
 ///   23).
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
-///   world map at both ends. It is a drawbridge, standing raised between its
+///   World Map at both ends. It is a drawbridge, standing raised between its
 ///   posts. A villager stands beside it, a tree while the curse lasts
 ///   (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
 ///   (ACTOR_BRIDGE_VILLAGER). The first time the party then steps up to the
@@ -48,7 +48,7 @@
 ///   places/kolima-bridge/events/Kolima_LowerBridge.gif). From then on
 ///   he says that for a while he thought no one would ever cross it again,
 ///   Kolima_RestoreBridgeState draws it down on every later visit, and the
-///   bridge on the world map is drawn down with the same flag.
+///   bridge on the World Map is drawn down with the same flag.
 
 #include "script_operands.h"
 #include "djinn_ids.h"
@@ -290,10 +290,10 @@ const struct SceneExitRegion *Kolima_GetRegions(void) {
   return 0;
 }
 
-/// The exits of all three maps, each map's after its header word (an exit
-/// of kind 0): Kolima's to the world map, the houses (SceneId_LogRoomsC)
+/// The exits of all three scenes, each scene's after its header word (an exit
+/// of kind 0): Kolima's to the World Map, the houses (SceneId_LogRoomsC)
 /// and Kolima
-/// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
+/// Tunnel, Kolima Bridge's to the World Map, and Kolima Tunnel's to a house
 /// and the village.
 const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
@@ -495,12 +495,12 @@ static void Kolima_LowerBridge(void) {
   Event_End();
 }
 
-/// Sets up whichever map is entered: Kolima Bridge as the curse and the
+/// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself. There the four sparkles twinkle, the
 /// villagers stand as trees while the curse lasts (and three cells around
 /// (14, 8) take the metatile behavior of cell (13, 9)), and the first entry
-/// from the world map plays Kolima_WitnessForestCurse. Once that has been seen,
+/// from the World Map plays Kolima_WitnessForestCurse. Once that has been seen,
 /// here or in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes
 /// are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
@@ -596,7 +596,7 @@ static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
   WaitFrames(1);
 }
 
-/// Finishes Mind Read and releases its temporary event objects.
+/// Finishes Mind Read and releases its temporary event actors.
 static void Kolima_FinishReadingThoughts(void) {
   FieldPsynergy_RunHandler(2);
   FieldPsynergy_StopCasterUpdate();
@@ -611,7 +611,7 @@ static __inline__ void Kolima_NodTogether(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 }
 
-/// Kolima, the first entry from the world map (KOLIMA_FROM_WORLD_MAP), until
+/// Kolima, the first entry from the World Map (KOLIMA_FROM_WORLD_MAP), until
 /// FLAG_KOLIMA_CURSE_WITNESSED: the party sees the curse fall. The leader,
 /// Garet and Ivan, with Mia if she has joined, walk into a silent village.
 /// Ivan reads a tree's mind ("This tree...was a person"), Garet sees that
@@ -1916,7 +1916,7 @@ struct ActorTemplate gKolimaBridgeActorTemplates[] = {
 /// The triggers Kolima and Kolima Tunnel share: the exits and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
 /// after, the healer, Granite and two jars. Exits 1 and 2, which cell 99 takes
-/// too, keep their numbers, since each map's exit table gives them its own
+/// too, keep their numbers, since each scene's exit table gives them its own
 /// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
 /// Tunnel.

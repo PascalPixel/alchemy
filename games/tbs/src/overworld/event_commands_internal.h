@@ -92,7 +92,7 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The field effect sprites of a Psynergy effect
+/// The field effect sprites of a field Psynergy
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
@@ -101,7 +101,7 @@
 /// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
-/// Per-frame update of an afterimage: closes half the distance to the object
+/// Per-frame update of an afterimage: closes half the distance to the actor
 /// it is linked to, on all three axes.
 static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *actor) {
   struct Actor *afterimage = (struct Actor *)actor;
@@ -128,9 +128,9 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-/// Defines a per-frame update that spins an object 1/8 turn a frame while its
-/// scale changes by step, releasing the object once the scale falls below
-/// 0x3000 (3/16 of full size). step is negative: from full size the object
+/// Defines a per-frame update that spins an actor 1/8 turn a frame while its
+/// scale changes by step, releasing the actor once the scale falls below
+/// 0x3000 (3/16 of full size). step is negative: from full size the actor
 /// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(struct Actor *actor) {                                             \
@@ -175,13 +175,13 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   }
 }
 
-/// The shards DEFINE_ITEM_BREAK_EFFECT's effects scatter.
+/// The shards DEFINE_ITEM_BREAK_EFFECT's casts scatter.
 #define ITEM_BREAK_SHARD_MAX 24
 
-/// Defines an effect cast with no target: spawn makes a hand 16 pixels above
-/// the effect's position and 32 pixels to either side, each facing the
+/// Defines a field Psynergy cast with no target: spawn makes a hand 16 pixels
+/// above the cast's position and 32 pixels to either side, each facing the
 /// middle; each moves 24 pixels inward, then 24 shards scatter 8 to 32
-/// pixels. Carry's and Lift's no-target effects are made with it.
+/// pixels. Carry's and Lift's no-target casts are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct FieldEffectWork *effectWork;                                        \

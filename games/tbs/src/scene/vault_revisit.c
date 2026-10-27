@@ -1,14 +1,14 @@
 /// @file
 /// Vault (SceneId_VaultRevisit), the town once the party has reached Kalay, on
-/// the same layout as Vault's first map (vault.c). The world map still leads
-/// into the first map, but once FLAG_KALAY_REACHED is set its setup sends the
+/// the same layout as Vault's first scene (vault.c). The World Map still leads
+/// into the first scene, but once FLAG_KALAY_REACHED is set its setup sends the
 /// party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
 /// Cave, the jail and the houses (log_rooms_b.c) lead back here
-/// directly. This map replaces the first for the rest of the game.
+/// directly. This scene replaces the first for the rest of the game.
 ///
 /// The thieves the party caught have broken out of jail, and most townspeople
 /// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
-/// through scripts that remember who has spoken in area flags
+/// through events that remember who has spoken in area flags
 /// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED to
 /// FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL), so that a Mind Read on one not yet
 /// spoken to plays the conversation first. The old man's praise also sets
@@ -126,7 +126,7 @@ enum VaultRevisitActorId {
 
 enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 
-/// Area flags, kept while the party stays in Vault's maps: what the
+/// Area flags, kept while the party stays in Vault's scenes: what the
 /// townspeople have already said. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
@@ -147,7 +147,7 @@ enum {
   FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_AREA_TEMP_08
 };
 
-// Shared effect and proximity routines precede the map's entry points.
+// Shared effect and proximity routines precede the scene's entry points.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/actor_distance.h"
@@ -419,7 +419,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 }
 
 /// Searching the bell rings it (SE_BELL). The first ring since the party came
-/// in from the world map makes Sap jump out of hiding and walk to the bell, at
+/// in from the World Map makes Sap jump out of hiding and walk to the bell, at
 /// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void VaultRevisit_RingBell(void) {
   Event_Start();
@@ -598,7 +598,7 @@ static void VaultRevisit_RevealPassage(void) {
 }
 
 /// The dog barks; carrying a Bone before it has shown the passage lets the
-/// party give it one: the main menu opens as the talk ends.
+/// party give it one: the File Screen opens as the talk ends.
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
@@ -639,9 +639,9 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's metatile behaviors
-/// (common/vault_toggle.h), creates the still object of sprite 223 on the well
+/// (common/vault_toggle.h), creates the still actor of sprite 223 on the well
 /// that shows nothing, mends the inn's roof, which vault.c
-/// leaves holed, and hooks the two children round the well to
+/// leaves holed, and gives the two children round the well the update routine
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in by a gate (ENTRANCE_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
@@ -659,7 +659,7 @@ s32 Scene_Initialize(void) {
   // Keep the bridge deck after a battle, and mend the inn's roof.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
-  // A still object on the well that shows nothing. XXX (no evidence): what it
+  // A still actor on the well that shows nothing. XXX (no evidence): what it
   // was meant to show; its tiles in video memory are blank and nothing refers
   // to it.
   Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);

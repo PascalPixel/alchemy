@@ -4,18 +4,18 @@
 
 #include "../battle_anim_internal.h"
 
-#define KIRIN_OBJECTS 9 ///< objects in the row, work->animations[0] to [8]
+#define KIRIN_OBJECTS 9 ///< sprites in the row, work->animations[0] to [8]
 /// One 48x32 fire blob picture; the fire sheet holds four.
 #define KIRIN_BLOB_BYTES (48 * 32)
 
-/// Over a scrolling forest a row of objects rides in on a wave trailing fire,
+/// Over a scrolling forest a row of sprites rides in on a wave trailing fire,
 /// then sweeps across the targets, each throwing a burst of motes as the row
 /// passes it.
 ///
 /// Abilities: Kirin (SUMMON_ANIM_KIRIN).
 ///
 /// The animation runs in two stages. In the sweep (120 frames; A or B ends it
-/// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
+/// after frame 16), KIRIN_OBJECTS sprites ride in on a sine wave while the
 /// battle background scrolls, a ring of motes opens around them and a trail of
 /// fire follows. In the rise (96 frames) the row slides across the targets;
 /// each target the row passes throws a burst of 32 motes and plays its hit
@@ -27,7 +27,7 @@
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which the
 /// rise's BattleCamera_Shake then moves while the screen shakes. The nine
-/// objects are released before the animation returns.
+/// sprites are released before the animation returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
@@ -292,7 +292,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *args) {
     ANIM_PRESENT_FRAME(work);
   }
 
-  // The rise stage: restore the battle background and display, put the objects
+  // The rise stage: restore the battle background and display, put the sprites
   // behind the background, and clear the hit marks and the burst motes.
   gBgScroll[1].x = savedX;
   view->busy = 0;
@@ -473,7 +473,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *args) {
     } while (frame != 96);
   }
 
-  // The finish: the battle shows the damage, then the objects and the
+  // The finish: the battle shows the damage, then the sprites and the
   // canvas are released.
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;

@@ -1,10 +1,10 @@
-/// @file Lalivero, the town by Babi Lighthouse, one map with the area name
+/// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
 /// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetActorTemplates and
 /// Lalivero_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
-/// On the first visit the party comes in from the world map with Iodem, and
+/// On the first visit the party comes in from the World Map with Iodem, and
 /// Lalivero_WatchWoundedSoldiers plays once
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN): two of Tolbi's soldiers lie beaten in
 /// the street and tell Iodem that Sheba's captors went to the ruins beneath
@@ -23,7 +23,7 @@
 /// On both visits Torch, a Mars Djinni, waits until it joins;
 /// Lalivero_EnterDoor opens the door or the Sanctum's gate before the leader
 /// leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
-/// SceneId_TimberRoomsC; the world map lies east and west; and a jar, a
+/// SceneId_TimberRoomsC; the World Map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
 
@@ -59,7 +59,7 @@ static void Lalivero_TalkAboutIdejimaShip(void);
 /// Entrances that set up the later visit, 90 as if the party had also
 /// seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them
 /// and the entrance table has no row for them (the aerie's exit leads
-/// into Faran's house): only the debug map selector, which exits to any
+/// into Faran's house): only the debug scene selector, which exits to any
 /// entrance from 0 to 99, reaches them.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
@@ -262,7 +262,7 @@ static void Lalivero_EnterDoorway(void) {
   Import_EventSetExitRequest(exit);
 }
 
-/// Lalivero, the first visit, arriving from the world map: the party and Iodem
+/// Lalivero, the first visit, arriving from the World Map: the party and Iodem
 /// find more of Tolbi's soldiers beaten in the street. Iodem asks whether they
 /// fought a group of six; there were seven, the same group the soldiers had
 /// been following, and one of them was Sheba, with the scholar Kraden

@@ -5,7 +5,7 @@
 #include "vram_cache.h"
 #include "fx_work.h"
 
-// Vale and the world map: the particles that rise around a glowing
+// Vale and the World Map: the particles that rise around a glowing
 // actor.
 
 /// Attaches two rising particles to the actor, sharing the effect's

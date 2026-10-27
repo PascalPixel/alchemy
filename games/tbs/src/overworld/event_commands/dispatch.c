@@ -1,17 +1,17 @@
 /// @file
-/// Running a field Psynergy by its kind, and helpers its effects share.
+/// Running a field Psynergy by its kind, and helpers its kinds share.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-// The dispatchers use the common field effect. Individual update hooks use
-// their actor or FieldParticle contract; neither is a map-script
-// callback.
+// The dispatchers use the common field effect. Individual update routines use
+// their actor or FieldParticle contract; neither is an
+// event.
 
-/// Runs one step of the current Psynergy effect: an enum FieldPsynergyHandler.
+/// Runs one step of the current field Psynergy: an enum FieldPsynergyHandler.
 /// Exported as FieldPsynergy_RunHandlerFar; Goma Cave's entrance imports it
 /// and passes FIELD_PSYNERGY_HANDLER_ON_TARGET to play Whirlwind on the stump's
-/// ivy from its own script.
+/// ivy from its own event.
 void FieldPsynergy_RunHandler(s32 kind) {
   if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
     FieldPsynergy_Run();
@@ -25,7 +25,7 @@ void FieldPsynergy_RunHandler(s32 kind) {
 
 void _call_via_r3(s32, s32);
 
-/// Casts the current Psynergy effect with no target: runs the body of its
+/// Casts the current field Psynergy with no target: runs the body of its
 /// kind (effectWork->fieldPsynergy).
 ///
 /// Called by Field_UsePsynergy when no trigger names a target
@@ -76,7 +76,7 @@ void FieldPsynergy_Run(void) {
     FieldPsynergy_Catch();
     return;
   case FIELD_PSYNERGY_HALT:
-    // Free the object stopped before, then stop the nearest one.
+    // Resume the actor stopped before, then stop the nearest one.
     if (gSaveBlock.haltedActor != -1) {
       FieldPsynergy_ResumeHaltedActor(gSaveBlock.haltedActor);
       gSaveBlock.haltedActor = -1;
@@ -115,7 +115,7 @@ void FieldPsynergy_Run(void) {
   }
 }
 
-/// Casts the current Psynergy effect on its target (secondObjectId): runs the
+/// Casts the current field Psynergy on its target (secondActorId): runs the
 /// handler of its kind.
 ///
 /// Called by Field_UsePsynergy when a trigger names the target
@@ -195,8 +195,8 @@ void FieldPsynergy_Dispatch(void) {
   }
 }
 
-/// Finishes the current effect when it is Mind Read: ends the effect and lets
-/// its target move again, unless the target is the object kept stopped.
+/// Finishes the current field Psynergy when it is Mind Read: ends it and lets
+/// its target move again, unless the target is the actor kept stopped.
 /// Called by Field_UsePsynergy after the after event, and by
 /// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH): Mind Read is the
 /// one kind whose effect stays up through the after event, the conversation it
@@ -232,11 +232,10 @@ void Event_RunFieldPsynergy(void) {
   }
 }
 
-/// Runs the event tied to an effect: a result below 0x10000 is a message,
-/// shown at target; a larger one is a routine, called with param and target
-/// (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But nothing
-/// happens.".
-/// Returns 0.
+/// Runs the event tied to a field Psynergy: a result below 0x10000 is a
+/// message, shown at target; a larger one is a routine, called with param and
+/// target (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But
+/// nothing happens.". Returns 0.
 ///
 /// Called by Field_UsePsynergy and Field_RunPsynergyEndEvents for the before
 /// and after events, and by Force, Frost and Reveal for the events of their own
@@ -266,7 +265,7 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   return 0;
 }
 
-/// Per-frame update: sets every part of an object's sprite to param
+/// Per-frame update: sets every part of an actor's sprite to param
 /// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
@@ -305,7 +304,7 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
   }
 }
 
-/// Sends an object toward the point magnitude (16.16 pixels) away from it in
+/// Sends an actor toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target. Carry, Lift, Douse, Move and the
 /// Djinni's hop into battle throw things this way.
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
@@ -319,11 +318,11 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
   }
 }
 
-// From here on objects are passed in each function's own view of them.
+// From here on actors are passed in each function's own view of them.
 
 /// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
 /// FieldPsynergy_LoadResources subtracts this from VRAM_BLOCK_COUNT
-/// to record the blocks already occupied before the effect starts.
+/// to record the blocks already occupied before the Psynergy starts.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount = 0;
@@ -366,13 +365,13 @@ struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
   return shared;
 }
 
-/// Creates an object for an effect, at the caster's ground height, with
-/// sprite priority 0 and animation 1. An object without animation is released
-/// and NULL returned. The effects spawn their orbs, hands and particles
-/// through it, and check for NULL: the object table may be full. The object
+/// Creates an actor for a field Psynergy, at the caster's ground height, with
+/// sprite priority 0 and animation 1. An actor without animation is released
+/// and NULL returned. Field Psynergy spawns its orbs, hands and particles
+/// through it, and checks for NULL: gActors may be full. The actor
 /// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
-/// flag bit 2) and has no shadow; its creator releases it, or its script
-/// frees it.
+/// flag bit 2) and has no shadow; its creator releases it, or its actor script
+/// releases it.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor;
@@ -393,9 +392,9 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return actor;
 }
 
-/// Sets the movement state and animation timer steps of every object but the
+/// Sets the movement state and animation timer steps of every actor but the
 /// player's and except. FieldPsynergy_StartCast pauses them
-/// (animation speed 0) while an effect plays and lets them go again at
+/// (animation speed 0) while a field Psynergy plays and lets them go again at
 /// normal speed.
 void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
   s16 *player;

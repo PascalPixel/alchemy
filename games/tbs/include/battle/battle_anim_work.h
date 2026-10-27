@@ -76,7 +76,7 @@ struct BattleAnimWork {
     } trackedCanvas;
   };
   struct Particle particles[64]; ///< free while variant is -1
-  /// How the canvas transfer callbacks treat the canvas after each copy
+  /// How the canvas transfer tasks treat the canvas after each copy
   /// (enum CanvasTransferMode in battle_anim_internal.h).
   s32 transferMode; ///< an enum CanvasTransferMode
   /// The transfer mode's argument: the fill value, the share kept (50 or 75
@@ -120,12 +120,12 @@ struct BattleAnimWork {
   s32 bg2y;
   ///@}
   struct Sprite *animations[16]; ///< the animation's sprites
-  /// Each target's flash timer in frames, for effect->actors[n]: set by
+  /// Each target's flash timer in frames, for args->targets[n]: set by
   /// BattleAnim_TintBattler, counted down by BattleAnim_TickBattlerTints.
   u8 actorTimers[8];
   s32 framesSinceTransfer; ///< 1 on a canvas copy's frame, then counts up
   /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas
-  /// transfer callback copies the canvas and clears it.
+  /// transfer task copies the canvas and clears it.
   s32 transferPending;
   struct BattleAnimArgs *args; ///< the command being run
 };

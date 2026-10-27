@@ -1,5 +1,5 @@
 /// @file
-/// Field effect sprites: the particles Psynergy effects move and draw.
+/// Field effect sprites: the particles field Psynergy moves and draws.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"

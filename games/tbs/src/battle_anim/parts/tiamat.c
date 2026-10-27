@@ -6,7 +6,7 @@
 
 /// The palette particles' modes (BattleAnim_RunPaletteParticles).
 enum PaletteParticlesMode {
-  PALETTE_PARTICLES_TIAMAT,       ///< also a formation of eight objects that
+  PALETTE_PARTICLES_TIAMAT,       ///< also a formation of eight sprites that
                                   ///< sweeps in and explodes at the end
                                   ///< (BattleAnim_RunImpactBurst)
   PALETTE_PARTICLES_DRAGON_DRIVER ///< the sparks and flashes thrown from the
@@ -20,7 +20,7 @@ enum PaletteParticlesMode {
 void BattleAnim_RunDragonDriver(struct BattleAnimArgs *args) {
   BattleAnim_RunPaletteParticles(args, PALETTE_PARTICLES_DRAGON_DRIVER);
 }
-/// Embers rise from the ground while a formation of eight objects sweeps in,
+/// Embers rise from the ground while a formation of eight sprites sweeps in,
 /// and the formation explodes at the end.
 ///
 /// Abilities: Tiamat (SUMMON_ANIM_TIAMAT).
@@ -63,7 +63,7 @@ void BattleAnim_RunTiamat(struct BattleAnimArgs *args) {
 /// the flash and later the streak palette (or the lightning bolt's) into the
 /// first 64 background colours and brightens them over frames 160 to 175,
 /// sets work->shakeFrames, and tints and shakes the targets. Tiamat spawns the
-/// eight formation objects and releases them after the impact burst.
+/// eight formation sprites and releases them after the impact burst.
 ///
 /// mode: Tiamat's or Dragon Driver's (enum PaletteParticlesMode).
 void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode) {
@@ -370,7 +370,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode) {
       work->shakeFrames = 8;
 
     // Over frames 40 to 47 the formation moves 8 pixels left and 16 down a
-    // frame; from 128 to 175 four of its objects play animations 8 to 11.
+    // frame; from 128 to 175 four of its sprites play animations 8 to 11.
     if (frame >= 40 && frame <= 47) {
       focus.x += -(8 << 16);
       focus.y += 16 << 16;

@@ -1,6 +1,6 @@
 /// @file
 /// Imil Falls Cave, north of Imil, and Fuchin Falls Cave, the waterfall grotto
-/// of Fuchin Temple's test: two areas in seven maps.
+/// of Fuchin Temple's test: two areas in seven scenes.
 ///
 /// - Imil Falls Cave (SceneId_ImilFallsCave), up the way north out of Imil; its
 ///   only exit, IMIL_FALLS_CAVE_TO_IMIL, leads back down
@@ -18,7 +18,7 @@
 ///   temple Nyunpa names the power they have gained Ki (fuchin_temple.c). The
 ///   way in and out is FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS, to
 ///   FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE. The code numbers
-///   the rooms by map: the first to fourth rooms
+///   the rooms by scene: the first to fourth rooms
 ///   (SceneId_FuchinFallsCaveEntrance to SceneId_FuchinFallsCaveArcticBlade),
 ///   the room of the Ki inscription (SceneId_FuchinFallsCaveOrbOfForce) and the
 ///   dragon statue's room (SceneId_FuchinFallsCaveDragonStatue).
@@ -37,7 +37,7 @@
 /// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP the third's and
 /// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH to
 /// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST the fourth's, so the logs
-/// are back where they started once the party leaves the cave's maps. After
+/// are back where they started once the party leaves the cave's scenes. After
 /// each move, and on entry, the room's rebuild function puts every log at the
 /// cell its flags name and rewrites the cells of each log's track to match: in
 /// the first room (FuchinFallsCave_RebuildEntranceLogs) the track's cells are
@@ -124,7 +124,7 @@
 #include "item_ids.h"
 #include "map_grid.h"
 
-/// The placed actors, numbering each map's template rows from
+/// The placed actors, numbering each scene's template rows from
 /// ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin
 /// Falls Cave's first four rooms, followed in the second room by Zephyr, and
 /// the one sprite the dragon statue's room places.
@@ -237,7 +237,7 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
 
 const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 
-/// Returns the exit table every map of the overlay shares.
+/// Returns the exit table every scene of the overlay shares.
 const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
 const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void) {
@@ -1478,7 +1478,7 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
   }
 }
 
-/// Sets up the map as the party enters. Every normal entry into Imil Falls
+/// Sets up the scene as the party enters. Every normal entry into Imil Falls
 /// Cave blocks Retreat and walks the leader toward Fever; otherwise each room
 /// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
@@ -1691,7 +1691,7 @@ static void FuchinFallsCave_UpdateDustMotion(struct Actor *raw) {
   object->scaleY += object->scaleRateY;
 }
 
-/// Hides the dust (SPRITE_COLOR_HIDDEN) when its object script finishes
+/// Hides the dust (SPRITE_COLOR_HIDDEN) when its actor script finishes
 /// looping.
 static s32 FuchinFallsCave_SetDustPalette(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -1856,8 +1856,8 @@ static void FuchinFallsCave_ReadShadowInscription(void) {
 
 /// Searching the dragon statue in Fuchin Falls Cave (examine trigger 20): its
 /// burning red eyes once set, else its empty sockets; with the Dragon's Eye
-/// carried it then opens the main menu as the search ends, so that the eye can
-/// be used.
+/// carried it then opens the File Screen as the search ends, so that the eye
+/// can be used.
 static void FuchinFallsCave_SearchDragonStatue(void) {
   Event_Start();
 

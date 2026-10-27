@@ -2,7 +2,7 @@
 /// The first and last rooms of Goma Cave, the cave in the Goma Range between
 /// Vault and Bilibin: SceneId_GomaCaveStream and SceneId_GomaCaveBridge, both
 /// under the area name Goma Cave. The getters give SceneId_GomaCaveBridge its
-/// own tables and any other map SceneId_GomaCaveStream's; the two share one
+/// own tables and any other scene SceneId_GomaCaveStream's; the two share one
 /// exit table.
 ///
 /// - SceneId_GomaCaveStream, the room a stream runs the length of. The party
@@ -25,7 +25,7 @@
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_PLAZA).
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no actors and only its two exits: back south into
-///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
+///   SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "save_block.h"
 #include "unit/scene/goma_cave_stream.h"
@@ -67,8 +67,8 @@ enum GomaCaveStreamActorId {
 };
 
 /// SceneId_GomaCaveStream's entrance that no exit names, standing the
-/// leader just east of the stump, facing it. Only the debug map selector, which
-/// exits to any entrance by number, reaches it.
+/// leader just east of the stump, facing it. Only the debug scene selector,
+/// which exits to any entrance by number, reaches it.
 enum { ENTRANCE_BESIDE_STUMP = 99 };
 
 static void GomaCaveStream_LeapStump(s32 stumpId);
@@ -148,7 +148,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The leaping stump's update hook turns its sprite a fixed amount per frame.
+/// The leaping stump's update routine turns its sprite a fixed amount per
+/// frame.
 static void GomaCaveStream_SpinStump(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 

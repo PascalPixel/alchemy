@@ -1,6 +1,6 @@
 /// @file
 /// The menu object of the window bank: the screens built on the window system
-/// (window.c). It holds the party status window, the file menu, the name
+/// (window.c). It holds the party status window, the file list, the name
 /// entry screen, the joined-party messages, the command icon row, the Djinn
 /// change preview and the Status screen, the battle menus (Djinn, summons,
 /// items, Psynergy, targets and the party's commands), the command icon menus

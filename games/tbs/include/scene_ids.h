@@ -11,7 +11,7 @@
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char SceneId_Title;
-/// The main menu, where the player chooses a file; the debug map list calls
+/// The File Screen, where the player chooses a file; the debug map list calls
 /// it "(Clear data)".
 /// ★ Named from what the player sees: the Golden Sun logo over the start menu
 /// of New Game, Continue, Copy and Erase (its render)

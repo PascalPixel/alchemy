@@ -13,10 +13,10 @@
 // works in field space, before projection; the 2D one works directly on the
 // screen, where a positive gravity pulls down.
 //
-// The EffectPosition_Project* helpers turn a point or a battler into an
+// The EffectPosition_Project* helpers turn a point or a unit into an
 // ScreenPoint on the screen. Each returns a point 16 pixels higher than the
-// projection, which is where animations anchor on a battler. They differ only
-// in how the battler is projected: at its sprite's scaled height, scaled for
+// projection, which is where animations anchor on a unit. They differ only
+// in how the unit is projected: at its sprite's scaled height, scaled for
 // the battle view, or plainly.
 
 /// Moves a particle one frame in three dimensions: adds its velocity, then
@@ -73,7 +73,7 @@ s32 Projection_Point(const void *point, struct ScreenPoint *position) {
   return result;
 }
 
-/// The screen position of a battler's sprite, at its scaled height, 16
+/// The screen position of a unit's sprite, at its scaled height, 16
 /// pixels higher.
 ///
 /// Called by BattleAnim_RunBeamSequence (beams.c), for the first target, and
@@ -84,7 +84,7 @@ void Projection_Sprite(s32 id, struct ScreenPoint *position) {
   position->y -= 16;
 }
 
-/// The screen position of a battler, scaled for the battle view, 16 pixels
+/// The screen position of a unit, scaled for the battle view, 16 pixels
 /// higher.
 ///
 /// The usual anchor for an animation on its user or first target: called during
@@ -95,7 +95,7 @@ void Projection_ScaledUnit(s32 id, struct ScreenPoint *position) {
   position->y -= 16;
 }
 
-/// The screen position of a battler, 16 pixels higher.
+/// The screen position of a unit, 16 pixels higher.
 ///
 /// Called during the setup of 11 parts, among them the target strikes, Bolt,
 /// the rushing strike, the Titan Blade, the Helm Splitter and the element
@@ -105,7 +105,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
   position->y -= 16;
 }
 
-/// Projects a battler onto the screen, raised by half its table height (the
+/// Projects a unit onto the screen, raised by half its table height (the
 /// table holds the full height in 16.16) at the sprite's scale. The view is
 /// reset to the battle camera first, so the result does not depend on the
 /// transform an animation has left behind.

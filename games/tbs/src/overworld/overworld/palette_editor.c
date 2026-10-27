@@ -10,7 +10,7 @@
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in WINDOW_PALETTE
 
-/// The debug palette editor (L on the pause menu in debug mode). Shows colours
+/// The debug palette editor (L on the Pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and
 /// right choose the colour, up and down the channel, L and R the palette (0 to
 /// 13); A raises the channel and B lowers it, Start makes the colour blink

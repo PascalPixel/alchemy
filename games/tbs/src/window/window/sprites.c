@@ -137,7 +137,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) - 1;
 #endif
     } else {
-      // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it:
+      // Copy the glyph's tiles to its sprite tiles (sprite VRAM) and place it:
       // half the line spacing below y and half the letter spacing right of x,
       // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
       // shape a 16x16 sprite.

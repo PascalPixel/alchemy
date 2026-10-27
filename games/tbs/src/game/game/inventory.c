@@ -28,7 +28,7 @@ s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
 
 /// Returns 1 for an item that is not a weapon or armor, and for those whether
 /// the character can equip it. The shop's buy screen calls it to grey out the
-/// members who could not use an item.
+/// party members who could not use an item.
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE) {
     return 1;
@@ -94,7 +94,7 @@ s32 Inventory_Count(s32 unitId) {
 }
 
 /// Returns 1 when the selected character or any party member has a free
-/// inventory slot. Called by the scripts that give an item (the Vault's Water
+/// inventory slot. Called by the events that give an item (the Vault's Water
 /// of Life and the bones) and the debug item menus.
 s32 PartyInventory_HasSpace(void) {
   s16 unitIds[10];
@@ -186,7 +186,7 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
 
 /// Gives the item to the first party member with room. Returns who took it,
 /// or -1. Called for a battle's spoils, a chest or search in the field, and
-/// the scripts that give items.
+/// the events that give items.
 s32 PartyInventory_Add(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount;
@@ -209,7 +209,7 @@ s32 PartyInventory_Add(s32 itemId) {
 }
 
 /// Returns the first slot holding `itemId` (any quantity, equipped or not),
-/// or -1. Called by the shops and the scripts that check for an item.
+/// or -1. Called by the shops and the events that check for an item.
 s32 Inventory_Find(s32 unitId, s32 itemId) {
   struct Unit *inv = Unit_Get(unitId);
   s32 slot = 0;
@@ -225,7 +225,7 @@ s32 Inventory_Find(s32 unitId, s32 itemId) {
 }
 
 /// Returns who carries `itemId`, asking the selected character first, or -1.
-/// Called by the scripts that need a key item, such as the Mercury Lighthouse's
+/// Called by the events that need a key item, such as the Mercury Lighthouse's
 /// Hermes' Water and Kolima's Tret.
 s32 PartyInventory_FindMember(s32 itemId) {
   s16 unitIds[10];
@@ -293,7 +293,7 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
 
 /// Returns the slot of the equipped item of `type`, or -1. Called by the
 /// shops to compare what is worn and to repair it, and by the battle sprites
-/// to draw the member's weapon.
+/// to draw the party member's weapon.
 s32 Inventory_FindEquipped(s32 unitId, s32 type) {
   struct Unit *base = Unit_Get(unitId);
   s32 index;
@@ -330,7 +330,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
 }
 
 /// Returns the id of the unit's equipped item of `type`, or 0. Called by
-/// BattleObject_Make to draw a member's weapon, and by BattleTurn_Build.
+/// BattleObject_Make to draw a party member's weapon, and by BattleTurn_Build.
 s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   s32 slot;
 
@@ -374,7 +374,7 @@ s32 Inventory_Remove(s32 unitId, s32 slot) {
 
 /// Removes one item as Inventory_Remove does, and puts a rare item back into
 /// circulation (its counter goes up by one) for the shops to sell. Called
-/// by selling an item and by the scripts that take an item away.
+/// by selling an item and by the events that take an item away.
 s32 Inventory_Discard(s32 unitId, s32 slot) {
   s32 item = Unit_Get(unitId)->inventory[slot];
   s32 removalResult = Inventory_Remove(unitId, slot);
@@ -408,7 +408,7 @@ s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
 }
 
 /// Removes one `itemId` from whoever carries it first; always returns 0.
-/// Called by the scripts that use up a key item, the Lucky Wheels' Game
+/// Called by the events that use up a key item, the Lucky Wheels' Game
 /// Tickets and the field shortcut that uses an item.
 s32 PartyInventory_Remove(s32 itemId) {
   s32 unitId = PartyInventory_FindMember(itemId);
@@ -420,7 +420,7 @@ s32 PartyInventory_Remove(s32 itemId) {
 }
 
 /// Discards one `itemId` from whoever carries it first, as Inventory_Discard
-/// does; always returns 0. Called by the scripts that take an item back, such
+/// does; always returns 0. Called by the events that take an item back, such
 /// as the Vault dog's bone and the Black Orb.
 s32 PartyInventory_Discard(s32 itemId) {
   s32 unitId = PartyInventory_FindMember(itemId);
@@ -503,7 +503,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 }
 
 /// Counts matching nonstackable items, or the quantity in the first matching
-/// stack. Called by PartyInventory_CountItem and by the scripts that give an
+/// stack. Called by PartyInventory_CountItem and by the events that give an
 /// item, to keep stacks under their limit.
 s32 Inventory_CountItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);

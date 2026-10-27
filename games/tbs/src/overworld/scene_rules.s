@@ -20,7 +20,7 @@
 	.4byte \name
 	.endm
 
-@ Defeat return points: the scene and entrance (-1 for any), then the
+@ Restart points: the scene and entrance (-1 for any), then the
 @ scene and entrance the party returns to after a defeat there.
 	.macro restart_point scene:req, entrance:req, saved:req, saved_entrance:req
 	.2byte SceneId_\scene, \entrance, SceneId_\saved, \saved_entrance

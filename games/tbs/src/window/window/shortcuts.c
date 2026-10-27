@@ -5,7 +5,7 @@
 #include "../window_internal.h"
 
 /// The area name notice's fields, which live in the field work block
-/// (gFieldWork, a map's work), for as long as the map runs.
+/// (gFieldWork, a scene's work), for as long as the scene runs.
 struct TimedNoticeWork {
   u8 fieldWork[0x230];   ///< the field work's other fields
   struct Window *window; ///< the notice's window; it may since have closed
@@ -89,8 +89,8 @@ UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
   gSaveBlock.windowColor[0] = hue;
 }
 
-/// A Psynergy the debug shortcut picker lists: its member and the Psynergy.
-/// The picker's list is a Alloc block of 448 of them.
+/// A Psynergy the debug shortcut picker lists: its party member and the
+/// Psynergy. The picker's list is a Alloc block of 448 of them.
 struct AbilityListEntry {
   u16 member;  ///< the party member's unit id
   u16 ability; ///< the action id (10 bits in a shortcut)
@@ -244,10 +244,10 @@ void Debug_SelectAbilityPair(void) {
   Free(list);
 }
 
-/// Lists every Psynergy of the party's active members as (member, Psynergy)
+/// Lists every Psynergy of the active party members as (party member, Psynergy)
 /// pairs in output and returns how many.
-/// output must hold every member's nonzero action slots; there is no capacity
-/// argument. Each member's list stops at its first empty slot.
+/// output must hold every party member's nonzero action slots; there is no
+/// capacity argument. Each party member's list stops at its first empty slot.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 memberIds[14];
   s32 outputCount = 0;

@@ -31,7 +31,7 @@
 /// of three per side. work->particles holds 16 flashes a column and PARTICLES
 /// 340 sparks a column.
 ///
-/// Leaves effect->variant at ANIM_VARIANT_STRONGER, and the user in its
+/// Leaves args->variant at ANIM_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
 void BattleAnim_RunRagnarok(struct BattleAnimArgs *args) {
   void **slots;

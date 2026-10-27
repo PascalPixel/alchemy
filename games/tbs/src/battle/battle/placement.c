@@ -23,7 +23,7 @@
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
-/// sprite, turned to face the centre, and starts its motion script
+/// sprite, turned to face the centre, and starts its actor script
 /// (gBattleObject_EmptyScript). Called by
 /// BattleUnit_RefreshPlacement and by BattleAbility_ApplyToTarget for an enemy
 /// that joins. Fills in actor, creates an actor for it and, for an
@@ -260,7 +260,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
 
   // Face the centre of the battlefield (0x8000 is half a turn, so the
   // angle points back along the line to the origin); enemies are drawn at
-  // 1.3 times their size. ACTOR_FALLS lets the object fall.
+  // 1.3 times their size. ACTOR_FALLS lets the actor fall.
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
   object->facing = facingAngle;
   object->collisionFlags = 3;
@@ -351,9 +351,9 @@ s32 Enemy_GetFreeUnitId(void) {
   return unitId;
 }
 
-/// Lays the enemies out again and moves each one's object anchor to its new
-/// place. Called by BattleAbility_ApplyToTarget after an enemy joins. Writes
-/// the anchorX and anchorZ of every enemy's battle object.
+/// Lays the enemies out again and moves each one's battle object anchor to its
+/// new place. Called by BattleAbility_ApplyToTarget after an enemy joins.
+/// Writes the anchorX and anchorZ of every enemy's battle object.
 #ifdef UBFIX
 void BattlePlacement_RelayoutEnemies(void) {
 #else
@@ -386,7 +386,7 @@ s32 BattlePlacement_RelayoutEnemies(void) {
 
 /// Places every unit at the start of a battle: numbers the places (party
 /// members 0 up in their order, enemies 8 to 13) and creates each unit's
-/// object at its spot. Called by Battle_Run once the unit lists are
+/// battle object at its spot. Called by Battle_Run once the unit lists are
 /// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
@@ -443,7 +443,7 @@ void BattleUnit_RefreshPlacement(void) {
 }
 
 /// Returns 1 if the unit at place is in list. Called by
-/// BattleObject_SpawnObjectsForList to find the objects to release.
+/// BattleObject_SpawnObjectsForList to find the actors to release.
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {

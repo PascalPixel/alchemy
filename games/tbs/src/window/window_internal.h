@@ -167,7 +167,7 @@ enum {
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
-  TEXT_WINDOW_STATE = 15, ///< the next entry is the window effect to run
+  TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
   TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
   /// The printer runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
@@ -199,7 +199,7 @@ enum TextStyle {
   TEXT_STYLE_SPIN = 5      ///< WINDOW_SPRITE_MOTION_SPIN, a pixel wider too
 };
 
-/// The window effect a message can start (TEXT_WINDOW_STATE): the window's
+/// The window animation a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the printer's
 /// countdown.
 #define WINDOW_ANIMATION_SWELL 4

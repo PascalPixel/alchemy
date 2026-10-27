@@ -121,11 +121,11 @@ static inline void StatusPanel_CopyUnit(struct Unit *destination,
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
-/// member `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
-/// or the level, the member's portrait, and below them what mode's panel kind
-/// asks for. slot is the inventory slot of the item the panel is about, for
-/// the equipment and Psynergy item panels. The first parameter, the status
-/// window, is not used: the window is the menu work's.
+/// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
+/// statuses or the level, the party member's portrait, and below them what
+/// mode's panel kind asks for. slot is the inventory slot of the item the panel
+/// is about, for the equipment and Psynergy item panels. The first parameter,
+/// the status window, is not used: the window is the menu work's.
 ///
 /// Opens the window on first use and keeps it in the work's statusWindow;
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
@@ -152,11 +152,11 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
                                     WINDOW_KEEP_EXISTING | 2);
   window = menu->statusWindow;
 
-  // The name, then each status the member has, one row each; the level
+  // The name, then each status the party member has, one row each; the level
   // takes the third row when no more than one status is shown.
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
-    // A window that already existed still shows the last member: clear its
-    // top 88 by 32 pixels a frame later. A new window is blank.
+    // A window that already existed still shows the last party member: clear
+    // its top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
       WaitFrames(1);
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
@@ -191,7 +191,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     }
   }
 
-  // Clear the lower part and redraw the member's portrait.
+  // Clear the lower part and redraw the party member's portrait.
   if (!created) {
     WaitFrames(1);
     Window_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
@@ -243,7 +243,8 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     s32 known = 0;
     s32 i;
 
-    // Whether the member already knows it, from any of the 32 action slots.
+    // Whether the party member already knows it, from any of the 32 action
+    // slots.
     for (i = 0; i < 32; i++) {
       if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
@@ -511,8 +512,8 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
-/// chooser) pass on to PsynergyMenu_InitializeEntryActors for the party
+/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the party
+/// member chooser) pass on to PsynergyMenu_InitializeEntryActors for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
@@ -545,10 +546,10 @@ struct Window *MenuCursor_Create(void *source) {
 /// Creates a walking figure for each active party member, side by side under
 /// the window source: origin (originX, originY) in tiles from the window's
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
-/// Clears the unused figure slots and starts the callback that places them
+/// Clears the unused figure slots and starts the task that places them
 /// every frame. Every screen of the field menu calls it as it opens, and the
 /// shops through PsynergyMenu_InitializeEntryActorsFar;
-/// Menu_ReleaseEntryActors frees the figures.
+/// Menu_ReleaseEntryActors releases the figures.
 void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
                                         s32 spacing, s32 unused) {
   u16 memberIds[14];
@@ -580,7 +581,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
       Sprite_StartAnimFar(figure, 1);
     }
   }
-  // Clear the unused party slots so the callback can skip them.
+  // Clear the unused party slots so the task can skip them.
   for (; i < 8; i++) {
     menu->tabSprites[i] = 0;
   }
@@ -594,7 +595,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
 }
 
 /// Releases the party figures PsynergyMenu_InitializeEntryActors created and
-/// stops their placement callback.
+/// stops their placement task.
 void Menu_ReleaseEntryActors(void) {
   u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
@@ -1229,7 +1230,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
 }
 
 /// Writes the party's coins and the "Coins" label into window: the info
-/// window of the Item and Psynergy screens' member choice.
+/// window of the Item and Psynergy screens' party member choice.
 void Text_DrawWorkValueWithLabel(struct Window *window) {
   Text_DrawNumberAtOffsetFar(gSaveBlock.coins, 7, window, 8, 0);
   Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);

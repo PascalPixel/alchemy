@@ -109,7 +109,7 @@ enum LunpaActorId {
   /// to the fortress lately." (MsgLunpaVillageVillagerHSealed)
   ACTOR_GIRL_ON_THE_CHEFS_MEALS,
   /// The two soldiers in spiked helmets (SPRITE_SOLDIER_IN_SPIKED_HELMET);
-  /// this one keeps the road in from the world map.
+  /// this one keeps the road in from the World Map.
   /// ★ Named from what the player sees: a soldier with a spear guarding the
   /// road (its render)
   ACTOR_WEST_GUARD,

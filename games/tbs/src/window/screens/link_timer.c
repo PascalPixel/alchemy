@@ -24,9 +24,9 @@ struct LinkSignature {
 /// (Battle_CollectPartyCommands): eases the battle view a third of the way
 /// to BattleMenuWork.targetViewOffset each frame (a pixel at least), draws
 /// the sprites of BattleMenuWork.icons that are shown (the chosen command's
-/// and ability's icons, the member's portrait) and slides the page arrows.
-/// In a link battle it also runs the timer: once the partner has chosen its
-/// commands, 15 seconds, shown in a window at the top left with a tone at
+/// and ability's icons, the party member's portrait) and slides the page
+/// arrows. In a link battle it also runs the timer: once the partner has chosen
+/// its commands, 15 seconds, shown in a window at the top left with a tone at
 /// each whole second; at 0 the menus end as if cancelled, or take their
 /// first command. A paused link sets the timer to 0 at once.
 void UpdateLinkSessionCountdown(void) {
@@ -134,7 +134,7 @@ void UpdateLinkSessionCountdown(void) {
 }
 
 /// Tests whether the party may not run from this battle: battle types 3 and
-/// 4 (the battles a script starts, and link battles; see
+/// 4 (the battles an event starts, and link battles; see
 /// BATTLE_TYPE_NO_ESCAPE in battle/battle/round.c) and a party once
 /// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
 /// time to be running away!" until A or B is pressed or the link battle's

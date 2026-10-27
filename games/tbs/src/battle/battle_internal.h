@@ -115,8 +115,8 @@
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
 /// In a link battle each console sends LINK_PARTY_SIZE places, at most three
-/// members (LinkBattle_SendParty), and the opponent's take the first three
-/// enemy ids from FIRST_ENEMY_UNIT.
+/// party members (LinkBattle_SendParty), and the opponent's take the first
+/// three enemy ids from FIRST_ENEMY_UNIT.
 #define LINK_PARTY_SIZE 3
 
 /// The party fights four at a time, three in a link battle; six enemies at
@@ -157,7 +157,7 @@
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which EnemySprite_LoadIntoSlots loads into further
 /// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
-/// object's second sprite.
+/// actor's second sprite.
 #define SPRITE_WITH_SECOND_PART_A                                              \
   476 ///< the Kraken's (ENEMY_KRAKEN, battle_sprites.c)
 #define SPRITE_WITH_SECOND_PART_B                                              \
@@ -166,7 +166,7 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// Object.spriteStorageKind holds an enum ActorSpriteKind in its low four
+// Actor.spriteStorageKind holds an enum ActorSpriteKind in its low four
 // bits; a group's sprite word points to a table of four sprites.
 #define ACTOR_SPRITE_KIND_MASK 15
 #define ACTOR_SPRITE_GROUP_SIZE 4
@@ -200,7 +200,7 @@ enum BattleCastKind {
 #define TARGET_NONE_PARTY 0x180
 
 /// The camera's yaw while a party member acts, and while an enemy does, in
-/// 1/65536 turns: an eighth of a turn either side of 0. The camera callback
+/// 1/65536 turns: an eighth of a turn either side of 0. The camera task
 /// eases toward it (BattleCamera_Update).
 #define YAW_PARTY_TURN 0x2000
 #define YAW_ENEMY_TURN -0x2000

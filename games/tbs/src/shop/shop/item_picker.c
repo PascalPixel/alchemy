@@ -1,11 +1,11 @@
 /// @file
-/// The item picker: which member's item to drop when every bag is full.
+/// The item picker: which party member's item to drop when every bag is full.
 // Part of shop.c.
 
 #include "../shop_internal.h"
 
 /// Lets the player choose a party member, then one of its items that may be
-/// dropped. Writes the member and inventory slot to `selectedUnit` and
+/// dropped. Writes the party member and inventory slot to `selectedUnit` and
 /// `selectedSlot` and returns 0, or writes -1 to both and returns -1 when
 /// cancelled. Holds the shop's work block while it runs. Reached through
 /// SHOP.S when an item is found with every bag full ("What will you drop?",
@@ -124,7 +124,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
 #define SHOP_USE_COIN_MESSAGE_OFFSET 1
 #endif
 
-/// Lets the player choose one of the member's items to drop, refusing an
+/// Lets the player choose one of the party member's items to drop, refusing an
 /// indispensable one with a message and an equipped cursed one with only the
 /// cancel sound (the game's bug; BUGFIX shows its message, see
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called

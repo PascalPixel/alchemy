@@ -14,7 +14,7 @@
 ///
 /// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_ANIM_PRISM).
 ///
-/// effect->variant picks the volley from gPrism_Counts (crystals and frames: 1
+/// args->variant picks the volley from gPrism_Counts (crystals and frames: 1
 /// in 110, 4 in 134, 12 in 166); for Freeze Prism the camera also swings round
 /// for the first 104 frames. The crystals are particles[]: z is 1 once
 /// shattered, variant is the frame it starts to fall. The shards are 16 per

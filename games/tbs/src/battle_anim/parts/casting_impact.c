@@ -108,13 +108,13 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
-/// Clears the prelude image, stops its callbacks and releases its blitters
+/// Clears the prelude image, stops its tasks and releases its blitters
 /// before the next animation takes over.
 ///
 /// Called by BattleAnim_RunCastingImpact for the impacts that hand off after
 /// the gathering (15, 17, 24, 26 and Severe Blow); Meltdown's end does the
 /// same inline. Clears the canvas and its VRAM (character block 1) and
-/// work->effect->prelude, removes Palette_StepFadeTransfer and the canvas
+/// work->args->prelude, removes Palette_StepFadeTransfer and the canvas
 /// transfer, and frees both blitters.
 static inline void CastingImpact_EndPrelude(struct BattleAnimWork *work,
                                             void *canvas) {
@@ -1447,7 +1447,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
   }
   // Phase 4: Meltdown hands the cleared canvas to the stat reduction
   // (Impair), as CastingImpact_EndPrelude does; the others stop the wave
-  // callback and release the canvas.
+  // task and release the canvas.
   if (mode == CASTING_IMPACT_IMPACT_MELTDOWN) {
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Iwram_ClearWords(canvas, CANVAS_BYTES);

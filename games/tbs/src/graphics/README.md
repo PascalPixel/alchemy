@@ -1,7 +1,7 @@
 # Graphics
 
 The grassland behind a battle, the monsters, the fonts, the
-[map](../../glossary.md#map) tiles and the title screen are kept here as
+[map](../../glossary.md#map) tiles and the Title are kept here as
 ordinary picture files anyone can open and edit, and every build packs them
 into the forms the game reads. The folder also holds the code of the two
 screens that are mostly pictures, the title intro and the credits, the
@@ -89,7 +89,7 @@ halves: one shows while the next picture loads into the other, the screen
 blends across, and the halves swap roles.
 
 The credits roll at the end of the game, as the Lemurian ship sails off with
-the ending music playing, and afterwards the game goes on to the main menu.
+the ending music playing, and afterwards the game goes on to the File Screen.
 They show 32 battle backgrounds, each crossfading into the next over about
 a second, and end by fading to black. A battle background uses 128 colours,
 exactly half of what the background layers can show, so each half of memory

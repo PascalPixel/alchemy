@@ -1,7 +1,7 @@
 /// @file
 /// The title overlay: the start screen, the Golden Sun logo shown after the
 /// ending, and the screens that lead from the prologue and the last event on
-/// to Vale and the main menu. Title_Run chooses by entrance.
+/// to Vale and the File Screen. Title_Run chooses by entrance.
 
 #include "save_block.h"
 #include "vram_cache.h"
@@ -63,17 +63,17 @@ u8 *Title_GetActorTemplates(void) { return (u8 *)gTitleActorTemplates; }
 u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 
 /// The overlay's initialize entry: plays what the entrance asks for,
-/// sets the next destination and returns 0.
+/// sets the after-battle destination and returns 0.
 /// - Entrance 10, after Jenna and Kraden's closing event on the world
 ///   map (WorldMap_ShowEndingEvent): the Golden Sun logo for two seconds, then
 ///   until a key is pressed or a minute passes, then entrance 2.
 /// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
-///   credits, then the main menu's entrance 2, which offers to
+///   credits, then the File Screen's entrance 2, which offers to
 ///   save the cleared game.
 /// - Entrance 2, at power-on (SequenceManager_Run) and after the logo:
 /// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
-///   with its "Press Start" prompt; then the main menu's
+///   with its "Press Start" prompt; then the File Screen's
 ///   entrance 1.
 /// - Any other entrance is the title shown after the prologue: the
 ///   intro without its prompt, then Vale's entrance 16
@@ -295,7 +295,7 @@ static void Title_UpdateSpriteReveal(void) {
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 
-  // Load while dark, then let the sprite callback reveal the lettering.
+  // Load while dark, then let the sprite task reveal the lettering.
   Title_LoadBackground();
   Event_WaitFrames(30);
   gTitleRevealFrame = 0;

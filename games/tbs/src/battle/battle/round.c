@@ -57,7 +57,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// Battle_GatherActions, and through its far stub by
 /// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
 /// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera
-/// callback leaves the background alone), gProjection and the background's
+/// task leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
@@ -178,15 +178,15 @@ s32 BattleFlee_CheckSuccess(void) {
   return escaped;
 }
 
-/// The party's actions for the round, from the command menu: a member who
+/// The party's actions for the round, from the command menu: a party member who
 /// is asleep, confused, charmed or stunned loses each of their turns
 /// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// Battle_GatherActions. Fills entries.
 s32 Battle_BuildUnitActions(struct BattleAction *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
-  // and 12 bytes: up to eight choosers and the up to four members with their
-  // end mark.
+  // and 12 bytes: up to eight choosers and the up to four party members with
+  // their end mark.
   u16 *choosingUnits = AllocEwram(17);
   u16 *unitIds = AllocEwram(9);
   s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
@@ -198,8 +198,8 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
     struct Unit *unit = Unit_GetFar(unitIds[unitIndex]);
     s32 copyIndex;
 
-    // Once for each of the member's actions this round (actionsPerRound):
-    // a member with two is listed twice and chooses twice.
+    // Once for each of the party member's actions this round (actionsPerRound):
+    // a party member with two is listed twice and chooses twice.
     for (copyIndex = 0; copyIndex < unit->actionsPerRound; copyIndex++) {
       if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
           unit->stun != 0) {
@@ -216,7 +216,7 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
     }
   }
 
-  // The command menu appends the choosing members' actions.
+  // The command menu appends the choosing party members' actions.
   {
     s32 appended;
 

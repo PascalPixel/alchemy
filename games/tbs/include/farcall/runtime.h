@@ -66,7 +66,7 @@ void Oam_AddSpriteAtDepthFar(void *slot_entry, s32 slot);
 void Window_LoadGraphicsFar(void);
 /// Returns the ROM address of resource `index` from the resource directory.
 void *Resource_GetTableEntryFar(s32 index);
-/// Does nothing. The title screen, Lucky Dice and Lucky Wheels pass it a
+/// Does nothing. The Title, Lucky Dice and Lucky Wheels pass it a
 /// far-call resource id.
 void Stub_NoOpHookFar(s32 unused);
 /// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`

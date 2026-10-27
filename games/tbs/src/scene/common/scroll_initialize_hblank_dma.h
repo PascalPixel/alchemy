@@ -15,8 +15,8 @@ static __inline__ void WaitDma(volatile u32 *channel) {
 }
 
 /// Starts the ripple: its work (heap block 34) holds the mode and, for x and y,
-/// the wave's frequency, its step each frame and its amplitude; two map
-/// callbacks build each frame's table of line offsets and sends it by DMA in
+/// the wave's frequency, its step each frame and its amplitude; two
+/// tasks build each frame's table of line offsets and sends it by DMA in
 /// the horizontal blank.
 void ScanlineEffect_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                              s32 freqY, s32 stepY, s32 ampY) {

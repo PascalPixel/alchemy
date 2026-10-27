@@ -66,7 +66,7 @@ struct SpriteFrameCache {
   void *frames; ///< the decoded frames, their offsets made pointers
 };
 
-/// The object system's work: the flag that suspends sprite projection, the
+/// The actor system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite frame caches. Heap slot 6.
 struct ActorSystemWork {
   u16 used;      ///< sprite pixel bytes composed since the camera reset it

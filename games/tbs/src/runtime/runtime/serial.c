@@ -26,7 +26,7 @@ enum {
 /// timer 3 interrupt handlers, clears gSerialWork and points its packet
 /// buffers into its storage, clears the bulk transfer state and sets
 /// gSerialExchangeActive, which starts the per-frame exchange. Called by the
-/// Battle Arena, the file menu's link transfer and the link test, and through
+/// Battle Arena, the file list's link transfer and the link test, and through
 /// the far-call table.
 void Serial_Initialize(void) {
   u32 interruptEnable;
@@ -466,7 +466,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
 /// sets the send source, size and block sequence that
 /// Serial_StepBlockTransfer works from. Called by the link battle,
-/// the Battle Arena and the file menu's transfer. Returns -1 when a send is
+/// the Battle Arena and the file list's transfer. Returns -1 when a send is
 /// already running, 0 otherwise.
 ///
 /// `size` must be a multiple of 20: it falls by 20 a block, and the send ends

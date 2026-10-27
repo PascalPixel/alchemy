@@ -2,7 +2,7 @@
 #define ALCHEMY_ACTOR_SCRIPT_H
 
 /// @file
-/// Object scripts: one s32 command word, then its operands, as
+/// Actor scripts: one s32 command word, then its operands, as
 /// gActorScript_CommandTable runs them. Each macro expands to the words of
 /// one command. Coordinates are 16.16 fixed point (PIXELS).
 
@@ -20,16 +20,16 @@
 #define SC_POSITION(x, y, z) 0x02, (x), (y), (z) ///< Set position.
 #define SC_MOVE(x, y, z) 0x03, (x), (y), (z)     ///< Move toward the target.
 #define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z)  ///< Move by a relative offset.
-#define SC_FACE_LINK 0x05                        ///< Face the linked object.
-#define SC_MOVE_LINK 0x06                        ///< Move to the linked object.
-/// Move toward the object's position plus an offset that is never filled in;
+#define SC_FACE_LINK 0x05                        ///< Face the linked actor.
+#define SC_MOVE_LINK 0x06                        ///< Move to the linked actor.
+/// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 0x07, (a), (b)
 // Wander to random points base to base + range away, within limit of home;
 // SC_WANDER_HOME heads home when outside it.
 #define SC_WANDER(a, b, c) 0x08, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x09, (a), (b), (c)
-#define SC_APPROACH_LINK 0x0a ///< Follow the linked object to 16 pixels.
+#define SC_APPROACH_LINK 0x0a ///< Follow the linked actor to 16 pixels.
 #define SC_CAMERA 0x0b        ///< Follow the leader.
 /// Jump to label to n - 1 times, so what lies between runs n times; loops
 /// do not nest.
@@ -47,16 +47,16 @@
 #define SC_ADD(w, v) 0x16, (w), (v) ///< Add to a work value.
 #define SC_CMP(w, v) 0x17, (w), (v) ///< Test whether work value w equals v.
 #define SC_PLAYER 0x18              ///< Player input control
-#define SC_KEYS 0x19              ///< Move 8 pixels a step by the direction pad
-#define SC_WORLD 0x1a             ///< World map control
-#define SC_RELEASE 0x1b           ///< Release
+#define SC_KEYS 0x19    ///< Move 8 pixels at a time by the direction pad
+#define SC_WORLD 0x1a   ///< World map control
+#define SC_RELEASE 0x1b ///< Release
 #define SC_ANIMATION(v) 0x1c, (v) ///< Switch the sprites to animation v.
 #define SC_NOP(v) 0x1d, (v)       ///< Skip its operand.
-#define SC_SE(n) 0x1e, (n)        ///< Sound effect
+#define SC_SE(n) 0x1e, (n)        ///< Play sound n
 #define SC_BASE 0x1f              ///< Restart from the next word.
 #define SC_HIDE_SPRITES 0x20      ///< Hide the sprites (ACTOR_SPRITE_NONE).
 #define SC_SHOW_SPRITE 0x21       ///< Show one sprite (ACTOR_SPRITE_ONE).
-/// Call fn with the object each frame until it returns zero.
+/// Call fn with the actor each frame until it returns zero.
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23 ///< Check the configured keys.
 
@@ -91,15 +91,15 @@ enum ActorScriptValue {
   SW_PAUSED = 0x20,
   SW_REPEAT = 0x21,
   SW_WAIT = 0x22,
-  /// Actor.timer, the parameter an action script reads; a map's own
+  /// Actor.timer, the parameter an actor script reads; a scene's own
   /// scripts set it to 1 as they end, for the code that waits on them.
   SW_TIMER = 0x23,
-  /// Actor.work, map scratch: a map script sets it for the map code
+  /// Actor.userValue, scene scratch: an event sets it for the scene code
   /// that reads or waits on it.
   SW_USER_VALUE = 0x24,
   SW_HOOK = 0x26,
-  SW_RISE_COUNTER = 0x27, ///< Actor.riseCounter, map code's own byte
-  SW_RISE_ENABLED = 0x28  ///< Actor.riseEnabled, map code's own byte
+  SW_RISE_COUNTER = 0x27, ///< Actor.riseCounter, scene code's own byte
+  SW_RISE_ENABLED = 0x28  ///< Actor.riseEnabled, scene code's own byte
 };
 
 #endif

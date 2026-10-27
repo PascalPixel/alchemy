@@ -8,7 +8,7 @@
 //   plays the swirl over it and scatters bouncing sparks. The sparks live in
 //   PARTICLES, whose 1024 slots are cleared first.
 // - The impact burst plays a flash with large and small sparks and three
-//   fragments, while the animation's objects settle into one of the formations
+//   fragments, while the animation's sprites settle into one of the formations
 //   of BattleAnim_PlaceFormationObjects. Large sparks and the fragments use
 //   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
 //   large sparks), small sparks PARTICLES.
@@ -176,12 +176,12 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *args) {
   ANIM_FINISH_CANVAS();
 }
 
-/// Arranges work->objects in a formation; x and z are its origin in 16.16
+/// Arranges work->animations in a formation; x and z are its origin in 16.16
 /// pixels.
 ///
-/// Each summon that ends in an impact burst keeps its objects in its own
+/// Each summon that ends in an impact burst keeps its sprites in its own
 /// formation, every frame while it plays and then through
-/// BattleAnim_RunImpactBurst. Places the objects through
+/// BattleAnim_RunImpactBurst. Places the sprites through
 /// Actor_ApplyProjectedPlacementFar and changes nothing else.
 ///
 /// formation: the summon's layout (enum SummonFormation); any other value
@@ -247,7 +247,7 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
-/// animation's objects in formation for the first 36 frames.
+/// animation's sprites in formation for the first 36 frames.
 ///
 /// The close of four summons: Thor, Nereid, Cybele and Tiamat's
 /// BattleAnim_RunPaletteParticles call it once their own frames are over,

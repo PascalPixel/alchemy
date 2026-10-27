@@ -2,7 +2,7 @@
 #define ALCHEMY_ACTOR_CONTROLLERS_H
 
 /// @file
-/// The object dispatcher's scripts: key checks, the player, the world map and
+/// The actor dispatcher's scripts: key checks, the player, the world map and
 /// the camera.
 
 #include "unit/field/field.h"

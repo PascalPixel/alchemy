@@ -84,8 +84,8 @@ const s32 gCamera_FixedViewMatrix[12] = {
     0, 0, 0,
 };
 
-/// One period of a triangle wave, which bobs a floating object up and down.
-/// Actor_UpdateAllThumb reads it at half the object's phase, scaled by its
+/// One period of a triangle wave, which bobs a floating actor up and down.
+/// Actor_UpdateAllThumb reads it at half the actor's phase, scaled by its
 /// gravity.
 const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
@@ -94,8 +94,8 @@ const s32 gActorScript_CycleTable[32] = {
     -7, -6, -5, -4, -3, -2, -1, 0,
 };
 
-/// The idle script an object returns to when its own one ends: a lone SC_END,
-/// which reloads it. ActorScript_End (SC_END) points an object here.
+/// The idle script an actor returns to when its own one ends: a lone SC_END,
+/// which reloads it. ActorScript_End (SC_END) points an actor here.
 const s32 gActorScript_EndScript[1] = {
     SC_END,
 };
@@ -117,7 +117,7 @@ const u16 gWorldMap_KeyHeadings[16] = {
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30
-/// frames, then release the object. Actor_UpdatePlayerControl starts
+/// frames, then release the actor. Actor_UpdatePlayerControl starts
 /// the first and Actor_MoveOnWorldMap the second (three words in).
 const s32 gWorldMap_FootprintActions[6] = {
     SC_WAIT(120), SC_RELEASE,

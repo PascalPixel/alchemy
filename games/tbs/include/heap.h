@@ -6,9 +6,9 @@
 ///
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
 /// runtime README's "The heap" gives the allocators and
-/// the lifetime rule. Every map change resets both pools and clears every
-/// slot (InitHeap, from the map loop in overworld/sequence_manager.c), so
-/// no block outlives the map, battle or minigame that took it.
+/// the lifetime rule. Every scene change resets both pools and clears every
+/// slot (InitHeap, from the sequence loop in overworld/sequence_manager.c), so
+/// no block outlives the scene, battle or minigame that took it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -47,14 +47,14 @@ STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 /// the same pool.
 enum HeapSlot {
   HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
-  /// The sprite anims (struct SpriteAnim) of the object
+  /// The sprite anims (struct SpriteAnim) of the actor
   /// system's sprites (gSpriteAnims).
   HEAP_SLOT_SPRITE_ANIMS = 3,
-  /// The object system's sprite pool (struct Sprite).
+  /// The actor system's sprite pool (struct Sprite).
   HEAP_SLOT_SPRITES = 4,
-  /// The 64 objects (struct Actor).
+  /// The 64 actors (struct Actor).
   HEAP_SLOT_ACTORS = 5,
-  /// The object system's work (struct ActorSystemWork, gActorSystemWork),
+  /// The actor system's work (struct ActorSystemWork, gActorSystemWork),
   /// taken by ActorSystem_Initialize. The item, Psynergy, Status, Djinn and
   /// debug menus and the world map effect set its suspended field while they
   /// are open, so sprites that are not held are not drawn and free their VRAM.
@@ -65,7 +65,7 @@ enum HeapSlot {
   /// map its perspective view (struct WorldMapView); gMapGridWork.
   HEAP_SLOT_MAP_GRID = 8,
   /// A battle's struct BattleWork (gBattleWork), from Battle_Run to
-  /// the next map change.
+  /// the next scene change.
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
@@ -85,11 +85,11 @@ enum HeapSlot {
   HEAP_SLOT_SELECTION_MENU = 18,
   /// The work of Menu_AllocateSelectionWorkspace, which nothing calls.
   HEAP_SLOT_SELECTION_WORKSPACE = 19,
-  /// The option menu's work (struct OptionMenuWork, gOptionMenuWork).
+  /// The settings menu's work (struct OptionMenuWork, gOptionMenuWork).
   HEAP_SLOT_SETTINGS_MENU = 20,
   /// Mind Read's wave work (struct MindReadWork, gMindReadWork).
   HEAP_SLOT_MIND_READ = 22,
-  /// A field map's struct FieldWork, which maps read as struct FieldWork
+  /// A field scene's struct FieldWork, which scenes read as struct FieldWork
   /// (gFieldWork); SceneManager_Run takes it and frees it on the way out.
   HEAP_SLOT_FIELD = 27,
   /// The palette cycles (struct PaletteCycleWork).
@@ -102,11 +102,11 @@ enum HeapSlot {
   /// allocate.
   HEAP_SLOT_FIELD_BLEND = 30,
   /// The screen transition (struct ScreenTransitionState,
-  /// gScreenTransitionWork): the window edges and dissolve of a map change.
+  /// gScreenTransitionWork): the window edges and dissolve of a scene change.
   HEAP_SLOT_SCREEN_TRANSITION = 31,
-  /// The palette fade (gPaletteFadeWork) that moves the BG and OBJ palettes
+  /// The palette fade (gPaletteFadeWork) that moves the BG and sprite palettes
   /// toward target colours: the struct PaletteFade
-  /// PaletteFade_Initialize allocates on map load, or the title
+  /// PaletteFade_Initialize allocates on scene load, or the title
   /// intro's struct TitlePaletteFade.
   HEAP_SLOT_PALETTE_FADE = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct

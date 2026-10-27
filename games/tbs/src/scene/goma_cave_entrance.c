@@ -28,7 +28,7 @@
 /// the stump where it landed, the pillars on their columns and the map grid
 /// cells that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into
 /// Goma Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out
-/// to the world map.
+/// to the World Map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -104,7 +104,7 @@ enum GomaCaveEntranceActorId {
   ACTOR_IVY
 };
 
-// Private event actions used by the reunion sequence.
+// Private event routines used by the reunion event.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
@@ -517,7 +517,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// The leaping stump's update hook turns its sprite a fixed amount per frame.
+/// The leaping stump's update routine turns its sprite a fixed amount per
+/// frame.
 static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
   struct Actor *actor = updated;
   struct Sprite *state = actor->sprite;

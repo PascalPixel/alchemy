@@ -1,8 +1,8 @@
 /// @file
-/// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
+/// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
 /// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
-/// SceneId_BilibinBarricade. The getters pick each map's tables by
-/// gSaveBlock.sceneId, Bilibin_Initialize sets up the map being entered, and
+/// SceneId_BilibinBarricade. The getters pick each scene's tables by
+/// gSaveBlock.sceneId, Bilibin_Initialize sets up the scene being entered, and
 /// Bilibin_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
@@ -25,11 +25,11 @@
 /// open before the party walks in (Bilibin_OpenDoorAndLeave): six lead into
 /// Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
-/// shown again. The other exits lead to the world map, to the garden of McCoy's
+/// shown again. The other exits lead to the World Map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
 /// (ACTOR_IVY), gone when the party comes back out that way
-/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
-/// Field_UsePsynergy only aims Whirlwind's effect at it and the ivy stays. And
+/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no event, so
+/// Field_UsePsynergy only aims Whirlwind at it and the ivy stays. And
 /// from the cell a statue (ACTOR_VILLAGE_STATUE) stands on, once Move or a
 /// push slides it aside. Bilibin_UpdateVillageStatueCells keeps the cells of
 /// the statue's lane in step and hops the leader clear if it lands on him;
@@ -55,7 +55,7 @@
 /// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
-/// where McCoy's barricade stands, reached from the world map at either end.
+/// where McCoy's barricade stands, reached from the World Map at either end.
 /// Its sign reads `This area is off-limits to all those without a permit. —Lord
 /// McCoy`, and a door there stays locked. A stack of crates
 /// (ACTOR_BARRICADE_CRATES) slides a cell at a time under Move or a push, and
@@ -292,7 +292,7 @@ const struct SceneExitRegion *Bilibin_GetRegions(void) {
   return 0;
 }
 
-/// Returns the packed exits shared by the three maps.
+/// Returns the packed exits shared by the three scenes.
 const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
 /// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
@@ -666,7 +666,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Event_End();
 }
 
-/// Sets up the map being entered, Bilibin, the Bilibin Barricade or the
+/// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
 /// Bilibin Treasury: its actors by story flags, its metatile behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
@@ -749,7 +749,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   if ((statueX >> 20) != 16 || statueRow != 13) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 13);
   }
-  // The statue may have moved onto the leader while this script was running.
+  // The statue may have moved onto the leader while this event was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
       Event_Start();
@@ -935,7 +935,7 @@ static void Bilibin_PushStatueOrCrates(void) {
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
-      // Each map derives its metatile behaviors from this same moved
+      // Each scene derives its metatile behaviors from this same moved
       // actor.
       if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade)
         Bilibin_UpdateCratesCells();
@@ -967,7 +967,7 @@ static void Bilibin_UpdateWadingRipples(void) {
 }
 
 /// Spawns a semi-transparent ripple (SPRITE_RIPPLE's spreading rings) at the
-/// wader, which frees itself after 30 frames.
+/// wader, which releases itself after 30 frames.
 static void Bilibin_SpawnRipple(struct Actor *actor) {
   struct Actor *effect;
   struct Sprite *sprite;
@@ -1016,7 +1016,7 @@ s32 gBilibin_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Unused: the entrances for a map other than the three, which never
+/// Unused: the entrances for a scene other than the three, which never
 /// loads this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
 /// entrances.
 u16 gBilibinEntrancesOther[] = {

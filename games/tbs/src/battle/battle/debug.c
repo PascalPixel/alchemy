@@ -32,13 +32,13 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 /// it.
 #define DEBUG_PRESET_LAST_ROW 332
 
-/// Debug: replaces the party with the members of preset number preset.
-/// Each member is raised to the row's level, given the row's Djinn (Set, in
-/// order of their numbers across the party), the row's abilities, and an
+/// Debug: replaces the party with the party members of preset number preset.
+/// Each party member is raised to the row's level, given the row's Djinn (Set,
+/// in order of their numbers across the party), the row's abilities, and an
 /// emptied inventory holding the row's items, each equipped. Called by
 /// DebugBattle_RunMenu and, through its far stub, by the Battle Arena's
 /// BattleArena_ChooseDebugPartyPreset. Changes the active party and each
-/// member's level, Djinn, abilities and inventory.
+/// party member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that preset, 0 otherwise.
 s32 DebugParty_LoadPreset(s32 preset) {
   // The next Djinni number of each element to hand out.
@@ -52,7 +52,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   s32 i;
 
   notFound = 0;
-  // Empty the active party; the preset's rows add its members back.
+  // Empty the active party; the preset's rows add its party members back.
   Party_RemoveMemberFar(ISAAC);
   Party_RemoveMemberFar(GARET);
   Party_RemoveMemberFar(IVAN);
@@ -100,7 +100,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
         Unit_LearnPsynergyFar(unitId, gDebug_PartyPresets[row].abilities[i]);
     }
 
-    // Djinn are numbered across the party, so no two members get the same.
+    // Djinn are numbered across the party, so no two party members get the
+    // same.
     for (i = 0; i < ELEMENT_COUNT; i++) {
       for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
            djinnIndex++) {

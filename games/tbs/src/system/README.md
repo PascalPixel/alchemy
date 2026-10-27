@@ -97,7 +97,7 @@ is packed on the cartridge as an overlay and unpacked, when the party
 arrives, into the 32 KB overlay area, over the scene before. Every overlay is
 built to run at that one address, so only one is ever loaded and an overlay
 never calls another; code several scenes need is copied into each. There are
-96 overlays: several scenes can share one, and the title screen and a few
+96 overlays: several scenes can share one, and the Title and a few
 screens that are mostly menus are overlays too.
 
 An overlay meets the rest of the game at two tables:
@@ -135,7 +135,7 @@ after it.
 Code names a resource by a symbol, which follows a moved row, but in a few
 places the numbers travel bare, without a symbol: the scene table names each
 scene's code by number, and some code counts on from one resource to the next
-(the maps, and the frames of the option menu's marker). The directory ends
+(the maps, and the frames of the settings menu's marker). The directory ends
 with 25 spare rows, where a row fits without renumbering any other.
 
 The directory is `Resource_DirectoryTable` in `resource/directory.s`, read by

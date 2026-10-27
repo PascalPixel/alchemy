@@ -1,10 +1,10 @@
 /// @file
 /// Suhalla Gate and Gateway Cave, the pass Babi's soldiers guard on the way
-/// from the Suhalla Desert to Babi Lighthouse. Three maps share this overlay,
+/// from the Suhalla Desert to Babi Lighthouse. Three scenes share this overlay,
 /// in the order the pass is crossed:
 ///
 /// - SuhallaGateCheckpoint (SceneId_SuhallaGateCheckpoint, area name Suhalla
-///   Gate): the gate itself, entered from the world map from the south and from
+///   Gate): the gate itself, entered from the World Map from the south and from
 ///   the east, each into its own part of the map, with the house beside it
 ///   (Gate to Suhalla, rock_rooms.c). Two soldiers keep the passage north.
 /// - SuhallaGateDew (SceneId_SuhallaGateDew, area name Suhalla Gate): beyond
@@ -12,11 +12,11 @@
 ///   passage, in a west part and an east part, with Dew, a Mercury Djinni, and
 ///   a chest.
 /// - Gateway Cave (SceneId_GatewayCave, area name Gateway Cave): two caves out
-///   onto the world map, with a Psynergy Stone.
+///   onto the World Map, with a Psynergy Stone.
 ///
-/// One exit table serves the three maps; the other getters choose by
+/// One exit table serves the three scenes; the other getters choose by
 /// gSaveBlock.sceneId, and SuhallaGateCheckpoint's actor templates also
-/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any map not
+/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any scene not
 /// otherwise named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
@@ -33,7 +33,7 @@
 /// Scene_Initialize remembers which side of the gate the party came in by
 /// (FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH, FLAG_SUHALLA_GATE_ENTERED_FROM_EAST),
 /// so that Retreat from the house leads back out that way, and leaving for the
-/// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
+/// World Map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
 /// soldiers out without collision and patch the gate's cells around them, and
 /// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's Psynergy
 /// Stone is kept in an area flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
@@ -103,7 +103,7 @@ enum SuhallaGateCheckpointActorId {
   ACTOR_IODEM
 };
 
-/// The actors of the second map (SuhallaGateDew), numbered in the order
+/// The actors of the second scene (SuhallaGateDew), numbered in the order
 /// of gSuhallaGateDewActorTemplates.
 enum SuhallaGateDewActorId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
@@ -120,7 +120,7 @@ enum SuhallaGateDewActorId {
 /// grown (spr_238's frames 3 and 6).
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
-/// Suhalla Gate's second map (SceneId_SuhallaGateDew): talking to Dew, a
+/// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
 static void SuhallaGate_FightDew(void) {
   Field_RequestDjinnBattle(ACTOR_DEW, DJINNI_DEW);
@@ -143,7 +143,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
-/// beside the vanishing soldier and Iodem; Dew and the second map's sprouts.
+/// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -159,9 +159,9 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gSuhallaGateActorTemplatesOther;
 }
 
-/// The events of Suhalla Gate's second map (SceneId_SuhallaGateDew), of
+/// The events of Suhalla Gate's second scene (SceneId_SuhallaGateDew), of
 /// Gateway Cave (SceneId_GatewayCave), or of the gate itself
-/// (SceneId_SuhallaGateCheckpoint) for any other map.
+/// (SceneId_SuhallaGateCheckpoint) for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -174,14 +174,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaGateTriggersOther;
 }
 
-/// Sets up whichever of the pass's maps is entered. Once Iodem has
+/// Sets up whichever of the pass's scenes is entered. Once Iodem has
 /// questioned the guards, a defeat returns the party to the house beside the
 /// gate. In Suhalla Gate (SceneId_SuhallaGateCheckpoint) the vanished soldier
 /// stays hidden, the side the party came in by is remembered for Retreat, and
 /// arriving from the south before Babi's audience changes cells by the passage;
 /// the Spanish, French and Italian editions also change cells around the
-/// wounded guards. In the second map (SceneId_SuhallaGateDew) the five sprouts
-/// take their frames and one cell changes; its stretch of actor 15 does
+/// wounded guards. In the second scene (SceneId_SuhallaGateDew) the five
+/// sprouts take their frames and one cell changes; its stretch of actor 15 does
 /// nothing, as the comment at it says.
 s32 Scene_Initialize(void) {
   s32 sceneId;
@@ -232,9 +232,9 @@ s32 Scene_Initialize(void) {
     Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
     Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4,
                              SPROUT_ANIMATION_HALF_GROWN);
-    // UB: the map places only actors up to ACTOR_DEW, so there is no
+    // UB: the scene places only actors up to ACTOR_DEW, so there is no
     // actor 15 and Actor_GetById returns NULL (watched in tbs-en
-    // as the map loads from each of its entrances); the store goes to
+    // as the scene loads from each of its entrances); the store goes to
     // the BIOS, which ignores it.
 #ifndef UBFIX
     Actor_GetById(15)->scaleY = 8 * Q16_ONE / 5;
@@ -263,7 +263,7 @@ static void SuhallaGate_EnterHouse(void) {
   Import_EventSetExitRequest(exitTrigger);
 }
 
-/// The party leaves the checkpoint for the world map. In SuhallaGateCheckpoint
+/// The party leaves the checkpoint for the World Map. In SuhallaGateCheckpoint
 /// it leaves by the south way out (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH)
 /// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
 /// side it came in by.

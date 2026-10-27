@@ -75,7 +75,7 @@
 //   (BattleAnim_ArmWin0HBlankDma, BattleAnim_ArmBg2AffineHBlankDma and
 //   BattleAnim_ArmPaletteHBlankDma), and the tables those transfers read.
 //
-// The callbacks read the current animation's work block, so the runner that
+// The tasks read the current animation's work block, so the runner that
 // adds them must remove them before that block is released.
 
 /// The battle screen's display mode while an animation plays: background mode 1
@@ -186,7 +186,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
    Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
 /// Ends a frame of a canvas animation: marks the canvas ready for the transfer
-/// callback, then waits for the next frame. Nearly every animation loop ends
+/// task, then waits for the next frame. Nearly every animation loop ends
 /// so.
 #define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
 
@@ -199,7 +199,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define ANIM_RELEASE_BLITTERS()                                                \
   (FreeHeapSlot(HEAP_SLOT_RAM_CODE_2), FreeHeapSlot(HEAP_SLOT_RAM_CODE))
 
-/// The usual end of a canvas animation: stops the transfer callback before
+/// The usual end of a canvas animation: stops the transfer task before
 /// freeing what it reads, then the blitters, then the canvas layer.
 #define ANIM_FINISH_CANVAS()                                                   \
   (Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer),                     \
@@ -325,7 +325,7 @@ enum CanvasWipeFill {
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// The summons' object formations (BattleAnim_PlaceFormationObjects and
+/// The summons' sprite formations (BattleAnim_PlaceFormationObjects and
 /// BattleAnim_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
   /// ★ Named from the game: "Thor" (MsgDjinnName)

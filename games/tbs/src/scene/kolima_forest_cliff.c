@@ -1,6 +1,6 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
-/// maps, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
+/// scenes, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
 /// Of its three logs, rolled by walking into them, the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
 /// to the far side, and from the bank the leader can hop east (step trigger 11,
@@ -10,8 +10,8 @@
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER: the log is in the river, until the
 /// party next comes in.
 ///
-/// The map's name, Cliff, is ours, for what sets the map apart: a rock cliff
-/// runs across its north side above the river and the logs
+/// The scene's name, Cliff, is ours, for what sets the scene apart: a rock
+/// cliff runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
 #include "speaker.h"
@@ -42,7 +42,7 @@
 #include "scene_tables.h"
 #include "songs.h"
 
-/// The map's actors, numbering the rows of
+/// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorTemplates.
 enum {
   /// The three logs; the third is the one that can reach the river.

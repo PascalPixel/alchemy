@@ -23,10 +23,10 @@
 /// (FLAG_REWARD_OFFERED), where McCoyPalace_PresentRewardChests shows four
 /// chests: a search of one gives its Vial, Potion, Psy Crystal or Water of Life
 /// (McCoyPalace_ClaimReward), and the others are then locked. The chest taken
-/// from is kept only in map temp flags (FLAG_TOOK_VIAL and the others), so once
-/// the party has left the palace all four search as locked. Leaving without
-/// a reward (step trigger 51), the captain walks the leader back; with it (
-/// step trigger 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
+/// from is kept only in scene temp flags (FLAG_TOOK_VIAL and the others), so
+/// once the party has left the palace all four search as locked. Leaving
+/// without a reward (step trigger 51), the captain walks the leader back; with
+/// it ( step trigger 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
 ///
 /// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
@@ -150,8 +150,9 @@ enum {
   CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
-/// The palace's temporary flags: the map temp flags last until the party leaves
-/// the palace's map, the area temp flags until it leaves McCoy's Palace.
+/// The palace's temporary flags: the scene temp flags last until the party
+/// leaves the palace's scene, the area temp flags until it leaves McCoy's
+/// Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
   /// ★ Named from its area name: McCoy's Palace
@@ -198,7 +199,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void);
 static void McCoyPalace_McCoyRewardsParty(void);
 static void McCoyPalace_PresentRewardChests(void);
 
-// The shared facing callback precedes the map's entry points.
+// The shared facing routine precedes the scene's entry points.
 #include "common/actor_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -1681,7 +1682,7 @@ u32 gMcCoyPalaceExits[] = {
     SCENE_EXITS_END,
 };
 
-/// Unused: the getters return it for any map but SceneId_McCoyPalace, and the
+/// Unused: the getters return it for any scene but SceneId_McCoyPalace, and the
 /// overlay serves no other.
 struct ActorTemplate gMcCoyPalaceNoActorTemplates[] = {
     {SCENE_TABLE_END},

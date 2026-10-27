@@ -1,10 +1,10 @@
 /// @file
-/// Vale Cave's overlay, which holds three rooms, each a map of its own: the way
-/// in, which the game still calls Vale, and two rooms of Vale Cave proper.
+/// Vale Cave's overlay, which holds three rooms, each a scene of its own: the
+/// way in, which the game still calls Vale, and two rooms of Vale Cave proper.
 /// Kite, a Jupiter Djinni, hides in the second. No story flag is read here and
 /// no message is shown: the cave is a side trip from the part of Vale around
-/// Kraden's cottage, a run of Psynergy puzzles whose progress lives in map and
-/// area flags.
+/// Kraden's cottage, a run of Psynergy puzzles whose progress lives in scene
+/// and area flags.
 ///
 /// - Vale (SceneId_ValeCaveMouth), the way in, an area of its own (29).
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
@@ -174,8 +174,8 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 /// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
-// The cave's map flags: each room reuses them for its own puzzle, so the second
-// room's two have one name in the holes' part and another in Kite's.
+// The cave's scene flags: each room reuses them for its own puzzle, so the
+// second room's two have one name in the holes' part and another in Kite's.
 /// The holes' part: the western crates have sunk into their hole.
 /// ★ Named from what the player sees: stacks of wooden crates at the edge of
 /// the cave's water (its render)
@@ -258,9 +258,9 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
 
 /// Turns Kite to face the party leader each frame.
 ///
-/// Kite's update hook once it has run behind the ledge, set by
+/// Kite's update routine once it has run behind the ledge, set by
 /// ValeCave_KiteRunsBehindLedge and again by ValeCave_ApplyEntryState.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void ValeCave_FaceActorTowardLeader(struct Actor *updated) {
@@ -554,7 +554,7 @@ static void ValeCave_KiteRunsOff(void) {
 /// Reached by stepping on metatile behavior 41 in the second room until Kite is
 /// caught, once ValeCave_KiteRunsOff has run. Sets
 /// FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE,
-/// and gives Kite the update hook ValeCave_FaceActorTowardLeader.
+/// and gives Kite the update routine ValeCave_FaceActorTowardLeader.
 static void ValeCave_KiteRunsBehindLedge(void) {
 
   struct Actor *djinni;
@@ -790,7 +790,7 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// Arriving in any of the three rooms: chooses the entry transition and
 /// restores the room's puzzle state.
 ///
-/// The map's initialize entry. The first room, Vale, fades in from the
+/// The scene's initialize entry. The first room, Vale, fades in from the
 /// backdrop and clears FLAG_SHOW_AREA_NAME, so the area name is not shown
 /// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
@@ -903,9 +903,9 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
-      // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
+      // A still actor of sprite 223 (spr_223.png, a wooden crate) that shows
       // nothing. XXX (no evidence): what it and the chest below were meant to
-      // show; the sprites alone hold neither, and neither object is solid or a
+      // show; the sprites alone hold neither, and neither actor is solid or a
       // target.
       Actor_CreateConfigured(PIXELS(120), 0, PIXELS(232), SPRITE_CRATE);
       break;
@@ -933,7 +933,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:
     case VALE_CAVE_KITE_SOUTH_FROM_EAST:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
-      // The holes' part: a still chest object that shows nothing, the riding
+      // The holes' part: a still chest actor that shows nothing, the riding
       // log's passage, and the holes already filled.
       Actor_CreateConfigured(PIXELS(642), 0, PIXELS(552), SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
@@ -994,9 +994,9 @@ static void ValeCave_TouchRidingLog(void) {
 
 // The lifetimes FieldEffect_Spawn gives its effects through
 // gFieldEffect_DurationScripts: an effect waits 23, 45 or 127 frames, then is
-// put away and freed. FieldEffect_Spawn divides a change of scale by the loop
-// count in each one's fourth word, so that the effect reaches its scale as its
-// time runs out.
+// put away and released. FieldEffect_Spawn divides a change of scale by the
+// loop count in each one's fourth word, so that the effect reaches its scale as
+// its time runs out.
 
 s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),

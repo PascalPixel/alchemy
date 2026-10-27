@@ -1,16 +1,16 @@
 /// @file
 /// Tree rooms (SceneId_TreeRooms), a sheet of rooms drawn inside a tree: the
 /// inside of Tret, the holy tree of Kolima Forest, and the first of Tret Tree's
-/// two maps. The party comes in from Kolima Forest (kolima_forest_tree.c) to
+/// two scenes. The party comes in from Kolima Forest (kolima_forest_tree.c) to
 /// face Tret's wrathful side. FLAG_TRET_DEFEATED, whether that battle is won
-/// and Tret has spoken with the party since, decides most of the map.
+/// and Tret has spoken with the party since, decides most of the scene.
 ///
 /// The map is six rooms, the six camera boxes of its entrance table.
 /// The party comes in from Kolima Forest (SceneId_KolimaForestTree) at
 /// TREE_ROOMS_FROM_KOLIMA_FOREST_TREE and leaves by
 /// TREE_ROOMS_TO_KOLIMA_FOREST_TREE; eight exits, from
 /// TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
-/// lead out to Tret Tree's other map (SceneId_TretTreeBranch), and six more,
+/// lead out to Tret Tree's other scene (SceneId_TretTreeBranch), and six more,
 /// TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR to
 /// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room, three of them
 /// through regions 28 to 36 pixels up (Scene_GetExitRegions).
@@ -25,7 +25,7 @@
 /// drop the leader into one room and 50 to 59 into another of the map's six
 /// rooms. The layout draws four cocoons already
 /// torn (22, 52, 54 and 58) and the setup sets their flags, so they give way at
-/// the first step. A latch in the map state (sLastCocoon) keeps a step from
+/// the first step. A latch in the scene state (sLastCocoon) keeps a step from
 /// counting twice until the leader walks on. Cocoon 50 is the way down to Tret:
 /// entrances 50, 40, 30 and 20 each let the leader fall on to the
 /// entrance numbered ten lower, and at entrance 10 the leader lands
@@ -107,13 +107,13 @@ enum {
   ACTOR_SECOND_TRET
 };
 
-/// The speaker of a message; every speaker on this map has
+/// The speaker of a message; every speaker in this scene has
 /// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
-// The map's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the
-// others are set the first time each cocoon is stepped on, tearing it; the next
-// step breaks through (gTreeRooms_MapPatches lists them).
+// The scene's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and
+// the others are set the first time each cocoon is stepped on, tearing it; the
+// next step breaks through (gTreeRooms_MapPatches lists them).
 
 #define COCOON_FALL_SPIN_FRAMES 30
 #define SWIRL_SPARK_LAST_FRAME 79
@@ -267,7 +267,7 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_14
 
-/// Returns the map's entrances, the cocoons' landing spots among them.
+/// Returns the scene's entrances, the cocoons' landing spots among them.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTreeRoomsEntrances;
 }
@@ -814,7 +814,7 @@ s32 TreeRooms_EnterRoom(void) {
   s32 leaderActorId;
 
   tret = Actor_GetById(ACTOR_TRET);
-  // Point the cocoon latch at the map state and save the palette first.
+  // Point the cocoon latch at the scene state and save the palette first.
   sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
@@ -1137,7 +1137,7 @@ static void TreeRooms_ApplyFlaggedMapPatches(void) {
 }
 
 /// Casting Reveal in Tret Tree (PSYNERGY_PHASE_ACTS) stops the map
-/// tint until the map is entered again.
+/// tint until the scene is entered again.
 static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }

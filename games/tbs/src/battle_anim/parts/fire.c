@@ -18,10 +18,10 @@
 ///
 /// Adds BattleCamera_ApplyPhasedDelta as a task for the swing and drives it
 /// through work->cameraDelta and work->cameraPhase; sets work->shakeFrames on
-/// each hit and writes REG_BLDALPHA. Ends with both callbacks removed, the
+/// each hit and writes REG_BLDALPHA. Ends with both tasks removed, the
 /// blitters freed and the canvas layer closed.
 ///
-/// effect: the targets; variant picks the number of embers
+/// args: the targets; variant picks the number of embers
 ///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
 void BattleAnim_RunFire(struct BattleAnimArgs *args) {
   void **slots;

@@ -267,11 +267,11 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// Halt on a pursuer in CrossboneIsleStatues: nothing beyond the
-/// Psynergy's own effect, which keeps it from stepping out.
+/// field Psynergy itself, which keeps it from stepping out.
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
 // Turn the Djinni toward the party leader each frame.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
@@ -490,7 +490,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 ///
 /// Both rows that name it follow a plain step trigger row for the same door
 /// (CrossboneIsleKeys_OpenThirdBlueDoor, CrossboneIsleKeys_OpenFourthBlueDoor),
-/// which Scene_FindTrigger always finds first; those scripts jump forward
+/// which Scene_FindTrigger always finds first; those events jump forward
 /// themselves after a dozen steps pressed south against the door, so the player
 /// sees the same thing.
 static void CrossboneIsleKeys_UnusedJumpPastBlueDoor(void) {
@@ -1229,7 +1229,7 @@ static void CrossboneIsleKeys_MoveFifthPillar(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
-/// Unused: a callback that moves the fifth pillar and refreshes its terrain;
+/// Unused: a task that moves the fifth pillar and refreshes its terrain;
 /// nothing calls it.
 UNUSED static void CrossboneIsleKeys_PushFifthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
@@ -1303,7 +1303,7 @@ s32 Scene_Initialize(void) {
 /// CrossboneIsleKeys they would have shown their item icons one after another,
 /// every 16 frames.
 ///
-/// Nothing adds it as a callback, so the keys never flash.
+/// Nothing adds it as a task, so the keys never flash.
 UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   if (++gCrossboneIsleKeys_IconTimer > 16) {
     gCrossboneIsleKeys_IconTimer = 0;

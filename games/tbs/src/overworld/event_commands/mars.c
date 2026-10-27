@@ -133,7 +133,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Spins and shrinks an object by 0x400 a frame, then releases it: 53 frames
+/// Spins and shrinks an actor by 0x400 a frame, then releases it: 53 frames
 /// from full size.
 DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, 0xFFFFFC00)
 

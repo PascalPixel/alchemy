@@ -9,7 +9,7 @@ boxes, unpacks the game's stored text, types it out over several
 letters, icons, portraits and the page arrow.
 
 It also builds the screens made directly from windows: the field menu's row of
-icons, the pause menu and its option menu, the file menu that saves the game,
+icons, the Pause menu and its settings menu, the file list that saves the game,
 the name entry screen, the [party](../../glossary.md#the-party) status window, the
 battle menus and the debug menus.
 [Menus, windows and shops](../../menus.md#windows) gives the whole layer in
@@ -71,7 +71,7 @@ window sizes itself to its text, and moves so that it stays on screen.
 
 The cartridge stores the game's text squeezed, so a message is unpacked whole
 before it is typed. A message can hold blanks, such as the 21 coins above or a
-member's or an item's name, and they are filled in as it is unpacked, with
+party member's or an item's name, and they are filled in as it is unpacked, with
 "a" or "an" and the other small words each language puts in front of a name.
 All the slow work happens here, once, so typing it afterwards costs almost
 nothing a frame.
@@ -134,7 +134,7 @@ codes, whose meanings are listed with them in `window_internal.h` (`TEXT_`).
 
 ![Garet's sister's line typed twice from the same moment: first at the slow message speed, a letter at a time with a pause after each, then at the fast speed, where it comes about a word at a time.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
 
-The player chooses the message speed in the option menu. At the slow speed one
+The player chooses the message speed in the settings menu. At the slow speed one
 letter comes a frame with a pause of 4 frames after it, which holding a button
 skips; at the normal speed one a frame; at the fast speed up to ten, though a
 space ends the frame's share, so the text comes about a word at a time. In
@@ -190,14 +190,14 @@ time is up.
 | --- | --- | --- |
 | `AREA_NAME_WINDOW_FRAMES` | 90 | frames the area's name shows |
 
-## The pause menu
+## The Pause menu
 
 ![Isaac presses Start in Vale: a window titled Pause offers `Save your quest`, `Sleep` and `Change settings`, each with an icon that lights up as the hand moves down to it, and B closes it.](https://alchemy.pascalpixel.com/guides/window/pause-menu.gif)
 
-Start on the field opens the pause menu: Save your quest, Sleep and Change
+Start on the field opens the Pause menu: Save your quest, Sleep and Change
 settings. Sleep says to press L and R to resume and then stops the console
-until they are pressed. Backing out of the file choice or the option menu
-brings the pause menu back. In debug mode three more entries follow.
+until they are pressed. Backing out of the file choice or the settings menu
+brings the Pause menu back. In debug mode three more entries follow.
 
 The field calls `PauseMenu_Run` (`window/screens/debug.c`), which runs the
 choice: `Save_ToChosenFile`, the sleep message or `SettingsMenu_Run`.
@@ -222,9 +222,9 @@ use.
 | `SAVE_FILE_COUNT` | 3 | save files |
 | `SAVE_RECORD_BYTES` | 4 KB | one of a file's two halves |
 
-### The option menu
+### The settings menu
 
-![Isaac opens Change settings from the pause menu: the hand turns the window colour slider, and every window turns from blue to green; it lowers the brightness, the windows darken; B drops the changes, the windows are blue again and the pause menu returns.](https://alchemy.pascalpixel.com/guides/window/options.gif)
+![Isaac opens Change settings from the Pause menu: the hand turns the window colour slider, and every window turns from blue to green; it lowers the brightness, the windows darken; B drops the changes, the windows are blue again and the Pause menu returns.](https://alchemy.pascalpixel.com/guides/window/options.gif)
 
 Change settings sets the windows' colour and brightness, the message speed,
 whether people speak with voice blips, and auto-sleep. The windows change
@@ -244,7 +244,7 @@ A new game opens on the name entry screen with the leader's name already in it.
 The player moves the hand over a keyboard: A puts a letter on, B or Del takes
 the last one off, and End (or Start, which jumps there) keeps the name. A
 name has at most five letters, and an empty one keeps the old name. Two hidden
-button codes on the main menu add more names to enter: the first Garet, Ivan
+button codes on the File Screen add more names to enter: the first Garet, Ivan
 and Mia, the second Felix, Jenna and Sheba as well.
 
 `NameEntry_EditMemberName` (`window/screens/name_entry.c`) runs it; the main
@@ -297,7 +297,7 @@ so renaming one changes other folders too.
 - **text printer**: a `struct TextPrinter`, which types unpacked text into one
   window and runs its control codes (`TEXT_`).
 - **window sprite**: a `struct WindowSprite`, one sprite a window carries.
-- **file menu**: the list of the three save files (`FileList_SelectFile`).
+- **file list**: the list of the three save files (`FileList_SelectFile`).
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
 
 ## Evidence

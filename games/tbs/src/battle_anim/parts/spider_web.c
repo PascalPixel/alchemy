@@ -38,7 +38,7 @@ void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *args) {
 /// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
 /// its lime colours over the first 64 of the background palette, and the battle
 /// shows its damage at once as the target recoils; in Spinning Beat the
-/// target flashes, its object is thrown up on frame 13 and the battle shows
+/// target flashes, its actor is thrown up on frame 13 and the battle shows
 /// the damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).

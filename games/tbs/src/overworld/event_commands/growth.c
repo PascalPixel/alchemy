@@ -5,10 +5,10 @@
 #include "../event_commands_internal.h"
 
 #define GROWTH_PARTICLE_MAX 24 ///< particles round the target
-#define GROWTH_FALL_OBJECT 217 ///< falling object
-#define GROWTH_FALL_LAST 4     ///< five falling objects, 0 to 4
+#define GROWTH_FALL_OBJECT 217 ///< the falling actors' sprite
+#define GROWTH_FALL_LAST 4     ///< five falling actors, 0 to 4
 
-/// A point Growth works out round the effect's position.
+/// A point Growth works out round the Psynergy's position.
 struct BurstParticleVector {
   s32 values[3]; ///< x, y, z
 };
@@ -53,7 +53,7 @@ struct BurstParticleVisualGroup {
 ///
 /// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
-/// (ACTOR_PRIORITY_UNDERFOOT); the effect leaves it so.
+/// (ACTOR_PRIORITY_UNDERFOOT); the Psynergy leaves it so.
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct Actor *target;
 
@@ -72,12 +72,12 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 }
 
 /// When Growth is cast with no target, particles fly out from in front of the
-/// caster, and then five falling objects appear 4 to 10 pixels round the
-/// effect's position.
+/// caster, and then five falling actors appear 4 to 10 pixels round the
+/// Psynergy's position.
 ///
 /// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
-/// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
+/// The actors (sprite 217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleActorScript).
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -112,9 +112,9 @@ void FieldPsynergy_Growth(void) {
 }
 
 /// Sends 24 particles, one every 2 frames, from in front of the caster to
-/// points round the effect's position. They start 10 pixels up facing south,
+/// points round the Psynergy's position. They start 10 pixels up facing south,
 /// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise. Each
-/// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
+/// flies at 1.5 pixels a frame and is released on arrival; facing north, the
 /// points are 14 pixels further north.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *effectWork;
@@ -148,7 +148,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
     // The shadow part takes the image's colour mode, shape, size, tile and
     // palette, so the shadow (turned on by SPRITE_FLAG_SHADOW below) is drawn
     // with the particle's picture. BUG: the copy comes before the NULL test, so
-    // a failed spawn (a full object table) is read through.
+    // a failed spawn (a full gActors) is read through.
     particle = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
@@ -169,7 +169,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript + 1);
       Actor_SetSpriteFlagsFar(particle, 1);
 
-      // Destination: 4 to 10 pixels from the effect's position.
+      // Destination: 4 to 10 pixels from the Psynergy's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
       if (effectWork->angle == 0xc000)
         Vector_AddPolarOffset(0xe0000, effectWork->angle, pos);

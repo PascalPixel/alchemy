@@ -25,10 +25,10 @@ enum {
 /// z); after the burst the first 32 also hold the smoke puffs, in their
 /// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
 /// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on ANIM_SIDE_PARTY,
-/// REG_BG2X; ends with the blitters freed, the transfer callback removed and
+/// REG_BG2X; ends with the blitters freed, the transfer task removed and
 /// the canvas layer closed.
 ///
-/// effect: the targets; variant picks the number of motes and columns and
+/// args: the targets; variant picks the number of motes and columns and
 ///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.

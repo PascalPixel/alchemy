@@ -15,10 +15,10 @@
 /// Five doors, whose metatile behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
 /// into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor) and lead into
-/// the village's buildings. Three ways lead out onto the world map, and the
+/// the village's buildings. Three ways lead out onto the World Map, and the
 /// desert's sandstorms drop a caught party at WORLD_MAP_FROM_SUHALLA. A chest
 /// and two jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a
-/// sprout and changes its cell. Its map flag:
+/// sprout and changes its cell. Its scene flag:
 ///
 /// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout; a return that
 ///   keeps the party's position, as after a battle, draws it grown again.

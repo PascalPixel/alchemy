@@ -99,9 +99,9 @@ void Shop_ReleaseWork(void) {
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
 /// until the player leaves. `stockRow` picks the row of sStockTable
-/// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the object
+/// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the actor
 /// whose portrait the messages show. Seeds the row's artifacts on the first
-/// visit and holds the work block while it runs. Called by the town maps'
+/// visit and holds the work block while it runs. Called by the town scenes'
 /// shopkeepers through SHOP.S, and by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopWork *shop;
@@ -111,7 +111,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 
   if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
     stockRow = SHOP_STOCK_ROW_EMPTY;
-  // Seed this location's artifact stock before creating the shop UI.
+  // Seed this place's artifact stock before creating the shop UI.
   ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
   shop = gMenuWork;
@@ -181,7 +181,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 #endif
 
 /// Opens the debug shop with 200000 coins, the ticket counter at its cap,
-/// broken equipment for repairs and poisoned or haunted members for the
+/// broken equipment for repairs and poisoned or haunted party members for the
 /// sanctum. Called by DebugMenu_RunPresetShop.
 s32 Shop_OpenDebugShop(s32 unused) {
   gSaveBlock.coins = 200000;
@@ -200,7 +200,7 @@ s32 Shop_OpenDebugShop(s32 unused) {
 }
 
 /// Waits one frame at a time until the sound driver has finished the last
-/// command. Called by the inn's sleep, the sanctum and two scripts that wait
+/// command. Called by the inn's sleep, the sanctum and two events that wait
 /// for a fanfare.
 void Sound_WaitForFanfare(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {

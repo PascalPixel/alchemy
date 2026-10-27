@@ -2,7 +2,7 @@
 #define ALCHEMY_ACTOR_ARM_VIEW_H
 
 /// @file
-/// The words of an object's script as the motion loops index them, and
+/// The words of an actor's script as the motion loops index them, and
 /// ActorArmView, struct Actor as update.c reads it.
 
 #include "types.h"
@@ -16,7 +16,7 @@ struct Actor;
 #ifdef UBFIX
 typedef s32 ActorScriptWords;
 #else
-/// The words of an object's script, as its script pointer reads them.
+/// The words of an actor's script, as its script pointer reads them.
 struct ActorScriptWords {
   s32 word[1];
 };
@@ -25,10 +25,10 @@ typedef struct ActorScriptWords ActorScriptWords;
 
 /// struct Actor, field for field, as Actor_UpdateAll (update.c) reads it.
 /// update.c is ARM code built with GCC 2.95.2, which cannot read struct
-/// Object's anonymous unions, so it keeps this copy of the layout with the
+/// Actor's anonymous unions, so it keeps this copy of the layout with the
 /// script as words and the bounce as a union (MATCHING.md).
 struct ActorArmView {
-  const ActorScriptWords *script; ///< null when the object is free
+  const ActorScriptWords *script; ///< null when its slot is released
   u16 scriptCursor;               ///< in words; read signed
   u16 facing;                     ///< 1/65536 turns
   s32 x;                          ///< 16.16 fixed-point pixels
@@ -56,11 +56,11 @@ struct ActorArmView {
   union {
     /// The share of the falling speed kept on landing, 16.16 fixed point.
     s32 bounce;
-    /// A floating object's step along gActorScript_CycleTable, low six bits.
+    /// A floating actor's step along gActorScript_CycleTable, low six bits.
     s32 phase;
   } vertical;
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
-  /// pixels per frame; also scales a floating object's bob.
+  /// pixels per frame; also scales a floating actor's bob.
   s32 gravity;
   /// Actor's riseBaseY, sprite and sprite kind; not named here.
   ///@{
@@ -72,22 +72,23 @@ struct ActorArmView {
   /// 0 follows the terrain; zero is free flight in 3D
   u8 motionFlags;
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
-  u8 conditionResult; ///< the object script's last flag test; not named here
+  u8 conditionResult; ///< the actor script's last flag test; not named here
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
-  u8 collisionFlags;  ///< bit 7: a solid object refuses its move
+  u8 collisionFlags;  ///< bit 7: a solid actor refuses its move
   u8 steeringFlags;   ///< bit 0: turns toward its velocity, 1/16 turn a frame
-  u8 paused;          ///< nonzero skips its script and motion, not its hook
-  /// Actor's flag that keeps its sprite's VRAM, and the object script's
+  u8 paused; ///< nonzero skips its script and motion, not its update routine
+  /// Actor's flag that keeps its sprite's VRAM, and the actor script's
   /// SC_LOOP count; not named here.
   ///@{
   u8 retainSpriteCache;
   u8 repeatCount;
   ///@}
   s16 wait;   ///< frames left before its script runs again
-  u8 refused; ///< frames in a row a solid object refused its move
+  u8 refused; ///< frames in a row a solid actor refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// Actor's two bytes map code uses and Object's action
-  /// parameter, footprint side and linked object; not named here.
+  /// Actor's two bytes scene code uses, and its timer
+  /// (the actor script's parameter), footprint side and linked actor; not named
+  /// here.
   ///@{
   u8 riseCounter;
   u8 riseEnabled;

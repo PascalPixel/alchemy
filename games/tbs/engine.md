@@ -17,7 +17,7 @@ hands the finished picture over in the blank.
 
 ![The console switched on: Camelot's logo, then the Golden Sun logo](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
-Between switching on and the title, the game puts memory in order and starts
+Between switching on and the Title, the game puts memory in order and starts
 the services everything else relies on: the code that hands each frame to the
 screen, the sound and the list of [tasks](glossary.md#task). It copies the
 routines that must run fastest into the console's fast memory, waits ten
@@ -114,7 +114,7 @@ and [the driver's ident](src/sound/README.md#the-drivers-ident).
 
 ## Debug rooms
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
 The cartridge keeps three test rooms no player can walk into: one that hands
 out [Djinn](glossary.md#djinn), one for raising levels and browsing items,

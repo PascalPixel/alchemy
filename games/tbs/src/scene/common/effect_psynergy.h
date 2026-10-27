@@ -1,5 +1,5 @@
 /// @file
-/// Vale, its home, storm and Babi maps, Sol Sanctum's eruption and Venus
+/// Vale, its home, storm and Babi scenes, Sol Sanctum's eruption and Venus
 /// Lighthouse's aerie: Psynergy shown in an event. One is the villager's in
 /// Vale: "Behold, the power of Psynergy!"
 #include "types.h"

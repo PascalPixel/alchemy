@@ -8,7 +8,7 @@
 /// of sight and bursts into 24 light particles that circle and close in on the
 /// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Called by
 /// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's
-/// actor slot; the Djinni's object is released here. Uses all 24 field effect
+/// actor slot; the Djinni's actor is released here. Uses all 24 field effect
 /// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
 /// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
@@ -76,7 +76,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Per-frame update: makes an object pulse, switching its scale between the
+/// Per-frame update: makes an actor pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
 void FieldEffect_SetActorAlternatingWords(struct Actor *actor) {
@@ -88,9 +88,9 @@ void FieldEffect_SetActorAlternatingWords(struct Actor *actor) {
   ((struct Actor *)object)->scaleY = scale;
 }
 
-/// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
+/// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
-/// zeroes the frame count first (Object.spinRampFrames), as the Mars Djinni's
+/// zeroes the frame count first (Actor.spinRampFrames), as the Mars Djinni's
 /// joining does.
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   void *obj = (void *)actor;
@@ -104,7 +104,7 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   }
 }
 
-/// Spins and shrinks an object by 0x1c0 a frame, then releases it: 119 frames
+/// Spins and shrinks an actor by 0x1c0 a frame, then releases it: 119 frames
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
 DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, 0xFFFFFE40)
 

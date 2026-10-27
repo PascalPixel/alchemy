@@ -80,7 +80,7 @@ struct ScreenTransitionState {
   /// whether the transition opens or closes, the low 5 bits how far it is.
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point
-  /// (WINDOW_TRANSITION_RIPPLE), set by the Reveal effect.
+  /// (WINDOW_TRANSITION_RIPPLE), set by Reveal.
   s32 centreX;
   s32 centreY; ///< as centreX: the target's z less its y
   /// WINOUT, or WININ by mode: 0x3f3f or 63 when a transition starts.

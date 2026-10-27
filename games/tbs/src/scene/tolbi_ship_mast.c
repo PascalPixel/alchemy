@@ -1,13 +1,13 @@
 /// @file
 /// Tolbi-bound Ship (SceneId_TolbiShipMast), the top of its mast, where the
-/// ship's lookout (ACTOR_LOOKOUT) keeps watch: one of the ship's three maps
+/// ship's lookout (ACTOR_LOOKOUT) keeps watch: one of the ship's three scenes
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
 /// and down again by MB_TOLBI_SHIP_MAST_LADDER and the region of
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The entrances from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// events here, each leading on into the next; during the attacks the
-/// map a defeat returns to (gSaveBlock.restartScene) is set to
+/// restart point (gSaveBlock.restartScene) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -100,7 +100,7 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-/// The map's one actor template row.
+/// The scene's one actor template row.
 enum TolbiShipMastActorId {
   /// The ship's lookout, a man in a blue bandana
   /// (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the captain's
@@ -303,7 +303,7 @@ const struct SceneExitRegion *TolbiShipMast_GetRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
-/// Returns exits to the deck and the continuing ship maps.
+/// Returns exits to the deck and the continuing ship scenes.
 const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
 
 /// Returns the lookout, the only actor placed.
@@ -570,7 +570,8 @@ static inline void TolbiShipMast_InitializeDriftingGroup(void) {
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 6);
 }
 
-/// Stops the birds' drifting actions and gives them their speed to fly off.
+/// Stops the birds' drifting actor scripts and gives them their speed to fly
+/// off.
 static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Actor_Stop(ACTOR_FIRST_BIRD);
   Actor_Stop(ACTOR_FIRST_BIRD + 1);

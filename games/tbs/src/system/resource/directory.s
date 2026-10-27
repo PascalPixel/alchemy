@@ -11,13 +11,13 @@
 @   group KIND, names...   Consecutive named entries KIND_name.
 @   tileset SET, count, maps... Maps, then palette and tiles A onward; count is ABCD or -.
 @   recolor NN, maps...    Maps followed by a palette; reuse the preceding tiles.
-@   overlays ID...         Map overlays in ID order.
+@   overlays ID...         Scene overlays in ID order.
 @   unused N               N unused entries.
 @ A row's number is its place, so a row added or moved renumbers every row
 @ after it. Code naming a resource by its symbol follows, but some numbers
-@ travel bare: the map table (field/scenes.s) names each map's overlay by
+@ travel bare: the scene table (field/scenes.s) names each scene's overlay by
 @ number, objects.tsv numbers each overlay's rows, the layouts are counted on
-@ from ResourceId_Map001 (MapGrid_LoadMap), and the option menu's marker
+@ from ResourceId_Map001 (MapGrid_LoadMap), and the settings menu's marker
 @ steps through eight frames from ResourceId_MenuCursorFrames.
 	.macro group kind:req, names:vararg
 	.irp n, \names

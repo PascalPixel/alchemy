@@ -24,10 +24,10 @@ enum VramCacheLimits {
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 
 /// A sprite slot of the VRAM cache: the size of its block and where the block
-/// starts in OBJ VRAM.
+/// starts in sprite VRAM.
 struct VramCacheEntry {
   u16 size;   ///< bytes
-  u16 offset; ///< bytes from the start of OBJ VRAM
+  u16 offset; ///< bytes from the start of sprite VRAM
 };
 
 STATIC_ASSERT(sizeof(struct VramCacheEntry) == 4);

@@ -2,8 +2,8 @@
 #define ALCHEMY_UNIT_IMPORT_H
 
 /// @file
-/// The main-image headers that declare the routines map overlays import, for
-/// the overlays that call them outside the script layer.
+/// The main-image headers that declare the routines scene overlays import, for
+/// the overlays that call them outside the event layer.
 
 #include "types.h"
 #include "unit/field/field.h"

@@ -30,10 +30,10 @@ extern const u8 gAbilityStaging[];
 /// (gAbilityStaging where it gives one).
 enum BattleStaging {
   STAGING_MESSAGES = 1, ///< no animation: each target's messages only
-  STAGING_ATTACK = 2,   ///< the actor runs up and strikes
+  STAGING_ATTACK = 2,   ///< the acting unit runs up and strikes
   STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
   STAGING_ITEM = 4,     ///< an item
-  STAGING_SUMMON = 5,   ///< the larger summons, the actor hidden
+  STAGING_SUMMON = 5,   ///< the larger summons, the acting unit hidden
   STAGING_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
   STAGING_FLEE = 7,     ///< a unit runs
   /// The action plays as a cast, the caster showing its element's streaks in
@@ -54,7 +54,7 @@ enum BattleStaging {
 #define ANIM_VARIANT_MASK 0x3000
 #define ANIM_VARIANT_SHIFT 12
 #define ANIM_BY_ID_RANGE 0x4000 ///< BattleAnim_RunByIdRangeFar
-#define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonFar, actor's view
+#define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonFar, acting unit's view
 #define ANIM_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
 /// Plays the animation on the side opposite its targets. Unused: no entry of
 /// gAbilityAnimations in either game sets it and no code adds it, so the flip

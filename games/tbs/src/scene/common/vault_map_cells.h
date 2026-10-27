@@ -1,7 +1,7 @@
 /// @file
 /// Vault, before and after the thieves are caught: the doorway to the Sanctum,
 /// which opens in two frames as the leader walks into it facing north. Both
-/// maps number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
+/// scenes number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
 /// so the shared code keeps the number.
 #include "battle.h"
 #include "debug.h"

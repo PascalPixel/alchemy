@@ -13,7 +13,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 }
 
 /// Per-frame update of Move's hand (FieldEffect_StartItemBreak): turns it
-/// toward the object it is linked to, at most 1/16 turn a frame, and sheds a
+/// toward the actor it is linked to, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
 void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
   struct Actor *source = (struct Actor *)actor;
@@ -310,7 +310,7 @@ void FieldPsynergy_Move(void) {
   object = effectWork->mainActor;
 
   /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
-   * mainObject load below the frame's sub sp; as a plain call, 2 of 24
+   * mainActor load below the frame's sub sp; as a plain call, 2 of 24
    * instructions differ in tbs-en. */
   do {
     FieldPsynergy_FadeToCastColor();
@@ -325,7 +325,7 @@ void FieldPsynergy_Move(void) {
   UpdateRisingParticleBurst(object);
 }
 
-/// Spawns Move's hand (object 215) 16 pixels above object, at quarter size,
+/// Spawns Move's hand (sprite 215) 16 pixels above object, at quarter size,
 /// and moves it 16 pixels the way object faces (to the nearest quarter
 /// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
 /// spawned (Actor_Spawn); the caller releases it (UpdateRisingParticleBurst).
@@ -378,10 +378,10 @@ void *FieldEffect_StartItemBreak(void *object) {
   return parent;
 }
 
-/// Sets an object's scale at once to full size (its first step of 1/16 past
+/// Sets an actor's scale at once to full size (its first step of 1/16 past
 /// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
 /// at most 600 frames, for it to arrive at its target. Called by both Move
-/// effects on the hand.
+/// casts on the hand.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
@@ -403,7 +403,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 /// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks
 /// by 1/32 of full size a frame, then bursts into 8 particles and is
 /// released. Not a per-frame update: it waits the frames itself. Called by
-/// the Move effects and Lift.
+/// the Move casts and Lift.
 void UpdateRisingParticleBurst(void *object) {
   struct Actor *src = object;
   struct Actor *child;

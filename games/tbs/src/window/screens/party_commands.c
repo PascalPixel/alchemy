@@ -35,7 +35,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 }
 
 /// Collects the party's commands for a round into `commands`, one
-/// for each of the `commandCount` units in `actors` (a member with two
+/// for each of the `commandCount` units in `actors` (a party member with two
 /// actions is listed twice), and returns how many it wrote: commandCount, 1
 /// when the party flees (COMMAND_FLEE for the first actor), or -1 when the link
 /// fails. Each record gets its command (COMMAND_), parameter (the ability, the
@@ -45,9 +45,9 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 /// action in a row. Attack keeps the parameter, and Defend the parameter and
 /// target, that the command chosen before it left (0 and 256 at first).
 ///
-/// It runs the party's row (Fight, Flee, Status), then each member's row and
-/// the menus its command opens; B in a menu goes back a step, B on a
-/// member's row to the member before, and from the first back to the
+/// It runs the party's row (Fight, Flee, Status), then each party member's row
+/// and the menus its command opens; B in a menu goes back a step, B on a party
+/// member's row to the party member before, and from the first back to the
 /// party's row. In a link battle both consoles first wait for each other
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
@@ -88,7 +88,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   }
 
   // Set up the shared command UI before the optional link handshake: VRAM
-  // for the chosen command's 32x32 icon (1 KB) and the member's portrait,
+  // for the chosen command's 32x32 icon (1 KB) and the party member's portrait,
   // the lists' page numbers (tile 0x300), page arrows (0x334) and range
   // icons (0x314), and no Djinni chosen yet (0x80000000).
   target = 256;
@@ -173,13 +173,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->tutorialStep = 1;
       state->tutorialDelay = 60;
     }
-    // The party's row; with no member to choose, as if Fight were taken.
+    // The party's row; with no party member to choose, as if Fight were taken.
     if (commandCount > 0) {
       mode = BattleCommandRow_Run(COMMAND_ROW_PARTY);
     } else {
       mode = COMMAND_ICON_FIGHT;
     }
-    // Status: the party's Status screens, from the first member; the
+    // Status: the party's Status screens, from the first party member; the
     // debug build with Start held lists the enemies instead.
     if (mode == COMMAND_ICON_STATUS) {
       void *block;
@@ -222,7 +222,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       break;
     }
 
-    // Each member in turn. A command starts from the standby Djinn the
+    // Each party member in turn. A command starts from the standby Djinn the
     // earlier ones leave, so two summons cannot spend the same Djinn.
     for (;;) {
       if (commandIndex == 0) {
@@ -247,7 +247,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
        * instructions differ in tbs-en. */
       unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
 #endif
-      // The member's row starts on Attack; its portrait shows at the left.
+      // The party member's row starts on Attack; its portrait shows at the
+      // left.
       gBattleMenuWork->commandActor = unitId;
       gBattleMenuWork->commandSelection[1] = 0;
       iconSprite = &gBattleMenuWork->icons[2];
@@ -278,7 +279,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
-      // signatureHeader is the member alone, 0xff-ended: marked in the
+      // signatureHeader is the party member alone, 0xff-ended: marked in the
       // battle and highlighted in the party status window.
       signatureHeader[0] = (u16)unitId;
       signatureHeader[1] = 255;
@@ -301,7 +302,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         continue;
       }
       BattleHighlight_SetModesFar(signatureHeader, 0);
-      // B: back to the member before, or from the first to the party's row.
+      // B: back to the party member before, or from the first to the party's
+      // row.
       if (mode == -1) {
         if (commandIndex == 0) {
           break;
@@ -328,7 +330,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->iconShown[0] = 1;
       // Each command's menus; commandKind is the COMMAND_ value recorded. B in
       // a target selection goes back to the command's list (for Attack, to the
-      // member's row), B in a list to the row.
+      // party member's row), B in a list to the row.
       switch (mode) {
       case COMMAND_ICON_ATTACK:
         // Attack: one enemy, range 1; COMMAND_ATTACK.
@@ -359,7 +361,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 k;
         s32 entryValue;
 
-        // Psynergy: the member's abilities usable in battle, from its 32
+        // Psynergy: the party member's abilities usable in battle, from its 32
         // action slots (pick keeps each one's slot); then the ability's
         // window, TEXT_COLOR_RED when the PP fall short and TEXT_COLOR_PINK
         // while sealed, and its target; COMMAND_PSYNERGY with the ability as
@@ -554,10 +556,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 element;
         s32 index;
 
-        // Djinn: the member's Djinn list; COMMAND_DJINN with the Djinni's entry
-        // as parameter, kept in chosenDjinn so no later command takes it. A
-        // set Djinni is unleashed: its ability's target, then in the
-        // tutorial a hint. A standby one is set on the member itself
+        // Djinn: the party member's Djinn list; COMMAND_DJINN with the Djinni's
+        // entry as parameter, kept in chosenDjinn so no later command takes it.
+        // A set Djinni is unleashed: its ability's target, then in the tutorial
+        // a hint. A standby one is set on the party member itself
         // ("Set Djinni", target mode 4, kind 7), its name in TEXT_COLOR_RED.
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
@@ -638,7 +640,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 entryValue;
         s32 selection;
 
-        // Item: the member's 15 inventory places, the usable items first
+        // Item: the party member's 15 inventory places, the usable items first
         // and the rest after (pick keeps each one's place); then the item's
         // window and its action's target; COMMAND_ITEM with the place as
         // parameter.

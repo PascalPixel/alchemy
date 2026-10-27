@@ -5,7 +5,7 @@
 #include "../event_commands_internal.h"
 
 /// Per-frame update of arc A: over 32 frames it swells and shrinks again
-/// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
+/// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the actor
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
@@ -31,7 +31,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
 }
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
-/// object and up to 5 pixels nearer while small.
+/// actor and up to 5 pixels nearer while small.
 void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
   struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
@@ -74,7 +74,7 @@ struct SpriteArcOamView {
   u16 palette : 4;
   u8 pad0a[18];
   u8 slot; ///< VRAM cache entry holding its tiles
-  /// retainCacheEntry: set, releasing the arc leaves the effect's spark tiles
+  /// retainCacheEntry: set, releasing the arc leaves the Psynergy's spark tiles
   /// (effectWork->tileSlot), which it borrows, loaded.
   u8 active : 1;
   u8 displayFlags : 7;
@@ -84,10 +84,10 @@ struct SpriteArcOamView {
   struct SpriteAnim *child; ///< entries[0], its first layer
 };
 
-/// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
-/// down); they follow it for 32 frames, then free themselves. They draw
-/// with the effect's spark tiles, so they need the effect's work; the
-/// casting hooks below spawn them every 16 frames, and
+/// Spawns the two swelling arcs (sprite 26) on an actor, A and B (B upside
+/// down); they follow it for 32 frames, then release themselves. They draw
+/// with the Psynergy's spark tiles, so they need the Psynergy's work; the
+/// casting update routines below spawn them every 16 frames, and
 /// FieldPsynergy_End waits for the last to end (at most 30
 /// frames).
 void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
@@ -112,7 +112,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
     arc->scaleX = arc->scaleY = 0x1999; // 0.1
     if (sprite == 0)
       continue;
-    // A wide 16-colour sprite drawn from the effect's tiles.
+    // A wide 16-colour sprite drawn from the Psynergy's tiles.
     Sprite_StartAnimFar((struct Sprite *)sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
@@ -134,7 +134,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
   arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Per-frame update: flashes an object between sprite param 7 and 0 every 2
+/// Per-frame update: flashes an actor between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldPsynergy_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
 void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
@@ -149,7 +149,7 @@ void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
   }
 }
 
-/// Per-frame update: cycles an object through sprite params 0 to 5, one step
+/// Per-frame update: cycles an actor through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldPsynergy_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.

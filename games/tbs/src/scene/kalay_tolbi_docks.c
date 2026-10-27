@@ -1,16 +1,16 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three maps that share one overlay: SceneId_KalayDocks,
+/// Karagol Sea, in three scenes that share one overlay: SceneId_KalayDocks,
 /// SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet that holds a room at
-/// each. The getters pick each map's tables by gSaveBlock.sceneId, and three
+/// each. The getters pick each scene's tables by gSaveBlock.sceneId, and three
 /// story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the
-/// ship has made its crossing (set on the world map,
+/// ship has made its crossing (set on the World Map,
 /// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
 /// Colosso Tour's group has left Kalay; and FLAG_COLOSSO_OVER, whether the
 /// Colosso finals have been fought.
 ///
-/// Kalay Docks (KalayDocks): the first time the party walks in from the world
-/// map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
+/// Kalay Docks (KalayDocks): the first time the party walks in from the World
+/// Map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
 /// KalayTolbiDocks_GaretSeesTheKaragol plays. Until the tour's
 /// group has left Kalay, the ship is open to look around and the man at its
 /// plank (ACTOR_CHECKING_TICKETS) checks no tickets; afterwards he stands in
@@ -28,7 +28,7 @@
 /// are too expensive`. Ground, a Venus Djinni (ACTOR_GROUND),
 /// waits on the docks until it joins. Once the ship has crossed, the travellers
 /// are gone and the dock hands wait for a ship that has not returned. The docks
-/// lead to the world map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
+/// lead to the World Map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
 /// KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
 /// (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
 /// SceneId_TolbiShipDeck) and through a door (step trigger 10) into the
@@ -51,7 +51,7 @@
 /// each answer. The woman's daughter (ACTOR_WAITING_DAUGHTER) watches the sea
 /// for her parents and takes the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED).
 /// Two stacks of crates slide along the pier under Move, a chest holds a Potion
-/// and a box 35 coins, and the docks lead to the world map toward Tolbi
+/// and a box 35 coins, and the docks lead to the World Map toward Tolbi
 /// (TOLBI_DOCKS_TO_WORLD_MAP), back onto the ship
 /// (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building beside them (
 /// step trigger 10). After Colosso the Colosso Tour's passengers are stranded
@@ -59,7 +59,7 @@
 /// trigger 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be
 /// taken home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them. Only
-/// the debug menus' map selector, which exits to any map and entrance
+/// the debug menus' scene selector, which exits to any scene and entrance
 /// by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
@@ -295,13 +295,13 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
 
 const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
-/// The exits of the three maps, each map's after its header word (an exit of
-/// kind 0): both docks lead to the world map, onto the ship
+/// The exits of the three scenes, each scene's after its header word (an exit
+/// of kind 0): both docks lead to the World Map, onto the ship
 /// (SceneId_TolbiShipDeck) and into their rooms
 /// (SceneId_CottageRoomsE), which lead back to their docks.
 const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
-/// Each map's people before the crossing, once the ship has crossed and not
+/// Each scene's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ActorTemplate *KalayTolbiDocks_GetActorTemplates(void) {
@@ -349,7 +349,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
   Event_End();
 }
 
-/// Selects each map's events for the same three times as its people.
+/// Selects each scene's events for the same three times as its people.
 const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -683,10 +683,10 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 }
 
 /// An entrance no exit, table or code leads to, whose arrival sets
-/// FLAG_COLOSSO_OVER; the debug menus' map selector reaches it.
+/// FLAG_COLOSSO_OVER; the debug menus' scene selector reaches it.
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
-/// Prepares whichever of the three maps is entered. Arriving by
+/// Prepares whichever of the three scenes is entered. Arriving by
 /// KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
@@ -703,7 +703,7 @@ s32 KalayTolbiDocks_Initialize(void) {
   return 0;
 }
 
-/// On the first arrival at Kalay Docks from the world map, Garet runs to see
+/// On the first arrival at Kalay Docks from the World Map, Garet runs to see
 /// the Karagol. Coming back off the ship clears the shore leave, and once the
 /// tour's group has left Kalay the ticket taker stands at the ship's plank
 /// until the party goes ashore.
@@ -812,7 +812,7 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Kalay Docks, the first entry from the world map
+/// Kalay Docks, the first entry from the World Map
 /// (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, until
 /// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL): Garet runs to the edge of the docks and
 /// marvels at the sea. "Incredible! So this is the ocean Kraden was talking
@@ -1173,7 +1173,7 @@ struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
 };
 
 /// Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's, each after the
-/// header word (an exit of kind 0) for its map.
+/// header word (an exit of kind 0) for its scene.
 u32 gKalayTolbiDocks_Exits[] = {
     SCENE_EXITS(KalayDocks),
     SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,

@@ -1,19 +1,19 @@
 /// @file
-/// Altin, the mining village north of the Alpine Crossing, in two maps that
+/// Altin, the mining village north of the Alpine Crossing, in two scenes that
 /// share this overlay and the area name Altin: SceneId_Altin, the village
 /// outdoors, and SceneId_CottageRoomsD, a sheet of rooms drawn as cottages, all
 /// of them Altin's: its houses, shops and inn, entered by the village's doors
 /// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
-/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each map's tables by
-/// gSaveBlock.sceneId, both share one exit table, and a third, empty set of
-/// tables serves any other map.
+/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each scene's tables
+/// by gSaveBlock.sceneId, both share one exit table, and a third, empty set of
+/// tables serves any other scene.
 ///
-/// The village is flooded by the water beasts of its mine, whose maps the
+/// The village is flooded by the water beasts of its mine, whose scenes the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
 /// follow the party's work down there. The water drops in three stages with the
 /// three drains it opens by beating the mine's water beasts
 /// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
-/// into three map temp flags, the water dropped once, twice, or drained (the
+/// into three scene temp flags, the water dropped once, twice, or drained (the
 /// second and third drains both), and Altin_ApplyWaterLevel copies the layout
 /// area for that level over the village, with its metatile behaviors, and
 /// leaves out whoever would be standing in the water. And every villager has
@@ -306,7 +306,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Both maps share one exit table.
+/// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 
 /// Some villagers only turn back after talking once the flood is over or
@@ -513,7 +513,7 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Altin's armor merchant, in either map: outside, while his shop is under
+/// Altin's armor merchant, in either scene: outside, while his shop is under
 /// water, he laments; once it has dried after the second drop, he sells across
 /// his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
@@ -683,16 +683,17 @@ static void Altin_WalkThroughDoorway(void) {
   Event_End();
 }
 
-/// Update callback of the hopping water beast in Altin's village: once a
+/// Update routine of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
 static void Altin_BeastHop(struct Actor *actor) {
   struct Actor *beast = actor;
   s16 *shakeFrames = (s16 *)&beast->userValue;
 
-  // While this hook owns the beast, timer is its hop phase, work counts down
-  // the landing shake, and the effect's countdown is a landing-sound latch.
-  // Read work through its corresponding signed type for the countdown test.
+  // While this update routine owns the beast, timer is its hop phase, work
+  // counts down the landing shake, and the effect's countdown is a
+  // landing-sound latch. Read work through its corresponding signed type for
+  // the countdown test.
   if (*shakeFrames != 0) {
     if (--*shakeFrames == 1)
       MapGrid_SetShake(-1, -1, 0xe666);
@@ -756,7 +757,7 @@ static void Altin_CheckPillarMoved(void) {
   }
 }
 
-/// Sets up the map being entered, at the village's water level. It works out
+/// Sets up the scene being entered, at the village's water level. It works out
 /// the water level from the mine's drain flags first. Returns 0.
 s32 Scene_Initialize(void) {
   s16 sceneId;
@@ -850,7 +851,7 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_SetSpritePriority(ACTOR_FIRST_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
-  // Redraw at the leader after the map and object state are ready.
+  // Redraw at the leader after the map and actor state are ready.
   WaitFrames(1);
   Event_Start();
   FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
@@ -905,7 +906,7 @@ static void Altin_SprayInitialize(struct Actor *spray) {
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
 
-/// Update callback of a spray particle: it drifts and grows with a random
+/// Update routine of a spray particle: it drifts and grows with a random
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
 static void Altin_SprayDrift(struct Actor *actor) {

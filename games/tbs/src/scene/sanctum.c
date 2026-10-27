@@ -1,6 +1,6 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
-/// places in one map (SceneId_Sanctum): the entrance the party arrives
+/// places in one scene (SceneId_Sanctum): the entrance the party arrives
 /// at decides which, and Sanctum_GetActorTemplates and Sanctum_GetTriggers
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
@@ -107,7 +107,7 @@
 /// so the account of Sol Sanctum is skipped.
 #define FLAG_SANCTUM_QUEST_RESTARTED FLAG_SCENE_TEMP_01
 
-// Map flags, in Vale Sanctum: 00 is set once the Great Healer has
+// Scene flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
 // after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
 // Sanctum.
@@ -185,13 +185,13 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
-/// Faces the actor whose ID this callback stores in the timer field.
+/// Faces the actor whose ID this update routine stores in the timer field.
 static void Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
 #else
-/// Faces the actor whose ID this callback stores in the timer field.
+/// Faces the actor whose ID this update routine stores in the timer field.
 static s32 Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
@@ -548,7 +548,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
   }
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps this actor at the party leader's drawing priority.

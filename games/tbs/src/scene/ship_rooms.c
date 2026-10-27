@@ -1,7 +1,7 @@
 /// @file
 /// Ship rooms (SceneId_ShipRooms), a sheet of rooms drawn as a ship's cabins,
 /// all of them below the decks of the Tolbi-bound Ship: one of the ship's three
-/// maps on its voyage from Kalay to Tolbi, told in tolbi_ship_deck.c. The map
+/// scenes on its voyage from Kalay to Tolbi, told in tolbi_ship_deck.c. The map
 /// is four rooms, each a camera box of the entrance table, whose
 /// entrances are named by room: the passengers' hold
 /// (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK and the others named for
@@ -45,7 +45,7 @@
 ///   (SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS) and
 ///   the rowing deck rows
 ///   (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING), which leads
-///   to the world map for the next leg.
+///   to the World Map for the next leg.
 /// - The attacks, each called by the lookout on the mast or the deck; before
 ///   the first, the captain in the captain's quarters hears of monsters
 ///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS) and
@@ -73,7 +73,7 @@
 ///   shakes the event until it is defeated on deck).
 /// - The island: off course, a short event in the captain's quarters
 ///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND) leads by
-///   the world map (SHIP_ROOMS_TO_WORLD_MAP) to
+///   the World Map (SHIP_ROOMS_TO_WORLD_MAP) to
 ///   SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, where the rowers
 ///   rest at the island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and captain's
 ///   quarters have their own talk. Back from it,
@@ -150,7 +150,7 @@
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
 /// Operations shared by the captain's quarters, passenger hold and rowing-deck
-/// scripts.
+/// events.
 enum ShipEventCommand {
   SHIP_FACE_PARTY_EAST_AND_WEST,
   SHIP_FACE_PARTY,
@@ -500,7 +500,7 @@ static void ShipRooms_DismissReplacementRowers(void);
 static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
                                           s32 secondSeatFlags);
 
-/// An action-script call: stands the actor still at the origin, with no
+/// An actor script call: stands the actor still at the origin, with no
 /// velocity and no target. Returns 0.
 static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -686,7 +686,7 @@ static void ShipRooms_WatchPacer(struct Actor *actor) {
   }
 }
 
-/// An action-script call: lays the actor flat on the floor, drawn
+/// An actor script call: lays the actor flat on the floor, drawn
 /// underfoot at priority 1 with its parts hidden. Returns 1.
 static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
   struct Actor *work = interpreter;
@@ -902,7 +902,8 @@ static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
 /// The captain, by the voyage's stage: too late to hire mercenaries, then his
 /// bad luck at losing his lucky anchor, then uncertain what might happen, and
 /// under sail the news of an injured oarsman. After finding the Anchor Charm,
-/// talking to him also opens the main menu, so that the charm can be returned.
+/// talking to him also opens the File Screen, so that the charm can be
+/// returned.
 static void ShipRooms_TalkToCaptain(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -2292,7 +2293,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Event_End();
 }
 
-/// Restores the room or plays the script selected by this entrance.
+/// Restores the room or plays the event selected by this entrance.
 s32 ShipRooms_ApplyEntryState(void) {
   WaitFrames(1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -4018,7 +4019,7 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
 
 /// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the
 /// captain's quarters, after the ship has come off course: a short exchange,
-/// then SHIP_ROOMS_TO_WORLD_MAP leads by the world map to the island
+/// then SHIP_ROOMS_TO_WORLD_MAP leads by the World Map to the island
 /// (SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND).
 static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   Event_Start();
@@ -4373,7 +4374,7 @@ s32 gShipRooms_MonsterBob[] = {
     SC_CALL(ShipRooms_Bob),
 };
 
-/// A rower walks up the stairs and is freed.
+/// A rower walks up the stairs and is released.
 s32 gShipRooms_LeaveByStairs[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(132)),
     SC_SYNC,         SC_MOVE(PIXELS(444), 0, PIXELS(132)),
@@ -4398,10 +4399,10 @@ s32 gShipRooms_LieFlatScript[] = {
     SC_CALL(ShipRooms_LayFlat),
 };
 
-/// The Anchor Charm's object, once placed this visit.
+/// The Anchor Charm's actor, once placed this visit.
 struct Actor *gShipRooms_AnchorObject = 0;
 
-/// The other maps have no entrances.
+/// The other scenes have no entrances.
 struct SceneEntrance gShipRooms_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };

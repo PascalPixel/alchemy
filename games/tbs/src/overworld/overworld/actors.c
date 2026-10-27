@@ -1,5 +1,5 @@
 /// @file
-/// The party's sprites, placing a map's actors, and the actor
+/// The party's sprites, placing a scene's actors, and the actor
 /// table.
 // Part of overworld.c.
 
@@ -62,19 +62,19 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
 extern const struct ActorTemplate gField_DefaultActorTemplates[2];
 
-/// Creates the actors of a map's actor template table (ended by
-/// sprite -1), and records the table among the map's tables. Sprites 0 to 7 are
-/// the party's characters and take their own actor slot; other
-/// actor templates take the actor slots from slot on, one each, up to
-/// the last. An actor template whose condition does not hold is skipped,
-/// as is a Djinni hidden after a lost battle outside the world map, but it
-/// still uses up its slot: actor slot + n is always row n, counted from
-/// 0, of the table's rows of sprite 8 or more, as Scene_FindActorTemplate
-/// counts them. An existing actor is moved back to its place unless the
-/// party keeps its position. The table is kept by address, so it must last as
-/// long as the map (the overlay's own tables do).
+/// Creates the actors of a scene's actor template table (ended by
+/// sprite -1), and records the table among the scene's tables. Sprites 0 to 7
+/// are the party's characters and take their own actor slot; other actor
+/// templates take the actor slots from slot on, one each, up to the last. An
+/// actor template whose condition does not hold is skipped, as is a Djinni
+/// hidden after a lost battle outside the World Map, but it still uses up its
+/// slot: actor slot + n is always row n, counted from 0, of the table's rows of
+/// sprite 8 or more, as Scene_FindActorTemplate counts them. An existing actor
+/// is moved back to its place unless the party keeps its position. The table is
+/// kept by address, so it must last as long as the scene (the overlay's own
+/// tables do).
 ///
-/// Called by Actor_ResetForLeader (the leader, then the map's table),
+/// Called by Actor_ResetForLeader (the leader, then the scene's table),
 /// Actor_Respawn and Event_CallWithLastActiveActorId. Records
 /// the table in work->tables and each actor in work->actors.
 void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
@@ -169,14 +169,14 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
       (object)->homeZ = object->z.fixed / Q16_ONE;
       // An actor template with a height is lifted half a pixel more and
       // takes motion flags 4, floating: it neither follows the ground nor
-      // falls. Outside the world map every height is then counted from the
+      // falls. Outside the World Map every height is then counted from the
       // ground below.
       if (object->y.fixed != 0) {
         object->motionFlags = 4;
         object->y.fixed += 0x8000;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        // World-map actor templates use single sprites and do not follow
+        // World Map actor templates use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
         object->motionFlags &= 0xfe;
@@ -201,7 +201,7 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
   }
 }
 
-/// Destroys the actor in slot actorIndex, if there is one, and
+/// Releases the actor in slot actorIndex, if there is one, and
 /// empties the slot. No caller names it; its far-call veneer has no exported
 /// name.
 void Actor_ReleaseAtIndex(s32 actorIndex) {
@@ -225,16 +225,16 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
   }
 }
 
-/// Creates a map's actors on entering it: the party leader where the
-/// save block puts it, then the map's actor template table from
+/// Creates a scene's actors on entering it: the party leader where the
+/// save block puts it, then the scene's actor template table from
 /// actor slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by SceneManager_Run on entering a map, and by
+/// Called by SceneManager_Run on entering a scene, and by
 /// Event_RunActorUpdateAndWait.
-/// Empties every actor slot and table first, without destroying the
+/// Empties every actor slot and table first, without releasing the
 /// actors in them; sets work->camera, the map's origin and
 /// gSaveBlock.movementMode.
 void Actor_ResetForLeader(struct ActorTemplate *table) {
@@ -250,7 +250,7 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
 
   work = gFieldWork;
   leader = gSaveBlock.leaderActorId;
-  // Build the leader's temporary actor template before the map's placed
+  // Build the leader's temporary actor template before the scene's placed
   // actors. The two-row table, the leader's row and an end row, lives in
   // the field work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
   entry = (struct ActorTemplate *)((u8 *)work + 0x200);
@@ -349,7 +349,7 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 /// Gives each actor template with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 ///
-/// Called by map overlays through Scene_AssignViewFlagsFar. Writes the
+/// Called by scene overlays through Scene_AssignViewFlagsFar. Writes the
 /// actor templates' condition, and clears FLAG_IN_VIEW and sets
 /// FLAG_OUT_OF_VIEW.
 void Scene_AssignViewFlags(struct ActorTemplate *entry) {
@@ -378,13 +378,13 @@ void Scene_AssignViewFlags(struct ActorTemplate *entry) {
   }
 }
 
-/// Destroys the placed actors far from the view's centre: more than 160
+/// Releases the placed actors far from the view's centre: more than 160
 /// pixels to either side, 200 pixels north or 100 pixels south. Actors
 /// at (0, 0) stay.
 ///
-/// Called on the world map before an effect plays, by Field_UsePsynergy and
-/// Djinn_JoinParty; empties the slots it frees. Actor_Respawn
-/// brings the actors back afterwards.
+/// Called on the World Map before a Psynergy or a Djinni's joining plays, by
+/// Field_UsePsynergy and Djinn_JoinParty; empties the slots it releases.
+/// Actor_Respawn brings the actors back afterwards.
 void Actor_ClearOutOfBounds(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *camera;
@@ -441,10 +441,10 @@ void Actor_ClearOutOfBounds(void) {
   }
 }
 
-/// Destroys every placed actor and places the map's actors again
+/// Releases every placed actor and places the scene's actors again
 /// from its first actor template table after the leader's.
 ///
-/// Called on the world map after an effect, by Field_UsePsynergy and
+/// Called on the World Map after one, by Field_UsePsynergy and
 /// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
 /// again.
 void Actor_Respawn(void) {
@@ -472,7 +472,7 @@ void Actor_Respawn(void) {
     Event_SpawnActorTemplates(templates, Actor_FindLastActiveId());
 }
 
-/// Empties all the actor slots, without destroying the actors.
+/// Empties all the actor slots, without releasing the actors.
 ///
 /// Called by Actor_ResetForLeader.
 void Actor_ClearAll(void) {
@@ -493,8 +493,8 @@ void Actor_ClearAll(void) {
 /// NULL. Indices up to 191 read past the actor slots into the rest of
 /// the field work; larger ones give NULL.
 ///
-/// The field's actor lookup: called across the object folder and,
-/// through Actor_LookupFar, by map
+/// The field's actor lookup: called across this folder and,
+/// through Actor_LookupFar, by scene
 /// overlays.
 void *Actor_Lookup(u32 actorIndex) {
   u8 *workBytes = (u8 *)gFieldWork;
@@ -515,12 +515,12 @@ void *Actor_Lookup(u32 actorIndex) {
 #endif
 }
 
-/// Saves up to 32 actors (only the party's 8 on the world map) into
+/// Saves up to 32 actors (only the party's 8 on the World Map) into
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
 ///
 /// Called by SceneManager_Run before a random battle, by saving the game
-/// through Save_CaptureActorsFar, and by two maps (Tolbi's spring and the
+/// through Save_CaptureActorsFar, and by two scenes (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void Actor_Snapshot(void) {
   struct FieldWork *work;
@@ -577,7 +577,7 @@ void Actor_Snapshot(void) {
 /// to the party leader's height.
 ///
 /// Called by SceneManager_Run when the party keeps its position
-/// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie map through
+/// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
 /// Actor_RestoreFar. Only actors whose slots are filled again are
 /// restored; the leader is set idle.
 void Actor_Restore(void) {

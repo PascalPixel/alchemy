@@ -63,7 +63,7 @@ void WindowSprite_InitializeFreeList(void) {
 
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
-/// every window sprite and starts the two per-frame callbacks, the tilemap
+/// every window sprite and starts the two per-frame tasks, the tilemap
 /// upload and the window update. Reached from SceneManager_Run
 /// (overworld/overworld/scene_manager.c), the debug message viewer
 /// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).

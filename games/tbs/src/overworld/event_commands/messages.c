@@ -14,7 +14,7 @@ struct HeapSlotsFromWindowView {
 };
 #endif
 
-/// The script command "open message": opens the script's current message in a
+/// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait
 /// beside it when it has one, and moves on to the next message. The low 12
 /// bits of actorId are the speaker (0 to 7, a party member, speaks from the
@@ -248,12 +248,12 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   return handle;
 }
 
-/// The script command "show message": opens the current message at actorId
+/// The event command "show message": opens the current message at actorId
 /// (FieldMessage_ShowAtActor) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
-/// Select, L, R and A are all held. About 70 maps reach it (Event_ShowMessage,
-/// MESSAGE_PUT); the trigger runner (overworld/triggers.c),
+/// Select, L, R and A are all held. About 70 scenes reach it
+/// (Event_ShowMessage, MESSAGE_PUT); the trigger runner (overworld/triggers.c),
 /// Field_RunPsynergyEvent (dispatch.c), Field_UseItem for an item trigger that
 /// is a message (overworld/items.c) and the debug menu's message test call it
 /// too.
@@ -266,7 +266,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
 
   frames = 0;
   WaitFrames(1);
-  // A party member the map does not place has its portrait under its
+  // A party member the scene does not place has its portrait under its
   // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_ReadActiveValue(actorId);
   if (actorId <= 7) {
@@ -292,17 +292,17 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   WaitFrames(1);
 }
 
-/// The script command "show message and wait": shows the message, then waits
+/// The event command "show message and wait": shows the message, then waits
 /// wait frames.
 void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
   Event_ShowMessageAndWait(actorId, flags);
   Event_WaitFrames(wait);
 }
 
-/// The script command "ask yes or no": opens the question at actorId, lets
+/// The event command "ask yes or no": opens the question at actorId, lets
 /// the leader answer, then shows the next message for yes or the one after it
-/// for no. Returns 0 for yes, 1 for no. Either way the script's message number
-/// ends past both answers, so the script goes on with the same message
+/// for no. Returns 0 for yes, 1 for no. Either way the event's message number
+/// ends past both answers, so the event goes on with the same message
 /// whatever was chosen.
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   s32 answer;
@@ -331,7 +331,7 @@ void Event_EmptyCallback(void) {}
 /// open the message near it and wait unless fast-forwarding, then advance the
 /// message index. Like Event_ShowMessageAtPosition it moves the position
 /// 32 away from the middle and clamps it to 8..312 and 20..220, ranges larger
-/// than the 240 by 160 screen, before passing it to a window service that
+/// than the 240 by 160 screen, before passing it to a window routine that
 /// takes tiles; with no caller, the units it expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
@@ -412,7 +412,7 @@ void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
 }
 
 /// Unused: reached only through a bare veneer in OVERWORLD.S. It would open the
-/// script's message at (x, y), wait for it and advance the message index; its
+/// event's message at (x, y), wait for it and advance the message index; its
 /// units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
@@ -448,7 +448,7 @@ void Actor_RunIfActive(s32 actorId) {
     Portrait_CloseWindowFar(sprite);
 }
 
-/// The script command "show two messages and wait": two actors speak at
+/// The event command "show two messages and wait": two actors speak at
 /// once, each message at its own (x, y) with its portrait at (portraitX,
 /// portraitY), all in tiles. Waits for A, B, L or R, then closes both.
 void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,

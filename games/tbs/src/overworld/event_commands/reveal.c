@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// Gives every live object of the 64 whose first sprite layer shows sprite 200
+/// Gives every live actor of the 64 whose first sprite layer shows sprite 200
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
 void Actor_SetRevealSpriteColor(s32 value) {
@@ -30,11 +30,11 @@ void Actor_SetRevealSpriteColor(s32 value) {
   } while (remainingActors >= 0);
 }
 
-/// Task of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
+/// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it
 /// to end once the leader is 60 pixels from its centre or its time has run out.
 /// The centre and the time are in the field work from 0xcb8 on
 /// (FieldPsynergy_Reveal). The time counts only while effectTimerRunning is
-/// set, so menus and other effects pause it. It asks every frame until
+/// set, so menus and other field Psynergy pause it. It asks every frame until
 /// FieldPsynergy_EndReveal removes it.
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
@@ -127,8 +127,8 @@ void FieldPsynergy_Reveal(void) {
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs the map's PSYNERGY_PHASE_FADES
-/// event. Unless a map script set childOption, the window transition is then
+/// from black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES
+/// event. Unless an event set childOption, the window transition is then
 /// reset at once (no next mode, one frame). Called as Reveal ends
 /// (Event_RunFieldPsynergy) and before Mind Read starts its own colours.
 void FieldPsynergy_EndReveal(void) {

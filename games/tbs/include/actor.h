@@ -9,7 +9,7 @@
 
 #include "field_work.h"
 
-/// How a map fades in and out: SCENE_TRANSITION's high byte, which
+/// How a scene fades in and out: SCENE_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
 enum ScreenTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
@@ -20,7 +20,7 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A map transition as FieldWork.transition holds it. For
+/// A scene transition as FieldWork.transition holds it. For
 /// TRANSITION_WINDOW the variant is the window mode, listed at
 /// ScreenTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
 /// ellipse around the leader, and others.
@@ -198,7 +198,7 @@ STATIC_ASSERT(offsetof(struct Actor, update) == 0x6c);
 /// The values of Actor.targetX, targetY and targetZ that are not
 /// coordinates.
 enum ActorTarget {
-  /// A target coordinate that is not set: the object has no target.
+  /// A target coordinate that is not set: the actor has no target.
   ACTOR_NO_TARGET = (s32)0x80000000
 };
 
@@ -227,12 +227,12 @@ enum ActorMotionFlag {
 
 /// Actor.collisionFlags bits.
 enum ActorCollisionFlag {
-  ACTOR_SOLID = 0x01,         ///< blocks other objects and the player
+  ACTOR_SOLID = 0x01,         ///< blocks other actors and the player
   ACTOR_PUSHABLE = 0x02,      ///< the player pushes it
   ACTOR_NEAR_TALK = 0x04,     ///< nearer to talk to
   ACTOR_NOT_TARGETED = 0x08,  ///< never a talk or Psynergy target
   ACTOR_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
-  /// Refuses to move into a solid object (Actor.refused).
+  /// Refuses to move into a solid actor (Actor.refused).
   ACTOR_BLOCKED_BY_SOLID = 0x80
 };
 
@@ -243,10 +243,10 @@ enum ActorSteeringFlag {
 
 enum {
   ACTOR_SNAPSHOT_CAPACITY = 32, ///< actors a snapshot keeps
-  ACTOR_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
+  ACTOR_SNAPSHOT_EMPTY = 255    ///< an empty slot, and the end of the list
 };
 
-/// Actors kept across a battle or a saved map, with parallel sprite
+/// Actors kept across a battle or a saved scene, with parallel sprite
 /// state. The slot list ends in ACTOR_SNAPSHOT_EMPTY unless every entry
 /// is filled.
 struct ActorSnapshot {
@@ -266,7 +266,7 @@ STATIC_ASSERT(offsetof(struct ActorSnapshot, spriteFlags) == 0xe40);
 STATIC_ASSERT(offsetof(struct ActorSnapshot, priorities) == 0xe60);
 STATIC_ASSERT(sizeof(struct ActorSnapshot) == 0xe80);
 
-/// The one snapshot, in EWRAM outside the heap so that it outlives the map
+/// The one snapshot, in EWRAM outside the heap so that it outlives the scene
 /// change into and out of a battle. Actor_Snapshot fills it before a
 /// random battle and when saving; Actor_Restore puts the actors
 /// back when the party returns keeping its position (FLAG_KEEP_PARTY_POSITION).

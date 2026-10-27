@@ -22,7 +22,7 @@
 #include "types.h"
 #include "songs.h"
 
-// Seventeen maps with things the leader pushes (Altmiller Cave, Babi
+// Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
 // Cave, Kolima Forest (SceneId_KolimaForestEntrance to
 // SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
@@ -177,16 +177,16 @@ static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
   return 0;
 }
 
-// UB: the native s32 callback is called through Actor's void hook. The
+// UB: the native s32 update routine is called through Actor's void update. The
 // void form keeps 0xa4 bytes in Altmiller English but changes the return move.
 #ifdef UBFIX
-/// The leader's movement callback while pushing a large thing: stop the leader
+/// The leader's update routine while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
 /// way.
 static void PushedActor_StopBlockedMotion(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
 #else
-/// The leader's movement callback while pushing a large thing: stop the leader
+/// The leader's update routine while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
 /// way.
 static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {

@@ -67,7 +67,7 @@ extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
 #ifndef OWN_gActorSystemWork
-/// Heap slot 6: the object system's work (struct ActorSystemWork).
+/// Heap slot 6: the actor system's work (struct ActorSystemWork).
 extern struct ActorSystemWork *gActorSystemWork;
 #endif
 /// The number text buffer: String_FormatHex writes eight digits and
@@ -78,7 +78,7 @@ extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
 extern struct SelectionMenuWork *gSelectionMenuWork;
 #ifndef OWN_gTitleBattleOptionEnabled
-/// Read as a halfword: nonzero offers Battle on the main menu, when a file
+/// Read as a halfword: nonzero offers Battle on the File Screen, when a file
 /// has any of game flags 48 to 127 set.
 extern u8 gTitleBattleOptionEnabled[];
 #endif
@@ -92,7 +92,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four frames.
 extern const u8 gMenu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
-/// The colon the debug menus' map and flag rows draw
+/// The colon the debug menus' scene and flag rows draw
 /// (window/screens/debug.c): `:`.
 extern const u8 gMenu_ColonString[];
 #endif
@@ -114,7 +114,7 @@ extern const s32 gMenu_PartySpriteResourceIds[4];
 extern u8 gMenu_PointString[];
 /// The PP label: `PP`; `EP` in Japanese.
 extern const u8 gMenu_PpString[];
-/// The title menu's action by icon position, a row of 6 for each layout:
+/// The File Screen's action by icon position, a row of 6 for each layout:
 /// 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send.
 extern s8 gFileList_ActionByPosition[];
 /// Frames IconMenu_AnimateTo waits at each icon on its way, by icons still to
@@ -152,9 +152,9 @@ extern u8 gDebugMenu_PageLabel[];
 extern u8 gDebugMenu_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gDebugMenu_StatusTitle[];
-/// The option menu's slider colours (slidpal).
+/// The settings menu's slider colours (slidpal).
 extern const u16 gSettingsMenu_SliderPalette[];
-/// The option menu's slider, 32 by 8 (slider.4bpp32x8).
+/// The settings menu's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gSettingsMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct AbilityDefinition *Ability_GetData(s32 abilityId);

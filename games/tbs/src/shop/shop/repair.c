@@ -16,15 +16,15 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
   return repairCost;
 }
 
-/// Runs the repair counter's member choice; always returns 0. Called by
+/// Runs the repair counter's party member choice; always returns 0. Called by
 /// Shop_Run for Repair.
 s32 Shop_RunRepairMemberChoice(void) {
   Shop_ChooseMember();
   return 0;
 }
 
-/// Lets the player choose items to repair from the member's grid, one at a
-/// time, with each one's repair price, until B or the inventory is empty.
+/// Lets the player choose items to repair from the party member's grid, one at
+/// a time, with each one's repair price, until B or the inventory is empty.
 /// Returns -1 when cancelled, 0 when the inventory ran out. Called by
 /// Shop_ChooseMember.
 s32 Shop_SelectRepair(s32 unitId) {

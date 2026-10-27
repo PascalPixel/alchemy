@@ -2,7 +2,7 @@
 #define ALCHEMY_ACTOR_CREATE_H
 
 /// @file
-/// FieldActor_Create, which creates an object.
+/// FieldActor_Create, which creates an actor.
 
 #include "types.h"
 

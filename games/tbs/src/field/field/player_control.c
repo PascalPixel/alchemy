@@ -1,5 +1,5 @@
 /// @file
-/// Player control: the configured keys and moving objects by the pad.
+/// Player control: the configured keys and moving actors by the pad.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -35,7 +35,7 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
 
-/// Unused: stores value as a word in the object's update hook.
+/// Unused: stores value as a word in the actor's update routine.
 UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
   struct Actor *actor = rawActor;
 
@@ -53,7 +53,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the map loop (scene_manager.c)
+/// work->item or work->event, which the scene manager (scene_manager.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -132,7 +132,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 
   // The bound is 64 pixels in 16.16, the units before the shift, but dx and
   // dz are already whole pixels (at most 32768), so these tests always pass
-  // and only the distance decides. No two objects on a 2,048-pixel map are
+  // and only the distance decides. No two actors on a 2,048-pixel map are
   // far enough apart for the squares to overflow, so nothing the player sees
   // changes.
   if (!(dx > 0x400000) && !(dz > 0x400000) &&
@@ -142,16 +142,16 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 }
 
 /// SC_PLAYER: moves the player on the field by the direction pad: walking or
-/// running, sliding around walls, pushing movable objects, turning, playing
+/// running, sliding around walls, pushing movable actors, turning, playing
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gActor_PlayerScript, which the map loop
+/// Run each frame by gActor_PlayerScript, which the scene manager
 /// (scene_manager.c) starts on the leader through
 /// Actor_StartPlayerControl when it hands control back on the field.
-/// Sets the leader's speed, target, velocity, angle and action, moves the
-/// objects it pushes, counts gFieldWork->blockedSteps and creates the
-/// footprint objects.
+/// Sets the leader's speed, target, velocity, angle and timer, moves the
+/// actors it pushes, counts gFieldWork->blockedSteps and creates the
+/// footprint actors.
 s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -337,7 +337,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       collision |= 1;
 
     push_objects:
-      // Push the movable objects (ACTOR_PUSHABLE) just ahead 4 pixels
+      // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid actor there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
       contact.x = actor->x.fixed;
@@ -473,7 +473,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   }
 
   // Leave a footprint every 18 walking or 12 running
-  // frames on maps that show them, alternating left and right; action
+  // frames on maps that show them, alternating left and right; timer
   // counts down the frames to the next one.
   footprintAngle = (u16)angle;
   if (((struct MapGridScrollWork *)gMapGridWork[0])->footprints != 0 &&
@@ -527,11 +527,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 /// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
-/// Run each frame by gActor_WorldMapScript, which the map loop
+/// Run each frame by gActor_WorldMapScript, which the scene manager
 /// (scene_manager.c) starts on the leader through
 /// Actor_StartWorldMapControl on the world map. Sets the leader's
-/// speed, target, velocity, angle and action, turns the perspective work's
-/// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.
+/// speed, target, velocity, angle and timer, turns the perspective work's
+/// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
 s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -837,8 +837,8 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
 /// Returns 1. Run each frame by gActor_KeyCheckScript, which the
-/// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
-/// does not move it.
+/// scene manager starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
+/// pad does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -847,12 +847,12 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
+/// SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up
 /// and down changing its height (y) rather than its depth. Refuses steps
 /// into an occupied cell, across a change of metatile behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gActor_KeysScript, which the map loop starts
+/// Run each frame by gActor_KeysScript, which the scene manager starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
 s32 Actor_MoveByKeys(struct Actor *interpreter) {

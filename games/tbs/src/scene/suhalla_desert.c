@@ -1,7 +1,7 @@
 /// @file
 /// Suhalla Desert, the desert of sandstorms between Suhalla and Suhalla Gate,
 /// which the party crosses with Iodem after Babi's audience while Sheba is
-/// missing in it. Three maps share this overlay and the area name Suhalla
+/// missing in it. Three scenes share this overlay and the area name Suhalla
 /// Desert:
 ///
 /// - SuhallaDesertNorth (SceneId_SuhallaDesertNorth): entered from the world
@@ -16,12 +16,12 @@
 /// desert,
 ///   reached from SuhallaDesertSouth; they place nothing.
 ///
-/// One exit table and, for the first two maps, one trigger table serve the
+/// One exit table and, for the first two scenes, one trigger table serve the
 /// overlay; the exits in that trigger table keep their numbers, which each
-/// map's exit rows lead its own way.
+/// scene's exit rows lead its own way.
 ///
 /// The storms are the desert's mechanism, ACTOR_FIRST_SANDSTORM to
-/// ACTOR_LAST_SANDSTORM in the first two maps. As the party nears one
+/// ACTOR_LAST_SANDSTORM in the first two scenes. As the party nears one
 /// (metatile behaviors 61 to 65 and 71 to 73) it rises, growing to full size,
 /// and the sand haze, BG1 blended over the rest (SUHALLA_DESERT_HAZE_BLEND),
 /// fades in the first time (SuhallaDesert_RaiseStorm); the first storm to rise
@@ -30,7 +30,7 @@
 /// centre and lifts the party, spinning, for SANDSTORM_CAPTURE_FRAMES
 /// (SuhallaDesert_CatchInStorm). Douse in that time stops the storm and the
 /// monster in it attacks (SuhallaDesert_DouseStorm); otherwise the storm
-/// carries the party up and drops it on the world map outside Suhalla
+/// carries the party up and drops it on the World Map outside Suhalla
 /// (SuhallaDesert_StormCarriesPartyAway), which is why everyone the storms
 /// catch winds up there. In SuhallaDesertSouth, metatile behavior 81 sets the
 /// fifth storm chasing the leader (SuhallaDesert_ChaseLeader), and it catches a
@@ -41,7 +41,7 @@
 /// FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, so the storm stays gone
 /// until the party leaves the desert's area; the chasing storm, once
 /// doused, is gone for good (FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED). Its
-/// map flags:
+/// scene flags:
 ///
 /// - FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN to
 ///   FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms ACTOR_FIRST_SANDSTORM
@@ -96,13 +96,13 @@
 #include "map_grid.h"
 #include "fixed_math.h"
 
-/// Storms doused in the first and second maps, one flag per storm from the
+/// Storms doused in the first and second scenes, one flag per storm from the
 /// first; each storm stays away once doused.
 enum {
-  /// The first map's storms, five from this one.
+  /// The first scene's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_01,
-  /// The second map's storms, five from this one.
+  /// The second scene's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
   /// A storm has risen: the sand haze stays faded in.
@@ -114,27 +114,27 @@ enum {
 };
 
 /// The actors, numbering the actor template rows of the first two
-/// maps from ACTOR_FIRST_PLACED; the third map places none.
+/// scenes from ACTOR_FIRST_PLACED; the third scene places none.
 enum {
-  /// The storms, five in each map.
+  /// The storms, five in each scene.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FIRST_SANDSTORM = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FOURTH_SANDSTORM = ACTOR_FIRST_SANDSTORM + 3,
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_LAST_SANDSTORM = ACTOR_FIRST_SANDSTORM + 4,
-  /// In the second map the last storm gives chase.
+  /// In the second scene the last storm gives chase.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_CHASING_SANDSTORM = ACTOR_LAST_SANDSTORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
   /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
-  /// In the second map, seen only while Reveal lasts, drawn as Goma Cave's
+  /// In the second scene, seen only while Reveal lasts, drawn as Goma Cave's
   /// stone pillars.
   /// ★ Named from what the player sees: its sprite, SPRITE_STONE_PILLAR, a
   /// stone pillar (its render)
   ACTOR_REVEALED_PILLAR,
-  /// In the second map, the Mars Djinni.
+  /// In the second scene, the Mars Djinni.
   /// ★ Named from the game: "Flash" (MsgDjinnName)
   ACTOR_FLASH
 };
@@ -258,10 +258,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Where each exit of the three maps leads.
+/// Where each exit of the three scenes leads.
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
-/// The storms, Iodem, and in the second map Flash and what Reveal shows.
+/// The storms, Iodem, and in the second scene Flash and what Reveal shows.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 selector = gSaveBlock.sceneId;
 
@@ -349,7 +349,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the map's first storm
+/// SceneId_SuhallaDesertSouth), the leader walks into the scene's first storm
 /// (metatile behavior 41 or 51).
 static void SuhallaDesert_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM);
@@ -478,8 +478,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the map's first storm (metatile
-/// behavior 61 or 71).
+/// SceneId_SuhallaDesertSouth), the party nears the scene's first storm
+/// (metatile behavior 61 or 71).
 static void SuhallaDesert_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM);
 }
@@ -511,7 +511,7 @@ static void SuhallaDesert_FifthStormRises(void) {
 }
 
 /// Iodem asks whether to search the desert for Sheba again or press on. It
-/// plays in SuhallaDesertSouth, near its way out to the world map (metatile
+/// plays in SuhallaDesertSouth, near its way out to the World Map (metatile
 /// behavior 9), once Iodem has heard the wounded soldiers in Suhalla: he steps
 /// out of the party. "Sheba is nowhere to be found. Should we search the desert
 /// once more or press on to Lalivero?" Whatever the answer, Iodem decides to
@@ -695,8 +695,8 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the spinning runs out (event 99): the storm
 /// rises into the sky with the party, the screen closes, and the party lands
-/// falling (FLAG_ARRIVE_FALLING) on the world map outside Suhalla, or where the
-/// second map's fourth storm drops it.
+/// falling (FLAG_ARRIVE_FALLING) on the World Map outside Suhalla, or where the
+/// second scene's fourth storm drops it.
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
   struct Actor *selectedActor;
@@ -756,12 +756,12 @@ static void SuhallaDesert_PulseRevealPalette(void) {
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
 /// Reveal wears off, and what it showed is hidden again. It runs as Reveal
-/// ends and whenever a map is entered, and only in SuhallaDesertSouth does it
+/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
 /// hide what Reveal showed and put back the pulsing color.
 static void SuhallaDesert_RevealEnds(void) {
 #else
 /// Reveal wears off, and what it showed is hidden again. It runs as Reveal
-/// ends and whenever a map is entered, and only in SuhallaDesertSouth does it
+/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
 /// hide what Reveal showed and put back the pulsing color.
 static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
@@ -816,7 +816,7 @@ static s32 SuhallaDesert_RevealStarts(void) {
   }
 }
 
-/// The third map's exits, or the storms, Iodem, treasure and Reveal of the
+/// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
 /// first two.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertCaves) {
@@ -825,8 +825,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaDesertTriggersOther;
 }
 
-/// Sets a map up as the party enters: a capture goes on spinning, Reveal's
-/// color is saved, and the first two maps set up their storms.
+/// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
+/// color is saved, and the first two scenes set up their storms.
 s32 Scene_Initialize(void) {
   struct MapGridScrollAnimView *gridState;
 
@@ -855,7 +855,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The first map's storms on entry: a doused storm counts as risen, the
+/// The first scene's storms on entry: a doused storm counts as risen, the
 /// others start small (unless the party is coming back to where it stood), and
 /// the sand haze is faded in if a storm has risen before.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
@@ -902,7 +902,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
                       IO_WRITE_16);
 }
 
-/// The second map's storms on entry, as the first map's; the fourth storm's
+/// The second scene's storms on entry, as the first scene's; the fourth storm's
 /// first sprite part takes parameter 10, and once the chasing storm has been
 /// doused it is gone for good.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
@@ -1112,8 +1112,8 @@ s32 gSuhallaDesertChaseScript[] = {
     SC_END,
 };
 
-/// The first two maps' events, in one table. Its exits keep their numbers,
-/// since each map's exit table gives them its own ways out: exit 1 is
+/// The first two scenes' events, in one table. Its exits keep their numbers,
+/// since each scene's exit table gives them its own ways out: exit 1 is
 /// SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
 /// SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the second.
 struct Trigger gSuhallaDesertTriggersOther[] = {

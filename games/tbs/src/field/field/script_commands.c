@@ -1,9 +1,9 @@
 /// @file
-/// Object script commands: waits, jumps, flags, moves and work values.
+/// Actor script commands: waits, jumps, flags, moves and work values.
 ///
 /// Each `SC_` handler here is reached through gActorScript_CommandTable
 /// (actor_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
-/// for each live object; each returns 1 to run on and 0 to end the object's
+/// for each live actor; each returns 1 to run on and 0 to end the actor's
 /// frame (the protocol is in this folder's README).
 
 #include "../field_internal.h"
@@ -13,12 +13,12 @@ enum {
   SCRIPT_BLOCKED_MOVE_FRAMES = 60,  ///< refused frames SC_SYNC waits through
   SCRIPT_WANDER_TRIES = 7,          ///< random points a wander tries a frame
   /// The wander probes' distance, 8 pixels in 16.16: past the point for
-  /// ground, and along the heading for solid objects (SC_WANDER_HOME).
+  /// ground, and along the heading for solid actors (SC_WANDER_HOME).
   SCRIPT_WANDER_PROBE_DISTANCE = 8 * Q16_ONE,
   SCRIPT_WANDER_DIAGONAL_ANGLE = 0x2000, ///< one eighth of a turn
   SCRIPT_WANDER_SIDE_ANGLE = 0x4000,     ///< one quarter of a turn
   SCRIPT_HALF_TURN = 0x8000,
-  /// Whole pixels SC_APPROACH_LINK stays short of its linked object.
+  /// Whole pixels SC_APPROACH_LINK stays short of its linked actor.
   SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
   CAMERA_FOLLOW_FINE_DISTANCE = 64 * Q16_ONE,
@@ -33,7 +33,7 @@ enum {
 
 /// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
 /// interpreter->wait to n - 1, which the update loops count down, and moves
-/// past its operand. Returns 0 to end the object's commands for this frame.
+/// past its operand. Returns 0 to end the actor's commands for this frame.
 s32 ActorScript_Wait(struct Actor *interpreter) {
   s16 commandCursor = interpreter->scriptCursor;
 
@@ -42,8 +42,8 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
   return 0;
 }
 
-/// SC_SYNC: waits until the object arrives at its target, or until a solid
-/// object has blocked it for 60 frames (refused is the blocked count, which
+/// SC_SYNC: waits until the actor arrives at its target, or until a solid
+/// actor has blocked it for 60 frames (refused is the blocked count, which
 /// Actor_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
 /// refused when it gave up, and 0 (wait) until then.
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
@@ -59,10 +59,10 @@ s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   return 0;
 }
 
-/// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
+/// SC_CALL(fn): calls fn with the actor. A non-zero result waits and calls
 /// it again next frame; zero moves on, past the command unless fn moved the
-/// cursor itself. Map scripts and the field effect scripts of fxdata.c use
-/// it to run their own per-object steps.
+/// cursor itself. Events and the field effect scripts of fxdata.c use
+/// it to run their own per-actor routines.
 s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
   s16 initialCursor = interpreter->scriptCursor;
   ScriptCommand callback =
@@ -169,7 +169,7 @@ s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_END: hands the object back to the idle script, gActorScript_EndScript,
+/// SC_END: hands the actor back to the idle script, gActorScript_EndScript,
 /// whose lone SC_END runs again each frame. Returns 0. The table's unused
 /// command numbers from 0x24 also point here.
 s32 ActorScript_End(struct Actor *interpreter) {
@@ -223,7 +223,7 @@ s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_ANIMATION(v): switches the object's sprites to animation v.
+/// SC_ANIMATION(v): switches the actor's sprites to animation v.
 s32 ActorScript_SetAnimation(struct Actor *interpreter) {
   Actor_SelectAnimation(interpreter,
                         interpreter->script[interpreter->scriptCursor + 1]);
@@ -231,9 +231,9 @@ s32 ActorScript_SetAnimation(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_RELEASE: releases the object through Actor_Release, which
+/// SC_RELEASE: releases the actor through Actor_Release, which
 /// releases its sprites and zeroes its slot. Returns 0: with its script now
-/// null, the update loop skips the rest of the object's frame.
+/// null, the update loop skips the rest of the actor's frame.
 s32 ActorScript_Release(struct Actor *interpreter) {
   Actor_Release(interpreter);
   return 0;
@@ -245,18 +245,18 @@ s32 ActorScript_Nop(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_SE(n): sends sound command n (a sound effect).
+/// SC_SE(n): sends sound command n.
 s32 ActorScript_PlaySound(struct Actor *interpreter) {
   Sound_PlaySongFar(interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
 }
 
-/// Returns -1 when an object at position values would overlap a solid
-/// object (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
-/// The object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
+/// Returns -1 when an actor at position values would overlap a solid
+/// actor (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
+/// The actor itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
 /// player's control (player_control.c), the motion loop's solid test
-/// (actor_motion.c), and the carry and Force effects through
+/// (actor_motion.c), and the carry and Force field Psynergy through
 /// ActorScript_CheckOverlapFar.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 objectIndex;
@@ -276,9 +276,9 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   return 0;
 }
 
-/// Returns the first solid object that an object at position values would
+/// Returns the first solid actor that an actor at position values would
 /// overlap, as ActorScript_CheckOverlap tests, or NULL. Called by the Move
-/// effect (move.c) through ActorScript_FindOverlappingEntryFar.
+/// field Psynergy (move.c) through ActorScript_FindOverlappingEntryFar.
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
   s32 objectIndex;
@@ -319,18 +319,18 @@ static __inline__ s32 ActorScript_ApplyPositionCommand(
   return 1;
 }
 
-/// SC_POSITION(x, y, z): places the object at (x, y, z) and stops it.
+/// SC_POSITION(x, y, z): places the actor at (x, y, z) and stops it.
 s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter) {
   return ActorScript_ApplyPositionCommand(interpreter,
                                           Actor_SetPositionAndResetMotion);
 }
 
-/// SC_MOVE(x, y, z): sends the object towards (x, y, z).
+/// SC_MOVE(x, y, z): sends the actor towards (x, y, z).
 s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
   return ActorScript_ApplyPositionCommand(interpreter, Actor_SetMoveTarget);
 }
 
-/// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
+/// SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z).
 s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -346,7 +346,7 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_FACE_LINK: stores the angle from the object to its linked object in
+/// SC_FACE_LINK: stores the angle from the actor to its linked actor in
 /// scriptValue, measured on the ground plane (x and z).
 s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -360,7 +360,7 @@ s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_MOVE_LINK: sends the object towards its linked object.
+/// SC_MOVE_LINK: sends the actor towards its linked actor.
 s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -372,7 +372,7 @@ s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
+/// SC_MOVE_LOCAL(a, b): sends the actor towards its position plus an offset
 /// that is never filled in; the operands are skipped unread.
 s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -391,10 +391,10 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
+/// SC_CAMERA: keeps the camera actor on its leader (linkedActor), clamped
 /// so the view stays on the map. It closes an eighth of the distance a frame,
 /// at most its speed limit, and a quarter of a large height difference; when
-/// action is set it jumps there at once.
+/// timer is set it jumps there at once.
 ///
 /// Run each frame by gActor_CameraScript, which
 /// Actor_StartCamera starts. Clears the camera's flags and target,
@@ -497,12 +497,12 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
+/// SC_APPROACH_LINK: follows the linked actor at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 ///
 /// Run each frame by gActor_ApproachLinkScript, which
-/// Actor_StartApproachLink starts. Copies the linked object's speed
+/// Actor_StartApproachLink starts. Copies the linked actor's speed
 /// limit and acceleration, and sets the move target.
 s32 Actor_ApproachLinkedActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -547,10 +547,10 @@ s32 Actor_ApproachLinkedActor(struct Actor *interpreter) {
 
 /// SC_WANDER(base, range, limit): walks to a random point base to base +
 /// range away, within 90 degrees either side of its heading (scriptValue),
-/// that no solid object or wall blocks, with clear ground 8 pixels further at
+/// that no solid actor or wall blocks, with clear ground 8 pixels further at
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
-/// No script in games/tbs names SC_WANDER; map scripts use SC_WANDER_HOME.
+/// No script in games/tbs names SC_WANDER; events use SC_WANDER_HOME.
 s32 Actor_Wander(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -820,7 +820,7 @@ enum ScriptOperandOperation {
   }
 
 /// The work value handlers, one for each entry of enum ActorScriptValue (see
-/// gActorScript_OperandHandlerTable in operand.c); each names the object field
+/// gActorScript_OperandHandlerTable in operand.c); each names the actor field
 /// it sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress,
                               scriptAddress)
@@ -842,7 +842,7 @@ SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareX, x)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareY, y)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareZ, z)
 
-/// Work value SW_RADIUS: sets, adds to or compares the object's radius.
+/// Work value SW_RADIUS: sets, adds to or compares the actor's radius.
 void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                     s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {

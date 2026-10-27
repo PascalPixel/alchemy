@@ -11,7 +11,7 @@ struct ScreenPoint;
 struct Particle;
 
 /// The large animations BattleAnim_RunSummon runs, by kind: the twelve
-/// summons. A summon's row of gAbilityAnimations has effect 0x8000 plus its
+/// summons. A summon's row of gAbilityAnimations has ANIM_SUMMON plus its
 /// kind.
 enum SummonAnimId {
   SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's animation too

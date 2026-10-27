@@ -284,7 +284,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
   return gLacquerRoomsB_Triggers;
 }
 
-/// Opens the room through a window transition and places hidden still objects
+/// Opens the room through a window transition and places hidden still actors
 /// of SPRITE_CHEST's sheet (Actor_CreateConfigured): one in the
 /// inn (LACQUER_ROOMS_B_INN_SOUTH and
 /// LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS), two in the shops

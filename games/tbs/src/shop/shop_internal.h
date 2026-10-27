@@ -69,11 +69,11 @@ enum ShopType {
 };
 
 /// The inn the inn's own code names (Inn_CheckIn's innId, a row of
-/// sInnPricesPerGuest); each town's map script names its own inn where it opens
+/// sInnPricesPerGuest); each town's event names its own inn where it opens
 /// it.
 #define INN_XIAN 5
 
-/// The stock rows the shop code itself names; each town's map script names its
+/// The stock rows the shop code itself names; each town's event names its
 /// own shops' rows where it opens them.
 enum ShopStockRow {
   SHOP_STOCK_ROW_EMPTY = 0,        ///< sells nothing; stands in for a bad row
@@ -96,17 +96,17 @@ enum SanctumSparkleState {
   SANCTUM_SPARKLE_LAST_FLIGHT = 2
 };
 
-/// What the sanctum does for one party member; each kind picks the member's
-/// status it needs, its fee and its cure (sanctum.c).
+/// What the sanctum does for one party member; each kind picks the party
+/// member's status it needs, its fee and its cure (sanctum.c).
 enum SanctumService {
-  SANCTUM_SERVICE_REVIVE,      ///< for a downed member (HP 0)
+  SANCTUM_SERVICE_REVIVE,      ///< for a downed party member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
-  SANCTUM_SERVICE_REPEL_EVIL,  ///< for a haunted member
+  SANCTUM_SERVICE_REPEL_EVIL,  ///< for a haunted party member
   SANCTUM_SERVICE_REMOVE_CURSE ///< for any curse bit set
 };
 
 enum {
-  /// Icons a row in a member's 15-slot inventory grid, 16 pixels apart.
+  /// Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
   SHOP_INVENTORY_COLUMNS = 5,
   /// Stock items a page of the buy screen, 32 pixels apart.
   SHOP_STOCK_PAGE_ITEMS = 7
@@ -147,8 +147,8 @@ enum {
 #endif
 
 // Where the item grid (Shop_DrawMemberItems, sell.c), shared by the sell,
-// repair and drop screens and the equip prompt, writes MsgNoItems for a member
-// with no items, in pixels.
+// repair and drop screens and the equip prompt, writes MsgNoItems for a party
+// member with no items, in pixels.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12

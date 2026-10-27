@@ -80,7 +80,7 @@ void BattleAnim_RunHeadbutt(struct BattleAnimArgs *args) {
 /// and does not bring it back. Copies the mode's palette over the first 128
 /// bytes of BG palette RAM, sets work->shakeFrames on the strike.
 ///
-/// effect: the user and the targets.
+/// args: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).
 void BattleAnim_RunRushingStrike(struct BattleAnimArgs *args, s32 mode) {
   void **slots;

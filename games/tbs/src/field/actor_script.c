@@ -1,5 +1,5 @@
 /// @file
-/// Object scripts: the ones the engine starts itself, and the command
+/// Actor scripts: the ones the engine starts itself, and the command
 /// table.
 
 #include "unit/field/actor_script.h"
@@ -9,7 +9,7 @@
 #include "actor_script.h"
 #include "types.h"
 
-/// The script Actor_Create gives every new object: it does nothing and
+/// The script Actor_Create gives every new actor: it does nothing and
 /// returns to the idle script.
 const s32 gActor_DefaultScript[] = {
     SC_END,
@@ -58,7 +58,7 @@ const s32 gActor_ApproachLinkScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The idle script Actor_StartIdle gives an object.
+/// The idle script Actor_StartIdle gives an actor.
 const s32 gActor_IdleScript[] = {
     SC_END,
 };

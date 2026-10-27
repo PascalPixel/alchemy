@@ -3,11 +3,11 @@
 /// game packs rooms of several places that share a tile style onto one map,
 /// here the inside of Fuchin Temple with two masters' rooms in other
 /// areas, Master Feh's school in Xian and Master Hama's room in Lama Temple.
-/// Two maps hold four areas, by their area names; in each, story flags
-/// pick where the people stand and which script plays on entry.
+/// Two scenes hold four areas, by their area names; in each, story flags
+/// pick where the people stand and which event plays on entry.
 ///
 /// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
-///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
+///   from the World Map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
 ///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
 ///   front of the traveling healer. The monk beneath the falls guards the
 ///   waterfall grotto: once Nyunpa has set his test (FLAG_NYUNPA_TEST_ACCEPTED)
@@ -202,7 +202,7 @@ enum HamasRoomActorId {
   ACTOR_FEIZHI_IN_LAMA_TEMPLE
 };
 
-/// Animations of these maps' own sprites beyond enum ActorAnimation.
+/// Animations of these scenes' own sprites beyond enum ActorAnimation.
 enum {
   /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
   ANIM_NYUNPA_MEDITATE = 5,
@@ -243,7 +243,7 @@ FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
 
 // Keep an actor facing the party leader while the conversation is
 // staged.
-// UB: update hooks return void. The native produces an unused zero result;
+// UB: update routines return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
 static void FuchinTemple_FaceLeader(struct Actor *updated) {
@@ -1264,7 +1264,8 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
 static void FuchinTemple_FehSeesChi(void) {
   struct Actor *actor;
 
-  // Stop the temporary facing hooks while the group reacts to the tree.
+  // Stop the temporary facing update routines while the group reacts to the
+  // tree.
   actor = Actor_Get(ACTOR_FEH);
   actor->update = 0;
   actor = Actor_GetById(ACTOR_PROUD_STUDENT);
@@ -2451,7 +2452,7 @@ static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
   WaitFrames(1);
 }
 
-/// Finishes the demonstration's effect and lowers the caster's hands.
+/// Finishes the demonstration's Mind Read and lowers the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH);
@@ -2485,8 +2486,8 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   Event_WaitFrames(60);
 }
 
-/// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
-/// and blue in turn every two frames.
+/// Hama's and Ivan's update routine during the Reveal lesson: they glow, drawn
+/// red and blue in turn every two frames.
 static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
     Actor_SetSpriteColor((struct Actor *)updated, SPRITE_COLOR_RED_TINT);
@@ -2496,7 +2497,7 @@ static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
 }
 
 /// Animates Hama and Ivan's lesson effects, fades the palette and clears the
-/// callbacks.
+/// update routines.
 static void FuchinTemple_AnimateRevealLesson(void) {
   struct EffectOptions options;
   struct Actor *hama;
@@ -2537,7 +2538,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   }
   Sound_PlaySong(SE_SHIMMER);
   Event_WaitFrames(30);
-  // Fade back and remove both hooks before the conversation resumes.
+  // Fade back and remove both update routines before the conversation resumes.
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_WaitFrames(40);

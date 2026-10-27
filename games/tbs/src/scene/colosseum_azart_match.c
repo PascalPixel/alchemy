@@ -398,7 +398,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   Event_End();
 }
 
-/// Moves the leader and a stage object together between cell centers.
+/// Moves the leader and a stage actor together between cell centers.
 static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
                                                       s32 dz) {
   struct Actor *leader;
@@ -601,7 +601,7 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 /// fight; the battle's group follows who took the shield. The arena's
 /// step trigger row, in all three finals stages, waits on
 /// FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in the game sets it: no
-/// map code, no object script (none uses SC_FLAG_ON) and none of the main
+/// scene code, no actor script (none uses SC_FLAG_ON) and none of the main
 /// image's flag writers reaches it, so the arena is never closed.
 static void ColosseumAzartMatch_ReachArena(void) {
   s32 approach;
@@ -1226,7 +1226,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
-// This map's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
 #include "common/colosso_solo.h"
@@ -1512,7 +1512,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 #include "common/colosso_map_state.h"
 #include "common/actor_findslot.h"
 
-/// Checks the next cell and pushes its object one step if clear.
+/// Checks the next cell and pushes its actor one step if clear.
 static void ColosseumAzartMatch_PushActorAhead(void) {
 
   struct Actor *subject;

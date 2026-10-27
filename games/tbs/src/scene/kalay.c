@@ -1,6 +1,6 @@
 /// @file
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace, and
-/// the tunnel beneath them: four areas in six maps.
+/// the tunnel beneath them: four areas in six scenes.
 ///
 /// - Kalay (SceneId_Kalay), the town. Eight doors (step triggers 1 to 8) open
 /// into
@@ -8,7 +8,7 @@
 ///   (kalay_interiors.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
 ///   KALAY_TO_ARMOR_SHOP_COUNTER into the same two shops from behind their
 ///   counters; KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace, and
-///   step triggers 9 and 10 out to the world map (KALAY_TO_WORLD_MAP and
+///   step triggers 9 and 10 out to the World Map (KALAY_TO_WORLD_MAP and
 ///   KALAY_TO_WORLD_MAP_WEST, to its WORLD_MAP_FROM_KALAY_EAST and
 ///   WORLD_MAP_FROM_KALAY_WEST). The weapon, armor and item sellers open their
 ///   shops only when spoken to across the counter. A Nut circles in the air
@@ -35,7 +35,7 @@
 ///   palace (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
 ///   HAMMET_PALACE_GROUNDS_TO_KALAY leads back to town.
 /// - Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), outside the town (the
-///   world map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
+///   World Map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
 ///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH). A guard
 ///   (ACTOR_TUNNEL_GUARD) bars `the cave up ahead` by Hammet and Layana's
 ///   command, and a Nut floats here until Catch takes it
@@ -59,9 +59,9 @@
 ///   statues, pushed by walking into them or moved with Move, each open a
 ///   passage step by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN
 ///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, area temp flags, so the
-///   statues are back once the party leaves the tunnel's maps); while a passage
-///   is closed, particles stream from its statue as it nears its place. The
-///   first passage raises a puddle (ACTOR_PUDDLE) that Frost freezes and
+///   statues are back once the party leaves the tunnel's scenes); while a
+///   passage is closed, particles stream from its statue as it nears its place.
+///   The first passage raises a puddle (ACTOR_PUDDLE) that Frost freezes and
 ///   sinks into the floor, freeing its cells; that is a temporary flag, so the
 ///   puddle stands again on each entry. Scorch, a Mars Djinni, joins the party
 ///   when spoken to, without a battle, and five chests hold Spirit Gloves, a
@@ -77,15 +77,15 @@
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY up into the town
 ///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM).
 ///
-/// Every map sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's front
-/// also catch the palace's story up with Lunpa's: hearing in Lunpa that Hammet
-/// is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets area temp flag
+/// Every scene sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
+/// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
+/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets area temp flag
 /// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, which changes what Layana says, and
 /// once Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
 /// Lunpa) Ivan's report and Layana's scolding count as seen and
-/// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each map's
+/// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each scene's
 /// tables; the cave and the passage have no actor templates, and an
-/// empty set serves any other map number.
+/// empty set serves any other scene.
 
 #include "save_block.h"
 #include "unit/field/field.h"
@@ -138,7 +138,7 @@
 /// group, which Kalay_WatchTourGroupDeparture places after them
 /// (gKalay_TourGroupActorTemplates).
 enum KalayTownActorId {
-  /// The two soldiers of Kalay at the town's entrance from the world map.
+  /// The two soldiers of Kalay at the town's entrance from the World Map.
   /// ★ Named from the game: "Welcome to Kalay! You may enter, so long as you
   /// do not disrupt the peace." (MsgKalayWelcomeInPeace)
   ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
@@ -277,7 +277,7 @@ enum KalayTunnelActorId {
   /// ★ Named from what the player sees: the second stone statue, east of the
   /// first (its render)
   ACTOR_SECOND_STATUE,
-  // XXX (no evidence): whether he is Bunza; likely, because every other map
+  // XXX (no evidence): whether he is Bunza; likely, because every other scene
   // places SPRITE_BUNZA beside Hammet as Bunza, but his lines never name him.
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
   /// is set.
@@ -299,7 +299,7 @@ enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (area temp flags) while the party stays in the tunnel's
-/// maps.
+/// scenes.
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
   /// ★ Named from its area name: Kalay Tunnel
@@ -411,7 +411,7 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
 
 const struct SceneExitRegion *Kalay_GetRegions(void) { return NULL; }
 
-/// The numbered exits of all six maps.
+/// The numbered exits of all six scenes.
 const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
@@ -453,7 +453,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
   Event_End();
 }
 
-/// The conversations, exits and Psynergy targets of each map.
+/// The conversations, exits and Psynergy targets of each scene.
 const struct Trigger *Kalay_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -1185,7 +1185,7 @@ static void Kalay_CatchTownNut(void) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 
-/// Every map of the overlay sets FLAG_KALAY_REACHED, then prepares its own
+/// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
 s32 Kalay_Initialize(void) {
   s32 sceneId;
@@ -2245,8 +2245,8 @@ static void Kalay_UpdateTunnelPassages(void) {
 }
 
 // UB: the native void epilogue returns through r0, leaving the nonzero return
-// address as SC_CALL's status. Repeat once per frame until the object is
-// destroyed, with an explicit status in the modern build.
+// address as SC_CALL's status. Repeat once per frame until the actor is
+// released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
 static s32 Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
@@ -2380,7 +2380,7 @@ static void Kalay_UpdateNutOrbit(void) {
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
 /// is in KalayTunnelTreasureRoom; sinking it clears its cells, and it stays
-/// sunk until the map is entered again.
+/// sunk until the scene is entered again.
 static void Kalay_FreezePuddle(void) {
   struct Actor *effect = Actor_GetById(ACTOR_PUDDLE);
 

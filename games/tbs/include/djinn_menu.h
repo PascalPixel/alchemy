@@ -14,12 +14,12 @@
 // DjinnListTable.ids. bits: 15 set | 11..8 member | 7..5 element | 4..0 index
 #define DJINN_ENTRY_INDEX 31      ///< its number within its element
 #define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
-#define DJINN_ENTRY_MEMBER 0xf00  ///< the member holding it
+#define DJINN_ENTRY_MEMBER 0xf00  ///< the party member holding it
 #define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
 
 #define DJINN_ELEMENTS 4
 #define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member
-#define DJINN_LIST_ROWS 10   ///< entries one member's list holds
+#define DJINN_LIST_ROWS 10   ///< entries one party member's list holds
 
 /// The Djinn menu's lists: each party member's Djinn entries and their count.
 struct DjinnListTable {
@@ -50,7 +50,8 @@ struct DjinnMenuWork {
   struct WindowSprite *cursor;
   /// The second of ItemMenuWork's sideIcons; not named here.
   struct WindowSprite *secondSideIcon;
-  s8 selectedColumn[2]; ///< each side's member, an index into members
+  s8 selectedColumn[2]; ///< each side's party member, an index into party
+                        ///< members
   s8 sideCount[2];      ///< ItemMenuWork's; not named here
   /// ItemMenuWork's and ShopWork's itemWindow; not named here.
   struct Window *itemWindow;
@@ -89,7 +90,7 @@ struct DjinnMenuWork {
   u16 members[DJINN_LIST_MEMBERS]; ///< the party in order
   u8 pairCount;
   u8 memberCount;
-  u8 shownMember[2]; ///< the member giving and the one receiving
+  u8 shownMember[2]; ///< the party member giving and the one receiving
   /// ItemMenuWork's selectedItemIcon; not named here.
   struct WindowSprite *selectedIcon;
   /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
@@ -102,7 +103,8 @@ struct DjinnMenuWork {
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4]; ///< ItemMenuFiguresView's phases; not named here
-  /// The Djinn chosen in each side: index in their element, element, member.
+  /// The Djinn chosen in each side: index in their element, element, party
+  /// member.
   ///@{
   u8 pairIndex[2];
   u8 pairElement[2];

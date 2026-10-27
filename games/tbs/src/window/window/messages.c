@@ -189,11 +189,11 @@ void Window_CloseAll(s32 unused) {
   }
 }
 
-/// Steps a text printer's window effect (WINDOW_ANIMATION_SWELL): the frame is
-/// drawn a tile bigger on every side until the countdown ends, then back to
-/// normal. Any other effect is left set and does nothing, so the printer types
-/// no more text. TextPrinter_RunAll calls it in place of typing while the
-/// window has an effect.
+/// Steps a text printer's window animation (WINDOW_ANIMATION_SWELL): the frame
+/// is drawn a tile bigger on every side until the countdown ends, then back to
+/// normal. Any other animation is left set and does nothing, so the printer
+/// types no more text. TextPrinter_RunAll calls it in place of typing while the
+/// window has an animation.
 void Window_StepSwellEffect(struct TextPrinter *printer) {
   struct Window *window = printer->window;
   s32 effect = window->animation;

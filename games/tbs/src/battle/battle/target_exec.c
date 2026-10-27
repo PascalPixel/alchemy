@@ -7,7 +7,7 @@
 
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
-/// back to the actor.
+/// back to the user.
 /// Called by BattleAbility_ApplyToTarget before the added effect.
 /// @param effect the ability's effect (enum AbilityEffect)
 s32 Ability_EffectAppliesToDowned(s32 effect) {
@@ -102,7 +102,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 ///
 /// Called for each target in turn by BattlePlayback_Run (an action with an
 /// animation) and BattleStaging_RunActorEntries (one without). Changes the
-/// target's HP, PP, statuses, stat stages and turns, and its guard; the actor's
+/// target's HP, PP, statuses, stat stages and turns, and its guard; the user's
 /// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
 /// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
 /// bit 1 when the party is challenged; queues the playback that shows it all.
@@ -112,7 +112,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// It runs in phases, each marked in the body:
 /// 1. Setup: a copy of the target as it was; the target's distance from the
 ///    aimed place; the element's affinity (resisted, neutral or weak); the
-///    actor's power in the element.
+///    user's power in the element.
 /// 2. The Djinn bonus roll, and whether the effect lands (hit).
 /// 3. Calling an ally (Ally Search, Search for Help, Speed Surge).
 /// 4. The effects that change the damage step: Ground, Torch, Severe Blow,
@@ -122,10 +122,10 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// 6. The added effect, by the ability's effect: cures, heals, stat changes,
 ///    revivals, statuses, drains, Break, the curse, guards.
 /// 7. Waking from damage, the recalculated stats, the redraw, and the evil
-///    spirit's share for a haunted actor.
+///    spirit's share for a haunted unit.
 ///
-/// @param plan the turn under way: the actor, the ability, its element and
-/// its targets, each with its distance from the aimed position, damage
+/// @param plan the turn under way: the acting unit, the ability, its element
+/// and its targets, each with its distance from the aimed position, damage
 /// multiplier, critical hit and any hit roll made in advance
 /// @param slot which of the turn's targets (0 to plan->targetCount - 1)
 #ifdef UBFIX
@@ -152,7 +152,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   // A copy of the target as it was, to measure each stat's change; a heap
   // block freed at the end.
   struct Unit *savedTarget;
-  s32 elementPower; // the actor's power in the ability's element
+  s32 elementPower; // the user's power in the ability's element
   s32 targetId;
   s32 element;
   struct Unit *target;
@@ -218,7 +218,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
       affinity = 1;
   }
 
-  // The actor's power in the ability's element; items always use 100. (Here
+  // The user's power in the ability's element; items always use 100. (Here
   // and below the element is read from the turn again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
@@ -360,7 +360,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     } else if (ability->effect == ABILITY_EFFECT_INSTANT_DEATH) {
       skipDamage = 1;
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
-      // The actor leaves the battle (BattleObject_DestroyTemporaryObject).
+      // The user leaves the battle (BattleObject_DestroyTemporaryObject).
       if (actor->hp != 0)
         BattlePlayback_Push(PLAYBACK_REMOVE_UNIT, unitId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {
@@ -383,7 +383,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     s32 power;
 
     switch (kind) {
-    // An attack: the actor's Attack against the target's Defense.
+    // An attack: the user's Attack against the target's Defense.
     case ABILITY_FORMULA_ATTACK:
     case ABILITY_FORMULA_ATTACK_MULTIPLIED: {
       s32 hp;
@@ -1127,7 +1127,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
       target->reflect = STATUS_TURNS;
       break;
 
-    // The drains give the damage dealt back to the actor: Drain all of it
+    // The drains give the damage dealt back to the user: Drain all of it
     // as HP, Sap half.
     case ABILITY_EFFECT_DRAIN_HP:
     case ABILITY_EFFECT_DRAIN_HALF_HP: {
@@ -1181,7 +1181,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     }
 
     // Psy Leech: a tenth of the damage as PP, as far as the target has it
-    // and the actor has room.
+    // and the user has room.
     case ABILITY_EFFECT_PSY_LEECH:
       amount = damageDealt / 10;
       if (target->pp < amount)
@@ -1309,7 +1309,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   PartyStatus_DrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
-  // A haunted actor pays, one time in four, for each target it took HP or PP
+  // A haunted unit pays, one time in four, for each target it took HP or PP
   // from: a quarter of that (at least 1), gathered in hauntDamage and taken
   // from its own HP at the end of its turn (BattleUnit_ProcessTurnEnd).
   if (actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {

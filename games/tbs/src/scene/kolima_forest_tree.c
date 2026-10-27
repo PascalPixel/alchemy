@@ -1,8 +1,8 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestTree), the last of the forest's five
-/// maps, where Tret and Laurel, the spirits of the holy trees, stand. The party
-/// has come from Kolima to reawaken Tret's gentle side and save the villagers
-/// he turned into trees, and here the curse is lifted.
+/// scenes, where Tret and Laurel, the spirits of the holy trees, stand. The
+/// party has come from Kolima to reawaken Tret's gentle side and save the
+/// villagers he turned into trees, and here the curse is lifted.
 ///
 /// At first Tret is silent and his wrathful side answers for him
 /// (ACTOR_TRETS_WRATHFUL_SIDE, with a portrait): "I control all in Tret's
@@ -36,7 +36,7 @@
 /// forest's way in (SceneId_KolimaForestEntrance,
 /// KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
-/// Switch's map (SceneId_KolimaForestFloodgate).
+/// Switch's scene (SceneId_KolimaForestFloodgate).
 
 #include "speaker.h"
 #include "save_block.h"
@@ -230,7 +230,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 /// (ACTOR_TRET_STAND_IN); until FLAG_TRET_DEFEATED Mind Read on him runs this
 /// too, with no effect of its own (subject bit 10). Before the Tret Tree, he is
 /// silent and his wrathful side answers, the screen darkening around its words;
-/// after it he is silent, and if anyone carries Hermes' Water the main menu
+/// after it he is silent, and if anyone carries Hermes' Water the File Screen
 /// opens. Once the curse is lifted, no axe shall touch him again.
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterHolder;

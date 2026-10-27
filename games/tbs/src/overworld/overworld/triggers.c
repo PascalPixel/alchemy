@@ -5,14 +5,14 @@
 
 #include "../overworld_internal.h"
 
-/// Returns the actor template of actor id in the map's
+/// Returns the actor template of actor id in the scene's
 /// actor template tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
 /// from, counting the placed rows in order.
 ///
 /// Called by Scene_TalkToActor for the talk facing, and by the field
-/// Psynergy effects that read an actor's template (Mind Read, the
-/// Djinni effect, the script messages and the view).
+/// Psynergy and event commands that read an actor's template (Mind Read,
+/// a Djinni's joining, the event messages and the view).
 struct ActorTemplate *Scene_FindActorTemplate(s32 id) {
   struct ActorTemplate *template;
   s32 tableIndex;
@@ -62,7 +62,7 @@ found:
 /// bit 0x1000 holds while that flag is set, any other while its flag is clear.
 /// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
-/// Used for every condition column of a map's tables: events
+/// Used for every condition column of a scene's tables: triggers
 /// (Scene_FindTrigger, Field_ExamineCell), actor templates
 /// (Event_SpawnActorTemplates), exit regions
 /// (Field_CheckExitRegions) and item triggers.
@@ -105,13 +105,13 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
   return ignoresCondition;
 }
 
-/// Returns the first of the map's events of kind for target whose condition
+/// Returns the first of the scene's triggers of kind for target whose condition
 /// holds, or NULL. STEP_TRIGGER_FLAG_WALKING also needs the leader to have
 /// pushed against it for more than 12 frames (2 with control bit 11);
 /// TRIGGER_FLAG_FACING needs the leader to face within an eighth of a turn of
 /// the direction in the top four bits.
 ///
-/// Called by every lookup of a map's events in this part and by
+/// Called by every lookup of a scene's triggers in this part and by
 /// Actor_GetTriggerCellAheadOfCurrent. Changes nothing.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
@@ -304,7 +304,7 @@ finish:
   return result;
 }
 
-/// Runs the map's raised event (TRIGGER_RAISED) for value: its message or
+/// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
 /// Called by SceneManager_Run for a positive event request (work->event).
@@ -338,7 +338,7 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by SceneManager_Run for its step request (work->action), which
+/// Called by SceneManager_Run for its step request (work->stepTrigger), which
 /// Field_UpdateWalking raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->exit for an exit, and clears work->blockedSteps after a
 /// step trigger that needs pushing.
@@ -370,7 +370,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
     exit = Scene_FindTrigger(TRIGGER_EXIT, value);
     if (exit != 0) {
       // An enum ExitStyle chooses how the leader leaves; the animated styles'
-      // flags make the next map play the matching arrival.
+      // flags make the next scene play the matching arrival.
       exitId = exit->flags & EXIT_STYLE_MASK;
       switch (exitId) {
       case EXIT_STYLE_NORMAL:
@@ -433,7 +433,7 @@ s32 Field_RunPushCell(s32 behavior) {
 
 /// Searches the cell ahead with the given metatile behavior. The fixed search
 /// spots, MB_JAR to MB_WELL, show their two messages. Otherwise the
-/// map's examine trigger for the cell runs: a function, a message, or a chest
+/// scene's examine trigger for the cell runs: a function, a message, or a chest
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
@@ -549,7 +549,7 @@ s32 Field_ExamineCell(s32 tile) {
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinni,
-              // which SceneManager_Run resolves when the map is entered again
+              // which SceneManager_Run resolves when the scene is entered again
               // after the battle.
               if (condition != -1) {
                 condition = gSaveBlock.pendingDjinni = condition | 0x1000;

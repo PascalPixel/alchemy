@@ -41,15 +41,15 @@ burning sand, and the ledges, climbing spots and gaps the leader jumps when
 pushing against them.
 
 **How the ground is shaped.** A cell's shape is flat ground, a slope, a step
-or one of the other 16 kinds, with three heights in steps of 8 pixels, and
-the height anywhere in the cell is worked out from them. An object can step
+or one of the other 16 kinds, with three heights in multiples of 8 pixels, and
+the height anywhere in the cell is worked out from them. An actor can step
 at most 8 pixels up or 12 down, so a sharp rise or drop stops the leader as
 surely as a wall. Most of the game's walls are made this way: Goma Cave has no
 wall cells at all, only a rim of ground 32 pixels high along the foot of each
 cliff, some of it cut along a cell's diagonal.
 
 Behavior and height belong to a layer. Each layer is a window onto the grid
-([below](#one-grid-three-layers)), and an object follows the ground of one
+([below](#one-grid-three-layers)), and an actor follows the ground of one
 layer, which a scene's code can change, so the three layers can have different
 walls and heights ([Field](../field/README.md#how-high-a-step-can-go)).
 
@@ -84,7 +84,7 @@ map's own folder. Each table holds one part of the map, and the map's
 | `shapes.tsv` | the shapes of the ground |
 | `map.txt` | the grid: each cell's picture, behavior and shape |
 | `tileset_anims.tsv` | the tileset animation script |
-| `blend.tsv` | the blend [script](../../glossary.md#script) |
+| `blend.tsv` | the blend script |
 | `treasure_spots.tsv` | where chests and Psynergy Stones can stand |
 | `*_ja.tsv`, `map_de.txt`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table |
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing |
@@ -256,7 +256,7 @@ map lists the spots where a chest or a
 event that would place one there, and a scene places one only where it has that
 event. A chest is shown open once it has been opened and is gone once its
 mimic has been beaten; a Psynergy Stone stands until it is taken, and taking
-it fills every member's PP.
+it fills every party member's PP.
 
 Crossbone Isle's keys room and its Bane room share `map_110`, whose eight
 treasure spots carry the [trigger](../../glossary.md#trigger) subjects 100 to 107: the
@@ -266,7 +266,7 @@ pillar carrying it reaches the ladder, since its treasure spot's cell lies
 past the room's east wall.
 
 The treasure spot list is (column, row, subject) rows ended by 255, 255, and
-`Field_PlaceTreasureSpots` places an object at each spot whose subject the scene
+`Field_PlaceTreasureSpots` places an actor at each spot whose subject the scene
 has a trigger for, up to `TREASURE_SPOT_MAX` (10); a spot the scene has no trigger
 for takes none of the ten. 76 maps use `map_000`'s list, which holds
 only the end row. Opening a chest and taking a stone are the scene's examine
@@ -288,7 +288,7 @@ after the fourth. Up to 16 channels run side by side.
 Both scripts are lists of numbers, run each frame as
 [tasks](../../glossary.md#task): a channel's start, then frames of four
 values each (the tile to copy from, how many tiles, the tile to copy to and
-the frames to wait), then a jump, a stop or a loop. A blend script's steps set
+the frames to wait), then a jump, a stop or a loop. A blend script's commands set
 how the layers blend and wait.
 
 `TilesetAnim_Update` and `BlendScript_Run` run the scripts,
@@ -313,7 +313,7 @@ The world is 16 by 16 squares of 512 pixels. The ground is stored as two
 sets of squares, one for the lower ground and one for the mountains, woods and
 towns drawn over it, and each position starts on the square of its own number.
 Each set holds 64 squares more than there are positions, alternates: a world map
-script can put one in a position, and the snowfield's graphics swap six.
+event can put one in a position, and the snowfield's graphics swap six.
 
 `world/blocks.tsv` is the ground, one value for each 32-pixel
 cell of the world map, 512 across and 320 down, which the build cuts into the

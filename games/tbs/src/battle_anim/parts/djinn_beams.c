@@ -27,13 +27,13 @@ void BattleAnim_RunRevive(struct BattleAnimArgs *args) {
 void BattleAnim_RunDew(struct BattleAnimArgs *args) {
   BattleAnim_RunDjinnBeams(args, ELEMENT_MERCURY);
 }
-/// When effect->prelude is 1, a Djinni appears, sways and then rises out of
+/// When args->prelude is 1, a Djinni appears, sways and then rises out of
 /// sight. Over each target in turn, 16 frames apart, eight motes drift down,
 /// and from 72 frames after its turn starts a column of light falls on it
 /// and narrows away; the battle shows the result on frame 80.
 ///
 /// Called by BattleAnim_RunRevive and BattleAnim_RunDew. Runs
-/// BattleAnim_RunDjinniEntrance first when effect->prelude is 1. Loads three
+/// BattleAnim_RunDjinniEntrance first when args->prelude is 1. Loads three
 /// palettes over the first 64 background colours in turn, so the Djinni's
 /// is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X, and
 /// builds and frees its blitters every frame.

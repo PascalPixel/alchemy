@@ -73,7 +73,7 @@
 /// Loads the dusk clouds as the battle background (BattleBackground_LoadFar),
 /// and for the dusk part sets view->busy and moves gProjection.centerY to
 /// 240 (BattleAnim_SetupBlendedDisplay puts the centre back). Spawns the nine
-/// formation objects and releases them at the end; the closing
+/// formation sprites and releases them at the end; the closing
 /// BattleAnim_RunImpactBurst builds and frees its own blitters and transfer
 /// and overwrites work->particles and PARTICLES 0 to 63. Closes the canvas
 /// layer.
@@ -376,7 +376,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
   Task_Remove(BattleAnim_AdvanceScrollOnInterval);
   BattleAnim_SetupBlendedDisplay();
   BattleAnim_SelectLivingTargets(work->args);
-  // Nine objects of SPRITE_THOR, the formation (SUMMON_FORMATION_THOR),
+  // Nine sprites of SPRITE_THOR, the formation (SUMMON_FORMATION_THOR),
   // released at the end.
   BattleAnim_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,

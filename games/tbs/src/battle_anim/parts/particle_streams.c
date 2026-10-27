@@ -6,8 +6,8 @@
 
 /// The particle streams' modes (BattleAnim_RunParticleStreams).
 enum ParticleStreamsMode {
-  PARTICLE_STREAMS_METEOR,     ///< one spawned object rises
-  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated objects
+  PARTICLE_STREAMS_METEOR,     ///< one spawned sprite rises
+  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated sprites
                                ///< rise in the lightning bolt's colours
 };
 
@@ -55,7 +55,7 @@ void BattleAnim_ArmPaletteHBlankDma(void) {
 }
 
 /// A formation rises out of a dissolving starfield and bursts into embers and
-/// flashes, with one spawned object rising.
+/// flashes, with one spawned sprite rising.
 ///
 /// Abilities: Meteor (SUMMON_ANIM_METEOR).
 ///
@@ -65,7 +65,7 @@ void BattleAnim_RunMeteor(struct BattleAnimArgs *args) {
   BattleAnim_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
 }
 
-/// The user leaps up, and two objects rise out of a dissolving starfield and
+/// The user leaps up, and two sprites rise out of a dissolving starfield and
 /// burst into embers and flashes, in the lightning bolt's colours.
 ///
 /// Abilities: Outer Space (BATTLE_ANIM_OUTER_SPACE).
@@ -84,7 +84,7 @@ void BattleAnim_RunOuterSpace(struct BattleAnimArgs *args) {
 
 /// The stream runs in two halves. The rise dissolves the battle map into a
 /// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
-/// objects while motes, orbiting sparks and falling drops are drawn into the
+/// sprites while motes, orbiting sparks and falling drops are drawn into the
 /// map buffer over a heat-tinted scanline palette. The burst then switches to
 /// a blended half-scale canvas and throws embers, screen motes and growing
 /// flashes from the origin for PARTICLE_STREAMS_BURST_FRAMES shaking frames.
@@ -105,7 +105,7 @@ void BattleAnim_RunOuterSpace(struct BattleAnimArgs *args) {
 /// then keeps it within 4 pixels of (120, 120) until
 /// BattleAnim_EndCanvasLayer puts it back there at the end. The burst sets
 /// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
-/// formation objects it spawned (Outer Space's on frame 48 of the burst).
+/// formation sprites it spawned (Outer Space's on frame 48 of the burst).
 void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
@@ -194,8 +194,8 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
-  // The rising formation: two animated objects in Outer Space, otherwise one
-  // spawned object.
+  // The rising formation: two animated sprites in Outer Space, otherwise one
+  // spawned sprite.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct Sprite *animation = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
@@ -401,7 +401,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       else
         x = 64 - frame / 4;
       y = 96 - frame;
-      // Place the formation (both objects in Outer Space), drifting with the
+      // Place the formation (both sprites in Outer Space), drifting with the
       // stream and growing each frame: its 16.16 scale starts at 0.625 in
       // Outer Space and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
@@ -554,7 +554,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   // The burst shakes while the formation keeps climbing and growing. The
-  // background brightens from frame 36; on frame 48 Outer Space's objects are
+  // background brightens from frame 36; on frame 48 Outer Space's sprites are
   // released and the battle shows the damage.
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;

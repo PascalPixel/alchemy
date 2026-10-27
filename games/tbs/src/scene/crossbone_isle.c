@@ -1,14 +1,15 @@
 /// @file
-/// Crossbone Isle, an island reached from the world map, and the main line of
+/// Crossbone Isle, an island reached from the World Map, and the main line of
 /// the cave beneath it, in three areas by their area names: Crossbone
 /// Isle, Crossbone Isle Cave and the Pirate Ship.
 ///
 /// No one on the island speaks: it is a run of Psynergy puzzles and battles
-/// that ends with Deadbeard on the Pirate Ship. Its maps are met in this order:
+/// that ends with Deadbeard on the Pirate Ship. Its scenes are met in this
+/// order:
 ///
 /// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached from
 /// the
-///   world map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP leads
+///   World Map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP leads
 ///   back to it). Whirlwind blows two ivies away for good (flags from
 ///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell;
 ///   the second's and a fourth's triggers are unused), Growth grows three
@@ -54,7 +55,7 @@
 ///   is set and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
-/// Scene_Initialize restores each map as its flags say: the ivy and plants on
+/// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
 
@@ -132,7 +133,7 @@ enum CrossboneIsleActorId {
 };
 
 /// Growth has grown Crossbone Isle's first plant, until the party leaves the
-/// island's map: four map temp flags from this one, one a plant.
+/// island's map: four scene temp flags from this one, one a plant.
 /// ★ Named from what the player sees: small sprouts on the cliff ledges (its
 /// render)
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
@@ -349,7 +350,7 @@ static void CrossboneIsle_CatchNut(void) {
   Event_End();
 }
 
-/// Restores each map's puzzles from its flags: the sliding logs'
+/// Restores each scene's puzzles from its flags: the sliding logs'
 /// footprints in CrossboneIsleFloatingLogs; on the Pirate Ship the mimic's
 /// chest and, after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy,
 /// plants and Nut; in the corridor rooms the mimic's chest, the sunk pillars

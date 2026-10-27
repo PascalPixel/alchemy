@@ -4,7 +4,7 @@
 
 #include "../overworld_internal.h"
 
-/// The object system's work (struct ActorSystemWork, gActorSystemWork in
+/// The actor system's work (struct ActorSystemWork, gActorSystemWork in
 /// HEAP_SLOT_ACTOR_SYSTEM), seen as the flag that suspends sprite projection
 /// while the menu opens.
 struct ActorSystemSuspendView {
@@ -18,7 +18,7 @@ struct ActorSystemSuspendView {
 /// Runs the current scene, which the party entered by entrance, until it
 /// leaves; returns the exit kind it left by, for Scene_TakeExit, or
 /// EXIT_KEEP_DESTINATION when the next scene is already in gSaveBlock: a random
-/// battle, a party that fell outside battle, Retreat or a script's destination.
+/// battle, a party that fell outside battle, Retreat or an event's destination.
 /// Sets the scene up (map, actors, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
 /// (Field_UpdateWalking each frame) until a request is made, and then the
@@ -27,9 +27,9 @@ struct ActorSystemSuspendView {
 /// Called by SequenceManager_Run for every scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
-/// block the scene took after it from the same pool; sets gSaveBlock's default,
-/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
-/// has started, FLAG_KEEP_PARTY_POSITION.
+/// block the scene took after it from the same pool; sets gSaveBlock's return
+/// point, after-battle and defeat destinations, and clears FLAG_IN_BATTLE and,
+/// once the scene has started, FLAG_KEEP_PARTY_POSITION.
 s32 SceneManager_Run(s32 entrance) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -267,7 +267,7 @@ s32 SceneManager_Run(s32 entrance) {
           }
           work->aButton = 0;
         } else if (work->fieldMenu != 0) {
-          // The main menu (B + Select in debug mode opens the debug menu).
+          // The File Screen (B + Select in debug mode opens the debug menu).
           AreaNameWindow_HideFar();
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
@@ -309,7 +309,7 @@ s32 SceneManager_Run(s32 entrance) {
           WorldMap_Unfreeze();
           work->item = 0;
         } else if (work->pauseMenu != 0) {
-          // The pause menu (in debug mode, B opens the debug menu and L the
+          // The Pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
@@ -325,7 +325,7 @@ s32 SceneManager_Run(s32 entrance) {
                    (gKeysHeld & KEY_L) != 0) {
             PaletteEditor_Run();
           } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-            // As for the main menu above.
+            // As for the File Screen above.
             work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
             Field_EndBusyAndReveal();
@@ -364,8 +364,8 @@ s32 SceneManager_Run(s32 entrance) {
       }
 
       // Hand the leader back to the player, as climbing, carried through the
-      // air (only a key check runs), on the world map or walking, and step
-      // until the next request.
+      // air (only a key check runs), on the World Map or walking, and run the
+      // walking update until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gSaveBlock.leaderActorId];
       if (actor != NULL) {
@@ -427,7 +427,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     probePosition.vector.y = leader->y.fixed;
     probePosition.vector.z = leader->z.fixed;
     Vector_AddPolarOffset(0x100000, leader->facing, probePosition.coordinates);
-    // World map metatiles are 32 pixels square, 32 to a row; map cells 16
+    // World Map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
       cell =

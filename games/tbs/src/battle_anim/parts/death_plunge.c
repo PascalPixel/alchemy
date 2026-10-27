@@ -94,7 +94,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *args) {
 
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
-    // Object.gravity is taken off velocityY each frame the object is above
+    // Actor.gravity is taken off velocityY each frame the actor is above
     // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
     // here is about 0.57, the bounce's 0xab85 and 0x7851 about 0.67 and 0.47.
     if (frame == 0) {
@@ -353,13 +353,13 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *args) {
 /// for each element, by AutoBattle_RunAttackOrItem. Allocates and frees
 /// its own work, canvas and sheet slots; loads the element's colours over the
 /// first 64 of the background palette, fills PARTICLES 0 to 127 and moves
-/// BG2X with the unit. Increments effect->variant in place, so
+/// BG2X with the unit. Increments args->variant in place, so
 /// AutoBattle_RunAttackOrItem's four calls draw ever larger motes.
 ///
-/// effect->kind    : the element (enum Element), which picks the palette:
+/// args->kind    : the element (enum Element), which picks the palette:
 ///                   Venus yellow, Mercury blue, Mars red, others Jupiter
 ///                   violet.
-/// effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
+/// args->variant : the mote size less one, kept to 1 to 4 after adding 1.
 void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
   struct ScreenPoint ground;
   struct ScreenPoint screenPosition;
@@ -500,7 +500,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
     ANIM_END_FRAME(work);
   }
 
-  // Finish: the blitter, the callback and the layer, then the three slots
+  // Finish: the blitter, the task and the layer, then the three slots
   // in the reverse of the order they were taken.
   FreeHeapSlot(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
@@ -551,7 +551,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
 /// gBgScroll[1], starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED
 /// and queues a DISPCNT without BG1.
 ///
-/// effect : only effect->actors[0], the unit that flashes, is read.
+/// args : only args->targets[0], the unit that flashes, is read.
 void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
   /* FAKEMATCH(dead): an unused position for the frame's 12 bytes at sp+44;
    * without it, 2 of 1051 instructions differ in tbs-en. */
@@ -936,7 +936,7 @@ struct Streak {
 /// 64 of the background palette, fills PARTICLES 0 to 127 and
 /// work->particles, and moves BG2X with the unit.
 ///
-/// effect->kind : the element (enum Element), which picks the palette: Venus
+/// args->kind : the element (enum Element), which picks the palette: Venus
 ///                yellow, Mercury blue, Mars red, others Jupiter violet.
 void BattleAnim_RunElementBurst(struct BattleAnimArgs *args) {
   struct ScreenPoint ground;
@@ -1195,7 +1195,7 @@ void BattleAnim_StartElementStreaks(s32 element) {
 }
 
 /// Ends the element streak burst that BattleAnim_StartElementStreaks
-/// started: stops its callbacks and the background palette fade, clears the
+/// started: stops its tasks and the background palette fade, clears the
 /// canvas in VRAM and frees the work and the canvas.
 ///
 /// Called through BattleAnim_EndElementStreaksFar by

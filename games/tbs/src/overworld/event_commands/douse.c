@@ -21,7 +21,7 @@ struct ActorDouseView {
   u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
   /// Frames its script waits before it runs on; 2 or 6 here, before
-  /// gFieldEffect_CommonParticleScript frees it.
+  /// gFieldEffect_CommonParticleScript releases it.
   s16 wait;
   u8 reserved60[0xc];
   void (*callback)(struct Actor *actor); ///< per-frame update
@@ -32,24 +32,24 @@ struct ActorDouseView {
 struct FieldEffectDouseView {
   s32 angle;            ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;          ///< the ground under the orb's destination
-  struct Actor *caster; ///< mainObject
-  s32 targetActor;      ///< child: the target's object, 0 for none
+  struct Actor *caster; ///< mainActor
+  s32 targetActor;      ///< child: the target's actor, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a trigger names the target
   /// (FieldPsynergy_Dispatch). Set, 10 particles fall; cleared, 24
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[0x13];
-  u8 variant; ///< childOption: set by a map script, the orb stops 80 pixels up
+  u8 variant; ///< childOption: set by an event, the orb stops 80 pixels up
   u8 reserved35[0x10];
-  /// lit: set in two Mercury Lighthouse maps (setup.c), where swaying
+  /// lit: set in two Mercury Lighthouse scenes (setup.c), where swaying
   /// particles (SPRITE_PARTICLE) fall rather than splashing drops.
   u8 alternate;
 };
 
-/// Per-frame update of a falling drop: on reaching altitude it is freed 2
+/// Per-frame update of a falling drop: on reaching altitude it is released 2
 /// frames later and scatters three half-size splashes, which hop toward
-/// points 32 pixels away and are freed after 6 frames.
+/// points 32 pixels away and are released after 6 frames.
 void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
   struct ActorDouseView *particle = (struct ActorDouseView *)actor;
   s32 i;

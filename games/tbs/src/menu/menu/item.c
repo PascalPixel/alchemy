@@ -1,6 +1,6 @@
 /// @file
-/// The item menu: the field menu's Item screen, the command loop, the member
-/// and item lists, and Use, Equip, Give, Drop, Remove and Details.
+/// The item menu: the field menu's Item screen, the command loop, the party
+/// member and item lists, and Use, Equip, Give, Drop, Remove and Details.
 // Part of menu.c.
 
 #include "../menu_internal.h"
@@ -203,8 +203,8 @@ enum ItemMenuStep {
 /// Runs the item menu: choose a party member, one of their items and a command
 /// (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
 /// player backs out or presses Start. Returns 1 when an item is to be used
-/// outside the menu, with its member, target and item id in the out parameters;
-/// -1 when the player backed out or pressed Start; 0 otherwise.
+/// outside the menu, with its party member, target and item id in the out
+/// parameters; -1 when the player backed out or pressed Start; 0 otherwise.
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
 #if !TBS_PATCH_1
@@ -311,7 +311,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           // The international editions report target 0 (command is
           // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
           // target chosen last and the list's whole inventory entry.
-          // ItemMenu_Run reads only the member and the item id.
+          // ItemMenu_Run reads only the party member and the item id.
 #if TBS_PATCH_1
           *memberOut = menu->sideMember[0];
           *targetOut = command;
@@ -498,7 +498,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Event_ClearInvalidPackedValuesFar();
       break;
 
-    // Give the item, or some of a stack, to the chosen member. A full
+    // Give the item, or some of a stack, to the chosen party member. A full
     // inventory offers a trade instead; the new holder may equip it.
     case ITEM_STEP_GIVE:
       transferFailed = 0;
@@ -755,8 +755,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
-    // Equip it. Inventory_EquipFar returns -1 when the member cannot equip it
-    // and -2 when the item it would replace is cursed on.
+    // Equip it. Inventory_EquipFar returns -1 when the party member cannot
+    // equip it and -2 when the item it would replace is cursed on.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -851,10 +851,10 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
   return menuResult;
 }
 
-/// Uses the selected item from the member in side 0 on the one in side 1.
+/// Uses the selected item from the party member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns
-/// -1; otherwise plays the item's animation, recalculates both members and
-/// returns 1.
+/// -1; otherwise plays the item's animation, recalculates both party members
+/// and returns 1.
 s32 ItemMenu_Use(void) {
   struct ItemMenuWork *menu;
   s32 result;
@@ -889,7 +889,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   s32 memberIndex;
 
   PsynergyMenu_InitializeEntryActors(MenuCursor_Create(menu), 2, 2, 8, 0);
-  // The four figures stand at screen y 30; the screens raise the member
+  // The four figures stand at screen y 30; the screens raise the party member
   // chosen to 26.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
     menu->memberY[memberIndex] = 30;
@@ -1014,8 +1014,8 @@ void ItemMenu_Close(void) {
 }
 
 /// Lets the player choose a party member in side (0 or 1), starting from the
-/// member chosen last. Returns the member's id, or -1 when the player backs
-/// out.
+/// party member chosen last. Returns the party member's id, or -1 when the
+/// player backs out.
 s32 ItemMenu_SelectMember(s32 side) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 result = 0;
@@ -1041,9 +1041,9 @@ s32 ItemMenu_SelectMember(s32 side) {
 
 /// The party member row of the item menu. Left and Right move between members,
 /// showing each one's items and status; holding R shows their equipment
-/// instead; L + A sorts the member's items, a new sort order each press; A
-/// chooses a member who has items and B backs out. Returns the chosen member's
-/// id, or -1.
+/// instead; L + A sorts the party member's items, a new sort order each press;
+/// A chooses a party member who has items and B backs out. Returns the chosen
+/// party member's id, or -1.
 s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   struct ItemMenuWork *menu;
   s32 selection;
@@ -1105,7 +1105,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
         StatusPanel_Draw(window, memberIds[selection], 0,
                          STATUS_PANEL_EXPERIENCE);
       }
-      // Raise the chosen member's figure.
+      // Raise the chosen party member's figure.
       for (memberIndex = 3; memberIndex >= 0; memberIndex--)
         menu->memberY[memberIndex] = 30;
       menu->memberY[selection] = 26;
@@ -1157,7 +1157,8 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   return result;
 }
 
-/// Shows the equipment view of member memberId's items in the item window.
+/// Shows the equipment view of party member memberId's items in the item
+/// window.
 void ItemMenu_OpenCategory(s32 memberId) {
   struct ItemMenuWork *menu;
 
@@ -1168,12 +1169,12 @@ void ItemMenu_OpenCategory(s32 memberId) {
 }
 
 /// Chooses the party member to use or give the selected item (enum
-/// ItemTargetMode) to. Using shows each member's status as the cursor passes;
-/// giving shows each member's items, how many of this item they already hold,
-/// or that they would have to trade, and the equipment preview. The party
-/// members who can equip the item move while the cursor is up. Returns the
-/// chosen member's id, or -1 when the player backs out; giving cannot choose
-/// the member who holds the item.
+/// ItemTargetMode) to. Using shows each party member's status as the cursor
+/// passes; giving shows each party member's items, how many of this item they
+/// already hold, or that they would have to trade, and the equipment preview.
+/// The party party members who can equip the item move while the cursor is up.
+/// Returns the chosen party member's id, or -1 when the player backs out;
+/// giving cannot choose the party member who holds the item.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct ItemMenuWork *menu;
@@ -1203,14 +1204,14 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       window = menu->itemWindow;
       Unit_GetFar(menu->memberIds[memberIndex]);
-      // The marker over the chosen member, three tiles a member. Nothing in
-      // TBS stores sideIcons[1], so it is still NULL from
+      // The marker over the chosen party member, three tiles a party member.
+      // Nothing in TBS stores sideIcons[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address
       // 0, which ignores them, and no marker is drawn.
       targetMarker = menu->sideIcons[1];
       targetMarker->oam.x = targetMarker->x =
           ((menu->mainWindow->x + memberIndex * 3) << 3) - 2;
-      // Giving: the member's items and how many of this one they hold.
+      // Giving: the party member's items and how many of this one they hold.
       if (mode == ITEM_TARGET_GIVE) {
         ItemMenu_RefreshMember(menu->memberIds[memberIndex], 1);
         Window_DrawDividerLineFar(window, 0, 9, 16, 9);
@@ -1248,7 +1249,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
                                   0, menu->memberIds[memberIndex]);
       }
-      // Using: the member's status, and the item's name once.
+      // Using: the party member's status, and the item's name once.
       if (mode == ITEM_TARGET_USE) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
           StatusPanel_Draw(menu->statusWindow, menu->memberIds[memberIndex],
@@ -1309,9 +1310,9 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   return (s8)result;
 }
 
-/// Task while ItemMenu_SelectTarget chooses a member to use or
+/// Task while ItemMenu_SelectTarget chooses a party member to use or
 /// give the item to, and while the command grid's cursor is on Give: every 32
-/// frames, sets each party figure's animation by whether that member can
+/// frames, sets each party figure's animation by whether that party member can
 /// equip the item (3) or not (1). EquipmentMenu_StopCompatibilityIndicators
 /// removes it.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
@@ -1391,7 +1392,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   }
 }
 
-/// Returns how many of member memberId's 15 inventory slots hold an item.
+/// Returns how many of party member memberId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 memberId) {
   s32 maskedItemId;
   s32 remainingSlots;
@@ -1492,8 +1493,8 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 
-/// Shows member memberId's items in the item window, laid out for layout mode
-/// (see ItemMenu_RefreshEntry), or "no items" when there are none.
+/// Shows party member memberId's items in the item window, laid out for layout
+/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 memberId, s32 mode) {
   struct ItemMenuWork *menu;
   struct Unit *member;
@@ -1670,11 +1671,11 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 /// The item command grid: Use, Equip and Details on the top row, Give, Remove
 /// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
 /// them). Disabled commands are grey and refuse A. The status panel follows the
-/// cursor: the member's status on Use, the stats with the item equipped on
-/// Equip and Details, and without it on the bottom row, where Give also shows
-/// who can equip it. The cursor starts on the command chosen last, or on the
-/// first available one. Returns the command chosen, or -1 when the player backs
-/// out.
+/// cursor: the party member's status on Use, the stats with the item equipped
+/// on Equip and Details, and without it on the bottom row, where Give also
+/// shows who can equip it. The cursor starts on the command chosen last, or on
+/// the first available one. Returns the command chosen, or -1 when the player
+/// backs out.
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
   s8 commandStorage[6];
@@ -1766,7 +1767,7 @@ s32 ItemMenu_ChooseCommand(void) {
       EquipmentMenu_StopCompatibilityIndicators();
       // Preview the item in the status panel for the command under the cursor:
       // the bottom row (Give, Remove, Drop) without it, Equip and Details with
-      // it, Use the member's status.
+      // it, Use the party member's status.
       if (commandIndex > 2) {
         menu->equipPreview = 1;
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
@@ -1854,10 +1855,10 @@ s32 ItemMenu_ChooseCommand(void) {
 /// Fills commandStates (indexed by ItemMenuCommand) with
 /// ITEM_COMMAND_STATE_AVAILABLE or _DISABLED for the selected item: Use for
 /// items Item_ClassifyUseMode accepts and are not broken, and for field items,
-/// Equip for equipment the member can wear and is not wearing, Remove for worn
-/// equipment that is not cursed, Give with someone to give to, Drop unless the
-/// item is indispensable, and neither for cursed equipment being worn. Details
-/// is always available. Each later test overrides the earlier ones.
+/// Equip for equipment the party member can wear and is not wearing, Remove for
+/// worn equipment that is not cursed, Give with someone to give to, Drop unless
+/// the item is indispensable, and neither for cursed equipment being worn.
+/// Details is always available. Each later test overrides the earlier ones.
 void ItemMenu_BuildCommands(s8 *commandStates) {
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
@@ -1965,8 +1966,8 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
 }
 
 /// Says how memberId can use inventoryEntry from the item menu (enum
-/// ItemUseMode). Usable items always qualify; equipment only when the member
-/// can wear it.
+/// ItemUseMode). Usable items always qualify; equipment only when the party
+/// member can wear it.
 s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
   struct ItemDefinition *item;
@@ -2015,7 +2016,7 @@ s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry) {
 
 /// After the selected item is used: an item that may break (ITEM_USE_MAY_BREAK)
 /// breaks one time in eight, with the break sound and "It broke!" in the info
-/// window. Called only after a successful use on a chosen member.
+/// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
   struct ItemMenuWork *menu;
 
@@ -2071,7 +2072,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #endif
   window = Window_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10,
                             WINDOW_FLAG_INSTANT);
-  // Hide the party figures (without their placement callback they are not
+  // Hide the party figures (without their placement task they are not
   // drawn) and the status panel's portrait (the work's cursor), which the
   // window covers, meanwhile.
   Task_Remove(Menu_UpdateEntryActorTransforms);
@@ -2431,10 +2432,10 @@ void ItemMenu_SetMessageWindowHeight3(void) {
 
 /// Asks how many of the selected item stack to give or drop: Left and Right
 /// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
-/// baseQuantity + quantityRange on a dial of digit sprites), with the member's
-/// remaining count and, when giving (dropMode 0), the receiver's new count
-/// beside their names. Returns the number less one, or -1 when the player backs
-/// out.
+/// baseQuantity + quantityRange on a dial of digit sprites), with the party
+/// member's remaining count and, when giving (dropMode 0), the receiver's new
+/// count beside their names. Returns the number less one, or -1 when the player
+/// backs out.
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 quantity = baseQuantity;
@@ -2454,7 +2455,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   window = menu->questionWindow;
   ItemMenu_SetMessageWindowHeight7();
   WindowSprite_RedrawSavedRectFar(window);
-  // How many each member holds now.
+  // How many each party member holds now.
   if (dropMode == 0)
     receiverCount = ItemMenu_GetItemQuantity(
         menu->sideMember[1], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
@@ -2540,7 +2541,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 }
 
 /// Shows the selected item at the top of the message window: its icon, its
-/// member's name and its name.
+/// party member's name and its name.
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuWork *menu = gMenuWork;
 
@@ -2617,10 +2618,10 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   return selection;
 }
 
-/// After giving or trading the selected item to the member in side 1, offers to
-/// equip it there, showing the stats it would give. Returns 0 when it is
-/// equipped; 1 when the player says No, backs out, or the member cannot equip
-/// it, and the member is left as before.
+/// After giving or trading the selected item to the party member in side 1,
+/// offers to equip it there, showing the stats it would give. Returns 0 when it
+/// is equipped; 1 when the player says No, backs out, or the party member
+/// cannot equip it, and the party member is left as before.
 s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
@@ -2697,7 +2698,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   }
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
     selection = 1;
-  // No: put the member back as they were.
+  // No: put the party member back as they were.
   if (selection == 1)
     Iwram_CopyWords(unit, saved, BATTLE_UNIT_SIZE);
   Free(saved);
@@ -2719,9 +2720,9 @@ void Resource_LoadPairedBlocks(void) {
   VramCache_Load(block, 128, gMenu_SmallDownArrowTiles);
 }
 
-/// Fills result with the item list of the member in side index: their unit,
-/// how many items they hold, and the page and row of the item chosen last for
-/// them (kept within the list), five items to a page. Returns 1.
+/// Fills result with the item list of the party member in side index: their
+/// unit, how many items they hold, and the page and row of the item chosen last
+/// for them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 unit;
   struct ItemMenuWork *menu = gMenuWork;
@@ -2840,13 +2841,13 @@ UNUSED s32 ItemMenu_ItemNamePageReturnTrue(void) { return 1; }
 
 UNUSED void ItemMenu_ItemNamePageNoOp(void) {}
 
-/// The item list of the member in sideIndex (0: the holder, 1: the receiver of
-/// a trade), five items a page. The cursor's item is named in the info window
-/// and previewed in the status panel, its icon animates, and the party members
-/// who can equip it move. Up and Down move the cursor, Left and Right turn
-/// pages, and in sideIndex 0 L and R switch to the previous or next member who
-/// has items. Returns the chosen inventory entry, or -1 when the player backs
-/// out.
+/// The item list of the party member in sideIndex (0: the holder, 1: the
+/// receiver of a trade), five items a page. The cursor's item is named in the
+/// info window and previewed in the status panel, its icon animates, and the
+/// party members who can equip it move. Up and Down move the cursor, Left and
+/// Right turn pages, and in sideIndex 0 L and R switch to the previous or next
+/// party member who has items. Returns the chosen inventory entry, or -1 when
+/// the player backs out.
 s32 ItemMenu_RunList(s32 sideIndex) {
   struct ItemMenuWork *menu;
   struct Window *window;
@@ -2881,7 +2882,8 @@ s32 ItemMenu_RunList(s32 sideIndex) {
     changed = 1;
     redraw = 1;
 
-    // One member's list, until an item is chosen or the member changes.
+    // One party member's list, until an item is chosen or the party member
+    // changes.
     while (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
       MenuCursor_Position(98, state.row * 16 + 36);
 
@@ -2920,7 +2922,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         }
       }
 
-      // Every 32 frames, the members who can equip the item move.
+      // Every 32 frames, the party members who can equip the item move.
       if ((gFrameCount & 31) == 0) {
         for (i = 0; i < menu->partyCount; i++) {
           if (Item_CanUnitEquip(menu->memberIds[i],
@@ -2959,7 +2961,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         done = 1;
         break;
       }
-      // L and R: the previous or next member who has items (side 0 only).
+      // L and R: the previous or next party member who has items (side 0 only).
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (sideIndex == 1) {
           Sound_PlaySongFar(SE_MENU_ERROR);

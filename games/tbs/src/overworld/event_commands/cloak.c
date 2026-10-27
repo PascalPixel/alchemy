@@ -6,17 +6,17 @@
 
 /// The metatile behavior of the cells Cloak can stay hidden on: byte 2 of a
 /// cell (MapGridCell.behavior), or of a 4-byte gMetatiles entry on the
-/// world map.
+/// World Map.
 #define CLOAK_TILE 0xfb
 /// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
 /// ABILITY_CLOAK (0x92).
 #define CLOAK_END 0x2092
 
 /// Task of Cloak: when the cell under the leader is not
-/// CLOAK_TILE, requests CLOAK_END. On the world map it reads
+/// CLOAK_TILE, requests CLOAK_END. On the World Map it reads
 /// the 32-pixel gMetatiles, elsewhere the 16-pixel cells. Runs once a
 /// frame from FieldPsynergy_StartCloak, and again from
-/// FieldPsynergy_ResumeCloakCheck when a map loads with the leader still
+/// FieldPsynergy_ResumeCloakCheck when a scene loads with the leader still
 /// cloaked.
 void FieldPsynergy_CheckCloakTile(void) {
 #ifndef UBFIX
@@ -129,7 +129,7 @@ void FieldPsynergy_EndCloak(void) {
 }
 
 /// Starts the Cloak cell check if the leader is hidden. SceneManager_Run calls
-/// it as a map loads, since gSaveBlock.cloaked outlives the map.
+/// it as a scene loads, since gSaveBlock.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
   if (gSaveBlock.cloaked != 0) {
     Task_Add(FieldPsynergy_CheckCloakTile, TASK_PASS_FRAME);

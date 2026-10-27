@@ -45,10 +45,10 @@ struct ImpactChip {
 /// Abilities: Planet Diver (BATTLE_ANIM_PLANET_DIVER).
 ///
 /// The ball falls towards the middle of the field, from whichever side the
-/// user stands on; actors[0] is where it lands, and effect->side picks the
+/// user stands on; targets[0] is where it lands, and args->side picks the
 /// ball's facing.
 ///
-/// Moves the user's object: it leaps on frame 4 and falls from frame 18. The
+/// Moves the user's actor: it leaps on frame 4 and falls from frame 18. The
 /// flash's sheet and palette are replaced by the fireball's on frame 16. The
 /// sheet slot holds the mote sprites the chips are drawn from, and the chips
 /// themselves live in Ram_MapGridCellBuffer.
@@ -367,7 +367,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *args) {
     ANIM_END_FRAME(work);
   }
 
-  // Finish: both callbacks before the blocks they read.
+  // Finish: both tasks before the blocks they read.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
   ANIM_RELEASE_BLITTERS();
@@ -499,7 +499,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *args) {
     }
     ANIM_PRESENT_FRAME(work);
   }
-  // Finish: both callbacks before the blocks they read.
+  // Finish: both tasks before the blocks they read.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
   ANIM_RELEASE_BLITTERS();

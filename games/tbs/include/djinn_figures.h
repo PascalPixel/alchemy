@@ -11,7 +11,7 @@
 struct Sprite;
 
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
-/// figure's object, screen position and scale.
+/// figure's sprite, screen position and scale.
 struct ItemMenuFiguresView {
   /// ItemMenuWork's fields before memberY; not named here.
   u8 beforeMemberY[0x144];

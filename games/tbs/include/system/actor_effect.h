@@ -22,7 +22,7 @@ struct FadeOverlayWork {
 STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
 /// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
-/// FieldEffect_StartFadeOverlay until the next map change.
+/// FieldEffect_StartFadeOverlay until the next scene change.
 extern struct FadeOverlayWork *gFadeOverlayWork;
 
 #define WEATHER_PARTICLE_COUNT 32 ///< WeatherWork.particles

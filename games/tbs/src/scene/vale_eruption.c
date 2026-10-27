@@ -3,7 +3,7 @@
 /// sanctum's door, on the village's own layout (SceneId_Vale's), where the
 /// villagers wait for Isaac and Garet.
 ///
-/// The map falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
+/// The scene falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
 /// where Jenna and Kraden are carried off, and the party's journey. The path
 /// down the mountain leads here, by VALE_ERUPTION_FROM_SOL_ENTRANCE
 /// (sol_sanctum_entrance.c's SOL_ENTRANCE_TO_VALE after the eruption).
@@ -11,20 +11,20 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The map has no triggers. ValeEruption_Initialize plays the whole event on
+/// The scene has no triggers. ValeEruption_Initialize plays the whole event on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (ValeEruption_ReturnFromMtAleph):
 /// the ground shakes, the villagers wonder where the two are, Isaac and Garet
 /// come down the path and are called over, and Dora's question about Jenna and
 /// Kraden is answered the same way whatever Isaac replies. The Great Healer
 /// then opens the sanctum's door (MapGrid_AnimateCells) and leads everyone in,
-/// and the map's one exit takes the party into the Vale Sanctum
+/// and the scene's one exit takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
 /// MapGrid_SetShake calls, each with a flash (Weather_LastLightning) and
 /// SE_CRASH, over a burst of red flashes on the warm colours
-/// (Weather_StartLightningFlash). The map sets
+/// (Weather_StartLightningFlash). The scene sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
-/// map does (sol_sanctum_entrance.c).
+/// scene does (sol_sanctum_entrance.c).
 
 #include "save_block.h"
 #include "unit/scene/vale_eruption.h"
@@ -113,7 +113,7 @@ const struct ActorTemplate *ValeEruption_GetActorTemplates(void) {
   return gValeEruption_ActorTemplates;
 }
 
-/// The map has no triggers of its own: everything happens on arrival.
+/// The scene has no triggers of its own: everything happens on arrival.
 const struct Trigger *ValeEruption_GetTriggers(void) {
   return gValeEruption_Triggers;
 }

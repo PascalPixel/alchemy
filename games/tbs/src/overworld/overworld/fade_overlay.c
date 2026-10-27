@@ -70,7 +70,7 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    // Attributes 0 and 1 give a 16 by 16 square (size 1); the object mode
+    // Attributes 0 and 1 give a 16 by 16 square (size 1); the sprite mode
     // and priority set next replace what the two words put there, so the
     // left and right marks end up alike although their third words differ.
     ((u32 *)mark)[1] = 0x40000800;
@@ -110,11 +110,11 @@ void FadeOverlay_DrawMarks(void) {
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
 /// tiles (0x200 bytes of colour 1, VRAM cache block 94) and registers
-/// FadeOverlay_DrawMarks. Called by seven map overlays (Venus and Mercury
+/// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
 /// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no
-/// named caller): the work and the callback last until the next map change
+/// named caller): the work and the task last until the next scene change
 /// resets the heap and the task table (SequenceManager_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
@@ -122,7 +122,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   volatile u32 fill;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
-  // Upload the solid sprite tiles before enabling the drawing callback.
+  // Upload the solid sprite tiles before enabling the drawing task.
   tiles = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);

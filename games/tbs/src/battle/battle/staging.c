@@ -9,7 +9,7 @@
 /// enemy picks its ability now; the turn is built (its targets, hits
 /// and damage) and shown the way its staging asks, then the turn's end
 /// effects run and every unit returns to its spot. Returns 1 when the
-/// party got away, 0 otherwise, and -1 when the actor is already down.
+/// party got away, 0 otherwise, and -1 when the unit is already down.
 /// Called by Battle_Run for each action of the round, with a delay
 /// of 10 for the first. Resets the camera's view (gBattleBackgroundWork's
 /// frames, flag and yaw, gBattleWork->brightness, the transform and
@@ -55,7 +55,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
     view->targetYaw = YAW_PARTY_TURN;
     WaitFrames(delay);
   }
-  // Build the turn, with the actor highlighted, and stage it by its
+  // Build the turn, with the acting unit highlighted, and stage it by its
   // outcome. A turn that failed has shown its message; TURN_REPORTED
   // waits for the player first.
   actingUnit[0] = request->unitId;
@@ -119,12 +119,11 @@ finish:
 }
 
 /// Fills an animation command from a turn: its kind and strength,
-/// the actor and the targets still standing (or every target, for an animation
-/// that revives), at least the first.
-/// Called by each staging runner before its animation plays: RunUnitTransition,
-/// RunAttack, RunPlainAttack, RunItem and RunPsynergyCast. Writes effect's
-/// prelude (0), kind, variant, actor, actors, firstTarget, count and range
-/// (1); the caller sets its side.
+/// the acting unit and the targets still standing (or every target, for an
+/// animation that revives), at least the first. Called by each staging runner
+/// before its animation plays: RunUnitTransition, RunAttack, RunPlainAttack,
+/// RunItem and RunPsynergyCast. Writes args' prelude (0), kind, variant, user,
+/// targets, firstTarget, targetCount and range (1); the caller sets its side.
 #ifdef UBFIX
 void BattleStaging_BuildTargetList(struct BattleTurn *plan,
                                    struct BattleAnimArgs *args) {
@@ -171,13 +170,13 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
 /// actions were gathered (BattleFlee_CheckSuccess); a failed one turns the
 /// round into the enemies' (FIRST_STRIKE_ENEMIES), and that is
 /// what this tests. So the party gets away unless the roll failed ("But
-/// there's no escape!"), each member able to move running off in turn; an
+/// there's no escape!"), each party member able to move running off in turn; an
 /// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
 /// party got away.
 /// Called by BattleStaging_DispatchAction for STAGING_FLEE. Turns the
 /// camera to the party's view and holds gBattleBackgroundWork->busy while it
-/// runs; an enemy that gets away is taken out of the lists and its object
-/// released.
+/// runs; an enemy that gets away is taken out of the lists and its battle
+/// object marked for release.
 s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -197,8 +196,8 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
   view->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
-  // The party: each member that can move runs, the last listed first, eight
-  // frames apart.
+  // The party: each party member that can move runs, the last listed first,
+  // eight frames apart.
   if (plan->unitId <= ALLY_MAX) {
     partyMode = completed.value;
 
@@ -246,8 +245,8 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 }
 
 /// Plays a summon or a full-screen Psynergy. The camera turns to the target
-/// side (or to the actor's, for a staged animation), the actor glows in its
-/// element and the other side fades out; then, unless the cast failed
+/// side (or to the acting unit's, for a staged animation), the unit glows in
+/// its element and the other side fades out; then, unless the cast failed
 /// ("blocked" or too little PP), the target side's units are readied alone
 /// and the animation plays during playback. Everyone fades back in.
 /// Called by BattleStaging_DispatchAction for STAGING_SUMMON (with
@@ -255,7 +254,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 /// yaw (and its frames, for an animation), REG_BLDCNT and REG_BLDALPHA for the
 /// fades, and the units' colour modes; schedules BattlePlayback_Run around the
 /// animation.
-/// @param mode STAGING_HIDE_ACTOR hides the actor too (the summons)
+/// @param mode STAGING_HIDE_ACTOR hides the acting unit too (the summons)
 s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   u16 units[14];
   struct BattleStagingWork work;
@@ -272,8 +271,9 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   void **slots = (void **)&gBattleWork;
 #endif
 
-  // The camera: a staged animation turns to the actor's side over 60 frames (an
-  // enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's usual view.
+  // The camera: a staged animation turns to the acting unit's side over 60
+  // frames (an enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's
+  // usual view.
   BattleStaging_BuildTargetList(plan, &work.effect);
   actor = plan->unitId;
   target = plan->targetIds[0];
@@ -305,8 +305,8 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
       view->targetYaw = yaw;
   }
 
-  // The actor raises its hand (POSE_CAST) and glows; the units of the side
-  // not targeted fade out over 16 frames (and the actor too, for
+  // The unit raises its hand (POSE_CAST) and glows; the units of the side
+  // not targeted fade out over 16 frames (and the acting unit too, for
   // STAGING_HIDE_ACTOR).
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
@@ -343,9 +343,9 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
-    // Only the target side's units stay on the field (with the actor, unless
-    // STAGING_HIDE_ACTOR hides it); the list is then reused for the turn's
-    // targets.
+    // Only the target side's units stay on the field (with the acting unit,
+    // unless STAGING_HIDE_ACTOR hides it); the list is then reused for the
+    // turn's targets.
     kept = 0;
     for (i = 0; i < count; i++) {
       u32 unit = units[i];
@@ -696,7 +696,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 /// Plays an item's use: the camera turns to the user's side, the user raises
 /// the item and, for an item with an animation, the screen dims while it plays
 /// with its playback. Then the item is spent as its use type says; when its
-/// slot empties, later item commands of the same member this round follow
+/// slot empties, later item commands of the same party member this round follow
 /// their items to their new slots (or lose theirs, -1).
 /// Called by BattleStaging_DispatchAction for STAGING_ITEM, with the
 /// action's entry as selection. Sets gBattleBackgroundWork's yaw and, while an
@@ -826,7 +826,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   return 0;
 }
 
-/// Draws every sprite of an object in a colour mode (enum SpriteColorMode):
+/// Draws every sprite of an actor in a colour mode (enum SpriteColorMode):
 /// colorMode on each sprite's first layer, SPRITE_COLOR_NORMAL on the others,
 /// and every layer's frame set to 255 (none) so that it is drawn again.
 /// Called by BattleMotion_FlashHit and BattlePlayback_Run (a hit's flashes
@@ -1075,8 +1075,8 @@ removed:
 /// pose, turns grey, leaves the lists after four frames and dissolves a dot
 /// at a time.
 /// Called for PLAYBACK_DEFEAT by BattlePlayback_RunAll; PLAY_FELLED in
-/// BattlePlayback_Run is its counterpart over frames. An enemy's object is
-/// marked for release.
+/// BattlePlayback_Run is its counterpart over frames. An enemy's battle object
+/// is marked for release.
 void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct Unit *unit;

@@ -2,15 +2,15 @@
 #define ALCHEMY_PUSHED_ACTOR_H
 
 /// @file
-/// The pushed objects' movement probes and footprint bounds.
+/// The pushed actors' movement probes and footprint bounds.
 
 #include "types.h"
 #include "actor.h"
 #include "scene.h"
 #include "static_assert.h"
 
-/// Where a pushed object ahead of the leader would roll to: its footprint, its
-/// actor, that position, and a callback during the leader's
+/// Where a pushed actor ahead of the leader would roll to: its footprint, its
+/// actor, that position, and a routine run during the leader's
 /// follow-through.
 struct PushedActorProbe {
   /// The large thing's row in gPushedActor_FootprintKinds and

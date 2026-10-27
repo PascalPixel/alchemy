@@ -13,7 +13,7 @@ game; [the Djinn room](#the-djinn-room) shows one whole.
 
 ## How the rooms are reached
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and An exits there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and round to the level room, and An exits there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
 The debug scene selector is a one-line window that names a scene and an arrival
 point by number; Left and Right step the number, R and L step it by ten, and
@@ -66,19 +66,19 @@ anywhere else, and the room then forgets the Djinni was taken, so it stands
 there again next time.
 
 Flint, Fizz, Forge and Gust stand in the room only while their flags are
-clear. Talking to one runs a two-step script: give the party that
+clear. Talking to one runs a two-step event: give the party that
 [element](../../glossary.md#the-four-elements)'s first Djinni, with the same
-capture the game uses everywhere (the Djinni goes to the member with the
+capture the game uses everywhere (the Djinni goes to the party member with the
 fewest), then clear the Djinni's flag again. Those two calls are all the room
 needs from the rest of the game, so its import table holds just the two. Each
 Djinni is one row of the room's trigger table, which says: when the player
-talks to Flint, always, run Flint's script.
+talks to Flint, always, run Flint's event.
 
 The room answers the field's six questions with `TestRoom_Initialize`,
 `TestRoom_GetEntrances`, `TestRoom_GetExits`,
 `TestRoom_GetActorTemplates`, `TestRoom_GetTriggers` and
 `Scene_GetExitRegions` (none). The events are `gTestRoom_Triggers`, and each
-script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
+event, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
 ## The level room
@@ -94,7 +94,7 @@ distance.
 The level editor raises the party one level with A and five with Start or
 Select. The item browser steps through the 270 item numbers, by one, ten or
 thirty at a time, skips numbers whose item has no icon, and gives the chosen item to
-the first member with room. The editions differ: the ability browser can be
+the first party member with room. The editions differ: the ability browser can be
 talked to only in English and German, though French, Spanish and Italian keep
 its code and its tester; and Force cast at the portrait browser runs a motion
 test in Japanese and shows the character-set captions elsewhere.
@@ -118,7 +118,7 @@ test equipment, Ivan items to use, and Mia opens the name entry screen for Isaac
 The other people open the screen for choosing an item to give up when the
 bags are full, give out Djinn and treasure, wound and afflict Isaac and
 Garet, and run a ready-made shop with 200,000 coins, broken equipment and
-afflicted members.
+afflicted party members.
 
 There are two Felixes, and they changed most between editions. In Japanese
 they are plain talkers: one opens a character selector whose choice nothing
@@ -137,14 +137,14 @@ the shop `Shop_OpenDebugShop`.
 
 The palette editor's swatch, `swatch.png`, belongs to no room: it is placed
 in the [main image](../../glossary.md#main-image) for the palette editor,
-which opens with L on the pause menu in debug mode
+which opens with L on the Pause menu in debug mode
 (`PaletteEditor_Run`). Each room's functions take the room's prefix, except
 the set-up and exit region entries, which take the scene overlays' names.
 
 ## How it fits with the rest of the game
 
 The rooms are scenes like any other: the scene table names their overlays,
-`SceneManager_Run` runs them, and their [scripts](../../glossary.md#script) call the
+`SceneManager_Run` runs them, and their [events](../../glossary.md#event) call the
 same main-image code the real scenes call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the

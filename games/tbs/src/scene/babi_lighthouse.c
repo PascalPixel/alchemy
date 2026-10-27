@@ -1,10 +1,10 @@
-/// @file Babi Lighthouse and the road up to it: four maps in one overlay, in
+/// @file Babi Lighthouse and the road up to it: four scenes in one overlay, in
 /// three of the game's areas. SceneId_RoadToBabiLighthouse is the Road to Babi
-/// Lighthouse, entered from the world map; SceneId_BabiLighthouseEntry is the
+/// Lighthouse, entered from the World Map; SceneId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; SceneId_BabiLighthouseLuff and
 /// SceneId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
 /// exit table, the other getters choose by gSaveBlock.sceneId with the road as
-/// the fallback, and BabiLighthouse_SetupMap restores the map being
+/// the fallback, and BabiLighthouse_SetupMap restores the scene being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
@@ -335,7 +335,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-/// The four maps share one exit table.
+/// The four scenes share one exit table.
 const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
@@ -1118,7 +1118,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Event_End();
 }
 
-/// Finds the pushed object one direction-table step ahead, including
+/// Finds the pushed actor one direction-table step ahead, including
 /// ground height.
 static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
   struct FieldPosition position;
@@ -1268,7 +1268,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 }
 
 #if TBS_PATCH_2
-/// Update callback of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
+/// Update routine of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
@@ -1301,7 +1301,7 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 }
 #endif
 
-/// Sets up the map being entered: Retreat leads back to the Entry; the road's
+/// Sets up the scene being entered: Retreat leads back to the Entry; the road's
 /// pillar, the Entry's pillars, vine and the four lying on the ground,
 /// BabiLighthouseLuff's arrivals by falling, and BabiLighthouseStoneDoor's door
 /// and onlookers are restored. Returns 0.

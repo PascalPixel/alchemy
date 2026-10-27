@@ -522,10 +522,10 @@ s32 Battle_ProcessRoundEnd(void) {
 }
 
 /// Ends one unit's turn: its Djinn on standby are taken off its set, the Djinn
-/// a summon used begin to recover, and the actor takes its summon's power
+/// a summon used begin to recover, and the unit takes its summon's power
 /// boost, the haunt's damage, poison and the Grim Reaper.
 /// Called by BattleStaging_DispatchAction after every action, with the
-/// action's turn. Changes the side's Djinn recovery list, the actor's
+/// action's turn. Changes the side's Djinn recovery list, the unit's
 /// summonBoost, HP and grimReaper, and works out its stats again
 /// (Unit_Calculate); the messages are queued and played at once
 /// (BattlePlayback_RunAll).
@@ -542,7 +542,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
   s32 strongestElement;
   s32 recoveryTurn;
 
-  // Take the actor's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
+  // Take the unit's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
   // unleashed Djinni is left by BattleTurn_Build) off its set. The table
   // is the opponent's for an enemy unit id.
   unitId = plan->unitId;

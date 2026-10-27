@@ -40,12 +40,12 @@
 ///
 /// The rooms' colours follow the party: cells on the floor between them fade
 /// the palette to a tint or back to plain colours (enum
-/// SolSanctumLunaSolRoomsMetatileBehavior), and one of three map flags
+/// SolSanctumLunaSolRoomsMetatileBehavior), and one of three scene flags
 /// remembers which colours show, so a return after a battle keeps them. On
 /// entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
 /// open way up from the story flags, unless the entrance's own event
-/// draws them. The falling lights are four callbacks, each with a random timer
+/// draws them. The falling lights are four tasks, each with a random timer
 /// of its own, that the trap adds and removes. A third statue-room event, the
 /// lit quarters flashing for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
@@ -136,7 +136,7 @@ enum SolSanctumLunaSolRoomsMetatileBehavior {
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 
-// Map flags, cleared at every ordinary entrance; one of the three is
+// Scene flags, cleared at every ordinary entrance; one of the three is
 // set at a time, for the colours the rooms show, so a return after a battle
 // keeps them:
 // - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED: the plain colours
@@ -690,7 +690,7 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
 }
 
 /// Animates the first light falling through the Luna room and manages the
-/// shared shake pulse. Run each frame as a callback that
+/// shared shake pulse. Run each frame as a task that
 /// SolSanctumLunaSolRooms_SpringTrap adds and removes.
 static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   if ((Random_Next() & 3) != 0) {
@@ -1016,7 +1016,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
                                             6);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
-  // Stop all light callbacks before leaving this room.
+  // Stop all light tasks before leaving this room.
   Task_Remove(SolSanctumLunaSolRooms_UpdateFirstFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
@@ -1592,7 +1592,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   WaitFrames(1);
   Actor_SetPosition(ACTOR_GARET, PIXELS(280), PIXELS(134));
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  // This script reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
+  // This event reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
   // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
   // gPaletteFadeWork they would load two.
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;

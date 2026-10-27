@@ -8,7 +8,7 @@
 #define DJINN_PER_ELEMENT 20
 
 /// A Djinni's place among its element's Djinn, from 0, as Djinn_JoinParty and
-/// the members' Djinn lists take it.
+/// the party members' Djinn lists take it.
 #define DJINNI_INDEX(id) ((id) % DJINN_PER_ELEMENT)
 
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINN_FIRST count them:

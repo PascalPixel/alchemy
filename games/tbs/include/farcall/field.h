@@ -1,5 +1,5 @@
 /// @file
-/// Objects, movement, map drawing and map services.
+/// Actors, movement, map drawing and map routines.
 
 /// Allocates the 64 sprites and their sprite anims, loads the basic sprite
 /// palettes and shadow tiles, and puts the tile uploader in RAM; `mode` picks
@@ -36,40 +36,40 @@ void SpriteAnim_ClearFar(struct SpriteAnim *layer);
 /// keeps the command cursor and timer, and unlike the sprite-wide form it stays
 /// part of the index.
 void SpriteAnim_StartFar(struct SpriteAnim *work, s32 no);
-/// Allocates the 64 objects and registers their per-frame updates;
+/// Allocates the 64 actors and registers their per-frame updates;
 /// `mode` picks the battle's script-less motion and the world map's fixed
 /// camera.
 void ActorSystem_InitializeFar(s32 mode);
-/// Switches every sprite of an object, one or a group of four, to animation
+/// Switches every sprite of an actor, one or a group of four, to animation
 /// `no`.
 void Actor_SelectAnimationFar(void *raw, s32 no);
-/// Sets the timer step of every sprite of an object (16 is normal speed).
+/// Sets the timer step of every sprite of an actor (16 is normal speed).
 void Actor_SetAnimationSpeedFar(struct Actor *actor, s32 val);
-/// Gives an object `script` and runs it from the top, clearing the cursor, the
+/// Gives an actor `script` and runs it from the top, clearing the cursor, the
 /// pause, the loop count and the last flag test.
 void Actor_StartScriptFar(struct Actor *actor, const s32 *script);
-/// Hands an object to the player's control on a layered map (SC_PLAYER).
+/// Hands an actor to the player's control on a layered map (SC_PLAYER).
 void Actor_StartPlayerControlFar(struct Actor *actor);
-/// Hands an object to the player's control on the world map (SC_WORLD).
+/// Hands an actor to the player's control on the world map (SC_WORLD).
 void Actor_StartWorldMapControlFar(struct Actor *actor);
-/// Runs the script that walks an object wherever the keys point (SC_KEYS),
+/// Runs the script that walks an actor wherever the keys point (SC_KEYS),
 /// which the leader gets when gSaveBlock.movementMode is 1.
 void Actor_StartMoveByKeysFar(struct Actor *actor);
-/// Runs SC_KEY_COUNT on an object every frame, which the leader gets when
+/// Runs SC_KEY_COUNT on an actor every frame, which the leader gets when
 /// gSaveBlock.movementMode is 2.
 void Actor_StartKeyCheckFar(struct Actor *actor);
 #ifndef OWN_Actor_CreateFar
-/// Creates an object at (x, y, z) in 16.16 pixels, or returns 0 when none
-/// is free (Actor_Create). `id / 4096` is its enum ActorCreateKind and
+/// Creates an actor at (x, y, z) in 16.16 pixels, or returns 0 when every
+/// slot is in use (Actor_Create). `id / 4096` is its enum ActorCreateKind and
 /// the low 12 bits its sprite's animation id.
 struct Actor *Actor_CreateFar(s32 id, s32 x, s32 y, s32 z);
 #endif
-/// Releases an object's sprites and zeroes it, so it can be handed out again.
+/// Releases an actor's sprites and zeroes it, so it can be handed out again.
 void Actor_ReleaseFar(struct Actor *actor);
-/// Puts an object on the camera script (SC_CAMERA); following a leader, it
+/// Puts an actor on the camera script (SC_CAMERA); following a leader, it
 /// moves at most 4 pixels a frame.
 void Actor_StartCameraFar(struct Actor *actor, s32 arg);
-/// Places an object at (x, y, z) in 16.16 pixels and stops it, clearing its
+/// Places an actor at (x, y, z) in 16.16 pixels and stops it, clearing its
 /// movement target.
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -98,18 +98,18 @@ void WorldMap_UpdateCurrentTileBlockFar(void);
 /// snowfield set where the ground there is
 /// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
-/// Leaves an object standing still on the idle script, a lone SC_END.
+/// Leaves an actor standing still on the idle script, a lone SC_END.
 void Actor_StartIdleFar(struct Actor *actor);
-/// Waits until an object's script reaches SC_END, giving up after 300 frames
+/// Waits until an actor's script reaches SC_END, giving up after 300 frames
 /// (five seconds).
 void Actor_WaitForScriptEndFar(void *raw);
 #ifndef OWN_Actor_SetMoveTargetFar
-/// Sends an object towards (x, y, z) in 16.16 pixels, pulling the target in so
+/// Sends an actor towards (x, y, z) in 16.16 pixels, pulling the target in so
 /// it coasts to a stop there; within a pixel it arrives at once.
 void Actor_SetMoveTargetFar(struct Actor *actor, s32 x, s32 y, s32 z);
 #endif
-/// Waits until an object reaches its target, giving up after 600 frames
-/// (ten seconds) with the object still moving.
+/// Waits until an actor reaches its target, giving up after 600 frames
+/// (ten seconds) with the actor still moving.
 void Actor_WaitForMoveFar(void *actor);
 /// Puts the world map's default cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles.
@@ -130,11 +130,11 @@ void TilesetAnim_ResumeFar(u32 no);
 void TilesetAnim_PauseFar(u32 no);
 /// Lets the map's blend script run again after BlendScript_SuspendFar.
 void BlendScript_ResumeFar(void);
-/// Stops the map's blend script, as the lighthouse maps and Vale's Babi
+/// Stops the map's blend script, as the lighthouse scenes and Vale's Babi
 /// event do while they set the blend themselves.
 void BlendScript_SuspendFar(void);
 /// Returns the ground height of `layer` at (x, y) in 16.16 pixels, where y is
-/// the map's down axis (an object's z).
+/// the map's down axis (an actor's z).
 s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 /// Returns the metatile behavior of the cell of `layer` under (x, y), given in
 /// 16.16 pixels.
@@ -154,13 +154,13 @@ void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
 /// Puts world map tile (x / 16, y / 16) into the tile grid at
 /// (px / 16, py / 16), drawing it at once when it's next to the view.
 void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
-/// Returns whether an object can step to `position`, as an enum
+/// Returns whether an actor can step to `position`, as an enum
 /// Collision: a wall there, or ground too high or too low for one step.
 s32 MapGrid_CheckCollisionFar(struct Actor *actor,
                               struct FieldPosition *position);
-/// Sets the flags of a one-sprite object's sprite (bit 0 draws its shadow).
+/// Sets the flags of a one-sprite actor's sprite (bit 0 draws its shadow).
 void Actor_SetSpriteFlagsFar(struct Actor *actor, u32 flags);
-/// Sets the OAM blend mode of a one-sprite object's sprite; an object with high
+/// Sets the OAM blend mode of a one-sprite actor's sprite; an actor with high
 /// kind bits set is left alone.
 void Actor_SetBlendModeFar(struct Actor *actor, u32 mode);
 /// Changes the screen shake, leaving alone an axis whose argument is negative.
@@ -169,31 +169,31 @@ void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 shakeDecay);
 /// Waits until the shake dies down below 1/256 pixel, or 300 frames pass, and
 /// then stops it.
 void MapGrid_WaitForShakeToSettleFar(void);
-/// Stops the object camera updates, brings the palette back and shows the
+/// Stops the actor camera updates, brings the palette back and shows the
 /// sprites alone over BG0, with BG1 to BG3 hidden.
 void ActorSystem_SuspendProjectionAndShowSpritesFar(void);
-/// Restarts the object camera updates and hides BG1 to BG3 and the sprites,
+/// Restarts the actor camera updates and hides BG1 to BG3 and the sprites,
 /// undoing ActorSystem_SuspendProjectionAndShowSpritesFar.
 void ActorSystem_ResumeProjectionAndHideLayersFar(void);
 /// Returns -1 when the overhead layer's cell under `position`, its height
 /// taken off, is a wall (MB_WALL), else 0.
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
-/// Adds a sprite anim playing animation `no` to a one-sprite object's sprite; a
+/// Adds a sprite anim playing animation `no` to a one-sprite actor's sprite; a
 /// negative `no` does nothing.
 void Actor_RegisterSpriteMetadataFar(struct Actor *actor, s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
-/// menu or script can use the window and VBlank.
+/// menu or event can use the window and VBlank.
 void WorldMap_StartStillViewFar(void);
 /// Reloads the world map area's palette and tiles after the still view and
 /// returns to the perspective view.
 void WorldMap_LoadAreaGraphicsFar(void);
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's sprite
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
 /// anims, except hidden ones.
 void Anim_ApplyChildValuesFar(struct Actor *actor, u32 val);
 /// Sets every sprite anim of a sprite to colour mode `value`, skipping those
 /// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
-/// Returns -1 when an object at `values` would overlap a solid object
+/// Returns -1 when an actor at `values` would overlap a solid actor
 /// (ACTOR_SOLID), each radius less 2 pixels, else 0.
 s32 ActorScript_CheckOverlapFar(struct Actor *actor, s32 *values);
 /// Sets which of BG1 to BG3 the map shows, in bits 9 to 11 of its display
@@ -224,9 +224,9 @@ void TilesetAnim_SuspendAllFar(void);
 /// Restarts the tileset animations when a menu closes, unless the world map's
 /// still view is shown.
 void TilesetAnim_ResumeAllFar(void);
-/// Returns the first solid object an object at `values` would overlap, as
-/// ActorScript_CheckOverlapFar tests, or NULL; the Move effect uses it to see
-/// what stands in the way of the stone pillar it pushes.
+/// Returns the first solid actor an actor at `values` would overlap, as
+/// ActorScript_CheckOverlapFar tests, or NULL; Move's field Psynergy uses it to
+/// see what stands in the way of the stone pillar it pushes.
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *actor,
                                                   s32 *values);
 /// Returns the terrain kind (the low four bits of the first collision byte) of

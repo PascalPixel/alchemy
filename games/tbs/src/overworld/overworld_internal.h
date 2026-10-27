@@ -96,7 +96,7 @@
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// Map ids above the field maps, which SequenceManager_Run runs without a
+/// Scene ids above the field scenes, which SequenceManager_Run runs without a
 /// layout; each returns a result to Scene_ReturnFromSequence instead of an
 /// exit. A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers

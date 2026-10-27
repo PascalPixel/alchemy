@@ -1,5 +1,5 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
-/// game's last map: SceneId_LemurianShip, with the area name Lemurian ship.
+/// game's last scene: SceneId_LemurianShip, with the area name Lemurian ship.
 /// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
 /// the party the Black Orb, and stepping back on metatile behavior 1
 /// (LemurianShip_LeaveTheShip) returns there.
@@ -8,8 +8,8 @@
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
 /// water's ripple (Ripple_Start), a scanline effect: an HBlank DMA of
 /// per-line scroll offsets for BG3 that Reveal stops while it shows the map.
-/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector
-/// reaches, first gives the leader the Black Orb.
+/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene
+/// selector reaches, first gives the leader the Black Orb.
 ///
 /// Using the Black Orb at the water's edge (metatile behavior 10) plays
 /// LemurianShip_RaiseTheShip: the orb glows, spray rises and the ship comes up
@@ -166,8 +166,8 @@ static void ShipGlow_CyclePalette(void) {
 }
 
 /// A drop of spray rises and wobbles for its timer, then falls back by
-/// gSprayFallScript, which frees it.
-/// The update hook Ship_UpdateSwell gives each drop it creates.
+/// gSprayFallScript, which releases it.
+/// The update routine Ship_UpdateSwell gives each drop it creates.
 static void LemurianShip_SprayUpdate(struct Actor *actor) {
   struct Actor *drop = (struct Actor *)actor;
 
@@ -284,7 +284,7 @@ static void Ship_UpdateSwell(void) {
 
 /// Remembers the leader's height on deck, so that from then on he bobs with
 /// the ship.
-/// Called by gLeaderBoardsShip as he steps on deck; the other members'
+/// Called by gLeaderBoardsShip as he steps on deck; the other party members'
 /// boarding scripts call their own copies below.
 static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
@@ -296,7 +296,7 @@ static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   return 0;
 }
 
-/// Remembers Garet's boarding height for the swell callback.
+/// Remembers Garet's boarding height for the swell task.
 static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
@@ -307,7 +307,7 @@ static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
   return 0;
 }
 
-/// Remembers Mia's boarding height for the swell callback.
+/// Remembers Mia's boarding height for the swell task.
 static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
@@ -318,7 +318,7 @@ static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
   return 0;
 }
 
-/// Remembers Ivan's boarding height for the swell callback.
+/// Remembers Ivan's boarding height for the swell task.
 static s32 Ivan_StepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
   struct Actor *actor;
@@ -573,7 +573,7 @@ static void LemurianShip_SetSail(void) {
   Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this map's view of the scanline effect's work
+/// The water's ripple, this scene's view of the scanline effect's work
 /// (gScanlineEffect, struct ScanlineEffectWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
 /// is one word, BG3's x and y, where ScanlineEffectWork has three.
@@ -599,7 +599,7 @@ static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
 /// Lemurian ship: the Black Orb glows, the water lights up, spray rises and
 /// the ship comes up out of the sea 90 pixels; then the party sets sail.
 /// Reached by using the Black Orb at the water's edge (metatile behavior 10).
-/// Adds the swell and glow callbacks, which run to the end of the game, and
+/// Adds the swell and glow tasks, which run to the end of the game, and
 /// calls LemurianShip_SetSail.
 static void LemurianShip_RaiseTheShip(void) {
   struct MapGridScrollWork *grid;
@@ -835,7 +835,7 @@ void ScanlineEffect_BuildPage(void) {
 
 #include "common/scroll_initialize_hblank_dma.h"
 
-/// Takes the ripple's callbacks off and stops DMA 0.
+/// Takes the ripple's tasks off and stops DMA 0.
 /// Called by Ripple_StopForReveal.
 static void Ripple_Stop(void) {
   volatile u16 *reg;
@@ -929,7 +929,7 @@ u16 gShipGlowPalettes[] = {
     0x5860, 0x69c0, 0x7f20, 0x69c0, 0x5860, 0x0000,
 };
 
-/// A drop of spray, at the end of its rise: freed.
+/// A drop of spray, at the end of its rise: released.
 s32 gSprayFallScript[] = {
     SC_RELEASE,
 };

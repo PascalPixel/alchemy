@@ -160,7 +160,7 @@ void Shop_RestoreFieldPalette(void) {
 /// Moves the cursor from its saved position toward its target, in a straight
 /// line over `kind` frames, one frame a call; `active` counts the frames and
 /// both go back to 0 on arrival. Runs every frame from MenuCursor_Step, and
-/// from the option menu's, name entry screen's and file menu's cursor tasks.
+/// from the settings menu's, name entry screen's and file list's cursor tasks.
 void MenuCursor_Advance(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 durationFrames;
@@ -190,7 +190,7 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
 }
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
-/// one-pixel step. Called each frame by the option menu and the name entry
+/// one-pixel step. Called each frame by the settings menu and the name entry
 /// screen.
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;

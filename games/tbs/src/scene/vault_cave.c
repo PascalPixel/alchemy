@@ -1,8 +1,8 @@
 /// @file
-/// Vault Cave's overlay, which holds three rooms, each a map of its own and all
-/// named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace and
-/// SceneId_VaultCaveMouth, area 31). The cave opens off Vault as the
-/// party finds it on its return (SceneId_VaultRevisit), whose exits
+/// Vault Cave's overlay, which holds three rooms, each a scene of its own and
+/// all named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace
+/// and SceneId_VaultCaveMouth, area 31). The cave opens off Vault as the party
+/// finds it on its return (SceneId_VaultRevisit), whose exits
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
 /// in the town's northeast cliff. No story flag is read here and no one speaks:
@@ -63,7 +63,7 @@
 /// Each room has a door that only says it is locked
 /// (VaultCave_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
 /// which moves the pillar the leader faces one cell unless another actor
-/// or the terrain is in the way, and the water drops run as map callbacks
+/// or the terrain is in the way, and the water drops run as tasks
 /// started by Scene_Initialize.
 
 #include "save_block.h"
@@ -127,7 +127,7 @@ enum VaultCaveMetatileBehavior {
   MB_VAULT_CAVE_CHEST = 100
 };
 
-/// Map flags, and one area flag. The six puddles of
+/// Scene flags, and one area flag. The six puddles of
 /// SceneId_VaultCaveVambrace keep their frozen state in six flags in a row,
 /// read by index as well.
 enum {
@@ -416,7 +416,7 @@ static void VaultCave_ShowLockedDoor(void) {
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
-/// Selects the cave map's examine triggers, movement checks and Psynergy
+/// Selects the cave scene's examine triggers, movement checks and Psynergy
 /// callbacks.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -521,7 +521,7 @@ static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   return 0;
 }
 
-/// The northern switch also waits until the falling-object guard is clear.
+/// The northern switch also waits until the falling-actor guard is clear.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
@@ -799,7 +799,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   return 0;
 }
 
-/// Drops four objects on a repeating schedule and handles their landings.
+/// Drops four actors on a repeating schedule and handles their landings.
 static void VaultCave_UpdateTimedFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
@@ -819,7 +819,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
         gVaultCave_ScheduleIndex = 0;
       }
     }
-    // Reset objects that have reached the floor and spawn their landing puffs.
+    // Reset actors that have reached the floor and spawn their landing puffs.
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
@@ -850,7 +850,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
   }
 }
 
-/// Drops a random object every 64 frames, with reset height set by its puddle
+/// Drops a random actor every 64 frames, with reset height set by its puddle
 /// (frozen or not).
 static void VaultCave_UpdateFrostControlledFallingActors(void) {
 
@@ -870,7 +870,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
       fallingActor = Actor_GetById((stateValue + ACTOR_FIRST_WATER_DROP));
       fallingActor->gravity = 0xa3d;
     }
-    // Each object's paired Frost flag selects its reset height.
+    // Each actor's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingActor = Actor_GetById((fallingIndex + ACTOR_FIRST_WATER_DROP));
       stateValue = GameFlag_Get(
@@ -914,7 +914,7 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
                            destination[2]);
 }
 
-/// Spawns up to four short-lived puffs around a landing object.
+/// Spawns up to four short-lived puffs around a landing actor.
 static void VaultCave_SpawnPuffs(struct Actor *source) {
   struct Actor *puff;
   s32 puffIndex;

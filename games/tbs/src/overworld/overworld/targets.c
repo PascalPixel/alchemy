@@ -1,5 +1,5 @@
 /// @file
-/// The actor a field action aims at, and the helpers that follow it.
+/// The actor a field Psynergy or item aims at, and the helpers that follow it.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -207,8 +207,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4
 /// and, 12 frames later, shows itemId in front of actor with sparkles.
 /// Returns the picture's encoded actor pointer, or 0 when the target or
-/// picture is absent. Called by two map overlays: McCoy's palace, when a reward
-/// chest opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
+/// picture is absent. Called by two scene overlays: McCoy's palace, when a
+/// reward chest opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;
@@ -225,7 +225,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   return emitter;
 }
 
-/// Gives every part of a motion object's sprite (but those at palette 15)
+/// Gives every part of an actor's sprite (but those at palette 15)
 /// palette - 1, or for palette 0 the next palette of a cycle that changes every
 /// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
 /// Mind Read's wave effect (event_commands/mind_read.c) on the caster: each
@@ -262,8 +262,8 @@ void Anim_ApplyChildPalette(struct Actor *actor, s32 palette) {
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events. Called by Event_Start
-/// when a script starts while the field is busy, by SceneManager_Run before the
-/// pause menu, and by 30 map overlays.
+/// when an event starts while the field is busy, by SceneManager_Run before the
+/// Pause menu, and by 30 scene overlays.
 void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = gFieldWork;
 

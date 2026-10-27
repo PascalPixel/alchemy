@@ -1,14 +1,14 @@
 /// @file
-/// The script camera.
+/// The event camera.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-/// The script command "camera follow actor": the camera (the script's
+/// The event command "camera follow actor": the camera (the event's
 /// view centre) follows actorId. Unless keepPosition is set it jumps there
-/// at once and, off the world map, the map is redrawn around it.
-/// Event_End calls it with the leader and keepPosition 1, so after a
-/// script the view follows the leader again from where it is, without a jump.
+/// at once and, off the World Map, the map is redrawn around it.
+/// Event_End calls it with the leader and keepPosition 1, so after an
+/// event the view follows the leader again from where it is, without a jump.
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Actor *subject;
   struct Actor *camera;
@@ -35,7 +35,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   }
 }
 
-/// The script command "camera set speed": the camera's top speed and
+/// The event command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
 void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   struct FieldWork *owner =
@@ -44,7 +44,7 @@ void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   owner->camera->acceleration = acceleration;
 }
 
-/// The script command "camera move to": sends the camera to the requested axes,
+/// The event command "camera move to": sends the camera to the requested axes,
 /// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 /// screen never shows past its edge. With glide 0 the camera jumps there at
 /// once; otherwise it travels at its own speed.
@@ -114,7 +114,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   }
 }
 
-/// The script command "camera move to actor":
+/// The event command "camera move to actor":
 /// FieldCamera_MoveWithinMapBounds to the actor's x and z.
 void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
   struct Actor *subject;
@@ -128,7 +128,7 @@ void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
   }
 }
 
-/// The script command "camera wait for move": waits (at most 600 frames) for
+/// The event command "camera wait for move": waits (at most 600 frames) for
 /// the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(((struct FieldWork *)AllocHeapSlotEwram(
@@ -137,7 +137,7 @@ void FieldCamera_WaitForArrival(void) {
   Event_WaitFrames(2);
 }
 
-/// The script command "get view centre": returns the camera object.
+/// The event command "get view centre": returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
   return ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
                                                  sizeof(struct FieldWork)))

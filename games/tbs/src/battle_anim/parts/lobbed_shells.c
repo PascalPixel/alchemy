@@ -95,7 +95,7 @@ void BattleAnim_RunRottenBlood(struct BattleAnimArgs *args) {
 /// background colours in turn, the style's last; frees PARTICLES 0 to 1023,
 /// then gives the shells 16 a target from 0 and the bursts 32 a target from
 /// LOBBED_SHELLS_BURSTS. Runs 8 frames a target plus 72 for smoke or 56 for
-/// shards, and before it returns removes its transfer callback, frees its
+/// shards, and before it returns removes its transfer task, frees its
 /// blitters and closes the canvas layer.
 ///
 /// mode: the style (enum LobbedShellsMode): its colours and its row of

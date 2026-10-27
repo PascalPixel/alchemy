@@ -35,27 +35,27 @@ static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
   Import_ActorSetAnimation(actorId, animation);
 }
 
-/// Holds the script until the camera's pan is done.
+/// Holds the event until the camera's pan is done.
 static inline void FieldCamera_WaitForMove(void) {
   FieldCamera_WaitForArrival();
 }
 
-/// Runs a script's palette fade, from the source colours to the target ones,
+/// Runs an event's palette fade, from the source colours to the target ones,
 /// over frames.
 static inline void PaletteFade_Interpolate(s32 frames) {
   PaletteFade_StartInterpolation(frames);
 }
 
-/// Takes a work block for a map from its heap slot, or returns the block the
+/// Takes a work block for a scene from its heap slot, or returns the block the
 /// slot already holds.
 static inline void *Heap_Allocate(s32 slot, s32 size) {
   return AllocHeapSlot(slot, size);
 }
 
-/// Frees a map's work block once the map is done with it.
+/// Frees a scene's work block once the scene is done with it.
 static inline void Heap_Release(s32 slot) { FreeHeapSlot(slot); }
 
-/// Draws an item's icon, ready for a script to show it.
+/// Draws an item's icon, ready for an event to show it.
 static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// Holds an item's picture up over the leader, as when the party finds it.
@@ -63,11 +63,11 @@ static inline void Item_ShowFound(s32 item, s32 height) {
   ItemDisplay_ShowItem(item, height);
 }
 
-/// Redraws the room around the point the camera follows, after a script has
+/// Redraws the room around the point the camera follows, after an event has
 /// moved it.
 static inline void MapGrid_Redraw(void) { MapGrid_CenterOnFollowedPoint(); }
 
-/// The cosine of an angle, a full turn being 0x10000, in 16.16, for a script's
+/// The cosine of an angle, a full turn being 0x10000, in 16.16, for an event's
 /// circling motion.
 static inline s32 Math_Cos(s32 angle) { return Trig_Cos(angle); }
 
@@ -79,18 +79,18 @@ static inline void Message_ShowCentered(s32 message, s32 flags) {
   FieldMessage_Show(message, flags);
 }
 
-/// Gives the party an item from a script and says who got it; -1 when it was
+/// Gives the party an item from an event and says who got it; -1 when it was
 /// left behind.
 static inline s32 Party_GiveItem(s32 item, s32 flags) {
   return PartyInventory_GiveItem(item, flags);
 }
 
-/// Ends a script's wave effect and restores the colours it changed.
+/// Ends an event's wave effect and restores the colours it changed.
 static inline void Psynergy_Cancel(void) {
   FieldPsynergy_FinishWaveAndReleaseHeapBlock();
 }
 
-/// Loads a map's sprite picture into VRAM; returns its first tile number, 0
+/// Loads a scene's sprite picture into VRAM; returns its first tile number, 0
 /// when there's no room.
 static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
   return VramCache_Load(block, size, data);
@@ -139,7 +139,7 @@ static inline void Field_SetMetatileBehaviorAt(s32 layer, s32 x, s32 y,
   MapGrid_SetMetatileBehaviorAt(layer, x, y, behavior);
 }
 
-/// Changes one 512-pixel tile of the world map, drawn at once when it's next to
+/// Changes one 512-pixel tile of the World Map, drawn at once when it's next to
 /// the view (WorldMap_SetWindowCellTile).
 static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
                                                    s32 py) {
@@ -147,7 +147,7 @@ static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
 }
 
 /// Puts an actor on the leader and sends it walking off by (dx, dz),
-/// then starts the action facing names (Actor_LaunchFromLeader).
+/// then starts the movement type facing names (Actor_LaunchFromLeader).
 static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
                                                s32 facing) {
   Actor_LaunchFromLeader(actorId, dx, dz, facing);

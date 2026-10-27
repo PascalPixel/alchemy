@@ -26,7 +26,7 @@ struct BattleAnimArgs {
   s32 user;        ///< the user's unit id
   s32 firstTarget; ///< the action's first target, standing or not
   s32 range;       ///< forwarded action range, otherwise initialized to 1
-  s32 targetCount; ///< targets in actors, at least 1
+  s32 targetCount; ///< entries in targets, at least 1
   s32 variant;     ///< the ability's size, from 0 (Quake, then Earthquake)
   s32 prelude;     ///< 1 plays a prelude: in some animations a Djinni appears
   s32 unused;      ///< no code names it
@@ -44,9 +44,9 @@ STATIC_ASSERT(offsetof(struct BattleAnimArgs, targets) == 0x24);
 #define DEFINE_BATTLE_ANIM_KIND(name, runner, arg)                             \
   void name(struct BattleAnimArgs *args) { runner(args, arg); }
 
-/// Loops `i` over the animation's targets, effect->actors[0] to
-/// effect->actors[effect->count - 1]: the loops that flash, shake, strike or
-/// aim at each target in turn.
+/// Loops `i` over the animation's targets, effect->targets[0] to
+/// effect->targets[effect->targetCount - 1]: the loops that flash, shake,
+/// strike or aim at each target in turn.
 #define ANIM_FOR_EACH_TARGET(i, effect)                                        \
   for ((i) = 0; (i) != (effect)->targetCount; (i)++)
 

@@ -9,7 +9,7 @@
 #define PROCNE_DUST_OFFSETS (3 * (48 * 64))
 #define PROCNE_COMET_OFFSETS 0x3600
 
-/// A whirlwind lifts the targets, then comets from a block of objects in a
+/// A whirlwind lifts the targets, then comets from a block of sprites in a
 /// violet sky strike them.
 ///
 /// Abilities: Procne (SUMMON_ANIM_PROCNE).
@@ -19,7 +19,7 @@
 ///                spinning them round it and drawing them in, while dust
 ///                spirals up;
 ///   160        : the battle background becomes the violet sky, and a 3x3 block
-///                of nine objects appears and sways;
+///                of nine sprites appears and sways;
 ///   256 to 329 : motes gather into the middle of the block;
 ///   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
 ///                ring of sparks, striking the targets on frames 334, 347,
@@ -31,12 +31,12 @@
 /// work->particles hold the dust (0 to 23 drawn), then from frame 160 the
 /// gathering motes (0 to 31), the comets' rings (32 to 59) and the four
 /// comets (60 to 63). PARTICLES 0 to 511 hold the sparks, 128 for each comet
-/// of which 96 are thrown. The animation moves the targets' objects (position,
+/// of which 96 are thrown. The animation moves the targets' actors (position,
 /// height, angle and gravity) and puts back their places and angles at the
 /// end; it loads the whirlwind's and then the comets' palette into the first
 /// 64 background colours, moves gProjection.centerX to 72 from frame 160 and
 /// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
-/// objects of the block on frame 160 and releases them before closing the
+/// sprites of the block on frame 160 and releases them before closing the
 /// canvas.
 void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
@@ -98,7 +98,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
   // Trails keep half of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // wave is where the block of objects sways, from (128, 40); drift is a
+  // wave is where the block of sprites sways, from (128, 40); drift is a
   // push from each comet.
   wave.x = 0x800000;
   wave.y = 0x280000;
@@ -287,7 +287,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
       } while (index != 24);
     }
 
-    // Frame 160: the violet sky, the nine objects and the comet images; the
+    // Frame 160: the violet sky, the nine sprites and the comet images; the
     // sparks are cleared, the targets hang 8 to 23 pixels up, the 32 motes
     // that will gather are scattered round the block, and the targets
     // settle into a tight, fast orbit.
@@ -345,7 +345,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
       }
     }
 
-    // From frame 160: sway the block of objects, faster for its first 64
+    // From frame 160: sway the block of sprites, faster for its first 64
     // frames, plus what is left of each comet's push. Each frame it moves up
     // to half a pixel across, on a 512-frame swing, and half a pixel (a
     // quarter after the first 64 frames) up and down, on a 128-frame swing;
@@ -366,7 +366,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
       scale.x = Q16_ONE;
       scale.y = Q16_ONE;
       place.groundHeight = 0;
-      // Object i is placed 64i pixels lower and raised 64i pixels higher,
+      // Sprite i is placed 64i pixels lower and raised 64i pixels higher,
       // which cancel on the screen but give it a draw slot 32i later
       // (Render_ApplyProjectedPlacement takes the slot from y / 2, and
       // Oam_AddSpriteAtDepth stops at 255).

@@ -26,7 +26,7 @@ enum UiSpriteViewerEditMode {
 /// One sprite anim the sprite viewer edits.
 struct UiSpriteViewerLayer {
   s16 spriteId;       ///< metadata record selected for this layer
-  s16 animationIndex; ///< script selected from that metadata
+  s16 animationIndex; ///< animation script selected from that metadata
   u8 enabled;         ///< zero hides it by a priority above the drawing range
   s8 priority;        ///< drawing order, 0 to 3
   s8 colorMode;       ///< SpriteColorMode; the viewer cycles through 0 to 15

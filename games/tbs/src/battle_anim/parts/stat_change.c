@@ -90,10 +90,10 @@ enum StatBoostSheet {
 ///
 /// Reached through the six wrappers above, Impact to Zephyr. Copies the mode's
 /// palette over the first 128 bytes of BG palette RAM (all but Zephyr), writes
-/// REG_BG2PA and REG_BG2X, and ends with the transfer callback removed and the
+/// REG_BG2PA and REG_BG2X, and ends with the transfer task removed and the
 /// canvas layer closed; the blitters are built and freed within each frame.
 ///
-/// effect: the targets. With prelude 1, a Djinni appears first, sways and
+/// args: the targets. With prelude 1, a Djinni appears first, sways and
 ///         rises.
 /// mode: the picture and its palette (enum StatBoostMode). The Djinni is
 ///       Venus for Granite, Jupiter for Ward and Zephyr, Mars otherwise;
@@ -441,7 +441,7 @@ UNUSED void BattleAnim_RunUnusedStatReduction(struct BattleAnimArgs *args) {
 /// Copies the mode's palette over the first 128 bytes of BG palette RAM,
 /// writes REG_BG2PA and REG_BG2X.
 ///
-/// effect: the targets.
+/// args: the targets.
 /// mode: the picture and its palette (enum StatReductionMode).
 void BattleAnim_RunStatReduction(struct BattleAnimArgs *args, s32 mode) {
   void **cursor;

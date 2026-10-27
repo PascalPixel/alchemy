@@ -810,7 +810,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   do {
     WaitFrames(1);
   } while (++sShakeChance <= 100);
-  // Commit the water tiles, then remove both scroll callbacks.
+  // Commit the water tiles, then remove the scroll task and HBlank handler.
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
@@ -941,7 +941,7 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
   return result;
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 320 to 316 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps each moving pillar's priority and collision flags consistent with the
@@ -1224,7 +1224,7 @@ static void CrossboneIsleSteppingStones_StopRising(void) {
   leader->riseCounter = 0;
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 54 to 52 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps the frozen puddle's underfoot flag consistent with the leader's height
@@ -1253,8 +1253,8 @@ CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
 #endif
 }
 
-/// Remembers the frozen puddle, installs its priority callback, and starts its
-/// flicker script.
+/// Remembers the frozen puddle, installs its priority update routine, and
+/// starts its flicker script.
 static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   struct Actor *actor;
 
@@ -1361,7 +1361,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
       settings);
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
@@ -1548,8 +1548,8 @@ static void CrossboneIsleSteppingStones_PrepLoweredActor(s32 id) {
   actor->sprite->image.priority = 2;
 }
 
-/// Restores a previously frozen pillar's mode, map cell, priority hook, and
-/// script.
+/// Restores a previously frozen pillar's mode, map cell, priority update
+/// routine, and script.
 static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
   struct Actor *actor;
 
@@ -1569,7 +1569,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
   }
 }
 
-/// Uses layer 2 and installs the moving pillar's priority callback.
+/// Uses layer 2 and installs the moving pillar's priority update routine.
 static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 

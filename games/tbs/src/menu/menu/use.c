@@ -15,9 +15,9 @@ void Item_PrepareUsePalette(void) {
 /// Nothing calls it.
 void Item_UseNoOpCallback(void) {}
 
-/// Uses the item in memberId's inventory slot on targetId, or on every member
-/// when its action's range is ABILITY_RANGE_ALL: applies its action at its
-/// plain power (Ability_ApplyToTargets with fixedScale 1). When the action
+/// Uses the item in memberId's inventory slot on targetId, or on every party
+/// member when its action's range is ABILITY_RANGE_ALL: applies its action at
+/// its plain power (Ability_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
 /// from its stack and the menu's list is rebuilt, and Hermes' Water
 /// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
@@ -56,14 +56,14 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 s32 Item_ReturnOne(void) { return 1; }
 
 /// Applies the healing, curing, revival or lasting stat rise of action
-/// effectId, used by member sourceId, to targetId, or to every member when the
-/// action's range is ABILITY_RANGE_ALL. Item_Use passes fixedScale 1, the
-/// action's plain power; the Psynergy screen 0, which scales HP healing by the
-/// user's Power in the action's element (Battle_CalculateRecoveryFar). Leaves
-/// the result message in the work's messageOffset, counted from
-/// MsgItemUseResult
-/// ("You recovered all HP!"). Returns 0 after recalculating every member, or -1
-/// when nothing changed.
+/// effectId, used by party member sourceId, to targetId, or to every party
+/// member when the action's range is ABILITY_RANGE_ALL. Item_Use passes
+/// fixedScale 1, the action's plain power; the Psynergy screen 0, which scales
+/// HP healing by the user's Power in the action's element
+/// (Battle_CalculateRecoveryFar). Leaves the result message in the work's
+/// messageOffset, counted from MsgItemUseResult
+/// ("You recovered all HP!"). Returns 0 after recalculating every party member,
+/// or -1 when nothing changed.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct AbilityDefinition *effect;

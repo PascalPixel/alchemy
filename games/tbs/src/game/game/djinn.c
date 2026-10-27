@@ -20,7 +20,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
 /// has room in that element, puts it on standby and sets its found flag.
 /// Returns who got it, -1 if it was found before or -2 when nobody has room.
-/// Called by Djinn_JoinParty when a Djinni joins in the field. Of members
+/// Called by Djinn_JoinParty when a Djinni joins in the field. Of party members
 /// holding equally few, the earliest in the party order gets it.
 s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
@@ -61,8 +61,8 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 /// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in
 /// djinnHeld and counts it. Returns -1 when the unit holds ten of the
 /// element or has it already. Called by Djinn_GiveToParty and
-/// Djinn_Transfer, by the events where a member joins with Djinn, and by the
-/// debug menus.
+/// Djinn_Transfer, by the events where a party member joins with Djinn, and by
+/// the debug menus.
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
 

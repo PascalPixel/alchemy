@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi's colosseum, where Colosso is fought, in three maps: the Colosseum
+/// Tolbi's colosseum, where Colosso is fought, in three scenes: the Colosseum
 /// Entrance outside its gates, the Colosseum Tunnel from Babi's Palace, and the
 /// Colosseum itself, whose stands, waiting room and passages lead to the sites
 /// of the three finals matches.
@@ -7,7 +7,7 @@
 /// Colosso has two parts, and the code tells them apart by FLAG_BABI_SAVED.
 /// While warriors fight their trials, Babi, the ruler of Tolbi, is missing.
 /// Once the party has saved his life in Altmiller Cave, the trials are over and
-/// Babi has picked Isaac for the finals himself: every map here then plays
+/// Babi has picked Isaac for the finals himself: every scene here then plays
 /// the finals day. FLAG_COLOSSO_OVER, set after the third finals match, closes
 /// the colosseum until next year.
 ///
@@ -33,7 +33,7 @@
 ///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
 ///   two exits.
-/// - Colosseum (SceneId_Colosseum), one map that holds the stands, the trial
+/// - Colosseum (SceneId_Colosseum), one scene that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
 ///   each an entrance's camera box on it.
 ///   Every arrival is an entrance of its own, and
@@ -53,7 +53,7 @@
 ///   next; the stages themselves are colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
-/// The three maps share one exit table, a run of exits for each map, and
+/// The three scenes share one exit table, a run of exits for each scene, and
 /// the Colosseum's exits are how its arrivals chain into one another and into
 /// the finals stages.
 
@@ -326,7 +326,7 @@ enum ColosseumMetatileBehavior {
   MB_COLOSSEUM_BEHIND_FINALS_LINE = 13
 };
 
-/// The temporary flags the colosseum's maps keep.
+/// The temporary flags the colosseum's scenes keep.
 enum {
   /// The Lucky Guess man has refused Isaac as a finalist
   /// (ColosseumEntrance_OfferLuckyGuess).
@@ -384,8 +384,8 @@ const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
       table = gColosseumTrialGroundsActorTemplates;
       break;
     // XXX (no evidence): what entrances 3 and 8 were made for; no exit
-    // or code enters by them, only the debug map selector can, and 8 takes the
-    // soldiers' table, as the arrivals of the finals day do.
+    // or code enters by them, only the debug scene selector can, and 8 takes
+    // the soldiers' table, as the arrivals of the finals day do.
     case 8:
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
@@ -538,7 +538,7 @@ static void ColosseumEntrance_TalkToAzart(void) {
   Actor_RunRepeatedMotion(ACTOR_AZART, 1);
   Event_ShowMessageAndWait(ACTOR_AZART, 0);
   // Give his wander back its home, where he is placed: MOVEMENT_TYPE_WANDER
-  // reads timer and work as homeX and homeZ (Object.homeX and homeZ), in
+  // reads timer and work as homeX and homeZ (Actor.homeX and homeZ), in
   // pixels.
   {
     u16 *timer = (u16 *)&contestant->timer;
@@ -1977,7 +1977,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Import_EventSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
-/// The warriors' child values and their waiting actions in the Colosseum's
+/// The warriors' child values and their waiting animations in the Colosseum's
 /// waiting room.
 static void ColosseumEntrance_InitializeContestants(void) {
   Actor_ConfigureSpriteColor(ACTOR_MORGAN, SPRITE_COLOR_BGR);

@@ -74,7 +74,7 @@ void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// counting the frames since; Ram_MapGridCellBuffer takes the blue flame sheet
 /// before it is turned. Sets work->shakeFrames as each flame shatters.
 ///
-/// effect: the targets.
+/// args: the targets.
 void BattleAnim_RunMercury(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
@@ -215,7 +215,7 @@ void BattleAnim_RunMercury(struct BattleAnimArgs *args) {
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
 /// work->shakeFrames as each ball lands.
 ///
-/// effect: the targets.
+/// args: the targets.
 void BattleAnim_RunJupiter(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
@@ -360,7 +360,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
 /// work->shakeFrames as each column appears.
 ///
-/// effect: the targets.
+/// args: the targets.
 void BattleAnim_RunVenus(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
@@ -492,7 +492,7 @@ void BattleAnim_RunVenus(struct BattleAnimArgs *args) {
 /// the streak sheet replaces the Djinni in work->sheet. Sets
 /// work->shakeFrames on the strike.
 ///
-/// effect: the targets.
+/// args: the targets.
 void BattleAnim_RunMars(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;

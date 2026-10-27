@@ -150,7 +150,7 @@ select_again:
         request->command = COMMAND_ITEM;
         // The parameter is the ability Can't Use, yet COMMAND_ITEM reads its
         // parameter as an inventory slot (BattleTurn_Build): slot 509, 1,018
-        // bytes past the actor's inventory. For the first three enemies that
+        // bytes past the unit's inventory. For the first three enemies that
         // is the twelfth inventory slot of the enemy three places on, which no
         // enemy fills, so the item is the empty one and the enemy defends
         // (MsgActorDefends); for the others it lies past the enemy units.
@@ -246,8 +246,8 @@ select_again:
     }
 
     // The target. With no one listed on the side (TARGET_PICK_SIDE_EMPTY) a
-    // random place is taken instead, on the actor's own side for both modes
-    // (allyIsParty and opponentIsParty both test the actor); with no one worth
+    // random place is taken instead, on the unit's own side for both modes
+    // (allyIsParty and opponentIsParty both test the unit); with no one worth
     // it (TARGET_PICK_NONE) the enemy picks again. A mode no ability has (3, or
     // one above ABILITY_TARGET_SELF) targets the user, but 3 leaves the choice
     // open, so the enemy picks again after it too.

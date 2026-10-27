@@ -21,13 +21,13 @@
 /// Djinni is not felled as an enemy is: the battle gives the downed pose, greys
 /// out and releases only BATTLE_SIDE_ENEMY units (BattleMotion_ShowDowned,
 /// BattlePlayback_Run, BattleObject_DestroyTemporaryObject), so the Djinni
-/// takes a member's held pose instead,
-/// a knock-out says `<unit> goes down!` as for a member, and the formation's
-/// suffix letters pass it by. Returns 0 for an id
-/// out of range, 1 otherwise; enemy ids 173 to 250, past the table's 165 rows
-/// but within the check, are filled from row 0. Called by the battle set-up
-/// (Battle_Run, BattleFormation_BuildEnemyList) and by
-/// BattleAbility_ApplyToTarget when an enemy calls for help.
+/// takes a party member's held pose instead,
+/// a knock-out says `<unit> goes down!` as for a party member, and the
+/// formation's suffix letters pass it by. Returns 0 for an id out of range, 1
+/// otherwise; enemy ids 173 to 250, past the table's 165 rows but within the
+/// check, are filled from row 0. Called by the battle set-up (Battle_Run,
+/// BattleFormation_BuildEnemyList) and by BattleAbility_ApplyToTarget when an
+/// enemy calls for help.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
@@ -137,7 +137,7 @@ s32 Party_CountMembers(void) {
 /// Adds character `unitId` to the end of the party: sets its game flag and
 /// appends it to gSaveBlock.party unless it is already listed.
 /// Returns the party size. Called by the events where a character joins, by
-/// the member chooser and the main menu, and by the debug presets.
+/// the party member chooser and the File Screen, and by the debug presets.
 s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
@@ -155,8 +155,8 @@ s32 Party_AddMember(s32 unitId) {
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
 /// the gap it leaves in gSaveBlock.party. Returns the party size.
-/// Called by the events where a character leaves, by the member chooser and
-/// the main menu, and by the debug presets.
+/// Called by the events where a character leaves, by the party member chooser
+/// and the File Screen, and by the debug presets.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;

@@ -92,14 +92,14 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// Returns 0 to stage the turn, TURN_REPORTED when the action failed (its
 /// message shown), or TURN_NO_ACTION.
 /// Called by BattleStaging_DispatchAction for each action of the round.
-/// Fills the turn (its actor, targets, hit and critical rolls, ability,
+/// Fills the turn (its acting unit, targets, hit and critical rolls, ability,
 /// element, staging, animation word and failure), resets the playback and shows
 /// the announcing message. The command's costs are paid here: a caster's PP, a
 /// Djinni set or put on standby (with its own animation), the standby Djinn a
 /// summon uses (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no
 /// target, may be set to guard (guardLevel).
 ///
-/// The phases: the debug defeat; what stops the actor; the announcement and
+/// The phases: the debug defeat; what stops the unit; the announcement and
 /// the ability id, by command; the rolls of a plain attack, or an ability's
 /// extra blows, critical hit or advance hit roll; then how it is staged.
 s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
@@ -110,7 +110,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
 
   /// Fills the turn's targets: the aimed unit, or for a range the places
   /// within range - 1 of the aimed place on its side, standing units only
-  /// unless the ability revives. With none, the actor defends ("defends")
+  /// unless the ability revives. With none, the unit defends ("defends")
   /// and it returns TURN_REPORTED.
   /// Called by BattleTurn_Build once the command gives its ability id.
   s32 BattleTurn_SetTargets(s32 abilityId) {
@@ -255,7 +255,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   }
 
   //----------------------------------------------------------------------
-  // What stops the actor: Ground, sleep, stun, a bound unit's bad luck
+  // What stops the unit: Ground, sleep, stun, a bound unit's bad luck
   //----------------------------------------------------------------------
   MessageArgument_ClearAllFar();
   if (actor->immobile) {

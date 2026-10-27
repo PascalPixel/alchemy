@@ -209,7 +209,7 @@ enum {
   FLAG_SUSPECTS_FLEEING = FLAG_AREA_TEMP_00
 };
 
-// The map flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
+// The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
 // (common/vault_spotflag.h) once the thieves are jailed means something else in
 // the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
@@ -1559,7 +1559,7 @@ static void LogRoomsA_LeaveLoft(void) {
 /// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM while
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set. Sets
 /// FLAG_VAULT_SUSPECTS_APPROACHED and FLAG_SUSPECTS_FLEEING, starts their
-/// routes and the callback that keeps them facing the leader.
+/// routes and the task that keeps them facing the leader.
 /// It plays once: it copies MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over
 /// the cells that reach it.
 static void LogRoomsA_ApproachSuspects(void) {
@@ -1613,7 +1613,7 @@ static void LogRoomsA_ApproachSuspects(void) {
 /// lead and corner them.
 ///
 /// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR while
-/// FLAG_SUSPECTS_FLEEING is set. Clears it and stops the facing callback; the
+/// FLAG_SUSPECTS_FLEEING is set. Clears it and stops the facing task; the
 /// suspects go back to their places.
 static void LogRoomsA_DiscussSuspiciousGuests(void) {
   struct Actor *suspectedLeader;
@@ -1777,7 +1777,7 @@ static inline void LogRoomsA_SetPartyImagePriority(void) {
 /// This is in the guests' room at Vault's inn. "Uh-oh! I'm surrounded!" "Now,
 /// Ivan!"
 ///
-/// Reached through raised events 201 to 203, which
+/// Reached through raised triggers 201 to 203, which
 /// LogRoomsA_UpdateActorStops raises after thirty frames with at
 /// least one suspect blocked: 201 the leader, 202 the thief, 203 both. Stops
 /// the chase, clears FLAG_MENUS_RAISE_TRIGGER and
@@ -2252,7 +2252,7 @@ s32 Scene_Initialize(void) {
 
 /// Keeps both suspects facing the leader while they evade the party.
 ///
-/// Run each frame as a map callback, from LogRoomsA_ApproachSuspects until
+/// Run each frame as a task, from LogRoomsA_ApproachSuspects until
 /// LogRoomsA_DiscussSuspiciousGuests, and again once their minds are read.
 static void LogRoomsA_FaceSuspectsTowardLeader(void) {
   struct Actor *origin = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -3168,7 +3168,7 @@ static void LogRoomsA_StartMindRead(s32 casterId, s32 targetId) {
   WaitFrames(1);
 }
 
-/// Finishes Mind Read and releases its event effect objects.
+/// Finishes Mind Read and releases its event effect actors.
 static void LogRoomsA_EndMindRead(void) {
   FieldPsynergy_RunHandler(2);
   FieldPsynergy_StopCasterUpdate();
@@ -3311,7 +3311,7 @@ static void LogRoomsA_MoveActorToStop(struct Actor *actor,
 /// Steers Ivan and both suspects through the graph and detects a sustained
 /// cornering.
 ///
-/// Run each frame as a map callback from LogRoomsA_StartActorStops
+/// Run each frame as a task from LogRoomsA_StartActorStops
 /// until LogRoomsA_ReadCorneredSuspectsMinds removes it. Raises event 200
 /// plus the blocked suspects (1 the leader, 2 the thief) after thirty frames
 /// with at least one suspect blocked; a frame when both can move restarts the
@@ -3426,7 +3426,7 @@ static void LogRoomsA_UpdateActorStops(void) {
   }
 }
 
-/// Arranges the chase, constrains its camera, and starts the route callback.
+/// Arranges the chase, constrains its camera, and starts the route task.
 ///
 /// Called by LogRoomsA_StartCorneringSuspects. Starts
 /// LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.

@@ -1,8 +1,8 @@
 /// @file
-/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with no
-/// story event between Babi Lighthouse and Venus Lighthouse. Both have the area
-/// name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's three
-/// drops land, which the area names call Babi Lighthouse:
+/// The Tunnel Ruins under Babi Lighthouse, two scenes of Psynergy puzzles with
+/// no story event between Babi Lighthouse and Venus Lighthouse. Both have the
+/// area name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's
+/// three drops land, which the area names call Babi Lighthouse:
 ///
 /// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue): entered from Babi
 ///   Lighthouse's stone door. A statue in the first room speaks to the leader's
@@ -19,7 +19,7 @@
 ///   stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
 /// The getters choose by gSaveBlock.sceneId; the actor templates of
-/// TunnelRuinsLadyStatues answer any other map number, and
+/// TunnelRuinsLadyStatues answer any other scene number, and
 /// TunnelRuins_GetActorTemplates prepares each table's actors to
 /// appear only in view. TunnelRuins_Initialize works room by room, one case for
 /// each room's entrances: it puts each puzzle back as it was left,
@@ -28,7 +28,7 @@
 /// FLAG_VENUS_LIGHTHOUSE_SECOND_PATH), sets the retreat point, and in the rooms
 /// that need it starts a fade overlay that follows the leader south of a depth
 /// set per room (TunnelRuins_UpdateTrackedActor). The walking events,
-/// keyed on the metatile behaviors under the leader, are shared by both maps:
+/// keyed on the metatile behaviors under the leader, are shared by both scenes:
 /// hops across gaps (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
 ///
 /// The puzzles that must survive a visit keep story flags
@@ -36,8 +36,8 @@
 /// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
-/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags, which
-/// mean different things in each map:
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep scene flags,
+/// which mean different things in each scene:
 ///
 /// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are ivy
 /// A
@@ -155,7 +155,7 @@ enum {
   ACTOR_SOUTHEAST_PILLAR_PUDDLE
 };
 
-/// The actors of TunnelRuinsLadyStatues and any other map: a pillar for
+/// The actors of TunnelRuinsLadyStatues and any other scene: a pillar for
 /// Douse with a puddle for Frost, two balance platforms with three carved
 /// stones to Carry onto them, two statues that vanish under Reveal, two pillars
 /// to push in the east, and five coloured statues of a woman to Move before the
@@ -359,7 +359,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 
 #include "common/actor_depth.h"
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 156 to 152 bytes in tbs-en.
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
@@ -399,7 +399,7 @@ static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
 #endif
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void removes its zero result; its aligned extent stays 80 bytes.
 // Once the Douse pillar is soaked, its puddle stays 32 pixels below the
 // pillar while the pillar is in row 10 and the leader is above 48 pixels
@@ -531,7 +531,7 @@ static void TunnelRuins_HopDownStep(void) {
 #define FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
-/// a table for any other map number.
+/// a table for any other scene number.
 const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -948,7 +948,7 @@ static void TunnelRuins_PushDousePillar(void) {
 /// As Douse begins on the pillar, water splashes on it and it is soaked; its
 /// puddle follows it from then on. Reached by Douse's first phase on the Douse
 /// pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED and
-/// gives the puddle its update hook.
+/// gives the puddle its update routine.
 static void TunnelRuins_DouseStartsOnPillar(void) {
   struct Actor *puddle;
 
@@ -996,7 +996,7 @@ static void TunnelRuins_FreezeDousePuddle(void) {
   Event_End();
 }
 
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 34 to 32 bytes in tbs-en.
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
@@ -1404,7 +1404,7 @@ static void TunnelRuins_SearchLockedDoor(void) {
 }
 
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
-/// any other map.
+/// any other scene.
 const struct Trigger *TunnelRuins_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueTriggers;
@@ -1504,7 +1504,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// Retreat leads back to
 /// TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, or, from
 /// TunnelRuinsLadyStatues's three entrances from Babi Lighthouse Entry,
-/// up there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The map's
+/// up there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
 /// initialization. Entering the room of four walkways
 /// (TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST and the three after it) sets
 /// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.
@@ -2138,7 +2138,7 @@ struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[] = {
     {SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, PIXELS(728), 0, PIXELS(184),
      FACING_NORTH, TALK_FACING_KEEP, 0},
     // A model of Venus Lighthouse on the floor before the Great Statue: the
-    // world map's tower, at three fifths of its size, with no collision
+    // World Map's tower, at three fifths of its size, with no collision
     // and no shadow.
     {SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0, (s32)gTunnelRuins_ShrinkScript,
      PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},

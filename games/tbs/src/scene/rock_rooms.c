@@ -30,7 +30,7 @@
 /// actors in front of the merchants (ACTOR_WEAPON_COUNTER and the
 /// others), so talking across one reaches the merchant's trigger. Entering by
 /// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
-/// hides the location name.
+/// hides the area name.
 
 #include "save_block.h"
 #include "event_layer.h"
@@ -506,8 +506,8 @@ static void RockRooms_TalkToTravelingHealer(void) {
   if (FACING_IS_NORTH(leader->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
     // its keeper's portrait from the actor (Sanctum_Run), and both
-    // Healers are placed in this map in the same sprite, so the player sees no
-    // difference.
+    // Healers are placed in this scene in the same sprite, so the player sees
+    // no difference.
 #ifdef BUGFIX
     Sanctum_Run(ACTOR_TRAVELING_HEALER);
 #else

@@ -50,14 +50,14 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {15, 16, 17, 18},
         .weights = {4, 4, 12, 8},
     },
-    // World map: terrain kind 1, grassland and beach
+    // World Map: terrain kind 1, grassland and beach
     {
         .rate = 25,
         .level = 3,
         .enemies = {20, 21, 22, 23, 24, 25, 26, 27},
         .weights = {4, 4, 4, 4, 2, 2, 2, 2},
     },
-    // World map: terrain kind 1, forest
+    // World Map: terrain kind 1, forest
     {
         .rate = 9,
         .level = 3,
@@ -85,19 +85,19 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {31, 32, 33, 34, 35, 36, 37},
         .weights = {2, 2, 5, 2, 8, 8, 14},
     },
-    // Scripted battles: Vale, Vault, world map
+    // Event battles: Vale, Vault, World Map
     {
         .enemies = {1, 2, 3, 4, 5, 29, 28},
         .weights = {10, 10, 10, 10, 10, 10, 1},
     },
-    // World map: terrain kind 2, grassland and beach
+    // World Map: terrain kind 2, grassland and beach
     {
         .rate = 25,
         .level = 6,
         .enemies = {50, 51, 52, 53, 54, 55, 56, 57},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World map: terrain kind 2, forest
+    // World Map: terrain kind 2, forest
     {
         .rate = 9,
         .level = 6,
@@ -202,14 +202,14 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {77, 78, 79, 80, 81, 82, 83, 84},
         .weights = {1, 1, 1, 1, 1, 2, 2, 2},
     },
-    // World map: terrain kind 21, snowfield (behavior 5)
+    // World Map: terrain kind 21, snowfield (behavior 5)
     {
         .rate = 25,
         .level = 9,
         .enemies = {86, 87, 88, 89, 90},
         .weights = {3, 3, 5, 5, 5},
     },
-    // World map: terrain kind 21, snowfield (behavior 6)
+    // World Map: terrain kind 21, snowfield (behavior 6)
     {
         .rate = 9,
         .level = 9,
@@ -251,19 +251,19 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {97, 98, 99, 100, 101, 102, 103, 104},
         .weights = {1, 1, 1, 2, 2, 2, 4, 4},
     },
-    // Scripted battles: Tret Tree, Mercury Lighthouse
+    // Event battles: Tret Tree, Mercury Lighthouse
     {
         .enemies = {106, 107, 108},
         .weights = {10, 10, 10},
     },
-    // World map: terrain kind 31, grassland
+    // World Map: terrain kind 31, grassland
     {
         .rate = 20,
         .level = 11,
         .enemies = {120, 121, 122, 123},
         .weights = {3, 3, 3, 3},
     },
-    // World map: terrain kind 31, forest
+    // World Map: terrain kind 31, forest
     {
         .rate = 9,
         .level = 11,
@@ -312,14 +312,14 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {129, 130, 131, 132, 133, 134, 135, 136},
         .weights = {1, 1, 2, 2, 3, 4, 5, 5},
     },
-    // World map: terrain kind 3, grassland, desert and beach
+    // World Map: terrain kind 3, grassland, desert and beach
     {
         .rate = 25,
         .level = 12,
         .enemies = {141, 142, 143, 144, 145, 146},
         .weights = {3, 3, 1, 3, 1, 1},
     },
-    // World map: terrain kind 3, forest
+    // World Map: terrain kind 3, forest
     {
         .rate = 9,
         .level = 12,
@@ -368,19 +368,19 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {160, 161, 162, 163, 164, 165, 166, 167},
         .weights = {1, 1, 1, 2, 3, 4, 4, 5},
     },
-    // Scripted battles: Mogall Forest, Altin Peak, Lamakan Desert
+    // Event battles: Mogall Forest, Altin Peak, Lamakan Desert
     {
         .enemies = {138, 139, 157, 158, 169, 170},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // World map: terrain kind 4, grassland, desert and beach
+    // World Map: terrain kind 4, grassland, desert and beach
     {
         .rate = 25,
         .level = 15,
         .enemies = {180, 181, 182, 183, 184, 185, 186, 187},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World map: terrain kind 4, forest
+    // World Map: terrain kind 4, forest
     {
         .rate = 9,
         .level = 15,
@@ -429,26 +429,26 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {201, 202, 203, 204, 205, 206, 207, 208},
         .weights = {2, 2, 2, 4, 4, 4, 8, 8},
     },
-    // Scripted battles: Tolbi ship
+    // Event battles: Tolbi ship
     {
         .level = 17,
         .enemies = {210, 211, 212, 213},
         .weights = {10, 10, 10, 10},
     },
-    // Scripted battles: Crossbone Isle
+    // Event battles: Crossbone Isle
     {
         .level = 17,
         .enemies = {291, 292, 293, 294},
         .weights = {10, 10, 10, 10},
     },
-    // World map: terrain kind 5, grassland, desert and beach
+    // World Map: terrain kind 5, grassland, desert and beach
     {
         .rate = 25,
         .level = 18,
         .enemies = {220, 221, 222, 223, 224, 225, 226, 227},
         .weights = {6, 6, 6, 6, 3, 3, 3, 3},
     },
-    // World map: terrain kind 5, forest
+    // World Map: terrain kind 5, forest
     {
         .rate = 9,
         .level = 18,
@@ -497,7 +497,7 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {1, 1, 1, 2, 2, 4, 6, 6},
     },
-    // Scripted battles: Colosso
+    // Event battles: Colosso
     {
         .level = 19,
         .enemies = {238, 239, 240, 241, 242, 243},
@@ -552,14 +552,14 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {259, 260, 261, 262},
         .weights = {2, 2, 2, 2},
     },
-    // World map: terrain kind 6, grassland, desert and beach
+    // World Map: terrain kind 6, grassland, desert and beach
     {
         .rate = 25,
         .level = 22,
         .enemies = {268, 269, 270, 271, 272, 273, 274, 275},
         .weights = {4, 4, 3, 3, 3, 3, 3, 3},
     },
-    // World map: terrain kind 6, forest
+    // World Map: terrain kind 6, forest
     {
         .rate = 9,
         .level = 22,
@@ -580,7 +580,7 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {277, 278, 279, 280, 281, 282, 284, 285},
         .weights = {2, 2, 2, 4, 3, 4, 4, 4},
     },
-    // Scripted battles: Crossbone Isle
+    // Event battles: Crossbone Isle
     {
         .level = 17,
         .enemies = {296, 297, 298, 300, 301, 302},
@@ -677,7 +677,7 @@ const struct EncounterZone gEncounterZones[] = {
         .enemies = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {2, 2, 2, 3, 3, 3, 4, 4},
     },
-    // Scripted battles: Suhalla Desert, Venus Lighthouse Aerie, world map
+    // Event battles: Suhalla Desert, Venus Lighthouse Aerie, World Map
     {
         .enemies = {347, 346, 264, 265, 266, 287, 288, 289},
         .weights = {10, 10, 30, 10, 10, 80, 10, 10},

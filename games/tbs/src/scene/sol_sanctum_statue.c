@@ -37,7 +37,7 @@
 ///
 /// Both of Kraden's visits hold Jenna and Garet in place beside the leader,
 /// then walk them back into the party; any other arrival hides them. Retreat
-/// does not work here, a callback draws three rows of sprites that drift
+/// does not work here, a task draws three rows of sprites that drift
 /// sideways at different speeds (SolSanctumStatue_UpdateScrollingSprites): the
 /// clouds of the sky seen between the pillars of the colonnade along the
 /// room's north wall, 80 pixels down the map at the lowest priority, so they
@@ -127,7 +127,7 @@ enum SolSanctumStatueMetatileBehavior {
   MB_SOL_SANCTUM_STATUE_CENTER_STATUE = 32
 };
 
-// Map flags, cleared on every ordinary arrival:
+// Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN: both beams have opened the hole in the
 //   floor; until then, Move on the centre statue first walks the leader clear
 //   of it.
@@ -223,7 +223,7 @@ enum SolSanctumStatueActorId {
   ACTOR_MOVED_CENTER_STATUE
 };
 
-/// The map's bss, in this order; as commons of one object the linker would
+/// The scene's bss, in this order; as commons of one object the linker would
 /// sort them itself.
 static struct SealOpening sSealOpening;
 /// Initialization writes each three-word OAM packet; drawing updates its
@@ -765,7 +765,7 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
 }
 
 /// Draws the three rows of sky clouds while they overlap the screen. Run each
-/// frame as a callback that SolSanctumStatue_InitializeScrollingSprites adds.
+/// frame as a task that SolSanctumStatue_InitializeScrollingSprites adds.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;

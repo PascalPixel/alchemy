@@ -1,5 +1,5 @@
 /// @file
-/// The main menu overlay: the Golden Sun logo, the start menu (new game,
+/// The File Screen overlay: the Golden Sun logo, the start menu (new game,
 /// continue, copy and delete), the door to the Battle Arena and the transfer of
 /// a save's data, by link or as a password.
 
@@ -135,11 +135,11 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
-/// The main menu overlay's map tables, for the map loader: one
+/// The File Screen overlay's scene tables, for the scene loader: one
 /// entrance, the exit, and no actor templates or triggers.
 u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
-/// The exit regions entry: the main menu has no exit boxes.
+/// The exit regions entry: the File Screen has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *FileScreen_GetExits(void) { return (u8 *)gFileScreen_Exits; }
@@ -201,7 +201,7 @@ static void FileScreen_LoadBackground(void) {
 }
 
 /// The task that fades BG0 and the sprites in over the logo:
-/// their weight rises by a sixteenth every two frames, and the callback
+/// their weight rises by a sixteenth every two frames, and the task
 /// removes itself at full weight, 32 frames on. FileScreen_Run schedules it
 /// once, when there is no save file to choose.
 static void FileScreen_UpdateBlend(void) {
@@ -225,7 +225,7 @@ static void FileScreen_UpdateBlend(void) {
 }
 
 // clang-format off
-/// The first hidden code, entered on the main menu and ended by 0:
+/// The first hidden code, entered on the File Screen and ended by 0:
 /// Select three times. With it a new game names Garet, Ivan and Mia as well
 /// as Isaac (FileScreen_Run).
 const u16 gFileScreen_CodeSequence[] = {
@@ -251,7 +251,7 @@ const u16 gFileScreen_ExtraCodeSequence[] = {
 #endif
 
 /// The task that follows the two hidden codes each frame while
-/// the main menu runs. Each key must be held alone and then every
+/// the File Screen runs. Each key must be held alone and then every
 /// key released; any other key starts that code over. A finished code sets
 /// its unlocked flag, which stays set, and plays SE_CHIME.
 static void FileScreen_CheckButtonCodes(void) {
@@ -365,7 +365,7 @@ static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
 }
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
-/// otherwise. It may not when it was saved where a map script blocked
+/// otherwise. It may not when it was saved where an event blocked
 /// Retreat (FLAG_RETREAT_BLOCKED), except in towns (SCENE_TYPE_TOWN), which
 /// block it by themselves, and on the world map.
 static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
@@ -383,7 +383,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
-/// A view of the map state that names its copy of the play time, checked
+/// A view of the scene state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
   u8 mapAndInventory[0x100]; ///< gSceneLocalState, then gInventorySnapshot
@@ -405,7 +405,7 @@ struct SaveLinkGreeting {
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// The overlay's initialize entry: the main menu. At entrance
+/// The overlay's initialize entry: the File Screen. At entrance
 /// 2, after the credits, it offers to save the cleared game and goes on to the
 /// world map. Otherwise it loops on the start menu until the player starts a
 /// new game, continues a file or enters the Battle Arena; copying, erasing
@@ -1041,17 +1041,17 @@ struct PasswordMember {
 /// Packs the four heroes' data for a password of level mode (enum
 /// PasswordLevel): PASSWORD_LEVEL_GOLD 173 bytes, _SILVER 39 or _BRONZE 9; any
 /// other mode clears 11. Clamps
-/// each member's base stats and level in place first, and returns the byte
-/// count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
+/// each party member's base stats and level in place first, and returns the
+/// byte count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
 /// each from the lowest bit; the low half of 3 and bytes 4 to 6 the Djinn
 /// held, 7 bits an element; byte 7 the story flags of
 /// gFileScreen_PasswordFlags. Silver and Bronze keep in byte 8 which Psynergy
 /// items the party carries. Gold and Silver add the base stats, 60 bits a
-/// member, high bits first, from byte 8 (Gold) or 9 (Silver). Gold alone adds
-/// the 60 inventory slots' items, 9 bits each from byte 39, with a spare bit
-/// after every seventh; from the low half of byte 107, the 5-bit quantity
-/// fields of the 23 gFileScreen_PasswordStackItems for each member; and the
-/// coins in bytes 165 to 167.
+/// party member, high bits first, from byte 8 (Gold) or 9 (Silver). Gold alone
+/// adds the 60 inventory slots' items, 9 bits each from byte 39, with a spare
+/// bit after every seventh; from the low half of byte 107, the 5-bit quantity
+/// fields of the 23 gFileScreen_PasswordStackItems for each party member; and
+/// the coins in bytes 165 to 167.
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // A direct Unit member plus the real member table shrinks the native
   // function from 0x400 to 0x3f4. The private view remains pending member
@@ -1146,7 +1146,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       djinnBits += member->djinnHeld[j] << (j * 7);
     }
     // Which of the eight Psynergy items (gFileScreen_PasswordKeyItems) any
-    // member carries.
+    // party member carries.
     for (j = 0; j != 15; j++) {
       u16 item = member->inventory[j] & 0x1ff;
 
@@ -1223,7 +1223,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   // The two larger forms include the packed base-stat rows. Each pass packs
-  // two members in 15 bytes: each one's first word and the top 28 bits of
+  // two party members in 15 bytes: each one's first word and the top 28 bits of
   // its second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
     s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
@@ -1388,7 +1388,7 @@ s16 gFileScreen_CodeHeld = 0;
 s32 gFileScreen_ExtraCodeHeld = 0;
 
 // clang-format off
-/// The members the password packs: Isaac, Garet, Ivan and Mia.
+/// The party members the password packs: Isaac, Garet, Ivan and Mia.
 u32 gFileScreen_PasswordMembers[] = {
     0, 1, 2, 3,
 };
@@ -1407,7 +1407,7 @@ u32 gFileScreen_PasswordKeyItems[] = {
     0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };
 
-/// The 23 items whose quantity a Gold password keeps for each member: Herb,
+/// The 23 items whose quantity a Gold password keeps for each party member: Herb,
 /// Nut, Vial, Potion, Psy Crystal, Antidote, Elixir, Water of Life, Power
 /// Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke Bomb, Sleep
 /// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,

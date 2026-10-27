@@ -194,8 +194,8 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
 /// Returns the anim, 0 when no sprite anim is free, or -1 when the sprite
 /// has four anims already. Called by Sprite_Create for a sprite's
 /// first anim, by Actor_RegisterSpriteMetadata and the sprite
-/// viewer, and as Sprite_AddAnimFar by the battle, the Psynergy
-/// effects and the field map's actors.
+/// viewer, and as Sprite_AddAnimFar by the battle, field
+/// Psynergy and the overworld's actor code.
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
@@ -318,9 +318,9 @@ void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
 /// each anim's place and timer), unless the sprite plays it already. The
 /// first anim's animation also sets the sprite's offsets. Returns 0.
 /// The engine's usual way to change what a sprite plays: called by the
-/// object dispatch and the player control, and as
+/// actor dispatch and the player control, and as
 /// Sprite_StartAnimFar by the battle, the shops, the menus,
-/// the battle animations, the Psynergy effects and the map scripts.
+/// the battle animations, field Psynergy and the events.
 s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
   s32 keepPlace;
   s32 i;
@@ -391,7 +391,7 @@ s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames) {
 }
 
 /// Sets the timer step, the animation speed, of each playing anim of a
-/// sprite (16 is normal speed). Called by the object dispatch and, as
+/// sprite (16 is normal speed). Called by the actor dispatch and, as
 /// Sprite_SetAnimSpeedFar, by the Sanctum, which stops a
 /// party member's icon with 0 and restarts it with 16.
 void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step) {
@@ -414,7 +414,7 @@ void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step) {
 /// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
 /// the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
 /// Battle_Run (ACTOR_SYSTEM_BATTLE) takes both slots from EWRAM, at
-/// the same sizes, before it starts the object system, so in battle this gets
+/// the same sizes, before it starts the actor system, so in battle this gets
 /// those blocks back.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
@@ -504,7 +504,7 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
 /// Zeroes one sprite anim (struct SpriteAnim); does nothing for NULL.
 /// Zeroing kind frees the anim for SpriteAnim_Alloc. Called by the
 /// anim release functions here and, as SpriteAnim_ClearFar, by
-/// the Psynergy effects and map scripts.
+/// field Psynergy and events.
 void SpriteAnim_Clear(struct SpriteAnim *record) {
   if (record != 0) {
     Dma_Fill32(0, record, sizeof(*record));
@@ -519,7 +519,7 @@ void SpriteAnim_Clear(struct SpriteAnim *record) {
 /// Sprite_Destroy. When no sprite anim is free the sprite is still
 /// returned, with no anim and a width of 0, so it also counts as free. Called
 /// by Actor_Create and the sprite viewer, and as Sprite_CreateFar
-/// by the battle, the battle animations, the Psynergy effects and the menus.
+/// by the battle, the battle animations, field Psynergy and the menus.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct Sprite *sprite;
@@ -635,7 +635,7 @@ struct Sprite *Sprite_Create(s32 id) {
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
 /// its four sprite anims, and then zeroes its 56 bytes. Called by
 /// Actor_Release and, as Sprite_DestroyFar, by the battle
-/// and its animations, the Psynergy effects and the menus.
+/// and its animations, field Psynergy and the menus.
 void Sprite_Destroy(struct Sprite *sprite) {
   s32 remaining;
   struct SpriteAnim **layer;

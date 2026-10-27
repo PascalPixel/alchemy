@@ -2,15 +2,16 @@
 #define ALCHEMY_SCENE_EXITS_H
 
 /// @file
-/// The ways between maps: each map's entrances, named by where the
+/// The ways between scenes: each scene's entrances, named by where the
 /// party arrives from, and its exits, named by where they lead, in the exit
 /// tables' numbers (SCENE_EXIT). A door is named the same from both sides.
 /// Exits between rooms of one map are named by their rooms
 /// (<MAP>_<ROOM>_TO_<ROOM>).
 
-/// The entrance a map's table lists first: Scene_TakeExit sends the
+/// The entrance a scene's table lists first: Scene_TakeExit sends the
 /// party there when an exit has no row of its own, and the debug menu's map
-/// select starts there. A map that gives it a place of its own names it below.
+/// select starts there. A scene that gives it a place of its own names it
+/// below.
 enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 
 /// SceneId_Title's entrances and exits.
@@ -1343,7 +1344,7 @@ enum {
 /// SceneId_KolimaForestEntrance's exits.
 enum {
   KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
-  /// Two exits no script takes, back into this map
+  /// Two exits no event takes, back into this scene
   /// (KOLIMA_FOREST_ENTRANCE_UNUSED).
   /// ★ Named from its area name: Kolima Forest
   KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A = 2,
@@ -4797,7 +4798,7 @@ enum {
       24, ///< ★ Named from the game: "Who is disrupting my sleep???"
           ///< (MsgLunpaWhoDisruptingSleep)
   LUNPA_FORTRESS_UPPER_FLOOR_MIDDLE_PASSAGE_UNUSED =
-      30, ///< no exit or script leads here
+      30, ///< no exit or event leads here
   /// Where the party comes back after the battle with the three guards in the
   /// guard room.
   LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE = 31,

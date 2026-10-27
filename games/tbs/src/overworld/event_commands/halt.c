@@ -6,7 +6,7 @@
 
 /// Field effect sprite callback (enum OutAndBackState): the particle heads for
 /// a point 40 to 70 pixels from where it appeared, then for a point 4 pixels
-/// round 8 pixels above the effect's position on screen, and is freed on
+/// round 8 pixels above the Psynergy's position on screen, and is freed on
 /// arrival. Set on the 16 particles of FieldPsynergy_Halt. They fly out
 /// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
 /// frame.
@@ -72,8 +72,8 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
   FieldPsynergy_Halt();
 }
 
-/// Throws an object from the caster to the effect's position over 10 frames
-/// and scatters it into 16 particles. Halt's visible effect: called by
+/// Throws an actor from the caster to the Psynergy's position over 10 frames
+/// and scatters it into 16 particles. Halt's visible part: called by
 /// FieldPsynergy_Run when no target with a talk trigger is near, and through
 /// FieldPsynergy_HaltOnTarget otherwise. Fills field effect sprites 0
 /// to 15 and sets effectWork->y to the caster's height.
@@ -97,7 +97,7 @@ void FieldPsynergy_Halt(void) {
   if (orb == 0)
     return;
 
-  // From 16 pixels above the caster to 8 pixels above the effect's position.
+  // From 16 pixels above the caster to 8 pixels above the Psynergy's position.
   FieldPsynergy_FadeToCastColor();
   from.x = caster->x.fixed;
   from.y = caster->y.fixed + (16 << 16);
@@ -134,7 +134,7 @@ void FieldPsynergy_Halt(void) {
   WaitFrames(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_HIGH);
 
-  // Particles 4 pixels round it fly out, then come back to the effect's
+  // Particles 4 pixels round it fly out, then come back to the Psynergy's
   // position.
   effect = &effectWork->particles[0];
   for (i = 0; i < 16; i++) {
@@ -159,9 +159,9 @@ void FieldPsynergy_Halt(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Per-frame update of a paused object: gives its sprite one of the table's
+/// Per-frame update of a paused actor: gives its sprite one of the table's
 /// eight params at random. FieldPsynergy_HaltActor sets it, and
-/// FieldPsynergy_ResumeHaltedActor looks for it to know the object was paused
+/// FieldPsynergy_ResumeHaltedActor looks for it to know the actor was paused
 /// this way.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
@@ -170,14 +170,14 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   Anim_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
 }
 
-/// Pauses object id, keeping its per-frame update and, if it is animated, its
+/// Pauses actor id, keeping its per-frame update and, if it is animated, its
 /// first animation's param in gSaveBlock. Called by FieldPsynergy_Run and
 /// FieldPsynergy_Dispatch for Halt, which then record the id in
-/// gSaveBlock.haltedActor, and by the Colosso maps to stop their operators.
-/// Sets gSaveBlock.pausedUpdate and pausedPose, the object's update and paused
-/// fields, and stops its animation. gSaveBlock keeps one object's state, so
+/// gSaveBlock.haltedActor, and by the Colosso scenes to stop their operators.
+/// Sets gSaveBlock.pausedUpdate and pausedPose, the actor's update and paused
+/// fields, and stops its animation. gSaveBlock keeps one actor's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
-/// object flickers through random sprite params meanwhile.
+/// actor flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnim *entry;
@@ -198,11 +198,11 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   }
 }
 
-/// Resumes object id with the update and param kept by
+/// Resumes actor id with the update and param kept by
 /// FieldPsynergy_HaltActor. Called for gSaveBlock.haltedActor by
 /// FieldPsynergy_Run and FieldPsynergy_Dispatch before Halt stops
-/// another object, and by Scene_TalkToActor after talking to the paused
-/// actor. Clears gSaveBlock.pausedUpdate and the object's paused field,
+/// another actor, and by Scene_TalkToActor after talking to the paused
+/// actor. Clears gSaveBlock.pausedUpdate and the actor's paused field,
 /// and restarts its animation at speed 16.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);

@@ -337,10 +337,10 @@ gFieldEffect_UntargetedActorScript:
 	.global gFieldEffect_DurationScripts
 gFieldEffect_DurationScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
-@ The world picture's markers (WorldPicture_Show): a row for each world map
+@ The world picture's markers (WorldPicture_Show): a row for each World Map
 @ actor from slot 11 (WORLD_MAP_FIRST_AREA_ACTOR), whose marker
 @ is drawn where that actor stands, so a place's spot on the picture is
-@ its actor's on the world map. The flag is the place's
+@ its actor's on the World Map. The flag is the place's
 @ FLAG_AREA_VISITED. A row of zeros is an actor with no marker, and
 @ -1 ends the table.
 @ {tile << 16 | flag, area name}

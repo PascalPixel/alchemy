@@ -1,5 +1,5 @@
 /// @file
-/// Object motion, each frame, and the first object script commands.
+/// Actor motion, each frame, and the first actor script commands.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -31,11 +31,11 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter) {
   return 1;
 }
 
-/// Waits a frame at a time until an object has arrived at its target, at
-/// most 600 frames (ten seconds), after which it returns with the object still
+/// Waits a frame at a time until an actor has arrived at its target, at
+/// most 600 frames (ten seconds), after which it returns with the actor still
 /// on its way. It takes void * because callers pass every view of an
-/// object. Called through Actor_WaitForMoveFar by the Psynergy effects
-/// and by about 50 map overlays.
+/// actor. Called through Actor_WaitForMoveFar by field Psynergy
+/// and by about 50 scene overlays.
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
@@ -46,8 +46,8 @@ void Actor_WaitForMove(void *actor) {
   }
 }
 
-/// Returns 1 when the object has no movement target: none of its target
-/// coordinates set, or for an object moved by the ground (any motion flag)
+/// Returns 1 when the actor has no movement target: none of its target
+/// coordinates set, or for an actor moved by the ground (any motion flag)
 /// neither its target x nor z. Called by Actor_WaitForMove and SC_SYNC
 /// (ActorScript_WaitForArrival).
 s32 Actor_IsTargetUnset(struct Actor *actor) {
@@ -72,11 +72,11 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
 
 static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 
-/// Advances all 64 objects by one frame, as Actor_UpdateAll does for
-/// the eight script objects, with the field's extras: free flight in 3D,
-/// following the ground, floating, and solid objects that refuse to overlap.
-/// ActorSystem_Initialize adds it as the task that updates the objects in
-/// every mode but the battle's (4). Writes each live object's position,
+/// Advances all 64 actors by one frame, as Actor_UpdateAll does for
+/// the eight script-driven actors, with the field's extras: free flight in 3D,
+/// following the ground, floating, and solid actors that refuse to overlap.
+/// ActorSystem_Initialize adds it as the task that updates the actors in
+/// every mode but the battle's (4). Writes each live actor's position,
 /// velocity, target, wait and facing.
 void Actor_UpdateAllThumb(void) {
   struct Actor *actor;
@@ -114,7 +114,7 @@ void Actor_UpdateAllThumb(void) {
     if (script == NULL)
       continue;
 
-    // The hook runs even for a paused actor, and may free it.
+    // The update routine runs even for a paused actor, and may release it.
     if (actor->update != NULL) {
       actor->update((struct Actor *)actor);
       script = (const ActorScriptWords *)actor->script;
@@ -404,10 +404,10 @@ void Actor_UpdateAllThumb(void) {
   }
 }
 
-/// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
+/// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it. Reached through SC_POSITION and Actor_Create, and as
-/// Actor_SetPositionAndResetMotionFar from the Psynergy effects and the
-/// field map's actors.
+/// Actor_SetPositionAndResetMotionFar from field Psynergy and the
+/// overworld's actor code.
 void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
   actor->z.fixed = z;
   actor->targetX = TARGET_UNSET;
@@ -418,16 +418,16 @@ void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
   SET_VELOCITY(actor, 0, 0, 0);
 }
 
-/// Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
+/// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it
 /// arrives at once. Unless it snaps to its target, the target is pulled in
 /// by half its braking distance (speed limit squared over acceleration), or
-/// to halfway when that is further, as the object coasts on. Picks the
+/// to halfway when that is further, as the actor coasts on. Picks the
 /// axis to watch for arrival: the one with the furthest to go (y only for a
-/// free-flying object).
+/// free-flying actor).
 ///
 /// Reached through SC_MOVE and the other move commands, the player control,
 /// and as Actor_SetMoveTargetFar from the battle's motion, the battle
-/// effects and the Psynergy effects. Sets the target and arrivalAxis.
+/// animations and field Psynergy. Sets the target and arrivalAxis.
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
@@ -509,7 +509,7 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
   Free(updateActors);
 }
 
-/// Advances the first 14 objects' motion by one frame, without running their
+/// Advances the first 14 actors' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
 /// ActorSystem_Initialize adds it as a task in place of Actor_UpdateAllThumb
@@ -528,7 +528,7 @@ void Actor_UpdateAllMotion(void) {
   s32 ratio;
   s32 facingStep;
 
-  // Fourteen objects, as many as the battle has units (UNIT_MAX in
+  // Fourteen actors, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
   actor = gActors;
   for (objectsRemaining = 13; objectsRemaining >= 0;

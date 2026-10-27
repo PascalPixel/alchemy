@@ -32,7 +32,7 @@ struct Window {
   u16 x;                           ///< tiles
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
-  /// The effect a message's TEXT_WINDOW_STATE code sets. Only
+  /// The animation a message's TEXT_WINDOW_STATE code sets. Only
   /// WINDOW_ANIMATION_SWELL is acted on; its text printer types nothing more
   /// until the swell ends and clears it.
   u16 animation;
@@ -107,8 +107,8 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
 /// WindowSystem_InitField takes for the field and
-/// WindowSystem_InitBattle for battle; it lasts until the next map change. Its
-/// size and offsets differ between Japanese and the other editions
+/// WindowSystem_InitBattle for battle; it lasts until the next scene change.
+/// Its size and offsets differ between Japanese and the other editions
 /// (tbs_edition.h's RENDER_ values).
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles

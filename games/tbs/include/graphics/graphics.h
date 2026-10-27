@@ -177,7 +177,7 @@ extern struct PaletteCycleWork *gPaletteCycleWork;
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
-/// HEAP_SLOT_SPRITES: the object system's sprite pool, which the
+/// HEAP_SLOT_SPRITES: the actor system's sprite pool, which the
 /// field animation and the sprite viewer walk.
 extern struct Sprite *gSprites;
 #ifndef OWN_Menu_CursorActorTiles
@@ -263,11 +263,11 @@ extern u8 Tile_ExpandMaskedCodeSize[];
 extern const u8 Tile_ExpandOpaque[];
 /// Tile_ExpandOpaque, which Icon_Decode loads for an icon's first layer.
 extern u8 Tile_ExpandOpaqueCodeSize[];
-/// The title screen's "Press Start" prompt, byte-LZ compressed, in each
+/// The Title's "Press Start" prompt, byte-LZ compressed, in each
 /// language.
 extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
-/// options menu's selected icon through.
+/// settings menu's selected icon through.
 extern s32 gWindowSprite_PulseScales[];
 /// The pixel offsets MenuTitle_Bob moves a sprite pair up and down
 /// by.

@@ -1,17 +1,17 @@
 /// @file
-/// Battles and destinations a script requests, and the queued sound.
+/// Battles and destinations an event requests, and the queued sound.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
 /// Sets up a battle with the formation in slot of encounter table zone. On
-/// the world map the encounter region and battle environment under the leader
+/// the World Map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
-/// the map loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
+/// the field loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
 /// first slot also sets gSaveBlock.special to the Aerie's storm battle
-/// background. About 35 maps reach it through
+/// background. About 35 scenes reach it through
 /// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
-/// directly. The battle starts only once the script that asked for it has
+/// directly. The battle starts only once the event that asked for it has
 /// returned.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
@@ -33,9 +33,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 /// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn
 /// are numbered 20 to an element (Djinn_ResolvePending). Sets
 /// gSaveBlock.pendingDjinni and the field work's encounter request; when
-/// the map is entered again after the battle, Djinn_ResolvePending
+/// the scene is entered again after the battle, Djinn_ResolvePending
 /// reads the pending event to make the Djinni join or hide it. About 20
-/// maps reach it through Field_RequestDjinnBattleFar.
+/// scenes reach it through Field_RequestDjinnBattleFar.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *work;
   struct SaveBlock *state;
@@ -74,7 +74,7 @@ void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gSaveBlock.defeatScene and defeatEntrance). The maps before scripted
+/// (gSaveBlock.defeatScene and defeatEntrance). The scenes before event
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through Event_SetDefeatDestinationFar.
 void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
@@ -82,9 +82,9 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.defeatEntrance = entrance;
 }
 
-/// Makes the script leave for entrance entrance of map sceneId: sets
+/// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gSaveBlock.sceneId and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION (999), so the map loop leaves on its next pass. Only
+/// EXIT_KEEP_DESTINATION (999), so the field loop leaves on its next pass. Only
 /// Tolbi's spring reaches it, through Event_LeaveForFar.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
@@ -96,8 +96,8 @@ void Event_LeaveFor(u16 sceneId, u16 entrance) {
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),
 /// and remembers soundId for Scene_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
-/// now and nothing later. About 30 maps reach it through the far alias, and the
-/// ground particles (weather.c) queue SE_AMBIENT_WATER with it.
+/// now and nothing later. About 30 scenes reach it through the far alias, and
+/// the ground particles (weather.c) queue SE_AMBIENT_WATER with it.
 void Scene_QueueMusic(s32 soundId) {
   gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {
@@ -108,7 +108,7 @@ void Scene_QueueMusic(s32 soundId) {
 }
 
 /// Plays the sound Scene_QueueMusic remembered, if any. Called
-/// by maps, by the event runner (overworld/triggers.c), by setup.c and by an
+/// by scenes, by the event runner (overworld/triggers.c), by setup.c and by an
 /// actor's landing (actor_commands.c).
 void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;

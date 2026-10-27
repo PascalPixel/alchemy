@@ -128,7 +128,7 @@ struct ActorTemplate {
   /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the
   /// scene is entered normally again.
   s16 condition;
-  /// A built-in action (enum MovementType) or an action script, for
+  /// A movement type (enum MovementType) or an actor script, for
   /// Actor_SetMovementType.
   s32 movement;
   s32 x;         ///< 16.16 fixed-point pixels
@@ -143,7 +143,7 @@ struct ActorTemplate {
 STATIC_ASSERT(sizeof(struct ActorTemplate) == 24);
 STATIC_ASSERT(offsetof(struct ActorTemplate, talkFacing) == 22);
 
-/// The built-in actions an actor template's behavior can name, which
+/// The movement types an actor template's behavior can name, which
 /// Actor_SetMovementType turns into scripts.
 enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
@@ -151,7 +151,7 @@ enum MovementType {
   MOVEMENT_TYPE_WANDER = 2,
   MOVEMENT_TYPE_WANDER_NEAR = 3,   ///< as MOVEMENT_TYPE_WANDER, within 8 pixels
   MOVEMENT_TYPE_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
-  MOVEMENT_TYPE_FOLLOW_LINKED = 5, ///< moves toward the linked object
+  MOVEMENT_TYPE_FOLLOW_LINKED = 5, ///< moves toward the linked actor
   MOVEMENT_TYPE_FACE_LEADER = 6,   ///< links to the leader and turns toward it
   MOVEMENT_TYPE_RESET_ACTION = 7   ///< gMovementType_ResetActionScript
 };
@@ -198,7 +198,7 @@ enum ActorId {
 #define PIXELS(value) ((value) << 16)
 
 /// A trigger: its kind and detail, the subject it answers, its condition
-/// and its value (a message or a script).
+/// and its value (a message or an event).
 struct Trigger {
   /// The kind and its detail, read by Scene_FindTrigger and the item, Psynergy
   /// and examine trigger lookups; -1 ends the table. The detail bits depend on
@@ -208,12 +208,12 @@ struct Trigger {
   u32 kind;
   /// What the trigger answers: an actor id, a metatile behavior, a treasure
   /// spot id or a raised value. Item and Psynergy triggers read it as bits
-  /// below; bit 10 also skips an examine trigger's checking message and a
-  /// Psynergy's effect. bits: 15..12 facing | 11 needs facing | 10 own message
+  /// below; bit 10 also skips an examine trigger's checking message and its
+  /// field Psynergy. bits: 15..12 facing | 11 needs facing | 10 own message
   /// | 7..0 target
   s16 subject;
   s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
-  /// A message below 0x10000, else a script function; for an exit, the exit
+  /// A message below 0x10000, else an event; for an exit, the exit
   /// kind its scene's exit table matches, and for an examine trigger, a FIND_
   /// value.
   u32 value;
@@ -221,8 +221,8 @@ struct Trigger {
 
 STATIC_ASSERT(sizeof(struct Trigger) == 12);
 
-/// Trigger.subject bit 10: a Psynergy trigger runs in place of the
-/// Psynergy's effect, as Mind Read on someone who notices it does, and an
+/// Trigger.subject bit 10: a Psynergy trigger runs in place of its
+/// field Psynergy, as Mind Read on someone who notices it does, and an
 /// examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 
@@ -258,7 +258,7 @@ enum ExitStyle {
   EXIT_STYLE_MASK = 0x30
 };
 
-/// The raised event the menus and shortcut keys raise instead of opening
+/// The raised trigger the menus and shortcut keys raise instead of opening
 /// while FLAG_MENUS_RAISE_TRIGGER is set, as Vault's inn sets it while the
 /// party corners the suspects.
 #define FIELD_RAISED_TRIGGER_MENUS 250
@@ -278,12 +278,14 @@ enum ExitStyle {
 #define STEP_TRIGGER_WALKING_INTO(facing)                                      \
   (TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING | (facing))
 
-/// When a Psynergy trigger runs around its effect, control bits 30..28.
+/// When a Psynergy trigger runs around its field Psynergy, control bits 30..28.
 enum PsynergyPhase {
-  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
-  /// PSYNERGY_EVENT_PLAYS_CAST the event plays the effect itself.
+  /// After the field Psynergy (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase.
+  /// With
+  /// PSYNERGY_EVENT_PLAYS_CAST the event plays the cast itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
-  PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
+  PSYNERGY_PHASE_BEFORE_CAST =
+      1, ///< once the PP is paid, before the field Psynergy
   /// After a Psynergy that runs out by itself has ended:
   /// Field_RunPsynergyEndEvents
   /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
@@ -292,9 +294,11 @@ enum PsynergyPhase {
   /// As Reveal's colours come back (FieldPsynergy_EndReveal): the scenes
   /// hide again what Reveal showed.
   PSYNERGY_PHASE_FADES = 4,
-  /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as
+  /// Run by the field Psynergy itself as it acts (force.c, frost.c and
+  /// reveal.c): as
   /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
-  /// this phase also makes Field_UsePsynergy aim the effect at the actor
+  /// this phase also makes Field_UsePsynergy aim the field Psynergy at the
+  /// actor
   /// ahead.
   PSYNERGY_PHASE_ACTS = 5,
   PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyTrigger matches every phase
@@ -313,9 +317,9 @@ enum PsynergyPhase {
 /// Bits of an after-cast Psynergy trigger's target word, beside the
 /// actor's number.
 enum PsynergyEventTarget {
-  /// Field_UsePsynergy clears FLAG_PLAY_PSYNERGY_CAST and plays no effect of
+  /// Field_UsePsynergy clears FLAG_PLAY_PSYNERGY_CAST and plays no cast of
   /// its
-  /// own, leaving it to the event's script.
+  /// own, leaving it to the event.
   PSYNERGY_EVENT_PLAYS_CAST = 0x400
 };
 /// A Psynergy trigger on an actor at one phase of the cast, as
@@ -395,7 +399,7 @@ enum ExamineTarget {
 /// ENCOUNTER_ZONE_MIMIC.
 #define FIND_MIMIC 0x00500000
 
-/// A script function as a Trigger value; its address is above 0x10000, so
+/// An event as a Trigger value; its address is above 0x10000, so
 /// it is never taken for a message.
 #define EVENT(script) ((u32)(script))
 #define TRIGGERS_END 0xffffffff ///< ends a trigger table

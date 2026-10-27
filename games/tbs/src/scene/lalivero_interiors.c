@@ -4,7 +4,7 @@
 /// map, and every room on these two is Lalivero's, entered from the town. Their
 /// area name is Lalivero, and Lalivero Sanctum for the Sanctum's rooms of
 /// TimberRoomsB (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST and
-/// TIMBER_ROOMS_B_SANCTUM). Each map has tables for before and after Venus
+/// TIMBER_ROOMS_B_SANCTUM). Each scene has tables for before and after Venus
 /// Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's
 /// are (lalivero.c).
 ///
@@ -69,7 +69,7 @@ static void LaliveroInteriors_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No exit
 /// leads to it and the entrance table has no row for it: only the debug
-/// map selector, which exits to any entrance from 0 to 99, reaches it.
+/// scene selector, which exits to any entrance from 0 to 99, reaches it.
 enum {
   ENTRANCE_FROM_AERIE = 90,
 };
@@ -83,7 +83,7 @@ enum {
   LALIVERO_INN = 11
 };
 
-/// The actors of both maps, numbered by the rows of each map's
+/// The actors of both scenes, numbered by the rows of each scene's
 /// actor template tables. The people are named by what they say before Venus
 /// Lighthouse and by what their sprites show.
 enum LaliveroInteriorsActorId {
@@ -232,7 +232,7 @@ const struct SceneExitRegion *LaliveroInteriors_GetRegions(void) {
 
 const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 
-/// The people of each map; Faran's house fills up after Venus Lighthouse.
+/// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ActorTemplate *LaliveroInteriors_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
@@ -405,8 +405,8 @@ static void LaliveroInteriors_TalkToIodem(void) {
   Event_ShowMessageAndWait(ACTOR_IODEM, 0);
 }
 
-/// Both maps, a doorway out: take the touched step trigger's exit with the exit
-/// sound.
+/// Both scenes, a doorway out: take the touched step trigger's exit with the
+/// exit sound.
 static void LaliveroInteriors_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->stepTrigger;
@@ -415,7 +415,7 @@ static void LaliveroInteriors_LeaveBuilding(void) {
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
-/// What the party can talk to, touch and search in each map, before and
+/// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *LaliveroInteriors_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
@@ -833,7 +833,7 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   FieldMessage_ShowAtActor(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
-/// Sets both maps up as the party enters: shopkeepers and the innkeeper
+/// Sets both scenes up as the party enters: shopkeepers and the innkeeper
 /// behind their counters, the Sanctum as the place to wake after a defeat,
 /// the inn worker back at her chores, and the report to Faran on coming back
 /// from Venus Lighthouse.

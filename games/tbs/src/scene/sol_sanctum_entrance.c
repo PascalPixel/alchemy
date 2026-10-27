@@ -1,5 +1,5 @@
 /// @file
-/// Sol Entrance and the first rooms of Sol Sanctum, two maps one overlay
+/// Sol Entrance and the first rooms of Sol Sanctum, two scenes one overlay
 /// serves, chosen by gSaveBlock.sceneId in every entry point.
 ///
 /// - Sol Entrance (SceneId_SolEntrance), the mountainside before the
@@ -15,8 +15,8 @@
 /// - Sol Sanctum (SceneId_SolSanctumReliefs), the rooms inside the door, which
 ///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
-///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET), the
-///   second from the chest in SceneId_SolSanctumMaze
+///   first from this scene's chest (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET),
+///   the second from the chest in SceneId_SolSanctumMaze
 ///   (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden has an event on the
 ///   first entry at the door (SolSanctumEntrance_IntroduceSanctum), in the
 ///   first relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in
@@ -26,7 +26,7 @@
 ///   SceneId_SolSanctumCorridor, SceneId_SolSanctumMaze, Sol Entrance and
 ///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
-/// SceneId_SolSanctumReliefs is one map, but each relief room has actor
+/// SceneId_SolSanctumReliefs is one scene, but each relief room has actor
 /// template and trigger tables of its own:
 /// SolSanctumEntrance_GetActorTemplates and _GetTriggers choose them by
 /// the entrance the party came in at, so a room's statues and their
@@ -131,7 +131,7 @@
 /// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
-// Map flags, cleared on every ordinary arrival:
+// Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
 //   room; the Move rows of the first relief room apply only while it is clear,
 //   which it always is there: only the second room's entrances set it,
@@ -144,7 +144,7 @@
 #define EXIT_FLAG_NONE 0xffffffff
 
 /// The metatile behaviors of the cells the Sol Sanctum entrance's coord, bg
-/// and item triggers answer; behaviors 1 to 16 in both maps are the exits, in
+/// and item triggers answer; behaviors 1 to 16 in both scenes are the exits, in
 /// the exit table's order.
 enum SolEntranceMetatileBehavior {
   /// ★ Named from what the player sees: the door that slides open as the
@@ -177,7 +177,7 @@ enum SolSanctumReliefsMetatileBehavior {
 };
 
 /// An item trigger's subject bit that skips the `<actor> uses <item>.` message,
-/// so the script shows its own (Field_UseItem).
+/// so the event shows its own (Field_UseItem).
 #define SOL_SANCTUM_ITEM_OWN_MESSAGE 0x400
 
 static void SolSanctumEntrance_ApplyEntryState(void);
@@ -212,7 +212,7 @@ const u32 *SolSanctumEntrance_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }
 
-/// Selects the actors for the map and, in Sol Sanctum, the room. The
+/// Selects the actors for the scene and, in Sol Sanctum, the room. The
 /// first relief room's entrances place Kraden and that room's eleven
 /// statues, the second relief room's Kraden and the row of six; the rest of Sol
 /// Sanctum places Kraden and one statue (ACTOR_STATUE), and Sol Entrance the
@@ -244,7 +244,7 @@ const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
   return gSolSanctumEntrance_FallbackActorTemplates;
 }
 
-/// Selects the events for the map and room, by the same entrances as
+/// Selects the events for the scene and room, by the same entrances as
 /// SolSanctumEntrance_GetActorTemplates.
 const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
@@ -303,7 +303,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
 /// both once the Small Jewel is set: "The right eye is sparkling, but there's a
 /// hole where the left eye should be." Once the first Small Jewel is found, and
-/// until it is set, the main menu opens as the search ends, so that the jewel
+/// until it is set, the File Screen opens as the search ends, so that the jewel
 /// can be used.
 static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
 
@@ -382,7 +382,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
 
 /// Sol Sanctum, the second relief room: searching the second minotaur
 /// relief, as the first. Once the second Small Jewel is found,
-/// and until it is set, it opens the main menu.
+/// and until it is set, it opens the File Screen.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
 
   struct FieldWork *work;
@@ -1276,7 +1276,7 @@ static void SolSanctumEntrance_DoorTightlyLocked(void) {
 }
 
 /// Sol Entrance after the eruption: the ground rumbles now and then, and each
-/// shake fades. Run each frame as a callback that
+/// shake fades. Run each frame as a task that
 /// SolSanctumEntrance_ApplyEntryState adds once FLAG_SOL_SANCTUM_ERUPTED is
 /// set.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {

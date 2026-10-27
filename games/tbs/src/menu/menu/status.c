@@ -1,6 +1,6 @@
 /// @file
-/// The member chooser and the Status menu: its member row, status page,
-/// Psynergy page and equipment page.
+/// The party member chooser and the Status menu: its party member row, status
+/// page, Psynergy page and equipment page.
 // Part of menu.c.
 
 #include "../menu_internal.h"
@@ -91,9 +91,9 @@
 #define STATUS_EQUIPPED_NAME_X 16
 #endif
 
-/// Lets the player choose one party member, over the field (the Colosso maps
+/// Lets the player choose one party member, over the field (the Colosso scenes
 /// use it, through MENU.S, and so does the debug test). Returns the chosen
-/// member's id, or -1 when the player backs out. Owns the menu work
+/// party member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 MemberChooser_Open(void) {
   struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
@@ -122,7 +122,8 @@ s32 MemberChooser_Open(void) {
   return result;
 }
 
-/// The member chooser's loop. Returns the chosen member's id, or -1.
+/// The party member chooser's loop. Returns the chosen party member's id, or
+/// -1.
 s32 MemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
@@ -236,7 +237,7 @@ s32 StatusScreen_Run(void) {
 
 /// The steps of the Status menu (StatusScreen_RunPages).
 enum StatusScreenStep {
-  STATUS_STEP_MEMBER = 0,   ///< choose a member
+  STATUS_STEP_MEMBER = 0,   ///< choose a party member
   STATUS_STEP_STATUS = 1,   ///< their status page
   STATUS_STEP_PSYNERGY = 2, ///< their Psynergy page
   STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
@@ -244,8 +245,9 @@ enum StatusScreenStep {
 
 /// The Status menu's pages: choose a party member, then their status page, A
 /// for their Psynergy page and A again for their equipment page, whose A goes
-/// back round to the status page; B on any page goes back to the member row.
-/// Returns -1 when the player backs out of the member row or presses Start.
+/// back round to the status page; B on any page goes back to the party member
+/// row. Returns -1 when the player backs out of the party member row or presses
+/// Start.
 s32 StatusScreen_RunPages(void) {
   struct StatusScreenWork *menu = gMenuWork;
   s32 step = STATUS_STEP_MEMBER;
@@ -295,9 +297,9 @@ s32 StatusScreen_RunPages(void) {
 }
 
 /// Lets the player choose a party member in slot, from the one chosen last: the
-/// member chooser on STATUS_SCREEN_PAGE_CHOOSER, else the Status menu's party
-/// row. Returns the chooser's result: 1 when a member was chosen, -1 when the
-/// player backed out, and on the party row 0 when Start ended it.
+/// party member chooser on STATUS_SCREEN_PAGE_CHOOSER, else the Status menu's
+/// party row. Returns the chooser's result: 1 when a party member was chosen,
+/// -1 when the player backed out, and on the party row 0 when Start ended it.
 s32 StatusScreen_SelectMember(s32 slot) {
   struct StatusScreenWork *menu;
   struct WindowSprite *cursor;
@@ -312,7 +314,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   cursor->animationStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->memberWindow);
   // FLAG_LINK_BATTLE_ARRANGED is set while a link battle is arranged in the
-  // Battle Arena, in which only the first three members fight
+  // Battle Arena, in which only the first three party members fight
   // (BattleArena_PartyContains); the divider falls between the third and
   // fourth figures, which stand three tiles apart.
   if (GameFlag_GetFar(FLAG_LINK_BATTLE_ARRANGED))
@@ -408,7 +410,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
 
 struct ItemMenuWork;
 
-/// Lowers the party figures, then raises the currently selected member.
+/// Lowers the party figures, then raises the currently selected party member.
 static __inline__ void
 StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
                                   s32 selectedMember) {
@@ -419,12 +421,13 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
   menu->memberY[selectedMember] = 26;
 }
 
-/// The Status menu's party row: Left and Right choose a member, showing their
-/// status; L and R move the member one place along the party order; Select
-/// lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
-/// chooses the member and B backs out. Returns 1 or -1, or 0 when Start ends
-/// it, with the member in the work's memberIndex[0] and selectedIds[0]. Moving
-/// a member changes the party order for good (MemberChooser_MoveEntry).
+/// The Status menu's party row: Left and Right choose a party member, showing
+/// their status; L and R move the party member one place along the party order;
+/// Select lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
+/// chooses the party member and B backs out. Returns 1 or -1, or 0 when Start
+/// ends it, with the party member in the work's memberIndex[0] and
+/// selectedIds[0]. Moving a party member changes the party order for good
+/// (MemberChooser_MoveEntry).
 s32 MemberChooser_RunRearrange(void) {
   struct StatusScreenWork *menu;
   s32 memberIndex;
@@ -460,7 +463,7 @@ s32 MemberChooser_RunRearrange(void) {
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
-      // The help lines, and the member's status and figure.
+      // The help lines, and the party member's status and figure.
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
       if (GameFlag_GetFar(FLAG_DJINN_FIRST))
@@ -487,7 +490,7 @@ s32 MemberChooser_RunRearrange(void) {
       result = -1;
       break;
     }
-    // L and R move the member along the party order.
+    // L and R move the party member along the party order.
     if (gKeysRepeat & KEY_R) {
       if (MemberChooser_MoveEntry(memberIndex, 1)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -537,9 +540,9 @@ s32 MemberChooser_RunRearrange(void) {
   return result;
 }
 
-/// The member chooser (menu page 3): Left and Right choose a party member,
-/// showing their status and Psynergy icons; A chooses and B backs out. Returns
-/// 1 or -1.
+/// The party member chooser (menu page 3): Left and Right choose a party
+/// member, showing their status and Psynergy icons; A chooses and B backs out.
+/// Returns 1 or -1.
 s32 PsynergyMenu_ChooseMember(void) {
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 memberIndex = menu->tabIndex[0];
@@ -693,7 +696,7 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
 }
 
 /// Shows `member`'s status in the status window (0, 5, 30 by 15),
-/// opening it first with the member's portrait (kept as the work's
+/// opening it first with the party member's portrait (kept as the work's
 /// statusCursor), the 32 entry icons (the chooser's Psynergy icons) on the
 /// chooser page, and the eight category sprites that show the status icons;
 /// then draws the stats and statuses. frame is not used.
@@ -724,13 +727,13 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
   StatusScreen_DrawStatusAilments(window, member, 0);
 }
 
-/// The member's status page. The left side lists their statuses (or the stat
-/// help when they have none) and the right side the status entries (name and
-/// level, experience, HP, PP, Djinn when the party has any, elemental levels,
-/// Power and Resist); the cursor's entry is highlighted and explained in the
-/// help window. Up and Down move in a side, Left and Right switch sides, L and
-/// R switch to the previous or next member; A goes on to the Psynergy page and
-/// B backs out. Returns 1 or -1.
+/// The party member's status page. The left side lists their statuses (or the
+/// stat help when they have none) and the right side the status entries (name
+/// and level, experience, HP, PP, Djinn when the party has any, elemental
+/// levels, Power and Resist); the cursor's entry is highlighted and explained
+/// in the help window. Up and Down move in a side, Left and Right switch sides,
+/// L and R switch to the previous or next party member; A goes on to the
+/// Psynergy page and B backs out. Returns 1 or -1.
 s32 StatusScreen_SelectCommand(void) {
   struct StatusScreenWork *menu;
   s32 side;
@@ -755,7 +758,7 @@ s32 StatusScreen_SelectCommand(void) {
   if (djinnTotal != 0)
     hasDjinn = 1;
   // The help window covers the top of the screen. Without their placement
-  // callback the party figures under it are not drawn (the depth slots are
+  // task the party figures under it are not drawn (the depth slots are
   // emptied every frame); the four Djinn figures go up from y 128 to 104
   // until the page closes.
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
@@ -765,7 +768,7 @@ s32 StatusScreen_SelectCommand(void) {
   done = 0;
   MenuCursor_Slide(-10, 88);
 
-  // One member's page at a time; L and R start the next.
+  // One party member's page at a time; L and R start the next.
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Unit_GetFar(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
@@ -856,7 +859,7 @@ s32 StatusScreen_SelectCommand(void) {
         redraw = 1;
         side--;
       }
-      // L and R: the previous or next member.
+      // L and R: the previous or next party member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         member = menu->memberIndex[0];
@@ -931,8 +934,8 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 }
 
 /// Writes the advice for the selected status (two lines, for example how to
-/// revive a member who is down) into window target, or that the member is well
-/// when they have no status.
+/// revive a party member who is down) into window target, or that the party
+/// member is well when they have no status.
 void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
                                       const u8 *entries) {
   s32 labelCount = 0;
@@ -1000,7 +1003,7 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
   Free(buffer);
 }
 
-/// Draws member memberId's status page into window: the top rows
+/// Draws party member memberId's status page into window: the top rows
 /// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
 /// chooser page the Djinn counts by element and, in mode 1, the elemental
 /// levels, Power and Resist. mode's 0x100 keeps what is drawn instead of
@@ -1127,7 +1130,7 @@ spin:
 
 #endif
 
-/// Draws the top rows of member memberId's status page into window: name,
+/// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right. flags' 0x100 keeps what is drawn instead of clearing
 /// it.
@@ -1177,9 +1180,9 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
                              STATUS_STAT_X, 24);
 }
 
-/// Fills ailments[0..4] (UnitStatus) with member memberId's statuses: down
-/// (only when requested is 1), poison or venom, curse and haunt. Returns how
-/// many they have.
+/// Fills ailments[0..4] (UnitStatus) with party member memberId's statuses:
+/// down (only when requested is 1), poison or venom, curse and haunt. Returns
+/// how many they have.
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
@@ -1215,7 +1218,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   return count;
 }
 
-/// Fills result with the item list of the member in side index for the
+/// Fills result with the item list of the party member in side index for the
 /// equipment pages: their unit, the menu's item count, and the page and row of
 /// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
 /// Returns 1.
@@ -1423,8 +1426,8 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 
 /// Draws one page of the Status menu's Psynergy list into window: up to
 /// PAGE_ROWS names with their icons, PP costs and range icons, the page
-/// numbers or "no Psynergy", and the member's name, class and level. Returns
-/// 1.
+/// numbers or "no Psynergy", and the party member's name, class and level.
+/// Returns 1.
 s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
                               const struct PagedList *res) {
   struct PsynergyMenuWork *menu = gMenuWork;
@@ -1499,11 +1502,11 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
   return 1;
 }
 
-/// The Status menu's Psynergy page: the member's Psynergy, PAGE_ROWS to a page,
-/// each with its PP cost and range icon; the cursor's Psynergy is described in
-/// the info window with where it can be used. Up and Down move the cursor,
-/// Left and Right turn pages, L and R switch member. Returns 1 for A (on to
-/// the equipment page) or -1 for B (back to the member row).
+/// The Status menu's Psynergy page: the party member's Psynergy, PAGE_ROWS to a
+/// page, each with its PP cost and range icon; the cursor's Psynergy is
+/// described in the info window with where it can be used. Up and Down move the
+/// cursor, Left and Right turn pages, L and R switch party member. Returns 1
+/// for A (on to the equipment page) or -1 for B (back to the party member row).
 s32 PsynergyMenu_SelectAction(void) {
 
   struct PsynergyMenuWork *menu;
@@ -1523,8 +1526,8 @@ s32 PsynergyMenu_SelectAction(void) {
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
-  // screen (y -16) while this page is up, until the member row or the status
-  // page puts them back.
+  // screen (y -16) while this page is up, until the party member row or the
+  // status page puts them back.
   for (iconIndex = 3; iconIndex >= 0; iconIndex--)
     menu->slotY[iconIndex] = -16;
   {
@@ -1736,8 +1739,8 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 
 /// Draws one page of the Status menu's equipment page into window: up to
 /// PAGE_ROWS item names with their icons and the page numbers, or "no items",
-/// and the member's name with their Attack and Defense. Returns 1. Called by
-/// ItemMenu_SelectItem for each page.
+/// and the party member's name with their Attack and Defense. Returns 1. Called
+/// by ItemMenu_SelectItem for each page.
 s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
                           struct PagedList *state) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1783,12 +1786,12 @@ s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
   return 1;
 }
 
-/// The Status menu's equipment page: the member's items in the first list
+/// The Status menu's equipment page: the party member's items in the first list
 /// order (LIST_SORT_EQUIPPED_THEN_ITEMS), PAGE_ROWS to a page, beside
 /// the equipment window of what they wear. Up and Down move the cursor, Left
-/// and Right turn pages, L and R switch member. Returns 1 for A (back to the
-/// status page) or -1 for B (back to the member row). Only the list is
-/// sorted; the inventory itself is left as it is.
+/// and Right turn pages, L and R switch party member. Returns 1 for A (back to
+/// the status page) or -1 for B (back to the party member row). Only the list
+/// is sorted; the inventory itself is left as it is.
 s32 ItemMenu_SelectItem(void) {
 
   struct ItemMenuWork *menu;
@@ -2048,7 +2051,8 @@ void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items) {
 }
 
 /// Places the 32 entry icons in a grid of 16x16 cells, columns wide, from
-/// (originX, originY), and shows them: the member chooser's Psynergy icons.
+/// (originX, originY), and shows them: the party member chooser's Psynergy
+/// icons.
 void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
   struct WindowSprite *icon;

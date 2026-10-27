@@ -361,7 +361,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                                DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                                DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
-      // The opening runs from the callbacks while the status window opens
+      // The opening runs from the tasks while the status window opens
       // and the encounter is announced.
       BattleCamera_SetView(0, 0, 0, 180);
       *timer = start;

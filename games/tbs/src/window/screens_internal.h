@@ -142,7 +142,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PSYNERGY_COST_SECOND_TILE 0xf01e
 #endif
 
-// The Status screen's level label, after the member's name, in pixels.
+// The Status screen's level label, after the party member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define OWNER_STATUS_LEVEL_X 51
 #else
@@ -158,8 +158,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define SUMMON_MENU_WINDOW_WIDTH 14
 #endif
 
-// While a member's commands are chosen (Battle_CollectPartyCommands): the
-// screen x of the member's portrait sprite, in pixels.
+// While a party member's commands are chosen (Battle_CollectPartyCommands): the
+// screen x of the party member's portrait sprite, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_CLASS_ICON_X 0
 #else
@@ -285,7 +285,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // The two portrait slots of the UI work (WindowWork.portraitPictures and
 // portraitSprites), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
-#define PORTRAIT_PALETTE 14 ///< OBJ palette of slot 0; slot 1 uses 15
+#define PORTRAIT_PALETTE 14 ///< sprite palette of slot 0; slot 1 uses 15
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the
@@ -318,21 +318,23 @@ enum {
 /// The two battle command rows BattleCommandRow_Run runs.
 enum CommandRowMode {
   COMMAND_ROW_PARTY = 0, ///< the start of a round: Fight, Flee and Status
-  COMMAND_ROW_MEMBER = 1 ///< a member's commands; any mode but 0 is this row
+  COMMAND_ROW_MEMBER =
+      1 ///< a party member's commands; any mode but 0 is this row
 };
 
 /// What BattleTarget_RunSelection shows on a party member for the action
-/// being aimed (Battle_ClassifyEntryKind), and which member it starts on.
+/// being aimed (Battle_ClassifyEntryKind), and which party member it starts on.
 enum BattleTargetHint {
   TARGET_HINT_NONE = 0,
-  TARGET_HINT_HP = 1, ///< heals HP: the member's HP
-  TARGET_HINT_PP = 2, ///< restores PP: the member's PP
-  /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned member.
+  TARGET_HINT_HP = 1, ///< heals HP: the party member's HP
+  TARGET_HINT_PP = 2, ///< restores PP: the party member's PP
+  /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned party
+  /// member.
   TARGET_HINT_CURE_POISON = 3,
-  /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a member
-  /// who has one of those statuses, and lists them.
+  /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a party
+  /// member who has one of those statuses, and lists them.
   TARGET_HINT_RESTORE = 4,
-  /// Revives (Battle_IsReviveEffectFar): starts on a downed member.
+  /// Revives (Battle_IsReviveEffectFar): starts on a downed party member.
   TARGET_HINT_REVIVE = 5,
   /// Cures Restore's statuses, poison and the evil spirit, as Tonic does
   /// (ABILITY_EFFECT_CURE_ALL).

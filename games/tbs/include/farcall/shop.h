@@ -2,10 +2,10 @@
 /// Shops, inns and the cursors used by their screens.
 
 /// Opens the debug shop with 200000 coins, broken equipment to repair and
-/// ailing members for the sanctum.
+/// ailing party members for the sanctum.
 s32 Shop_OpenDebugShopFar(s32 unused);
 /// Runs a shop counter until the player leaves: row picks the stock and
-/// keeper_id the object whose portrait the lines show.
+/// keeper_id the actor whose portrait the lines show.
 s32 Shop_RunFar(s32 row, s32 keeper_id);
 /// Runs a sanctum's welcome, services and farewell; unitId is the keeper, whose
 /// portrait the lines show. Returns 0.
@@ -34,12 +34,12 @@ void QuantityBar_FillFar(s32 count, s32 selector, u8 *base);
 void Shop_SaveAndTintFieldPaletteFar(s32 layer);
 /// Fades back to the field colours saved before the effect, over 16 frames.
 void Shop_RestoreFieldPaletteFar(void);
-/// Lets the player pick a member and one of their droppable items, as when
-/// every bag is full. Returns -1 when cancelled.
+/// Lets the player pick a party member and one of their droppable items, as
+/// when every bag is full. Returns -1 when cancelled.
 s32 ItemPicker_RunFar(s32 *selected_unit, s32 *selectedItem);
 /// Waits a frame at a time until the sound driver has finished its last
 /// command, such as a fanfare.
 void Sound_WaitForFanfareFar(void);
-/// Charges room_price, heals every member still standing and plays the night at
-/// the inn.
+/// Charges room_price, heals every party member still standing and plays the
+/// night at the inn.
 void Inn_PlaySleepFar(s32 room_price);

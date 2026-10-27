@@ -1,11 +1,11 @@
 /// @file
-/// The debug menus (maps, flags, icon browsers) and the pause menu's
+/// The debug menus (scenes, flags, icon browsers) and the Pause menu's
 /// choices.
 // Part of screens.c.
 
 #include "../screens_internal.h"
 
-/// Schedules the debug map and entrance selector;
+/// Schedules the debug scene and entrance selector;
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 UNUSED void DebugMapSelect_Schedule(void) {
@@ -16,10 +16,10 @@ UNUSED void DebugMapSelect_Schedule(void) {
 #endif
 }
 
-/// Draws the debug map and entrance numbers with their category/area
-/// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
-/// beside it, the area its entrance leads to (MsgDebugEntryName +
-/// area); the numbers, three digits each, go under them.
+/// Draws the debug scene and entrance numbers with their category/area
+/// labels. The first line has the scene's name (MsgDebugCategoryName + scene)
+/// and, beside it, the area its entrance leads to (MsgDebugEntryName + area);
+/// the numbers, three digits each, go under them.
 void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
                             const s16 *entrance) {
   s16 mapIndex = sceneId;
@@ -33,8 +33,8 @@ void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
-// The debug map selector: a map and an entrance number, starting from
-// the map being run (DebugMapSelect_HandleRowInput has the keys). An exits
+// The debug scene selector: a scene and an entrance number, starting from
+// the scene being run (DebugMapSelect_HandleRowInput has the keys). An exits
 // there (Event_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (overworld/overworld/scene_manager.c).
@@ -96,12 +96,12 @@ s16 DebugMapSelect_Run(void) {
   }
 }
 
-/// Edits the debug map or entrance, returning -1 to exit and -2 to
+/// Edits the debug scene or entrance, returning -1 to exit and -2 to
 /// cancel. Shoulder buttons step by ten; it keeps the original 99-step
-/// entrance wrap. Otherwise it returns the map after this frame's keys. Up
-/// and Down switch the field (`selectedField`: 0 map, 1 entrance), Left
-/// and Right step by one, wrapping maps 0 to 200 and entrances 0 to 99.
-/// R and L step a map by ten, setting the entrance to 0, and past
+/// entrance wrap. Otherwise it returns the scene after this frame's keys. Up
+/// and Down switch the field (`selectedField`: 0 scene, 1 entrance), Left
+/// and Right step by one, wrapping scenes 0 to 200 and entrances 0 to 99.
+/// R and L step a scene by ten, setting the entrance to 0, and past
 /// either end go to the other (195 + 10 gives 0); they step an entrance
 /// by ten, wrapping by 99 (95 + 10 gives 6).
 s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
@@ -167,10 +167,10 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 sceneId,
 /// Shows a 16x16 flag grid per page and processes input until closed.
 /// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
 /// flags 0x800 to 0x8ff (DebugFlagEditor_HandleInput has the keys). The field
-/// opens it in debug mode when the main menu (Psynergy, Djinn, Item, Status)
+/// opens it in debug mode when the File Screen (Psynergy, Djinn, Item, Status)
 /// is opened with B and Select held (overworld/overworld/scene_manager.c).
 s32 DebugFlagEditor_Run(void) {
-  struct MenuSprite cursorSprite; // Cursor object
+  struct MenuSprite cursorSprite; // Cursor sprite
   s32 cursor[2];                  // Cursor column and row
   s32 cursorSlot;
   s32 page;
@@ -314,15 +314,16 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
 /// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
-/// Sets the Djinni's collected flag, then adds it to the specified member.
-/// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
+/// Sets the Djinni's collected flag, then adds it to the specified party
+/// member. The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls
+/// it.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
   GameFlag_SetFar((element * 0x14) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(member, element, index);
 }
 
-/// Handles Save, Sleep and Options from the pause menu. A cancelled save
-/// or option menu reopens the pause menu; cancelling the pause menu returns
+/// Handles Save, Sleep and Options from the Pause menu. A cancelled save
+/// or settings menu reopens the Pause menu; cancelling the Pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
 /// 0. The field reaches it by far call (overworld/overworld/scene_manager.c).
 s32 PauseMenu_Run(void) {
@@ -348,7 +349,7 @@ s32 PauseMenu_Run(void) {
 }
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
-/// field's object system while the browser owns its window and cache entries.
+/// field's actor system while the browser owns its window and cache entries.
 /// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
 /// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
 /// every page, whatever the heading says), A or B closes it. Returns 0. The

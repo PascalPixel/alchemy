@@ -22,7 +22,7 @@ struct AreaNameRule;
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
 /// Read as a halfword by Actor_SetOthersPaused: the actor id of the
-/// player's object, which it leaves alone.
+/// player's actor, which it leaves alone.
 extern u8 gPlayerActorId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
@@ -91,7 +91,7 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 /// Round-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
 /// (BATTLE_SIDE_MASK_ENEMIES).
 extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
-/// A lone SC_END: a battle unit's object script, which BattleObject_Make
+/// A lone SC_END: a battle unit's actor script, which BattleObject_Make
 /// starts.
 extern const s32 gBattleObject_EmptyScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
@@ -159,17 +159,17 @@ extern u32 gRandomSeed;
 extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an actor told to
-/// keep facing its linked object.
+/// keep facing its linked actor.
 extern const u8 gActor_LinkedScript[];
-/// Where the party returns after a defeat: {map, entrance (-1 any),
-/// return map, return entrance} rows, ended by map -1
+/// Where the party returns after a defeat: {scene, entrance (-1 any),
+/// return scene, return entrance} rows, ended by scene -1
 /// (Scene_SetRestartPoint).
 extern const s16 gScene_RestartRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// Battle backgrounds by map: a background word (bit 31 set, resource id below)
-/// and then its maps, ended by 0; a map not listed takes the last background
-/// (BattleBackground_SelectForMap).
+/// Battle backgrounds by scene: a background word (bit 31 set, resource id
+/// below) and then its scenes, ended by 0; a scene not listed takes the last
+/// background (BattleBackground_SelectForMap).
 extern s32 gScene_BattleBackgroundRules[];
 /// The template BattleAnim_BuildBlitter walks word by word to write a blitter
 /// (battle_anim_composite.s); none of it runs where it is.
@@ -180,7 +180,7 @@ extern const u32 gBlitterTemplate[];
 extern u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
-/// The world map's area markers, {tile << 16 | flag, area} for
+/// The World Map's area markers, {tile << 16 | flag, area} for
 /// each area's actor id from 11, ended by -1; a zero row reserves an
 /// actor id with no marker.
 extern const s32 gWorldPicture_AreaMarkers[];
@@ -222,7 +222,7 @@ enum BattlePose {
   POSE_STANDING = 1,
   POSE_LEAP = 2,       ///< running up to a target and leaping
   POSE_CAST = 3,       ///< a hand raised to cast or use an item
-  POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed member
+  POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed party member
   POSE_DAMAGE = 5,     ///< taking damage
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };

@@ -25,7 +25,7 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each round.
 ///
-/// Reached through its far stub from SequenceManager_Run's map switch
+/// Reached through its far stub from SequenceManager_Run's sequence switch
 /// (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
@@ -55,7 +55,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 
-  // The battle's work areas. The object system's sprite and layer pools
+  // The battle's work areas. The actor system's sprite and layer pools
   // are taken here from EWRAM first: ActorSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
   // is (field/field/animation.c, runtime/runtime/heap.c).
@@ -81,7 +81,7 @@ s32 Battle_Run(s32 enemyGroup) {
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
   // Flag 0x169 is set as every battle starts and never cleared; no code,
-  // script, flag range or byte read in this game reads it.
+  // event, flag range or byte read in this game reads it.
   // XXX (no evidence): what it marks; with no reader in the ROM, nothing the
   // game does shows its use.
   GameFlag_SetFar(0x169);
@@ -205,7 +205,7 @@ s32 Battle_Run(s32 enemyGroup) {
     else if ((Battle_RandomFar() & 31) == 0)
       battle->firstStrike = FIRST_STRIKE_ENEMIES;
   }
-  // After the entry transition the camera callback owns the background
+  // After the entry transition the camera task owns the background
   // again, and the sprite priorities are sorted every frame.
   BattleTransition_Run(enemyCount, enemyGroup);
   view->flag = 0;
@@ -345,8 +345,8 @@ aborted:
   goto finished;
 
 party_lost:
-  // "X goes down in defeat..." for a lone member, else "X's party has been
-  // defeated!".
+  // "X goes down in defeat..." for a lone party member, else "X's party has
+  // been defeated!".
   Battle_ClearSerialTransferPayload();
   Sound_PlaySongFar(MUS_DEFEAT);
   MessageArgument_ClearAllFar();
@@ -385,7 +385,7 @@ finished:
 /// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
 /// fight. Called across the battle parts whenever they need the party, and
 /// through its far stub by the party status window (party_status.c). Sets
-/// each fighting member's side to BATTLE_SIDE_PARTY.
+/// each fighting party member's side to BATTLE_SIDE_PARTY.
 s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 limit;
   s32 count;

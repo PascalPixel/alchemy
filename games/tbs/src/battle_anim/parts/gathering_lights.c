@@ -43,7 +43,7 @@ void BattleAnim_RunHaunting(struct BattleAnimArgs *args) {
 /// BattleAnim_RunHaunting. Loads its colours over the first 64 of the
 /// background palette, uses PARTICLES 0 to 1023, writes work->bg2xLines each
 /// frame and adds BattleAnim_ArmBg2AffineHBlankDma to feed it to BG2X;
-/// removes both its callbacks before it returns.
+/// removes both its tasks before it returns.
 ///
 /// mode: the colours (enum GatheringLightsMode) and the row of
 ///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
@@ -170,7 +170,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *args, s32 mode) {
     ANIM_END_FRAME(work);
   }
 
-  // Finish: the transfer goes before the blitters and the DMA callback
+  // Finish: the transfer goes before the blitters and the DMA task
   // before the layer closes.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   ANIM_RELEASE_BLITTERS();

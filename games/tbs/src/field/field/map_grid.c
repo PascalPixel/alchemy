@@ -101,7 +101,7 @@ UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
 /// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
 /// The grid is decoded as three planes: metatile behaviors and shapes
 /// (16 KB each), then 32 KB of metatile halfwords (the metatile number with the
-/// layer and priority bits an object standing there takes). The routine makes
+/// layer and priority bits an actor standing there takes). The routine makes
 /// each metatile halfword the low half of a cell word, numbering placeholder
 /// metatiles (0xfff)
 /// from 0 up, and interleaves the other two planes into the high halves. The
@@ -395,8 +395,8 @@ s32 MapGrid_LoadMap(s32 index) {
 /// Centres the camera on the point the map follows (origin: x, height, z),
 /// or on (0, 0) when there is none, and scrolls the layers there. Called
 /// through MapGrid_CenterOnFollowedPointFar when a layered map starts, by the
-/// camera script commands after they move the camera, and by about 35 map
-/// scripts.
+/// camera event commands after they move the camera, and by about 35
+/// events.
 void MapGrid_CenterOnFollowedPoint(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 x;
@@ -663,7 +663,7 @@ struct MapGridTilePosition {
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// MapGrid_CopyCellIndexRect does, with the destination before the size.
 ///
-/// Called by MapGrid_PlayMetatileCopySequence, and by about 40 map scripts
+/// Called by MapGrid_PlayMetatileCopySequence, and by about 40 events
 /// through MapGrid_CopyMetatileIndicesRectFar.
 void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                      u32 dstY, u32 width, u32 height) {
@@ -772,8 +772,8 @@ typedef char MapGridCopyCommandSize
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///
-/// Called by about 30 map scripts through MapGrid_PlayMetatileCopySequenceFar;
-/// it returns only when the sequence ends, so it blocks the script that calls
+/// Called by about 30 events through MapGrid_PlayMetatileCopySequenceFar;
+/// it returns only when the sequence ends, so it blocks the event that calls
 /// it.
 void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                       u32 destinationY) {
@@ -829,7 +829,7 @@ void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
 /// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
 /// cell lies in a layer's visible area (16x12 cells), its metatile's 2x2 tiles
-/// go to that layer's BG map in VRAM too. Called by about 15 map scripts
+/// go to that layer's BG map in VRAM too. Called by about 15 events
 /// through MapGrid_CopyMetatileCellsRectFar.
 void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
@@ -951,7 +951,7 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
 /// metatile number. Nothing is redrawn: the attributes (flags, metatile
-/// behavior and shape) do not show. Called by about 65 map scripts through
+/// behavior and shape) do not show. Called by about 65 events through
 /// MapGrid_CopyCellAttributeRectFar.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
@@ -978,7 +978,7 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 /// Copies only the metatile numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
 /// cell's attributes; cells in a visible area update the BG maps too. Called by
-/// seven map scripts through MapGrid_CopyCellIndexRectFar.
+/// seven events through MapGrid_CopyCellIndexRectFar.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
@@ -1078,7 +1078,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 /// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
-/// Fortress's map script through MapGrid_SetShownLayersFar.
+/// Fortress's event through MapGrid_SetShownLayersFar.
 void MapGrid_SetShownLayers(u32 layerFlags) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

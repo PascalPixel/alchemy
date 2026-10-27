@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_PARTICLE_H
 
 /// @file
-/// Field effect sprites: the particles Psynergy effects move and draw.
+/// Field effect sprites: the particles field Psynergy moves and draws.
 
 #include "edition.h"
 #include "types.h"
@@ -16,11 +16,11 @@ struct FieldParticle;
 /// A field effect sprite's per-frame routine (FieldParticle.callback).
 typedef void (*EffectCallback)(struct FieldParticle *);
 
-/// A particle a Psynergy effect moves and draws: its sprite, its position and
-/// target, its speed, scale and heading, and its per-frame callback. The 24 are
+/// A particle a field Psynergy moves and draws: its sprite, its position and
+/// target, its speed, scale and heading, and its per-frame routine. The 24 are
 /// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT heap slot.
 struct FieldParticle {
-  void *actor;  ///< the object it draws, released with it
+  void *actor;  ///< the actor it draws, released with it
   s32 x;        ///< 16.16 fixed-point pixels
   s32 z;        ///< 16.16 fixed-point pixels
   s32 targetX;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
@@ -41,7 +41,7 @@ struct FieldParticle {
   s16 callbackDelay;       ///< frames
   s16 orbitRadius;         ///< pixels
   s16 orbitAngle;          ///< 1/32 turns
-  s8 state;                ///< the callback's own step; 0 when it is given
+  s8 state;                ///< the routine's own step; 0 when it is given
   s8 stopAtTarget;         ///< nonzero: lands on the target within 8 pixels
   /// Nonzero turns the heading toward the target by at most turnStepMax a
   /// frame; zero faces the target at once.

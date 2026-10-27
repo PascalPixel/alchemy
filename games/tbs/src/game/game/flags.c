@@ -12,7 +12,7 @@
 // the same byte.
 
 /// Returns 1 when `flag` is set. Every bank tests flags through it, as
-/// GameFlag_GetFar, and the map scripts directly or through the script layer.
+/// GameFlag_GetFar, and the events directly or through the event layer.
 s32 GameFlag_Get(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -26,7 +26,7 @@ s32 GameFlag_Get(s32 flag) {
 }
 
 /// Sets `flag` and returns its byte number. Called from every bank, as
-/// GameFlag_SetFar, and by the map scripts directly or through the script
+/// GameFlag_SetFar, and by the events directly or through the event
 /// layer.
 s32 GameFlag_Set(s32 flag) {
   s32 flagMask;
@@ -40,7 +40,7 @@ s32 GameFlag_Set(s32 flag) {
 }
 
 /// Clears `flag`. Called from every bank, as GameFlag_ClearFar, and by the
-/// map scripts directly or through the script layer.
+/// events directly or through the event layer.
 void GameFlag_Clear(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -68,7 +68,7 @@ u32 GameFlag_Toggle(s32 flag) {
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags. Called
 /// by the battle encounter code and, through FieldGameFlag_GetByte, by the
-/// Colosso maps and the Battle Arena.
+/// Colosso scenes and the Battle Arena.
 s32 GameFlag_GetByte(s32 flag) {
   u32 byteIndex;
 

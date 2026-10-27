@@ -100,7 +100,7 @@ enum McCoyPalaceGroundsActorId {
 
 /// The grounds' temporary flags.
 enum {
-  /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the map
+  /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
   /// is left.
   /// ★ Named from its area name: McCoy's Palace
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
@@ -484,7 +484,7 @@ u32 gMcCoyPalaceGroundsExits[] = {
     SCENE_EXITS_END,
 };
 
-/// Unused: the getters return it for any map but SceneId_McCoyPalaceGrounds,
+/// Unused: the getters return it for any scene but SceneId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
 struct ActorTemplate gMcCoyPalaceGroundsNoActorTemplates[] = {
     { SCENE_TABLE_END },

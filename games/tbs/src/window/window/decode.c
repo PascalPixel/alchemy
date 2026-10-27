@@ -239,7 +239,7 @@ enum {
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
-  /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
+  /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
   MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gSaveBlock.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
@@ -276,7 +276,7 @@ enum {
   MESSAGE_END_NOW = 30,
 };
 
-/// What the decoding effects of Message_SetDecodeFlags put between characters.
+/// What the decode flags of Message_SetDecodeFlags put between characters.
 /// Halting speech (haltingSpeech): a short pause before each decoded code; in
 /// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT

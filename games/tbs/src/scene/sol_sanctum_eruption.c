@@ -19,10 +19,10 @@
 /// The effects are the event's own. Sixteen blue crystals thrown out in a ring
 /// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
 /// a varying rate (SolSanctumEruption_StepEmbers and
-/// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
+/// SolSanctumEruption_UpdateEmberFrequency, tasks the first part adds and
 /// the second removes); once Saturos's group starts to leave
 /// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), they fall silently. The
-/// breaking floor's cells flicker by callback until the Wise One holds them,
+/// breaking floor's cells flicker by task until the Wise One holds them,
 /// ten arcs of light rise at each of the chamber's four corners as the Wise One
 /// tells of the stars (SolSanctumEruption_RaiseElementalArcs), and the Wise One
 /// glows through a cycle of palettes.
@@ -103,7 +103,7 @@ static void SolSanctumEruption_FlashMaterializingActor(struct Actor *actor);
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
-// Map flags, cleared on every ordinary arrival:
+// Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
 //   leave; from then on the embers fall without their sound (SE_GLITTER).
 
@@ -154,7 +154,7 @@ const struct ActorTemplate *SolSanctumEruption_GetActorTemplates(void) {
   return gSolSanctumEruption_ActorTemplates;
 }
 
-/// Returns the empty trigger table: the map is one event.
+/// Returns the empty trigger table: the scene is one event.
 const struct Trigger *SolSanctumEruption_GetTriggers(void) {
   return gSolSanctumEruption_Triggers;
 }
@@ -640,7 +640,7 @@ s32 SolSanctumEruption_Initialize(void) {
 }
 
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
-/// each ember's object script, gEruption_EmberScript.
+/// each ember's actor script, gEruption_EmberScript.
 static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   actor->sprite->rotation = actor->facing + 0x4000;
@@ -718,7 +718,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 
 /// Retires landed embers and launches new ones, shaking the map. It launches
 /// the next free one at the current frequency, shaking the map after each. Run
-/// each frame as a callback that SolSanctumEruption_PlayHostageEvent adds and
+/// each frame as a task that SolSanctumEruption_PlayHostageEvent adds and
 /// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
   struct WeatherWork *sparkles;
@@ -810,7 +810,7 @@ static void SolSanctumEruption_StepEmbers(void) {
 }
 
 /// Varies the ember emission interval and its duration. Run each frame as a
-/// callback beside SolSanctumEruption_StepEmbers.
+/// task beside SolSanctumEruption_StepEmbers.
 static void SolSanctumEruption_UpdateEmberFrequency(void) {
   u32 emissionLevel;
 
@@ -1564,7 +1564,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
 }
 
 /// Randomly alternates the first tile patch on even frames. Run each frame as
-/// a callback while the floor breaks up, until the Wise One holds it.
+/// a task while the floor breaks up, until the Wise One holds it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
@@ -1696,7 +1696,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 }
 
 /// Stretches each active arc for eight frames, then lifts it out of view. Run
-/// each frame as a callback while SolSanctumEruption_RaiseElementalArcs runs.
+/// each frame as a task while SolSanctumEruption_RaiseElementalArcs runs.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
 
   u32 arcIndex;
@@ -1763,7 +1763,7 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
   MapGrid_CopyCellAttributes(43, 28, 1, 1, 44, 28);
 }
 
-/// Fades the object palette into or out of the materialization tint.
+/// Fades the sprite palette into or out of the materialization tint.
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
                                                       s32 waitFrames) {
   if (enabled == 1) {
@@ -1852,7 +1852,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
 
 #include "common/effect_psynergy.h"
 
-/// Cycles the Wise One's palette while it glows. Run each frame as a callback
+/// Cycles the Wise One's palette while it glows. Run each frame as a task
 /// that SolSanctumEruption_PlayWiseOneRescue adds and
 /// SolSanctumEruption_FinishMaterialization removes.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {

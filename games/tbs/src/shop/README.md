@@ -3,7 +3,7 @@
 In a town the [party](../../glossary.md#the-party) spends its coins at three
 kinds of counter. At a shop it buys and sells weapons, armor or items, has
 broken things mended, and finds the rare items the game calls artifacts. At a
-sanctum a priest revives a fallen member or lifts poison, a haunting or a
+sanctum a priest revives a fallen party member or lifts poison, a haunting or a
 curse. At an inn the party sleeps and wakes with full HP and
 [PP](../../glossary.md#psynergy-and-pp). The shop code runs all three, and two
 smaller things that share their screens: the Game Tickets a shopkeeper gives
@@ -11,7 +11,7 @@ for spending, and the item picker, which asks what to drop when the party is
 given an item with every bag full.
 
 Each counter is opened by its town's [scene](../../glossary.md#scene)
-[script](../../glossary.md#script) when the player talks to the keeper.
+[event](../../glossary.md#event) when the player talks to the keeper.
 [Menus, windows and shops](../../menus.md#shops) gives the counters in brief;
 the windows and messages they draw with are in [Windows](../window/README.md),
 and the items and their rare item counters in [Game rules](../game/README.md).
@@ -28,7 +28,7 @@ shop, for one, sells the Long Sword, Broad Sword, Hunter's Sword, Battle Axe
 and Heavy Mace, and brings the Witch's Wand.
 
 The keepers' lines are written once for each kind of shop, every set in the
-same order, so a town's script only names which row the shop is and whose face
+same order, so a town's event only names which row the shop is and whose face
 the lines show. The code always asks for the weapon shop's line, and the line
 is moved over to the armor, item or warriors' shop's set by the distance
 between the two sets' welcomes.
@@ -43,7 +43,7 @@ in [`shop/artifacts.c`](shop/artifacts.c), with its columns named there, and
 ![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 Buying takes the price off the party's coins and asks who carries the item;
-at a weapon or armor shop the hand over each member shows what the item would
+at a weapon or armor shop the hand over each party member shows what the item would
 do to their stats, or says `Can't equip`. A stackable item such as a Herb
 asks how many. The list shows seven items a page.
 
@@ -123,16 +123,16 @@ visit adds one, so it can be bought twice.
 
 ![In the Vale Sanctum, with Garet and Mia down and Ivan poisoned, the Great Healer asks what aid Isaac seeks; Revive, then `Who shall I revive?`: the hand on Ivan gets `This ally needs no healing.`, on Garet `Reviving Garet requires a donation of 20 coins. OK?`, Yes; the room turns grey as sparkles rise around Garet, he stands again, the coins drop to 1,980, Mia is offered for 200 coins, and B leaves.](https://alchemy.pascalpixel.com/guides/shop/sanctum.gif)
 
-A sanctum's priest serves one member at a time. The hand can point at anyone,
-but a member who doesn't need the service is refused with a line, and the
+A sanctum's priest serves one party member at a time. The hand can point at anyone,
+but a party member who doesn't need the service is refused with a line, and the
 choice comes round again while anyone is left who does. Reviving and lifting a
-curse cost more for a higher-level member. Lifting a curse takes off every
-cursed item the member wears.
+curse cost more for a higher-level party member. Lifting a curse takes off every
+cursed item the party member wears.
 
 `Sanctum_Run` (`shop/sanctum.c`) runs it; `Sanctum_NeedsService` decides who
 needs what and `Sanctum_ServicePrice` sets the fee.
 
-| Service | For a member who | Fee |
+| Service | For a party member who | Fee |
 | --- | --- | --- |
 | Revive | is down (HP 0) | 20 coins a level |
 | Cure poison | is poisoned or deadly poisoned | 10 coins |
@@ -143,8 +143,8 @@ needs what and `Sanctum_ServicePrice` sets the fee.
 
 ![Isaac asks Bilibin's innkeeper for a room, `It's 21 coins for a room.`, and answers Yes; after `Please enjoy your stay.` the room closes in an oval to black for the night, opens again, and the innkeeper says `I hope you slept well. Have a nice trip!`](https://alchemy.pascalpixel.com/guides/shop/inn.gif)
 
-An inn charges for each member still standing and restores their HP and PP
-overnight. A member who is down stays down until a sanctum revives them, and
+An inn charges for each party member still standing and restores their HP and PP
+overnight. A party member who is down stays down until a sanctum revives them, and
 is not charged. Each town's inn has its own price a guest, from 2 coins in
 Vale to 25 in Lalivero.
 
@@ -156,7 +156,7 @@ Vale to 25 in Lalivero.
 ![In Vale, with every bag full, Isaac is given a Nut: `Isaac got a Nut.`, `But you can't carry any more items.` and `What will you drop?`; the hand moves to Garet and back, lands on Isaac's Machete (`Can't remove.`), then a Potion, which he drops, and the Nut takes its place.](https://alchemy.pascalpixel.com/guides/shop/item-picker.gif)
 
 When the party is given an item and every bag is full, the item picker asks
-which member's item to drop to make room. The dropped item leaves the bag,
+which party member's item to drop to make room. The dropped item leaves the bag,
 the items after it move up and the new one takes the last place. An item the
 story needs can't be dropped, nor can one that can't be taken off while worn.
 
@@ -202,8 +202,8 @@ Scenes open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
 of the program through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
-other screens: its hand cursor also moves in the option menu, the
-name entry screen and the file menu; the Item screen draws its quantity bar with the
+other screens: its hand cursor also moves in the settings menu, the
+name entry screen and the file list; the Item screen draws its quantity bar with the
 shop's; and the colour fade a sanctum plays first also runs before a
 [Djinni](../../glossary.md#djinn) joins the party and before the wall in
 Altmiller Cave bursts.
@@ -214,7 +214,7 @@ Altmiller Cave bursts.
 - A shop adds its artifacts once.
 - Shop credit stops at 999,999 and the Game Ticket count at 28, so every
   ticket after the 28th costs the same as the 28th.
-- Inn row 9, Tolbi's, has a price of 0 and no script opens it: Tolbi's inns are
+- Inn row 9, Tolbi's, has a price of 0 and no event opens it: Tolbi's inns are
   always full.
 
 ## Words used here
@@ -230,10 +230,10 @@ Altmiller Cave bursts.
 - **shop credit**: `gSaveBlock.shopCredit`, the coins spent buying, which
   earns Game Tickets.
 - **action**: what the player chose at a shop's counter (`enum ShopAction`).
-- **service**: what a sanctum does for one member (`enum SanctumService`).
+- **service**: what a sanctum does for one party member (`enum SanctumService`).
 - **cursor duration**: `shop->mode`, the frames the hand cursor's next glide
   takes (`MenuCursor_Place`, `MenuCursor_Set`, `MenuCursor_Advance`).
-- **party row**: the members' icons across a window, which the counters
+- **party row**: the party members' icons across a window, which the counters
   select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.
 
@@ -244,9 +244,9 @@ columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
 from the town scenes that open them. The item names on this page are
 `MsgItemName` plus each row's item ids. The recordings were made with the
-party's coins, the shop credit and the members' bags and health set first,
+party's coins, the shop credit and the party members' bags and health set first,
 so each shows its rule at once; the inn's price, 21 coins at 7 a guest, shows
-three members standing.
+three party members standing.
 
 Inn row 9 is taken to be Tolbi's by three facts:
 

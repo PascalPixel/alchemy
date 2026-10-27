@@ -23,7 +23,7 @@
 ///
 /// Opens the tiled canvas (BattleAnim_StartTiledCanvas) and adds
 /// BattleAnim_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
-/// the burst's pieces into Ram_MapGridCellBuffer; moves the target's object;
+/// the burst's pieces into Ram_MapGridCellBuffer; moves the target's actor;
 /// and reloads the battle background on BG1 before it closes the layer. It
 /// never calls ANIM_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleAnim_RunCondemn(struct BattleAnimArgs *args) {
@@ -243,7 +243,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *args) {
     }
     ANIM_PRESENT_FRAME(work);
   }
-  // Finish: the callbacks, then the battle background reloaded into
+  // Finish: the tasks, then the battle background reloaded into
   // character blocks 2 and 3, its palettes darkened to level 24, as
   // BattleAnim_SetupBlendedDisplay does after a summon. It repairs nothing:
   // this animation writes neither those blocks nor the battle's palette, and

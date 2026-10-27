@@ -1,5 +1,5 @@
 /// @file
-/// Effect tables: object scripts, curves and lookup tables of the overworld
+/// Effect tables: actor scripts, curves and lookup tables of the overworld
 /// bank.
 
 #include "speaker.h"
@@ -118,7 +118,7 @@ const s32 gFieldEffect_ParticleScript[] = {
 };
 
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
-/// runs it again each frame), and frees itself once Reveal ends.
+/// runs it again each frame), and releases itself once Reveal ends.
 const s32 gFieldEffect_MarkerParticleScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_RELEASE,
@@ -465,7 +465,7 @@ const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
 
-/// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
+/// [0] only releases the actor, +1 waits for it to arrive and releases it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
 const s32 gFieldEffect_CommonParticleScript[] = {
     SC_RELEASE,
@@ -473,7 +473,7 @@ const s32 gFieldEffect_CommonParticleScript[] = {
     SC_RELEASE,
 };
 
-/// Faces the linked object every frame, forever: the caster holding its
+/// Faces the linked actor every frame, forever: the caster holding its
 /// target while Move, Carry or Lift has it (each gives the caster its target
 /// first).
 const s32 gFieldEffect_SourceHoldScript[] = {
@@ -483,7 +483,7 @@ const s32 gFieldEffect_SourceHoldScript[] = {
 };
 
 /// A shard or particle: waits to arrive, slows to 1/16 pixel a frame, and
-/// frees itself 10 frames later.
+/// releases itself 10 frames later.
 const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC,
     SC_SET(SW_SPEED, 0x1000),
@@ -507,7 +507,7 @@ const u16 gFieldEffect_CyclePatternWords[16] = {
 /// the push (move.c): 3 toward its side, 2 away from it, 1 either way across.
 const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
-/// Waits 60 frames and frees the object. Word +4 is
+/// Waits 60 frames and releases the actor. Word +4 is
 /// gFieldEffect_HeavyImpactScript.
 const s32 gFieldEffect_BurstParticleActorScript[] = {
     SC_WAIT(60),
@@ -517,8 +517,8 @@ const s32 gFieldEffect_BurstParticleActorScript[] = {
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and frees the
-/// object.
+/// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and releases the
+/// actor.
 const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_SYNC,
     SC_CALL(SpawnHeavyImpactEffect),
@@ -541,12 +541,12 @@ const s32 gFieldEffect_LongEffectScript[] = {
     SC_RELEASE,
 };
 
-/// The sprite params a paused object flickers through at random
+/// The sprite params a paused actor flickers through at random
 /// (FieldPsynergy_UpdateHaltedActor, halt.c): 0 twice as often as
 /// each of 1 to 6.
 const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
-/// The world map markers' blend weight in sixteenths, against the picture's
+/// The World Map markers' blend weight in sixteenths, against the picture's
 /// 16 less it ((gFrameCount >> 1) & 31, WorldPicture_UpdateMarkers): solid
 /// for 32 frames, then down to half and back over the next 32.
 const u8 gWorldMap_MarkerBlendCycle[32] = {

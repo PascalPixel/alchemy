@@ -117,11 +117,11 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
 ///
 /// Abilities: Bind (BATTLE_ANIM_BIND); Luff (BATTLE_ANIM_LUFF).
 ///
-/// When effect->prelude is 1 a Jupiter Djinni first appears over the first
+/// When args->prelude is 1 a Jupiter Djinni first appears over the first
 /// target, sways and rises away. The canvas darkens a little faster every 16
 /// frames.
 ///
-/// Runs BattleAnim_RunDjinniEntrance first when effect->prelude is 1. Moves
+/// Runs BattleAnim_RunDjinniEntrance first when args->prelude is 1. Moves
 /// BG2X so the canvas's x 64 is on the first target, cycles the palette
 /// each frame through BattleAnim_UpdatePhasePalette, raises
 /// work->transferValue every 16 frames, keeps the triangle's corners in

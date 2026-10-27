@@ -46,7 +46,7 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 // 25 frames, and the three rings move outward through four frames. Sets
 // SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a
 // task added by ElementGlow_InitializeStarField.
-// UB: the task runner invokes a void callback. Plain void changes the native
+// UB: the task runner invokes a void task. Plain void changes the native
 // return register from r1 to r0 in tbs-en; matching builds keep the old type.
 #ifdef UBFIX
 void ElementGlow_UpdateStarField(void) {
@@ -165,7 +165,7 @@ s32 ElementGlow_UpdateStarField(void) {
 // Copies the canvas, once a frame is drawn, to BG2's tiles in character block
 // 1 through PaletteFade_BackupAndScaleThreeQuarters, and clears
 // SparkWork.ready. Runs each frame as a task added by
-// ElementGlow_InitializeStarField. UB: the task runner invokes a void callback.
+// ElementGlow_InitializeStarField. UB: the task runner invokes a void task.
 // Plain void changes the native return register from r1 to r0 in tbs-en;
 // matching builds keep the old type.
 #ifdef UBFIX
@@ -184,7 +184,7 @@ u32 ElementGlow_UploadStarField(void) {
   }
 }
 
-// The two callbacks as the task runner takes them: cast to TaskFunc
+// The two tasks as the task runner takes them: cast to TaskFunc
 // where the native types return a value.
 #ifdef UBFIX
 #define STAR_FIELD_UPDATE_CALLBACK ElementGlow_UpdateStarField
@@ -203,7 +203,7 @@ u32 ElementGlow_UploadStarField(void) {
 /// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
 /// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Called by
 /// ElementGlow_Play; ElementGlow_ReleaseVramAndHeapBlocks
-/// undoes it. Returns the upload callback's task index (-1 when the task table
+/// undoes it. Returns the upload task's task index (-1 when the task table
 /// is full), which the caller does not read.
 s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
@@ -295,7 +295,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
-/// blitters, canvas and work, turns BG2 off and removes both callbacks.
+/// blitters, canvas and work, turns BG2 off and removes both tasks.
 /// Called by ElementGlow_Play once the field has played.
 /// Returns Task_Remove's result, which the caller does not
 /// read.
@@ -443,7 +443,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     }
     BattleAnim_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
-    // The pillar and the burst run an animation with the unit as its actor and
+    // The pillar and the burst run an animation with the unit as its user and
     // only target.
     pillarLaunch.effect.prelude = 0;
     pillarLaunch.effect.kind = element;

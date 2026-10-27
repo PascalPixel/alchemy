@@ -68,7 +68,7 @@ void BattleAnim_RunPunji(struct BattleAnimArgs *args) {
 /// PARTICLES the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side
 /// 1, REG_BG2X; sets work->shakeFrames as each column appears.
 ///
-/// effect: the targets; variant picks the number of columns
+/// args: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The animation runs
 ///         4 frames a column and 56 more.
@@ -432,7 +432,7 @@ void BattleAnim_RunVine(struct BattleAnimArgs *args) {
 /// react with a sound. The battle moves on to the results 64 frames before
 /// the end, and the animation fades out over its last 16 frames.
 ///
-/// effect: the targets; variant picks the number of thorns
+/// args: the targets; variant picks the number of thorns
 ///         (gGrowth_Counts): 3 for Thorn, 5 for Briar, 8 for Nettle; the
 ///         animation runs 8 frames a thorn and 56 more. gGrowth_Kinds gives
 ///         each thorn's size and direction.

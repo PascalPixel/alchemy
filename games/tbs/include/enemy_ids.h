@@ -119,7 +119,7 @@ enum EnemyId {
   /// The Djinn the party fights, each element's in order of level;
   /// BattleUnit_Set puts them on the party's side. A Djinni's battle is a slot
   /// of its element's zone (gEncounter_AreaEntryTable), which Djinn who join
-  /// without a fight share; each row is named for the one Djinni whose map
+  /// without a fight share; each row is named for the one Djinni whose scene
   /// starts its battle (Field_RequestDjinnBattle).
   /// Level 12, in Mogall Forest.
   /// ★ Named from the game: "Quartz" (MsgDjinnName)

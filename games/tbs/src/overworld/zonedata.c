@@ -1,7 +1,7 @@
 #include "unit/overworld/zonedata.h"
 #include "types.h"
 
-/// The world map's encounter zones (struct WorldMapEncounterRule): {encounter
+/// The World Map's encounter zones (struct WorldMapEncounterRule): {encounter
 /// region, battle environment (-1 for any), flag (-1, or a flag that turns the
 /// rule off once set), zone}, ended by region -1. The first matching rule wins
 /// (Encounter_ResolveWorldMapZoneAndBackdrop), and ground no rule matches

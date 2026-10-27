@@ -26,6 +26,6 @@ void BattleAnim_RunElementBurstFar(struct BattleAnimArgs *args);
 /// Starts the streaks in an element's colours and returns at once;
 /// ElementGlow_Play ends them with BattleAnim_EndElementStreaksFar.
 void BattleAnim_StartElementStreaksFar(s32 element);
-/// Ends the element streaks, stopping their callbacks and freeing their work
+/// Ends the element streaks, stopping their tasks and freeing their work
 /// and canvas.
 void BattleAnim_EndElementStreaksFar(void);

@@ -53,7 +53,7 @@ UNUSED void Exit_NoOp(void) {}
 
 // UB: no value is returned, and scene_manager.c ignores it; as void, the
 // epilogue changes.
-/// Starts the transition into a random battle: plays the map's battle music
+/// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by SceneManager_Run when it
 /// handles work->encounter; clears work->transitionActive once the screen is
@@ -71,9 +71,9 @@ s32 Field_StartEncounterTransition(s32 unused) {
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // On the world map the flash colours BG palette colour 243 instead, and
+    // On the World Map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
-    // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
+    // a field scene closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
@@ -134,7 +134,7 @@ void Exit_PrepareAnimation(s32 animation) {
 }
 
 /// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
-/// FLAG_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
+/// FLAG_ARRIVAL_STAIRS_UP makes the next scene play the matching arrival
 /// (Entrance_PlayArrival). Called by the exit handling in
 /// overworld/triggers.c, after it plays SE_STAIRS_UP.
 void Exit_StartStairsUp(void) {
@@ -186,13 +186,13 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   Actor_WaitForMoveFar(leader);
 }
 
-/// Plays the leader's arrival for the way the last map was left: through a
+/// Plays the leader's arrival for the way the last scene was left: through a
 /// EXIT_STYLE_STAIRS_UP exit (FLAG_ARRIVAL_STAIRS_UP,
 /// ANIM_LEADER_ARRIVE, returns 1) or a EXIT_STYLE_STAIRS_DOWN one
 /// (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
 /// Returns 0 when there is nothing to play. Called by SceneManager_Run as the
-/// map fades in, which waits out the fade itself only when this returns 0.
+/// scene fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 Entrance_PlayArrival(void) {
   s32 result = 0;
@@ -217,7 +217,7 @@ s32 Entrance_PlayArrival(void) {
         GameFlag_ClearFar(flag);
         leaderId = gSaveBlock.leaderActorId;
         leader = Actor_Lookup(leaderId);
-        // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
+        // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
         leader->y.fixed += 0x00a00000;

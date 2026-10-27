@@ -139,7 +139,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *args) {
 /// first 32 of each 128 are moved and drawn. A negative variant marks a mote
 /// that has gone out.
 ///
-/// effect: the targets; Drain's basic variant takes the ice block palette,
+/// args: the targets; Drain's basic variant takes the ice block palette,
 ///         any stronger one (Psy Drain's) the blast palette.
 void BattleAnim_RunDrain(struct BattleAnimArgs *args) {
   void **slots;

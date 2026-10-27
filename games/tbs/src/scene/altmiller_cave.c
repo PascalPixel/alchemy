@@ -1,10 +1,10 @@
 /// @file
 /// Altmiller Cave, where the party finds Babi while Tolbi searches for him
-/// during Colosso (babi_palace.c). Its six maps share this overlay and the area
-/// name Altmiller Cave:
+/// during Colosso (babi_palace.c). Its six scenes share this overlay and the
+/// area name Altmiller Cave:
 ///
 /// - AltmillerCaveEntrance (SceneId_AltmillerCaveEntrance): the dark passage in
-///   from the world map and the chamber beyond it.
+///   from the World Map and the chamber beyond it.
 /// - AltmillerCaveBabi (SceneId_AltmillerCaveBabi): the invisible Babi, who
 /// asks
 ///   for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
@@ -24,7 +24,7 @@
 /// entry from outside the cave (entrance 0) to the room's first
 /// entrance, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
-/// the overlay's own state is in map temp flags and gSceneLocalState, so it
+/// the overlay's own state is in scene temp flags and gSceneLocalState, so it
 /// starts over on every ordinary arrival.
 ///
 /// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK): BG1 is
@@ -191,7 +191,7 @@ enum {
   COLOR_NONE = 6
 };
 
-/// The map temp flags the cave keeps.
+/// The scene temp flags the cave keeps.
 enum {
   /// The cave is dark: set on entry everywhere but AltmillerCaveSquall and
   /// AltmillerCaveDraught.
@@ -503,7 +503,7 @@ static void AltmillerCave_EndReveal(void) {
 }
 
 /// Retreat's first phase: the Psynergy's first actor faces south, and
-/// its object is copied into a new one for the effect to use.
+/// it is copied into a new actor for the Psynergy to use.
 static void AltmillerCave_StartRetreat(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *original;
@@ -636,7 +636,7 @@ static void AltmillerCave_MoveStagedActorToClearPosition(void) {
   Event_End();
 }
 
-/// Update callback of the light at the top of the stopped ring: it pulses
+/// Update routine of the light at the top of the stopped ring: it pulses
 /// through four sizes.
 static void AltmillerCave_PulseLight(struct Actor *actor) {
   struct Actor *light = (struct Actor *)actor;
@@ -2026,7 +2026,7 @@ const struct Trigger *AltmillerCave_GetTriggers(void) {
   return gAltmillerCave_TriggersOther;
 }
 
-/// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
+/// Update routine of AltmillerCaveDraught's obstacles: drawn on the leader's
 /// sprite priority.
 static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
@@ -2123,8 +2123,8 @@ s32 AltmillerCave_Initialize(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
-    // UB: the callbacks are stored through an s32 view of update, which keeps
-    // the entrance read below the last store (as ->update, one store
+    // UB: the update routines are stored through an s32 view of update, which
+    // keeps the entrance read below the last store (as ->update, one store
     // moves: 1 of 403 instructions differ in tbs-en).
 #ifdef UBFIX
     Actor_GetById(ACTOR_FIRST_OBSTACLE)->update =
@@ -2196,7 +2196,7 @@ s32 AltmillerCave_Initialize(void) {
   return 0;
 }
 
-/// Update callback of a piece of the burst wall: it flies off to a random
+/// Update routine of a piece of the burst wall: it flies off to a random
 /// point 120 pixels away, with a crash every fourth frame as they start.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];

@@ -1,7 +1,7 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestFloodgate), the fourth of the forest's
-/// five maps, between SceneId_KolimaForestCliff and the map where Tret stands
-/// (SceneId_KolimaForestTree). A Floodgate Switch
+/// five scenes, between SceneId_KolimaForestCliff and the scene where Tret
+/// stands (SceneId_KolimaForestTree). A Floodgate Switch
 /// (MB_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a sign that reads "Do not touch
 /// Floodgate Switch!", raises and lowers the river: with the water high the
 /// logs float (26 pixels up) and can be rolled along it; with it low they lie

@@ -325,11 +325,11 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
 /// height function of the cell's terrain kind applied to its samples.
-/// y is the map's down axis, an object's z.
+/// y is the map's down axis, an actor's z.
 ///
-/// Called each frame by Actor_UpdateAllThumb for objects that follow the
+/// Called each frame by Actor_UpdateAllThumb for actors that follow the
 /// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
-/// field map's objects, the Psynergy effects and about ten map overlays.
+/// overworld's actor code, field Psynergy and about ten scene overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridScrollAnimView *work = gMapGridWork[0];
   struct MapGridCell *cell;
@@ -361,8 +361,8 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 
 /// Returns the terrain kind of a layer's cell at (x, y) in 16.16 pixels: the
 /// low four bits of the first byte of the cell's shape.
-/// Called through MapGrid_GetCellAttributeLowNibbleFar by the Psynergy Move
-/// effect.
+/// Called through MapGrid_GetCellAttributeLowNibbleFar by Move's field
+/// Psynergy.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
@@ -387,7 +387,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 /// Returns the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
 /// through MapGrid_GetMetatileBehaviorAtFar by the Psynergy climbing and by
-/// maps (Altin Peak, Colosso, Imil, Crossbone Isle).
+/// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapGridScrollAnimView *gridState;
   struct MapGridCell *cell;
@@ -406,7 +406,7 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
 
 /// Sets the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// Writes the cell in the map's grid; does nothing before the map is set up.
-/// Called through MapGrid_SetMetatileBehaviorAtFar by maps
+/// Called through MapGrid_SetMetatileBehaviorAtFar by scenes
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
@@ -435,12 +435,12 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
-/// Returns whether an object can step to position, an enum Collision:
+/// Returns whether an actor can step to position, an enum Collision:
 /// whether the cell there is a wall, or the ground too high or too low for a
-/// step from the object's.
+/// step from the actor's.
 ///
 /// Called by the player control and the script commands that pick a free
-/// step, and as MapGrid_CheckCollisionFar by the Psynergy effects (Move,
+/// step, and as MapGrid_CheckCollisionFar by field Psynergy (Move,
 /// Carry, Force, climbing). A layer past MAPGRID_LAYER_OVERHEAD reads the
 /// grid from its start.
 s32 MapGrid_CheckCollision(struct Actor *actor,
@@ -573,8 +573,8 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 /// Returns 0 when the world map at position can be walked on (collision
 /// WORLD_MAP_COLLISION_WALKABLE_FIRST to WORLD_MAP_COLLISION_WALKABLE_LAST),
 /// else -1.
-/// The first argument is not read; the player control passes its object.
-/// Called by the player control as it probes the steps around the object it
+/// The first argument is not read; the player control passes its actor.
+/// Called by the player control as it probes the steps around the actor it
 /// moves.
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
   // One unsigned compare tests the walkable range.

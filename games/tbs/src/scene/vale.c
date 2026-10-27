@@ -171,7 +171,7 @@ static void Vale_CycleActorPalette(struct Actor *actor);
 /// The placed actors of Vale by day, numbered in the order of
 /// gVale_ActorTemplates and gVale_ActorTemplatesAfterLeaving, which
 /// place the same people in the same rows. A row whose sprite is a party
-/// member's (Garet's, Jenna's) takes that member's actor id instead
+/// member's (Garet's, Jenna's) takes that party member's actor id instead
 /// (Event_SpawnActorTemplates), so the numbering skips it.
 enum ValeActorId {
   /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
@@ -3051,9 +3051,9 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
   return result;
 }
 
-/// The update hook of the man guarding Mt. Aleph: while he walks, he stops
+/// The update routine of the man guarding Mt. Aleph: while he walks, he stops
 /// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
 static void Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
@@ -3076,7 +3076,7 @@ static s32 Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
 #endif
 }
 
-/// The Move hand's update hook in the opening: each frame it sheds a sparkle
+/// The Move hand's update routine in the opening: each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
 static void Vale_TrailSparkles(struct Actor *updated) {
   struct Actor *source = updated;
@@ -3217,7 +3217,7 @@ static void Vale_MovePillarBelowCliff(void) {
   }
 }
 
-/// The callback that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
+/// The task that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
 /// Psynergy lifts a board at the roof's end.
 static void Vale_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
@@ -3269,7 +3269,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 #include "common/actor_orbit.h"
 
 /// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
-/// four, and the world map's linked sparks every 16 frames.
+/// four, and the World Map's linked sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
 
   if ((gFrameCount & 2) != 0)

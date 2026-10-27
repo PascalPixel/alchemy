@@ -39,7 +39,7 @@ enum BattleType {
   /// (overworld/overworld/triggers.c) and the travelers' fight in Vale
   /// (ValePlaza_FightTravelers, scene/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
-  /// The battles a script starts. Here and in a link battle the command menu
+  /// The battles an event starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
   /// (Message_ShowLocalizedAndWait, window/screens/link_timer.c).
@@ -180,18 +180,18 @@ struct SaveBlock {
   s16 sequenceResult; ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
-  s16 sceneType;      ///< the current scene's variant from its header
+  s16 sceneType;      ///< the current scene's variant from its row in gScenes
   s16 retreatScene;   ///< where Retreat goes; the area's first
                       ///< entrance
   s16 retreatEntrance;     ///< where Retreat goes; the area's first
                            ///< entrance
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
-  s8 pausedPose;           ///< Halt: the stopped object's first animation param
-  s16 haltedActor;         ///< Halt: the stopped object; -1 for none
+  s8 pausedPose;           ///< Halt: the stopped actor's first animation param
+  s16 haltedActor;         ///< Halt: the stopped actor; -1 for none
   s16 cloaked;             ///< 1 under Cloak, which prevents battles
   u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
-  u32 pausedUpdate; ///< Halt: the stopped object's update; not read by name
+  u32 pausedUpdate; ///< Halt: the stopped actor's update; not read by name
   u8 unusedAfterHalt[0x50]; ///< no code names it
   /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by

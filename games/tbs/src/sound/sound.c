@@ -96,7 +96,7 @@ void Sound_PlaySong(s32 id) {
     gBgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
   } else {
     // Music: the keep control, or the music last chosen (gCurrentBgm),
-    // changes nothing, so a map may name its music on every entry; a song
+    // changes nothing, so a scene may name its music on every entry; a song
     // that has ended is not started again. The three songs below take the long
     // reverb code, the rest the normal one (enum SoundReverbCode).
     if (id == SONG_KEEP_BGM)
@@ -321,7 +321,7 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 
 /// Returns nonzero while a fanfare holds the music: from its start until its
 /// player falls silent and the music begins to fade back in. Polled by the
-/// Colosso maps, the Djinni-joined messages (window/screens/joined.c),
+/// Colosso scenes, the Djinni-joined messages (window/screens/joined.c),
 /// the message windows' pause skip (window/window/messages.c) and
 /// Sound_WaitForFanfare (shop/shop/run.c), which the inn, the
 /// sanctum, the Lemurian ship and Tolbi's spring use.
@@ -350,7 +350,7 @@ void Sound_UpdateCommandMask(u32 command) {
 
 /// Returns the music Sound_PlaySong last chose: 0xff before any,
 /// MUS_SILENCE after a fade, else the last music. SceneManager_Run saves it
-/// as gSaveBlock.returnMusic before the pause menu, so the music can be started
+/// as gSaveBlock.returnMusic before the Pause menu, so the music can be started
 /// again when the party is put back where it was (SequenceManager_Run,
 /// overworld/overworld/sequence_manager.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }

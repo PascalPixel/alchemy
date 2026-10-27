@@ -34,8 +34,8 @@ struct CursorSlot {
 /// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
 /// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
 /// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
-/// reviving or curing action not aimed at everyone starts on the first member
-/// who needs it. On an enemy a window across the screen names it.
+/// reviving or curing action not aimed at everyone starts on the first party
+/// member who needs it. On an enemy a window across the screen names it.
 ///
 /// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
@@ -341,7 +341,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(spreadActorIds, 1);
       // A party member (units 0 to 7): the window of what the action does,
-      // placed by the member's tile column (anchor) and kept on screen.
+      // placed by the party member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_GetFar(candidateIds[targetIndex]);

@@ -299,7 +299,7 @@ void Title_LoadIntroBackgrounds(void) {
 /// until frame 278 (A or Start skips ahead), then the screen flashes white
 /// into the title picture. With `prompt` set the "Press Start" prompt pulses
 /// for up to a minute, otherwise the picture stays five seconds. Reached
-/// through the palette far-call table from the title screen. Returns 1 when A
+/// through the palette far-call table from the Title. Returns 1 when A
 /// or Start was pressed on the title picture.
 s32 Title_ShowIntro(s32 prompt) {
   struct IntroWork *work;
@@ -328,7 +328,7 @@ s32 Title_ShowIntro(s32 prompt) {
   TitlePaletteFade_Initialize();
   TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
   // This screen supplies its own OAM list in VBlank. Keep the normal OAM
-  // copy disabled until its sprite callback is removed at the white flash.
+  // copy disabled until its sprite task is removed at the white flash.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |

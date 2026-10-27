@@ -1,23 +1,23 @@
 /// @file
-/// Actor scripts: moving, turning and the built-in actions.
+/// Actor scripts: moving, turning and the built-in movement types.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-/// Script step of action 7: clears an object's sprite flags and its collision
-/// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
-/// once (gMovementType_ResetActionScript then ends).
+/// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
+/// its collision flags, so nothing collides with it. Returns 0, so SC_CALL
+/// moves on at once (gMovementType_ResetActionScript then ends).
 s32 Actor_ClearChildAndCollisionFlags(void *obj) {
   Actor_SetSpriteFlagsFar(obj, 0);
   ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
-/// Script step of action 5: follows the linked object. While it is at least
-/// action pixels away the object walks (animation 2) toward a point 16 /
-/// action of the way there, so with action 16 it heads for the linked
-/// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
-/// runs it again every frame until the actor's script is replaced.
+/// The SC_CALL routine of movement type 5: follows the linked actor. While it
+/// is at least timer pixels away the actor walks (animation 2) toward a point
+/// 16 / timer of the way there, so with timer 16 it heads for the linked actor
+/// itself; closer, it stands (animation 1). Returns 1, so SC_CALL runs it again
+/// every frame until the actor's script is replaced.
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
@@ -57,9 +57,9 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   return 1;
 }
 
-/// Script step of action 6: turns the object toward its linked object, at most
-/// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
-/// the actor's script is replaced.
+/// The SC_CALL routine of movement type 6: turns the actor toward its linked
+/// actor, at most 1/16 turn a frame. Returns 1, so SC_CALL runs it again every
+/// frame until the actor's script is replaced.
 s32 Actor_TurnTowardLinkedActor(struct Actor *actor) {
   s16 turnStep;
   u16 currentAngle;
@@ -85,9 +85,9 @@ s32 Actor_TurnTowardLinkedActor(struct Actor *actor) {
   return 1;
 }
 
-/// Starts an actor's action script: an enum MovementType, or any other
-/// value as the script to run itself. The built-in scripts are in scripts.s
-/// (field.h). Reached from an actor template's behavior column
+/// Starts an actor's movement type: an enum MovementType, or any other
+/// value as the actor script to run itself. The built-in scripts are in
+/// scripts.s (field.h). Reached from an actor template's behavior column
 /// (overworld/actors.c), from Scene_TalkToActor after a talk
 /// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.
@@ -121,10 +121,10 @@ void Actor_SetMovementType(struct Actor *actor, s32 action) {
   Actor_StartScriptFar(actor, (const s32 *)action);
 }
 
-/// Finds the nearest animated object to self within 40 pixels and 48 pixels of
-/// height, ignoring objects more than 3/16 turn to either side once they are
+/// Finds the nearest animated actor to self within 40 pixels and 48 pixels of
+/// height, ignoring actors more than 3/16 turn to either side once they are
 /// over 23 pixels away. Returns it if it shows sprite, otherwise NULL: the
-/// sprite is tested only on the nearest object, so a nearer object of
+/// sprite is tested only on the nearest actor, so a nearer actor of
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
 /// asks it for a log, SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH, where the
 /// leader lands.

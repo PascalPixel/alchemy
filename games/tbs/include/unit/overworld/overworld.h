@@ -19,28 +19,28 @@ struct Actor;
 
 /// The exit request whose destination is already in gSaveBlock.sceneId and
 /// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
-/// Retreat and the script commands that set a destination
+/// Retreat and the event commands that set a destination
 /// (Event_SetDestination) raise it, and SceneManager_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
 /// (sequence_manager.c, scene_manager.c).
 #define EXIT_KEEP_DESTINATION 999
 
-/// gSaveBlock.movementMode: how the map loop hands the party leader back to
+/// gSaveBlock.movementMode: how the field loop hands the party leader back to
 /// the player (SceneManager_Run).
 enum LeaderMovementMode {
-  /// Walking: the pad moves the leader, on the world map or a layered map.
+  /// Walking: the pad moves the leader, on the World Map or a layered map.
   LEADER_MOVEMENT_WALK = 0,
   LEADER_MOVEMENT_CLIMB = 1, ///< on a climbable wall, moved 8 pixels a step
-  /// Carried through the air (Suhalla Desert's storms, the world map's
+  /// Carried through the air (Suhalla Desert's storms, the World Map's
   /// airborne travel): only the configured keys are checked.
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
 /// SequenceManager_Run's mode: where the game starts.
 enum GameStart {
-  GAME_START_TITLE = 0,      ///< the title screen, with a fresh save block
-  GAME_START_DEBUG_VALE = 1, ///< in debug mode, SceneId_ValePlaza
-  GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the main menu
+  GAME_START_TITLE = 0,            ///< the Title, with a fresh save block
+  GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
+  GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
 };
 
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
@@ -69,14 +69,14 @@ enum WindowTransitionMode {
 /// the rows no step on a map rolls.
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
-  /// The scripted battles of Vale's stormy night (its monsters, and the
-  /// travelers who catch Isaac in Vale's plaza), Vault's thieves and the world
-  /// map's Djinn tutorial battle.
+  /// The event battles of Vale's stormy night (its monsters, and the
+  /// travelers who catch Isaac in Vale's plaza), Vault's thieves and the World
+  /// Map's Djinn tutorial battle.
   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT = 12,
-  /// The scripted battles of Tret Tree (Tret) and Mercury Lighthouse (the
+  /// The event battles of Tret Tree (Tret) and Mercury Lighthouse (the
   /// Lizard Man, then Saturos at the aerie).
   ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY = 36,
-  /// The scripted battles of Mogall Forest, Altin Peak and Lamakan Desert,
+  /// The event battles of Mogall Forest, Altin Peak and Lamakan Desert,
   /// whose last two slots hold the battles with the Ant Lions and the
   /// Manticore.
   ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN = 53,
@@ -91,8 +91,8 @@ enum EncounterZoneId {
   /// The monsters behind the east doors of Crossbone Isle Cave's next five
   /// floors, one slot a floor, then Deadbeard on the Pirate Ship.
   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS = 84,
-  /// The scripted battles: Suhalla Desert, Venus Lighthouse Aerie and the
-  /// world map; its first slot is the Aerie's second battle.
+  /// The event battles: Suhalla Desert, Venus Lighthouse Aerie and the
+  /// World Map; its first slot is the Aerie's second battle.
   ENCOUNTER_ZONE_SCRIPTED = 98,
   ENCOUNTER_ZONE_MIMIC = 99, ///< mimic chests, by the chest's slot
   /// The Djinn battles, one zone for each element in element order.
@@ -136,7 +136,7 @@ void FieldEffect_ShrinkActorAndDestroyFast(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 void FieldPsynergy_Carry(void);
 
-/// One of the map's events (the same 12 bytes as struct Trigger).
+/// One of the scene's triggers (the same 12 bytes as struct Trigger).
 struct TriggerView {
   s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
              ///< the actor the party stopped)

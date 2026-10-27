@@ -1,10 +1,10 @@
 /// @file
-/// Script commands: waits, received items, questions and destinations.
+/// Event commands: waits, received items, questions and destinations.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-// When a gift goes to another member, `<leader> gave <item> to <member>.`
+// When a gift goes to another party member, `<leader> gave <item> to <member>.`
 // follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
 // message, in every edition. Japanese and English show it with window flags
 // 3 (zoom, busy while it shows), the European releases with 1 (zoom only).
@@ -35,9 +35,9 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
 }
 
-/// Debug only: while debug mode is on, R makes every script wait
+/// Debug only: while debug mode is on, R makes every event wait
 /// (Event_WaitFrames) end at once and L restores normal waits. Runs as a
-/// task for the length of a script (Event_Start). R also
+/// task for the length of an event (Event_Start). R also
 /// skips the actors' messages, which open nothing while fastForward is
 /// set (FieldMessage_ShowAtActor).
 void Event_UpdateDebugSkip(void) {
@@ -67,7 +67,7 @@ void Event_WaitFrames(s32 frames) {
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
 /// Event_Start, by SceneManager_Run before it handles several requests,
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
-/// the world map's zoom (FieldEffect_RunVisibilityTransition).
+/// the World Map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
@@ -96,11 +96,11 @@ void Event_Start(void) {
 
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  // Keep the script reset's signed halfword read.
+  // Keep the event reset's signed halfword read.
   if ((s16)runtime->busy != 0) {
     Field_EndBusyAndReveal();
   }
-  // Every script starts with no name window and normal waits.
+  // Every event starts with no name window and normal waits.
   runtime->choiceMessage = 0;
   runtime->choiceWidth = 0;
   runtime->transitionFrames = 0x10;
@@ -109,7 +109,7 @@ void Event_Start(void) {
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
-  // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
+  // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gSaveBlock.leaderActorId;
@@ -131,27 +131,27 @@ UNUSED void Event_NoOpUpdateA(void) {}
 /// Event_RunActorUpdateAndWait calls it.
 void Event_NoOpUpdate(void) {}
 
-/// Respawns the map's actors from an actor template table and
+/// Respawns the scene's actors from an actor template table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
 /// in the overworld bank's far-call table; nothing in ☀️ names it.
 void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   WaitFrames(1);
-  // XXX (no evidence): why the leader's object is fetched and dropped; no
+  // XXX (no evidence): why the leader's actor is fetched and dropped; no
   // code calls this function, so no caller reads a result.
   Actor_Lookup(gSaveBlock.leaderActorId);
 }
 
 /// Spawns the actors of an actor template table after the last
-/// actor in use. Called by the Kolima, Kalay and Tolbi ship map scripts
+/// actor in use. Called by the Kolima, Kalay and Tolbi ship events
 /// to bring actors in during an event.
 void Event_CallWithLastActiveActorId(struct ActorTemplate *table) {
   Event_SpawnActorTemplates(table, Actor_FindLastActiveId());
 }
 
-/// Sets the map's trigger table, which the field checks as the leader moves:
-/// writes work->events. Altin Peak's map script calls it.
+/// Sets the scene's trigger table, which the field checks as the leader moves:
+/// writes work->events. Altin Peak's event calls it.
 void Event_SetTriggers(const struct Trigger *triggers) {
   struct FieldWork *work = gFieldWork;
 
@@ -160,7 +160,7 @@ void Event_SetTriggers(const struct Trigger *triggers) {
 
 /// Adds unit to the party. With announce nonzero it also shows
 /// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
-/// announce too). Called by six map scripts as a character joins (Vale,
+/// announce too). Called by six events as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
 void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
   Unit_GetFar(unit);
@@ -170,18 +170,18 @@ void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
   }
 }
 
-/// Adds two units to the party and announces them together. Vale's map
-/// script calls it twice.
+/// Adds two units to the party and announces them together. Vale's
+/// event calls it twice.
 void Event_PrepareTwoActorsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
-/// Checks an L or R button shortcut, packed as the member in bits 10 to 13 and
-/// the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1 for no
-/// such party member, -2 when that member is not in the party and -3 when the
-/// member no longer knows the Psynergy. Only
+/// Checks an L or R button shortcut, packed as the party member in bits 10 to
+/// 13 and the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1
+/// for no such party member, -2 when that member is not in the party and -3
+/// when the party member no longer knows the Psynergy. Only
 /// Event_ClearInvalidPackedValues calls it.
 s32 Event_ValidatePackedId(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
@@ -209,8 +209,8 @@ void Event_ClearInvalidPackedValues(void) {
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
-/// poison. If no member left standing has HP, the leader is given 1 HP so the
-/// party is never left all down. Called by the map scripts where a member
+/// poison. If no party member left standing has HP, the leader is given 1 HP so
+/// the party is never left all down. Called by the events where a party member
 /// leaves: Vale in the storm, the Vault, and Sol Sanctum.
 void Party_RemoveMemberRestored(s32 unit) {
   struct Unit *vitals;
@@ -225,7 +225,7 @@ void Party_RemoveMemberRestored(s32 unit) {
   vitals->pp = vitals->ppMax;
   Unit_UpdateGauges(vitals);
   vitals->poison = 0;
-  // Count the members who remain and still have HP.
+  // Count the party members who remain and still have HP.
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
@@ -240,12 +240,11 @@ void Party_RemoveMemberRestored(s32 unit) {
   }
 }
 
-/// Checks whether the party can carry one more of item: each member carries at
-/// most 30 of one item. When they are all full, says
-/// `Isaac's party cannot carry any more <item>s...` and
-/// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
-/// returns 0. SceneManager_Run calls it before it gives gSaveBlock.pendingItem
-/// with PartyInventory_GiveItem.
+/// Checks whether the party can carry one more of item: each party member
+/// carries at most 30 of one item. When they are all full, says `Isaac's party
+/// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
+/// possible.` and returns -1; otherwise returns 0. SceneManager_Run calls it
+/// before it gives gSaveBlock.pendingItem with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -265,13 +264,13 @@ s32 Party_CheckItemLimit(s32 item) {
   return 0;
 }
 
-/// The script command "give item": gives item to the first party member with
+/// The event command "give item": gives item to the first party member with
 /// room for it and says so. When every bag is full, the player picks an item
 /// to drop to make room, or drops the new item instead (not allowed for an
-/// indispensable one). Returns the member who received the item, or -1 when
-/// it was left behind. Map scripts reach it (about
-/// 24 of them); SceneManager_Run gives the pending item and the debug test menu
-/// gives items through it. The field work's message is restored afterwards.
+/// indispensable one). Returns the party member who received the item, or -1
+/// when it was left behind. Events reach it (about 24 of them);
+/// SceneManager_Run gives the pending item and the debug test menu gives items
+/// through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
   // retain the original backedges until a plain form matches.
@@ -285,8 +284,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 slot;
 
   work = gFieldWork;
-  // The messages below move the script's message on; every return puts it
-  // back, so the map script continues where it was.
+  // The messages below move the event's message on; every return puts it
+  // back, so the event continues where it was.
   savedMessage = work->message;
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
@@ -330,7 +329,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
         discardQuantity = Shop_GetSelectionState(member, selectedSlot);
       }
-      // A member who already carries 30 of the new item (the cap
+      // A party member who already carries 30 of the new item (the cap
       // Party_CheckItemLimit counts) cannot take it: say so and ask again.
       // Editions at TBS_PATCH_1 alone skip the check.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
@@ -408,11 +407,11 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   }
 }
 
-/// The script command "choose yes or no": once the message on screen has been
+/// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
-/// Map scripts reach it (about
+/// Events reach it (about
 /// 54 of them); the Battle Arena and Event_AskYesNoAndShowResponse call
 /// it too.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
@@ -471,7 +470,7 @@ s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Teaches unit the Psynergy ability and says so with its fanfare, waiting for
 /// the player to read it. The message is `<unit> learned <ability>.` Fuchin
-/// Temple's map script calls it.
+/// Temple's event calls it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
@@ -482,9 +481,9 @@ void Party_LearnAbility(s32 unit, s32 ability) {
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
-/// The script command "open screen": starts the script's screen transition and
-/// sets work->transitionActive. Map scripts reach it; the inn, the title, the
-/// main menu, the Battle Arena and WorldPicture_Show call it too.
+/// The event command "open screen": starts the event's screen transition and
+/// sets work->transitionActive. Events reach it; the inn, the Title, the
+/// File Screen, the Battle Arena and WorldPicture_Show call it too.
 void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -492,9 +491,9 @@ void Event_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-/// The script command "close screen": finishes the script's screen transition
-/// and clears work->transitionActive. Map scripts reach it; the inn, the main
-/// menu and WorldPicture_Show call it too.
+/// The event command "close screen": finishes the event's screen transition
+/// and clears work->transitionActive. Events reach it; the inn, the File
+/// Screen and WorldPicture_Show call it too.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -502,25 +501,25 @@ void Event_FinishScreenTransition(void) {
   runtime->transitionActive = 0;
 }
 
-/// The script command "wait for screen": waits as long as the transition runs
-/// (work->transitionFrames). Map scripts reach it.
+/// The event command "wait for screen": waits as long as the transition runs
+/// (work->transitionFrames). Events reach it.
 void Event_WaitTransitionFrames(void) {
   WaitFrames(gFieldWork->transitionFrames);
 }
 
-/// Makes the script leave for the given entrance of the given map:
+/// Makes the event leave for the given entrance of the given scene:
 /// raises the exit request EXIT_KEEP_DESTINATION and writes gSaveBlock.sceneId
-/// and entrance. Called by the title, the main menu, the Battle Arena, the
-/// debug battle command and five map scripts (the Lemurian ship and the world
-/// map among them).
+/// and entrance. Called by the Title, the File Screen, the Battle Arena, the
+/// debug battle command and five events (the Lemurian ship and the World
+/// Map among them).
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gSaveBlock.sceneId = sceneId;
   gSaveBlock.entrance = entrance;
 }
 
-/// Makes the script leave and records map and entrance as the saved
-/// destination. Reached only through an unnamed veneer in the overworld bank's
+/// Makes the event leave and records scene and entrance as the restart
+/// point. Reached only through an unnamed veneer in the overworld bank's
 /// far-call table; nothing in ☀️ names it.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
@@ -529,8 +528,8 @@ void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   gSaveBlock.restartEntrance = entrance;
 }
 
-/// The script command "request exit": sets the field's exit request (999 leaves
-/// for gSaveBlock's sceneId and entrance). Map scripts reach it as
+/// The event command "request exit": sets the field's exit request (999 leaves
+/// for gSaveBlock's sceneId and entrance). Events reach it as
 /// Import_EventSetExitRequest (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

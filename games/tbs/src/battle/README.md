@@ -27,7 +27,7 @@ Who acts first is decided by Agility, highest first, with a few twists:
 - The Djinn that guard or hold an enemy, Granite, Flash and Ground, go before
   everyone ([Djinni](../../glossary.md#djinn)).
 - A party member's Agility gains up to a sixteenth more at random each round,
-  so two members of nearly equal speed may swap places; an enemy's counts as
+  so two party members of nearly equal speed may swap places; an enemy's counts as
   it is.
 - On a tie the party goes first, and enemies of equal Agility go in a
   shuffled order.
@@ -40,7 +40,7 @@ Before the first round the formation becomes a set of enemies, each with its
 level and, when two of a kind meet, a letter to tell them apart, and the
 opening plays. Then each round goes the same way: the actions are gathered
 and sorted; each action is announced, staged and animated, while the rules
-apply it to each target; the actor's turn ends, which is when poison bites
+apply it to each target; the unit's turn ends, which is when poison bites
 (a tenth of the maximum HP, deadly poison a fifth), the Grim Reaper takes a
 unit whose countdown has run out, and a
 [summon](../../glossary.md#summons)'s boost takes hold; and at the round's
@@ -119,7 +119,7 @@ is, `gSaveBlock.battleType`, decides the rest:
 | --- | --- |
 | `BATTLE_TYPE_NORMAL` | a random encounter: the first-strike rolls are made |
 | `BATTLE_TYPE_NO_ESCAPE` | the party cannot run, as from a Mimic |
-| `BATTLE_TYPE_SCRIPTED` | a battle a [script](../../glossary.md#script) starts; the command menu refuses to run |
+| `BATTLE_TYPE_SCRIPTED` | a battle an [event](../../glossary.md#event) starts; the command menu refuses to run |
 | `BATTLE_TYPE_LINK` | a link battle |
 | `BATTLE_TYPE_DEBUG` | the debug battle menu's battle; the party may run |
 
@@ -174,7 +174,7 @@ A range of 1 is the aimed unit alone, and each step more adds a place on
 either side; the widest range covers the whole side, with every target
 treated as the aimed one. The reach passes over a unit that has left the
 battle, and a downed unit unless the ability revives, but a downed unit still
-holds its place. If no one in range is left, the actor defends
+holds its place. If no one in range is left, the unit defends
 (`<unit> is defending!`). The reach stops at the ends of the line, though the
 cursor wraps round. Where the units stand on screen changes none of this.
 
@@ -212,7 +212,7 @@ hit.
 
 ![Isaac casts Rockslide at Garet, Ivan and Mia: a column of light opens into a wall of fire with rocks tumbling through it.](https://alchemy.pascalpixel.com/abilities/rockslide.gif)
 
-The staging is what happens around an animation: whether the actor runs up and
+The staging is what happens around an animation: whether the unit runs up and
 strikes, raises a hand to cast, or nothing moves. Rockslide is staged full
 screen: the camera turns and the side that isn't targeted fades out.
 
@@ -235,10 +235,10 @@ The stagings are `enum BattleStaging`:
 | Name | What the player sees |
 | --- | --- |
 | `STAGING_MESSAGES` | no animation, only each target's messages |
-| `STAGING_ATTACK` | the actor runs up and strikes |
+| `STAGING_ATTACK` | the acting unit runs up and strikes |
 | `STAGING_CAST` | a cast: Psynergy, and Venus, Mercury, Mars and Jupiter |
 | `STAGING_ITEM` | the user raises an item |
-| `STAGING_SUMMON` | the larger summons, the actor hidden |
+| `STAGING_SUMMON` | the larger summons, the acting unit hidden |
 | `STAGING_DJINNI` | a Djinni with no attack |
 | `STAGING_FLEE` | a unit runs |
 | `STAGING_ENEMY_CAST` | the element's streaks in place of the star field |
@@ -254,7 +254,7 @@ how much it heals, and whether the ability's added effect (Sleep, a lowered
 Defense, poison) takes hold.
 
 For one target, the game first notes how far it stands from the aimed place
-and how strong the actor is in the ability's element; rolls whether the added
+and how strong the user is in the ability's element; rolls whether the added
 effect lands; brings in a new enemy if the ability calls one; deals the damage
 or healing; applies the added effect; and last rolls whether the hit woke the
 target. Nothing is drawn and nothing waits while this happens: the target's
@@ -277,15 +277,15 @@ Attack is, where Quake's damage follows his Power in Venus.
 | --- | --- | --- |
 | healing (Cure, Ply, Herb) | HP back, by the healer's Power in the element | the HP restored at Power 100 |
 | effect (Sleep, Impair, Drain) | damage only when the added effect lands | the damage at an even match |
-| attack (Attack, Ragnarok) | a blow, the actor's Attack against the target's Defense | damage added to a plain blow |
+| attack (Attack, Ragnarok) | a blow, the user's Attack against the target's Defense | damage added to a plain blow |
 | multiplied attack (Flint, Quick Strike) | a plain blow times the power | the multiplier, in tenths |
-| damage (Quake, Avalanche) | damage scaled by the actor's Power against the target's Resist | the damage at an even match |
+| damage (Quake, Avalanche) | damage scaled by the user's Power against the target's Resist | the damage at an even match |
 | enemy damage (Fire Blessing, War Cry) | as damage, falling off faster | the damage at an even match |
 | summon (Ramses, Judgment) | as damage, with a share of the target's maximum HP added | the damage at an even match, before the share |
 | PP damage (Crazy Voice) | PP lost, as damage | the PP lost at an even match |
 | PP healing (Psy Crystal, Adept Ring) | PP back, as healing | the PP restored at Power 100 |
 
-An even match is the actor's [Power](../../glossary.md#power-and-resist) in
+An even match is the user's [Power](../../glossary.md#power-and-resist) in
 the element equalling the target's Resist in it. Granite, Flash, Kite, the
 field Psynergy, Defend and Flee apply no power at all, and every other kind
 but the two attacks does nothing when its power is 0. Healing, attacks and
@@ -345,7 +345,7 @@ place. The figures are percentages:
 
 Avalanche is a damage ability with a power of 160 and a range of 3. At an even
 match the aimed foe takes 160 to 163, one place away 128 to 131 and two places
-away 96 to 99; with the actor's Power 20 ahead, 175 to 178, 140 to 143 and 105
+away 96 to 99; with the user's Power 20 ahead, 175 to 178, 140 to 143 and 105
 to 108, and a defending aimed foe 87 to 89. Blows work differently: with
 Attack 100 against Defense 60, a plain Attack deals half the difference, 20
 to 23; Ragnarok (power 35) adds twice its power before halving, 55 to 58;
@@ -368,7 +368,7 @@ target's Luck and weaknesses, and its distance from the aimed place.
 The roll fails at once when there is nothing to do (a revival on a unit still
 standing, a cure on a unit without the status). Otherwise the chance starts
 from the effect's own rate (Sleep 45 percent, Taint 55, Condemn 20 and so on),
-gains 3 for each element level the actor is ahead, loses 3 for every two
+gains 3 for each element level the user is ahead, loses 3 for every two
 points of the target's Luck, gains 25 when the target is weak to the effect,
 and is scaled by the distance. A few effects have a fixed chance instead:
 Quartz 60 percent, Dew 90, and 100 for an effect with no rate of its own. When
@@ -424,7 +424,7 @@ own damage has just felled. The rules the effects share are these.
 - Restore and Elixir clear delusion, stun, sleep, the seal and the Grim
   Reaper's countdown; Tonic clears those, poison and the evil spirit. Neither
   clears confusion or charm.
-- Drain gives the actor all the HP the target lost, Sap half, Psy Drain the PP
+- Drain gives the user all the HP the target lost, Sap half, Psy Drain the PP
   it took, and Psy Leech a tenth of the damage as PP.
 - Defend and Granite halve the damage the target takes this round, Total
   Defense and Flash cut it to a tenth. Break returns every raised stage to 0
@@ -443,7 +443,7 @@ A sleeping unit that is hit may wake up, and a unit haunted by an evil spirit
 pays for its own attacks.
 
 Losing HP or PP wakes a sleeping target one time in four, unless it fell
-asleep this round. A haunted actor, one time in four for each target it took
+asleep this round. A haunted unit, one time in four for each target it took
 HP or PP from, keeps aside a quarter of that loss (at least 1), and loses the
 total from its own HP at the end of its turn. In the Djinn tutorial a
 Djinni's blow always leaves its target 1 HP, and a summon always fells it.
@@ -498,7 +498,7 @@ where one family of functions ends and the next begins.
 To the rest of the game a battle is one more sequence: the field leaves for it
 through an exit and comes back to the same spot
 ([Battle](../../battle.md#starting-a-battle)). While it runs the battle
-borrows the engine's [tasks](../../glossary.md#task), heap and objects, the
+borrows the engine's [tasks](../../glossary.md#task), heap and actors, the
 window code for its menus and status window, and the
 [game rules](../game/README.md) for its tables and arithmetic, which sit in
 another [bank](../../glossary.md#bank) and are reached by far calls. The
@@ -538,7 +538,7 @@ staging and hand back control when they finish.
   added effect.
 - **place**: a unit's position in its side's line-up.
 - **side**: the party or the enemies.
-- **turn**: the action under way (`struct BattleTurn`): the actor, the
+- **turn**: the action under way (`struct BattleTurn`): the acting unit, the
   ability, its element, its targets with their distances and rolls, its
   staging and its animation.
 - **battle object**: a unit's figure on the battlefield
@@ -551,7 +551,7 @@ staging and hand back control when they finish.
 
 The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct Unit`, `battleObject` for its
-`struct BattleObject`, `object` for that object's `struct Actor`, `record`
+`struct BattleObject`, `actor` for that object's `struct Actor`, `record`
 for one of its sprites, and `plan` for the turn.
 
 ## Evidence
@@ -588,7 +588,7 @@ beam blow land with `SE_HEAVY_IMPACT` (`BattleSprite_HasHeavyImpact`).
 The battle camera has a second point it can follow besides `followPosition`:
 `followEye`, which `ActorSystem_ProjectSprites` would use in place of the eye
 when it turns the sprites to face the camera. Every camera setup (the
-battle's, the world map's and Lucky Dice's) clears it and nothing sets it, so
+battle's, the World Map's and Lucky Dice's) clears it and nothing sets it, so
 the sprites always face the real eye. The last two words of
 `BattleBackgroundWork`, `unusedAfterFlag`, are cleared when a battle starts;
 no code in the battle, its animations or the field reads them.

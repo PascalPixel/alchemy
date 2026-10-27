@@ -1,6 +1,6 @@
 /// @file
-/// Previewing a Djinn change before it is made, the chosen member's status,
-/// and the checks that keep the members' Djinn counts even.
+/// Previewing a Djinn change before it is made, the chosen party member's
+/// status, and the checks that keep the party members' Djinn counts even.
 // Part of menu.c.
 
 #include "../menu_internal.h"
@@ -10,9 +10,9 @@
 ///
 /// mode is a DjinnCompareOperation. Two 15 by 15 windows show the change and
 /// the top window asks "Is this OK?". For a give or trade R cycles three
-/// pages: both members' stats (the first), then the giver's and then the
+/// pages: both party members' stats (the first), then the giver's and then the
 /// receiver's stats beside their Psynergy list; Left and Right turn the
-/// Psynergy list's pages. A set or standby shows the member's stats and
+/// Psynergy list's pages. A set or standby shows the party member's stats and
 /// Psynergy. Returns DJINN_RESULT_CONFIRMED for A, DJINN_RESULT_BACK for B and
 /// DJINN_RESULT_START for Start; the caller makes the change. The page counts
 /// are measured on the real units, which are put back from a copy at once.
@@ -46,7 +46,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = 0;
 
-  // The party figures go below the screen (y 200), except the two members
+  // The party figures go below the screen (y 200), except the two party members
   // concerned: the first over the left window, the second over the right.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--) {
     menu->memberY[memberIndex] = 0xc8;
@@ -563,10 +563,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   return result;
 }
 
-/// Shows the chosen member's current stats and paged Psynergy list.
-/// Opened by L on the Djinn list ("Char. Status"): the member's stats on the
-/// left, their Psynergy six to a page on the right, which Left and Right turn.
-/// Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
+/// Shows the chosen party member's current stats and paged Psynergy list.
+/// Opened by L on the Djinn list ("Char. Status"): the party member's stats on
+/// the left, their Psynergy six to a page on the right, which Left and Right
+/// turn. Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
 /// Start, which closes the Djinn menu.
 s32 DjinnMenu_ShowMemberStatus(void) {
   s32 selectedPages[2];
@@ -604,8 +604,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
-  // Count the member's Psynergy by diffing their list with itself; saved is
-  // taken and given back unused.
+  // Count the party member's Psynergy by diffing their list with itself; saved
+  // is taken and given back unused.
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = AllocEwram(96);
@@ -725,10 +725,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
 ///
-/// requiresTrade[i] becomes 1 for each other member i who cannot take one of
-/// sourceMemberColumn's Djinn without two members' totals differing by more
-/// than one (Djinn_CheckTurnBalance), else 0. The second Djinn chooser offers
-/// such a member only Trade.
+/// requiresTrade[i] becomes 1 for each other party member i who cannot take one
+/// of sourceMemberColumn's Djinn without two party members' totals differing by
+/// more than one (Djinn_CheckTurnBalance), else 0. The second Djinn chooser
+/// offers such a party member only Trade.
 s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
   s32 memberColumn;
@@ -755,10 +755,10 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
   return tradeCount;
 }
 
-/// Tests whether a hypothetical give leaves every pair of members within one
-/// Djinn. Returns 1 when, with one Djinni moved from sourceMemberColumn to
-/// targetMemberColumn, no two members' totals (Djinn_CountTurns) differ by
-/// more than one; 0 otherwise.
+/// Tests whether a hypothetical give leaves every pair of party members within
+/// one Djinn. Returns 1 when, with one Djinni moved from sourceMemberColumn to
+/// targetMemberColumn, no two party members' totals (Djinn_CountTurns) differ
+/// by more than one; 0 otherwise.
 s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];
@@ -790,8 +790,9 @@ s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   return balanced;
 }
 
-/// Counts each member's Djinn across its set and available bitmasks: writes
-/// every party member's total, set or not, into ownedCounts by list column.
+/// Counts each party member's Djinn across its set and available bitmasks:
+/// writes every party member's total, set or not, into ownedCounts by list
+/// column.
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct Unit *unit;

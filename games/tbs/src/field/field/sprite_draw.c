@@ -43,7 +43,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   u32 facing;
   s32 tile;
 
-  // The object system's work and the frame decoder sit in the heap slot
+  // The actor system's work and the frame decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
   system = gActorSystemWork;
@@ -377,12 +377,12 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 /// holds screen x, height, screen y and ground height in 16.16 pixels; scale
 /// holds its x/y factors and facing its angle. Builds an affine matrix when the
 /// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
-/// has one) and then the image in a draw slot by depth; an object 100 pixels
+/// has one) and then the image in a draw slot by depth; an actor 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
 ///
-/// Called by ActorSystem_PlaceSprites for each one-sprite object on a
+/// Called by ActorSystem_PlaceSprites for each one-sprite actor on a
 /// layered map, by the sprite viewer, and as Actor_ApplyProjectedPlacementFar
-/// by the battle animations, the Psynergy effects and the menus.
+/// by the battle animations, field Psynergy and the menus.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -477,7 +477,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
 ///
-/// Called by ActorSystem_ProjectSprites for each object on the world map
+/// Called by ActorSystem_ProjectSprites for each actor on the world map
 /// and in the battle; while a menu suspends projection
 /// (ActorSystemWork.suspended) every sprite is treated as off screen.
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
@@ -605,8 +605,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 /// sprite for redrawing. The sprite's first count anims must all be present:
 /// it does not test them for null.
 /// Called by Anim_ApplyChildValues and, as
-/// Sprite_SetAnimColorModesFar, by the Psynergy effects, the
-/// Sanctum and the Altmiller Cave map.
+/// Sprite_SetAnimColorModesFar, by field Psynergy, the
+/// Sanctum and the Altmiller Cave scene.
 void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {
   struct Sprite *sprite = rawSprite;
   if (sprite != 0) {

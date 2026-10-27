@@ -275,7 +275,7 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
 
 /// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on
 /// a downed unit. Called by the battle's targeting, which lets them aim at
-/// downed members, and by Battle_RollEffectSuccess.
+/// downed party members, and by Battle_RollEffectSuccess.
 s32 Battle_IsReviveEffect(s32 effectId) {
   if ((effectId == ABILITY_EFFECT_REVIVE) ||
       (effectId == ABILITY_EFFECT_REVIVE_HALF) ||

@@ -2,7 +2,7 @@
 #define ALCHEMY_SCRIPT_OPERANDS_H
 
 /// @file
-/// The object script interpreter and the operands its commands read.
+/// The actor script interpreter and the operands its commands read.
 
 #include "edition.h"
 #include "types.h"
@@ -10,7 +10,7 @@
 
 struct Actor;
 
-/// An object script command's handler: it reads its operands at the object's
+/// An actor script command's handler: it reads its operands at the actor's
 /// script cursor, moves the cursor past them and returns 1 to run the next
 /// command this frame or 0 to wait.
 typedef s32 (*ScriptCommand)(struct Actor *);
@@ -39,9 +39,9 @@ struct ScriptOperands {
   u32 targetX;       ///< SW_TARGET_X; 0x80000000 when unset
   u32 targetY;       ///< SW_TARGET_Y
   u32 targetZ;       ///< SW_TARGET_Z
-  u32 bounce;        ///< SW_BOUNCE, or a floating object's phase
+  u32 bounce;        ///< SW_BOUNCE, or a floating actor's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// Work value 0x17: the word Actor_Create zeroes and only map code
+  /// Work value 0x17: the word Actor_Create zeroes and only scene code
   /// reads.
   u32 riseBaseY;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
@@ -56,13 +56,13 @@ struct ScriptOperands {
   u8 retainSpriteCache; ///< keeps the sprite's VRAM; no work value
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
-  u8 refused;           ///< Object.refused; no work value
+  u8 refused;           ///< Actor.refused; no work value
   u8 frozen;            ///< ActorArmView.frozen; no work value
-  u8 riseCounter;       ///< SW_RISE_COUNTER, kept by map code
-  u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by map code
-  s16 timer;            ///< work value 0x23, what its action script reads
-  s16 userValue;        ///< work value 0x24, or map scratch
-  u32 linkedActor;      ///< work value 0x25, the object it follows or faces
+  u8 riseCounter;       ///< SW_RISE_COUNTER, kept by scene code
+  u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by scene code
+  s16 timer;            ///< work value 0x23, what its actor script reads
+  s16 userValue;        ///< work value 0x24, or scene scratch
+  u32 linkedActor;      ///< work value 0x25, the actor it follows or faces
   u32 update;           ///< SW_HOOK, the routine run each frame
 };
 

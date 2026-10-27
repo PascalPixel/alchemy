@@ -40,7 +40,7 @@ void BattleAnim_RunTaint(struct BattleAnimArgs *args) {
 }
 
 /// Pink smoke swirls in on each target, as Taint shows it for a stronger
-/// variant. No ☀️ animation table entry points here.
+/// variant. No animation table entry in The Broken Seal points here.
 UNUSED void BattleAnim_RunUnusedPinkSmoke(struct BattleAnimArgs *args) {
   BattleAnim_RunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
 }

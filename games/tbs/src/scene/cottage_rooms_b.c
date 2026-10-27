@@ -95,7 +95,7 @@
 /// The exits COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the metatile
 /// behaviors of the same numbers, leading to the rest of Vale (ValePlaza,
-/// ValeKradensCottage, Vale and ValeStormyNight) or between this map's own
+/// ValeKradensCottage, Vale and ValeStormyNight) or between this scene's own
 /// parts.
 
 #include "save_block.h"
@@ -275,7 +275,7 @@ enum CottageRoomsBBabiScholarActorId {
   ACTOR_OLD_MAN_ON_BABIS_RESEARCH
 };
 
-/// Vale's area flags this map keeps while the party is in Vale.
+/// Vale's area flags this scene keeps while the party is in Vale.
 enum CottageRoomsBAreaFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
@@ -311,7 +311,7 @@ enum CottageRoomsBAnimation {
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
 /// (menu/file_screen.c, and ValePlaza's
 /// VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST),
-/// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
+/// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this scene's
 /// own COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG from Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG).
@@ -617,7 +617,7 @@ s32 CottageRoomsB_Initialize(void) {
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, where a new game begins. Sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
-/// map by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
+/// scene by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
 /// CottageRoomsB_HurryToThePlaza follows.
 static void CottageRoomsB_DoraWakesIsaac(void) {
   s32 firstMessage;
@@ -1207,7 +1207,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Unused: an update hook that flashes between two palettes and gives off a
+/// Unused: an update routine that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no actor is given it.
 UNUSED static void CottageRoomsB_FlashPaletteAndSpawnPair(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
@@ -1239,7 +1239,7 @@ static void CottageRoomsB_CyclePaletteOnOddFrames(struct Actor *actor) {
   }
 }
 
-// Shared vertical-effect callbacks precede their paired-effect creator.
+// Shared vertical-effect update routines precede their paired-effect creator.
 #include "common/effect_vertical.h"
 
 /// Copies the parent's ground height into two oppositely moving vertical
@@ -1296,7 +1296,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
   }
 }
 
-// Shared Psynergy setup precedes the map's effect wrappers.
+// Shared Psynergy setup precedes the scene's Psynergy wrappers.
 #include "common/effect_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.
@@ -1311,7 +1311,7 @@ UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
       (struct Actor *)Actor_GetById(ACTOR_TUNIC));
 }
 
-/// Catch plays from Dora on the tunic, then its objects are released.
+/// Catch plays from Dora on the tunic, then its actors are released.
 /// Called by CottageRoomsB_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void CottageRoomsB_DemonstrateCatch(void) {
   FieldPsynergy_LoadResources(ABILITY_CATCH, 1);

@@ -45,17 +45,17 @@
 ///
 /// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
 /// regain PP faster. On the aerie Retreat is blocked, the beacon
-/// flickers and sheds sparks by callback
+/// flickers and sheds sparks by task
 /// (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50 pixels
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
 /// every other entrance sets FLAG_HOSTAGES_GONE before the actor
 /// templates are read.
 ///
 /// Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area
-/// names call Mercury Lighthouse and the debug map list labels `MTO07NG`,
+/// names call Mercury Lighthouse and the debug scene list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
-/// exit, table or code leads there; only the debug map selector, which
-/// reaches every map, can.
+/// exit, table or code leads there; only the debug scene selector, which
+/// reaches every scene, can.
 
 #include "save_block.h"
 #include "scene_ids.h"
@@ -138,7 +138,7 @@ enum MercuryLighthouseAerieActorId {
   ACTOR_ALEX
 };
 
-/// Map flags, kept while the party stays on the aerie.
+/// Scene flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
   /// ★ Named from what the player sees: the round platforms floating in the

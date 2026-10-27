@@ -21,7 +21,7 @@
 /// the sanctum or the item picker opens, and Shop_ReleaseWork frees it.
 struct ShopWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
-  s32 selectedMember; ///< the menu screens' chosen member; not named here
+  s32 selectedMember; ///< the menu screens' chosen party member; not named here
   struct Window *moneyWindow; ///< the coins window
   /// The menu screens' first window and their two sides; not named here.
   u8 menuSides[0x10];
@@ -57,7 +57,8 @@ struct ShopWork {
   u8 mode;        ///< passed on as the hand cursor's kind; set to 12 at first
   u8 shopType;    ///< the stock row's type: 0 items, 2 armor, else weapons
   s8 action;      ///< the counter chosen (enum ShopAction)
-  s8 burstMember; ///< the sanctum's member whose pose is randomized; -1 none
+  s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
+                  ///< none
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
   u8 padding[3];  ///< up to the word effects starts on
   struct FieldParticle effects[24]; ///< the sanctum service's particles

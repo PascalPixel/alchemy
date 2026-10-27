@@ -147,7 +147,7 @@ void System_CopyBuildStamp(void) {
   copy->terminator = 0;
 }
 
-/// An exported stub that does nothing with its argument. The title screen,
+/// An exported stub that does nothing with its argument. The Title,
 /// Lucky Dice and Lucky Wheels (LuckyWheels_Run) call it with a far-call
 /// resource id.
 void Stub_NoOpHook(s32 unused) {}

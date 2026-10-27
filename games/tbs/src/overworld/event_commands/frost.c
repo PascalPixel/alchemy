@@ -94,16 +94,16 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
   }
 }
 
-/// 16 particles spiral in on the effect's position and make the target flash 16
-/// times; without childOption the target takes animation 2.
+/// 16 particles spiral in on the Psynergy's position and make the target flash
+/// 16 times; without childOption the target takes animation 2.
 ///
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
 /// The target's part runs only when a trigger named the target
-/// (FieldPsynergy_Dispatch clears enabled) and no map script set
+/// (FieldPsynergy_Dispatch clears enabled) and no event set
 /// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
 /// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
-/// the map's Frost event. Called by FieldPsynergy_Run and
+/// the scene's Frost event. Called by FieldPsynergy_Run and
 /// FieldPsynergy_FrostOnTarget.
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
@@ -121,7 +121,7 @@ void FieldPsynergy_Frost(void) {
   Sound_PlaySongFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
-  // centred 2 to 6 pixels from the effect's position.
+  // centred 2 to 6 pixels from the Psynergy's position.
   p = &pos;
   remainingCycles = 15;
   do {

@@ -112,13 +112,13 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   // if it came during a pass; it never does. In a call graph of the English
   // build, main image and overlays, no task reaches Task_Add, and neither does
   // any function whose address is taken except main-thread entries (far-call
-  // entries, a map's entry table and event scripts, start-up).
+  // entries, a scene's entry table and events, start-up).
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; its load is in the ROM.
   (void)gTasksRunning;
   IRQ_LOCK(savedInterruptState);
-  // Update an existing callback before looking for an unused task slot.
+  // Update an existing task before looking for an unused task slot.
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       task->priority = order;
@@ -227,7 +227,7 @@ s32 Task_SuspendOverlayTasks(void) {
 
 /// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Called by the Battle Arena
-/// and Colosso maps for the tasks that must keep running under a menu.
+/// and Colosso scenes for the tasks that must keep running under a menu.
 /// Returns its index, or -1.
 s32 Task_SetFlags(TaskFunc callback, u32 mask) {
   struct Task *task;
@@ -314,7 +314,7 @@ void Task_RunPass(s32 key) {
         return;
       task++;
       if (TASK_STATE_HIGH(task) == key) {
-        // UB: callbacks return void, and the stored word is not a pointer
+        // UB: tasks return void, and the stored word is not a pointer
         // object. The native integer-return call uses r0; a void call uses
         // r3 instead (two instructions and the call relocation differ).
 #ifdef UBFIX

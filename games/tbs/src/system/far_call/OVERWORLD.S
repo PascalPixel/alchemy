@@ -1,4 +1,4 @@
-@ Triggers, field Psynergy, objects and effect lifecycles.
+@ Triggers, field Psynergy, actors and field effect lifecycles.
 #include "stub.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:

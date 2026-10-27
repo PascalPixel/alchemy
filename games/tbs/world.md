@@ -1,7 +1,7 @@
 # World
 
 Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the
-world map, is run by the same four parts. The loop in `src/overworld` lets the
+World Map, is run by the same four parts. The loop in `src/overworld` lets the
 party walk and deals with whatever interrupts it. The engine in `src/field`
 moves everything that moves and draws the [map](glossary.md#map), and the
 map's own data, in `src/map`, says what the ground is like. And each
@@ -30,7 +30,7 @@ loads the scene again with everyone put back where they were.
 
 `SceneManager_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
-scene](src/overworld/README.md#the-scene-loop-handles-requests-not-scripts) lists
+scene](src/overworld/README.md#the-scene-manager-serves-requests) lists
 all twelve requests in the order they are handled.
 
 ## Scene entries
@@ -79,30 +79,30 @@ page](README.md#game-flags) gives the ranges, and
 [Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene uses
 them.
 
-## Objects and their scripts
+## Actors and their actor scripts
 
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
 Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even each footprint in the snow, is an
-[object](glossary.md#object) running a small script. Every frame each object
-runs the steps of its script until one says to wait. A footprint's whole
-script is "wait 120 frames, disappear". The player's control is itself a step
+[actor](glossary.md#actor) running a small [actor script](glossary.md#actor-script). Every frame each actor
+runs the commands of its script until one says to wait. A footprint's whole
+script is "wait 120 frames, disappear". The player's control is itself a command
 of the leader's script, run once a frame: "move by the pad, wait a frame,
 repeat".
 
-The objects are the 64 places of `gActors`, and the steps are
-the `SC_` commands of `actor_script.h`, run by `Actor_UpdateAllThumb`.
-[Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
+The actors are the 64 places of `gActors`, and the commands are
+the `SC_` macros of `actor_script.h`, run by `Actor_UpdateAllThumb`.
+[Field](src/field/README.md#everything-that-moves-runs-an-actor-script) covers the
 commands, the sprites and [the views of one
-object](src/field/README.md#one-object-a-few-views).
+actor](src/field/README.md#one-actor-a-few-views).
 
 ## Movement
 
 ![Isaac holds up and right below the Sanctum in Vale: he slides right along its front wall, then up along the cliff beside it, instead of stopping](https://alchemy.pascalpixel.com/guides/world/wall-slide.gif)
 
 The leader walks at one pixel a frame and runs at one and a half with B held.
-Before every step the game tests the ground just ahead. When the way is
+Each frame of walking, the game tests the ground just ahead. When the way is
 blocked it tries headings a little to either side and takes the first that is
 open, so the leader slides along a wall instead of stopping dead. Ground more
 than 8 pixels higher, or more than 12 lower, blocks the way as surely as a
@@ -168,29 +168,29 @@ priority of the cell under it.
 are put on screen, and [Maps](src/map/README.md#one-grid-three-layers)
 how they share one grid.
 
-## The world map
+## The World Map
 
-![Isaac walks and runs on the world map near Vale, the land tilting away towards the top of the screen](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
+![Isaac walks and runs on the World Map near Vale, the land tilting away towards the top of the screen](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
-The world map is a flat map tilted into perspective, so the land near the
+The World Map is a flat map tilted into perspective, so the land near the
 party looks close and the land towards the top of the screen far away. The
 console can scale two of its background layers, and the game gives every line
 of the screen its own scale: each line shows one straight strip of the flat
 map, and lines higher up show strips that are farther away and wider. When a
-menu or a script opens, the game draws the current view into an ordinary
+menu or an event opens, the game draws the current view into an ordinary
 still picture, so that the windows can use the layer the tilt was using.
 
 `WorldMap_BuildScanlineTable` works out each line's scale and
 `WorldMap_StartStillView` makes the still picture.
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
-lines, [Maps](src/map/README.md#the-world-maps-data) the world map's
-data, and [Running a scene](src/overworld/README.md#the-world-map-screen) the
-picture of the whole world R brings up. The world map's own places and events
+lines, [Maps](src/map/README.md#the-world-maps-data) the World Map's
+data, and [Running a scene](src/overworld/README.md#the-world-picture) the
+picture of the whole world R brings up. The World Map's own places and events
 are on [the front page](README.md#the-world-map).
 
 ## Random encounters
 
-![Isaac walks back and forth on the world map south of Vale until the screen flashes and a battle against Wild Mushrooms opens](https://alchemy.pascalpixel.com/guides/world/world-map-battle.gif)
+![Isaac walks back and forth on the World Map south of Vale until the screen flashes and a battle against Wild Mushrooms opens](https://alchemy.pascalpixel.com/guides/world/world-map-battle.gif)
 
 As the party walks, a counter fills, faster when running and faster on some
 ground than on other, and a battle starts when it is full. Each kind of ground
@@ -209,20 +209,20 @@ scene](src/overworld/README.md#random-battles) has the roll step by step, and
 
 Using Move on a stone pillar slides it; using it where nothing answers shows
 the same hand and moves nothing. What [Psynergy](glossary.md#psynergy-and-pp)
-does to a scene is decided by the scene's own events, and the effect only draws
-it. A scene can answer a Psynergy just before its effect plays and just after:
+does to a scene is decided by the scene's own events, and the cast only draws
+it. A scene can answer a Psynergy just before its cast plays and just after:
 in Vale, the event after Move notes where the pillar now stands and makes the
 ground under it solid.
 
-`Field_UsePsynergy` runs a cast and `FieldPsynergy_Run` plays its
-effect. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-effect)
-covers every moment a scene can answer and each Psynergy's effect.
+`Field_UsePsynergy` runs a cast and `FieldPsynergy_Run` plays
+it. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-target)
+covers every moment a scene can answer and each Psynergy's cast.
 
 ## Limits
 
-- 64 objects, and 64 sprites sharing 64 sprite anims, up to four each.
+- 64 actors, and 64 sprites sharing 64 sprite anims, up to four each.
 - 66 actor places in the field work, the party's 8 and then 58 for
-  the scene's actor templates, though only 64 objects exist to fill them.
+  the scene's actor templates, though only 64 actors exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
 - 256 scene flags and 256 area flags, each range reused by every scene or
   area.

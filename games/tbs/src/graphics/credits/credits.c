@@ -216,7 +216,7 @@ void Credits_ScrollBackgrounds(void) {
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
 /// the game: Title_Run calls it as Import_CreditsRun when the ending arrives
-/// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the main menu.
+/// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the File Screen.
 /// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
 /// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame
 /// hold, the last a fade to black. Returns 0 with BG2, BG3 and blending off
@@ -1122,7 +1122,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // next line before clearing the rest of the reused scratch buffer. The buffer
   // comes back at the same address each call (Free rewinds the pool), so the
   // last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here a line
-  // has been drawn, is clear on entering the map (Scene_Arrive), so
+  // has been drawn, is clear on entering the scene (Scene_Arrive), so
   // the first line starts from a clean buffer.
   if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);

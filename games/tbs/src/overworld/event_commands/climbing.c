@@ -118,7 +118,7 @@ again:
 /// when there is nothing to climb or the way is blocked by a wall cell.
 ///
 /// Called by Field_RunPushCell for a climbing spot (0xfd) with Down held,
-/// and imported by the maps with ladders and climbable walls (Babi's
+/// and imported by the scenes with ladders and climbable walls (Babi's
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gSaveBlock.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
@@ -197,7 +197,7 @@ failure:
 /// to climb or the way is blocked by a wall cell.
 ///
 /// Called by Field_RunPushCell for a climbing spot (0xfd) with Up held,
-/// and imported by the maps with ladders and climbable walls (Babi's
+/// and imported by the scenes with ladders and climbable walls (Babi's
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gSaveBlock.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {

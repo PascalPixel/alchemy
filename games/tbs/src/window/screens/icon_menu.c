@@ -544,14 +544,14 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 // found (flags 48-127 clear); a play that walks past Flint's ground on the
 // world map (MB_WORLD_MAP_FLINT) without meeting him would show whether he can
 // be missed.
-/// Builds the title menu from the save summaries and optional send flags.
-/// Translates the chosen visible position back to its action (enum FileAction),
-/// or -1 when cancelled or the backup memory cannot be read. With no files it
-/// returns 0 at once. The icons, by Save_ScanRecordFlags' count: New Game,
-/// Continue, Copy and Erase for one or two files (starting on Continue); no New
-/// Game or Copy with three; with every file cleared no Continue, and only Erase
-/// with three such files. Battle and Send follow when enabled.
-/// The file menu runs it (menu/file_screen.c).
+/// Builds the File Screen's menu from the save summaries and optional send
+/// flags. Translates the chosen visible position back to its action (enum
+/// FileAction), or -1 when cancelled or the backup memory cannot be read. With
+/// no files it returns 0 at once. The icons, by Save_ScanRecordFlags' count:
+/// New Game, Continue, Copy and Erase for one or two files (starting on
+/// Continue); no New Game or Copy with three; with every file cleared no
+/// Continue, and only Erase with three such files. Battle and Send follow when
+/// enabled. The file list runs it (menu/file_screen.c).
 s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;

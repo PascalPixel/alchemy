@@ -1,8 +1,8 @@
 #include "types.h"
 #include "actor.h"
 
-// Twenty-three maps, most of those that spawn effects (effect_spawn.h): two
-// ways to place a still effect object of a given type at a 16.16 position.
+// Twenty-three scenes, most of those that spawn effects (effect_spawn.h): two
+// ways to place a still field effect of a given type at a 16.16 position.
 
 /// Sets the actor's sprite priority (0 in front of the backgrounds, 3
 /// behind).

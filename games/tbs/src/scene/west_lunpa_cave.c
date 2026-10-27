@@ -1,21 +1,21 @@
 /// @file
 /// West Lunpa Cave (SceneId_WestLunpaCave, area name West Lunpa Cave), the cave
-/// between Lunpa and the world map, with a gate across it, where the party
+/// between Lunpa and the World Map, with a gate across it, where the party
 /// meets Bunza on the way out of Lunpa with Hammet.
 ///
-/// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
+/// The party comes in from the World Map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
 /// MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE
 /// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names,
 /// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
-/// The gate puzzle runs on map flags, which Scene_Initialize redraws: the
+/// The gate puzzle runs on scene flags, which Scene_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
 /// doing nothing while the gate already stands where it would put it or while
 /// the gate's puddle, frozen by Frost into a pillar, props it open. Freezing
 /// that puddle with the gate down raises it onto the pillar with the
 /// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
-/// that can be climbed, and one to the north. Its map flags:
+/// that can be climbed, and one to the north. Its scene flags:
 ///
 /// - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
 ///   propping the gate open.
@@ -35,7 +35,7 @@
 /// Bunza's wagon (WagonChoice_Run). Riding leaves by WEST_LUNPA_CAVE_BY_WAGON
 /// to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure;
 /// staying, Hammet and Bunza leave alone. Either way FLAG_BUNZAS_WAGON_LEFT is
-/// set, on the world map or here.
+/// set, on the World Map or here.
 ///
 /// Unused: a fourth puddle stands at the map's origin, outside the cave's
 /// camera bounds, so Frost can never reach it
@@ -86,7 +86,7 @@ static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
-// The cave's map flags, the state of its gate puzzle:
+// The cave's scene flags, the state of its gate puzzle:
 // FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate puddle is frozen, propping
 // the gate open. FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has
 // lowered the gate. FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
@@ -101,7 +101,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 /// Both passages and the wagon departure return through this exit table.
 const u32 *Scene_GetExits(void) { return gCaveExits; }
 
-/// Only the cave map places puddles, Hammet, Bunza and the party members.
+/// Only the cave scene places puddles, Hammet, Bunza and the party members.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
     return gCaveActorTemplates;

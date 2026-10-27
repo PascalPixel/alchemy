@@ -56,7 +56,7 @@
 /// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_ANIM) and the
 /// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
 /// them before the handler runs and releases them after it returns, so a
-/// handler removes every callback that reads them before it returns. The two
+/// handler removes every task that reads them before it returns. The two
 /// blitter slots and gMapGridCellBuffer (PARTICLES) belong to the handler for
 /// as long as it runs; it frees the blitters itself before it returns.
 ///

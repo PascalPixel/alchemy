@@ -5,7 +5,7 @@
 
 #include "../battle_internal.h"
 
-/// Object.targetX and targetZ while the object has no move target.
+/// Actor.targetX and targetZ while the actor has no move target.
 #define NO_MOVE_TARGET 0x80000000
 
 // The motion values below are 16.16 fixed point, in pixels and frames:
@@ -95,7 +95,7 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   Actor_SelectAnimationFar(start, POSE_LEAP);
 }
 
-/// Sends a unit's object back to its spot. Nothing in the source calls it.
+/// Sends a unit's actor back to its spot. Nothing in the source calls it.
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct Actor *actor = battleObject->actor;
 
@@ -284,7 +284,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 #define HIT_FLASH_ANIMATION 0x11b
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
-/// single-sprite object takes it. Nothing in the source calls it.
+/// single-sprite actor takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 unitId) {
   struct Actor *actor;
   struct SpriteAnim *effect;

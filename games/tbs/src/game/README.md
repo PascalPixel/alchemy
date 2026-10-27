@@ -125,7 +125,7 @@ after equipping, setting a Djinni, levelling up or a class change.
 The game remembers what has happened (a chest opened, a Djinni found, an event
 already played) as yes-or-no flags, 4,096 of them, one bit each. When Tonic
 joins, its found flag is set: a Djinni found once cannot join again, and the
-save files count the Djinn found. The title screen offers its Battle command
+save files count the Djinn found. The Title offers its Battle command
 only once some save file has found a Djinni.
 
 Eight flags in a row, read together as a byte, also hold small counters, such
@@ -219,12 +219,12 @@ as is the enemies' fourth (`EnemyDefinition.weakEffects`).
 Rows 269 to 323 of `item_table.c` are 55 copies of one row: a weapon only Isaac
 can equip, priced 100 coins, with Attack 11, no icon and no name message.
 Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
-[scripts](../../glossary.md#script) name no item past `ITEM_CLERICS_RING` (268), no enemy in
+[events](../../glossary.md#event) name no item past `ITEM_CLERICS_RING` (268), no enemy in
 `enemies.c` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
 The save block's byte after the Speech option, `unusedAfterSpeech`, is set to 1
-by a new game and read by nothing in the game: the option menu keeps only the
+by a new game and read by nothing in the game: the settings menu keeps only the
 window colour, message speed, Speech and auto-sleep, and no scene reaches the
 save block by offset there. A cleared file sent by cable sends the 4,100
 bytes from `gSaveBuffer`, which hold the game flags and the save block, this

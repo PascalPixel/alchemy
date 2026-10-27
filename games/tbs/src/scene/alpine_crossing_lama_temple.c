@@ -1,8 +1,8 @@
 /// @file
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
-/// (SceneId_LamaTemple), two maps on Silk Road west of Xian that share this
-/// overlay. The getters pick each map's tables by gSaveBlock.sceneId, both
-/// maps share one exit table, and Scene_Initialize sets up the map being
+/// (SceneId_LamaTemple), two scenes on Silk Road west of Xian that share this
+/// overlay. The getters pick each scene's tables by gSaveBlock.sceneId, both
+/// scenes share one exit table, and Scene_Initialize sets up the scene being
 /// entered from the story flags of Hsu's rescue, which runs through both.
 ///
 /// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
@@ -10,7 +10,7 @@
 /// beside them (MB_ALPINE_CROSSING_FEIZHI_ARRIVAL) plays
 /// AlpineCrossing_FeizhiArrives and sets FLAG_FEIZHI_SAW_ROCKSLIDE; she then
 /// waits at the end of the path until Hama's lesson. A signpost reads `North:
-/// Altin Mine West: Lama Temple`; the Crossing opens onto the world map to the
+/// Altin Mine West: Lama Temple`; the Crossing opens onto the World Map to the
 /// east, north and west, and by
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST into Altin Peak's
@@ -42,13 +42,13 @@
 /// raises it while Hama and Feizhi pull him free; the event sets
 /// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
 /// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
-/// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the world
-/// map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has been freed
+/// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the World
+/// Map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has been freed
 /// without the party (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c
 /// can set too), and Hama and Feizhi are gone. Once he is free, two workers
 /// from Xian stand by the road they have cleared, and Scene_Initialize copies
 /// the cleared cells over the rocks. The Crossing's other puzzles are kept
-/// only within one visit (map temp flags): Reveal shows a hidden path, Frost
+/// only within one visit (scene temp flags): Reveal shows a hidden path, Frost
 /// freezes a puddle into a pillar the party can climb, and Growth grows a
 /// sprout into a vine; a chest holds Power Bread.
 
@@ -161,8 +161,8 @@ enum {
   FLAG_ALPINE_CROSSING_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 
-/// Animations of these maps' own sprites beyond enum ActorAnimation,
-/// named by when the scripts play them.
+/// Animations of these scenes' own sprites beyond enum ActorAnimation,
+/// named by when the events play them.
 enum {
   ANIM_HAMA_PULL = 5,
   ANIM_FEIZHI_PULL = 6,
@@ -214,9 +214,9 @@ static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
   return 0;
 }
 
-// Update callback that turns the party leader toward Feizhi while she runs
+// Update routine that turns the party leader toward Feizhi while she runs
 // past.
-// UB: update hooks return void. Plain void removes the native zero result
+// UB: update routines return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
 static void AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
@@ -243,7 +243,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Both maps share one exit table.
+/// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
@@ -833,10 +833,10 @@ static void AlpineCrossing_HidePath(void) {
   Event_WaitFrames(1);
 }
 
-// Update callback of the frozen pillar: it draws under the party leader
+// Update routine of the frozen pillar: it draws under the party leader
 // while the leader stands higher than its top, so the leader can climb onto
 // it, and over the leader otherwise.
-// UB: this update hook has no result. Plain void changes the native return
+// UB: this update routine has no result. Plain void changes the native return
 // sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
 static void Pillar_SortAgainstLeader(struct Actor *updated) {
@@ -909,7 +909,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLamaTemple_Triggers;
 }
 
-/// Sets up whichever map is being entered and runs its arrival scripts.
+/// Sets up whichever scene is being entered and runs its arrival events.
 s32 Scene_Initialize(void) {
   s32 entrance;
 

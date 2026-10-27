@@ -2,7 +2,7 @@
 #define ALCHEMY_KOLIMA_H
 
 /// @file
-/// The globals Kolima's maps share: the falling effect and the party's state.
+/// The globals Kolima's scenes share: the falling effect and the party's state.
 
 #include "types.h"
 

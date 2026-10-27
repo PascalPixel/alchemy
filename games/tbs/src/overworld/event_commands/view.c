@@ -1,5 +1,5 @@
 /// @file
-/// The view bounds, zoom transitions and objects linked to an actor.
+/// The view bounds, zoom transitions and actors linked to an actor.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
@@ -8,7 +8,7 @@
 /// Bits 2 and 3 are its priority.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
-/// The script command "set view bounds": the camera keeps the screen inside
+/// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (FieldCamera_MoveWithinMapBounds).
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -64,7 +64,7 @@ s32 FieldEffect_StepRatioTransition(void) {
   }
 }
 
-/// Starts a zoom to zoom (16.16) over frames frames, on the world map only. The
+/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only. The
 /// perspective work keeps the inverse, which scales the view's distance
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
 /// distance. Event_WaitForZoomTransition waits for it.
@@ -90,7 +90,7 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 #endif
 }
 
-/// Waits for a zoom transition to end (on the world map only, at most 300
+/// Waits for a zoom transition to end (on the World Map only, at most 300
 /// frames).
 void Event_WaitForZoomTransition(void) {
   s32 frames;
@@ -109,10 +109,10 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
-// Per-frame update of a riding object: keeps it on the actor it rides
-// (its linked object), raised by the actor's sprite height (its
-// metadata's boxX) and 8 pixels. Its work holds the actor's id. The hook
-// consumer ignores the result. Plain void removes the native zero result and
+// Per-frame update of a riding actor: keeps it on the actor it rides
+// (its linked actor), raised by the actor's sprite height (its
+// metadata's boxX) and 8 pixels. Its work holds the actor's id. Its
+// caller ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
 void FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
@@ -142,11 +142,11 @@ s32 FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
 #endif
 }
 
-/// The script command "actor show emote": shows an emote bubble (object
+/// The event command "actor show emote": shows an emote bubble (sprite
 /// 21) over an actor, then waits wait frames. The low 4 bits of emote
 /// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
 /// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
-/// actor's. The bubble rides the actor and frees itself after 46 frames
+/// actor's. The bubble rides the actor and releases itself after 46 frames
 /// (gFieldEffect_LinkedActorScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
 void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
@@ -207,14 +207,14 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
   }
 }
 
-/// The script command "actor set attached effect", by enum
-/// AttachedEffectFlag: removes the object attached to an actor, attaches
+/// The event command "actor set attached effect", by enum
+/// AttachedEffectFlag: removes the actor attached to an actor, attaches
 /// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
 /// 2) that ends by itself (gActor_WaitScript, 40 frames). The attached
-/// object is kept as the actor's linkedActor, so ATTACHED_EFFECT_ATTACH
+/// actor is kept as the actor's linkedActor, so ATTACHED_EFFECT_ATTACH
 /// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
-/// step runs all three for hazard ground (overworld/walking.c).
+/// walking update runs all three for hazard ground (overworld/walking.c).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Actor *effect;

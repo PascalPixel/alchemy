@@ -17,7 +17,7 @@
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
 /// REG_BG2X, sets work->shakeFrames over the first 16 frames.
 ///
-/// effect: the targets. Destruct Ray shows the canvas at double width; Ray
+/// args: the targets. Destruct Ray shows the canvas at double width; Ray
 ///         draws every bolt with the maximum blend, the others alternate it
 ///         with additive. The variant also sets the sparks each bolt throws
 ///         a frame (gRay_Sparks).

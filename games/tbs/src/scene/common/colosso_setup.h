@@ -65,7 +65,7 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
 
 /// Decodes the opponent's recorded path (resource) after the gauge's work and,
 /// unless the party returns to where it was, has the opponent run it from the
-/// start, mirrored across the finish; then starts the opponent's callback.
+/// start, mirrored across the finish; then starts the opponent's task.
 void Colosso_StartOpponent(s32 resource) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;

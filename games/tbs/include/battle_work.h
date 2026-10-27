@@ -77,11 +77,12 @@ struct BattlePlaybackWork {
 /// Six enemies at most, and a turn's queue of up to 20 actions.
 enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 
-/// The battle's own work: its enemies, units and their objects, the turn's
-/// actions, the spoils, the background palette, the turn and the playback.
+/// The battle's own work: its enemies, units and their battle objects, the
+/// turn's actions, the spoils, the background palette, the turn and the
+/// playback.
 ///
 /// It lives in the HEAP_SLOT_BATTLE heap slot: Battle_Run takes and
-/// zeroes it, sets arrowTiles to -1 and formation, and the next map change
+/// zeroes it, sets arrowTiles to -1 and formation, and the next scene change
 /// clears the heap. Every battle part reads it through gBattleWork, and the
 /// battle animations read its background id and palette.
 struct BattleWork {
@@ -124,7 +125,7 @@ struct BattleWork {
   struct BattleObject objects[14];
   /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
   /// for enemy unit 0x80 + n: a party unit's place in the active party, an
-  /// enemy's own 8 + n; 0xff for a party unit with no object.
+  /// enemy's own 8 + n; 0xff for a party unit with no battle object.
   u8 objectIndex[14];
   u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.

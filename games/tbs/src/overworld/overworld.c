@@ -1,10 +1,10 @@
 /// @file
 /// The field object: the sequence manager and scene changes, random encounters,
-/// a field map's actors, the leader's steps and the requests they raise, the
-/// scene's triggers, using items and Psynergy on the field, the map's treasure
-/// spots, and the screen transitions and palette fade that the field and
-/// battles share. overworld_internal.h holds the includes and the few macros
-/// and types more than one part uses; the code is in the files under
+/// a field scene's actors, the leader's walking and the requests they raise,
+/// the scene's triggers, using items and Psynergy on the field, the map's
+/// treasure spots, and the screen transitions and palette fade that the field
+/// and battles share. overworld_internal.h holds the includes and the few
+/// macros and types more than one part uses; the code is in the files under
 /// overworld/, included here in ROM order, each opening with what it holds
 /// (head -2 overworld/*.c). The ROM shows one object; the parts are ours, cut
 /// where one family ends and the next begins.

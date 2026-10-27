@@ -4,7 +4,7 @@
 
 #include "../battle_anim_internal.h"
 
-// Ramses' slots: objects 0 to 6 are the formation, 7 and 8 the orb and 9 to
+// Ramses' slots: sprites 0 to 6 are the formation, 7 and 8 the orb and 9 to
 // 14 the rocks. work->particles 0 to 5 move the rocks (variant counts their
 // bounces), 6 to 29 are the orb's puffs (eight kept per drop, four thrown)
 // and 30 to 41 the rocks' puffs, two per rock. PARTICLES holds the sparks.
@@ -35,7 +35,7 @@
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
 void BattleAnim_RunRamses(struct BattleAnimArgs *args) {
-  // Every object of the animation takes this scale.
+  // Every sprite of the animation takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -65,7 +65,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *args) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->args);
-  // Nine objects of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and
+  // Nine sprites of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and
   // 8), then the six rocks of SPRITE_BATTLE_ROCKS, each playing one of its
   // three animations.
   BattleAnim_SpawnObjects(9, SPRITE_RAMSES, 2);
@@ -186,7 +186,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *args) {
       orb.x -= 0x10000;
     if (frame >= 252 && frame <= 275)
       orb.x -= (frame - 250) << 16;
-    // The orb's two objects, 32 pixels apart, drawn at the orb: a height of
+    // The orb's two sprites, 32 pixels apart, drawn at the orb: a height of
     // -256 pixels, 100 or more below the ground, puts them in draw slot 1
     // (Render_ApplyProjectedPlacement), and y moves up as far, so the two
     // cancel on the screen.

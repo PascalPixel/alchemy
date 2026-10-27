@@ -28,7 +28,7 @@ STATIC_ASSERT(offsetof(struct ScanlineEffectWork, page) == 0xf00);
 STATIC_ASSERT(offsetof(struct ScanlineEffectWork, freqX) == 0xf08);
 
 /// The scanline effect's work, HEAP_SLOT_SCANLINE_EFFECT under its own name,
-/// which ScanlineEffect_InitWave takes for a map's wave.
+/// which ScanlineEffect_InitWave takes for a scene's wave.
 extern struct ScanlineEffectWork *gScanlineEffect;
 /// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
 extern const s16 gScanlineEffect_WaveSine[];

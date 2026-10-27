@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_FIELD_H
 
 /// @file
-/// The field engine's shared routines, globals and object scripts.
+/// The field engine's shared routines, globals and actor scripts.
 
 #include "types.h"
 #include "edition.h"
@@ -100,7 +100,7 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gActors
-/// Heap slot 5: the 64 objects, 0x70 bytes each.
+/// Heap slot 5: the 64 actors, 0x70 bytes each.
 extern struct Actor *gActors;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
@@ -176,28 +176,28 @@ extern u16 gLogRoomsA_StopTimer;
 /// copy the routine to the heap and run it once.
 extern u8 Actor_UpdateAllCodeSize[];
 extern u8 gActor_BlinkSpriteColors[];
-// The object motion scripts: actions 1 to 7, which
+// The actor motion scripts: movement types 1 to 7, which
 // Actor_SetMovementType starts by number, and two turning scripts
-// with no action number.
-/// Action 1: a lone SC_END.
+// with no movement type number.
+/// Movement type 1: a lone SC_END.
 extern const u8 gMovementType_StandScript[];
-/// Action 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
+/// Movement type 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
 /// pixel a frame.
 extern const u8 gMovementType_WanderScript[];
-/// Action 3: the same within 8 pixels of home.
+/// Movement type 3: the same within 8 pixels of home.
 extern const u8 gMovementType_WanderNearScript[];
-/// Action 4: wanders within 6 pixels of home at 0.4 pixels a frame.
+/// Movement type 4: wanders within 6 pixels of home at 0.4 pixels a frame.
 extern const u8 gMovementType_WanderCloseScript[];
 /// Waits to arrive, then turns by Actor_StepAngle until it faces the
 /// kept angle (Actor_LaunchFromLeader).
 extern u8 gActor_LaunchScript;
-/// Action 5: Actor_MoveTowardTarget every frame, forever.
+/// Movement type 5: Actor_MoveTowardTarget every frame, forever.
 extern const u8 gMovementType_FollowLinkedScript[];
-/// Action 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
+/// Movement type 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
 extern const u8 gMovementType_ResetActionScript[];
 /// Turns by Actor_StepAngle until it faces the kept angle, then SC_END.
 extern const u8 gActor_StepAngleScript[];
-/// Action 6: turns toward the leader every frame, forever.
+/// Movement type 6: turns toward the leader every frame, forever.
 extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gActor_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
@@ -223,10 +223,10 @@ extern struct MenuSprite gHeatGauge_Sprites[];
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodeFrame[];
 #endif
-/// The statue map's three scrolling strips, packed (Decompress_ByteLz).
+/// The statue scene's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
-/// gPushedActor_FootprintBounds; each map with them defines its own.
+/// gPushedActor_FootprintBounds; each scene with them defines its own.
 extern u32 gPushedActor_FootprintKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
@@ -263,15 +263,15 @@ extern const s32 gFieldEffect_ParticleScript[];
 extern u32 gFieldEffect_PulseScales[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern s16 gFieldEffect_TargetRangeByMode[];
-/// A lone SC_RELEASE: an object that has arrived frees itself
+/// A lone SC_RELEASE: an actor that has arrived releases itself
 /// (FieldEffect_SetCallbackWhenTargetUnset).
 extern const s32 gFieldEffect_UntargetedActorScript[];
-/// The 32 by 16 spark a field Psynergy effect's particles draw (spark_a), 4
+/// The 32 by 16 spark a field Psynergy's particles draw (spark_a), 4
 /// bits a pixel; FieldPsynergy_LoadResources loads it.
 extern const u8 gFieldEffect_SparkTiles[];
 extern const u8 gFieldEffect_QuadrantModes[];
 /// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
-/// Psynergy effect fades the palettes toward, picked by the frame counter or
+/// Psynergy fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldPsynergy_FadeToCastColor).
 extern const s32 gFieldEffect_TargetColors[];
 extern s16 gFieldEffect_GroundParticleFrames[];

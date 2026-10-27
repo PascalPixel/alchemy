@@ -23,7 +23,7 @@ enum FlashingStrikeMode {
 ///
 /// The leap takes the user three quarters of the way in 24 steps, starting up
 /// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
-/// effect->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
+/// args->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
 void BattleAnim_RunThrash(struct BattleAnimArgs *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
   WaitFrames(29);
@@ -41,7 +41,7 @@ void BattleAnim_RunThrash(struct BattleAnimArgs *args) {
 /// Abilities: none (BATTLE_ANIM_UNUSED_SEVERE_BLOW_LEAP).
 ///
 /// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
-/// after 12 frames with effect->variant set to SPARK_GROUPS_SEVERE_BLOW,
+/// after 12 frames with args->variant set to SPARK_GROUPS_SEVERE_BLOW,
 /// overriding the ability's own.
 void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
@@ -70,7 +70,7 @@ void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *args) {
 /// BattleAnim_RunVorpalSlash; nothing passes FLASHING_STRIKE_UNUSED.
 ///
 /// The user steps up to the first target over 16 frames. Then four 120x120
-/// pictures show for four frames each (mirrored when effect->side is
+/// pictures show for four frames each (mirrored when args->side is
 /// ANIM_SIDE_PARTY), the canvas fills with colour 0x3f on frames 16 to 19, the
 /// battle shows the damage on frame 18, and on frame 20 the target reels and
 /// the screen shakes. 21 frames.

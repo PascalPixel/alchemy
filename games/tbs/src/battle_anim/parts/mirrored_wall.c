@@ -20,7 +20,7 @@ enum MirroredWallMode {
 ///
 /// Called during setup by twenty animation parts, from the gathering
 /// lights and the Djinn beams to the casting impacts and Ragnarok, usually
-/// with effect->side as `flip` so pictures face the targets. Builds the
+/// with args->side as `flip` so pictures face the targets. Builds the
 /// blitters in heap slots HEAP_SLOT_RAM_CODE and HEAP_SLOT_RAM_CODE_2,
 /// which the caller frees (ANIM_RELEASE_BLITTERS).
 ///

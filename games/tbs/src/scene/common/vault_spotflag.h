@@ -1,6 +1,6 @@
 /// @file
 /// Vault's interiors, before and after the thieves are caught: whether the
-/// leader stands beside the Bone on the floor, which the maps' trigger tables
+/// leader stands beside the Bone on the floor, which the scenes' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 #include "types.h"
 #include "actor.h"
@@ -13,8 +13,8 @@
 #define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_SCENE_TEMP_50
 
 /// Keeps the girl at the inn from offering another Bone too soon. She doesn't
-/// offer one while the leader stands beside the one on the floor. Each map adds
-/// this callback in the girl at the inn's house after the thieves are jailed.
+/// offer one while the leader stands beside the one on the floor. Each scene
+/// adds this task in the girl at the inn's house after the thieves are jailed.
 /// FLAG_VAULT_LEADER_BESIDE_BONE records proximity for the actor talk
 /// table.
 static void Vault_UpdateBoneProximityFlag(void) {

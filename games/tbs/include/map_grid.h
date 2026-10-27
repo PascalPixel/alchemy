@@ -13,7 +13,7 @@
 /// on, pushing against or searching the cell does.
 enum MetatileBehavior {
   MB_NORMAL = 0, ///< open ground: nothing happens there
-  /// 1 to 239: the map's own events, step trigger or exit when stepped on
+  /// 1 to 239: the scene's own events, step trigger or exit when stepped on
   /// (Scene_RunStepTriggerOrExit), examine trigger when the player presses A
   /// facing the cell.
   MB_EVENT_FIRST = 1,
@@ -80,7 +80,7 @@ struct TilesetAnim {
   const u16 *start;  ///< where 0xffff loops back to; null for none
   const u16 *cursor; ///< the next group
   u16 timer;         ///< frames left of the current wait
-  u16 paused;        ///< nonzero, set by a map, holds the animation
+  u16 paused;        ///< nonzero, set by a scene, holds the animation
 };
 
 /// A layout's three layers, by what they hold. Most layouts give them

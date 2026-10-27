@@ -6,7 +6,8 @@
 /// ValeKradensCottage_Initialize removes the people a visit does not use, and
 /// ValeKradensCottage_GetTriggers picks the events for the time of the story.
 ///
-/// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's map (Vale,
+/// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's scene
+/// (Vale,
 ///   SceneId_ValeStormyNight) leads here by
 ///   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH and
 ///   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH, arriving by
@@ -100,7 +101,7 @@
 enum ValeKradensCottageActorId {
   /// A boulder by the fence, with the sprite of the boulder Lift raises at the
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
-  /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
+  /// Lift row runs no event, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
   /// and the stormy night's events have no row for it. Cast on it, Lift's two
   /// hands close on it and burst into sparkles, the boulder stays where it is,
   /// and no message follows, since the row answers the cast (render probe
@@ -914,9 +915,9 @@ static void ValeKradensCottage_OverhearKraden(void) {
 /// Arriving in Kraden's part of Vale: places the actors for the storm or
 /// for the day, and plays the arrival from the cottage.
 ///
-/// The map's initialize entry. On the stormy night (FLAG_VALE_STORM) it starts
-/// the lightning, removes the day's people, lays the survivor by the fence
-/// (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
+/// The scene's initialize entry. On the stormy night (FLAG_VALE_STORM) it
+/// starts the lightning, removes the day's people, lays the survivor by the
+/// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
 /// rockslide covers. By day it removes the rocks and Garet, runs
 /// ValeKradensCottage_KradenSetsOff from
 /// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, removes Kraden and the
@@ -1117,7 +1118,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
 /// Reached by stepping on metatile behavior 10 until
 /// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
-/// zone of the scripted battles of Vale, Vault and the world map.
+/// zone of the scripted battles of Vale, Vault and the World Map.
 static void ValeKradensCottage_FightFirstMonster(void) {
   struct FieldWork *work;
 
@@ -1167,7 +1168,7 @@ static void ValeKradensCottage_TalkToCottageVisitor(void) {
   Event_End();
 }
 
-/// Leads the party away from the broken fence, then leaves the map.
+/// Leads the party away from the broken fence, then leaves the scene.
 s32 gValeKradensCottage_RockslideSurvivorEscapeActions[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
     SC_SYNC,         SC_MOVE(PIXELS(77), 0, PIXELS(329)),

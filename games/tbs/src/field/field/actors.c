@@ -1,5 +1,5 @@
 /// @file
-/// Objects: creating and freeing them, dissolving sprites, starting scripts.
+/// Actors: creating and releasing them, dissolving sprites, starting scripts.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -113,7 +113,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   } while (step <= 0x7fU);
 }
 
-/// Writes the object's screen position, in pixels, to screenPosition[0..1] and
+/// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
 /// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
 /// returns -1. The position is x and z less the view's whole pixels: where a
 /// layered map draws a point at height 0. It ignores y and the ground height,
@@ -154,21 +154,21 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   return -1;
 }
 
-/// Sets up the object system: allocates and zeroes the 64 objects and
-/// registers the per-frame updates. ACTOR_SYSTEM_BATTLE moves objects with
+/// Sets up the actor system: allocates and zeroes the 64 actors and
+/// registers the per-frame updates. ACTOR_SYSTEM_BATTLE moves actors with
 /// Actor_UpdateAllMotion, which runs no scripts; ACTOR_SYSTEM_WORLD_MAP and
 /// ACTOR_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
 /// later call gets the same ones back. No code releases HEAP_SLOT_ACTORS or
 /// HEAP_SLOT_ACTOR_SYSTEM by name, but SceneManager_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; InitHeap clears the slots at the next
-/// map change.
+/// scene change.
 ///
-/// Called through ActorSystem_InitializeFar by the field map runner
+/// Called through ActorSystem_InitializeFar by the scene manager
 /// (overworld/overworld/scene_manager.c) and the battle's encounter, and
 /// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
 /// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
-/// for the objects, and sets the sprite outline colours.
+/// for the actors, and sets the sprite outline colours.
 void ActorSystem_Initialize(s32 controlMode) {
   struct ActorSystemWork *system;
   struct Actor *objectPool;
@@ -180,7 +180,7 @@ void ActorSystem_Initialize(s32 controlMode) {
   ActorSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, ACTOR_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
-  // The task runner runs higher priorities first: the objects move before
+  // The task runner runs higher priorities first: the actors move before
   // the camera follows them.
   if (controlMode == ACTOR_SYSTEM_BATTLE)
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_FRAME + 10);
@@ -204,7 +204,7 @@ UNUSED void nullsub_0800C0C4(void) {}
 
 UNUSED void nullsub_0800C0C8(void) {}
 
-/// Returns the first of the 64 objects not in use (with no script), or 0.
+/// Returns the first of the 64 actors not in use (with no script), or 0.
 /// Called by Actor_Create.
 void *Actor_FindFree(void) {
   struct Actor *actor = gActors;
@@ -222,11 +222,11 @@ void *Actor_FindFree(void) {
   return freeActor;
 }
 
-/// Releases an object's sprites and zeroes it, freeing it.
-/// Clearing the script lets Actor_FindFree hand the object out
+/// Releases an actor's sprites and zeroes it, releasing its slot.
+/// Clearing the script lets Actor_FindFree hand the actor out
 /// again. Reached through SC_RELEASE (ActorScript_Release) and, as
-/// Actor_ReleaseFar, from the battle, the Psynergy effects and the
-/// field map's objects.
+/// Actor_ReleaseFar, from the battle, field Psynergy and the
+/// overworld's actor code.
 void Actor_Release(struct Actor *actor) {
   s32 spritesRemaining;
   void **sprites;
@@ -250,14 +250,14 @@ void Actor_Release(struct Actor *actor) {
   }
 }
 
-/// Creates an object at (x, y, z), in 16.16 pixels, or returns 0 when
-/// none is free. id / 4096 is its enum ActorCreateKind and the low 12 bits
-/// the sprite's animation id.
+/// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when
+/// every slot is in use. id / 4096 is its enum ActorCreateKind and the low 12
+/// bits the sprite's animation id.
 ///
-/// Called as Actor_CreateFar by the battle's placement, the Psynergy
-/// effects, the field map's actors and treasure spots and the map
-/// scripts, and directly by the player control for footprints and ripples.
-/// Gives the object gActor_DefaultScript (a lone SC_END), its home
+/// Called as Actor_CreateFar by the battle's placement, field
+/// Psynergy, the overworld's actor code and treasure spots and the scenes'
+/// events, and directly by the player control for footprints and ripples.
+/// Gives the actor gActor_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
 /// the ActorSystemWork's group tables.
 struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
@@ -341,11 +341,11 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
   return object;
 }
 
-/// Gives an object a script and starts it from the top.
+/// Gives an actor a script and starts it from the top.
 /// Sets the script and clears the cursor, the pause, the loop count and the
 /// last flag test. Called by the Start functions below and the player
 /// control, and as Actor_StartScriptFar by the battle's placement,
-/// the Psynergy effects and the field map's scripts.
+/// field Psynergy and events.
 void Actor_StartScript(struct Actor *actor, const s32 *script) {
   if (actor != 0) {
     actor->scriptCursor = 0;
@@ -357,7 +357,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
 }
 
 /// Defines name(object, value), which calls apply(sprite, value) on an
-/// object's one sprite, or on each sprite of its group.
+/// actor's one sprite, or on each sprite of its group.
 #define ACTOR_DEFINE_APPLY(name, object_type, apply)                           \
   void name(object_type rawObject, s32 value) {                                \
     struct Actor *object;                                                      \
@@ -385,7 +385,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
     }                                                                          \
   }
 
-/// Switches all of an object's sprites to animation value.
+/// Switches all of an actor's sprites to animation value.
 ACTOR_DEFINE_APPLY(Actor_SelectAnimation, void *, Sprite_StartAnim)
 
 /// Sets the animation speed (timer step) of all of an actor's sprites.
@@ -418,13 +418,13 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
   }
 }
 
-/// Sets the rotation of an object's sprite, when it has just one.
+/// Sets the rotation of an actor's sprite, when it has just one.
 void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation) {
   if (actor != 0 && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE)
     actor->sprite->rotation = rotation;
 }
 
-/// Gives a one-sprite object's first anim animation id animationId and
+/// Gives a one-sprite actor's first anim animation id animationId and
 /// restarts its anims.
 /// A negative animationId does nothing.
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor,
@@ -441,7 +441,7 @@ void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor,
   }
 }
 
-/// Adds an anim of animation id animationId to a one-sprite object's sprite.
+/// Adds an anim of animation id animationId to a one-sprite actor's sprite.
 /// A negative animationId does nothing.
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
   if (actor != 0 && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
@@ -451,50 +451,50 @@ void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
   }
 }
 
-/// Starts an object on the script that approaches its linked object
-/// (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
+/// Starts an actor on the script that approaches its linked actor
+/// (SC_APPROACH_LINK), linked to linkedActorHandle. The functions below start
 /// the engine's other scripts (actor_script.c).
 void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
   Actor_StartScript(actor, gActor_ApproachLinkScript);
   actor->linkedActor = (struct Actor *)linkedActorHandle;
 }
 
-/// Starts an object on the script that runs SC_KEY_COUNT every frame.
-/// The field map runner (overworld/overworld/scene_manager.c) gives it to the
+/// Starts an actor on the script that runs SC_KEY_COUNT every frame.
+/// The scene manager (overworld/overworld/scene_manager.c) gives it to the
 /// leader when gSaveBlock.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
 
-/// Starts an object on the script that moves it by the keys (SC_KEYS).
-/// The field map runner gives it to the leader when gSaveBlock.movementMode
+/// Starts an actor on the script that moves it by the keys (SC_KEYS).
+/// The scene manager gives it to the leader when gSaveBlock.movementMode
 /// is 1.
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);
 }
 
-/// Starts an object on the player control script (SC_PLAYER).
-/// The field map runner's usual choice for the leader on a layered map.
+/// Starts an actor on the player control script (SC_PLAYER).
+/// The scene manager's usual choice for the leader on a layered map.
 void Actor_StartPlayerControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_PlayerScript);
 }
 
-/// Starts an object on the world map control script (SC_WORLD).
-/// The field map runner gives it to the leader on the world map.
+/// Starts an actor on the world map control script (SC_WORLD).
+/// The scene manager gives it to the leader on the world map.
 void Actor_StartWorldMapControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_WorldMapScript);
 }
 
-/// Starts an object on the idle script (a lone SC_END).
+/// Starts an actor on the idle script (a lone SC_END).
 void Actor_StartIdle(struct Actor *actor) {
   Actor_StartScript(actor, gActor_IdleScript);
 }
 
-/// Starts an object on the camera script (SC_CAMERA). With a leader to
+/// Starts an actor on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
 /// acceleration of 0.5. Called through
-/// Actor_StartCameraFar by the field map's actors, the Psynergy
-/// camera and the Colosso and Kolima Forest maps.
+/// Actor_StartCameraFar by the overworld's actor code, the Psynergy
+/// camera and the Colosso and Kolima Forest scenes.
 void Actor_StartCamera(struct Actor *actor, s32 linkedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (linkedActorHandle != 0) {
@@ -505,11 +505,11 @@ void Actor_StartCamera(struct Actor *actor, s32 linkedActorHandle) {
   }
 }
 
-/// Waits until the object's script reaches SC_END, at most 300 frames
+/// Waits until the actor's script reaches SC_END, at most 300 frames
 /// (five seconds); it returns as soon as the script idles, and after the
 /// limit whether or not it has.
 /// Called through Actor_WaitForScriptEndFar by the Psynergy actor
-/// commands and by map scripts that wait for a scripted move (Colosso, Venus
+/// commands and by events that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void Actor_WaitForScriptEnd(void *rawActor) {
   struct Actor *interpreter = rawActor;
@@ -526,7 +526,7 @@ void Actor_WaitForScriptEnd(void *rawActor) {
   }
 }
 
-/// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
+/// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags) {
   if (actor != NULL) {
     if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE)
@@ -534,9 +534,9 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 flags) {
   }
 }
 
-/// Sets the OAM blend mode of a one-sprite object's sprite.
+/// Sets the OAM blend mode of a one-sprite actor's sprite.
 /// This one and the next two test the whole kind byte, not its low four
-/// bits, so an object with high kind bits set is left alone.
+/// bits, so an actor with high kind bits set is left alone.
 void Actor_SetBlendMode(struct Actor *actor, u32 mode) {
   if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
@@ -544,7 +544,7 @@ void Actor_SetBlendMode(struct Actor *actor, u32 mode) {
   }
 }
 
-/// Makes the fixed camera draw a one-sprite object at its own scale instead of
+/// Makes the fixed camera draw a one-sprite actor at its own scale instead of
 /// scaling it by distance.
 void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale) {
   if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
@@ -553,18 +553,18 @@ void Actor_SetSpriteScale(struct Actor *actor, u32 fixedScale) {
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's anims,
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's anims,
 /// except those drawn hidden (see Sprite_SetAnimColorModes).
 void Anim_ApplyChildValues(struct Actor *actor, u32 param) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     Sprite_SetAnimColorModes(actor->sprite, param);
 }
 
-/// Suspends the object camera updates, starts the palette back to normal and,
+/// Suspends the actor camera updates, starts the palette back to normal and,
 /// a frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
 /// Called through
-/// ActorSystem_SuspendProjectionAndShowSpritesFar by map scripts (Colosso, the
-/// Tolbi ship, Vale, Venus Lighthouse). The scripts except Colosso's pair it
+/// ActorSystem_SuspendProjectionAndShowSpritesFar by events (Colosso, the
+/// Tolbi ship, Vale, Venus Lighthouse). The events except Colosso's pair it
 /// with ActorSystem_ResumeProjectionAndHideLayers.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_PlaceSprites);
@@ -577,9 +577,9 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
       DISPCNT_OBJ_ON;
 }
 
-/// Resumes the object camera updates and hides BG1-3 and the sprites.
+/// Resumes the actor camera updates and hides BG1-3 and the sprites.
 /// Called through ActorSystem_ResumeProjectionAndHideLayersFar by the same
-/// scripts except Colosso's.
+/// events except Colosso's.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   Task_ResumeAll(ActorSystem_PlaceSprites);
   Task_ResumeAll(ActorSystem_ProjectSprites);

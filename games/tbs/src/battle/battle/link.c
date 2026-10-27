@@ -25,13 +25,13 @@ enum LinkPartyPacketSize {
 };
 
 /// Link battle: receives the opponent's party into the enemy units, one
-/// member at a time, and puts the "Enemy" label (MsgEnemyLabel) before each
-/// name; then receives the opponent's Djinn recovery list. Stops early if a
-/// transfer cannot start. Returns how many of the received units are
-/// members (a unit sent with side 0 is an empty place). Nothing in the
-/// source calls it. Overwrites enemy units 128 to 130 and the opponent's
-/// recovery table: each 340-byte packet runs 8 bytes into the next enemy
-/// unit, which the next packet rewrites, the third's into unit 131.
+/// party member at a time, and puts the "Enemy" label (MsgEnemyLabel) before
+/// each name; then receives the opponent's Djinn recovery list. Stops early if
+/// a transfer cannot start. Returns how many of the received units are party
+/// members (a unit sent with side 0 is an empty place). Nothing in the source
+/// calls it. Overwrites enemy units 128 to 130 and the opponent's recovery
+/// table: each 340-byte packet runs 8 bytes into the next enemy unit, which the
+/// next packet rewrites, the third's into unit 131.
 s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
@@ -41,7 +41,7 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 labelLength;
   s32 i;
 
-  // The block is only freed: each member is received straight into its
+  // The block is only freed: each party member is received straight into its
   // enemy unit, as in the Battle Arena's twin of this function
   // (BattleArena_ReceivePartyRecords, menu/battle_arena.c).
   // XXX (no evidence): whether the block is left from a receive into a buffer,
@@ -100,11 +100,11 @@ s32 LinkBattle_ReceiveParty(void) {
   return memberCount;
 }
 
-/// Link battle: sends the party, one member at a time and three places in
+/// Link battle: sends the party, one party member at a time and three places in
 /// all (an empty place has side 0), then the Djinn recovery list with each
 /// unit given the id the opponent knows it by. Records that id of
-/// each member in gBattleWork->opponentSlots (0xff for none). Nothing in the
-/// source calls it.
+/// each party member in gBattleWork->opponentSlots (0xff for none). Nothing in
+/// the source calls it.
 #ifdef UBFIX
 void LinkBattle_SendParty(void) {
 #else
@@ -127,7 +127,7 @@ s32 LinkBattle_SendParty(void) {
   for (i = 7; i >= 0; i--)
     battle->opponentSlots[i] = noSlot;
 
-  // The members, each marked as the opponent's.
+  // The party members, each marked as the opponent's.
   count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++) {
     Iwram_CopyWords(buffer, Unit_GetFar(unitIds[i]), size);

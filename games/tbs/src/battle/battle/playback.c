@@ -326,7 +326,7 @@ void BattlePlayback_Run(void) {
       // with the defeat sound numbered one before its own; then from 0:
       // SPRITE_COLOR_GREY and its own defeat sound, out of the lists at 4, and
       // from 5 the dissolve, four steps a frame, until its tiles are cleared
-      // and its object released.
+      // and its actor released.
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
@@ -384,7 +384,7 @@ void BattlePlayback_Run(void) {
       }
       if (events->timer > 4) {
         // The dissolve: steps 0 to 127 of render_animated_tile_frame, four a
-        // frame from timer 5 to 36; at 37 the tiles are cleared, the object
+        // frame from timer 5 to 36; at 37 the tiles are cleared, the actor
         // released, and the queue goes on.
         struct BattleObject *slot;
         struct Sprite *record;
@@ -452,7 +452,7 @@ void BattlePlayback_Reset(void) {
 }
 
 /// Waits, a frame at a time, until BattlePlayback_Run has played every
-/// target, then removes the callback and resets the playback.
+/// target, then removes the task and resets the playback.
 /// Called after the animation by the staging runners in staging.c, and after a
 /// Djinn's animation by BattleTurn_Build and turn_end.c. Playback still
 /// idle (the animation never called ANIM_SHOW_DAMAGE) is started here.

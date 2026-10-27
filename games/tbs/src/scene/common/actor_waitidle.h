@@ -4,7 +4,7 @@
 
 // Babi Lighthouse and Venus Lighthouse.
 
-/// Waits until the object stops rising or falling, a second at most.
+/// Waits until the actor stops rising or falling, a second at most.
 static void Actor_WaitUntilIdle(struct Actor *actor) {
   s32 cnt;
   s32 busy;

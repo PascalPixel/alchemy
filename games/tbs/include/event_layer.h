@@ -29,7 +29,7 @@
 
 #include "save_block.h"
 
-// A map stores into its own const tables: an overlay's data is in RAM.
+// A scene stores into its own const tables: an overlay's data is in RAM.
 // The games' compiler takes the store as written; a current GCC refuses it,
 // so the modern build names the place without its const.
 #ifdef MODERN
@@ -39,8 +39,8 @@
 #define STORE_CONST(place) (place)
 #endif
 
-/// 0x78 bytes of EWRAM where map overlays keep state of their own, such as
-/// Altmiller Cave's rock puzzle. It lies outside the heap, so a map change
+/// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
+/// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
 /// leaves it alone; SaveBlock_InitializeDefaults clears it for a new game.
 extern u8 gSceneLocalState[];
 
@@ -71,7 +71,7 @@ enum ActorAnimation {
   ANIM_LEADER_RUN = 5,
   ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
   ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
-  /// The leader leaning into what it pushes, as maps play it while a statue
+  /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
   /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
@@ -145,20 +145,20 @@ struct MapGridCellAnimation {
   u16 y; ///< destination cell row
 };
 
-// The imports below keep a name of their own, prefixed Import_: the maps' calls
-// of these routines were compiled against declarations that differ from the
-// routines' own, as the bytes measure. Import_EventSetExitRequest,
+// The imports below keep a name of their own, prefixed Import_: the scenes'
+// calls of these routines were compiled against declarations that differ from
+// the routines' own, as the bytes measure. Import_EventSetExitRequest,
 // Import_ActorSetPosition, Import_ActorSetAnimation and
 // Import_RandomNext are called with differing argument counts, so they keep
 // old-style declarations; Event_SetExitRequest also takes a u16 and
-// Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
+// Random16 returns a u32, where the scenes pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
-// every other map's match through GameFlag_Set itself, and the maps pass
+// every other scene's match through GameFlag_Set itself, and the scenes pass
 // Event_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Import_EventShowTwoMessagesAndWait).
 /// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
-/// gSaveBlock's map and entrance.
+/// gSaveBlock's scene and entrance.
 void Import_EventSetExitRequest();
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
@@ -167,7 +167,7 @@ void Import_ActorSetPosition();
 /// Switches an actor's sprite to an ActorAnimation
 /// (Actor_SetModeById).
 void Import_ActorSetAnimation();
-/// Sets a game flag (GameFlag_Set), for the two maps whose calls compile only
+/// Sets a game flag (GameFlag_Set), for the two scenes whose calls compile only
 /// as calls of a void routine.
 void Import_GameFlagSet(s32 flag);
 /// Advances the game's random number generator and returns 0 to 0xffff
@@ -181,7 +181,7 @@ u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
 s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void FreeHeapSlot(s32 slot);
-/// The engine encodes either a built-in action or an action-script address.
+/// The engine encodes either a movement type or an actor-script address.
 static inline void Actor_SetScript(s32 actorId, const s32 *script) {
   Actor_SetMovementTypeById(actorId, (s32)script);
 }
@@ -201,13 +201,13 @@ void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                         s32 other_extra, s32 flags);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-/// Declared for the maps that define FIELD_STAGED_ACTOR_IMPORTS in place
-/// of Event_PlaySong. Nothing calls it and no import resolves it: those maps
+/// Declared for the scenes that define FIELD_STAGED_ACTOR_IMPORTS in place
+/// of Event_PlaySong. Nothing calls it and no import resolves it: those scenes
 /// call Sound_PlaySong.
 void Audio_PlayCue(s32 cue);
 #endif
 
-/// Moves the script's message number count messages on, past lines the script
+/// Moves the event's message number count messages on, past lines the event
 /// doesn't show.
 static inline void Event_SkipMessages(s32 count) {
   u16 *message = &gFieldWork->message;
@@ -215,14 +215,14 @@ static inline void Event_SkipMessages(s32 count) {
   *message = *message + count;
 }
 
-/// Shows the script's next line of dialogue and waits for the player to read
+/// Shows the event's next line of dialogue and waits for the player to read
 /// it.
 static inline void Event_ShowMessage(s32 speaker, s32 flags) {
   Event_ShowMessageAndWait(speaker, flags);
 }
 
-/// Opens the script's next line and returns its window once the text is typed
-/// out, so the script can act while it is still on screen.
+/// Opens the event's next line and returns its window once the text is typed
+/// out, so the event can act while it is still on screen.
 static inline s32 Event_OpenMessage(s32 speaker, s32 flags) {
   return (s32)FieldMessage_ShowAtActor(speaker, flags);
 }
@@ -233,7 +233,7 @@ static inline s32 Event_AskYesNo(s32 speaker, s32 flags) {
   return Event_AskYesNoAndShowResponse(speaker, flags);
 }
 
-/// Looks up an actor for a script, NULL when it doesn't exist
+/// Looks up an actor for an event, NULL when it doesn't exist
 /// (Actor_GetById).
 static inline struct Actor *Actor_Get(s32 actorId) {
   return Actor_GetById(actorId);
@@ -245,13 +245,13 @@ static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z) {
 }
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed,
-/// for the script's next moves.
+/// for the event's next moves.
 static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
   Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
 
 /// Moves an actor to a point in the pose it has, without walking; the
-/// script carries on meanwhile.
+/// event carries on meanwhile.
 static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
   Actor_ResetAndSetPosition(actorId, x, z);
 }
@@ -264,7 +264,7 @@ static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
 }
 #endif
 
-/// Walks an actor to a point; the script goes on while it walks.
+/// Walks an actor to a point; the event goes on while it walks.
 static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
   Actor_ResetAndSetPositionInMode2(actorId, x, z);
 }
@@ -275,18 +275,18 @@ static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
   Actor_OffsetPositionAndReset(actorId, dx, dz);
 }
 
-/// Turns an actor to a direction and holds the script for a few frames.
+/// Turns an actor to a direction and holds the event for a few frames.
 static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
   Actor_ArmCallback(actorId, facing, frames);
 }
 
-/// Has one actor look at another at once, then pauses the script.
+/// Has one actor look at another at once, then pauses the event.
 static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
   Actor_SetAngleToward(actorId, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
-/// the script goes on.
+/// the event goes on.
 static inline void Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
   FieldEffect_SpawnAttached(actorId, emote, frames);
 }
@@ -297,7 +297,7 @@ static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
   FieldEffect_SetAttached(actorId, effect);
 }
 
-/// Sets how fast the camera pans for the script's next camera moves.
+/// Sets how fast the camera pans for the event's next camera moves.
 static inline void FieldCamera_SetSpeed(s32 speed, s32 acceleration) {
   FieldCamera_SetSpeedParameters(speed, acceleration);
 }
@@ -333,27 +333,27 @@ static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
-// Most map scripts call GameFlag_Get, GameFlag_Set and GameFlag_Clear
-// directly; the scripts that match only through an inline call spell them
+// Most events call GameFlag_Get, GameFlag_Set and GameFlag_Clear
+// directly; the events that match only through an inline call spell them
 // Event_GetFlag, Event_SetFlag and Event_ClearFlag. An inline call's
 // argument is a pseudo of its own, so a flag number two calls share is loaded
 // twice instead of kept in a register (MATCHING.md).
 
-/// GameFlag_Get, from a script: 1 when the FLAG_ is set.
+/// GameFlag_Get, from an event: 1 when the FLAG_ is set.
 static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }
 
-/// GameFlag_Set, from a script.
+/// GameFlag_Set, from an event.
 static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
 
-/// GameFlag_Clear, from a script.
+/// GameFlag_Clear, from an event.
 static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
-/// Plays a sound effect or music from a script: the SE command of script.h.
+/// Plays a sound effect or music from an event: the SE command of script.h.
 static inline void Event_PlaySong(s32 cue) { Sound_PlaySong(cue); }
 #endif
 
-/// A random number from 0 to 0xffff for a script.
+/// A random number from 0 to 0xffff for an event.
 static inline s32 Random_Next(void) { return Import_RandomNext(); }
 
 /// Signed division written as a call; the `/` compiles to __divsi3.
@@ -373,7 +373,7 @@ static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
   Anim_ApplyChildValues(actor, mode);
 }
 
-/// Creates an actor in a free slot of gActors, outside the actor ids, or
+/// Creates an actor in an empty slot of gActors, outside the actor ids, or
 /// returns NULL when every slot is taken.
 static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
                                               s32 fixed_y, s32 fixed_z) {
@@ -384,7 +384,7 @@ static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
 /// ACTOR_BLEND_TRANSLUCENT alpha-blends the sprite with what lies behind it.
 enum ActorBlendMode { ACTOR_BLEND_NORMAL = 0, ACTOR_BLEND_TRANSLUCENT = 1 };
 
-/// Plays a cell animation, such as a door opening, and holds the script until
+/// Plays a cell animation, such as a door opening, and holds the event until
 /// its last step.
 static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
                                         s32 destinationY) {
@@ -408,7 +408,7 @@ static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
   Actor_CommitPositionAndActivate(actorId, dx, dz);
 }
 
-/// Shows a line of dialogue, then pauses before the script goes on.
+/// Shows a line of dialogue, then pauses before the event goes on.
 static inline void FieldEvent_ShowMessageThenWait(s32 speaker, s32 flags,
                                                   s32 frames) {
   Event_ShowMessageThenWait(speaker, flags, frames);
@@ -441,12 +441,12 @@ static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
                             height);
 }
 
-/// Sets the colours the screen shows now, where a script's palette fade starts.
+/// Sets the colours the screen shows now, where an event's palette fade starts.
 static inline void PaletteFade_ApplySource(s32 value, s32 mode) {
   PaletteFade_SetSource(value, mode);
 }
 
-/// Sets the colours a script's palette fade ends on.
+/// Sets the colours an event's palette fade ends on.
 static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
   PaletteFade_SetTarget(value, mode);
 }
@@ -461,7 +461,7 @@ static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
   Actor_SetPositionAndReset(actorId, x, z);
 }
 
-/// Has two actors speak at once, each window placed by the script.
+/// Has two actors speak at once, each window placed by the event.
 static inline void
 FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
                                   s32 otherSpeaker, s32 otherX, s32 otherY,

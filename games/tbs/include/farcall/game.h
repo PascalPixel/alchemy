@@ -24,14 +24,14 @@ s32 Shop_GetSelectionState(s32 owner, s32 slot);
 /// slot, and returns the slot, or -1 when there was no room.
 s32 Inventory_AddItemFar(s32 owner_id, s32 item_id);
 /// Gives an item to the first party member with room and returns who took it,
-/// or -1; spoils, chests and the maps' gifts land this way.
+/// or -1; spoils, chests and the scenes' gifts land this way.
 s32 PartyInventory_AddFar(s32 item_id);
 /// Returns the first slot holding the item, equipped or not, or -1.
 s32 Inventory_FindFar(s32 owner, s32 item_id);
 /// Returns who carries the item, asking the selected character first, or -1;
-/// scripts use it to find a key item.
+/// events use it to find a key item.
 s32 PartyInventory_FindMemberFar(s32 item_id);
-/// Takes one of the item from whoever carries it first, as a script uses up a
+/// Takes one of the item from whoever carries it first, as an event uses up a
 /// key item; always returns 0.
 s32 PartyInventory_RemoveFar(s32 item_id);
 /// Equips the item in `slot` in place of the one of its type, then rebuilds
@@ -48,7 +48,7 @@ s32 Inventory_BreakFar(s32 owner, s32 slot);
 /// returns -1 when the slot is empty.
 s32 Inventory_RepairFar(s32 owner, s32 slot);
 /// Returns the id of the unit's equipped item of `type`, or 0; the battle draws
-/// a member's weapon from it.
+/// a party member's weapon from it.
 s32 Inventory_GetEquippedItemFar(struct Unit *inv, s32 type);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (Ability_GetDirect); every bank reads abilities so.
@@ -56,8 +56,8 @@ struct AbilityDefinition *Ability_Get(s32 abilityId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();
-/// Returns 1 when the action is in the unit's action list; scripts check a
-/// member's Psynergy with it.
+/// Returns 1 when the action is in the unit's action list; events check a
+/// party member's Psynergy with it.
 s32 Unit_KnowsPsynergyFar(s32 owner, s32 value);
 /// Clears the save block and sets a new game's defaults: Isaac alone in the
 /// party, the standard buttons, the message speed and the play time clock.
@@ -68,7 +68,7 @@ void SaveBlock_InitializeDefaultsFar(void);
 struct LevelUpResult *Unit_TryLevelUpFar(s32 owner_id,
                                          struct LevelUpResult *value);
 /// Returns 1 when the flag is set; the whole game tests flags here, the
-/// maps through the script layer.
+/// scenes through the event layer.
 s32 GameFlag_GetFar(s32 flag);
 /// Sets the flag and returns the number of the byte it's in.
 s32 GameFlag_SetFar(s32 flag);
@@ -76,7 +76,7 @@ s32 GameFlag_SetFar(s32 flag);
 /// byte.
 void GameFlag_ClearFar(s32 flag);
 /// Returns the whole byte the flag is in, a counter kept among the flags, as
-/// the encounter code and the Colosso and Battle Arena maps use.
+/// the encounter code and the Colosso and Battle Arena scenes use.
 s32 GameFlag_GetByteFar(s32 flag);
 /// Writes the whole byte the flag is in, such as the Battle Arena's win count.
 void GameFlag_SetByteFar(s32 flag, s32 value);
@@ -172,7 +172,7 @@ s32 Djinn_CanSetFar(s32 owner, s32 index, s32 bit);
 /// past the eight characters (Item_CanUnitEquipDirect).
 s32 Item_CanUnitEquip(s32 unit, s32 item);
 /// Returns 1 for anything but a weapon or armor, and for those whether the
-/// character can equip it; the buy screen greys out members with it.
+/// character can equip it; the buy screen greys out party members with it.
 s32 Item_IsCompatibleWithUnitFar(s32 unit, s32 item);
 /// Returns the slot of the unit's equipped item of `type`, or -1.
 s32 Inventory_FindEquippedFar(s32 owner, s32 type);
@@ -196,8 +196,8 @@ u32 Unit_GetExperienceForLevelFar(s32 owner, s32 level);
 /// Restores every party member's HP and PP; with 1 it also cures poison and
 /// haunting.
 void Party_RestoreHpPpFar(s32 cureConditions);
-/// Restores the PP of each member whose element's lighthouse is lit, at the top
-/// of the Mercury and Venus Lighthouses.
+/// Restores the PP of each party member whose element's lighthouse is lit, at
+/// the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElementsFar(void);
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna in their childhood
 /// classes, as a new game starts the prologue.
@@ -205,9 +205,9 @@ void Party_StartChildhoodFar(void);
 /// Sets the party up for Vale three years after the prologue: the Short Sword,
 /// Move, Retreat and Mind Read taught, and 300 coins.
 void Party_EndChildhoodFar(void);
-/// Gives a newly found Djinni to the member holding the fewest Djinn with room
-/// in its element and returns who got it: -1 when it was found before, -2 when
-/// nobody has room.
+/// Gives a newly found Djinni to the party member holding the fewest Djinn with
+/// room in its element and returns who got it: -1 when it was found before, -2
+/// when nobody has room.
 s32 Djinn_GiveToPartyFar(s32 element, s32 djinn);
 /// Returns how many Djinn of an element the party holds, or of all four for -1.
 s32 Party_SumDjinnCountsFar(s32 index);
@@ -237,10 +237,10 @@ s32 Inventory_CountItemFar(s32 owner, s32 item_id);
 /// Counts the item across the whole party, as Lucky Wheels counts Game
 /// Tickets.
 s32 PartyInventory_CountItemFar(s32 item_id);
-/// Discards one of the item from whoever carries it first, as a script takes
+/// Discards one of the item from whoever carries it first, as an event takes
 /// it back; always returns 0.
 s32 PartyInventory_DiscardFar(s32 item_id);
-/// Sets FLAG_LURE_CAP while any member wears the Lure Cap and clears it
+/// Sets FLAG_LURE_CAP while any party member wears the Lure Cap and clears it
 /// otherwise, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCapFar(void);
 /// Returns the unleash chance, in percent, that a unit's equipment adds.

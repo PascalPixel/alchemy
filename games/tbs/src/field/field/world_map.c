@@ -1,6 +1,6 @@
 /// @file
 /// The world map: its perspective view, its tiles, and the still picture of
-/// the view BG1 shows while a menu or script runs.
+/// the view BG1 shows while a menu or event runs.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -278,7 +278,7 @@ s32 WorldMap_InitializePerspective(void) {
 /// count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it is
 /// next to the view when px / 8 and py / 8, in 256-pixel steps, are within
 /// one step of the followed point's. Layer 1 takes the tile 0x140 (320)
-/// further on. Called by the world map's scripts
+/// further on. Called by the world map's events
 /// (Field_SetWorldMapWindowCellTile, through WorldMap_SetWindowCellTileFar).
 /// Sets perspective->tileIds.
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
@@ -587,7 +587,7 @@ void WorldMap_UpdateView(void) {
   // current pitch and yaw, the eye one pixel beyond the zoomed distance.
   // followedPosition is read here without the NULL test above, which never
   // fails on the world map: SceneManager_Run's Actor_ResetForLeader
-  // points it at the camera object before any frame passes, and nothing clears
+  // points it at the camera actor before any frame passes, and nothing clears
   // it.
   gProjection.centerX = 120;
   gProjection.centerY = 96;
@@ -713,7 +713,7 @@ void WorldMap_PresentStillFrame(void) {
 /// the window and VBlank to it.
 ///
 /// Called through WorldMap_StartStillViewFar by WorldMap_Freeze
-/// when a menu or script starts on the world map, and by the world map's
+/// when a menu or event starts on the world map, and by the world map's
 /// lighthouse transition. Sets animationActive, suspends the tileset
 /// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
 /// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
@@ -752,7 +752,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// the default cells back and returns to the perspective view.
 ///
 /// Called through WorldMap_LoadAreaGraphicsFar by
-/// WorldMap_Unfreeze when a menu or script ends, by
+/// WorldMap_Unfreeze when a menu or event ends, by
 /// WorldPicture_Show, and by the world map's lighthouse transition.
 /// Decodes into gMapGridCellBuffer and gBgTileBuffer, sets gVBlankCallback to
 /// WorldMap_ShowBg1FromBuffer, sets the window rows back to 0 and 159, clears
@@ -798,7 +798,7 @@ void WorldMap_LoadAreaGraphics(void) {
 /// three times by WorldMap_ShowEndingEvent, each time after its messages.
 /// Unlike WorldMap_LoadAreaGraphics it leaves animationActive set, which only
 /// stops a menu suspending and resuming the tileset animations; the ending
-/// opens no menu before it leaves for the title screen.
+/// opens no menu before it leaves for the Title.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;

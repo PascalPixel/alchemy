@@ -1,9 +1,9 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two maps:
+/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes:
 /// out on Tret's branches, under open sky
 /// (places/tret-tree-branch/map-0.png), between the rooms of
 /// SceneId_TreeRooms (tree_rooms.c), where the story is told.
-/// This map has no story event and tests no story flag.
+/// This scene has no story event and tests no story flag.
 ///
 /// Its eight exits (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TreeRooms; walking into
@@ -67,7 +67,7 @@ enum {
   ACTOR_BREEZE = ACTOR_FIRST_PLACED
 };
 
-/// Starts the scanline-dependent BG3 scroll callbacks.
+/// Starts the scanline-dependent BG3 scroll tasks.
 static void TretTreeBranch_StartBg3Split(void);
 
 static u16 sTransferHeader[16];
@@ -110,7 +110,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   offsetX *= PIXELS(16);
   offsetZ *= PIXELS(16);
 
-  // Shift the selected actor before the separate camera object.
+  // Shift the selected actor before the separate camera actor.
   if (actor != 0) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
@@ -169,7 +169,7 @@ static void TretTreeBranch_GoUpSoutheastVine(void) {
 
 /// Walking into one of the eight exits in Tret Tree, whose cells' metatile
 /// behaviors are the exits' own numbers: the exit sound plays and the party
-/// leaves by the exit touched, into Tret Tree's other map
+/// leaves by the exit touched, into Tret Tree's other scene
 /// (SceneId_TreeRooms).
 static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
@@ -180,7 +180,7 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
   Import_EventSetExitRequest(*touchedExit);
 }
 
-/// Selects the same mask and window parameters for Reveal and map entry.
+/// Selects the same mask and window parameters for Reveal and scene entry.
 static inline void
 TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
   state->mask = 0x3f3f;
@@ -202,12 +202,12 @@ static void TretTreeBranch_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(state);
 }
 
-/// Returns the map's exit, coord, talk and Reveal events.
+/// Returns the scene's exit, coord, talk and Reveal events.
 const struct Trigger *TretTreeBranch_GetTriggers(void) {
   return gTretTreeBranch_Triggers;
 }
 
-/// Unused script hook: begins and immediately ends a script.
+/// Unused event hook: begins and immediately ends an event.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
   Event_Start();
   Event_End();

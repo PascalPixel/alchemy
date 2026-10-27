@@ -93,8 +93,8 @@ void PartyStatus_CreateWindow(s32 flags) {
   *busy = zero;
 }
 
-/// Draws the vertical lines between the members' columns of the party status
-/// `window`, with their top and bottom joints, at the offsets listed in
+/// Draws the vertical lines between the party members' columns of the party
+/// status `window`, with their top and bottom joints, at the offsets listed in
 /// gWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
 /// line comes first in the list). In battle it also draws the window's bottom
 /// edge.
@@ -225,7 +225,7 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 }
 
 /// Draws the party status window with `flags` (see PARTY_STATUS_*): each
-/// member's name, HP and optionally PP with their bars, and in battle the
+/// party member's name, HP and optionally PP with their bars, and in battle the
 /// standby Djinn of each element. The HP is drawn in TEXT_COLOR_RED at zero and
 /// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
 /// erased and laid out again first.
@@ -252,8 +252,9 @@ void PartyStatus_Draw(s32 flags) {
   u16 members[5];
   u8 standbyDjinn[4];
 
-  // List the members shown: those fighting in battle, the party otherwise.
-  // In battle the window is a row shorter and its text starts a row higher.
+  // List the party members shown: those fighting in battle, the party
+  // otherwise. In battle the window is a row shorter and its text starts a row
+  // higher.
   if (work->battleMode != WINDOW_FIELD) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;
@@ -297,7 +298,7 @@ void PartyStatus_Draw(s32 flags) {
     Window_DrawColumnBorders(window, flags);
   }
 
-  // Each member's column: name, HP and PP, each bar 40 pixels at full.
+  // Each party member's column: name, HP and PP, each bar 40 pixels at full.
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
@@ -323,7 +324,7 @@ void PartyStatus_Draw(s32 flags) {
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->hpMax != 0) {
-      // A member with any HP left shows at least one pixel of bar.
+      // A party member with any HP left shows at least one pixel of bar.
       current = unit->hp;
       barLength = ((current * 40) / unit->hpMax);
       if (barLength == 0 && current != 0)

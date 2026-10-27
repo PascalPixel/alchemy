@@ -103,14 +103,14 @@ void BattleAnim_RunPsyCrystal(struct BattleAnimArgs *args) {
 ///
 /// Called by the wrappers above, each with its enum HealingMotesMode.
 ///
-/// Sets work->effect, overwrites PARTICLES 0 to 511 and the first 64 colours
+/// Sets work->args, overwrites PARTICLES 0 to 511 and the first 64 colours
 /// of the background palette, decodes into the battle sheet slot and
 /// work->sheet, and for Ply writes REG_BG2X and REG_BG2PA. After a djinni
-/// prelude it clears effect->variant, so the mote count and resource fall
-/// back to the basic variant's. The transfer callback it adds is
+/// prelude it clears args->variant, so the mote count and resource fall
+/// back to the basic variant's. The transfer task it adds is
 /// removed again at the end, with the blitters and the canvas layer.
 ///
-/// effect: the targets. With prelude 1, a djinni (Mars for Psy Crystal,
+/// args: the targets. With prelude 1, a djinni (Mars for Psy Crystal,
 ///         Mercury otherwise) appears first, sways and rises. variant picks
 ///         the motes per target (32 for the basic variant, 128 for the
 ///         strongest, otherwise 64) and, in every mode but Cure and Psy

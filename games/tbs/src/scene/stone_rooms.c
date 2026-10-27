@@ -12,7 +12,7 @@
 ///   behind Vault's jail door. Once the party has beaten the three thieves in
 ///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c), coming in
 ///   from Vault finds them behind the bars, each with his own talk and Mind
-///   Read. Once Vault has become its later map (vault_revisit.c), whose
+///   Read. Once Vault has become its later scene (vault_revisit.c), whose
 ///   villagers say the thieves have broken out, its jail door comes in by
 ///   STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
@@ -95,20 +95,20 @@ enum JailActorId {
 enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
 
 /// Returns the entrances from Vault, from Lunpa and from Vault's
-/// revisit map.
+/// revisit scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gStoneRooms_Entrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Returns the exits to Vault, to Vault's revisit map and to Lunpa, each to
-/// the entrance that map names for the jail (VAULT_FROM_STONE_ROOMS,
+/// Returns the exits to Vault, to Vault's revisit scene and to Lunpa, each to
+/// the entrance that scene names for the jail (VAULT_FROM_STONE_ROOMS,
 /// VAULT_REVISIT_FROM_STONE_ROOMS and LUNPA_FROM_STONE_ROOMS).
 const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 
 /// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
-/// is set), or, entered from Vault's revisit map
+/// is set), or, entered from Vault's revisit scene
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
@@ -119,7 +119,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// Returns the thieves' triggers, which also hold the Lunpa room's chests and
-/// exit, or the prisoner's when the party came in from Vault's revisit map,
+/// exit, or the prisoner's when the party came in from Vault's revisit scene,
 /// matching Scene_GetActorTemplates.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {

@@ -15,7 +15,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   return result;
 }
 
-// The tile column where a member's command row ends and its name window
+// The tile column where a party member's command row ends and its name window
 // begins.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define WINDOW_X 22
@@ -27,11 +27,11 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// screen, the selected one pulsing as a sprite and named in a window, until
 /// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
 /// B cancels, or -2 when L or R asks for the Status screen; the last two in a
-/// member's row only. When the link battle's time runs out the row takes its
-/// first command. Battle_CollectPartyCommands runs both rows.
+/// party member's row only. When the link battle's time runs out the row takes
+/// its first command. Battle_CollectPartyCommands runs both rows.
 ///
 /// COMMAND_ROW_PARTY is the party's row at the start of a round: Fight, Flee
-/// and Status. COMMAND_ROW_MEMBER, as any other mode, is a member's row:
+/// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
 /// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
 /// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
 /// Item and Defend. Each row remembers its choice in
@@ -196,16 +196,17 @@ s32 BattleCommandRow_Run(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
-              // VRAM through a volatile pointer, as in the member's row (19 of
-              // 1037 instructions differ with a plain one).
-              /* FAKEMATCH(temporary): vram, offset and mask, as in the member's
-               * row; as constants in place, 6 of 1037 instructions differ in
-               * tbs-en. */
+              // VRAM through a volatile pointer, as in the party member's row
+              // (19 of 1037 instructions differ with a plain one).
+              /* FAKEMATCH(temporary): vram, offset and mask, as in the party
+               * member's row; as constants in place, 6 of 1037 instructions
+               * differ in tbs-en. */
               volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
               s32 offset = 0x100;
               s32 mask = 3;
-              /* FAKEMATCH(temporary): tmp, as in the member's row; as the two
-               * values in place, 129 of 1037 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): tmp, as in the party member's row; as the
+               * two values in place, 129 of 1037 instructions differ in tbs-en.
+               */
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
@@ -251,7 +252,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     // 16 Right, 32 Left). In the party's row it takes Fight. Unit 1 moves left
     // to Defend and takes it; unit 0 moves right to Summon, or to Djinn while
     // no Djinni is on standby, shows that command's hint at tutorial step 1
-    // and takes it on the next press. Other members take Attack.
+    // and takes it on the next press. Other party members take Attack.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
     navigation = gBattleMenuWork;
@@ -418,12 +419,13 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   }
 }
 
-/// Clears the highlight from the party status window's member columns, then
-/// highlights the columns of the units in `ids` (up to four, ended by 0xff):
-/// the member whose commands are being chosen. A unit not in the party is
-/// skipped. The window is right-aligned on the 30-tile row, so its member
-/// columns start at column 29 - 6 * members (the Djinn column, when shown,
-/// lies left of them). Returns 0. Battle_CollectPartyCommands calls it.
+/// Clears the highlight from the party status window's party member columns,
+/// then highlights the columns of the units in `ids` (up to four, ended by
+/// 0xff): the party member whose commands are being chosen. A unit not in the
+/// party is skipped. The window is right-aligned on the 30-tile row, so its
+/// party member columns start at column 29 - 6 * members (the Djinn column,
+/// when shown, lies left of them). Returns 0. Battle_CollectPartyCommands calls
+/// it.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
   struct BattleWork *battle = gBattleWork;
   s32 count;

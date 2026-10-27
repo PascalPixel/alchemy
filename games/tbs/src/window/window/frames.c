@@ -412,7 +412,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   return printer;
 }
 
-/// Sets the effects the next message is decoded with
+/// Sets the decode flags the next message is decoded with
 /// (Message_Decode): flags bit 0 (haltingSpeech) makes it halting
 /// speech, a short pause before each character, broken off with an ellipsis
 /// after the first word; bit 1 (spacingAfter) puts code 222 after certain
@@ -558,7 +558,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   WaitFrames(3);
 }
 
-/// The window system's per-frame callback: windows, then text printers,
+/// The window system's per-frame task: windows, then text printers,
 /// then sprite animation. Both setups schedule it in the main loop's pass
 /// (0xc80); nothing here removes it.
 void WindowSystem_Update(void) {

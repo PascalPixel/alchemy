@@ -20,7 +20,7 @@ static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
 ///
 /// Abilities: Force (FIELD_PSYNERGY_FORCE).
 ///
-/// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
+/// The shot is sprite 215, the hand of Move and Carry, flying at 4 pixels a
 /// frame; where it lands it makes a heavy impact
 /// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
 /// FieldPsynergy_Run, and through FieldPsynergy_ForceOnTarget.
@@ -114,11 +114,11 @@ void FieldPsynergy_Force(void) {
   resourceSlot = sharedAnimation->slot;
 
   // Destination: 56 pixels in front of the caster with effectWork->enabled set
-  // (no trigger named the target), otherwise the effect's position.
+  // (no trigger named the target), otherwise the Psynergy's position.
   // The shot's script waits to arrive and makes the impact
   // (gFieldEffect_BurstParticleActorScript + 4 is
   // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
-  // is freed on arrival.
+  // is released on arrival.
   if (effectWork->enabled != 0) {
     caster = effectWork->mainActor;
     pos.x = caster->x.fixed;
@@ -147,8 +147,8 @@ void FieldPsynergy_Force(void) {
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
   // way: the ground there must be within a step (MapGrid_CheckCollision 0) and
-  // free of objects. It hops (8 pixels a frame) with childOption; a map
-  // script's childMode leaves it be.
+  // free of actors. It hops (8 pixels a frame) with childOption; an
+  // event's childMode leaves it be.
   if (target != NULL && effectWork->childMode == 0) {
     if (effectWork->childOption != 0)
       target->velocityY = 8 << 16;
@@ -165,7 +165,7 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  // Run the map's event for it, if there is one.
+  // Run the scene's event for it, if there is one.
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)

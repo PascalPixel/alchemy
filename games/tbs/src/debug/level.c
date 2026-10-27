@@ -127,7 +127,7 @@ u8 *IncreaseItemAndLevel_GetTriggers(void) {
   return (u8 *)gIncreaseItemAndLevel_Triggers;
 }
 
-/// Raises one member's level by amount, then recalculates that unit.
+/// Raises one party member's level by amount, then recalculates that unit.
 static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   struct Unit *unit = Unit_Get(ownerId);
 
@@ -135,8 +135,8 @@ static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_Calculate(ownerId);
 }
 
-/// Applies the level change to the members returned by the active-party service
-/// (FieldParty_ListMembers): every member of the party.
+/// Applies the level change to the party members returned by the active-party
+/// service (FieldParty_ListMembers): every party member.
 static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
@@ -153,7 +153,7 @@ static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   }
 }
 
-/// Displays the selected member's level and changes the whole party.
+/// Displays the selected party member's level and changes the whole party.
 /// B closes the window and recalculates the original four heroes. Talking to
 /// ACTOR_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with
@@ -216,8 +216,8 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// Browses nonempty item definitions and gives the selected item to the party.
 /// Talking to ACTOR_ITEM_BROWSER. Up and Down step one number, Right and Left
 /// ten, R and L thirty, passing over numbers whose item has no icon; A gives
-/// the item to the first member with room (SE_NOTE_HIGH), and B, or A with
-/// every bag full, closes the browser.
+/// the item to the first party member with room (SE_NOTE_HIGH), and B, or A
+/// with every bag full, closes the browser.
 static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
   // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
@@ -479,7 +479,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 }
 
 /// Starts the window transition and edition-specific actor
-/// scale/animation setup. Returns zero through the exported map entry. The
+/// scale/animation setup. Returns zero through the exported scene entry. The
 /// room's initialize entry, which SceneManager_Run runs on entry and whose
 /// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start

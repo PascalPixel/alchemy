@@ -192,8 +192,8 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 /// Each level up shows its message, every Psynergy newly learned and each
 /// stat that rose. An item the inventory cannot take goes to gOverflowItem
 /// and ends the handing out. Called by Battle_Run once the battle is
-/// won. Changes the members' experience, levels and stats, the party's coins
-/// and inventory.
+/// won. Changes the party members' experience, levels and stats, the party's
+/// coins and inventory.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
@@ -219,7 +219,7 @@ void Battle_AwardSpoils(void) {
     BattleMessage_ShowAndWaitFar(MsgExpGained);
     BattleMessage_WaitForAdvance();
   }
-  // Experience and level ups: each member is copied before every level it
+  // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);

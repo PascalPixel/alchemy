@@ -47,9 +47,9 @@ u8 *TestRoom_GetActorTemplates(void) { return (u8 *)gTestRoom_ActorTemplates; }
 
 /// Grants the first Djinni of an element, then clears its found flag for
 /// testing. Djinn_JoinParty plays the element's capture effect on the
-/// actor, frees its slot and gives the element's first Djinni to the member
-/// with the fewest Djinn; clearing the flag the template tests lets the room
-/// place the Djinni again on the next entry.
+/// actor, releases its slot and gives the element's first Djinni to the party
+/// member with the fewest Djinn; clearing the flag the template tests lets the
+/// room place the Djinni again on the next entry.
 static __inline__ void TestRoom_GiveDjinniForTesting(s32 actorId, s32 element) {
   Djinn_JoinParty(actorId, element, 0);
   GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);

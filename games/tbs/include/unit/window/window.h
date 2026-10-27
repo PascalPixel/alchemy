@@ -97,7 +97,7 @@ enum TextColor {
 #define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
 // The two page arrows beside a paged list's page numbers, in the menus and
-// the main menu: tiles 0x128 and 0x129 of character block 0, which
+// the File Screen: tiles 0x128 and 0x129 of character block 0, which
 // Link_DrawPageArrows slides back and forth each frame, and their
 // tilemap entries.
 #define PAGE_ARROW_TILE 0x128
@@ -259,7 +259,7 @@ enum FieldMessageFlag {
   FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };
 
-/// The pause menu's entries, as PauseMenu_Choose returns them
+/// The Pause menu's entries, as PauseMenu_Choose returns them
 /// (counted from Save your quest even when only Change settings shows).
 enum PauseMenuEntry {
   PAUSE_MENU_SAVE_QUEST = 0,

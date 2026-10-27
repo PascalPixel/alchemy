@@ -4,8 +4,8 @@
 /// through by using Force, learned from Nyunpa, on the stumps the apes hide in.
 ///
 /// The way runs from the first area (SceneId_MogallForestSign), entered from
-/// the world map, through the second (SceneId_MogallForestQuartz) to the third
-/// (SceneId_MogallForestKillerApe), which leaves for the world map by
+/// the World Map, through the second (SceneId_MogallForestQuartz) to the third
+/// (SceneId_MogallForestKillerApe), which leaves for the World Map by
 /// MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in hollow purple stumps,
 /// each stump holding a blank actor on its spot, and Force on a stump
 /// brings its ape out. Most turn to the leader, point the way on and leave; two
@@ -38,12 +38,12 @@
 ///   monks say that Nyunpa has reached enlightenment and passed away.
 /// - SceneId_MogallForestSidePaths, also named Mogall Forest: side paths that
 ///   the three areas' exits lead into and back out of, some of them leading
-///   back into the map itself; a Psynergy Stone lies there.
+///   back into the scene itself; a Psynergy Stone lies there.
 ///
-/// One overlay serves all four maps: MogallForest_GetEntrances,
-/// _GetActorTemplates and _GetTriggers choose each map's tables, and
+/// One overlay serves all four scenes: MogallForest_GetEntrances,
+/// _GetActorTemplates and _GetTriggers choose each scene's tables, and
 /// MogallForest_Initialize puts back the apes already out, the rolled logs and
-/// the settled rocks, map by map and entrance by entrance. The
+/// the settled rocks, scene by scene and entrance by entrance. The
 /// third area's east ape is also the guide at metatile behavior 22 and the
 /// Killer Ape, and the editions differ in how it is kept out of sight once it
 /// has come out (the #if blocks below and in MogallForest_Initialize).
@@ -222,7 +222,7 @@ enum MogallForestKillerApeActorId {
 };
 
 /// The animations of a river log's sprite (SPRITE_LOG_NORTH_SOUTH and
-/// SPRITE_LOG_WEST_EAST), named by when these maps play them.
+/// SPRITE_LOG_WEST_EAST), named by when these scenes play them.
 enum MogallForestLogAnimation {
   MOGALL_FOREST_LOG_ROLLING = 3,    ///< as it rolls over the bank
   MOGALL_FOREST_LOG_IN_RIVER = 4,   ///< lying in the river, set on arrival
@@ -275,7 +275,7 @@ enum {
   FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
-/// Map flag, kept while the party stays in the area.
+/// Scene flag, kept while the party stays in the area.
 enum {
   /// ★ Named from what the player sees: the rock beside the log, moved with
   /// Move (its render)
@@ -346,7 +346,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   return 0;
 }
 
-/// Script command: draws the actor in the colour mode its timer holds.
+/// An actor script call: draws the actor in the colour mode its timer holds.
 static s32 MogallForest_CopyTimerToChild(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   Actor_SetSpriteColor(actor, actor->timer);
@@ -453,7 +453,7 @@ const struct SceneEntrance *MogallForest_GetEntrances(void) {
 
 const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 
-/// Returns the exits, one table for all four maps.
+/// Returns the exits, one table for all four scenes.
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorTemplate *MogallForest_GetActorTemplates(void) {

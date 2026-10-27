@@ -38,16 +38,16 @@ void FieldEffect_UpdateDescendingActor(struct Actor *updated) {
 
 /// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
 enum RetreatParticleState {
-  RETREAT_PARTICLE_AIM = 0,    ///< placed on the main object and aimed
+  RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
   /// Set by FieldPsynergy_Retreat: freed on arrival.
   RETREAT_PARTICLE_LAST_FLIGHT = 2
 };
 
 /// Field effect sprite callback: a particle flies 120 pixels from the main
-/// object's screen position (8 pixels lower) in a direction within 1/8 turn of
+/// actor's screen position (8 pixels lower) in a direction within 1/8 turn of
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
-/// object on arrival until it takes its last flight.
+/// actor on arrival until it takes its last flight.
 void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   struct Vector3 pos;
   struct Actor *main;
@@ -93,7 +93,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   }
 }
 
-/// Spins the main object and shrinks it while 24 particles fly out, one a
+/// Spins the main actor and shrinks it while 24 particles fly out, one a
 /// frame.
 ///
 /// Abilities: Retreat (FIELD_PSYNERGY_RETREAT).
@@ -101,10 +101,10 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
 /// and shrinks out of sight (FieldEffect_UpdateDescendingActor) as the
-/// particles fly. It is hidden, not released, and the effect opens a script
+/// particles fly. It is hidden, not released, and the Psynergy opens an event
 /// (Event_Start) it does not end: the Retreat exit raised before it
 /// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
-/// the map. Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
+/// the scene. Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
@@ -172,12 +172,12 @@ void FieldPsynergy_Retreat(void) {
 }
 
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
-/// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
+/// as it falls 2 pixels a frame on the actor it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the World Map, MAP_INDEX_WORLD).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   // One shared inline kernel with constant inversion grows the positive and
-  // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
+  // negative update routines 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
   struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;
   s32 y;
@@ -206,7 +206,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
-/// down, 16 pixels in front of the object and up to 5 pixels nearer.
+/// down, 16 pixels in front of the actor and up to 5 pixels nearer.
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;

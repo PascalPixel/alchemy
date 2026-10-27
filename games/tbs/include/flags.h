@@ -28,36 +28,36 @@
 #define FLAG_DJINN_HIDING_FIRST 128
 /// Set while `djinni` is hiding, its DjinniId counting from
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
-/// fled Djinni battle, and the Djinni's actor stays away until the map
+/// fled Djinni battle, and the Djinni's actor stays away until the scene
 /// is entered normally again, which clears it.
 /// ★ Named from the game: "It must be hiding somewhere again"
 /// (MsgVaultHmmmItMustBeHidingSomewhere)
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 /// The system flags, after the party's and the Djinn's: what the field,
-/// battles and menus keep about their own working, shared with the maps
+/// battles and menus keep about their own working, shared with the scenes
 /// that set or test them, rather than the story's progress.
 #define FLAG_SYSTEM_FIRST 0x100
 #define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
-/// The next map change is silent: the map loader clears it in place of
+/// The next scene change is silent: the scene loader clears it in place of
 /// playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
 /// transition.
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
-/// Set as a battle starts, cleared as a field map starts.
+/// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field loop handles its requests, and cleared while the party
 /// walks (SceneManager_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
-/// Set while the field menu is open; maps hold their moving actors
+/// Set while the field menu is open; scenes hold their moving actors
 /// still.
 #define FLAG_MENU_OPEN 0x106
-/// While set, opening the field menu or the pause menu, or pressing a shortcut,
+/// While set, opening the field menu or the Pause menu, or pressing a shortcut,
 /// raises FIELD_RAISED_TRIGGER_MENUS instead (SceneManager_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
 // Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
-// PP faster (units.c). Each lighthouse's maps set its flag on every arrival,
+// PP faster (units.c). Each lighthouse's scenes set its flag on every arrival,
 // and Scene_Arrive clears all four when the party enters another
 // area, so a flag is set only while the party is inside.
 /// The party is inside Venus Lighthouse, which is lit.
@@ -68,29 +68,29 @@
 /// ★ Named from the game: "The lighthouse has already been lit!"
 /// (MsgMercuryLighthouseAlreadyLit)
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
-/// Mars Lighthouse is lit; no ☀️ map sets it.
+/// Mars Lighthouse is lit; no scene in The Broken Seal sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
 #define FLAG_MARS_LIGHTHOUSE_LIT 0x112
-/// Jupiter Lighthouse is lit; no ☀️ map sets it.
+/// Jupiter Lighthouse is lit; no scene in The Broken Seal sets it.
 /// ★ Named from the game: "the lighthouses aren't all lit!" (MsgMercuryGot)
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
-/// The next map keeps the music that is playing; sequence_manager.c clears
+/// The next scene keeps the music that is playing; sequence_manager.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
 /// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
-#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
-/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next map plays
+#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current scene is not the World Map
+/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays
 /// the leader's arrival (Entrance_PlayArrival), unless its setup
 /// clears this first.
 #define FLAG_ARRIVAL_STAIRS_UP 0x120
 /// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
 #define FLAG_ARRIVAL_STAIRS_DOWN 0x121
-/// The leader falls into the next map from 160 pixels above
+/// The leader falls into the next scene from 160 pixels above
 /// (Entrance_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
-/// The party is in a town (SCENE_TYPE_TOWN); the map loader sets and
+/// The party is in a town (SCENE_TYPE_TOWN); the scene loader sets and
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
 // Set as a file continues from its last Sanctum by the player's choice
@@ -102,24 +102,24 @@
 /// The file's two play times differed and the player answered Yes to "Do you
 /// wish to try to recover from a Sanctum?".
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
-/// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
+/// Play the kind's usual cast. Field_UsePsynergy sets it for each use and
 /// clears it when the after trigger has subject bit 0x400 and plays its own;
-/// the before event's script may clear it too.
+/// the before event may clear it too.
 #define FLAG_PLAY_PSYNERGY_CAST 0x140
-/// Aim the effect at the actor ahead (FieldPsynergy_Dispatch)
+/// Aim the field Psynergy at the actor ahead (FieldPsynergy_Dispatch)
 /// rather than run the kind's untargeted body (FieldPsynergy_Run, where Halt
 /// still stops the nearest actor when it has a talk trigger, and Force and
 /// Reveal run their PSYNERGY_PHASE_ACTS event). Field_UsePsynergy keeps
 /// it set only when a trigger applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
-/// Set before an action on the field; still set afterwards, nothing came of it
-/// and the game says so. A script that acts clears it.
-/// ★ Named from the game: "But nothing happens." (MsgNothingHappens)
+/// Set before the party acts on the field; still set afterwards, nothing came
+/// of it and the game says so. An event that acts clears it. ★ Named from the
+/// game: "But nothing happens." (MsgNothingHappens)
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 /// Retreat is blocked, whether cast or used from an item, and the game says
-/// "It doesn't work here." Cleared on every normal map entry (not a return
-/// keeping the party's position); the maps that forbid Retreat set it.
+/// "It doesn't work here." Cleared on every normal scene entry (not a return
+/// keeping the party's position); the scenes that forbid Retreat set it.
 /// ★ Named from the game: "Retreat" (MsgAbilityName)
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
@@ -145,7 +145,7 @@
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 /// The next battle is a link battle (Battle_Run); the Battle Arena
-/// sets it, and every normal map entry (not a return keeping the party's
+/// sets it, and every normal scene entry (not a return keeping the party's
 /// position) clears it.
 /// ★ Named from the game: "Test your skills in Linked Battles"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
@@ -158,7 +158,7 @@
 /// reader. The debug story preset for Vale's plaza sets it, and so do the
 /// Colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
-/// Set, the highest of these picks the tint a field Psynergy effect fades
+/// Set, the highest of these picks the tint a field Psynergy fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
@@ -202,7 +202,7 @@
 /// defeated (BattleFormation_AverageLevel). Nothing in this game sets it.
 #define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
 /// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
-/// has no effect and the pause menu offers only Change settings.
+/// has no effect and the Pause menu offers only Change settings.
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
@@ -219,17 +219,18 @@
 /// Scene_Arrive as the party enters the section; the world map
 /// screen shows a marker for each.
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
-/// A map's own flags, cleared on every ordinary entry
+/// A scene's own flags, cleared on every ordinary entry
 /// (Scene_Arrive): puzzles reset when the party walks back in.
 #define FLAG_SCENE_TEMP_FIRST 0x200
-#define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the map's 256 flags
-/// An area's flags, kept while the party moves between the maps of one
-/// section and cleared when it enters another. Each section uses the numbers
-/// for its own, so the maps name them; the next two are the Battle Arena's.
+#define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the scene's 256 flags
+/// An area's flags, kept while the party moves between the scenes of one
+/// area and cleared when it enters another. Each area uses the numbers
+/// for its own, so the scenes name them; the next two are the Battle Arena's.
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
 // Byte flags, read and written eight at a time.
-#define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
+#define FLAG_LINK_PARTY_COUNT                                                  \
+  0x3f0 ///< the party members the linked opponent sent
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
 /// series ends.
 /// ★ Named from the game: "Would you like to fight the next monster?"
@@ -243,13 +244,13 @@
 /// ★ Named from the game: "Warriors enter the finals without any of their own
 /// equipment." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
-/// The next field map starts where the party was, as after a battle: the
-/// map's flags are not reset, the actors come back from their snapshot,
+/// The next field scene starts where the party was, as after a battle: the
+/// scene's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gSaveBlock.returnMusic resumes if there is one (a
-/// random battle clears it, so the map's own music plays). SceneManager_Run
-/// clears it once the map starts.
+/// random battle clears it, so the scene's own music plays). SceneManager_Run
+/// clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
-/// The map shows its area's name once it is on screen; entering a new
+/// The scene shows its area's name once it is on screen; entering a new
 /// area sets it.
 #define FLAG_SHOW_AREA_NAME 0x12f
 /// The next layout keeps the palette and tiles already loaded, once.
@@ -424,7 +425,7 @@
 /// GondowanCave's stone pillar has dropped into its place for good.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
-// GondowanCaveRiver's two chests, whose examine triggers every map of the
+// GondowanCaveRiver's two chests, whose examine triggers every scene of the
 // overlay carries.
 /// ★ Named from the game: "Apple" (MsgItemName)
 #define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
@@ -487,7 +488,7 @@
 /// (MsgAltinWeDidIsaacWeBeat)
 #define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
 /// AltinPeakFallingRocks's boulder has fallen and rolled after the party leader
-/// into the wall at the bottom, leaving rubble; the map redraws the rubble
+/// into the wall at the bottom, leaving rubble; the scene redraws the rubble
 /// and the toppled log on later visits, and Force no longer topples the log.
 /// ★ Named from the game: "Watch for falling rocks! Do not strike the wall!
 /// Rocks may fall!" (MsgAltinWatchFallingRocks)
@@ -528,7 +529,7 @@
 /// ★ Named from the game: "Wait..." (MsgAltmillerWait)
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
 /// The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi
-/// then holds the Colosso finals, and its maps read this as the finals day.
+/// then holds the Colosso finals, and its scenes read this as the finals day.
 /// ★ Named from the game: "You have our gratitude for saving Babi's life."
 /// (MsgAltmillerBabi)
 #define FLAG_BABI_SAVED 0x962
@@ -622,7 +623,7 @@
 #define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
 /// Babi and Iodem have spoken with the party in the throne room after Colosso
 /// and sent Iodem with it toward Venus Lighthouse. Gondowan Passage, Suhalla
-/// and Suhalla Gate take their later people and scripts from then on.
+/// and Suhalla Gate take their later people and events from then on.
 /// ★ Named from the game: "I've been waiting here because I wanted to speak
 /// with you." (MsgTolbiWaitingCompanions)
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
@@ -825,7 +826,7 @@
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3
 
 // Lamakan Desert
-/// The Manticore, on the third map, is beaten.
+/// The Manticore, on the third scene, is beaten.
 /// ★ Named from the game: "Manticore" (MsgEnemyName)
 #define FLAG_LAMAKAN_MANTICORE_BEATEN 0x90a
 // The desert's chests, set once each is opened.
@@ -1072,7 +1073,7 @@
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
 /// A pillar pushed along the upper floor's row has sent the blue statue on its
 /// ledge sliding off to the floor below, where Move can set it on the stair
-/// gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The map
+/// gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The scene
 /// places the statue below from then on.
 /// ★ Named from its area name: Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
@@ -1177,7 +1178,7 @@
 /// ★ Named from the game: "There'll be trouble if we get caught up in one of
 /// those..." (MsgSuhallaSandstorm)
 #define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6
-/// Douse has stopped the sandstorm that chases the party in the second map,
+/// Douse has stopped the sandstorm that chases the party in the second scene,
 /// for good.
 /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED 0x9b7
@@ -1348,7 +1349,7 @@
 /// floor with a puddle where it stood (its render)
 #define FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR 0x972
 /// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
-/// pushed to the west of its row; the map puts it back there on the next
+/// pushed to the west of its row; the scene puts it back there on the next
 /// visit.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
@@ -1367,25 +1368,25 @@
 /// ★ Named from what the player sees: four long stone paths over a pit (its
 /// render)
 #define FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED 0x973
-/// A chest in the second map.
+/// A chest in the second scene.
 /// ★ Named from the game: "Oracle's Robe" (MsgItemName)
 #define FLAG_TUNNEL_RUINS_ORACLES_ROBE 0xf32
-/// A chest in the second map.
+/// A chest in the second scene.
 /// ★ Named from the game: "Asura's Armor" (MsgItemName)
 #define FLAG_TUNNEL_RUINS_ASURAS_ARMOR 0xf33
 // Vale
 /// The prologue's stormy night: lightning over Vale, the rockslide and the
 /// monsters loose in the village. It is set when Dora wakes Isaac and on every
-/// arrival in the storm's map, and cleared when the strangers leave the boys
+/// arrival in the storm's scene, and cleared when the strangers leave the boys
 /// lying in the storm; Vale's houses empty and their doors lead into the storm.
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"
 /// (MsgValeSureHelp)
 #define FLAG_VALE_STORM 0x834
 // XXX: the patched editions also set it on beating Lamakan Desert's Manticore;
 // why is not known.
-/// The party has reached Kalay: every Kalay map sets it on entry. Vale's
+/// The party has reached Kalay: every Kalay scene sets it on entry. Vale's
 /// villagers then talk of the journey, Garet's homecoming plays, Vault leads to
-/// its later map and the Sanctum's talk changes.
+/// its later scene and the Sanctum's talk changes.
 /// ★ Named from its area name: Kalay
 #define FLAG_KALAY_REACHED 0x87a
 /// Catch has taken the Nut floating in Vale.
@@ -1727,7 +1728,7 @@
 // Hammet's palace
 /// Set once the guards have brought Ivan and the party to Lady Layana and she
 /// has sent everyone back to their posts. Until then Hammet Palace's guards
-/// turn the party away at the door; Kalay's maps set it whenever
+/// turn the party away at the door; Kalay's scenes set it whenever
 /// FLAG_DODONPA_LOCKED_UP is set.
 /// ★ Named from the game: "I must report this to Lady Layana!"
 /// (MsgKalayLordHammetsPalaceLordAway)
@@ -1742,7 +1743,7 @@
 #define FLAG_HAMMET_BACK_HOME_SEEN 0x914
 /// The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
 /// to the party: Layana opens it in thanks once Hammet is home, and Kalay's
-/// maps set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
+/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
 /// door and the tunnel's way through are drawn open, and its guard turns away.
 /// ★ Named from the game: "Layana ordered the door to the underground path
 /// opened." (MsgHammetPalaceLayanaOrderedTheDoorToThe)
@@ -2171,9 +2172,9 @@
 /// ★ Named from the game: "Turtle Boots" (MsgItemName)
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf
 
-// Map flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
+// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
 // Scene_Arrive clears them on every ordinary entry, and each
-// map keeps its own puzzle and script states in them. A map says beside its
+// scene keeps its own puzzle and event states in them. A scene says beside its
 // uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
@@ -2436,7 +2437,7 @@
 // Scene_Arrive clears them whenever the party enters a different
 // area, so they keep what should last while the party is
 // anywhere inside one area, such as where Fuchin Falls Cave's logs
-// float. A map says beside its uses what each one holds there.
+// float. A scene says beside its uses what each one holds there.
 #define FLAG_AREA_TEMP_00 0x300
 #define FLAG_AREA_TEMP_01 0x301
 #define FLAG_AREA_TEMP_02 0x302

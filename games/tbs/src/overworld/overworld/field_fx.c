@@ -8,7 +8,7 @@ STATIC_ASSERT(offsetof(struct Actor, velocityY) == 0x28);
 STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 
-/// ActorSystem_Initialize allocates the 64 objects in
+/// ActorSystem_Initialize allocates the 64 actors in
 /// HEAP_SLOT_ACTORS.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
@@ -23,7 +23,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 /// Keeps the party leader off the treasure spots: a leader within 16 pixels of
 /// a treasure spot's centre is moved 20 pixels from that centre, in the
 /// direction it stood, and loses its move target. Only the first treasure spot
-/// it stands on moves it. Called by two map overlays (Suhalla Desert, Lamakan
+/// it stands on moves it. Called by two scene overlays (Suhalla Desert, Lamakan
 /// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
   struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
@@ -65,8 +65,8 @@ void TreasureSpot_MoveLeaderAway(void) {
 }
 
 /// Starts the particle script and its first child at priority 1, if the spawn
-/// succeeded. Allocation failure leaves the effect absent. The script sinks
-/// the sparkle a quarter pixel a frame for 60 frames, then frees it.
+/// succeeded. Allocation failure leaves the sparkle absent. The script sinks
+/// the sparkle a quarter pixel a frame for 60 frames, then releases it.
 static inline void Actor_InitializeSparkle(struct Actor *actor) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
@@ -78,7 +78,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 }
 
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
-/// within 16 pixels of it. Installed as the picture's update hook by
+/// within 16 pixels of it. Installed as the picture's update routine by
 /// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
 /// and ItemDisplay_ShowItem.
 void ItemDisplay_EmitSparkles(struct Actor *actor) {
@@ -112,7 +112,7 @@ void ItemDisplay_EmitSparkles(struct Actor *actor) {
 /// actor's,
 /// with sparkles. While Reveal is active, its marks and sparkles are cleared
 /// first. Returns the picture's actor, or 0 without the actor or
-/// a free object. The picture is object 22, thrown up (velocityY 2 << 16,
+/// an empty actor slot. The picture is sprite 22, thrown up (velocityY 2 << 16,
 /// gravity 0x4000: it rises for 8 frames) while it grows to full size, its icon
 /// drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded
 /// into VRAM. The caller owns the picture: Field_ExamineCell releases it once
@@ -141,10 +141,10 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   srcZ = (picturePosition.vector.z & 0xfff00000) + (8 << 16);
 
   if (((struct FieldWork *)work)->revealActive != 0) {
-    // Stop both the marker emitters and the sparkle objects they already made.
+    // Stop both the marker emitters and the sparkle actors they already made.
     struct Actor *effect = EFFECT_OBJECT_POOL;
 
-    // work now counts the objects left.
+    // work now counts the actors left.
     work = EFFECT_OBJECT_COUNT - 1;
 
     do {
@@ -231,7 +231,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
-/// set. The leader then returns to animation 1. Map overlays call it (six of
+/// set. The leader then returns to animation 1. Scene overlays call it (six of
 /// them).
 void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
@@ -260,9 +260,9 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item. Then it
-/// releases the picture and the leader returns to animation 1. Map overlays
-/// call it (41 of them). When no object is
-/// free, heap block 17, taken for the icon, is not released (the map change's
+/// releases the picture and the leader returns to animation 1. Scene overlays
+/// call it (41 of them). When no actor is
+/// free, heap block 17, taken for the icon, is not released (the scene change's
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
@@ -308,7 +308,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 /// as it returns.
 #define MENU_OPEN_OFFSET 0xcca
 
-/// While Reveal is active, destroys all its sparkles, leaving its marks. Called
+/// While Reveal is active, releases all its sparkles, leaving its marks. Called
 /// by the field menu (FieldMenu_Run, window/selection.c) each time
 /// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
 void FieldEffect_ClearRandomParticles(void) {
@@ -330,7 +330,7 @@ void FieldEffect_ClearRandomParticles(void) {
 #endif
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
-/// pixels of it. Installed as the marker's update hook by
+/// pixels of it. Installed as the marker's update routine by
 /// FieldEffect_SpawnNearbyMarkers.
 void Reveal_EmitSparkles(struct Actor *actor) {
   const struct Actor *source = (const struct Actor *)actor;
@@ -355,9 +355,9 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   Actor_InitializeSparkle(object);
 }
 
-/// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
+/// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's actor
 /// script (gFieldEffect_MarkerParticleScript) through SC_CALL: the marker stays
-/// while it returns 1 and frees itself once it returns 0.
+/// while it returns 1 and releases itself once it returns 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
   s16 revealState;
   u32 isActive = 0;
@@ -373,10 +373,10 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
 /// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
-/// object placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
+/// actor placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
-/// object of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
-/// Reveal's effect (event_commands/reveal.c).
+/// actor of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
+/// Reveal (event_commands/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct Actor *actor;

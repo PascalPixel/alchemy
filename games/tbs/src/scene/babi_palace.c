@@ -1,5 +1,5 @@
 /// @file
-/// Babi's Palace in Tolbi, two maps under the area name Babi's Palace that
+/// Babi's Palace in Tolbi, two scenes under the area name Babi's Palace that
 /// share this overlay and one exit table:
 ///
 /// - SceneId_BabiPalaceEntrance, the court between the town and the palace
@@ -12,7 +12,7 @@
 ///   cottage_rooms_b.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
-/// Each map has three actor template tables and three trigger tables,
+/// Each scene has three actor template tables and three trigger tables,
 /// and Scene_GetActorTemplates and Scene_GetTriggers choose between them by
 /// two story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED,
 /// set when the party saves him in Altmiller Cave) and after Colosso
@@ -253,7 +253,7 @@ enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// The palace map's tileset animations that open its doors, for
 /// TilesetAnim_Resume (play) and TilesetAnim_Pause (pause).
-/// Each map entry pauses them, so every door is drawn shut; the recording of
+/// Each scene entry pauses them, so every door is drawn shut; the recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open
 /// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
 enum BabiPalaceDoorAnimation {
@@ -339,10 +339,10 @@ const struct SceneExitRegion *BabiPalace_GetRegions(void) {
   return gBabiPalace_Regions;
 }
 
-/// Both maps share one exit table.
+/// Both scenes share one exit table.
 const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 
-/// Returns the actor templates for the map and the story: before Babi's
+/// Returns the actor templates for the scene and the story: before Babi's
 /// rescue, during the finals or after Colosso.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
@@ -2440,7 +2440,7 @@ static void BabiPalace_ExamineWell(void) {
   Event_End();
 }
 
-/// Returns the triggers for the map and the story, as for the actor
+/// Returns the triggers for the scene and the story, as for the actor
 /// templates.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
@@ -2461,7 +2461,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gBabiPalace_TriggersBabiMissing;
 }
 
-/// Sets up the map being entered: the doors, the Cloak Ball on show, and
+/// Sets up the scene being entered: the doors, the Cloak Ball on show, and
 /// the events that play on arrival (Babi after Colosso, the attendant during
 /// the finals, waking after a night's rest). Returns 0.
 s32 BabiPalace_ApplyEntryState(void) {
@@ -2472,7 +2472,7 @@ s32 BabiPalace_ApplyEntryState(void) {
 
   BabiPalace_CloseDoors();
   // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
-  // BABI_PALACE_AFTER_COLOSSO were made for; only the debug map selector
+  // BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector
   // reaches them, and nothing in the ROM says why they set these story flags.
   if (gSaveBlock.entrance == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
@@ -2528,7 +2528,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       // Only this entrance chooses the waking, so rewriting it makes a
-      // later load of the map from the save block, as when a game saved here
+      // later load of the scene from the save block, as when a game saved here
       // is continued, an arrival from the statue room, not a second waking.
       gSaveBlock.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }

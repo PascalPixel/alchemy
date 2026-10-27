@@ -8,7 +8,7 @@
 
 /// Searching MB_LOG_ROOMS_A_INN_BARREL beside the girl at the inn takes a
 /// Bone after the thieves are jailed. The floor Bone remains, so the party can
-/// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both maps name
+/// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name
 /// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
   Event_Start();

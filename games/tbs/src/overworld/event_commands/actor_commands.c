@@ -1,10 +1,10 @@
 /// @file
-/// Script commands on actors: placing, moving and animating them.
+/// Event commands on actors: placing, moving and animating them.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
 
-/// Returns an actor, or NULL if it does not exist. Map scripts reach it
+/// Returns an actor, or NULL if it does not exist. Events reach it
 /// through Actor_Get and ACTOR_GET; it is the far-callable form of
 /// Actor_Lookup that the other banks use.
 struct Actor *Actor_GetById(s32 actorId) {
@@ -15,9 +15,9 @@ struct Actor *Actor_GetById(s32 actorId) {
   return actor;
 }
 
-/// The script command "set actor speed": its top speed and
+/// The event command "set actor speed": its top speed and
 /// acceleration, 16.16 pixels per frame. Writes the actor's speedLimit
-/// and acceleration. Map scripts reach it
+/// and acceleration. Events reach it
 /// (ACTOR_SPEED, Actor_SetSpeed).
 void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -28,9 +28,9 @@ void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration) {
   }
 }
 
-/// Gives an actor an action script (Actor_SetMovementType) and
+/// Gives an actor a movement type or actor script (Actor_SetMovementType) and
 /// makes it face where it moves: sets ACTOR_FACES_MOTION, bit 0 of its
-/// actionFlags. Map scripts reach it (Actor_SetScript and
+/// actionFlags. Events reach it (Actor_SetScript and
 /// Actor_SetMovementTypeById).
 void Actor_SetMovementTypeById(u32 actorId, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -43,9 +43,9 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action) {
   }
 }
 
-/// The script command "stop actor": stops its action and puts it back
+/// The event command "stop actor": stops its movement type and puts it back
 /// under script control, on the idle script (a lone SC_END), and sets
-/// ACTOR_FACES_MOTION, bit 0 of its actionFlags. Map scripts reach it
+/// ACTOR_FACES_MOTION, bit 0 of its actionFlags. Events reach it
 /// (Actor_Stop), about 22 of them.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -58,8 +58,8 @@ void Actor_Stop(u32 actorId) {
   }
 }
 
-/// Makes an actor follow another (the linked action script): writes its
-/// linkedObject. Called by the Colosso log's script, and by Altmiller
+/// Makes an actor follow another (the linked actor script): writes its
+/// linkedActor. Called by the Colosso log's event, and by Altmiller
 /// Cave's.
 void Actor_LinkAndSetScript(u32 actorId, u32 linkedActorId) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -72,7 +72,7 @@ void Actor_LinkAndSetScript(u32 actorId, u32 linkedActorId) {
 
 /// Waits, at most 300 frames, for an actor's script to reach its end
 /// (command 0x10). Called by Actor_RunRepeatedMotion, the climbing
-/// scripts and about 28 map scripts.
+/// events and about 28 others.
 void Actor_RefreshSelectorById(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -80,9 +80,9 @@ void Actor_RefreshSelectorById(u32 actorId) {
     Actor_WaitForScriptEndFar(actor);
 }
 
-/// Starts a built-in action or supplied script, as
+/// Starts a movement type or supplied actor script, as
 /// Actor_SetMovementTypeById does, then waits up to 300 frames
-/// for its script to end. Map script calls use
+/// for its script to end. Event calls use
 /// Actor_RunScriptAndWait.
 void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -96,10 +96,10 @@ void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
   }
 }
 
-/// The script command "set actor destination": the actor heads
+/// The event command "set actor destination": the actor heads
 /// for (x, z), in pixels, keeping its current animation. Clears its
 /// movementState, so a paused actor moves again, as the other move
-/// commands here do. Map scripts reach it
+/// commands here do. Events reach it
 /// (Actor_SetDestination).
 void Actor_ResetAndSetPosition(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -111,10 +111,10 @@ void Actor_ResetAndSetPosition(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The script command "move actor and wait": as
+/// The event command "move actor and wait": as
 /// Actor_ResetAndSetPosition, then waits (at most 600 frames) for the
-/// actor to arrive. Map scripts reach it (Actor_MoveToAndWait);
-/// the climbing scripts call it too.
+/// actor to arrive. Events reach it (Actor_MoveToAndWait);
+/// the climbing events call it too.
 void Actor_SetPositionAndCommit(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -126,8 +126,8 @@ void Actor_SetPositionAndCommit(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The script command "walk actor to": the actor walks (animation
-/// 2) toward (x, z), in pixels. Map scripts reach it (ACTOR_WALK,
+/// The event command "walk actor to": the actor walks (animation
+/// 2) toward (x, z), in pixels. Events reach it (ACTOR_WALK,
 /// Actor_WalkTo); the Battle Arena calls it too.
 void Actor_ResetAndSetPositionInMode2(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -140,9 +140,9 @@ void Actor_ResetAndSetPositionInMode2(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The script command "walk actor to and wait": walks the actor
+/// The event command "walk actor to and wait": walks the actor
 /// to (x, z), in pixels, waits for it to arrive and stands it still (animation
-/// 1). Map scripts reach it
+/// 1). Events reach it
 /// (Actor_WalkToAndWait).
 void Actor_SetPositionAndReset(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -157,7 +157,7 @@ void Actor_SetPositionAndReset(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The script command "center actor and walk": walks the actor
+/// The event command "center actor and walk": walks the actor
 /// sideways to the middle of its 16-pixel column, sets its sprite priority to
 /// priority (Actor_SetSpritePriority), then sends it zOffset pixels along
 /// z. Kalay's interiors reach it.
@@ -192,8 +192,8 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
   }
 }
 
-/// The script command "set actor destination offset": the actor
-/// heads (xOffset, zOffset) pixels from where it stands. Map scripts reach it
+/// The event command "set actor destination offset": the actor
+/// heads (xOffset, zOffset) pixels from where it stands. Events reach it
 /// (Actor_SetDestinationOffset); Actor_LaunchFromLeader
 /// calls it too.
 void Actor_OffsetPositionAndResetMotion(u32 actorId, s32 xOffset, s32 zOffset) {
@@ -208,7 +208,7 @@ void Actor_OffsetPositionAndResetMotion(u32 actorId, s32 xOffset, s32 zOffset) {
 }
 
 /// Walks the actor (animation 2) (xOffset, zOffset) pixels from where it
-/// stands. Map scripts reach it
+/// stands. Events reach it
 /// (Actor_WalkBy); Actor_CommitPositionAndActivate calls it too.
 void Actor_OffsetPositionAndReset(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -223,7 +223,7 @@ void Actor_OffsetPositionAndReset(u32 actorId, s32 xOffset, s32 zOffset) {
 }
 
 /// Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and
-/// stands it still. Map scripts reach it (Actor_WalkByAndWait); the
+/// stands it still. Events reach it (Actor_WalkByAndWait); the
 /// Lemurian ship calls it by name.
 void Actor_CommitPositionAndActivate(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -237,8 +237,8 @@ void Actor_CommitPositionAndActivate(u32 actorId, s32 xOffset, s32 zOffset) {
 
 /// Places an actor on the leader and sends it walking (xOffset, zOffset)
 /// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
-/// the actor then takes action action. Called by the Lemurian ship, Babi
-/// Lighthouse and Lalivero map scripts.
+/// the actor then takes movement type action. Called by the Lemurian ship, Babi
+/// Lighthouse and Lalivero events.
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -258,9 +258,9 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   }
 }
 
-/// The script command "wait for actor": waits (at most 600 frames) for
-/// the actor to arrive and stands it still. Map scripts reach it
-/// (Actor_WaitForMoveById); the Battle Arena and the climbing scripts call it
+/// The event command "wait for actor": waits (at most 600 frames) for
+/// the actor to arrive and stands it still. Events reach it
+/// (Actor_WaitForMoveById); the Battle Arena and the climbing events call it
 /// too.
 void Actor_WaitForMoveById(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -271,10 +271,10 @@ void Actor_WaitForMoveById(u32 actorId) {
   }
 }
 
-/// The script command "set actor position": puts the actor at (x,
+/// The event command "set actor position": puts the actor at (x,
 /// z), 16.16 pixels, at rest. An actor that follows the ground
 /// (ACTOR_FOLLOWS_TERRAIN) keeps its height above the ground at the new
-/// place. Clears its velocity and targets. Map scripts reach it as
+/// place. Clears its velocity and targets. Events reach it as
 /// Import_ActorSetPosition (ACTOR_POSITION_SET,
 /// Actor_SetPosition); Actor_LaunchFromLeader calls it too.
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
@@ -357,8 +357,8 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
   }
 }
 
-/// The script command "set actor animation" (1 stands, 2 walks, 3 nods,
-/// 4 shakes the head and so on). Map scripts reach it as
+/// The event command "set actor animation" (1 stands, 2 walks, 3 nods,
+/// 4 shakes the head and so on). Events reach it as
 /// Import_ActorSetAnimation (ACTOR_ANIMATION, Actor_SetAnimation);
 /// Event_AskYesNoWithActorAnimation and
 /// Actor_SetAnimationAndWait call it too.
@@ -371,7 +371,7 @@ void Actor_SetModeById(u32 actorId, s32 animation) {
 
 /// Sets the animation timer steps of each of an actor's sprites
 /// (Sprite_SetAnimSpeed). Called by the Tolbi ship and
-/// Lamakan Desert map scripts.
+/// Lamakan Desert events.
 void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -381,7 +381,7 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
 
 /// Waits, at most 90 frames, for an actor's animation to change. Only an
 /// actor drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
-/// Called by Actor_SetAnimationAndWait, a few map scripts and the debug
+/// Called by Actor_SetAnimationAndWait, a few events and the debug
 /// level screen.
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
@@ -405,8 +405,8 @@ void Actor_WaitForAnimationChange(u32 actorId) {
   }
 }
 
-/// The script command "set actor animation and wait": plays the
-/// animation and waits for it to end. Map scripts reach it
+/// The event command "set actor animation and wait": plays the
+/// animation and waits for it to end. Events reach it
 /// (Actor_SetAnimationAndWait).
 void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
   Actor_SetModeById(actorId, animation);
@@ -417,10 +417,10 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 /// bank's far-call table; nothing in ☀️ names it.
 void Actor_NoOp(void) {}
 
-/// The script command "actor jump": throws the actor upward at
+/// The event command "actor jump": throws the actor upward at
 /// speed pixels per frame with a jump sound (a higher one above 5), then waits
 /// frames frames. Sets bit 1 of the actor's motion flags, so gravity
-/// brings it down, and its velocityY. Map scripts reach it (Actor_Jump),
+/// brings it down, and its velocityY. Events reach it (Actor_Jump),
 /// about 40 of them; the events of Djinn joining the party (djinni.c and the
 /// four element parts) call it too.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
@@ -445,9 +445,9 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   }
 }
 
-/// The script command "start repeated motion": the actor squashes and
-/// springs back count times (1 to 3), through gActor_VariantScripts. Map
-/// scripts reach it
+/// The event command "start repeated motion": the actor squashes and
+/// springs back count times (1 to 3), through gActor_VariantScripts. Events
+/// reach it
 /// (Actor_StartRepeatedMotion).
 void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   struct Actor *actor;
@@ -463,8 +463,8 @@ void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   }
 }
 
-/// The script command "run repeated motion": as
-/// Actor_StartRepeatedMotion, then waits for it to end. Map scripts reach
+/// The event command "run repeated motion": as
+/// Actor_StartRepeatedMotion, then waits for it to end. Events reach
 /// it (Actor_RunRepeatedMotion);
 /// the events of Djinn joining the party call it too.
 void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
@@ -475,7 +475,7 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
 /// Moves a dust puff of FieldEffect_SpawnBurstParticle: it drifts with its x
 /// and z velocity (kept in speed and acceleration), which drag slows by 1/18
 /// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
-/// puff's update hook.
+/// puff's update routine.
 void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 velocityX;
@@ -555,7 +555,7 @@ void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
 /// frame (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
 /// (Scene_PlayQueuedMusic). Called by Field_RunPushCell for a ledge
-/// (MB_LEDGE) with pose 6 and param 0, and by seven maps through
+/// (MB_LEDGE) with pose 6 and param 0, and by seven scenes through
 /// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   s32 nextY;
@@ -617,7 +617,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   }
 }
 
-/// The script command "actor face actor": turns the first
+/// The event command "actor face actor": turns the first
 /// actor at once to face the second, then waits wait frames. Writes the first
 /// actor's angle. Events reach it (Actor_FaceActor); the Battle Arena calls it
 /// too.
@@ -634,8 +634,8 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   }
 }
 
-/// The script command "actors face each other": turns two actors
-/// toward each other, then waits wait frames. Map scripts reach it
+/// The event command "actors face each other": turns two actors
+/// toward each other, then waits wait frames. Events reach it
 /// (Actor_FaceEachOther); Scene_TalkToActor turns the leader and
 /// the actor spoken to with it.
 void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait) {
@@ -693,9 +693,9 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
   }
 }
 
-/// The script command "destroy actor": releases the actor and
-/// frees its slot, writing NULL to its place in the field work's actor
-/// table. Map scripts reach it (about 14 of them).
+/// The event command "release actor": releases the actor and
+/// empties its slot, writing NULL to its place in the field work's actor
+/// table. Events reach it (about 14 of them).
 void Actor_ReleaseById(s32 index) {
   void *object = Actor_Lookup(index);
   struct FieldWork *table = gFieldWork;
@@ -718,12 +718,11 @@ void Actor_ReleaseById(s32 index) {
 
 UNUSED void Actor_ReleaseNoOp(void) {}
 
-/// The script command "set actor sprite param": gives every sprite part
+/// The event command "set actor sprite param": gives every sprite part
 /// of the actor param (Actor_SetSpriteColor). With bit 0x100 set
 /// the actor blinks instead (Actor_UpdateBlink, every
-/// frame); any other param also ends a blink, clearing the actor's hook.
-/// Map scripts reach it
-/// (Actor_SetSpriteColorById).
+/// frame); any other param also ends a blink, clearing the actor's update
+/// routine. Events reach it (Actor_SetSpriteColorById).
 void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
   s32 blink;
   struct Actor *actor;
@@ -740,8 +739,8 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
   }
 }
 
-/// Per-frame hook of a blinking actor: sets its sprite parts' param from
-/// gActor_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
+/// Per-frame update routine of a blinking actor: sets its sprite parts' param
+/// from gActor_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
 /// Actor_ConfigureSpriteColor installs it.
 void Actor_UpdateBlink(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;
@@ -770,10 +769,10 @@ void Actor_UpdateBlink(struct Actor *actor) {
   }
 }
 
-/// Sets the param byte of every animated part of an actor's sprite. Map
-/// scripts set 0 or 15, and alternate the two to make an actor flash.
+/// Sets the param byte of every animated part of an actor's sprite. Events
+/// set 0 or 15, and alternate the two to make an actor flash.
 /// Marks the sprite dirty. Called by Actor_ConfigureSpriteColor,
-/// FieldEffect_SpawnBurstParticle and about 40 map script sites.
+/// FieldEffect_SpawnBurstParticle and about 40 event sites.
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   struct Actor *object = actor;
 
@@ -798,11 +797,11 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
 
 /// Links an actor to the actor in the low 8 bits of targetId and
 /// starts script on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes a
-/// follow distance of 40 pixels (action 40, read by
+/// follow distance of 40 pixels (timer 40, read by
 /// Actor_MoveTowardTarget), the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot block
 /// the target. Called by Vale's, Bilibin's, Imil's, Kolima's and McCoy's palace
-/// map scripts, among others.
+/// events, among others.
 void Actor_SetTargetAndCallback(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
   struct Actor *target = Actor_Lookup(targetId & 0xff);
@@ -819,7 +818,7 @@ void Actor_SetTargetAndCallback(u32 actorId, s32 targetId, const void *script) {
   }
 }
 
-/// Script step that turns an actor toward the angle kept in its action:
+/// SC_CALL routine that turns an actor toward the angle kept in its timer:
 /// the whole way when within 1/16 turn, otherwise 1/32 turn. Returns the turn
 /// made, 0 once the actor faces that way: SC_CALL runs it again each
 /// frame while it is nonzero, so the script ends once the turn is done.
@@ -857,11 +856,11 @@ void Actor_ResetTargetAndSetMode1(u32 actorId) {
   }
 }
 
-/// The script command "actor face direction": the actor turns
-/// toward angle (0x10000 a full turn; Actor_StepAngle), then the script
-/// waits wait frames. Writes the angle to the actor's action. Map
-/// scripts reach it (ACTOR_DIR,
-/// Actor_FaceDirection); the Djinni, Retreat and climbing scripts and
+/// The event command "actor face direction": the actor turns
+/// toward angle (0x10000 a full turn; Actor_StepAngle), then the event
+/// waits wait frames. Writes the angle to the actor's timer. Events
+/// reach it (ACTOR_DIR,
+/// Actor_FaceDirection); the Djinni, Retreat and climbing events and
 /// Actor_JumpDownLedge call it too.
 void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -873,9 +872,9 @@ void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait) {
   }
 }
 
-/// The script command "set actor sprite priority": fixes the priority of
+/// The event command "set actor sprite priority": fixes the priority of
 /// the actor's sprite, which then no longer follows its depth: clears
-/// ACTOR_PRIORITY_AUTOMATIC. Map scripts reach it
+/// ACTOR_PRIORITY_AUTOMATIC. Events reach it
 /// (Actor_SetSpritePriority); Actor_CenterOnColumn calls it too.
 void Actor_SetSpritePriority(s32 actorId, s32 priority) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -891,7 +890,7 @@ void Actor_SetSpritePriority(s32 actorId, s32 priority) {
 
 /// Makes the target actor's sprite show the source actor's
 /// graphics (its VRAM block and tile). Neither actor is checked for
-/// NULL. Called by the Tolbi ship deck's map script.
+/// NULL. Called by the Tolbi ship deck's event.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -911,9 +910,9 @@ void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
 
 UNUSED void Actor_ReservedNoOp(void) {}
 
-/// The script command "set message": the number of the script's next message,
-/// written to work->message. Map scripts reach it (MESSAGE_SET); the field's
-/// talk, step trigger, item and Psynergy scripts call it too.
+/// The event command "set message": the number of the event's next message,
+/// written to work->message. Events reach it (MESSAGE_SET); the field's
+/// talk, step trigger, item and Psynergy events call it too.
 void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low
@@ -943,7 +942,7 @@ s32 Actor_ReadActiveValue(s32 actorId) {
   return sprite;
 }
 
-/// Returns the first of the map's actors (8 to 65) showing sprite, or
+/// Returns the first of the scene's actors (8 to 65) showing sprite, or
 /// -1. Reached only through an unnamed veneer in the overworld bank's far-call
 /// table; nothing in ☀️ names it.
 s32 Actor_FindActiveByValue(s32 sprite) {

@@ -45,7 +45,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_ANIM_ICE).
 ///
 /// The canvas shows only inside a slanted band of window 0, so the shards
-/// stream out of the sky above the targets. effect->variant picks the size of
+/// stream out of the sky above the targets. args->variant picks the size of
 /// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames
 /// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
 /// leaves longer trails and Ice Missile draws additively.
@@ -230,7 +230,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *args) {
     ANIM_PRESENT_FRAME(work);
   }
 
-  // Finish: the callbacks before the blocks they read, in the reverse of
+  // Finish: the tasks before the blocks they read, in the reverse of
   // the order they were added.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleAnim_ArmWin0HBlankDma);
@@ -264,7 +264,7 @@ struct BoltSparkBuffer {
 /// Abilities: Douse, Drench, Deluge (BATTLE_ANIM_DOUSE).
 ///
 /// Like the falling shards, the canvas shows only inside a slanted band of
-/// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
+/// window 0. args->variant picks the volley from gFalling_Counts: 6 bolts of
 /// 8 sparks (Douse), 8 of 16 (Drench) or 32 of 4 (Deluge), spaced 32, 24 or 8
 /// pixels apart, over 80 frames; it also picks how the canvas fades (see
 /// below).

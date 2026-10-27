@@ -1,7 +1,7 @@
 /// @file
 /// Tolbi-bound Ship (SceneId_TolbiShipDeck), its deck: the ship that carries
 /// the party and a tour group bound for Colosso across the Karagol Sea from
-/// Kalay to Tolbi. The ship's other maps are its mast (tolbi_ship_mast.c)
+/// Kalay to Tolbi. The ship's other scenes are its mast (tolbi_ship_mast.c)
 /// and below decks (ship_rooms.c). The voyage's stage, read from
 /// its flags, chooses the deck's actor templates and events: at Kalay,
 /// under sail once the first attack is fought off
@@ -12,7 +12,7 @@
 /// scrolls the sea while under sail, rows the oars to the strokes of the
 /// passengers at the seats (gTolbiShipDeckRowerStrokes), and plays the
 /// event its entrance names. Each event leaves into the next, in
-/// another of the ship's maps or on the world map, whose entrances sail
+/// another of the ship's scenes or on the World Map, whose entrances sail
 /// the ship on. In story order:
 ///
 /// - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
@@ -281,7 +281,7 @@ enum TolbiShipDeckActorId {
   /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN and at anchor
   /// (gTolbiShipDeck_KrakenActorTemplates, after Garet, Ivan and Mia in
   /// their own slots): the Kraken, which the party charges; at anchor the same
-  /// rows place it only for it to be destroyed at once.
+  /// rows place it only for it to be released at once.
   /// ★ Named from the game: "You did good against that Kraken."
   /// (MsgTolbiShipThankIsaacDidGoodAgainst)
   ACTOR_SEA_KRAKEN = ACTOR_SEA_CREW_MEMBER + 1,
@@ -346,7 +346,7 @@ enum TolbiShipDeckMetatileBehavior {
 /// (MsgTolbiShipIfWeArentGoingSet)
 #define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_SCENE_TEMP_72
 
-/// An action-script call: shows the actor's sprite. Returns 0 to end the
+/// An actor script call: shows the actor's sprite. Returns 0 to end the
 /// call.
 static s32 TolbiShipDeck_ShowSprite(struct Actor *interpreter) {
   struct Actor *a = interpreter;
@@ -1237,7 +1237,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
-/// Sets up the map on entry: clears FLAG_WORLD_MAP_LEFT, sets the
+/// Sets up the scene on entry: clears FLAG_WORLD_MAP_LEFT, sets the
 /// transition, starts the deck's sway at a random angle and stops the sea's
 /// scroll, redraws the map grid and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
@@ -2439,7 +2439,7 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 
 #define TOLBI_SHIP_DECK_SEA_WRAP PIXELS(32)
 
-/// The callback that rocks the deck while under sail: sways the camera on two
+/// The task that rocks the deck while under sail: sways the camera on two
 /// random-walking angles and offsets the BG3 sea pattern, wrapping at 32
 /// pixels.
 static void TolbiShipDeck_RockDeck(void) {

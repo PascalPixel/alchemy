@@ -236,7 +236,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *args) {
 /// Runs each frame as a task added by BattleAnim_RunFire (fire.c) and
 /// BattleAnim_RunFroth (vortices.c), which remove it before they return. Each
 /// of them moves cameraPhase from CAMERA_PHASE_IDLE to CAMERA_PHASE_FRAME_DONE
-/// at the end of its own frame. Then the callback turns the whole delta and
+/// at the end of its own frame. Then the task turns the whole delta and
 /// clears the phase; otherwise it turns half the delta and moves the phase
 /// between CAMERA_PHASE_IDLE and CAMERA_PHASE_HALF_TURNED, which the animations
 /// leave unmarked. Changes the camera slot's yaw and work->cameraPhase.

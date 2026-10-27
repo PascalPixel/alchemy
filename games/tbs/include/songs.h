@@ -163,7 +163,7 @@
 /// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption event; it also plays as the
 /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
 #define MUS_ERUPTION 63
-/// The title screen's music as the intro holds the title, without its prompt,
+/// The Title's music as the intro holds the title, without its prompt,
 /// after the prologue and before Vale three years later (Title_Run).
 /// ★ Named from what the player sees: the title shown between the prologue and
 /// Vale three years later (its render)
@@ -175,7 +175,7 @@
 #define MUS_ENDING 67
 /// The title intro's music at power-on, when a save file exists, with its
 /// "Press Start" prompt (Title_Run).
-/// ★ Named from what the player sees: the title screen and its "Press Start"
+/// ★ Named from what the player sees: the Title and its "Press Start"
 /// prompt (its render)
 #define MUS_TITLE 70
 /// A row of the song table that holds the empty song (dummy_song_header), so
@@ -185,7 +185,7 @@
 /// Plays once Felix has leapt after Sheba from Venus Lighthouse's aerie, as the
 /// party watches and resolves to escape (VenusLighthouseAerie_PlayShebasFall).
 #define MUS_FELIX_LEAPS_AFTER_SHEBA 72
-/// The main menu's music, and the field music of the Sanctum.
+/// The File Screen's music, and the field music of the Sanctum.
 #define MUS_FILE_SCREEN 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
 /// event on the world map, until a key is pressed (Title_Run's entrance
@@ -202,7 +202,8 @@
 /// Lemurian ship raised, the Vault Cave switches, and the West Lunpa Cave gate
 /// frozen open.
 #define MUS_PUZZLE_SOLVED 80
-/// The fanfare as a Djinni or a new member joins the party, Flint included.
+/// The fanfare as a Djinni or a new party member joins the party, Flint
+/// included.
 #define MUS_JOINED 81
 /// The fanfare of Revive, used from the menu or bought at a Sanctum.
 #define MUS_REVIVE 82
@@ -223,8 +224,8 @@
 #define MUS_REMOVE_CURSE 87
 /// The fanfare of a Sanctum's Repel Evil.
 #define MUS_REPEL_EVIL 88
-/// The fanfare as a member levels up after a battle, and as a Colosso round
-/// begins.
+/// The fanfare as a party member levels up after a battle, and as a Colosso
+/// round begins.
 #define MUS_LEVEL_UP 89
 /// The smallest prize fanfare: two pairs in Lucky Dice, a Tolbi Spring prize
 /// under 5,000 coins, and one level from the debug level editor; also an item
@@ -273,7 +274,7 @@
 /// The high triple tone: Halt ending.
 #define SE_TRIPLE_TONE_HIGH 109
 /// The lit bulb a field view shows as it finds a target (EMOTE_LIGHT_BULB);
-/// also the title splash screen, a code entered on the main menu, Altmiller
+/// also the title splash screen, a code entered on the File Screen, Altmiller
 /// Cave's lights appearing, and a battle command chosen.
 #define SE_CHIME 110
 /// The cursor moving in a menu or list.
@@ -301,7 +302,7 @@
 #define SE_FOOTSTEP 118
 /// The guards throwing the leader out of Lunpa.
 #define SE_SCUFFLE 121
-/// Leaving a map through an ordinary exit.
+/// Leaving a scene through an ordinary exit.
 #define SE_MAP_EXIT 123
 /// Played as a chest's lid lifts (TreasureSpot_OpenChest); also a Psynergy
 /// target reacting, the Fuchin Temple students' lessons, the Vault mayor's urn,
@@ -459,12 +460,13 @@
 #define SE_MAP_TRANSITION 167
 // XXX: likely wind, because none of the three has the water SE_AMBIENT_WATER
 // plays beside; the sequence alone can't tell wind from water, so a recording
-// of one of the three maps would settle it.
-/// The ambient sound a map queues in Lama Temple, Xian and the Manticore's part
-/// of Lamakan Desert (Scene_QueueMusic). It sounds like a steady quiet hiss, a
-/// little darker and softer than SE_AMBIENT_WATER on the same noise voice.
+// of one of the three scenes would settle it.
+/// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
+/// part of Lamakan Desert (Scene_QueueMusic). It sounds like a steady quiet
+/// hiss, a little darker and softer than SE_AMBIENT_WATER on the same noise
+/// voice.
 #define SE_AMBIENT_WIND 169
-/// The ambient sound a map queues (Scene_QueueMusic) with the rain's ground
+/// The ambient sound a scene queues (Scene_QueueMusic) with the rain's ground
 /// particles (Weather_StartRain) and Altin's water-spitting beasts, and in
 /// Fuchin Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the
 /// Goma Cave entrance.
@@ -513,8 +515,8 @@
 #define SE_CART_TURN 184
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
-/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' pushed
-/// objects (PushedActor_AdvancePair).
+/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the scenes' pushed
+/// actors (PushedActor_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185
@@ -576,7 +578,7 @@
 #define SE_POWER_UP 212
 /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the maps' pushed objects (Actor_MoveAndRedraw).
+/// and the scenes' pushed actors (Actor_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -656,7 +658,7 @@
 #define SE_PUSH_STEP 238
 /// A pushed log, pillar or wall moving, on player 3 until SE_STOP_ACTION_SE
 /// cuts it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus
-/// Lighthouse's sliding walls and the maps' pushed objects; SE_HEAVY_STOP
+/// Lighthouse's sliding walls and the scenes' pushed actors; SE_HEAVY_STOP
 /// follows. ★ Named from what the player sees: a log rolling or a pillar or
 /// wall sliding (its render)
 #define SE_HEAVY_MOVE 239
@@ -735,14 +737,14 @@
 #define SE_VOICE_MAN_3 286
 #define SE_VOICE_MAN_4 287
 /// A song with no tracks on player 3, which stops the loop playing there: every
-/// map change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
+/// scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_ACTION_SE 288
 /// The pair of upright effects spawned in the eruption at Sol Sanctum
 /// (SolSanctumEruption_SpawnEffectPair).
 #define SE_ERUPTION_COLUMNS 292
 /// A song with no tracks on player 5, which stops what plays there; played
-/// before each queued map sound (Scene_QueueMusic).
+/// before each queued scene sound (Scene_QueueMusic).
 #define SE_STOP_MUSIC_PLAYER_5 298
 /// Tolbi Spring: a coin or medal on its way, 50 frames into the toss
 /// (TolbiSpring_RunToss).

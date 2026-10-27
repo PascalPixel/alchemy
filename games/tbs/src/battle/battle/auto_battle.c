@@ -87,7 +87,7 @@ DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 /// a defeated target is replaced by a living unit of its side first.
 /// Returns 1 when the party got away, 0 otherwise. Called by
 /// Battle_Run for each action under FLAG_AUTO_BATTLE. Turns the
-/// camera to the actor's side (gBattleBackgroundWork) and rewrites
+/// camera to the acting unit's side (gBattleBackgroundWork) and rewrites
 /// action->target.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
   struct BattleBackgroundWork *view;
@@ -156,7 +156,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 }
 
 /// Auto battle: the party tries to run, and gets away 15 times in 16, each
-/// living member running off in turn. Returns 1 when they got away; else
+/// living party member running off in turn. Returns 1 when they got away; else
 /// shows MsgCannotEscape and returns 0. Called by AutoBattle_RunAction.
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
   s16 partyMembers[14];
@@ -211,7 +211,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 /// Auto battle: casts Psynergy. The camera turns to the caster's side and
 /// the caster raises its hand; the target side fades out, its living units
 /// are readied alone, the Psynergy's animation (kind action->parameter) plays
-/// on them, and everyone fades back in. Returns -1 for an invalid actor or
+/// on them, and everyone fades back in. Returns -1 for an invalid unit or
 /// target. Called by AutoBattle_RunAction for COMMAND_PSYNERGY. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
@@ -380,10 +380,10 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   return 0;
 }
 
-/// Auto battle: an attack or an item. Turns the camera to the actor's side,
-/// poses the actor and plays the animation (kind action->parameter) on the
+/// Auto battle: an attack or an item. Turns the camera to the acting unit's
+/// side, poses the unit and plays the animation (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid actor. Called by AutoBattle_RunAction for
+/// for an invalid unit. Called by AutoBattle_RunAction for
 /// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
 /// and Psynergy.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
@@ -419,7 +419,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
         BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
-  // The actor raises its hand (POSE_CAST); then only the first living unit of
+  // The unit raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
   object = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(object, POSE_CAST);
@@ -529,7 +529,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last
-/// frame and marks its object for release (BattleObject_MarkForRelease).
+/// frame and marks its battle object for release (BattleObject_MarkForRelease).
 /// Called by AutoBattle_ApplyDamage.
 void BattleMotion_PlayFall(s32 unitId) {
   struct SpriteAnim *actorData;

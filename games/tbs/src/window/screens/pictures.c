@@ -25,9 +25,9 @@ void MenuTitle_Load(s32 picture, s32 slot) {
 /// Shows heading `picture` of gMenuTitlePictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
-/// Returns NULL when no VRAM slot is free. The file menu shows its
+/// Returns NULL when no VRAM slot is free. The file list shows its
 /// mode's heading this way (FileList_SelectFile), and window/options.c the
-/// option menu's Setup and the pause menu's Pause.
+/// settings menu's Setup and the Pause menu's Pause.
 struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y) {
   s32 slot;
@@ -85,7 +85,7 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
 
 /// Shows command icon `icon` (see CommandIcon_Load) as a 32x32
 /// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
-/// when no VRAM slot is free. The option menu's icons come through here
+/// when no VRAM slot is free. The settings menu's icons come through here
 /// (window/options.c).
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y) {
@@ -106,7 +106,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// Makes the sprite `obj` pulse: scales it about its centre by
 /// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
 /// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
-/// The option menu pulses its selected icon with it each frame
+/// The settings menu pulses its selected icon with it each frame
 /// (window/options.c).
 void WindowSprite_Pulse(struct WindowSprite *obj) {
   s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7];
@@ -384,7 +384,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 /// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
 /// palette 14, and returns its first tile. In the prologue, Isaac and Garet
 /// use their childhood portraits. The Status screen
-/// and the battle command menus draw the member's portrait with it.
+/// and the battle command menus draw the party member's portrait with it.
 s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
@@ -471,7 +471,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
 /// 64-byte tile `tile` on (16 tiles, 32x32), for the command row's BG1. The
 /// row's icons share `palette`: each colour index first met takes the next
-/// BG palette entry, which gets that index's OBJ palette colour. Past 64
+/// BG palette entry, which gets that index's sprite palette colour. Past 64
 /// entries every new index takes entry 64, whose colour is not set here.
 /// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Alloc block
 /// the remapped pixels; both are freed before it returns.

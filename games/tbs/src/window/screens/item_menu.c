@@ -4,10 +4,10 @@
 
 #include "../screens_internal.h"
 
-/// Says whether member `unit` can use inventory entry `itemId` in battle: 0
-/// yes; 1 no, "Using this will have no effect." (no item, an item that only
+/// Says whether party member `unit` can use inventory entry `itemId` in battle:
+/// 0 yes; 1 no, "Using this will have no effect." (no item, an item that only
 /// teaches Psynergy while equipped, one with no action, or equipment the
-/// member cannot equip); 2 not in battle, "Cannot be used during battle."
+/// party member cannot equip); 2 not in battle, "Cannot be used during battle."
 /// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
 /// tested here. The item command lists the usable items first by it.
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {

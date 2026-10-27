@@ -1,6 +1,6 @@
 /// @file
 /// Vale (SceneId_ValePlaza): the part of the village with the Psynergy Stone
-/// and the town gate, Vale's way out to the world. The map sees the prologue
+/// and the town gate, Vale's way out to the world. The scene sees the prologue
 /// end and the journey begin, and ValePlaza_GetActorTemplates and
 /// ValePlaza_GetTriggers pick its people and events by the time of the story.
 /// In story order:
@@ -37,7 +37,7 @@
 ///   ValePlaza_DepartForQuest restores the party's HP and PP and plays the
 ///   village seeing them off at the town gate: Garet's sister gives a Herb, and
 ///   his brother the Catch Beads that Aunty Dora sent, for Dora herself does
-///   not come. VALE_PLAZA_TO_WORLD_MAP leads out to the world map.
+///   not come. VALE_PLAZA_TO_WORLD_MAP leads out to the World Map.
 /// - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
@@ -53,9 +53,9 @@
 /// each one's flag keeping it gone. The doors lead into the houses
 /// (SceneId_CottageRoomsA) and into the inn and the forge
 /// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
-/// the stormy night, back to the storm's map (SceneId_ValeStormyNight), and the
-/// exit row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM, which
-/// the exit table sends to Goma Cave (SceneId_GomaCaveStream,
+/// the stormy night, back to the storm's scene (SceneId_ValeStormyNight), and
+/// the exit row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM,
+/// which the exit table sends to Goma Cave (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
 /// in every state of the map, the cell north of where the party arrives from
 /// Goma Cave (VALE_PLAZA_FROM_GOMA_CAVE_STREAM, at (186, 474)), so that way
@@ -122,7 +122,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Vale's area flags, kept while the party stays in Vale's maps.
+// Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
 /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
 #define FLAG_VALE_WELCOMED_HOME 0x302
@@ -360,7 +360,7 @@ enum ValePlazaFarewellActorId {
   /// ★ Named from the game: "Woof! Woof!" (MsgValeRrruffRrrruff)
   ACTOR_FAREWELL_DOG = ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 10,
   /// A small cat set down where the dog stops, which runs off with the dog
-  /// after it. No other map places its sprite.
+  /// after it. No other scene places its sprite.
   /// ★ Named from what the player sees: a small white and grey cat (its
   /// render)
   ACTOR_FAREWELL_CAT
@@ -559,7 +559,7 @@ static void ValePlaza_AskAboutTheTravelers(void) {
 ///
 /// Reached by talking to ACTOR_STRONGMAN_SHOWING_PSYNERGY on the day the
 /// story begins and after the party has left. The display adds and removes the
-/// callback ValePlaza_UpdateShowingStrongmanPsynergy and shakes the map for
+/// task ValePlaza_UpdateShowingStrongmanPsynergy and shakes the map for
 /// three seconds.
 static void ValePlaza_DemonstratePsynergy(void) {
   u32 i;
@@ -690,7 +690,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
 /// a small rock (ACTOR_STORM_SMALL_ROCK) into the air.
 ///
 /// Reached by talking to ACTOR_STORM_ROCK_LIFTING_BOY on the stormy night.
-/// Adds and removes the callbacks ValePlaza_UpdateRockLiftingBoyPsynergy and
+/// Adds and removes the tasks ValePlaza_UpdateRockLiftingBoyPsynergy and
 /// ValePlaza_UpdateSmallRockPalette.
 static void ValePlaza_BoyLiftsSmallRock(void) {
   u32 i;
@@ -883,14 +883,14 @@ static void ValePlaza_OpenSoutheastDoor(void) {
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
-/// storm's map: stepping on metatile behavior 9 takes VALE_PLAZA_TO_VALE, to
+/// storm's scene: stepping on metatile behavior 9 takes VALE_PLAZA_TO_VALE, to
 /// the storm's VALE_STORMY_NIGHT_FROM_VALE_PLAZA.
 static void ValePlaza_LeaveThroughWestPassage(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
 }
 
-/// In Vale, leaves by the town gate for the world map, once the party has
+/// In Vale, leaves by the town gate for the World Map, once the party has
 /// begun its journey.
 ///
 /// Reached by stepping on metatile behavior 8; takes VALE_PLAZA_TO_WORLD_MAP
@@ -932,7 +932,7 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 /// the three debug entrances (the strangers' departure and two
 /// presets), and sets up the storm, the farewell or the village after Kalay.
 ///
-/// The map's initialize entry. VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
+/// The scene's initialize entry. VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
 /// and takes VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST; VALE_PLAZA_FROM_SANCTUM
 /// runs ValePlaza_DepartForQuest; VALE_PLAZA_AFTER_TRAVELERS_BATTLE (and
 /// VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE)
@@ -1313,7 +1313,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// "You must forget everything you heard."
 ///
 /// Called by ValePlaza_MeetSurvivingTravelers. Starts the fifth slot of the
-/// encounter zone of the scripted battles of Vale, Vault and the world map,
+/// encounter zone of the scripted battles of Vale, Vault and the World Map,
 /// with both outcomes leading back to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and
 /// sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
@@ -2029,7 +2029,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
 
 /// Updates the rock-lifting boy's Psynergy display.
 ///
-/// A callback ValePlaza_BoyLiftsSmallRock adds while the boy lifts.
+/// A task ValePlaza_BoyLiftsSmallRock adds while the boy lifts.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
@@ -2037,7 +2037,7 @@ static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
 
 /// Updates the demonstrating strongman's Psynergy display.
 ///
-/// A callback ValePlaza_DemonstratePsynergy adds while the ground shakes.
+/// A task ValePlaza_DemonstratePsynergy adds while the ground shakes.
 static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_GetById(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
@@ -2045,7 +2045,7 @@ static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
 
 /// Updates the small rock's palette while it is lifted.
 ///
-/// A callback ValePlaza_BoyLiftsSmallRock adds while ACTOR_STORM_SMALL_ROCK
+/// A task ValePlaza_BoyLiftsSmallRock adds while ACTOR_STORM_SMALL_ROCK
 /// rises.
 static void ValePlaza_UpdateSmallRockPalette(void) {
   ValePlaza_CyclePsynergyPalette(Actor_GetById(ACTOR_STORM_SMALL_ROCK));

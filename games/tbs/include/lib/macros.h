@@ -12,8 +12,9 @@
 /// projected, a per-frame step, a camera point or a scale.
 #define SET_VECTOR(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 
-/// Sets the position or the velocity of a particle, a piece of debris or an
-/// object in one statement.
+/// Sets the position or the velocity of a particle, a piece of debris or
+/// anything else with plain x, y and z in one statement (SET_ACTOR_POSITION
+/// sets an actor's).
 #define SET_POSITION(p, px, py, pz)                                            \
   ((p)->x = (px), (p)->y = (py), (p)->z = (pz))
 #define SET_VELOCITY(p, vx, vy, vz)                                            \

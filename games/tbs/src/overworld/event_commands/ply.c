@@ -17,7 +17,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
   *phase = (*phase + 128) % 128;
 }
 
-/// Per-frame update: spirals in on a point 10 pixels above the effect's
+/// Per-frame update: spirals in on a point 10 pixels above the Psynergy's
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldPsynergy_Ply's eight spiralling
 /// particles; each one's work holds its starting angle.
@@ -50,7 +50,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
 }
 
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
-/// above the effect's position, and every 3 frames sheds a spark that sways
+/// above the Psynergy's position, and every 3 frames sheds a spark that sways
 /// as it slowly falls. With phase -1 it stays where it is. The update
 /// FieldPsynergy_Ply gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
@@ -77,7 +77,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
-    // and is freed after 72 frames, its script's wait (lifetime).
+    // and is released after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
@@ -92,7 +92,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
   }
 }
 
-/// Runs FieldPsynergy_Ply, then stops the caster's hook.
+/// Runs FieldPsynergy_Ply, then stops the caster's update routine.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
@@ -139,8 +139,8 @@ void FieldPsynergy_Ply(void) {
 
   // The particles share one sprite cache; keep its slot to free at the end.
   // last is read with no check that any particle spawned. It would be 0 only
-  // with all 64 objects taken for eight frames, and a map places at most 60:
-  // the world map's 51 actor templates, the party's 8 and the camera.
+  // with all 64 actors taken for eight frames, and a scene places at most 60:
+  // the World Map's 51 actor templates, the party's 8 and the camera.
   resourceSlot = last->slot;
   Sound_PlaySongFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait

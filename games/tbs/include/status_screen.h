@@ -16,16 +16,17 @@
 struct Unit;
 struct PsynergyEntry;
 
-/// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
-/// heap slot, which each takes as it opens and frees before it returns.
+/// The work of the party member chooser and the Status menu, in the
+/// HEAP_SLOT_MENU heap slot, which each takes as it opens and frees before it
+/// returns.
 struct StatusScreenWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *memberWindow;
   struct WindowSprite *memberCursors[2];
-  s8 memberIndex[2]; ///< each side's member, in memberIds
-  s8 memberCount[2]; ///< members each side chooses from
+  s8 memberIndex[2]; ///< each side's party member, in memberIds
+  s8 memberCount[2]; ///< party members each side chooses from
   struct Window *actionWindow;
   struct Window *statusWindow;
   struct Window *unopenedWindow; ///< never given a window; only cleared
@@ -53,9 +54,9 @@ struct StatusScreenWork {
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 entryCount;
   u8 partyCount;
-  u8 selectedIds[2]; ///< each side's member
+  u8 selectedIds[2]; ///< each side's party member
   struct WindowSprite *selectedIcon;
-  u16 page;           ///< 3 for the member chooser, 0 for the Status menu
+  u16 page;           ///< 3 for the party member chooser, 0 for the Status menu
   s16 completionFlag; ///< ItemMenuWork's; not named here
   struct Sprite *rowSprites[4];
   s16 rowX[4]; ///< screen pixels
@@ -80,7 +81,7 @@ STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 0x234);
 STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x244);
 
 /// The statuses the Status screens show, as StatusScreen_BuildAvailability
-/// fills them: one byte each, nonzero while the member has it.
+/// fills them: one byte each, nonzero while the party member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it
   CHARACTER_POISON, ///< Unit.poison 1

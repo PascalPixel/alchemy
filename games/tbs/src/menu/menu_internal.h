@@ -92,10 +92,10 @@ s32 _call_via_r3(void *, void *, s32, void *);
 
 /// The target id the Psynergy screen passes for an action whose range is
 /// ABILITY_RANGE_ALL. It is no unit's id: Ability_ApplyToTargets starts
-/// from unit 0 in its place, and visits every member because of the range, not
-/// this id. The Item screen never passes it: a whole-party item is used with
-/// the work's sideMember[1] as it stands (ItemMenu_Use), and its range alone
-/// reaches every member.
+/// from unit 0 in its place, and visits every party member because of the
+/// range, not this id. The Item screen never passes it: a whole-party item is
+/// used with the work's sideMember[1] as it stands (ItemMenu_Use), and its
+/// range alone reaches every party member.
 #define MENU_TARGET_WHOLE_PARTY 9
 
 /// The result of using an item or Psynergy from the menu: its message,
@@ -127,10 +127,10 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// StatusScreenWork.page: which screen the member row belongs to.
+/// StatusScreenWork.page: which screen the party member row belongs to.
 enum StatusScreenPage {
   STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
-  /// The member chooser (MemberChooser_Open).
+  /// The party member chooser (MemberChooser_Open).
   STATUS_SCREEN_PAGE_CHOOSER = 3
 };
 
@@ -155,7 +155,7 @@ enum PsynergyListMode {
 
 /// How the item menu can use an item (Item_ClassifyUseMode).
 enum ItemUseMode {
-  /// It cannot be used here: it has no action, it is equipment the member
+  /// It cannot be used here: it has no action, it is equipment the party member
   /// cannot wear or that teaches Psynergy, or its action is usable only in
   /// battle.
   ITEM_USE_MODE_UNUSABLE = -1,
@@ -169,8 +169,8 @@ enum ItemUseMode {
 
 /// Whom ItemMenu_SelectTarget chooses.
 enum ItemTargetMode {
-  ITEM_TARGET_USE = 0, ///< the member to use the item on
-  ITEM_TARGET_GIVE = 1 ///< the member to give it to
+  ITEM_TARGET_USE = 0, ///< the party member to use the item on
+  ITEM_TARGET_GIVE = 1 ///< the party member to give it to
 };
 
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
@@ -247,7 +247,7 @@ enum DjinnPreviewMode {
 enum DjinnComparePage {
   DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
   DJINN_COMPARE_PAGE_RECEIVER = 1, ///< the receiver's stats and Psynergy
-  DJINN_COMPARE_PAGE_BOTH = 2      ///< both members' stats, shown first
+  DJINN_COMPARE_PAGE_BOTH = 2      ///< both party members' stats, shown first
 };
 
 /// What the Djinn menu's choosers return. DjinnMenu_SelectDjinn's Djinni
@@ -267,7 +267,7 @@ enum DjinnMenuResult {
   /// returns.
   DJINN_RESULT_SET_NOW = 5,
   DJINN_RESULT_STANDBY_NOW = 6,
-  DJINN_RESULT_STATUS = 7, ///< L: the member's status
+  DJINN_RESULT_STATUS = 7, ///< L: the party member's status
   DJINN_RESULT_GIVE_NOW = 8,
   DJINN_RESULT_TRADE_NOW = 9,
   DJINN_RESULT_HELP = 10 ///< Select: the help
@@ -292,7 +292,7 @@ enum DjinnTutorialStep {
 
 /// DjinnMenu_SelectDjinn's two choosers.
 enum DjinnSelectMode {
-  DJINN_SELECT_DJINNI = 0, ///< a Djinni in any member's column
+  DJINN_SELECT_DJINNI = 0, ///< a Djinni in any party member's column
   DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
 };
 
@@ -300,7 +300,7 @@ enum DjinnSelectMode {
 /// elements follow it in order.
 #define DJINN_ELEMENT_TILE 0x5001
 
-/// A Djinn list entry's member, element and index (DJINN_ENTRY_MEMBER,
+/// A Djinn list entry's party member, element and index (DJINN_ENTRY_MEMBER,
 /// _ELEMENT and _INDEX), shifted down.
 #define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
@@ -308,7 +308,7 @@ enum DjinnSelectMode {
 
 /// The preview loop's four operations, as its confirmation text describes them
 /// (PsynergyList_RunCompareLoop's mode). Trade and Give, the first two, have
-/// two members and the paged previews; Standby and Set one member.
+/// two party members and the paged previews; Standby and Set one party member.
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,

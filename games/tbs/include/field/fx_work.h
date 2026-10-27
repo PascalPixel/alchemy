@@ -2,7 +2,7 @@
 #define ALCHEMY_FX_WORK_H
 
 /// @file
-/// FieldEffectWork, the work of a field Psynergy effect.
+/// FieldEffectWork, the work of a field Psynergy.
 
 #include "types.h"
 #include "static_assert.h"
@@ -11,37 +11,37 @@
 struct Sprite;
 struct Actor;
 
-/// The work of a Psynergy effect: its caster and target, where it takes
+/// The work of a field Psynergy: its caster and target, where it takes
 /// place, the map state it restores and its 24 field effect sprites.
 /// It is the HEAP_SLOT_FIELD_EFFECT heap slot, read as gFieldEffectWork,
 /// cleared when allocated: FieldPsynergy_LoadResources takes it for a
 /// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
-/// effects and Altmiller Cave's map. The effect's end releases it.
+/// effects and Altmiller Cave's scene. Its end releases it.
 struct FieldEffectWork {
   s32 angle;         ///< 1/65536 turns
   s32 x;             ///< 16.16 fixed-point pixels
   s32 y;             ///< 16.16 fixed-point pixels
   s32 z;             ///< 16.16 fixed-point pixels
-  void *mainActor;   ///< the caster's object
-  void *child;       ///< the target's object, or NULL
-  s16 firstActorId;  ///< the caster's object id
-  s16 secondActorId; ///< the target's object id, -1 for none
+  void *mainActor;   ///< the caster's actor
+  void *child;       ///< the target's actor, or NULL
+  s16 firstActorId;  ///< the caster's actor id
+  s16 secondActorId; ///< the target's actor id, -1 for none
   u16 action;        ///< the ability id
   s16 fieldPsynergy; ///< the ability's field kind (FIELD_PSYNERGY_)
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
-  u8 mode; ///< where the effect runs; ACTOR_SYSTEM_WORLD_MAP on the world map
+  u8 mode;    ///< where it runs; ACTOR_SYSTEM_WORLD_MAP on the world map
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
-  void (*finishCallback)(void); ///< run, when set, as Ply's effect ends
+  void (*finishCallback)(void); ///< run, when set, as Ply ends
   u8 unusedAfterFinish[0x0c];   ///< no code names it
-  /// Set by some maps before an effect; Carry, Frost, Force and Reveal
+  /// Set by some scenes before a field Psynergy; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 childOption;
-  s8 childMode; ///< set by some maps: Frost and Force leave the target be
+  s8 childMode; ///< set by some scenes: Frost and Force leave the target be
   u8 paddingAfterChildMode[2]; ///< up to the word savedCallback starts on
-  /// The target's update hook and script, saved at the start and restored
+  /// The target's update routine and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{
   void (*savedCallback)(struct Actor *actor);
@@ -49,11 +49,11 @@ struct FieldEffectWork {
   ///@}
   u8 unusedAfterSavedScript[4]; ///< no code names it
   u8 savedPalette; ///< the target's first sprite's param, saved likewise
-  u8 lit;          ///< set in two Mercury Lighthouse maps; not read by name
+  u8 lit;          ///< set in two Mercury Lighthouse scenes; not read by name
   u16 tileSlot;    ///< resource entry holding the spark tiles
   u16 unusedAfterTileSlot; ///< no code names it
   u16 freeBlocks;          ///< 512 less the free resource blocks at the start
-  /// The map's shake and its decay, restored when the effect ends.
+  /// The map's shake and its decay, restored when the field Psynergy ends.
   ///@{
   s32 savedShakeX;
   s32 savedShakeY;
@@ -62,7 +62,7 @@ struct FieldEffectWork {
   struct FieldParticle particles[24];
   u8 unusedAfterSlots[2]; ///< no code names it
   s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
-  s8 messageMode;         ///< the announcement's box mode: 1, a script adds 8
+  s8 messageMode;         ///< the announcement's box mode: 1, an event adds 8
   u8 paddingAtEnd[3];     ///< up to the struct's word-aligned size
 };
 
@@ -76,8 +76,8 @@ STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 0x58);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
 
-/// Returns the value step tenths of the way from `from` to `to`; the Psynergy
-/// effects that use it step from 0 to 10, one a frame.
+/// Returns the value step tenths of the way from `from` to `to`; the field
+/// Psynergy that uses it steps from 0 to 10, one a frame.
 static __inline__ s32 FieldEffect_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }

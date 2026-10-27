@@ -3,7 +3,7 @@
 
 /// @file
 /// The engine call layer: one typed inline for each of the thirteen main-image
-/// routines below that the map, menu and debug overlays import; every overlay
+/// routines below that the scene, menu and debug overlays import; every overlay
 /// call of them goes through it.
 ///
 /// It is a habit of the whole game written once: a layer, not a
@@ -13,7 +13,7 @@
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared scene/common/scroll_initialize_hblank_dma.h, which
 /// overworld/event_commands.c includes as lemurian_ship.c does, reaches the
-/// layer there. event_inline.h includes this layer; rooms without the script
+/// layer there. event_inline.h includes this layer; rooms without the event
 /// command layer use it directly.
 
 // Passing arguments through inline parameters rematerializes constants at each
@@ -85,7 +85,7 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 }
 
 /// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-/// `destination`. Maps and the title screen and main menu reach the decoder
+/// `destination`. Scenes, the Title and the File Screen reach the decoder
 /// through it; main-image code calls Decompress_TaggedLz without it,
 /// LuckyDice_Run through call.h's Call2.
 static inline s32 FieldDecompress_TaggedLz(const void *source,

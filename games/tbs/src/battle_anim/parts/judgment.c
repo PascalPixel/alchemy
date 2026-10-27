@@ -29,8 +29,8 @@ struct JudgmentWork {
 #define JUDGMENT_GATHER_FRAMES 160    ///< frames of the gathering
 #define JUDGMENT_SWEEP_FRAMES 320     ///< frames of the sweep
 #define JUDGMENT_SHEET_FLARE_B 0x4240 ///< the second 24x24 flare picture
-#define JUDGMENT_FORMATION_OBJECTS 16 ///< objects in the formation, 4x4
-#define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris objects of the sweep
+#define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
+#define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
 #define JUDGMENT_SHEET_BURST 0x600    ///< the burst's quarter pictures
 /// The tornado sheet, whose six glint pictures are the burst's shards
 /// (gJudgment_ShardCells counts from the sheet's start).
@@ -66,8 +66,8 @@ struct JudgmentWork {
 /// mote sheet here. The animation projects with gProjection.centerY at 240
 /// until BattleAnim_SetupBlendedDisplay, on frame 280 of the sweep, puts it
 /// back at 120, and holds BG1's scroll from the battle camera until that frame
-/// too. It releases its formation and then its debris objects (16 each), and
-/// before it returns removes its transfer callback and closes the canvas
+/// too. It releases its formation and then its debris sprites (16 each), and
+/// before it returns removes its transfer task and closes the canvas
 /// layer.
 void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
@@ -309,7 +309,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
     // Place the 4x4 formation at its natural size, 32 pixels apart (1 << 21
     // in 16.16), then move it: it slows over the first 48 frames and eases
     // towards a stop from frame 33, jumps back on frame 144 and drifts
-    // forward from 146. Frames 72 and 76 switch object i from animation i to
+    // forward from 146. Frames 72 and 76 switch sprite i from animation i to
     // i + 16 and then i + 32.
     pair = unitScale;
     place.groundHeight = 0;
@@ -440,7 +440,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
     ANIM_PRESENT_FRAME(work);
   }
 
-  // The sweep's setup: replace the formation with 16 debris objects in three
+  // The sweep's setup: replace the formation with 16 debris sprites in three
   // animations, load the crescent sheet and show the aerial view at the
   // canvas's own width.
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
@@ -936,7 +936,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
       ANIM_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
     }
 
-    // From frame 214 each live debris object is placed from its particle (x
+    // From frame 214 each live debris sprite is placed from its particle (x
     // and y on the field, 255 pixels below the ground line, scaled by z plus
     // 1/128 of y but never below 1/32) and rises. One that leaves the top
     // comes back near the explosion front, ahead of it while it scrolls right
@@ -1017,7 +1017,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
     ANIM_PRESENT_FRAME(work);
   }
 
-  // The finish: release the debris objects, then the canvas and its blitter.
+  // The finish: release the debris sprites, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
     Sprite_DestroyFar(work->animations[i]);
   }

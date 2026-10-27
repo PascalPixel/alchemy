@@ -42,8 +42,8 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// SUMMON_ANIM_NONE, which no ability selects, runs Meteor's animation too.
 /// Takes heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the animation must
-/// have removed every callback that reads them. Unlike
-/// BattleAnim_RunFromTable it does not set work->effect: each animation does
+/// have removed every task that reads them. Unlike
+/// BattleAnim_RunFromTable it does not set work->args: each animation does
 /// that itself.
 void BattleAnim_RunSummon(struct BattleAnimArgs *args) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
@@ -109,9 +109,9 @@ void BattleAnim_RunSummon(struct BattleAnimArgs *args) {
 /// ANIM_BY_ID_RANGE), and by AutoBattle_RunAttackOrItem
 /// (battle/auto_battle.c).
 ///
-/// Sets work->effect before the handler runs, which every handler and
-/// callback reads the animation through. BATTLE_ANIM_NONE is no animation and
-/// only clears effect->variant.
+/// Sets work->args before the handler runs, which every handler and
+/// task reads the animation through. BATTLE_ANIM_NONE is no animation and
+/// only clears args->variant.
 void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
   s32 kind;
   struct BattleAnimWork *work;
@@ -138,7 +138,7 @@ void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
 ///
 /// Runs each frame as a task added by BattleAnim_RunNeptune
 /// (neptune.c) and BattleAnim_RunBoreas (boreas.c), which fill the edge
-/// offsets and remove the callback again. Writes the WIN0H table and stops and
+/// offsets and remove the task again. Writes the WIN0H table and stops and
 /// re-arms DMA channel 0.
 ///
 /// Ram_MapGridCellBuffer + 0    : the base right edge (u16)
@@ -185,7 +185,7 @@ void BattleAnim_BuildWindowEdgeTable(void) {
 /// Called by the summon animations (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
-/// objects through BattleObject_SpawnObjectsForListFar.
+/// actors through BattleObject_SpawnObjectsForListFar.
 void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *args) {
   s16 list[14];
   s32 count;
@@ -245,15 +245,15 @@ void BattleAnim_SetupBlendedDisplay(void) {
 ///
 /// unitId: the unit whose battle object is updated.
 /// palette: the colour mode each sprite part takes (enum SpriteColorMode), 0
-///          for the battler's own, or -1 to leave the parts alone. A part
+///          for the unit's own, or -1 to leave the parts alone. A part
 ///          that changes colours also restarts its frame.
 /// animation: the pose each group switches to (enum BattlePose), or -1 for
 ///            none.
 /// timerSlot: the actor timer (gBattleAnimWork's actorTimers) to set, or -1;
-///            BattleAnim_TickBattlerTints restores the battler's palette
+///            BattleAnim_TickBattlerTints restores the unit's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
-/// The parts and animations of a battler that is fading out stay as they are,
+/// The parts and animations of a unit that is fading out stay as they are,
 /// but its timer is still set.
 ///
 /// Called throughout the animations, most often through
@@ -287,7 +287,7 @@ void BattleAnim_TintBattler(s32 unitId, s32 palette, s32 animation,
           do {
             struct SpriteAnim *part;
 
-            // Every part but the battler's shadowEntry and animationEntry.
+            // Every part but the unit's shadowEntry and animationEntry.
             part = *parts++;
             if (part != NULL &&
                 part != (struct SpriteAnim *)slot->shadowEntry &&

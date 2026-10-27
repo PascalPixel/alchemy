@@ -211,7 +211,7 @@ struct AbilityDefinition {
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
   /// The ability's power, as its ability kind reads it: for damage, about what
-  /// the aimed target loses when the actor's Power in the element equals the
+  /// the aimed target loses when the user's Power in the element equals the
   /// target's Resist (a summon adds to it, see ABILITY_FORMULA_SUMMON); for
   /// healing, about what the aimed target regains from a healer with 100
   /// Power in the element; for an attack, what it adds to the blow at an even

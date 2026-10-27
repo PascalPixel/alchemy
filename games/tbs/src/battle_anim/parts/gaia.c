@@ -23,7 +23,7 @@
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 sprites,
 /// moved by particles[10] to particles[20].
 ///
-/// effect: the targets; the variant widens the wall: narrowest for Gaia and
+/// args: the targets; the variant widens the wall: narrowest for Gaia and
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
 void BattleAnim_RunGaia(struct BattleAnimArgs *args) {
@@ -129,7 +129,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // The rock objects, of SPRITE_BATTLE_ROCKS: objects 0 to 3 play animation
+  // The rock sprites, of SPRITE_BATTLE_ROCKS: sprites 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
@@ -275,8 +275,8 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *args) {
     }
 
     // Rocks (from frame 5): six at half size, then from frame 72 all 11, each
-    // larger than the last and larger with the variant. The objects take
-    // turns showing the rocks, moving on every 2 frames; four objects play
+    // larger than the last and larger with the variant. The sprites take
+    // turns showing the rocks, moving on every 2 frames; four sprites play
     // each of animations 0 and 1, three animation 2.
     if (frame > 4) {
       s32 rocks = 6;

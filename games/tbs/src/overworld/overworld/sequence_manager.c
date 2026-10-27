@@ -79,7 +79,7 @@ void Scene_TakeExit(s32 exitId) {
     break;
   }
 
-  // Commit the chosen exit only after a matching scene header was found.
+  // Commit the chosen exit only after a matching scene was found.
   if (nextScene != EXIT_KEEP_DESTINATION) {
     gSaveBlock.sceneId = nextScene;
     gSaveBlock.entrance = nextEntrance;
@@ -93,11 +93,11 @@ void Scene_TakeExit(s32 exitId) {
 /// returns to the story battle's defeat point
 /// (Event_SetDefeatDestination) or, when none is set, to the restart
 /// point, usually the last Sanctum (Scene_SetRestartPoint). Any other
-/// result goes to the next scene the script set, or to the default scene (the
-/// scene the battle or minigame was started from) with the party keeping its
-/// position (FLAG_KEEP_PARTY_POSITION). Called by SequenceManager_Run after
-/// each scene from SEQUENCE_NONE on; stores result in gSaveBlock.sequenceResult
-/// and sets gSaveBlock.sceneId and .entrance.
+/// result goes to the after-battle destination an event set, or to the return
+/// point (the scene the battle or minigame was started from) with the party
+/// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
+/// SequenceManager_Run after each scene from SEQUENCE_NONE on; stores result in
+/// gSaveBlock.sequenceResult and sets gSaveBlock.sceneId and .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
@@ -106,7 +106,7 @@ void Scene_ReturnFromSequence(s32 result) {
 
   gSaveBlock.sequenceResult = result;
   if (result == -1) {
-    // Revive the leader before choosing the defeat return point.
+    // Revive the leader before choosing the restart point.
     unit = Unit_GetFar(gSaveBlock.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
@@ -136,7 +136,7 @@ void Scene_ReturnFromSequence(s32 result) {
         gSaveBlock.entrance = gSaveBlock.returnEntrance;
     }
   } else {
-    // An explicit script destination overrides the scene's default return.
+    // An after-battle destination an event set overrides the return point.
     sceneId = gSaveBlock.afterBattleScene;
     entrance = gSaveBlock.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
@@ -295,7 +295,7 @@ void SequenceManager_Run(s32 mode) {
       else
         Scene_PlayMusic();
     } else if (gSaveBlock.returnMusic != -1) {
-      // Back where the party was: resume the music saved when the pause menu
+      // Back where the party was: resume the music saved when the Pause menu
       // last opened (scene_manager.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
       Sound_PlaySongFar(gSaveBlock.returnMusic);
@@ -323,7 +323,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// entering the current scene. Unless keep is set (the party returns to where
 /// it was, as after a battle), the flags of the last scene are cleared, and on
 /// entering a new area so are the area's flags and step
-/// counters, the location name is shown and the entrance becomes the
+/// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
 /// (FLAG_AREA_VISITED) is set. Called by SequenceManager_Run before each
 /// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.area and

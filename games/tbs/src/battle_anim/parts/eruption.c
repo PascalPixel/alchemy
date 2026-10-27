@@ -46,7 +46,7 @@ enum {
 /// the damage 48 frames before the end. Writes the first 64 BG colours, sets
 /// work->shakeFrames.
 ///
-/// effect: the targets.
+/// args: the targets.
 /// mode: fire or smoke (enum EruptionMode). The rows of gEruption_Counts
 ///       give 16 motes, 8 puffs and 72 frames (Blast), 32, 16 and 80 (Mad
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
@@ -219,16 +219,16 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *args, s32 mode) {
   ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the animation's sprites in gBattleAnimWork's objects.
+/// Creates the animation's sprites in gBattleAnimWork's animations.
 ///
 /// Called by the summon animations (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
-/// Fills work->animations[0] to [entryCount - 1]: object n plays animation n,
-/// with its flags cleared and its sprite priority set. A slot whose object
+/// Fills work->animations[0] to [entryCount - 1]: sprite n plays animation n,
+/// with its flags cleared and its sprite priority set. A slot whose sprite
 /// could not be created is left NULL.
 ///
-/// entryCount: how many objects to create.
-/// source: the resource object every one of them is made from.
+/// entryCount: how many sprites to create.
+/// source: the sprite every one of them is made from.
 /// priority: the sprite priority they take.
 void BattleAnim_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);

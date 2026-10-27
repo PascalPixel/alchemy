@@ -1,6 +1,6 @@
 /// @file
-/// Two maps of Tolbi where the party plays for prizes whenever it is in town;
-/// neither has a story script.
+/// Two scenes of Tolbi where the party plays for prizes whenever it is in town;
+/// neither has a story event.
 ///
 /// - Stucco rooms C (SceneId_StuccoRoomsC), a sheet of rooms drawn in stucco,
 ///   both of them Tolbi's, whose area name is Tolbi: the rooms of Lucky Dice
@@ -355,7 +355,7 @@ const struct Trigger *TolbiSpring_GetTriggers(void) {
   return gTolbiSpringTriggersOther;
 }
 
-/// The setup of both maps. Tolbi Spring: the blend, the two mirrored props
+/// The setup of both scenes. Tolbi Spring: the blend, the two mirrored props
 /// drawn underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's
 /// obstacles, with the spring shown at once if it has risen in this visit. The
 /// Lucky Dice and Lucky Wheels rooms: the soldier removed after

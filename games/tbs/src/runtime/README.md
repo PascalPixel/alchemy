@@ -168,7 +168,7 @@ The queue is `gIoWriteQueue`, emptied by `IoWriteQueue_FlushPending`.
 
 ## Saving
 
-![In Vale, Start opens the pause menu; Save your quest is chosen, then the first of three empty files, and the game says "Saving..." and then "Your game was saved."](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
+![In Vale, Start opens the Pause menu; Save your quest is chosen, then the first of three empty files, and the game says "Saving..." and then "Your game was saved."](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
 
 Saving writes the new copy of a save before it lets go of the old one, so
 switching off at the wrong moment never loses a save. The cartridge's flash
@@ -192,7 +192,7 @@ The sectors are written by `Save_WriteRecord` and read by
 Two consoles joined by a cable trade a small fixed message every frame, and
 anything larger, such as a [party](../../glossary.md#the-party) for a link
 battle, rides inside it in numbered pieces that are sent again when one goes
-missing. Link battles, the Battle Arena and the main menu's transfer use it.
+missing. Link battles, the Battle Arena and the File Screen's transfer use it.
 
 Each frame's message carries 24 bytes each way, and larger data travels 20
 bytes a frame. The receiver keeps a piece only when its number is the one it
@@ -281,7 +281,7 @@ the fourth.
 
 No task waits, and none adds a task. A call graph of the English build's
 objects, main image and overlays, from each function the code adds as a task,
-each object hook and each `SC_CALL` callback, finds nine tasks with a path of
+each actor update routine and each `SC_CALL` routine, finds nine tasks with a path of
 calls to `WaitFrames`, and none takes it: the scene tasks turn actors
 with a wait of 0 (`Actor_ArmCallback`), the world map's lighthouse
 jitter moves the camera with a glide, Lucky Wheels and the link countdown

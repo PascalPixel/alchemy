@@ -31,7 +31,7 @@
 /// CottageRoomsC_Initialize opens the rooms with a window around the leader
 /// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority. He
 /// stands at the north edge of the restaurant's table, on cell (7, 49), which
-/// alone of the diners' cells gives an object standing on it priority 3
+/// alone of the diners' cells gives an actor standing on it priority 3
 /// (map_032's map.txt). Taken from that cell, his priority would
 /// put him behind the middle layer (`BG2`, priority 2 in this map); the fixed
 /// priority 2 draws him in front of it, as the other diners are.
@@ -353,7 +353,7 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
 /// out orders once, then sends the party to the waitress.
 static void CottageRoomsC_TalkToBusyChef(void) {
   Event_Start();
-  // The test is the script layer's inline and the set below a direct call,
+  // The test is the event layer's inline and the set below a direct call,
   // each as it matches: an inline call's argument is a pseudo of its own,
   // where a direct call keeps the flag number in a callee-saved register.
   if (Event_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {

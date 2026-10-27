@@ -1,7 +1,7 @@
 /// @file
 /// Hammet Palace (SceneId_HammetPalace), the rooms of Lord Hammet's palace in
-/// Kalay. The map before its door, also Hammet Palace in the game's area names,
-/// is kalay.c's HammetPalaceGrounds.
+/// Kalay. The scene before its door, also Hammet Palace in the game's area
+/// names, is kalay.c's HammetPalaceGrounds.
 ///
 /// Two events in the room where Lady Layana stands frame the party's part in
 /// Hammet's rescue from Lunpa, and between them three flags pick where she
@@ -138,7 +138,7 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 }
 
 /// Selects Hammet Palace's entrances, or the fallback table for any
-/// other map number.
+/// other scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 

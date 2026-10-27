@@ -3,9 +3,9 @@
 #include "actor.h"
 
 // Altin Peak, Bilibin, Imil, Kolima, McCoy's palace and garden, Sol Sanctum's
-// Elemental Star room, and Vale's Kraden, Babi, home and interiors maps.
+// Elemental Star room, and Vale's Kraden, Babi, home and interiors scenes.
 
-/// An object script call: an actor with a facing target turns towards
+/// An actor script call: an actor with a facing target turns towards
 /// it, at most a sixteenth of a turn a frame.
 static s32 Scene_TurnTowardTarget(struct Actor *interpreter) {
   struct Actor *actor = interpreter;

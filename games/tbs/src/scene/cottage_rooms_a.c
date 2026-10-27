@@ -26,7 +26,7 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetExits).
+///   storm's scene (SceneId_ValeStormyNight) instead (CottageRoomsA_GetExits).
 ///   The jars and the barrel are empty, and six more bookcases than by day can
 ///   be read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -344,7 +344,7 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
 
 // The rooms' doors: stepping on a door's cell, whose metatile behavior is its
 // exit's number, takes that exit back out, in every table. On the stormy night
-// the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
+// the exits to SceneId_Vale lead to the storm's scene (SceneId_ValeStormyNight)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
@@ -401,7 +401,7 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 /// lightning flashes outside; back from Kalay, entering Garet's house the first
 /// time plays his homecoming.
 ///
-/// The map's initialize entry. Runs CottageRoomsA_GaretComesHome from
+/// The scene's initialize entry. Runs CottageRoomsA_GaretComesHome from
 /// COTTAGE_ROOMS_A_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
 /// is set. From COTTAGE_ROOMS_A_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.
@@ -573,7 +573,7 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
 ///
 /// Called by CottageRoomsA_Initialize from
 /// COTTAGE_ROOMS_A_FROM_VALE_EAST after Kalay, until FLAG_GARET_CAME_HOME
-/// is set; sets it. Adds and removes the callback
+/// is set; sets it. Adds and removes the task
 /// CottageRoomsA_SpawnSleepZ, and leaves the father pacing.
 static void CottageRoomsA_GaretComesHome(void) {
   struct Actor *sleepZ;
@@ -901,7 +901,7 @@ static void CottageRoomsA_GaretComesHome(void) {
 /// Sends a sprite drifting up from Garet's sleeping grandfather, one of the
 /// three at frames 10, 20 and 30 of every 180.
 ///
-/// A callback CottageRoomsA_GaretComesHome adds while the grandfather dozes.
+/// A task CottageRoomsA_GaretComesHome adds while the grandfather dozes.
 static void CottageRoomsA_SpawnSleepZ(void) {
   s32 actorId;
   u32 cycleFrame;

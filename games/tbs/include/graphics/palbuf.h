@@ -14,7 +14,7 @@
 /// The title intro's form of HEAP_SLOT_PALETTE_FADE, allocated by
 /// TitlePaletteFade_Initialize.
 struct TitlePaletteFade {
-  /// The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
+  /// The source palette, RGB555: 256 BG colours, then 256 sprite colours.
   u16 palette[512];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
@@ -36,13 +36,13 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 0x1c00);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 0x2800);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 
-/// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
+/// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and sprite
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
-/// SceneManager_Run allocates it on map load (PaletteFade_Initialize),
+/// SceneManager_Run allocates it on scene load (PaletteFade_Initialize),
 /// and gPaletteFadeWork reads it.
 struct PaletteFade {
-  /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
+  /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;
   /// palette[0] is the backdrop.
   u16 palette[0x1c0];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a

@@ -19,13 +19,13 @@
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds it set into the
 /// floor underfoot, with the cells along it changed. All three are area
 /// temp flags, so the room is as it started again once the party leaves Goma
-/// Cave's four maps. Walking west into a gap (metatile behavior 20) jumps the
+/// Cave's four scenes. Walking west into a gap (metatile behavior 20) jumps the
 /// leader across it, and a chest holds a Lucky Medal.
 ///
 /// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
 /// see something strange over there? I fought it, but it fled.` Talking to
 /// Forge makes him jump in surprise, and the Djinni's battle begins. After a
-/// win the room reloads with the Djinni's script still pending, so the man
+/// win the room reloads with the Djinni's event still pending, so the man
 /// fidgets on a timer while Forge joins the party; once it has, the timer
 /// raises RAISED_FORGE_JOINED, and the man is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
@@ -38,7 +38,7 @@
 /// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
-/// ENTRANCE_STUMP_FALL, which no exit names and only the debug map selector
+/// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
 #include "script_operands.h"
 #include "version.h"
@@ -129,7 +129,7 @@ enum GomaCavePillarActorId {
 };
 
 /// The entrance no exit names, which plays the stump being pushed to
-/// the edge and falling into the room below; only the debug map selector
+/// the edge and falling into the room below; only the debug scene selector
 /// reaches it.
 enum { ENTRANCE_STUMP_FALL = 99 };
 
@@ -531,7 +531,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
-/// Djinni joins the party; once the Djinni's script is over, it raises
+/// Djinni joins the party; once the Djinni's event is over, it raises
 /// RAISED_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct FieldWork *work;

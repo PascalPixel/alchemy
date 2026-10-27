@@ -41,8 +41,8 @@
 /// ice block palette over the first 64, writes the window registers and the
 /// window-edge table at Ram_MapGridCellBuffer (through
 /// BattleAnim_BuildWindowEdgeTable), gBgScroll[1] for the shake,
-/// gProjection.centerY and work->shakeFrames; it releases the nine objects
-/// before the second half and its callbacks and blitters at the end.
+/// gProjection.centerY and work->shakeFrames; it releases the nine sprites
+/// before the second half and its tasks and blitters at the end.
 void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
   // One to one; the frame loop copies it and then sets both factors to 1.0
   // again.
@@ -98,7 +98,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
-  // The formation: nine objects of SPRITE_BOREAS, sprite priority 1.
+  // The formation: nine sprites of SPRITE_BOREAS, sprite priority 1.
   BattleAnim_SpawnObjects(9, SPRITE_BOREAS, 1);
   ANIM_SHOW_WIDE_CANVAS(16);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -164,7 +164,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
 
     // Shake: random until frame 167, from the table on frames 176 to 179,
     // when the big block lands. The battle background (BG1) sits 32 lines down,
-    // and the rocks and objects are drawn offset by the same amount, so they
+    // and the rocks and sprites are drawn offset by the same amount, so they
     // shake with it.
     if (frame <= 167) {
       shakeX = (Random16() & 3) - 1;
@@ -192,7 +192,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
            gBoreas_RockWidths[cell], gBoreas_RockHeights[cell]);
     }
 
-    // Lay out the 3x3 objects 32 pixels apart, moved against the shake. They
+    // Lay out the 3x3 sprites 32 pixels apart, moved against the shake. They
     // come to the front on frame 174, and from frame 209 the third one
     // animates.
     scale = unitScale;

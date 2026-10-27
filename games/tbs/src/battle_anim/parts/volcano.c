@@ -18,7 +18,7 @@
 #define VOLCANO_FLAME_IMAGE_ODD 0xdd0   ///< the flame on odd frames
 #define VOLCANO_FLAME_IMAGE_EVEN 0x10b4 ///< the flame on even frames
 
-/// One, two or four columns of fire (gVolcano_Counts by effect->variant) rise
+/// One, two or four columns of fire (gVolcano_Counts by args->variant) rise
 /// near the far edge on the targets' side, at the depths of gVolcano_Depths,
 /// starting at gVolcano_StartFrames; each erupts with a fountain of 200 sparks
 /// and keeps spitting more, and each eruption knocks the targets back.

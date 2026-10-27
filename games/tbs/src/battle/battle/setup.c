@@ -337,7 +337,7 @@ s32 DjinnRecovery_Reconcile(void) {
 
 /// Works out which summons the party can call: one whose Djinn requirement
 /// of every element is met by the Djinn the party holds of that element
-/// (djinnHeldCounts, set or not), all members together. Whether enough of
+/// (djinnHeldCounts, set or not), all party members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
 /// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
 /// is built into a turn (BattleTurn_Build). Stores the mask of them (bit n for

@@ -1,5 +1,5 @@
 /// @file
-/// An effect's work: setting it up, its caster and target, cleaning up.
+/// A field Psynergy's work: setting it up, its caster and target, cleaning up.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
@@ -7,12 +7,12 @@
 /// Task: updates the 24 field effect sprites.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
-/// Prepares the work of the Psynergy effect for ability
-/// (HEAP_SLOT_FIELD_EFFECT) and loads its spark tiles. Called again while an
-/// effect resolves, it only switches the ability.
+/// Prepares the work of the field Psynergy for ability
+/// (HEAP_SLOT_FIELD_EFFECT) and loads its spark tiles. Called again while one
+/// resolves, it only switches the ability.
 ///
-/// Field_UsePsynergy and the item uses (overworld/items.c) call it before an
-/// effect and FieldPsynergy_End after it, which releases the
+/// Field_UsePsynergy and the item uses (overworld/items.c) call it before a
+/// field Psynergy and FieldPsynergy_End after it, which releases the
 /// work, the spark tiles' resource entry and the task started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
@@ -42,7 +42,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   effectWork->enabled = 1;
   effectWork->active = 1;
   effectWork->messageMode = 1;
-  // Keep the map's shake and its decay, to restore after the effect.
+  // Keep the map's shake and its decay, to restore after the Psynergy.
   effectWork->savedShakeX = grid->shakeX;
   effectWork->savedShakeY = grid->shakeY;
   effectWork->savedShakeDecay = grid->shakeDecay;
@@ -51,8 +51,8 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
   FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, -1);
-  // Every effect but Reveal's own pauses Reveal's countdown (running is 0
-  // here) until FieldPsynergy_End lets it run again.
+  // Every field Psynergy but Reveal itself pauses Reveal's countdown (running
+  // is 0 here) until FieldPsynergy_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
@@ -61,11 +61,11 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
-/// Records the caster and the target of an effect. With no target, the effect
+/// Records the caster and the target of a field Psynergy. With no target, it
 /// takes place 16 pixels in front of the caster (facing to the nearest
-/// quarter turn). work->angle becomes that facing, the way the effects aim.
-/// A target's update hook, script and first sprite's param are saved, for
-/// the effects that take it over to restore.
+/// quarter turn). work->angle becomes that facing, the way field Psynergy aims.
+/// A target's update routine, script and first sprite's param are saved, for
+/// the Psynergy that takes it over to restore.
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -102,7 +102,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   Vector_AddPolarOffset(0x100000, dir, &effectWork->x);
 }
 
-/// Stops the caster's per-frame hook and restores its colours (sprite param
+/// Stops the caster's update routine and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldPsynergy_StopCasterUpdate(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -115,10 +115,10 @@ void FieldPsynergy_StopCasterUpdate(void) {
 
 #define SETUP_OBJECT_SLOTS (gActors)
 
-/// Ends a Psynergy effect: frees the field effect sprites still in use and,
-/// unless another effect is being resolved, waits (at most 30 frames) for the
-/// swelling arcs to end, stops the slot callback, releases the effect's tiles,
-/// restores the map's shake, plays the queued sound and releases the effect's
+/// Ends a field Psynergy: frees the field effect sprites still in use and,
+/// unless another is being resolved, waits (at most 30 frames) for the
+/// swelling arcs to end, stops the slot task, releases its tiles,
+/// restores the map's shake, plays the queued sound and releases its
 /// work.
 void FieldPsynergy_End(void) {
 #ifndef UBFIX
@@ -148,8 +148,8 @@ void FieldPsynergy_End(void) {
       FieldEffect_ClearOwnedSlot(effectSlot);
   }
 
-  // While Field_UsePsynergy resolves an effect (psynergyActing), a cleanup
-  // from inside it frees only the slots; the rest waits for its own.
+  // While Field_UsePsynergy resolves a field Psynergy (psynergyActing), a
+  // cleanup from inside it frees only the slots; the rest waits for its own.
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(struct Actor *) =
@@ -194,12 +194,12 @@ void FieldPsynergy_End(void) {
 }
 
 /// Starts casting: the caster takes its casting pose (animation 20) and
-/// stops. Unless the effect is silent the caster flashes with a sound; unless
-/// it is quiet, the ability's name is shown while every other object stands
+/// stops. Unless the Psynergy is silent the caster flashes with a sound; unless
+/// it is quiet, the ability's name is shown while every other actor stands
 /// still. With flag 0x140 the caster's colours keep cycling and it
-/// takes pose 21; otherwise the caster's hook stops. Sets the field work's
-/// castStarted, which FieldPsynergy_End clears. Called by
-/// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
+/// takes pose 21; otherwise the caster's update routine stops. Sets the field
+/// work's castStarted, which FieldPsynergy_End clears. Called by
+/// Field_UsePsynergy and Goma Cave Entrance once the Psynergy's caster and
 /// target are set up.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
@@ -245,10 +245,10 @@ void FieldPsynergy_StartCast(void) {
   ((struct FieldWork *)renderState)->castStarted = 1;
 }
 
-/// Saves the palettes for the effect and fades them toward one of the eight
-/// effect colours (gFieldEffect_TargetColors), picked by the frame counter or
+/// Saves the palettes for the Psynergy and fades them toward one of the eight
+/// cast colours (gFieldEffect_TargetColors), picked by the frame counter or
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
-/// effects open with it, and FieldPsynergy_FadeFromCastColor fades back.
+/// opens with it, and FieldPsynergy_FadeFromCastColor fades back.
 void FieldPsynergy_FadeToCastColor(void) {
   u8 *field;
   struct PaletteFade *work;
@@ -294,7 +294,7 @@ void FieldPsynergy_FadeToCastColor(void) {
   PaletteFade_StartInterpolation(8);
 }
 
-/// Fades the palettes back from an effect's colours to the saved ones over 8
+/// Fades the palettes back from a cast's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TINT_GRAYSCALE, 0x10001).
 void FieldPsynergy_FadeFromCastColor(void) {
@@ -313,7 +313,7 @@ void FieldPsynergy_FadeFromCastColor(void) {
 }
 
 /// Converts a world position (16.16 pixels) to the screen: x and z receive
-/// the screen's x and y and y becomes 0. The world map uses its perspective
+/// the screen's x and y and y becomes 0. The World Map uses its perspective
 /// projection.
 void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX

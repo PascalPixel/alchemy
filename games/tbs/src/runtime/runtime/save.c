@@ -265,7 +265,7 @@ u32 Save_ReadRecord(s32 recordId, void *destination) {
 }
 
 /// Invalidates the current copy of record `recordId`. Called when the
-/// file menu erases a file. Returns 0 on success and 1 when there is none or
+/// file list erases a file. Returns 0 on success and 1 when there is none or
 /// the write failed.
 u32 Save_DeleteRecord(s32 recordId) {
   s32 index;
@@ -387,7 +387,7 @@ u32 Save_GetLatestCounter(s32 recordId) {
 }
 
 /// Reads the summary at the start of each of the three save files into the
-/// workspace's summary table for the file menu, and four bytes from
+/// workspace's summary table for the file list, and four bytes from
 /// offset 0x110 of each file's second record into its secondRecordPlayTime
 /// (zero when it has none). A file with no first record keeps a cleared
 /// summary, so its level reads 0. Called by the save screens. Returns how many

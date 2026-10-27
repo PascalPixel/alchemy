@@ -1,13 +1,13 @@
 /// @file
 /// Vale on the stormy night (SceneId_ValeStormyNight), the prologue, when Isaac
-/// and Garet are children: a map of its own that stands in for SceneId_Vale
+/// and Garet are children: a scene of its own that stands in for SceneId_Vale
 /// while FLAG_VALE_STORM is set, so that the doors that lead to Vale by day
 /// lead here. ValeStormyNight_Initialize sets the flag on every arrival, and
 /// vale_plaza.c clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
-/// ValeStormyNight_Initialize, which rebuilds the map at that stage on the next
-/// arrival:
+/// ValeStormyNight_Initialize, which rebuilds the scene at that stage on the
+/// next arrival:
 ///
 /// - FLAG_VALE_STORM_SENT_TO_PLAZA: ValeStormyNight_DoraSendsIsaacToThePlaza,
 /// played on
@@ -20,7 +20,7 @@
 ///   ValeStormyNight_FourthRockFalls drop a rock across a path at four spots.
 ///   The _FELL flag puts back the rock and the metatile behaviors of the cells
 ///   it blocks; the _PASSED flag, cleared once the party leaves Vale, keeps the
-///   script from running again.
+///   event from running again.
 /// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValeStormyNight_BumpIntoShovingMan,
 /// the
 ///   first time Isaac tries the door of
@@ -172,7 +172,7 @@ enum StormNightActorId {
   ACTOR_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
   // elders!", vale_plaza.c), from gValeStormyNight_BoulderWatchers, which
-  // ValeStormyNight_WatchBoulderFall places after the map's own actors and
+  // ValeStormyNight_WatchBoulderFall places after the scene's own actors and
   // removes.
   // Two invisible actors stand on the spots of ACTOR_ELDER_EAST and
   // ACTOR_ELDER_WEST, and some of the elders' lines come from them.
@@ -246,7 +246,7 @@ enum StormNightAnimation {
   ANIM_FELIX_CLING_STILL = 8 ///< ANIM_FELIX_CLING's first frame held
 };
 
-/// Vale's area flags this map keeps while the party is in Vale.
+/// Vale's area flags this scene keeps while the party is in Vale.
 enum StormNightAreaFlag {
   /// The strongman at the river tried to go for help and could not.
   /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
@@ -258,7 +258,7 @@ enum StormNightAreaFlag {
   /// Kyle has greeted Isaac at the river.
   /// ★ Named from the game: "Oh," (MsgValeOh)
   FLAG_VALE_STORM_KYLE_GREETED_ISAAC = 0x30d,
-  /// The party has passed each rock's spot since coming to Vale, so its script
+  /// The party has passed each rock's spot since coming to Vale, so its event
   /// does not play again.
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
@@ -274,7 +274,7 @@ enum StormNightAreaFlag {
   FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_AREA_TEMP_13
 };
 
-// Map flags, cleared on every ordinary arrival:
+// Scene flags, cleared on every ordinary arrival:
 // - FLAG_VALE_ISAACS_DOOR_OPEN: the door of Isaac's house, from which Dora and
 //   Isaac came, stands open.
 // - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
@@ -379,7 +379,7 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
 /// Leaves through an exit the exit table doesn't list. In Vale on the stormy
 /// night, stepping on metatile behavior 2 requests exit 1, the one number the
 /// exit table leaves out; Scene_TakeExit therefore falls back to the first
-/// exit's map, Vale's SceneId_ValePlaza, at ENTRANCE_DEFAULT.
+/// exit's scene, Vale's SceneId_ValePlaza, at ENTRANCE_DEFAULT.
 static void ValeStormyNight_LeaveNorthwestToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
@@ -1411,7 +1411,7 @@ static void ValeStormyNight_WarnAboutMtAleph(void) {
 }
 
 /// Brings Garet out to discuss a blocked path, then returns him to Isaac.
-/// Called by the four rock scripts; x and y are the pixels where Garet stands.
+/// Called by the four rock events; x and y are the pixels where Garet stands.
 static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
   s32 speed = PIXELS(1);
@@ -2644,7 +2644,7 @@ static void ValeStormyNight_FlashLightning(void) {
   TilesetAnim_Resume(5);
 }
 
-/// The callback that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes
+/// The task that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes
 /// down the river: the shadow swells or shrinks by the step of
 /// gValeStormyNight_BoulderRollsDownriver the Boulder is on (its work value),
 /// shows on odd frames only, and the map shakes as the step's timer counts
@@ -2705,7 +2705,7 @@ static void ValeStormyNight_UpdateBoulderShadow(void) {
   }
 }
 
-/// The callback that moves ACTOR_BOULDER_SHADOW between two heights on
+/// The task that moves ACTOR_BOULDER_SHADOW between two heights on
 /// alternate frames, during the frozen flashes.
 static void ValeStormyNight_FlickerBoulderShadow(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOULDER_SHADOW);
@@ -3008,7 +3008,7 @@ static void ValeStormyNight_UpdateBoulderMapEffects(void) {
   }
 }
 
-/// The callback that cycles the Boulder's palettes while the elders hold it.
+/// The task that cycles the Boulder's palettes while the elders hold it.
 static void ValeStormyNight_CycleBoulderPalette(void) {
   ValeStormyNight_CycleActorPalettes(Actor_GetById(ACTOR_BOULDER));
 }

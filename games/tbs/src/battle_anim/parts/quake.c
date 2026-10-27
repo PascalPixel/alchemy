@@ -36,7 +36,7 @@ struct RockWallHeights {
 /// the first 0x8000 bytes of Ram_MapGridCellBuffer with BG tiles; sets the
 /// targets' vertical velocity and gravity; arms work->shakeFrames.
 ///
-/// effect: the targets; variant picks the row of gQuake_Timings.
+/// args: the targets; variant picks the row of gQuake_Timings.
 void BattleAnim_RunQuake(struct BattleAnimArgs *args) {
   static s32 wallHeights[4] = {
       -32,

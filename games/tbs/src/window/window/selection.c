@@ -199,7 +199,7 @@ void SelectionMenu_StartDrawing(void) {
 /// Stops drawing the selection screen.
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
-/// The selection screen's per-frame callback: slides and draws the row of
+/// The selection screen's per-frame task: slides and draws the row of
 /// icons, the large icon over the chosen one, the end arrows, the icons already
 /// chosen and the pointing hand. The depth slots: 240 for the row and the
 /// chosen icons, 241 for the icon under the cursor, 248 for the large icon and

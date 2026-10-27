@@ -34,7 +34,7 @@
 /// FLAG_TOLBI_SPRING_OPENED), and the gate (MB_TOLBI_GATE_TO_SPRING) leads into
 /// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the party
 /// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
-/// map flag kept only through a return that keeps the party's position;
+/// scene flag kept only through a return that keeps the party's position;
 /// Reveal uncovers a chest with Power Bread, and a barrel and a jar hold 9
 /// coins and a Lucky Medal (during the festival, the editions from TBS_PATCH_1
 /// on find the jar only when the party faces north).
@@ -46,7 +46,7 @@
 /// rooms (SceneId_StuccoRoomsC, whose area name is also Tolbi).
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
-/// out onto the world map.
+/// out onto the World Map.
 
 #include "unit/scene/tolbi.h"
 #include "djinn_ids.h"
@@ -133,7 +133,7 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // way. While the party talks to someone or Mind Read shows thoughts (the range
 // widens to 26 pixels), the child being talked to stops whatever the
 // direction.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void removes its zero result; its aligned extent stays 152 bytes.
 #ifdef UBFIX
 static void Tolbi_UpdateKid(struct Actor *updated) {
@@ -399,7 +399,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 }
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
-/// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
+/// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the scene changes through the
 /// door's exit, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
@@ -444,7 +444,7 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
   }
 }
 
-/// Sets up the map on entry: the running children, ACTOR_TOLBI_OLD_MAN's
+/// Sets up the scene on entry: the running children, ACTOR_TOLBI_OLD_MAN's
 /// update, and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
@@ -672,7 +672,7 @@ static void Tolbi_FreezePuddle(void) {
   GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 
-/// The action script of a mirrored actor: flips its sprite and passes 7
+/// The actor script of a mirrored actor: flips its sprite and passes 7
 /// on.
 s32 gTolbiMirroredActor[] = {
     SC_SET(SW_SCALE_X, -Q16_ONE),

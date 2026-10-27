@@ -25,7 +25,7 @@ struct SaveSectorHeader {
   u8 reserved[4]; ///< not named by TBS code
 };
 
-/// A save file's summary for the file menu: the leader's name, level and
+/// A save file's summary for the file list: the leader's name, level and
 /// class, the area, play time, coins, Djinn and party.
 struct SaveFileSummary {
   u8 slotHeader[16]; ///< room for the record's SaveSectorHeader
@@ -38,7 +38,7 @@ struct SaveFileSummary {
   u8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
   /// Copied from SaveBlock.sendFlag, which saving at the end of the game sets;
-  /// the file menu for cleared data lists a file without it as not cleared.
+  /// the file list for cleared data lists a file without it as not cleared.
   s8 sendFlag;
   s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
   u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
@@ -61,7 +61,7 @@ struct SaveFileSummary {
 /// summaries.
 ///
 /// It lives in heap slot HEAP_SLOT_SAVE (gSaveWork) only around each
-/// save, load, copy or delete and each scan of the files, as the main menu's
+/// save, load, copy or delete and each scan of the files, as the File Screen's
 /// (Save_ScanRecordFlags): Save_InitializeWork takes it and
 /// scans the sectors into it, and Save_ReleaseWork frees it.
 struct SaveWork {
@@ -114,7 +114,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// Waits until a START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
-/// Nonzero offers Send on the title menu: Save_ScanRecordFlags sets it
+/// Nonzero offers Send on the File Screen: Save_ScanRecordFlags sets it
 /// when a file has its send flag set and R and Left are held.
 extern s16 gTitleSendOptionEnabled;
 

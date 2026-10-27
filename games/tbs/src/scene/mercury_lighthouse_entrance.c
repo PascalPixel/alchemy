@@ -8,7 +8,7 @@
 ///
 /// - The doorway. Until Mia has gone on, coming in by the door
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) starts the
-///   map again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN,
+///   scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN,
 ///   where she tries again and again to get past a monster, the Lizard Man, who
 ///   steps across to block her, then waits, turning to watch the leader come up
 ///   (MercuryLighthouseEntrance_LizardManBlocksMia). Spoken to, she says `A
@@ -145,7 +145,7 @@ enum MercuryLighthouseEntranceActorId {
   ACTOR_PLY_TARGET = ACTOR_FIRST_PLACED + 8
 };
 
-/// Map flags, kept while the party stays here.
+/// Scene flags, kept while the party stays here.
 enum {
   /// ★ Named from the game: "Mia" (MsgCharacterName)
   FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
@@ -175,8 +175,9 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
 // Mia's update while she waits by the Lizard Man: she turns to watch the
 // leader while the leader is north of 184 pixels, and looks back north at
 // the doorway otherwise.
-// UB: the field updater invokes a void hook. Plain void removes the zero
-// result and changes the native return register (three instructions in EN).
+// UB: the field updater invokes a void update routine. Plain void removes the
+// zero result and changes the native return register (three instructions in
+// EN).
 #ifdef UBFIX
 static void MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
 #else
@@ -350,8 +351,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 }
 
 /// Mercury Lighthouse, the doorway: touching metatile behavior 10 starts the
-/// map again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, where
-/// Mia goes in if she has not yet.
+/// scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN,
+/// where Mia goes in if she has not yet.
 static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
   Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);

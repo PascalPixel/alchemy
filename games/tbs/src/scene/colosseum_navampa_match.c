@@ -323,7 +323,7 @@ const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void) {
   return gColosseumNavampaMatchActorTemplates;
 }
 
-/// The Wall Wedge's callback: cycles its pistons through their four patterns,
+/// The Wall Wedge's task: cycles its pistons through their four patterns,
 /// and raises the opening event (4 or 5) when the rider stands in an open
 /// gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
@@ -615,7 +615,7 @@ static void ColosseumNavampaMatch_SettleStones(void) {
   }
 }
 
-/// A callback for Colosseum Final 3's eastern end: the cell at column 81, row
+/// A task for Colosseum Final 3's eastern end: the cell at column 81, row
 /// 12 lets the rider through only while facing south.
 static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   struct Actor *actor;
@@ -1964,7 +1964,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   Event_End();
 }
 
-// This map's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
 #include "common/colosso_solo.h"

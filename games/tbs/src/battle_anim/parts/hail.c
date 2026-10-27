@@ -25,7 +25,7 @@
 /// the first 128 bytes of BG palette RAM (the water spray's, then the ice
 /// chips' on frame 1), sets work->shakeFrames on frame 8.
 ///
-/// effect: the user and the targets; prelude 1 keeps the Djinni circling.
+/// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleAnim_RunHail(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
@@ -185,7 +185,7 @@ void BattleAnim_RunHail(struct BattleAnimArgs *args) {
 /// (BattleAnim_StepPaletteToResource). Writes REG_BLDALPHA, sets
 /// work->shakeFrames on each hit.
 ///
-/// effect: the user and the targets; prelude 1 keeps the Djinni circling.
+/// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleAnim_RunGround(struct BattleAnimArgs *args) {
   struct BattleAnimWork *work;
   void *canvas;

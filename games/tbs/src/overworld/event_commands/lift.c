@@ -85,10 +85,10 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 /// This is Lift cast with no target, which FieldPsynergy_Run calls.
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
 
-/// Spawns a hand (object 215) and grows it, spinning, from a quarter to full
+/// Spawns a hand (sprite 215) and grows it, spinning, from a quarter to full
 /// size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
-/// NULL when no object could be spawned. Unlike Carry's
+/// NULL when no actor could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
 /// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
 struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
@@ -119,7 +119,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
 }
 
 /// Field effect sprite callback of a particle that scatters 25 pixels from its
-/// origin in a random direction, then gathers beside the main object and is
+/// origin in a random direction, then gathers beside the main actor and is
 /// freed. Set on Force's 12 flashes by FieldPsynergy_Force in force.c.
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // A for/continue retry keeps the same states but grows the native English
@@ -155,7 +155,7 @@ again:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
-    // 8 pixels toward effectWork->angle from 16 pixels above the main object,
+    // 8 pixels toward effectWork->angle from 16 pixels above the main actor,
     // on screen, give or take 4 pixels.
     struct Actor *caster = effectWork->mainActor;
 
@@ -178,11 +178,11 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// A heavy impact: places object 0x11b 32 pixels below the source for 20
-/// frames and scatters 12 shards from it. Reached through SC_CALL in
+/// A heavy impact: places an actor of sprite 0x11b 32 pixels below the source
+/// for 20 frames and scatters 12 shards from it. Reached through SC_CALL in
 /// gFieldEffect_HeavyImpactScript (fxdata.c), where the interpreter is the
-/// object running the script, which Force's thrown object runs (force.c).
-/// Returns 0, so the script moves on and frees the object.
+/// actor running the script, which Force's thrown actor runs (force.c).
+/// Returns 0, so the script moves on and releases the actor.
 s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   struct Actor *source = interpreter;
   struct Vector3 pos;

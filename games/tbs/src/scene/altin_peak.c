@@ -1,11 +1,11 @@
 /// @file
 /// Altin Peak, the mine below Altin that its villagers and the Alpine
-/// Crossing's signpost call Altin Mine: eleven maps,
+/// Crossing's signpost call Altin Mine: eleven scenes,
 /// SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit, whose area
 /// name is Altin Peak, except that the international editions call
 /// AltinPeakSouthEntrance the Alpine Crossing when the party comes in from
 /// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
-/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each map is a room
+/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each scene is a room
 /// of the mine, and the getters pick each room's tables by gSaveBlock.sceneId,
 /// all the rooms share one exit table, and Scene_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
@@ -28,7 +28,7 @@
 /// Altin's code reads to lower the water in the village too. Back from the
 /// first battle, in AltinPeakFirstWaterBeast, the party finds the Frost Jewel
 /// before the water drains, and from then on Frost freezes the mine's puddles
-/// into ice pillars to stand on (map temp flags keep them frozen only within
+/// into ice pillars to stand on (scene temp flags keep them frozen only within
 /// one visit). AltinPeakSouthEntrance's water stands until the second drain and
 /// AltinPeakPool's until the third.
 ///
@@ -60,7 +60,7 @@
 /// AltinPeakSouthEntrance opens onto the Alpine Crossing
 /// (ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST and
 /// ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST) and AltinPeakWestExit
-/// onto the world map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
+/// onto the World Map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
 ///
 /// The falling boulder is SPRITE_ROCK, its shadow a SPRITE_BLANK_LARGE
 /// actor, and its pieces in the crash SPRITE_ROCK again, scaled down
@@ -276,8 +276,8 @@ enum {
   ACTOR_WEST_EXIT_ROOM_PILLAR
 };
 
-/// The rooms' frozen puddles and Garet at the sign: map temp flags, kept within
-/// one visit to a room, across its battles.
+/// The rooms' frozen puddles and Garet at the sign: scene temp flags, kept
+/// within one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
   /// ★ Named from what the player sees: a small puddle of water on the mine's
@@ -320,10 +320,10 @@ static void AltinPeak_TalkToDjinni(void) {
 // Shared source, included where its bytes sit in the ROM.
 #include "common/actor_facing.h"
 
-// Update callback of AltinPeakFallingRocks's boulder shadow: it stays under the
+// Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the
 // boulder, on the ground 12 pixels down, while the boulder bounces. UB: update
-// hooks return void. Plain void removes the native zero result and changes its
-// return sequence (three instructions in tbs-en).
+// routines return void. Plain void removes the native zero result and changes
+// its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
 static void AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
 #else
@@ -340,7 +340,7 @@ static s32 AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
 #endif
 }
 
-/// Script callback for a piece of flying rock debris: it moves by its
+/// Actor script routine for a piece of flying rock debris: it moves by its
 /// velocity, grows by its z velocity and falls under its gravity.
 static s32 AltinPeak_FlyDebris(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -540,7 +540,7 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
 /// Frost on a puddle freezes it into an ice pillar the party can stand on:
 /// the puddle's cell takes the pillar's attributes, kept elsewhere on the
 /// map, and the pillar is drawn 32 pixels lower, under the party. Each
-/// room's puddle has its own copy, setting its own map temp flag.
+/// room's puddle has its own copy, setting its own scene temp flag.
 static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -999,7 +999,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Event_PlaySong(SE_STONE_RUMBLE);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Event_WaitFrames(20);
-  // Stage the rolling object and its follower for the escape route.
+  // Stage the rolling actor and its follower for the escape route.
   shadow->scaleX = 6 * Q16_ONE / 5;
   shadow->scaleY = 6 * Q16_ONE / 5;
   shadow->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1031,7 +1031,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  // Send the leader first, then release the rolling object after its delay.
+  // Send the leader first, then release the rolling actor after its delay.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
   Actor_SetScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderFleePath);
@@ -1062,7 +1062,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   shadow->update = NULL;
   shadow->z.fixed = PIXELS(618);
   shadow->y.fixed = -PIXELS(64);
-  // Let the rolling object bounce before the final collapse.
+  // Let the rolling actor bounce before the final collapse.
   Actor_SetSpeed(ACTOR_FALLING_BOULDER, PIXELS(8) / 5, PIXELS(4) / 5);
   boulder->bounce = PIXELS(1) / 10;
   boulder->gravity = PIXELS(1) / 5;
@@ -1244,14 +1244,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   return table;
 }
 
-/// Update callback of the hopping water beast: once a second it leaps up and
+/// Update routine of the hopping water beast: once a second it leaps up and
 /// lands with a splash (SE_SPLASH) that shakes the screen briefly.
 static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   struct Actor *beast = updated;
   s16 *shakeDelay = (s16 *)&beast->userValue;
 
   // The route owns timer (hop phase), work (shake delay) and the effect's
-  // countdown (landing-sound latch) until it removes this hook.
+  // countdown (landing-sound latch) until it removes this update routine.
   if (*shakeDelay != 0) {
     if (--*shakeDelay == 1)
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1311,7 +1311,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(295), PIXELS(32), PIXELS(212), 1);
-  // Run the timed hopping callback while the beast moves along its route.
+  // Run the timed hopping update routine while the beast moves along its route.
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
   beast->userValue = 0;
@@ -1905,7 +1905,7 @@ static void AltinPeak_InitializeSpray(struct Actor *spray) {
   spray->scaleY = 3 * Q16_ONE / 10;
 }
 
-/// Update callback of a spray particle: it grows while drifting away from the
+/// Update routine of a spray particle: it grows while drifting away from the
 /// beast, then curls and flattens when its movement timer runs low. The timer
 /// can start another curl; the separate lifetime still ends after 20 updates.
 static void AltinPeak_DriftSpray(struct Actor *updated) {
@@ -2016,7 +2016,7 @@ static void AltinPeak_SpawnDebris(void) {
   }
 }
 
-/// Update callback of the frozen second puddle: its ice glints every eight
+/// Update routine of the frozen second puddle: its ice glints every eight
 /// frames.
 static void AltinPeak_SparkleIce(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
@@ -2294,7 +2294,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_End();
 }
 
-/// Unused: asks the field to use Frost (psynergy 0x1018, member 4 and
+/// Unused: asks the field to use Frost (psynergy 0x1018, party member 4 and
 /// ABILITY_FROST); nothing calls it.
 UNUSED static void AltinPeak_RequestPsynergy(void) {
   gFieldWork->psynergy = 0x1018;
@@ -2709,7 +2709,7 @@ s32 gAltinPeak_LeaderFleePath[] = {
     SC_END,
 };
 
-/// A piece of debris flies for 60 frames and is freed.
+/// A piece of debris flies for 60 frames and is released.
 s32 gAltinPeak_DebrisScript[] = {
     SC_CALL(AltinPeak_FlyDebris),
     SC_WAIT(1),

@@ -368,7 +368,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 
 /// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
-/// SceneManager_Run on map load.
+/// SceneManager_Run on scene load.
 void PaletteFade_Initialize(void) {
   struct PaletteFade *work;
 
@@ -390,8 +390,8 @@ void PaletteFade_Release(void) {
 }
 
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does
-/// nothing without a palette fade. Called by the field Psynergy effects,
-/// the map transitions, the shop cursor, and map overlays.
+/// nothing without a palette fade. Called by field Psynergy,
+/// the scene transitions, the shop cursor, and scene overlays.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
 
@@ -401,7 +401,7 @@ void PaletteFade_SetTarget(s32 mode, s32 half) {
 }
 
 /// Sets the colours the buffer shows now (see PaletteFade_Build). Called by
-/// Reveal, the leader's steps (walking.c), the transitions, and map
+/// Reveal, the leader's walking update (walking.c), the transitions, and scene
 /// overlays.
 void PaletteFade_SetSource(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
@@ -423,7 +423,7 @@ void PaletteFade_SetBackdrop(u32 color) {
 
 /// Starts moving the shown colours to the target colours over frames frames:
 /// sets work->duration, clears work->step and fills work->delta. Called after
-/// PaletteFade_SetTarget by the same callers, and by map
+/// PaletteFade_SetTarget by the same callers, and by scene
 /// overlays.
 void PaletteFade_StartInterpolation(s32 frames) {
   struct PaletteFade *work = gPaletteFadeWork;

@@ -33,11 +33,11 @@ enum {
 /// battle moves on to the results on frame 24.
 ///
 /// PARTICLES holds the sparks, 128 for each target. Sets work->shakeFrames on
-/// each strike, and ends with the transfer callback removed, the blitter
+/// each strike, and ends with the transfer task removed, the blitter
 /// freed and the canvas layer closed; the glints' blitter is built and freed
 /// for each glint.
 ///
-/// effect: the targets; variant picks the row of gBolt_Counts
+/// args: the targets; variant picks the row of gBolt_Counts
 ///         and the glints' blend.
 void BattleAnim_RunBolt(struct BattleAnimArgs *args) {
   void **slots;

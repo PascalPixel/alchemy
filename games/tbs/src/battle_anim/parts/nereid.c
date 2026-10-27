@@ -11,20 +11,20 @@
 
 #define NEREID_FRAMES 124
 
-#define NEREID_OBJECTS 12 ///< objects in the sweeping formation
+#define NEREID_OBJECTS 12 ///< sprites in the sweeping formation
 /// Wrapping columns of fire; gNereid_Columns has a fourth row that nothing
 /// draws.
 #define NEREID_COLUMNS 3
 #define NEREID_EMBERS 1024        ///< embers in PARTICLES
 #define NEREID_COLUMN_IMAGE 0x6e4 ///< the column of fire in the sheet
 
-/// A formation of twelve objects sweeps in among embers and columns of fire,
+/// A formation of twelve sprites sweeps in among embers and columns of fire,
 /// and explodes.
 ///
 /// Abilities: Nereid (SUMMON_ANIM_NEREID).
 ///
 /// Pressing A or B during frames 33 to 97 skips to frame 98. A formation of
-/// twelve objects sweeps in from the right; embers burst up on frame 28 and
+/// twelve sprites sweeps in from the right; embers burst up on frame 28 and
 /// over frames 32 to 79, fall back under gravity and from frame 80 rise away,
 /// while three columns of fire stream upwards over frames 32 to 79 and the
 /// targets bounce. At the end the formation explodes with
@@ -34,9 +34,9 @@
 /// mote sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16,
 /// a variant of -1 marking an idle one. Loads the water spray palette into the
 /// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
-/// formation objects (released at the end) and gives the targets an upward
+/// formation sprites (released at the end) and gives the targets an upward
 /// speed and the usual battle gravity at each bounce. Before the impact burst
-/// it removes its transfer callback and frees its blitters, which the burst
+/// it removes its transfer task and frees its blitters, which the burst
 /// builds again, and it closes the canvas layer last.
 void BattleAnim_RunNereid(struct BattleAnimArgs *args) {
   BlitterPair draw;

@@ -16,14 +16,14 @@ The folders divide the game by what it does, in the order the cartridge lays
 their banks out.
 
 The field is split four ways. [Field](field/README.md) is the engine under
-every town, dungeon and the world map: the [objects](../glossary.md#object), movement, and
+every town, dungeon and the world map: the [actors](../glossary.md#actor), movement, and
 loading, scrolling and drawing the map grid. [Running a scene](overworld/README.md),
 the `overworld` folder, runs
 one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the party leaves
-by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands scene scripts
+by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands events
 use; `SequenceManager_Run`, the loop that runs one scene after another, is there too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
-templates, [triggers](../glossary.md#trigger), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
+templates, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
@@ -33,9 +33,9 @@ one function for each animation.
 
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
-windows, among them the battle menus, the file menu and the name entry screen.
+windows, among them the battle menus, the file list and the name entry screen.
 [Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and
-Status screens, and three overlays: the title, the main menu and the
+Status screens, and three overlays: the Title, the File Screen and the
 Battle Arena. [Shops](shop/README.md) holds every counter that buys,
 sells, repairs or heals.
 
@@ -85,7 +85,7 @@ three overlays beside its bank.
 Every file the build compiles or assembles is one object, and an object too
 long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
-field's objects or the actors in a scene.
+actors in a scene.
 
 [The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
@@ -122,7 +122,7 @@ files.
 The 201 scenes of the scene table share 96 overlays, unpacked one at a time
 into the overlay area when a scene loads.
 
-Each scene's people, scripts and events are code that is needed only while
+Each scene's people and events are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The scene table,
@@ -134,12 +134,12 @@ code and loads none.
 
 In the source an overlay is three files in its folder:
 
-- `entry/<map>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six [veneers](../glossary.md#veneer) the field code
+- `entry/<scene>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six [veneers](../glossary.md#veneer) the field code
   calls to start the scene and to ask it its questions, such as where its
   [entrances](../glossary.md#entrance) are ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
   lists them).
 - `<scene>.c`, the scene's code and tables.
-- `import/<map>.s`, the import table: the veneers the overlay calls the main
+- `import/<scene>.s`, the import table: the veneers the overlay calls the main
   image through, chosen from the list in `system/overlay.inc`.
 
 Only one overlay is loaded at a time, so code several scenes use is in
@@ -150,7 +150,7 @@ describes the tables and how an overlay is packed.
 | Folder | Overlays |
 | --- | --- |
 | `map/` | 90 |
-| `menu/` | 3: the title, the main menu and the Battle Arena |
+| `menu/` | 3: the Title, the File Screen and the Battle Arena |
 | `debug/` | 3: the test rooms |
 
 ## Headers
@@ -160,7 +160,7 @@ this folder with one header for each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
-`songs.h`, and the calls scene scripts are written in, in `event_layer.h`. The
+`songs.h`, and the calls events are written in, in `event_layer.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
@@ -176,7 +176,7 @@ header beside it.
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
 | `include/songs.h` | the songs and sound effects |
-| `include/event_layer.h` | the calls scene scripts are written in |
+| `include/event_layer.h` | the calls events are written in |
 | `include/unit/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
 
@@ -238,5 +238,5 @@ Each animation's comment names the abilities that play it, so searching
 place's code is the scene named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
-the save file menu in
+the save file list in
 [window/screens/save.c](window/screens/save.c).

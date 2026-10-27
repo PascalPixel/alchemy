@@ -37,9 +37,9 @@ enum {
 };
 
 /// The per-frame message update: each text printer whose window is fully
-/// open runs its window effect or types more text, and on the text's end marks
-/// the window done (state 1) or closes it. A text printer whose window has
-/// closed is freed here. WindowSystem_Update runs it each frame after the
+/// open runs its window animation or types more text, and on the text's end
+/// marks the window done (state 1) or closes it. A text printer whose window
+/// has closed is freed here. WindowSystem_Update runs it each frame after the
 /// windows' zooms.
 void TextPrinter_RunAll(void) {
   struct TextPrinter *printer = WINDOW_WORK->printers;
@@ -311,7 +311,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
         break;
 
       case TEXT_WINDOW_STATE:
-        // The effect lasts while the countdown of 10 runs out
+        // The animation lasts while the countdown of 10 runs out
         // (Window_StepSwellEffect counts it down); typing then resumes after
         // the operand.
         printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;

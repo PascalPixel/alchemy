@@ -121,7 +121,7 @@ void Weather_UpdateLightning(void) {
 /// timers, drawn semi-transparent. Their work is HEAP_SLOT_WEATHER,
 /// which the motes and sparkles also take. SE_AMBIENT_WATER is queued
 /// (Scene_QueueMusic), so it plays again wherever the queued
-/// sound is replayed, as after a Psynergy effect.
+/// sound is replayed, as after a field Psynergy.
 void Weather_StartRain(void) {
   struct WeatherWork *work;
   s32 *leader;
@@ -506,7 +506,7 @@ void Weather_ResumeLightning(void) {
   state->enabled = 1;
 }
 
-/// Flashes the palette with the storm's callback: one burst of three flashes
+/// Flashes the palette with the storm's task: one burst of three flashes
 /// of palette to, each fading back to palette from (PaletteFade_Build
 /// modes) on the BG colours, ending 120 frames from now, and no more after.
 /// Vale's eruption calls it with the warm and red tints

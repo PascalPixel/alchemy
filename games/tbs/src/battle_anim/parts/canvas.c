@@ -10,8 +10,8 @@
 //
 // A reaction may start one of the eight actor timers in the animation's work
 // block; BattleAnim_TickBattlerTints counts them down each frame and gives
-// the battler its own palette back when one runs out. The timers are indexed
-// like effect->actors, so timer n belongs to actor n.
+// the unit its own palette back when one runs out. The timers are indexed
+// like args->targets, so timer n belongs to target n.
 
 /// Wipes the whole canvas to one colour with a ragged edge: each row (or
 /// column) lags a random 0 to 63 pixels behind the front, which speeds up as
@@ -21,7 +21,7 @@
 /// Called by the summons and animations that open on a wiped canvas: Boreas,
 /// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
 /// Judgment. Writes the canvas and sets work->transferPending each frame;
-/// the caller's transfer callback must already be running.
+/// the caller's transfer task must already be running.
 ///
 /// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
 ///            bottom (enum CanvasWipeDirection).
@@ -273,7 +273,7 @@ void BattleAnim_ClearActorTimers(void) {
 
 /// Counts down each target's flash timer, which BattleAnim_TintBattler
 /// starts; when one runs out, the target gets its own palette back. Timer n
-/// belongs to effect->actors[n].
+/// belongs to args->targets[n].
 ///
 /// Called once a frame by nearly every animation, most through
 /// ANIM_END_FRAME. Changes work->actorTimers and, through
@@ -491,7 +491,7 @@ void BattleAnim_StartTiledCanvas(s32 bgControl) {
 /// 8 frames, then shows BG2 again and hides BG1.
 ///
 /// Called at the end of nearly every canvas animation, most through
-/// ANIM_FINISH_CANVAS, after the transfer callback is removed. Takes 11
+/// ANIM_FINISH_CANVAS, after the transfer task is removed. Takes 11
 /// frames. Writes gBgScroll[1], gProjection's centre, BG2CNT (priority 3)
 /// and BLDCNT, clears character block 1, removes Palette_StepFadeTransfer
 /// and queues two DISPCNT values.

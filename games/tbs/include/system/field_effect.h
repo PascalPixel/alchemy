@@ -9,8 +9,8 @@
 #include "vector3.h"
 #include "actor_script.h"
 
-/// A field effect: a small object on the field that moves at its velocity and
-/// grows and spins at its rates, run by its script and update hook.
+/// A field effect: a small actor on the field that moves at its velocity and
+/// grows and spins at its rates, run by its script and update routine.
 struct FieldEffect {
   /// Actor's script pointer, cursor and facing; not named by this view.
   ///@{
@@ -32,7 +32,7 @@ struct FieldEffect {
   u8 priorityFlags;
   /// Actor's velocityX to velocityZ; effects move by velocity instead.
   struct Vector3 objectVelocity;
-  /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
+  /// Added to scaleX each frame by the update routines, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
@@ -42,8 +42,8 @@ struct FieldEffect {
   s32 targetY;
   s32 targetZ;
   ///@}
-  /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
-  /// pixels per frame; Actor's bounce, gravity and riseBaseY.
+  /// Added to x, y and z each frame by the update routines, in 16.16
+  /// fixed-point pixels per frame; Actor's bounce, gravity and riseBaseY.
   struct Vector3 velocity;
   struct Sprite *sprite; ///< the sprite spin turns
   u8 spriteStorageKind;  ///< Actor's; not named by this view
@@ -68,11 +68,11 @@ struct FieldEffect {
   u8 riseCounter;
   u8 riseEnabled;
   ///@}
-  /// Added to the sprite's rotation each frame by the update hooks, in
+  /// Added to the sprite's rotation each frame by the update routines, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
   u16 userValue; ///< Actor's; not named by this view
-  /// Frames until a map's update hook releases the effect: 20 for Altin
+  /// Frames until a scene's update routine releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
@@ -95,12 +95,12 @@ union ActorOrEffect {
   struct FieldEffect effect;
 };
 
-/// The flags of a map's effect spawner (EFFECT_SPAWN in
+/// The flags of a scene's effect spawner (EFFECT_SPAWN in
 /// scene/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the
-  /// object's mode is
+  /// actor's mode is
   /// this
   /// plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
@@ -110,7 +110,7 @@ enum EffectSpawnFlags {
   /// script's repeat count.
   EFFECT_SCALE_TO_TARGET = 0x40000,
   EFFECT_USE_START_SCALE = 0x80000, ///< options.startScaleX and startScaleY
-  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else object type 222
+  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else actor type 222
   EFFECT_USE_SCRIPT = 0x200000,     ///< options.script, run in mode 1
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
@@ -118,16 +118,16 @@ enum EffectSpawnFlags {
 };
 
 /// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts, in a
-/// map's spawner and the resident one alike: each holds the effect for a while,
-/// then frees it.
+/// scene's spawner and the resident one alike: each holds the effect for a
+/// while, then releases it.
 enum EffectDuration {
   EFFECT_SCRIPT_SHORT =
-      0, ///< 22 one-frame repeats in a map, 24 frames resident
-  EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a map, 46 frames resident
-  EFFECT_SCRIPT_LONG = 2    ///< 126 repeats in a map, 128 frames resident
+      0, ///< 22 one-frame repeats in a scene, 24 frames resident
+  EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a scene, 46 frames resident
+  EFFECT_SCRIPT_LONG = 2    ///< 126 repeats in a scene, 128 frames resident
 };
 
-/// The three scripts a map's own effect spawner picks from by
+/// The three scripts a scene's own effect spawner picks from by
 /// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
 /// whole.
 struct EffectDurationScripts {
@@ -143,11 +143,11 @@ struct EffectOptions {
   s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleY;  ///< 16.16 fixed point, 0x10000 full size
-  s16 type;          ///< the object type to create; 222 without the flag
-  const s32 *script; ///< the object script, run in mode 1
+  s16 type;          ///< the actor type to create; 222 without the flag
+  const s32 *script; ///< the actor script, run in mode 1
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame
-  void (*update)(struct Actor *actor); ///< replaces the update hook
+  void (*update)(struct Actor *actor); ///< replaces the update routine
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

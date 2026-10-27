@@ -12,7 +12,7 @@
 /// edition. System_CopyBuildStamp copies it into gBuildStamp, and
 /// BuildStamp_GetTime turns its time into the number saves compare.
 extern char ResourceId_BuildStamp;
-/// The row of FarCall_TitleTable. The title screen hands it to
+/// The row of FarCall_TitleTable. The Title hands it to
 /// Stub_NoOpHook, which ignores it.
 extern char ResourceId_TitleFarCalls;
 /// The row of FarCall_BattleAnimTable. Lucky Dice and Lucky Wheels hand it to
@@ -49,7 +49,7 @@ extern char ResourceId_WorldMapPicture;
 extern char ResourceId_IntroTilesB;
 
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
-// map from gScene_BattleBackgroundRules (overworld/scene_rules.s), and on the
+// scene from gScene_BattleBackgroundRules (overworld/scene_rules.s), and on the
 // world map BattleBackground_SelectForEnvironment picks one by battle
 // environment; either leaves it in gSaveBlock.special for the battle. The
 // credits (gCredits_Backgrounds) shows every one but DesertBackdrop and
@@ -73,9 +73,9 @@ extern char ResourceId_AltmillerCaveBackdrop;
 extern char ResourceId_TunnelRuinsBackdrop; ///< Tunnel Ruins' two statue rooms.
 /// Babi Lighthouse, and SceneId_CrossboneIsleBane on Crossbone Isle.
 extern char ResourceId_BabiLighthouseBackdrop;
-/// Lamakan Desert's three maps.
+/// Lamakan Desert's three scenes.
 extern char ResourceId_LamakanDesertBackdrop;
-extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three maps.
+extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three scenes.
 /// SceneId_MercuryLighthouseAerie.
 extern char ResourceId_MercuryLighthouseAerieBackdrop;
 /// SceneId_ShipRooms.
@@ -83,21 +83,21 @@ extern char ResourceId_TolbiShipInteriorsBackdrop;
 /// Fuchin Falls Cave, and SceneId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
-extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five maps.
+extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five scenes.
 /// SceneId_TreeRooms.
 extern char ResourceId_TretTreeInteriorsBackdrop;
-/// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any map the
+/// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any scene the
 /// table doesn't list, since it comes last.
 extern char ResourceId_GomaCaveBackdrop;
-/// The vault interiors and Lalivero's maps, Faran's house included.
+/// The vault interiors and Lalivero's scenes, Faran's house included.
 extern char ResourceId_InteriorBackdrop;
-/// Altin Peak's maps but the Hydros statue.
+/// Altin Peak's scenes but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;
 /// SceneId_TolbiShipDeck and SceneId_TolbiShipMast.
 extern char ResourceId_TolbiShipDeckBackdrop;
 /// Mercury Lighthouse's floors below the aerie and its exterior.
 extern char ResourceId_MercuryLighthouseBackdrop;
-/// Vale's maps, the stormy night included; the credits open on it.
+/// Vale's scenes, the stormy night included; the credits open on it.
 extern char ResourceId_ValeStormBackdrop;
 extern char ResourceId_TretTreeBranchBackdrop; ///< SceneId_TretTreeBranch.
 /// Set by the first slot of ENCOUNTER_ZONE_SCRIPTED

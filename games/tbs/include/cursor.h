@@ -3,14 +3,14 @@
 
 /// @file
 /// The cursor that approaches its target, shared by shops, the
-/// name entry screen and the option menu.
+/// name entry screen and the settings menu.
 
 #include "types.h"
 #include "static_assert.h"
 #include "render_input.h"
 
 /// Cursor that approaches its target, shared by shops, name entry screen and
-/// option menu.
+/// settings menu.
 struct MenuCursor {
   struct WindowSprite *anchor; ///< the cursor's sprite, moved with its OAM
   u16 x;       ///< screen pixels: where the current move started

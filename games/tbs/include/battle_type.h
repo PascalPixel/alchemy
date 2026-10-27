@@ -56,7 +56,7 @@ struct BattleTurn {
   /// kind
   u32 animation;
   s32 failure; ///< enum BattleTurnFailure
-  /// The damage the evil spirit deals a haunted actor at the end of its turn.
+  /// The damage the evil spirit deals a haunted unit at the end of its turn.
   u32 hauntDamage;
 };
 

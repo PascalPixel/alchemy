@@ -20,7 +20,7 @@ enum BeamKind {
 /// Draws the selected beam and its projected sparks over the first target: a
 /// beam, arc or wave shoots from the user; from frame 4 the target is hit,
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
-/// effect->kind picks the picture.
+/// args->kind picks the picture.
 ///
 /// Reached through BattleAnim_RunByIdRange for kinds from
 /// ANIM_RANGE_BEAM_SEQUENCE to below ANIM_RANGE_RING_AND_SPARK and,
@@ -30,7 +30,7 @@ enum BeamKind {
 /// canvas on BG1 (BattleAnim_SetupCanvasTileMap), loads palette colours 0 to
 /// 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only
 /// 0 to 31 fly) and both blitter slots; at the end it removes the transfer
-/// callback, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
+/// task, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
 /// again (BattleAnim_HideBg1AndRestoreBackdrop).
 void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
@@ -280,7 +280,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args) {
 /// work->particles 0 to 63, work->imageStorage, Ram_MapGridCellBuffer and both
 /// blitter slots. While the motes gather it adds Palette_StepFadeTransfer and
 /// stops the user's motion, and restores both after. At the end it removes
-/// the transfer callback, frees the blitters, sets gBgScroll[1].y back to 32,
+/// the transfer task, frees the blitters, sets gBgScroll[1].y back to 32,
 /// steps the background palette level from 6 back to 0 and hides BG1 again.
 void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;

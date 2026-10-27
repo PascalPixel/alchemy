@@ -12,7 +12,7 @@
 /// Returns the chosen ability's place in `actions`, or -1 when cancelled, when
 /// the link battle's time runs out or when the list is empty. Only an ability
 /// not usable in battle is refused here, silently: one the PP cannot pay for,
-/// or a sealed member's, can be chosen. The Psynergy command runs it
+/// or a sealed party member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct WindowWork *work;

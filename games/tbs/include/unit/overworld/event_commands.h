@@ -10,17 +10,17 @@ struct Trigger;
 struct ActorTemplate;
 struct Actor;
 
-/// A step of the current Psynergy effect (FieldPsynergy_RunHandler).
+/// A step of the current field Psynergy (FieldPsynergy_RunHandler).
 enum FieldPsynergyHandler {
   FIELD_PSYNERGY_HANDLER_UNTARGETED =
       0, ///< casts it with no target (FieldPsynergy_Run)
-  /// Casts it on its target, secondObjectId (FieldPsynergy_Dispatch).
+  /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
   FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
   FIELD_PSYNERGY_HANDLER_FINISH = 2, ///< finishes it
   FIELD_PSYNERGY_HANDLER_EXTRA = 3   ///< runs its kind's extra handler
 };
 
-/// A field Psynergy's effect, as the field kind: the type column of
+/// A field Psynergy, as the field kind: the type column of
 /// games/tbs/src/game/abilities.tsv, named for the abilities that have it. The
 /// field effect keeps it as its animation.
 enum FieldPsynergy {
@@ -101,7 +101,7 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action);
 void Actor_Stop(u32 actorId);
 void Actor_LinkAndSetScript(u32 actorId, u32 linkedActorId);
 void Actor_RefreshSelectorById(u32 actorId);
-/// Accepts a built-in action number or script address; waits up to 300 frames.
+/// Accepts a movement type or an actor script address; waits up to 300 frames.
 void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action);
 void Actor_ResetAndSetPosition(u32 actorId, s32 x, s32 z);
 void Actor_SetPositionAndCommit(u32 actorId, s32 x, s32 z);
@@ -203,17 +203,17 @@ enum Emote {
   EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_CHIME
   EMOTE_SCOWL = 7,      ///< a scowling face
   EMOTE_SMILE = 8,      ///< a smiling face
-  /// A sweat drop; no map shows it, and the Japanese sheet has no tenth
+  /// A sweat drop; no scene shows it, and the Japanese sheet has no tenth
   /// bubble.
   EMOTE_SWEAT_DROP = 9
 };
 /// FieldEffect_SetAttached's flags: a mode in the low two bits, and
 /// ATTACHED_EFFECT_IN_FRONT.
 enum AttachedEffectFlag {
-  ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached object
+  ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached actor
   ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed
   ATTACHED_EFFECT_ONCE = 2,   ///< shows a one-off one that ends by itself
-  /// The object takes sprite priority 1, not the actor's.
+  /// The attached actor takes sprite priority 1, not the actor's.
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 void FieldEffect_SetAttached(s32 actorId, s32 flags);

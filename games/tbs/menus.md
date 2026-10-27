@@ -2,7 +2,7 @@
 
 Everything the player reads or chooses outside the [scene](glossary.md#scene)
 itself comes in a framed box: what people say, the field menu and its screens,
-the pause menu, the shop and inn counters. This layer draws those boxes
+the Pause menu, the shop and inn counters. This layer draws those boxes
 (windows), types the game's text into them, runs the field menu's four screens
 ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and
 Status), and runs the counters where the [party](glossary.md#the-party) spends
@@ -95,11 +95,11 @@ that pillar.
 The screen writes its choice into the field work (`gFieldWork`), and
 `SceneManager_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
 
-## The pause menu and saving
+## The Pause menu and saving
 
-![Isaac presses Start in Vale: the pause menu offers `Save your quest`, `Sleep` and `Change settings`; Save your quest opens three empty files, the first is chosen, `Saving...` shows and then `Your game was saved.`](https://alchemy.pascalpixel.com/guides/window/save.gif)
+![Isaac presses Start in Vale: the Pause menu offers `Save your quest`, `Sleep` and `Change settings`; Save your quest opens three empty files, the first is chosen, `Saving...` shows and then `Your game was saved.`](https://alchemy.pascalpixel.com/guides/window/save.gif)
 
-Start on the field opens the pause menu. Save your quest writes the game into
+Start on the field opens the Pause menu. Save your quest writes the game into
 one of three files in the cartridge's backup memory, Sleep puts the console to
 sleep until L and R are pressed together, and Change settings opens the option
 menu (window colour, message speed, speech and auto-sleep).
@@ -115,7 +115,7 @@ A town's counters are its shops, sanctums and inns, each opened by the town's
 scene when the player talks to the keeper. A shop sells what its row of a stock
 table lists, plus the rare items (artifacts) the party has seen in shops of
 its kind; a sanctum's priest revives, cures and lifts curses for a fee; an inn
-restores the members still standing for a price per guest.
+restores the party members still standing for a price per guest.
 
 A scene opens a shop with `Shop_Run`, a sanctum with `Sanctum_Run` and an inn
 with `Inn_CheckIn`. The counters borrow the field menu's memory, since the two
@@ -143,6 +143,6 @@ the scene's events, none of which exist while the menu runs.
   sprites and eight message blanks; a ninth blank is dropped.
 - The text buffer holds 512 letter codes (256 in Japanese).
 - The menu work is 2,672 bytes, with room for eight party members and 32
-  listed entries; a member carries 15 items.
+  listed entries; a party member carries 15 items.
 - A shop row lists at most 24 items and 8 artifacts. Shop credit stops at
   999,999 and the Game Ticket count at 28.

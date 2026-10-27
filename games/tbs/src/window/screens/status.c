@@ -38,7 +38,7 @@ enum BattleSummaryLabel {
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in windata.s name; the status icons' places follow.
 enum BattleSummaryHelp {
-  /// The name, whose help says how to switch members with L and R.
+  /// The name, whose help says how to switch party members with L and R.
   OWNER_STATUS_HELP_NAME = 0,
   OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
   OWNER_STATUS_HELP_EXPERIENCE = 2,
@@ -113,14 +113,14 @@ struct StatusCursor {
 };
 
 /// Runs the Status screen for party member `member` until B is pressed or
-/// the link battle's time runs out: the member's level, experience, HP and
-/// PP, class, stats, Djinn, elements and statuses, with a help line for
-/// the item under the cursor. With `listCount` nonzero, L and R step through
-/// the members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED is
-/// an empty place). The link timer's window is closed while it is open
+/// the link battle's time runs out: the party member's level, experience, HP
+/// and PP, class, stats, Djinn, elements and statuses, with a help line for the
+/// item under the cursor. With `listCount` nonzero, L and R step through the
+/// party members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED
+/// is an empty place). The link timer's window is closed while it is open
 /// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
 /// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
-/// command and from L or R in a member's command row.
+/// command and from L or R in a party member's command row.
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
@@ -186,7 +186,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
 
-  // Find the member's place in the list, for L and R.
+  // Find the party member's place in the list, for L and R.
   if (listCount != 0) {
     for (i = 0; i <= 5; i++) {
       s32 kind = list[i];
@@ -214,7 +214,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   for (;;) {
     keys = gKeysRepeat;
 
-    // The member's 32x32 portrait at the top left.
+    // The party member's 32x32 portrait at the top left.
     nameSprite.oam.word.attr01 = 0x80000400;
     nameSprite.oam.word.attr23 = 0;
     nameSprite.oam.f.tile = Portrait_Load(member, portraitSlot);
@@ -369,8 +369,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorPosition.x = cursor.column * 8;
     cursorPosition.y = cursor.row * 8;
 
-    // The member's battle figure: its battle object's first sprite record,
-    // as a 64x64, 256-colour sprite at (172, 56).
+    // The party member's battle figure: its battle object's first sprite
+    // record, as a 64x64, 256-colour sprite at (172, 56).
     {
       struct MenuSprite *face =
           (struct MenuSprite *)GetBattleObjectSlotFar(member)->actor->sprite;

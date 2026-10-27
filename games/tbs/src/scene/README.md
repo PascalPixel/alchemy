@@ -42,7 +42,7 @@ skips arrival events when the party is coming back to where it stood, as
 after a battle.
 
 The six are `struct SceneEntryPoints`, in a fixed order at the start of
-every overlay (`entry/<map>.s`), each behind an 8-byte
+every overlay (`entry/<scene>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
 `Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorTemplates`,
 `Scene_GetTriggers` and `Scene_GetExitRegions`; some overlays give them names of
@@ -62,8 +62,8 @@ east, y up and z south, and a facing is one of eight headings
   sometimes only while a flag is clear. One kind of exit leads into a battle.
 - **Actor templates**: who stands where: a
   [sprite](../../glossary.md#sprite-and-oam), a condition, how they move
-  (standing, wandering, or a [script](../../glossary.md#script) of their
-  own), a position, a facing and how they turn when spoken to.
+  (standing, wandering, or an [actor script](../../glossary.md#actor-script) of
+  their own), a position, a facing and how they turn when spoken to.
 - **Regions**: boxes in which the leader takes an exit, each with a condition.
   Most scenes have none.
 - **Triggers**: what answers each thing the player does
@@ -95,7 +95,7 @@ scene, an actor, and each row owns a numbered place of its own, its
 [actor id](../../glossary.md#actor-id), whether or not it appears.
 
 A row can carry a condition, a [story flag](../../glossary.md#game-flag) that
-must be set or clear, and a row whose condition fails puts nobody on the map.
+must be set or clear, and a row whose condition fails puts nobody in the scene.
 Its place stays empty rather than going to the next row, so every
 actor keeps one number all game and the scene's code can name it once: on
 Mercury Lighthouse's upper floor the blue statue has one row for its place on
@@ -130,7 +130,7 @@ the day the story begins:
   EVENT(Vale_SearchTheLockedDoor) },
 ```
 
-Talking to Dora, Isaac's mother, runs a script; walking north into the
+Talking to Dora, Isaac's mother, runs an event; walking north into the
 doorstep of Isaac's house, a [step trigger](../../glossary.md#step-trigger),
 takes him in; Catch on the nut works until the nut has been caught; and A
 facing the locked door, an [examine trigger](../../glossary.md#examine-trigger), searches it.
@@ -147,21 +147,21 @@ What starts a row also says what it answers:
 | `PSYNERGY_ON_ACTOR(ability)` and its form | using Psynergy on someone, or anywhere | that actor, or anywhere |
 | `TRIGGER_RAISED` | the scene's code asking for it | a number the code gives |
 
-A Psynergy row also says when it runs around the effect: before it plays,
+A Psynergy row also says when it runs around the Psynergy: before it plays,
 after it, or from inside it, as Force strikes, Frost freezes or Reveal shows
 what is hidden. Reveal's scenes pair that row with one that hides everything
 again as the colours come back, and a row can run when a Psynergy that runs
 out by itself, such as Cloak, has ended. [Running a
-scene](../overworld/README.md#how-field-psynergy-reaches-its-effect) follows a
+scene](../overworld/README.md#how-field-psynergy-reaches-its-target) follows a
 cast through these.
 
-What runs is a message, a script, or for a search what is found there: an
+What runs is a message, an event, or for a search what is found there: an
 item, coins, a Psynergy Stone, a line of text or a mimic's battle. One word
-holds either a message or a script, since scripts live at addresses above any
+holds either a message or an event, since events live at addresses above any
 message number.
 
 The row is `struct Trigger`, its kinds and the `FIND_` values
-are in `scene_tables.h`, and a script is written `EVENT(function)` and a
+are in `scene_tables.h`, and an event is written `EVENT(function)` and a
 message `MSGNO(name)`.
 
 ### Which triggers a cell starts
@@ -177,7 +177,7 @@ behavior](../../glossary.md#metatile-behavior) of its
 number does. The same number means different things in different scenes.
 
 In Vale on the day the story begins, each door is a step trigger rather than an
-exit: walking north into the doorstep runs a script that opens the door,
+exit: walking north into the doorstep runs an event that opens the door,
 walks the leader in and only then asks for the exit, and that can refuse
 instead, as Dora does once the party has left Vale. Step triggers also climb
 the ladder beside Isaac's house and put the bridge's cells back when the
@@ -223,7 +223,7 @@ search. Rows these rules make unreachable keep a
 [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every such
 case.
 
-## Scripts
+## Events
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he walks in, and the room inside fades in](https://alchemy.pascalpixel.com/guides/world/door.gif)
 
@@ -242,18 +242,18 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
 ```
 
 A step that takes time, such as opening the door, a line of dialogue or a
-wait, holds the script until it is done; a step that takes no time, such as
+wait, holds the event until it is done; a step that takes no time, such as
 starting a walk, lets the next line follow in the same
-[frame](../../glossary.md#frame). Whatever has to keep moving during a
-event runs on its own: as an object script (the steps someone runs each
-frame), a callback (a function the scene runs once a frame) or a hook (a
-function one actor runs each frame). A request the script raises, like
-this exit, waits until the script has finished.
+[frame](../../glossary.md#frame). Whatever has to keep moving during an
+event runs on its own: as an actor script (the steps someone runs each
+frame), a task (a function the scene runs once a frame) or an update routine
+(a function one actor runs each frame). A request the event raises, like
+this exit, waits until the event has finished.
 
-A script is plain C written in the calls of `event_layer.h`,
+An event is plain C written in the calls of `event_layer.h`,
 `event_inline.h` and `engine_call.h`. A step that takes time runs the
 game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
-explains it). A callback is added with `Task_AddFrame`.
+explains it). A task is added with `Task_AddFrame`.
 
 ## State that cleans itself up
 
@@ -289,7 +289,7 @@ once in `common/` and compiled into each of them: the three Colosso finals
 share the friends' cheering spots, the stage guides, the race gauge and the
 opponent's recorded run; Vault and its houses share the walking villagers;
 Mercury Lighthouse's scenes share the pool's lights and the passages between
-floors; and many scenes share the small effects and the helpers that move
+floors; and many scenes share the small field effects and the helpers that move
 actors. The ROM holds a copy in each overlay, alike but for the
 addresses they hold.
 
@@ -327,10 +327,10 @@ family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 `PushedActor_`, and `FieldEffect_` for the field effects), and some keep
 older descriptive names (`Scene_`) until the scenes that call them are humanized.
 A run of functions inside one overlay that is about one thing takes that
-thing's name, and a party member's or the leader's part in a script takes
+thing's name, and a party member's or the leader's part in an event takes
 that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`). The spellings some
 sites keep to match (fields reached through `offsetof`, another struct's view
-of an actor, update hooks returning `s32`) are in
+of an actor, update routines returning `s32`) are in
 [Matching](../MATCHING.md).
 
 ## How it fits with the rest of the game
@@ -373,9 +373,9 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
   `Event_ShowMessageAndWait` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
-- **callback**: a function a scene adds with `Task_AddFrame` at
+- **task**: a function a scene adds with `Task_AddFrame` at
   `TASK_PASS_FRAME`, run once a frame until removed.
-- **update hook**: an actor's `update`, run each frame with the
+- **update routine**: an actor's `update`, run each frame with the
   actor.
 
 ## Evidence

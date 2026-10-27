@@ -5,7 +5,7 @@
 
 #include "../event_commands_internal.h"
 
-/// Update hook shared by the Djinni battle-start and Mercury afterimages.
+/// Update routine shared by the Djinni battle-start and Mercury afterimages.
 void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
   FieldEffect_MoveAfterimageHalfway(actor);
 }
@@ -16,7 +16,7 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
 /// party trailing eight afterimages tinted for its element. Only
 /// Field_RequestDjinnBattle calls it, when DJINN_NO_HOP is clear. Nothing
-/// here releases the afterimages: they last until the map is left for the
+/// here releases the afterimages: they last until the scene is left for the
 /// battle.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
@@ -71,7 +71,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
   // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
-  // (91) and Jupiter (93) 9 (the maps' Djinni actor templates show which
+  // (91) and Jupiter (93) 9 (the scenes' Djinni actor templates show which
   // sprite is which element). They share one VRAM cache entry.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
@@ -123,16 +123,16 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Event_End();
 }
 
-/// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
-/// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_LESSON
-/// is set. Unless slot is -1, the Djinni's actor slot first plays its
-/// element's capture effect and is freed. Ends with
+/// A Djinni joins the party: djinn (0 to 19) of element goes to the party
+/// member with the fewest Djinn, or to no one and only its flag while
+/// FLAG_DJINN_LESSON is set. Unless slot is -1, the Djinni's actor slot first
+/// plays its element's capture effect and is released. Ends with
 /// `<Djinni> joined <member>.`
 ///
 /// Nothing happens when Djinn_GiveToParty refuses the Djinni: -1
-/// when it was found before, -2 when no member has room; its actor then
+/// when it was found before, -2 when no party member has room; its actor then
 /// stays. Called by Djinn_ResolvePending after a won Djinni battle, by
-/// 13 maps directly and by the debug rooms.
+/// 13 scenes directly and by the debug rooms.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
@@ -149,8 +149,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     Event_Start();
     WorldMap_Freeze();
     if (slot != -1) {
-      // On the world map the actors far from the view are removed while
-      // the effect plays and placed again after it.
+      // On the World Map the actors far from the view are removed while
+      // the Djinni's joining plays and placed again after it.
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
         Actor_ClearOutOfBounds();
 
@@ -176,11 +176,11 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
 /// Puts a Djinni's actor back where its battle started from: for a
 /// pending Djinni battle (pendingDjinni 300 to 380,
-/// FLAG_KEEP_PARTY_POSITION set, the battle over) the map's actor placed
+/// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
 /// for that Djinni (condition = its flag) goes back to its template's position,
 /// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
 /// set, and stands (animation 1). SceneManager_Run calls it as it rebuilds the
-/// map, only while an event is still pending after Djinn_ResolvePending's
+/// scene, only while an event is still pending after Djinn_ResolvePending's
 /// first call, that is after a won battle; the second call then makes this
 /// actor join the party.
 void Actor_PlaceMapActors(void) {
@@ -226,16 +226,16 @@ void Actor_PlaceMapActors(void) {
   }
 }
 
-/// Settles a pending Djinni battle as a map loads, from the battle's result
+/// Settles a pending Djinni battle as a scene loads, from the battle's result
 /// in sequenceResult (the enemies defeated, 999 when the party fled, -1
 /// when it lost). SceneManager_Run calls it with shown 0 while it builds the
-/// map and, while the event is still pending, with shown nonzero once the
-/// map is on screen.
+/// scene and, while the event is still pending, with shown nonzero once the
+/// scene is on screen.
 ///
 /// After a won battle the first call leaves the event pending and the second
 /// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
 /// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING flag, which
-/// hides the Djinni's actor until the map
+/// hides the Djinni's actor until the scene
 /// is entered normally again (overworld/actors.c), and drops the event.
 /// A mimic chest's event (kind 0x1000, overworld/triggers.c) sets the chest's
 /// flag when the battle ended with exactly one enemy defeated, and is dropped.
@@ -251,7 +251,7 @@ void Djinn_ResolvePending(s32 shown) {
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
-      // Won: the event waits for the call once the map is shown.
+      // Won: the event waits for the call once the scene is shown.
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
@@ -294,10 +294,10 @@ void Djinn_ResolvePending(s32 shown) {
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
-/// starts their update callback. The block is a whole field effect,
-/// gFieldEffectWork, the slot a Psynergy effect also takes. Called by
+/// starts their update task. The block is a whole field effect,
+/// gFieldEffectWork, the slot a field Psynergy also takes. Called by
 /// the Djinn joining effects (jupiter.c, mars.c, venus.c and mercury.c) and
-/// Altmiller Cave's map script; each ends with
+/// Altmiller Cave's event; each ends with
 /// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
 void FieldEffect_InitializeSlots(void) {
   void *work;
@@ -308,7 +308,7 @@ void FieldEffect_InitializeSlots(void) {
   Task_Add(FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 
-/// Stops the field effect sprites: removes their callback, frees every slot
+/// Stops the field effect sprites: removes their task, frees every slot
 /// still in use and releases their heap block, gFieldEffectWork with it. Then
 /// waits a frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
@@ -326,7 +326,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   WaitFrames(1);
 }
 
-/// Per-frame update: spins an object 1/8 turn a frame.
+/// Per-frame update: spins an actor 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;
   object->facing += 0x2000;

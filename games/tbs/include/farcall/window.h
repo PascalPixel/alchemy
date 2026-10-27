@@ -3,7 +3,7 @@
 
 /// Sets up the window system for the field and the other screens outside
 /// battle: a fresh work block, a blank tilemap and the per-frame upload and
-/// update callbacks.
+/// update tasks.
 void WindowSystem_InitFieldFar(void);
 /// Sets up the window system for battle; kind set reserves the glyph sprites'
 /// tiles, which Battle_Run asks for only during the Djinn lesson.
@@ -42,9 +42,9 @@ s32 TextPrinter_AllFinishedFar(void);
 /// Returns 1 once window has closed and freed its slot; a new window in that
 /// slot reads as still open.
 s32 Window_IsClosedFar(struct Window *window);
-/// Sets the effects the next messages are decoded with until a message window
-/// starts typing: bit 0 makes halting speech, broken off with an ellipsis after
-/// the first word.
+/// Sets the decode flags the next messages are decoded with until a message
+/// window starts typing: bit 0 makes halting speech, broken off with an
+/// ellipsis after the first word.
 void Message_SetDecodeFlagsFar(s32 flags);
 /// Redraws a window's empty frame and releases the sprites it carries, leaving
 /// a text canvas alone.
@@ -161,8 +161,8 @@ s32 Portrait_GetForSpeakerFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
 /// returns that screen's result; SceneManager_Run ignores it.
 s32 FieldMenu_RunFar(void);
-/// Runs the title menu built from the save files, New Game to Send, and returns
-/// the chosen FileAction, or -1 when cancelled.
+/// Runs the File Screen's menu built from the save files, New Game to Send, and
+/// returns the chosen FileAction, or -1 when cancelled.
 s32 FileList_SelectActionFar(void);
 /// Lets the player choose the Send screens' transfer method or password level,
 /// and returns the choice, or -1 when cancelled.
@@ -210,10 +210,10 @@ void WindowSprite_ClearListFar(void *work);
 void Window_SetTilemapEntryFar(struct Window *window, s32 value, s32 x, s32 y,
                                u32 mode);
 #ifdef UBFIX
-/// Debug: the map selector, returning nothing under UBFIX.
+/// Debug: the scene selector, returning nothing under UBFIX.
 void DebugMapSelect_RunFar(void);
 #else
-/// Debug: the map selector, where An exits to the chosen map and
+/// Debug: the scene selector, where An exits to the chosen scene and
 /// entrance and B closes it. The field opens it from the Start menu with B
 /// held. Its result is undefined, and nothing reads it.
 s16 DebugMapSelect_RunFar(void);
@@ -242,25 +242,25 @@ struct WindowSprite *WindowSprite_CreateLoadedFar(s32 code, s32 layers,
 /// the game is saved there. Returns 0, -1 when cancelled, or a SAVE_ERROR_
 /// after its message.
 s32 Save_ToChosenFileFar(void);
-/// Lets the player pick a file in file menu mode arg and loads it as the
+/// Lets the player pick a file in file list mode arg and loads it as the
 /// current file, as the title's Continue does; it returns as the Save command
 /// does.
 s32 Save_LoadRecordIntoWorkFar(s32 arg);
-/// Runs the file menu's Copy, writing a chosen file to the first empty one. Its
+/// Runs the file list's Copy, writing a chosen file to the first empty one. Its
 /// errors are shown before it returns them.
 s32 Save_CopyFileFar(void);
-/// Runs the file menu's Erase, deleting a chosen file once the player confirms
+/// Runs the file list's Erase, deleting a chosen file once the player confirms
 /// it. Returns 0 also when the player answers No.
 s32 Save_EraseSelectedFileFar(void);
 /// Writes the save stamp into the current file's first record, as the Battle
 /// Arena saves its battle results. Returns 0, -1 with no file chosen, or a
 /// SAVE_ERROR_.
 s32 Save_ProcessSelectedFileFar(void);
-/// Reads the save summaries for the title menu and returns how many files there
-/// are, plus 100 when every file has its send flag; it also decides whether
-/// Battle and Send are offered.
+/// Reads the save summaries for the File Screen and returns how many files
+/// there are, plus 100 when every file has its send flag; it also decides
+/// whether Battle and Send are offered.
 s32 Save_ScanRecordFlagsFar(void);
-/// Runs the name entry screen for member entry. Returns 0, or -1 when
+/// Runs the name entry screen for party member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
 s32 NameEntry_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
@@ -336,8 +336,8 @@ void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
 /// Draws the menus' two page arrows into the tiles at VRAM offset, sliding
 /// outward and back over eight frames.
 void Link_DrawPageArrowsFar(s32 offset);
-/// Shows `<member> joined your party.` with the member's portrait while the
-/// join fanfare plays, until it ends or a button is pressed.
+/// Shows `<member> joined your party.` with the party member's portrait while
+/// the join fanfare plays, until it ends or a button is pressed.
 void Party_ShowJoinedMessageFar();
 /// Shows `<first> and <second> joined your party.` with both portraits while
 /// the join fanfare plays.

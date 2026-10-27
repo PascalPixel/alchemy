@@ -35,7 +35,7 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
 /// The values of FieldWork.raisedTrigger that the field loop handles itself,
-/// rather than passing them to the map (Scene_RunRaisedTrigger).
+/// rather than passing them to the scene (Scene_RunRaisedTrigger).
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
@@ -46,16 +46,16 @@ enum FieldRaisedTrigger {
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 
-/// A field map's work: SceneManager_Run allocates it in heap slot
+/// A field scene's work: SceneManager_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field loop,
-/// the field services and the map overlays all reach it through gFieldWork. The
-/// twelve requests from stepTrigger to raisedTrigger are handled by the field
-/// loop.
+/// the event commands and the scene overlays all reach it through gFieldWork.
+/// The twelve requests from stepTrigger to raisedTrigger are handled by the
+/// field loop.
 struct FieldWork {
   /// The actor template tables placed so far, recorded by
   /// Event_SpawnActorTemplates.
   struct ActorTemplate *tables[4];
-  const struct Trigger *triggers; ///< the map's trigger table
+  const struct Trigger *triggers; ///< the scene's trigger table
   /// The actors by actor id: 0 to 7 the party's characters, 8 on the
   /// placed actors.
   struct Actor *actors[ACTOR_ID_COUNT];
@@ -66,7 +66,7 @@ struct FieldWork {
   ///@{
   s16 stepTrigger; ///< a step trigger (1 to 239) for Scene_RunStepTriggerOrExit
   s16 pushCell;    ///< a metatile behavior (252 to 254) for Field_RunPushCell
-  s16 exit;        ///< the exit taken, which ends the map
+  s16 exit;        ///< the exit taken, which ends the scene
   s16 fieldMenu;   ///< open the field menu
   /// The A button: a talk, an examine or the field menu, by what is ahead.
   s16 aButton;
@@ -102,18 +102,18 @@ struct FieldWork {
   s32 transition;       ///< SCENE_TRANSITION(style, variant); 0x100 on entry
   u16 unused;           ///< no code names it
   u16 transitionActive; ///< set once the opening transition has started
-  s32 transitionFrames; ///< frames; 16 on entry and at each script
-  s32 fastForward;      ///< debug: skip timed script waits and actor messages
+  s32 transitionFrames; ///< frames; 16 on entry and at each event
+  s32 fastForward;      ///< debug: skip timed event waits and actor messages
   u8 unusedAfterFastForward[8]; ///< no code names it
   s16 message; ///< the next message, advanced as each window opens
-  /// Set to 0xffff by Event_Start at each script; nothing reads it.
+  /// Set to 0xffff by Event_Start at each event; nothing reads it.
   u16 unusedAfterMessage;
-  /// Both set to -1 by Event_Start at each script; nothing reads them.
+  /// Both set to -1 by Event_Start at each event; nothing reads them.
   s16 unusedBeforeCamera[2];
   struct Actor
-      *camera; ///< the object the map view follows, which has no actor id
+      *camera; ///< the actor the map view follows, which has no actor id
   u8 unusedAfterCamera[0x10]; ///< no code names it
-  s32 speaker;                ///< the actor speaking; the leader at each script
+  s32 speaker;                ///< the actor speaking; the leader at each event
   s32 messageWindow;          ///< the open message window, 0 for none
   s32 sideWindow;             ///< the speaker's portrait window
   /// The leader's two-row actor template table (its row and an end
@@ -180,7 +180,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 0xcc6);
 STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
 STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
-/// The running field map's work, heap slot HEAP_SLOT_FIELD; SceneManager_Run
+/// The running field scene's work, heap slot HEAP_SLOT_FIELD; SceneManager_Run
 /// takes it and frees it.
 extern struct FieldWork *gFieldWork;
 

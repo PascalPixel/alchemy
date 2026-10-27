@@ -24,12 +24,13 @@ struct ItemMenuWork {
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *mainWindow;
-  /// The two sides: the member whose items are shown, and the one an item is
-  /// given to.
+  /// The two sides: the party member whose items are shown, and the one an item
+  /// is given to.
   ///@{
   struct WindowSprite *sideIcons[2];
-  s8 sideIndex[2]; ///< the member chosen, in memberIds; -1 for none at first
-  s8 sideCount[2]; ///< members to choose from; 1 at first
+  s8 sideIndex[2]; ///< the party member chosen, in memberIds; -1 for none at
+                   ///< first
+  s8 sideCount[2]; ///< party members to choose from; 1 at first
   ///@}
   struct Window *itemWindow;
   struct Window *statusWindow;
@@ -65,7 +66,7 @@ struct ItemMenuWork {
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
   u8 partyCount;
-  u8 sideMember[2]; ///< each side's member
+  u8 sideMember[2]; ///< each side's party member
   struct WindowSprite *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
@@ -76,7 +77,7 @@ struct ItemMenuWork {
   s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
   u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
   u8 unusedAfterListMode[2];   ///< no view of the menu work names it
-  s8 selectedIndexByMember[8]; ///< each member's entry chosen last
+  s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode;             ///< not named through this struct; PsynergyMenuWork.mode
   u8 shopStock[0x129]; ///< ShopWork's stock, party and cursor; not named
                        ///< here

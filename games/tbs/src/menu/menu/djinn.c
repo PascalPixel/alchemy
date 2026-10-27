@@ -182,7 +182,8 @@ enum DjinnMenuStep {
   DJINN_STEP_CONFIRM_GIVE = 7,
   DJINN_STEP_SELECT_SECOND = 8, ///< the other Djinni of a trade
   DJINN_STEP_CONFIRM_TRADE = 9,
-  DJINN_STEP_SHOW_STATUS = 10, ///< the status of the chosen column's member
+  DJINN_STEP_SHOW_STATUS =
+      10, ///< the status of the chosen column's party member
   DJINN_STEP_APPLY_SET = 11,
   DJINN_STEP_APPLY_STANDBY = 12,
   DJINN_STEP_APPLY_GIVE = 13,
@@ -578,8 +579,8 @@ s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
   return actionCount;
 }
 
-/// Rebuilds the Djinn lists in table: each member's packed Djinn entries and
-/// their count.
+/// Rebuilds the Djinn lists in table: each party member's packed Djinn entries
+/// and their count.
 s32 DjinnMenu_BuildLists(void *table) {
   struct DjinnMenuWork *menu;
   s32 memberIndex;
@@ -610,11 +611,11 @@ s32 DjinnMenu_BuildLists(void *table) {
 #endif
 }
 
-/// Draws each member's Djinn column, including set and recovering entries.
-/// Rebuilds table's lists first. Each name follows its element's icon: in the
-/// normal colour when set, TEXT_COLOR_RED on standby and TEXT_COLOR_YELLOW
-/// while recovering. Holds the tilemap upload (holdTilemapUpload) until the
-/// list is drawn.
+/// Draws each party member's Djinn column, including set and recovering
+/// entries. Rebuilds table's lists first. Each name follows its element's icon:
+/// in the normal colour when set, TEXT_COLOR_RED on standby and
+/// TEXT_COLOR_YELLOW while recovering. Holds the tilemap upload
+/// (holdTilemapUpload) until the list is drawn.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -874,7 +875,7 @@ s32 DjinnMenu_ShowHelp(void) {
 /// DJINN_ENTRY_IS_SET as a negative int, for entries built in s32.
 #define DJINN_ENTRY_SET (-0x8000)
 
-/// The flags DjinnMenu_SelectDjinn keeps for each member's column.
+/// The flags DjinnMenu_SelectDjinn keeps for each party member's column.
 enum DjinnColumnFlag {
   DJINN_COLUMN_ON_HEADER = 1,        ///< the cursor is on the column's header
   DJINN_COLUMN_HEADER_CHOOSABLE = 2, ///< its header can be chosen
@@ -882,11 +883,11 @@ enum DjinnColumnFlag {
 };
 
 /// The Djinn list's chooser. DJINN_SELECT_DJINNI chooses a Djinni in any
-/// member's column; DJINN_SELECT_ACTION, for the Djinni chosen, chooses what to
-/// do with it: its own column's header (Set or Standby), another member's
-/// header (Give), or a Djinni in another column to trade with. The help window
-/// says what R and Select do; the figures and the unleash text follow the
-/// cursor.
+/// party member's column; DJINN_SELECT_ACTION, for the Djinni chosen, chooses
+/// what to do with it: its own column's header (Set or Standby), another party
+/// member's header (Give), or a Djinni in another column to trade with. The
+/// help window says what R and Select do; the figures and the unleash text
+/// follow the cursor.
 ///
 /// The Djinni chooser returns DJINN_RESULT_CHOSEN for A, DJINN_RESULT_STATUS
 /// for L and DJINN_RESULT_HELP for Select. R puts the Djinni on standby or sets
@@ -929,8 +930,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
   // Each column's DJINN_COLUMN_ flags. The Djinni chooser skips an empty
   // column; in the action chooser the chosen Djinni's own column offers only
-  // its header, a member it can be given to its header too, and a member who
-  // must trade none.
+  // its header, a party member it can be given to its header too, and a party
+  // member who must trade none.
   selectedRow = -1;
   status = columnFlags;
   for (i = 7; i >= 0; i--)
@@ -1599,7 +1600,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 }
 
 /// Lists owned Djinn by element and index, marking those that are set.
-/// For element -1, entries also encode their member.
+/// For element -1, entries also encode their party member.
 ///
 /// Writes one Djinn list entry (DJINN_ENTRY_) for each Djinni of element the
 /// unit holds, or of every element for -1, and returns how many. The Djinn

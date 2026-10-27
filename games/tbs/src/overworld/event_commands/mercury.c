@@ -12,7 +12,7 @@
 /// plays ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
 /// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
-/// actor slot; the Djinni's object and its afterimages are released
+/// actor slot; the Djinni's actor and its afterimages are released
 /// here. Uses all 24 field effect sprites (FieldEffect_InitializeSlots).
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct Actor *djinni;
@@ -107,7 +107,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(20);
 
-  // The droplets (object 240), one a frame, from where the Djinni was on
+  // The droplets (sprite 240), one a frame, from where the Djinni was on
   // screen (FieldEffect_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;

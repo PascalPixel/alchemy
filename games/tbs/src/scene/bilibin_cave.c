@@ -2,17 +2,17 @@
 /// The Bilibin Cave Entrance and Bilibin Cave, two areas between Bilibin
 /// and Imil that share this overlay: the Bilibin Cave Entrance is
 /// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
-/// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the world
-/// map farther north. No one speaks here: each map is a run of Psynergy
+/// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the World
+/// Map farther north. No one speaks here: each scene is a run of Psynergy
 /// puzzles, the getters pick its tables by gSaveBlock.sceneId, and
-/// BilibinCave_Initialize restores what the party has already solved in the map
-/// being entered.
+/// BilibinCave_Initialize restores what the party has already solved in the
+/// scene being entered.
 ///
-/// At the Bilibin Cave Entrance, entered from the world map, Growth on a sprout
+/// At the Bilibin Cave Entrance, entered from the World Map, Growth on a sprout
 /// (ACTOR_SPROUT) grows it into a vine and changes the metatile behavior of
 /// its cell (BilibinCave_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
-/// cave beyond or out to the world map, since both are other areas. Two
+/// cave beyond or out to the World Map, since both are other areas. Two
 /// exits lead on into Bilibin Cave. The south one's exit cell, at the cave
 /// mouth, lies under the ledge path that runs above the mouth, since the map
 /// grid has one cell for both: step trigger 10, the ledge cells either side of
@@ -51,7 +51,7 @@
 /// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
 /// there: five pillars from ACTOR_FIRST_ICE_PILLAR and four lower pieces from
 /// ACTOR_FIRST_LOW_ICE. Step trigger 20 covers the snow blown in at the cave's
-/// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
+/// mouth to the World Map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
 /// the leader leave footprints; step trigger 21, rimming it, stops them
 /// (BilibinCave_StartFootprints, BilibinCave_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
@@ -106,7 +106,7 @@
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
-// BilibinCave_Initialize calls one of these for the map being entered.
+// BilibinCave_Initialize calls one of these for the scene being entered.
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
@@ -424,7 +424,7 @@ static void BilibinCave_StopFootprints(void) {
   grid->footprints = 0;
 }
 
-/// Sets up the map being entered, with its puzzles already solved. The map
+/// Sets up the scene being entered, with its puzzles already solved. The scene
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gSaveBlock.sceneId;

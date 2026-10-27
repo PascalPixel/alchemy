@@ -199,7 +199,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
 /// and removes the icon when no status is left. Called each frame for every
-/// unit by BattleObject_UpdateSpritePriorities. Changes the battle actor's
+/// unit by BattleObject_UpdateSpritePriorities. Changes the battle object's
 /// cycleTimer, shownStatus, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
 #ifdef UBFIX
@@ -320,7 +320,7 @@ s32 BattleObject_UpdatePose(s32 unitId) {
 }
 
 /// Releases every sprite unitId's actor holds and leaves it with none,
-/// clearing the battle actor's animationEntry and shadowEntry. Called by
+/// clearing the battle object's animationEntry and shadowEntry. Called by
 /// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
@@ -357,7 +357,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
-/// BattleAnim_SelectLivingTargets. Writes the objects' sprites, their storage
+/// BattleAnim_SelectLivingTargets. Writes the actors' sprites, their storage
 /// kind and height, and the battle objects' icon and shadow entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
@@ -485,7 +485,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   }
 }
 
-/// Returns unitId's battle actor, through its place, or null for a
+/// Returns unitId's battle object, through its place, or null for a
 /// unit with no place. Called throughout the battle parts.
 struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
@@ -516,7 +516,7 @@ void ResetMotionRecordGroup(void *recordGroup) {
   }
 }
 
-/// Detaches the scripts from every sprite of a battle actor. Nothing in the
+/// Detaches the scripts from every sprite of a unit's actor. Nothing in the
 /// source calls it.
 void ResetBattleObjectRecordGroups(struct Actor *actor) {
   s32 storageKind;
@@ -560,7 +560,7 @@ s32 BattleObject_MarkForRelease(s32 unitId) {
 }
 
 /// Releases the actor of every unit marked by BattleObject_MarkForRelease,
-/// leaving its battle actor with no actor. Called by Battle_Run
+/// leaving its battle object with no actor. Called by Battle_Run
 /// at the end of each round and by BattleStaging_DispatchAction.
 #ifdef UBFIX
 void BattleObject_DestroyAll(void) {

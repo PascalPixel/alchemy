@@ -105,7 +105,7 @@ struct MenuPoint {
 /// key presses and what each command has spent.
 struct BattleMenuWork {
   /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen
-  /// command's icon, the chosen ability's icon and the member's portrait.
+  /// command's icon, the chosen ability's icon and the party member's portrait.
   struct MenuSprite icons[3];
   u8 iconShown[3]; ///< whether each of icons is drawn
   u8 padding;      ///< up to the word targetViewOffset starts on
@@ -117,7 +117,7 @@ struct BattleMenuWork {
   s32 page;         ///< the list page chosen last
   s32 preferredRow; ///< the row to return to
   /// The command row's choice: [0] for the party's row (fight, flee,
-  /// status), [1] for a member's commands.
+  /// status), [1] for a party member's commands.
   s32 commandSelection[2];
   /// The window that shows the link battle's seconds left, a struct Window
   /// pointer kept as a word (as a pointer, two of the round's first stores
@@ -139,7 +139,7 @@ struct BattleMenuWork {
   /// is not 0 the menus press keys for the player.
   s32 tutorialStep;
   s32 tutorialDelay; ///< frames until the tutorial's next key press
-  /// The member whose commands are being chosen; -1 between members.
+  /// The party member whose commands are being chosen; -1 between members.
   s32 commandActor;
   /// The Djinni each command has chosen, element << 8 | index, or 0x80000000.
   u32 chosenDjinn[8];

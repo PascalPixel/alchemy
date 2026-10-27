@@ -1,6 +1,6 @@
 /// @file
 /// Lunpa Fortress, Dodonpa's fortress above Lunpa, where he holds Hammet for
-/// ransom, and the cave below it. Four maps share this overlay and the area
+/// ransom, and the cave below it. Four scenes share this overlay and the area
 /// name Lunpa Fortress:
 ///
 /// - LunpaFortressGroundFloor (SceneId_LunpaFortressGroundFloor): inside the
@@ -29,14 +29,14 @@
 ///
 /// The guards are the fortress's mechanism. A guard on screen sees the leader
 /// along his row or column, within six cells (LunpaFortress_CanGuardSeeLeader),
-/// unless Cloak is on, and each guard has a watcher, a callback that the
+/// unless Cloak is on, and each guard has a watcher, a task that the
 /// entrance the party arrives by starts
 /// (LunpaFortress_InitializeGroundFloor, LunpaFortress_InitializeUpperFloor). A
 /// watcher that sees the leader raises one of the RAISED_*_SPOTTED triggers,
-/// whose script has the guard challenge the party and throw it out to the gates
+/// whose event has the guard challenge the party and throw it out to the gates
 /// (LunpaFortress_GuardThrowsPartyOut, EXIT_THROWN_OUT). A cloaked leader
 /// within four cells of a patrolling guard makes the watcher request
-/// CLOAK_NEAR_GUARD. The patrolling guards walk action scripts
+/// CLOAK_NEAR_GUARD. The patrolling guards walk actor scripts
 /// (gFirstPatrolRoute and the others), stop while a menu, Psynergy or an item
 /// is in use, and drag MAPGRID_LAYER_OVERHEAD along with them, shaking it by a
 /// pixel every frame: in the dark corridors that layer holds the circles of
@@ -52,14 +52,14 @@
 /// pick one of four challenges, by gLunpaFortressRandomPick, drawn on every
 /// arrival.
 ///
-/// The Cell Key opens the cell doors of all four maps, facing each door with it
-/// in the party, and each opened door is remembered in an area temp flag
+/// The Cell Key opens the cell doors of all four scenes, facing each door with
+/// it in the party, and each opened door is remembered in an area temp flag
 /// from FLAG_AREA_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
 /// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches and
 /// a passage; the switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
-/// Map temp flags:
+/// Scene temp flags:
 /// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party;
 ///   FLAG_SCENE_TEMP_15 is set beside it and never read.
 /// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
@@ -82,7 +82,7 @@
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
 /// copies of West Lunpa Cave's exits and actor templates, which these
-/// maps never read.
+/// scenes never read.
 
 #include "save_block.h"
 #include "event_layer.h"
@@ -316,7 +316,7 @@ enum {
 };
 
 /// The metatile behaviors the fortress's triggers answer: the cell doors
-/// count from MB_LUNPA_FORTRESS_FIRST_DOOR in each map.
+/// count from MB_LUNPA_FORTRESS_FIRST_DOOR in each scene.
 enum LunpaFortressMetatileBehavior {
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
@@ -344,7 +344,7 @@ enum { EXIT_THROWN_OUT = 60 };
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
 /// The first of the flags that remember which cell doors the Cell Key opened,
-/// per map: one for each door trigger from MB_LUNPA_FORTRESS_FIRST_DOOR.
+/// per scene: one for each door trigger from MB_LUNPA_FORTRESS_FIRST_DOOR.
 enum {
   TOADONPA_DOOR_FLAG = FLAG_AREA_TEMP_50,
   CAVE_DOOR_FLAG = FLAG_AREA_TEMP_55,
@@ -459,7 +459,7 @@ const u32 *Scene_GetExits(void) {
   return gLunpaFortressExitsOther;
 }
 
-/// The guards, the other people and the objects of each map.
+/// The guards, the other people and the objects of each scene.
 const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -482,7 +482,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gLunpaFortressActorTemplatesOther;
 }
 
-/// What the party can talk to, search and use Psynergy on, by map.
+/// What the party can talk to, search and use Psynergy on, by scene.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -688,7 +688,7 @@ static void LunpaFortress_UnlockGroundFloorDoor(void) {
   }
 }
 
-/// Lunpa Fortress, every map: searching a cell door without the Cell Key,
+/// Lunpa Fortress, every scene: searching a cell door without the Cell Key,
 /// it stays shut.
 /// "The door is tightly locked."
 static void LunpaFortress_SearchLockedDoor(void) {
@@ -702,11 +702,11 @@ static void LunpaFortress_SearchSealedDoor(void) {
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
 }
 
-// XXX (no evidence): which map's actors these are; the pickups are
-// unused and name no map, and LunpaFortressGroundFloor's first four rows (in a
-// chest's sprite, at the map's origin) are the only rows nothing else uses.
+// XXX (no evidence): which scene's actors these are; the pickups are
+// unused and name no scene, and LunpaFortressGroundFloor's first four rows (in
+// a chest's sprite, at the map's origin) are the only rows nothing else uses.
 /// The four actors from ACTOR_FIRST_ITEM_DISPLAY that the unused item
-/// pickups below show their items on, in a map they do not name.
+/// pickups below show their items on, in a scene they do not name.
 /// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
 /// origin of LunpaFortressGroundFloor, the likely display actors (its
 /// render)
@@ -819,7 +819,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 
 // UB: these patrols formerly reached gFieldWork through gMapGridWork[19] and
 // treated its request members as a halfword array. Named owner access adds
-// eight bytes to each of the three patrol callbacks in the EN trial.
+// eight bytes to each of the three patrol tasks in the EN trial.
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
@@ -1390,7 +1390,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
 }
 
 /// A guard faces the leader with one of four challenges, chosen at random
-/// when the map was entered.
+/// when the scene was entered.
 static void LunpaFortress_GuardChallengesParty(s32 actorId) {
 
   Actor_SetAngleToward(actorId, ACTOR_PARTY_LEADER, 0);
@@ -2832,7 +2832,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-/// He has one of eight thoughts, chosen at random when the map was entered;
+/// He has one of eight thoughts, chosen at random when the scene was entered;
 /// in one he looks around first.
 static void LunpaFortress_ReadSentrysThoughts(void) {
 
@@ -3200,7 +3200,7 @@ static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
   Event_ShowMessageAndWait(ACTOR_TOADONPA_DODONPA, 0);
 }
 
-/// Sets each map up: a random pick for the guards' lines, the doors already
+/// Sets each scene up: a random pick for the guards' lines, the doors already
 /// opened, the watching guards and, in LunpaFortressToadonpa, the room after
 /// the battle with Toadonpa or Dodonpa jailed.
 s32 Scene_Initialize(void) {
@@ -3733,7 +3733,7 @@ struct SceneEntrance gLunpaFortressEntrancesOther[] = {
 };
 
 /// LunpaFortressGroundFloor's exits. Unused: its rows first copy West Lunpa
-/// Cave's, which no map of this overlay reads.
+/// Cave's, which no scene of this overlay reads.
 u32 gLunpaFortressExitsOther[] = {
     SCENE_EXITS(WestLunpaCave),
     SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
@@ -3817,7 +3817,7 @@ struct ActorTemplate gLunpaFortressActorTemplatesOther[] = {
 };
 
 /// Unused: a copy of West Lunpa Cave's actor templates, taken only by
-/// a map this overlay never runs for.
+/// a scene this overlay never runs for.
 struct ActorTemplate gLunpaFortressUnusedWestLunpaCaveActorTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },

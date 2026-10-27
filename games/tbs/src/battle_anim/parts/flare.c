@@ -13,9 +13,9 @@
 ///
 /// Each target flashes red in turn, 8 frames apart from frame 16. Writes
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
-/// callback removed and the canvas layer closed.
+/// task removed and the canvas layer closed.
 ///
-/// effect: the targets. Flare Wall, the stronger variant, adds a second flame
+/// args: the targets. Flare Wall, the stronger variant, adds a second flame
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
 ///         32 pixels above (and longer trails).
 void BattleAnim_RunFlare(struct BattleAnimArgs *args) {

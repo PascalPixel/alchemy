@@ -1,7 +1,7 @@
 /// @file
 /// Mercury Lighthouse (SceneId_MercuryLighthouseLower,
 /// SceneId_MercuryLighthouseMiddle, SceneId_MercuryLighthouseUpper and
-/// SceneId_MercuryLighthouseExterior), four of the lighthouse's maps. They
+/// SceneId_MercuryLighthouseExterior), four of the lighthouse's scenes. They
 /// share the game's area name Mercury Lighthouse with
 /// SceneId_MercuryLighthouseEntrance (mercury_lighthouse_entrance.c), the floor
 /// inside the door; the Lighthouse Aerie at the top is
@@ -16,7 +16,7 @@
 /// only once Saturos is beaten.
 ///
 /// - SceneId_MercuryLighthouseExterior, the lighthouse's door and the ground
-///   around it, reached from the world map
+///   around it, reached from the World Map
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). Until Mia has hurried here
 ///   the door stays shut. Then she stands before it, blocked by a statue
 ///   (ACTOR_DOOR_STATUE): she senses someone inside
@@ -71,7 +71,7 @@
 ///   grace.`; Ply on its statue stops it and opens the way up
 ///   (MercuryLighthouse_PlyOpensWaterfallPassage). The first time, Mia rises
 ///   first and the party follows
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the world map's
+///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the World Map's
 ///   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends
 ///   at the Lighthouse Aerie); there the beacon has already been lit, and the
 ///   party fights Saturos (mercury_lighthouse_aerie.c). Once Saturos is beaten
@@ -259,7 +259,7 @@ enum MercuryLighthouseUpperActorId {
 /// statues by the way in, the statue at the door, the Ply target, the statue by
 /// the waterfall, the statue on the lift and the people at the fountain.
 enum MercuryLighthouseExteriorActorId {
-  /// A pair of statues either side of the way in from the world map
+  /// A pair of statues either side of the way in from the World Map
   /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP); the east one is drawn
   /// mirrored.
   /// ★ Named from what the player sees: blue statues either side of the way in
@@ -341,7 +341,7 @@ enum {
   FLAG_PASSAGE_STATUE_MOVED = FLAG_AREA_TEMP_48
 };
 
-/// Map flags, kept while the party stays on the map.
+/// Scene flags, kept while the party stays in the scene.
 enum {
   /// The Empty Bottle has been filled at the Fountain of Healing this visit.
   /// ★ Named from the game: "Hermes' Water" (MsgItemName)
@@ -418,10 +418,10 @@ const struct SceneExitRegion *MercuryLighthouse_GetRegions(void) {
   return NULL;
 }
 
-/// Returns the packed exits shared by the lighthouse maps.
+/// Returns the packed exits shared by the lighthouse scenes.
 const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
-/// Selects the actors and obstacles for the current lighthouse map.
+/// Selects the actors and obstacles for the current lighthouse scene.
 const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void) {
   s16 selector = gSaveBlock.sceneId;
 
@@ -474,7 +474,7 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
   Event_End();
 }
 
-/// Selects the puzzle interactions and dialogue for the current map.
+/// Selects the puzzle interactions and dialogue for the current scene.
 const struct Trigger *MercuryLighthouse_GetTriggers(void) {
   s16 selector = gSaveBlock.sceneId;
 
@@ -1800,7 +1800,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// is beaten the leader rises through it alone to the Lighthouse Aerie
 /// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE); before that Mia
 /// rises first and the party follows
-/// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the world map's
+/// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the World Map's
 /// WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at
 /// the aerie).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
@@ -2297,7 +2297,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   } while (particleIndex <= 11);
 }
 
-/// Restores each lighthouse map's puzzle state and its entrance's
+/// Restores each lighthouse scene's puzzle state and its entrance's
 /// sequence.
 s32 MercuryLighthouse_Initialize(void) {
   u32 statueIndex;
@@ -2306,7 +2306,7 @@ s32 MercuryLighthouse_Initialize(void) {
   s32 keepPartyPosition;
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  // Set up common lighting before restoring each map's puzzle-specific state.
+  // Set up common lighting before restoring each scene's puzzle-specific state.
   gSaveBlock.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   gFieldWork->transition =
@@ -2600,7 +2600,7 @@ s32 MercuryLighthouse_Initialize(void) {
     }
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_MercuryLighthouseExterior) {
-    // This map contains Mia's entrance, the lift and the healing fountain.
+    // This scene contains Mia's entrance, the lift and the healing fountain.
     switch (gSaveBlock.entrance) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       Task_AddFrame(MercuryLighthouse_CycleWaterfallPalette, TASK_PASS_FRAME);
@@ -2912,7 +2912,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// Replaces one inventory item in the member and slot that contain it.
+/// Replaces one inventory item in the party member and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   s32 member = PartyInventory_FindMember(oldItem);
 

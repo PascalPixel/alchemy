@@ -4,10 +4,10 @@
 #include "scene_tables.h"
 #include "fixed_math.h"
 
-// Vale and its home, storm and Babi maps, Sol Sanctum's eruption, the world
-// map and Venus Lighthouse's aerie: the pair of rising particles that
+// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
+// Map and Venus Lighthouse's aerie: the pair of rising particles that
 // WorldMap_CreateLinkedEffects attaches to a glowing actor, each an
-// update hook that lives 32 frames.
+// update routine that lives 32 frames.
 
 /// Rises beside the linked actor, expanding and shrinking over half a
 /// sine wave.

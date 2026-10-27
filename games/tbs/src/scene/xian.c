@@ -14,8 +14,8 @@
 /// until she has found the road blocked at Alpine Crossing
 /// (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
 ///
-/// Two small events run on map flags, which last until the party next enters a
-/// map other than by returning from a battle:
+/// Two small events run on scene flags, which last until the party next enters
+/// a scene other than by returning from a battle:
 /// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to on
 ///   its eastern part, she spills her water (FLAG_XIAN_WATER_SPILLED): a puddle
 ///   spreads at her feet, its cell takes a metatile behavior that walking into
@@ -35,7 +35,7 @@
 /// (SceneId_LacquerRoomsB, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
 /// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_THUMP,
 /// XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's school, and
-/// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
+/// XIAN_TO_WORLD_MAP out to the World Map. Coming back from the school
 /// (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the Sanctum
 /// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is not
 /// shown again.
@@ -270,7 +270,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 }
 
 // Ask the carrier to move after the leader blocks her route for two seconds.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 154 to 150 bytes in tbs-en.
 #ifdef UBFIX
 static void Xian_WatchWaterCarrierPath(struct Actor *updated) {
@@ -830,7 +830,7 @@ s32 Xian_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
   }
   // Set the three crates up as Actor_CreateConfigured sets up
-  // its objects: still, not solid, never a target and hidden.
+  // its actors: still, not solid, never a target and hidden.
   // XXX (no evidence): what the crates are for; nothing reads them again.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
     struct Actor *actor;
@@ -847,7 +847,7 @@ s32 Xian_Initialize(void) {
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
   }
-  // Restore the frozen puddle and callbacks when re-entering the village.
+  // Restore the frozen puddle and tasks when re-entering the village.
   if (GameFlag_Get(FLAG_XIAN_SPILLED_WATER_FROZEN)) {
     Import_ActorSetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_FROZEN);
     {

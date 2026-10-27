@@ -1,5 +1,5 @@
 /// @file
-/// Timed map effects: tileset animations, the blend script, palette cycles.
+/// Timed map changes: tileset animations, the blend script, palette cycles.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -26,7 +26,7 @@ void TilesetAnim_Update(void) {
     u32 tileCount;
     u32 destinationTile;
 
-    // A tileset animation with no script, or paused by a map script, keeps its
+    // A tileset animation with no script, or paused by an event, keeps its
     // place.
     if ((gridState->animations + channelIndex)->start == NULL ||
         (gridState->animations + channelIndex)->paused != 0)
@@ -89,7 +89,7 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation channelIndex by clearing its paused byte.
-/// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// Events and the Battle Arena (menu/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
@@ -99,7 +99,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 }
 
 /// Pauses tileset animation channelIndex by setting its paused byte.
-/// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// Events and the Battle Arena (menu/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
@@ -257,7 +257,7 @@ void BlendScript_Start(u16 *script) {
     Task_Add(BlendScript_Run, TASK_PASS_FRAME);
 }
 
-/// Suspends the blend script. The lighthouse maps and Vale's Babi event
+/// Suspends the blend script. The lighthouse scenes and Vale's Babi event
 /// reach it through BlendScript_SuspendFar.
 void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 

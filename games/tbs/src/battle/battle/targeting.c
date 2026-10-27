@@ -22,7 +22,7 @@ struct BattleWorkUnitListView {
 /// when there is none.
 /// Called by BattleAI_ChooseAction when BattleAI_ChooseTarget
 /// finds no one listed on the side (TARGET_PICK_SIDE_EMPTY), with
-/// requireLivingUnit set for a party actor. Takes one Random16 roll when any
+/// requireLivingUnit set for a party unit. Takes one Random16 roll when any
 /// position qualifies.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 

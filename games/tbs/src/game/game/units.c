@@ -49,8 +49,9 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
-/// members). Called by Encounter_CountStepsAndSelectFormation to pick a random
-/// battle's enemies, and by the Lucky Dice game in Tolbi to set its prizes.
+/// party members). Called by Encounter_CountStepsAndSelectFormation to pick a
+/// random battle's enemies, and by the Lucky Dice game in Tolbi to set its
+/// prizes.
 u32 Party_GetAverageLevel(void) {
   s32 partySize;
   s32 totalLevels;
@@ -452,8 +453,8 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a map (Scene_Arrive, SceneManager_Run) and at the end of
-/// a field script, so the encounter rate follows the cap.
+/// entering a scene (Scene_Arrive, SceneManager_Run) and at the end of
+/// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -488,7 +489,7 @@ void GameFlag_RefreshLureCap(void) {
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
 /// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
-/// file menu (FileList_SelectFile, Save_BuildFileSummary) and the main
+/// file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
   u8 *digits;
@@ -548,16 +549,16 @@ struct MapLocalStateSnapshotView {
   u8 firstSnapshotSlot;
 };
 
-/// Clears the game-state header, the map state with the Colosso's inventory
+/// Clears the game-state header, the scene state with the Colosso's inventory
 /// snapshot and the actor snapshot after it, the flags and most of the
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
-/// Wheels prize odds. Called by the main menu's new game, by
+/// Wheels prize odds. Called by the File Screen's new game, by
 /// Game_RestartQuest and SequenceManager_Run, and by the debug battle menu.
 void SaveBlock_InitializeDefaults(void) {
   volatile s32 zero;
 
-  // Clear the state header, map state, flags and save metadata in DMA order:
+  // Clear the state header, scene state, flags and save metadata in DMA order:
   // 0xb0 words are gSaveBlock up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
@@ -623,7 +624,7 @@ void SaveBlock_InitializeDefaults(void) {
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
-/// then take their childhood forms. Called by the main menu when a
+/// then take their childhood forms. Called by the File Screen when a
 /// new game starts the prologue.
 void Party_StartChildhood(void) {
   GameFlag_Set(FLAG_CHILDHOOD);
@@ -680,7 +681,7 @@ void Party_EndChildhood(void) {
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
-/// cures poison and haunting. Called by the scripts that heal the party
+/// cures poison and haunting. Called by the events that heal the party
 /// (leaving Vale, meeting Flint, the Colosso rounds, Faran in Lalivero), by
 /// the Battle Arena after a round, and by InventorySnapshot_Save.
 void Party_RestoreHpPp(s32 cureConditions) {
@@ -705,7 +706,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
 /// Restores the PP of each party member whose element group has a lit
 /// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
-/// Called by the scripts at the top of the Mercury and Venus Lighthouses.
+/// Called by the events at the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;

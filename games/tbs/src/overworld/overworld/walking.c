@@ -1,12 +1,14 @@
 /// @file
-/// Field requests and each step of the leader: exits, encounters, damage.
+/// Field requests and each frame of the leader's walking: exits, encounters,
+/// damage.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
 
 // The fields of struct Unit that Field_UpdateWalking reads (see its tag).
 #ifndef UBFIX
-/// A party member's battle unit, seen as the HP and poison a step reads.
+/// A party member's battle unit, seen as the HP and poison the walking update
+/// reads.
 struct UnitHpPoisonView {
   u8 unitFieldsBeforeHp[0x38];
   s16 hp; ///< struct Unit's hp: current HP, 0 when downed
@@ -17,7 +19,7 @@ struct UnitHpPoisonView {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by SceneManager_Run while it sets a map up.
+/// Called by SceneManager_Run while it sets a scene up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -44,12 +46,13 @@ void Field_ClearRequests(void) {
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
-  // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises event
-  // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a member falls to poison,
-  // and the action request is the cell's metatile behavior, 1 on step trigger
-  // 1's cells (154 maps have them); together they sum to 0, and both wait until
-  // another request breaks the tie, by which time a later cell's behavior may
-  // have replaced the action. BUGFIX tests each request instead.
+  // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises
+  // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a party member falls to
+  // poison, and the step trigger request is the cell's metatile behavior, 1 on
+  // step trigger 1's cells (154 scenes have them); together they sum to 0, and
+  // both wait until another request breaks the tie, by which time a later
+  // cell's behavior may have replaced the step trigger. BUGFIX tests each
+  // request instead.
 #ifdef BUGFIX
   return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
          work->aButton | work->pauseMenu | (s16)work->talk | work->examineCell |
@@ -63,7 +66,7 @@ s32 Field_CountRequests(void) {
 }
 
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
-/// leader (a world map metatile on the world map), or 0 without a leader.
+/// leader (a World Map metatile on the World Map), or 0 without a leader.
 ///
 /// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
 /// which match an item or Psynergy trigger to the cell the leader faces.
@@ -90,7 +93,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // World map metatiles are 32 pixels square, 32 to a row.
+    // World Map metatiles are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
 
@@ -127,10 +130,10 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return tile[2];
 }
 
-/// Takes the exit of the first of the map's exit regions that contains the
+/// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
 /// region's exit value for SceneManager_Run, plays the exit sound and starts
-/// leaving the map. A region's bounds are whole pixels, its maxima
+/// leaving the scene. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
 /// Called by Field_UpdateWalking when the leader steps on a cell with a
@@ -182,15 +185,17 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   }
 }
 
-/// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// grid layer: records step triggers and push cells, takes exits, and while
-/// walking advances the encounter counter, regenerates PP, hurts the party with
-/// poison and hazardous ground, and wears Avoid off. When this hurts the party,
-/// the leader flinches and characters who fall are listed in the field work.
+/// Handles one frame of the party leader's walking onto the cell at (x, y, z)
+/// of map grid layer: records step triggers and push cells, takes exits, and
+/// while walking advances the encounter counter, regenerates PP, hurts the
+/// party with poison and hazardous ground, and wears Avoid off. When this hurts
+/// the party, the leader flinches and characters who fall are listed in the
+/// field work.
 ///
 /// Called by SceneManager_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
-/// per frame. Sets work->action, input, battle, command and event
+/// per frame. Sets work->stepTrigger, pushCell, encounter, psynergy and
+/// raisedTrigger
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
 /// fallenOwners and survivorCount, and gSaveBlock's hazard and Avoid counts.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
@@ -255,7 +260,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // Only while walking (not climbing) towards a target.
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
       leader->targetX != ACTOR_NO_TARGET) {
-    // Encounters: the zone comes from the world map's encounter region and
+    // Encounters: the zone comes from the World Map's encounter region and
     // battle environment, or from the ground the leader stands on.
     // FLAG_LURE_CAP doubles the speed the roll counts.
     encounterSpeed = leader->speedLimit;
@@ -277,8 +282,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     }
 
     // Every 0x10000 of distance walked (counted at half speed on ground whose
-    // encounter zone is 0; fullEncounterRate holds that zone, 1 on the world
-    // map), the party regains PP, Djinn recover, and poison hurts.
+    // encounter zone is 0; fullEncounterRate holds that zone, 1 on the World
+    // Map), the party regains PP, Djinn recover, and poison hurts.
     stepDistance = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
     if (!fullEncounterRate)
       stepDistance /= 2;
@@ -344,8 +349,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
 
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
-  // step is listed, loses its poison and raises event -1, which
-  // SceneManager_Run handles.
+  // frame is listed, loses its poison and raises
+  // FIELD_RAISED_TRIGGER_PARTY_FELL, which SceneManager_Run handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -373,7 +378,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
 /// walks).
 ///
 /// Called by Field_UpdateWalking as the party walks, by Field_ExamineCell for a
-/// Psynergy stone (999, all PP), and by the Vale home map through
+/// Psynergy stone (999, all PP), and by the Vale home scene through
 /// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
   s32 partyCount = Party_CountMembersFar();
@@ -476,16 +481,16 @@ s32 Party_ApplyPoisonDamage(void) {
   return worstPoison;
 }
 
-/// Starts a script or menu on the world map: ends any colour ratio transition
+/// Starts an event or menu on the World Map: ends any colour ratio transition
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
 /// Called by SceneManager_Run around the handling of most requests, by the
-/// Djinni effect and by the world map's overlay; each call is paired with
+/// joining of a Djinni and by the World Map's overlay; each call is paired with
 /// WorldMap_Unfreeze. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return
-/// the slot's block when it has one; with that slot free, the world map takes a
-/// new, uncleared block there, kept until the map ends, whose step is then
+/// the slot's block when it has one; with that slot free, the World Map takes a
+/// new, uncleared block there, kept until the scene ends, whose step is then
 /// leftover memory.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
@@ -505,7 +510,7 @@ void WorldMap_Freeze(void) {
   }
 }
 
-/// Ends what WorldMap_Freeze started: on the world map, reloads
+/// Ends what WorldMap_Freeze started: on the World Map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
 void WorldMap_Unfreeze(void) {
   struct FieldWork *work;

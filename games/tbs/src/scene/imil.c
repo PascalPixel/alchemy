@@ -7,7 +7,7 @@
 /// An epidemic has struck the village. Until the party has beaten Saturos at
 /// Mercury Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY), by which time the
 /// lighthouse is lit and the fountain at its foot flows again, the villagers
-/// are sick or waiting for Mia; afterwards both maps take their cured
+/// are sick or waiting for Mia; afterwards both scenes take their cured
 /// actor templates and lines, and the villagers talk of Mia leaving with the
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
@@ -16,10 +16,10 @@
 ///   snow, waiting for Mia, and a strongman counts out his exercises against
 ///   the cold. Six doors (step triggers 51 to 56) open into the houses, the
 ///   shops, the inn and the Sanctum (SceneId_IceRooms),
-///   IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH lead out to the world
-///   map, and the way north (step trigger 4) leads into Imil Falls Cave; coming
+///   IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH lead out to the World
+///   Map, and the way north (step trigger 4) leads into Imil Falls Cave; coming
 ///   back out of it (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the
-///   village. Two callbacks run while the party is here: one makes smoke rise
+///   village. Two tasks run while the party is here: one makes smoke rise
 ///   from the five houses' chimneys, staggered over each second, and one turns
 ///   the leader's footprints in the snow off on the frozen river that runs down
 ///   from the falls and on the raised ground under the big tree, and on
@@ -32,7 +32,7 @@
 ///   and a Lucky Medal.
 /// - Ice rooms (SceneId_IceRooms), a sheet of rooms drawn in ice, all of them
 ///   Imil's: inside the houses, the shops and the inn, whose area name is Imil;
-///   by ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil Sanctum.
+///   by ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil Sanctum.
 ///   While the epidemic lasts the weapon and armor sellers are sick: searching
 ///   their counters pans the camera to them, and they say the shop is closed.
 ///   The item seller's daughter minds that shop for her mother. In the Sanctum
@@ -45,7 +45,7 @@
 ///   sends his wife hurrying to fetch Mia. Either sets FLAG_IMIL_MIA_SENT_FOR,
 ///   which changes the couple's lines and where they stand.
 ///
-///   Mia's healing is this map's first script. Entering the old
+///   Mia's healing is this scene's first event. Entering the old
 ///   couple's house once Megan has told the party where Mia went,
 ///   before they have met her, finds her at the old man's bedside: she heals
 ///   him with Ply, asks who the party are, and the Mercury Lighthouse flashes.
@@ -55,7 +55,7 @@
 ///   across the bed (ACTOR_OLD_MANS_BED) reaches him.
 ///
 ///   Once Saturos is beaten the sellers are well and open their shops across
-///   the counters. The second script is Mia's farewell, the first time the
+///   the counters. The second event is Mia's farewell, the first time the
 ///   party then enters the Sanctum (FLAG_IMIL_MIA_SAID_FAREWELL): her
 ///   apprentices tell her the lighthouse has been lit, and Mia tells them she
 ///   will join Isaac's quest to protect the world. They promise to protect
@@ -244,7 +244,7 @@ enum IceRoomsMetatileBehavior {
 #define IMIL_OPEN_SHOP ((s32 (*)())Shop_Run)
 #endif
 
-/// The townsfolk's own animations the scripts play, as their sheets draw them.
+/// The townsfolk's own animations the events play, as their sheets draw them.
 enum ImilAnimation {
   /// Lying in bed, only the head above the covers: the old man
   /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
@@ -302,7 +302,7 @@ static s32 Imil_UpdateShiver(struct Actor *interpreter) {
 
 #include "common/actor_facing.h"
 
-/// Imil is two maps: the village, and its houses and Sanctum.
+/// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
     return gImil_InteriorEntrances;
@@ -814,7 +814,7 @@ static void Imil_TalkToJustin(void) {
   }
 }
 
-/// Sets up the map as the party enters. The village gets its rising puffs,
+/// Sets up the scene as the party enters. The village gets its rising puffs,
 /// map layers and snowman, and coming from Imil Falls Cave the leader walks
 /// in; inside, each room restores its people for the village's state, and the
 /// old couple's house and the Sanctum start Mia's healing and her farewell.
@@ -844,7 +844,7 @@ s32 Imil_Initialize(void) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gSaveBlock.sceneId == (s32)&SceneId_IceRooms) {
-    // Restore each interior's occupants before running its arrival script.
+    // Restore each interior's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gSaveBlock.entrance;
@@ -1008,7 +1008,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
-  // Play the healing effect, then let the old man respond.
+  // Play the healing Psynergy, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1121,8 +1121,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_End();
 }
 
-/// Unused: an update hook that moves an effect around its stored origin until
-/// its timer runs out; no actor is given it.
+/// Unused: an update routine that moves an effect around its stored origin
+/// until its timer runs out; no actor is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   // XXX (no evidence): what this and Imil_SwayAndSpark were for; no
   // actor is given either, so neither the ROM nor a render shows them in use.
@@ -1150,7 +1150,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   }
 }
 
-/// Unused: an update hook that sways an actor and now and then gives
+/// Unused: an update routine that sways an actor and now and then gives
 /// off a rising spark; no actor is given it.
 UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   s32 pos[3];
@@ -1180,7 +1180,7 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   }
 }
 
-/// The old man bobs and speaks as Ply's effect ends (its finishCallback).
+/// The old man bobs and speaks as Ply ends (its finishCallback).
 static void Imil_OldManBobsAndSpeaks(void) {
   Actor_SetScript(ACTOR_OLD_MAN, gImil_BobScript);
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0);

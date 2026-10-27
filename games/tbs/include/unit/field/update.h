@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// The axis a moving object watches to know it has arrived at its target: the
+/// The axis a moving actor watches to know it has arrived at its target: the
 /// one along which it has the furthest to go.
 enum ArrivalAxis {
   ARRIVAL_AXIS_NONE = 0, ///< no arrival test; set again once it arrives

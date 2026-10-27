@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_H
 
 /// @file
-/// Scene headers, exit regions and scene entry tables, with the field work they
+/// Scenes, exit regions and scene entry tables, with the field work they
 /// fill (field_work.h).
 
 #include "types.h"
@@ -76,7 +76,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every scene's header, by scene number (field/scenes.s).
+/// Every scene's row, by scene number (field/scenes.s).
 extern const struct Scene gScenes[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its 48-byte entry table. Every

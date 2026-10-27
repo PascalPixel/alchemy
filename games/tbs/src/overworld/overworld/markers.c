@@ -4,7 +4,7 @@
 
 #include "../overworld_internal.h"
 
-/// Sets an object's y and groundHeight to the map's height at its x and z.
+/// Sets an actor's y and groundHeight to the map's height at its x and z.
 /// Called by Field_PlaceTreasureSpots for each treasure spot it places.
 void Actor_SnapToTerrain(void *object) {
   struct Actor *actor = object;
@@ -29,7 +29,7 @@ struct MapGridMarkers {
   u8 *markers;
 };
 
-/// The sprites of the objects a map's treasure spots place.
+/// The sprites of the actors a map's treasure spots place.
 enum {
   TREASURE_SPOT_CHEST_SPRITE = 20,
   TREASURE_SPOT_PSYNERGY_STONE_SPRITE = 28
@@ -43,12 +43,12 @@ enum {
   TREASURE_SPOT_CHEST_MIMIC = 7    ///< jumping up as a mimic
 };
 
-/// Places an object at each of the map's treasure spots (ids 100 to 239) that
-/// the map has an event for, up to ten: a chest for a chest event, shown open
+/// Places an actor at each of the map's treasure spots (ids 100 to 239) that
+/// the scene has an event for, up to ten: a chest for a chest event, shown open
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for an examine trigger giving one, until it is taken. A treasure spot
-/// with no such event takes no slot. The objects are kept in
-/// work->treasureSpots, not in actor slots. Called by SceneManager_Run on map
+/// with no such event takes no slot. The actors are kept in
+/// work->treasureSpots, not in actor slots. Called by SceneManager_Run on scene
 /// load; clears and fills work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
@@ -180,7 +180,7 @@ s32 TreasureSpot_FindSlot(s32 id) {
 
 UNUSED void TreasureSpot_ReservedNoOp(void) {}
 
-/// Gives the object of treasure spot id animation, plays sound and waits 12
+/// Gives the actor of treasure spot id animation, plays sound and waits 12
 /// frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
@@ -252,7 +252,7 @@ void TreasureSpot_ShowOpened(s32 id) {
   }
 }
 
-/// Returns the object of treasure spot id, or NULL when no slot has it. Called
+/// Returns the actor of treasure spot id, or NULL when no slot has it. Called
 /// by Field_ExamineCell, and by Reveal's marks (field_fx.c) to skip a treasure
 /// spot already placed.
 struct Actor *TreasureSpot_GetActor(s32 id) {
@@ -265,8 +265,8 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
   return marker->actor;
 }
 
-/// Hides the object of treasure spot id by clearing its animationKind:
-/// ACTOR_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
+/// Hides the actor of treasure spot id by clearing its animationKind:
+/// ACTOR_SPRITE_NONE draws no sprite, and the actor stays in its slot. Called
 /// by Field_ExamineCell once a Psynergy Stone is taken.
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
@@ -282,8 +282,9 @@ void TreasureSpot_Hide(s32 id) {
   }
 }
 
-/// Moves the object of treasure spot id to (x, z) on the ground; -1 keeps the
-/// centre of its cell on that axis. Positions are 16.16. Map overlays call it.
+/// Moves the actor of treasure spot id to (x, z) on the ground; -1 keeps the
+/// centre of its cell on that axis. Positions are 16.16. Scene overlays call
+/// it.
 void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;

@@ -1,5 +1,5 @@
 /// @file
-/// Screen transitions between maps: window transitions and dissolves.
+/// Screen transitions between scenes: window transitions and dissolves.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -555,11 +555,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
 /// Starts window transition mode at value 0, with no duration: the caller
 /// moves it.
 ///
-/// Called by Reveal's effect (WINDOW_TRANSITION_RIPPLE) and, through
-/// ScreenTransition_InitializeBattleEffectStateFar, by three maps (Altmiller
+/// Called by Reveal (WINDOW_TRANSITION_RIPPLE) and, through
+/// ScreenTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
 /// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
 /// transition state in HEAP_SLOT_SCREEN_TRANSITION and adds both window
-/// callbacks; mask 0x3f3f shows every layer in both windows.
+/// tasks; mask 0x3f3f shows every layer in both windows.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -573,7 +573,7 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
 }
 
-/// Unused: suspends the window transition's two callbacks. Nothing calls it,
+/// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
@@ -600,9 +600,9 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// It returns after one frame while the fade runs on: a caller that must wait
 /// for it, as SceneManager_Run does, waits itself.
 ///
-/// Called by SceneManager_Run to fade a map in with work->transition and
-/// work->transitionFrames, and by Event_StartScreenTransition for map
-/// scripts. Every style but the fades adds a task (and the centre
+/// Called by SceneManager_Run to fade a scene in with work->transition and
+/// work->transitionFrames, and by Event_StartScreenTransition for
+/// events. Every style but the fades adds a task (and the centre
 /// line the HBlank handler, IRQ 1) that runs the transition; every kind
 /// ORs the map's display bits into DISPCNT through the I/O write queue.
 void ScreenTransition_Start(s32 mode, s32 frames) {
@@ -696,10 +696,10 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
 /// it in.
 ///
-/// Called by SceneManager_Run as a map ends, by Field_StartEncounterTransition
-/// before a battle (the flickering centre line, and the
-/// WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// Event_FinishScreenTransition for map scripts. The window and
+/// Called by SceneManager_Run as a scene ends, by
+/// Field_StartEncounterTransition before a battle (the flickering centre line,
+/// and the WINDOW_TRANSITION_LEADER_INVERSE window), and by
+/// Event_FinishScreenTransition for events. The window and
 /// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
 /// ScreenTransition_Start it does not wait for the fade: SceneManager_Run waits
 /// transitionFrames after it.
@@ -839,7 +839,7 @@ void ScreenTransition_Update(void) {
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
 ///
-/// The centre line's callback for a non-zero variant.
+/// The centre line's task for a non-zero variant.
 void ScreenTransition_UpdateFromCentre(void) {
   struct ScreenTransitionFrame *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *window =

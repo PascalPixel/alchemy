@@ -120,8 +120,9 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
   effect->z.fixed = anchor->z.fixed + dz;
   effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
   if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
-    // The engine integrates height after this callback. Supply upward speed
-    // and gravity here; the wandering callback only changes x and z.
+    // The engine integrates height after this update routine. Supply upward
+    // speed and gravity here; the wandering update routine only changes x and
+    // z.
     effect->update = FieldEffect_WanderAroundAnchor;
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
@@ -157,7 +158,7 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 /// shared runner reads effectWork->child instead.
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
-/// An orb is carried from the caster to 4 pixels above the effect's position
+/// An orb is carried from the caster to 4 pixels above the Psynergy's position
 /// over 10 frames, growing from 0.25.
 ///
 /// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
@@ -166,7 +167,7 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 /// round the orb, one every 6 frames, and circle it.
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_WhirlwindOnTarget. Fades the
-/// palettes to an effect colour and back, and gives the target its shrinking
+/// palettes to a cast colour and back, and gives the target its shrinking
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -245,7 +246,7 @@ void FieldPsynergy_Whirlwind(void) {
   WaitFrames(30);
   Sound_PlaySongFar(SE_WHOOSH);
   WaitFrames(20);
-  // Every particle has left its orbit by now. Its wandering callback no
+  // Every particle has left its orbit by now. Its wandering update routine no
   // longer reads the anchor, so the orb can be released independently.
   Actor_ReleaseFar(ball);
   FieldPsynergy_FadeFromCastColor();

@@ -99,7 +99,7 @@ void BattleAnim_RunDeadlyGas(struct BattleAnimArgs *args) {
 /// the lightning and the faces), REG_BLDCNT in the grey mode and REG_BG2PA in
 /// the lightning mode; sets work->shakeFrames on each hit.
 ///
-/// effect: the user and the targets.
+/// args: the user and the targets.
 /// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
 ///       the targets solid black and keeps them so. BURST_SHOWER_MODE_LIGHTNING
 ///       fires no bursts: a violet lightning bolt stands between the user and

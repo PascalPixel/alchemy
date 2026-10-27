@@ -1,6 +1,6 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's
-/// five maps, on the party's way to Tret between SceneId_KolimaForestEntrance
+/// five scenes, on the party's way to Tret between SceneId_KolimaForestEntrance
 /// and SceneId_KolimaForestCliff. Three logs lie in the grass to be rolled by
 /// walking into them, and a Nut floats out of reach until Catch pulls it in
 /// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
@@ -11,7 +11,7 @@
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
-/// The map's name, Glade, is ours, for what sets the map apart: open grass
+/// The scene's name, Glade, is ours, for what sets the scene apart: open grass
 /// and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 

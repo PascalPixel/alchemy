@@ -148,7 +148,7 @@ enum {
 /// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
-// Shared map routines stay in their linked order.
+// Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -437,7 +437,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Shared item-object routines follow the map initializer.
+// Shared item-object routines follow the scene initializer.
 #include "common/vault_itemobj.h"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {

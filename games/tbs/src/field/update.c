@@ -7,9 +7,9 @@
 #include "actor_arm_view.h"
 #include "macros.h"
 
-#define ACTOR_SLOTS 8 ///< script-driven objects updated each frame
+#define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
-#define TURN_MAX 0x1000 ///< the most an object turns in one frame
+#define TURN_MAX 0x1000                ///< the most an actor turns in one frame
 
 /// Calls a resident IWRAM routine at its absolute address, which this code
 /// still reaches when it runs from its copy in RAM.
@@ -25,11 +25,11 @@ s32 ArcTan2FarArm(s32 z, s32 x);
 s32 Iwram_SqrtFarArm(s32 value);
 s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 
-/// Advances the eight script-driven objects by one frame. For each live one:
-/// run its hook, then its script (unless it waits or is paused); steer it
-/// towards its target, or brake it when it has none; apply gravity and
+/// Advances the eight script-driven actors by one frame. For each live one:
+/// run its update routine, then its script (unless it waits or is paused);
+/// steer it towards its target, or brake it when it has none; apply gravity and
 /// bounce off the ground; detect arrival at the target; and turn it to face
-/// the way it moves. Copied to RAM and run from there. Writes each object's
+/// the way it moves. Copied to RAM and run from there. Writes each actor's
 /// position, velocity and facing, and unsets its target on arrival. Only
 /// Actor_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
 /// the field runs Actor_UpdateAllThumb instead.
@@ -93,7 +93,7 @@ void Actor_UpdateAll(void) {
     x = object->x;
     y = object->y;
     z = object->z;
-// UB: frozen objects skip the initialization below, but still test arrival.
+// UB: frozen actors skip the initialization below, but still test arrival.
 #ifdef UBFIX
     arrived = 0;
 #endif
@@ -143,7 +143,7 @@ void Actor_UpdateAll(void) {
           }
         }
       } else {
-        // No target: brake by the acceleration until the object stops.
+        // No target: brake by the acceleration until the actor stops.
         // XXX (no evidence): why this branch calls the far-call stubs where
         // the steering above calls the IWRAM routines by address; both reach
         // the same routines, and nothing runs this copy to show a difference.
@@ -208,7 +208,7 @@ void Actor_UpdateAll(void) {
         arrived = 1;
       break;
     }
-    // Snapping stops the object on the target; it takes the target's height
+    // Snapping stops the actor on the target; it takes the target's height
     // too only when its motion flags are all clear.
     if (arrived) {
       if (object->snapToTarget) {

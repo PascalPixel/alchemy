@@ -1,23 +1,23 @@
 /// @file
 /// Gondowan Passage and Gondowan Cave, the guarded bridge into Gondowan and the
 /// cave east of it, which the party crosses on the way from Tolbi to Babi
-/// Lighthouse. Three maps share this overlay:
+/// Lighthouse. Three scenes share this overlay:
 ///
 /// - Gondowan Passage (SceneId_GondowanPassage, area name Gondowan Passage):
 ///   three soldiers guard the bridge, and Iodem waits there to go on to Babi
 ///   Lighthouse with the party once Babi has spoken to it after Colosso
 ///   (FLAG_BABI_SPOKE_AFTER_COLOSSO).
 /// - Gondowan Cave (SceneId_GondowanCave, area name Gondowan Cave): both ways
-///   in from the world map, a tree stump that Move sends leaping into the
+///   in from the World Map, a tree stump that Move sends leaping into the
 ///   water, a stone pillar to push or move in after it, and a boulder for
 ///   Lift.
 /// - GondowanCaveRiver (SceneId_GondowanCaveRiver): the river between the
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
-/// One exit table serves every map; the other getters choose by
+/// One exit table serves every scene; the other getters choose by
 /// gSaveBlock.sceneId, Gondowan Passage's actor templates and triggers
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
-/// map number. Every map's trigger table carries GondowanCaveRiver's two
+/// scene. Every scene's trigger table carries GondowanCaveRiver's two
 /// chests.
 ///
 /// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
@@ -114,7 +114,7 @@ enum GondowanCaveActorId {
   /// Moved with Move, in the sprite of the Goma Cave stump.
   /// ★ Named from the game: "that stump" (MsgGomaNoUsePsynergy)
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
-  /// Pushed or moved with Move, in the sprite the stone pillars of other maps
+  /// Pushed or moved with Move, in the sprite the stone pillars of other scenes
   /// use (crossbone_isle_stepping_stones.c).
   /// ★ Named from what the player sees: a tall tan stone pillar standing on
   /// the cave floor (its render)
@@ -141,14 +141,14 @@ enum GondowanCaveActorId {
   ACTOR_BOULDER_GAP
 };
 
-// The leap script also runs after the shared pushed object movement.
+// The leap script also runs after the shared pushed actor movement.
 static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
-// Shared effect routines retain their position before the map's scripts.
+// Shared effect routines retain their position before the scene's events.
 #include "common/effect_create.h"
 
-// Particle and movable-object routines precede this map's entry points.
+// Particle and movable-actor routines precede this scene's entry points.
 #include "common/effect_spawn.h"
 #include "common/staged_actor.h"
 #include "ability_ids.h"
@@ -172,7 +172,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Every map of the overlay shares one exit table.
+/// Every scene of the overlay shares one exit table.
 const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
@@ -195,7 +195,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gGondowanCaveActorTemplatesOther;
 }
 
-/// The triggers of each map, with Iodem's in Gondowan Passage when he is
+/// The triggers of each scene, with Iodem's in Gondowan Passage when he is
 /// there.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -339,7 +339,7 @@ static void GondowanCave_ReadSoldierMind(void) {
 }
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
-/// out to the world map. With FLAG_SCENE_TEMP_04 set, which nothing in the
+/// out to the World Map. With FLAG_SCENE_TEMP_04 set, which nothing in the
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
 static void GondowanCave_LeaveToWorldMapEast(void) {
@@ -439,7 +439,7 @@ static void GondowanCave_WaitForDescent(struct Actor *actor, s32 heightLimit) {
   }
 }
 
-/// The object spins in place, leaps and lands with a shake and a ring of dust,
+/// The actor spins in place, leaps and lands with a shake and a ring of dust,
 /// then comes to rest a little further on.
 static void GondowanCave_RunSpinningLeap(s32 actorId) {
   struct Actor *actor;
@@ -501,7 +501,7 @@ static void GondowanCave_LiftBoulder(void) {
   Import_ActorSetPosition(ACTOR_BOULDER_GAP, 0, 0);
 }
 
-/// Sets up the map as the party enters. Gondowan Passage blocks Retreat and
+/// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
 /// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
 /// GondowanCave puts the stump and the pillar where the party left them.
 s32 Scene_Initialize(void) {

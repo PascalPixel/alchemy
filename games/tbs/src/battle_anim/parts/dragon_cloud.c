@@ -32,7 +32,7 @@
 /// The trail's last nine copies are darker versions of the trail picture, each
 /// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns a quarter turn about
 /// the field's centre over the first 64 of the DRAGON_CLOUD_FRAMES frames,
-/// one way or the other by effect->side:
+/// one way or the other by args->side:
 ///
 ///   0 to 17    a pair of puffs, one mirrored, bursts in front of the user
 ///   18 to 58   the flame follows its stored path

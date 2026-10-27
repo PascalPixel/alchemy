@@ -1,10 +1,11 @@
 /// @file
 /// Lamakan Desert (SceneId_LamakanDesertEast to SceneId_LamakanDesertCave):
-/// four maps that are all Lamakan Desert in the game's area names and share one
-/// trigger table, built around a heat gauge and the secrets Reveal uncovers.
+/// four scenes that are all Lamakan Desert in the game's area names and share
+/// one trigger table, built around a heat gauge and the secrets Reveal
+/// uncovers.
 ///
 /// The heat is a count of steps on hazard ground (gSaveBlock.hazardSteps):
-/// LamakanDesert_Initialize sets a limit of 600 on every map, at which the
+/// LamakanDesert_Initialize sets a limit of 600 on every scene, at which the
 /// party loses a quarter of its HP, and on all but LamakanDesertCave starts the
 /// heat gauge, a thermometer down the screen's left edge (HeatGauge_Draw). Each
 /// moving frame on the sand adds a step (HeatGauge_CountStep,
@@ -39,7 +40,7 @@
 /// beaten.
 ///
 /// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world map;
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the World Map;
 /// LamakanDesertCave, a cave, has no heat gauge. Step trigger 9 takes
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, and leaving that way while Hsu is still
 /// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
@@ -128,7 +129,8 @@ enum {
   /// ★ Named from the game: "I can't stand another minute of this!"
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
-  /// Who has complained since the gauge last passed a mark: one per member,
+  /// Who has complained since the gauge last passed a mark: one per party
+  /// member,
   /// in the order of their actors.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
@@ -141,7 +143,7 @@ enum {
   FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
-/// The actors, numbered in the order of each map's actor
+/// The actors, numbered in the order of each scene's actor
 /// templates from ACTOR_FIRST_PLACED. LamakanDesertEast to
 /// LamakanDesertManticore place the Manticore, then the LamakanDesertEast and
 /// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
@@ -187,7 +189,7 @@ static void LamakanDesert_TalkToSmog(void) {
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.
-// UB: calling this s32 function through a void update hook is incompatible.
+// UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 104 to 100 bytes in tbs-en.
 #ifdef UBFIX
 static void LamakanDesert_LeaderSpraySand(struct Actor *updated) {
@@ -222,7 +224,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
 #endif
 }
 
-/// Where the party can enter each of the four maps.
+/// Where the party can enter each of the four scenes.
 const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -243,10 +245,10 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
 
 const struct SceneExitRegion *LamakanDesert_GetRegions(void) { return 0; }
 
-/// All four desert maps share the packed exit table.
+/// All four desert scenes share the packed exit table.
 const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
-/// The pits, the Manticore and Smog of each map. Arriving at
+/// The pits, the Manticore and Smog of each scene. Arriving at
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
 /// way back from the Manticore's battle, marks it beaten; in the patched
 /// editions it also sets FLAG_KALAY_REACHED.
@@ -289,7 +291,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
   Event_End();
 }
 
-/// The desert's triggers, the same on every map.
+/// The desert's triggers, the same in every scene.
 const struct Trigger *LamakanDesert_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
@@ -481,7 +483,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     }
   }
   Event_Start();
-  // Three lines a mark, one for each member. They come right after Alpine
+  // Three lines a mark, one for each party member. They come right after Alpine
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before
   // it.
@@ -1326,8 +1328,8 @@ struct ActorTemplate gLamakanDesertManticoreActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-/// The four maps' one trigger table. Its exit rows keep their numbers: each
-/// takes the exit of that number in whichever map the party is in, which is a
+/// The four scenes' one trigger table. Its exit rows keep their numbers: each
+/// takes the exit of that number in whichever scene the party is in, which is a
 /// different way out in each (LAMAKAN_DESERT_EAST_TO_WORLD_MAP,
 /// LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST and the others).
 struct Trigger gLamakanDesertTriggers[] = {

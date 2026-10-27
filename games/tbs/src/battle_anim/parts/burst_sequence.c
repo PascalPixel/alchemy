@@ -99,9 +99,9 @@ enum BurstSequenceColumn {
 /// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter
 /// slots, rebuilt twice a frame; loads palette colours 0 to 63 from the
 /// row's palette resource. Sets work->shakeFrames on each hit, and ends with
-/// the transfer callback removed and the canvas layer closed.
+/// the transfer task removed and the canvas layer closed.
 ///
-/// effect: the user and the targets; prelude 1 first brings in a Jupiter
+/// args: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance
 ///         (DJINNI_ENTRANCE_LONG).
 /// mode: the row of gBurstSequence_Styles (enum BurstSequenceMode).

@@ -1,5 +1,5 @@
 /// @file
-/// The world map screen: area markers, the cursor and the area's
+/// The World Map screen: area markers, the cursor and the area's
 /// name.
 // Part of event_commands.c.
 
@@ -9,7 +9,7 @@
 #define WORLD_MAP_MARKER_TILE_BYTES 0x80
 #define WORLD_MAP_SCREEN_WIDTH 240  ///< the picture's width, the screen's
 #define WORLD_MAP_SCREEN_HEIGHT 160 ///< the picture's height, the screen's
-/// The world map's size in field pixels each way, which the picture shows at
+/// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
 #define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
@@ -82,7 +82,7 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
               sizeof(((struct FieldWork *)0)->actors) /
                   sizeof(((struct FieldWork *)0)->actors[0]));
 
-/// Sets up the world map screen: the marker tiles and their OAM entries, the
+/// Sets up the World Map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
 void FieldEffect_SetupResourcesAndWindow(void) {
@@ -185,7 +185,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-/// Closes the world map screen: returns its VRAM blocks and removes the
+/// Closes the World Map screen: returns its VRAM blocks and removes the
 /// name window.
 void FieldEffect_CleanupResourcesAndWindow(void) {
   struct WorldPictureWork *work = (struct WorldPictureWork *)gMapGridCellBuffer;
@@ -195,7 +195,7 @@ void FieldEffect_CleanupResourcesAndWindow(void) {
   Window_CloseFar(work->nameWindow, 2);
 }
 
-/// Task of the world map screen: shows a marker at each
+/// Task of the World Map screen: shows a marker at each
 /// area whose flag is set, moves the cursor with the d-pad (to the current
 /// area while L or R is held) and shows the name of the marker nearest
 /// the cursor.
@@ -248,9 +248,8 @@ void WorldPicture_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // SceneManager_Run creates the selected actor before event -888 opens
-  // this screen. No actor task removes it while the marker callback
-  // runs.
+  // SceneManager_Run creates the selected actor before raised trigger -888
+  // opens this screen. No actor task removes it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
     areaActor = Actor_Lookup(gSaveBlock.leaderActorId);
@@ -438,9 +437,10 @@ void WorldPicture_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// SceneManager_Run reaches this for event -888 in world-map mode. The marker
-/// task stops before map graphics are restored, so neither uses the other's
-/// scratch storage. The picture argument is unused; the resource is fixed.
+/// SceneManager_Run reaches this for raised trigger -888 in World Map mode. The
+/// marker task stops before map graphics are restored, so neither uses the
+/// other's scratch storage. The picture argument is unused; the resource is
+/// fixed.
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
@@ -511,7 +511,7 @@ void WorldPicture_Show(s32 picture) {
   work->camera->paused = 0;
 }
 
-/// On the world map, shows only the map's actors within 320 pixels
+/// On the World Map, shows only the scene's actors within 320 pixels
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateActorVisibilityBounds(void) {
   struct Actor *object;
@@ -552,7 +552,7 @@ void Field_UpdateActorVisibilityBounds(void) {
   } while (id < WORLD_MAP_MARKER_CAPACITY);
 }
 
-/// On the world map, zooms the view out (0x9d89) while L is held, then back.
+/// On the World Map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
 /// times as far (FieldEffect_ScheduleRatioTransition). SceneManager_Run runs it
 /// for event -889; the overlay tasks are suspended meanwhile.

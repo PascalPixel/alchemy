@@ -399,7 +399,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
   }
 
-  // Previewing must not change the member's Djinn, class or battle stats.
+  // Previewing must not change the party member's Djinn, class or battle stats.
   Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
   Free(changedAbilities);
   Free(savedUnit);

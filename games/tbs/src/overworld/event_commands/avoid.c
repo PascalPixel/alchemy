@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// End of the effect: switches the caster's display flags between 3 and 1 on
+/// End of the Psynergy: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
 /// FieldPsynergy_Avoid adds it as a task (priority TASK_PASS_FRAME)
 /// for its last 70 frames and removes it again.
@@ -28,11 +28,11 @@ void FieldEffect_BlinkAvoidCaster(void) {
   }
 }
 
-/// The caster during the effect: sheds a pair of falling arcs every 5 frames
-/// (7 on the world map), and spins in phase 1, 3/64 turn a frame.
-/// FieldPsynergy_Avoid makes it the caster's callback; it counts the caster's
-/// step and turns its angle. The arcs draw with the tiles FieldPsynergy_Avoid
-/// loads into effectWork->arcTileSlot.
+/// The caster during the Psynergy: sheds a pair of falling arcs every 5 frames
+/// (7 on the World Map), and spins in phase 1, 3/64 turn a frame.
+/// FieldPsynergy_Avoid makes it the caster's update routine; it counts the
+/// caster's step and turns its angle. The arcs draw with the tiles
+/// FieldPsynergy_Avoid loads into effectWork->arcTileSlot.
 void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
   struct Actor *caster = (struct Actor *)actor;
   s16 phase;
@@ -56,7 +56,7 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
 /// Clears gSaveBlock.avoidDistance. Reached through Event_RunFieldPsynergy
-/// when the Psynergy request the leader's steps raise as Avoid runs out
+/// when the Psynergy request the leader's walking raises as Avoid runs out
 /// (overworld/walking.c) is handled.
 void Event_ShowStatusMessage(void) {
   gSaveBlock.avoidDistance = 0;
@@ -83,8 +83,8 @@ void Event_ShowStatusMessage(void) {
 /// marks it as cast from the Sacred Feather.
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
-/// gSaveBlock.avoidDistance and avoidByItem; the leader's steps count the
-/// distance down by their speed (overworld/walking.c), 2,400 pixels in all.
+/// gSaveBlock.avoidDistance and avoidByItem; the leader's walking counts the
+/// distance down by its speed (overworld/walking.c), 2,400 pixels in all.
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
@@ -104,7 +104,7 @@ void FieldPsynergy_Avoid(void) {
     s16 *tileSlot = &effectWork->arcTileSlot;
     s32 zero = 0;
 
-    // The arcs' tiles (256 bytes) stay loaded until the effect's end; the
+    // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);

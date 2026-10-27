@@ -130,7 +130,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   position.z = leader->z.fixed;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
-  // Actor.velocityY), falling, and freed after 8 frames; stop at the
+  // Actor.velocityY), falling, and released after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
@@ -215,7 +215,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   }
 }
 
-/// Per-frame update of an afterimage: closes half the distance to the object
+/// Per-frame update of an afterimage: closes half the distance to the actor
 /// it is linked to. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
 void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {

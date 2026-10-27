@@ -346,7 +346,7 @@ struct SaveBlockWonPrizesView {
 
 #include "../graphics/lucky_wheels/reel_tables.h"
 
-/// Lucky Wheels' frame callback: reads the keys, runs the game's state
+/// Lucky Wheels' frame task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing
 /// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
 /// title letters of a win, the frame, the hold lamps, the spin counter, the

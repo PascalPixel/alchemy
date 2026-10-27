@@ -286,18 +286,18 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   from labels and `goto` gets none of this, so where the ROM shows none of it
   the loop stays a `goto`, and the comment beside it gives the measured cost
   of its loop form. The `goto`s without such a comment (the wander retries,
-  the step searches, the scene effects' [script](../glossary.md#script) loops and
+  the step searches, the scenes' [event](../glossary.md#event) loops and
   the debug loops) stay until someone finds their loops.
 - A function whose result nothing reads keeps its `s32` return where `void`
   would change its epilogue, the instructions that end it; `UBFIX` gives the
-  `void` form. An update hook that the bytes show returning a value does the
+  `void` form. An update routine that the bytes show returning a value does the
   same, with `// UB:` above it.
 
 ### Calls
 
 - One routine can be reached by several routes, each kept where it matches: a
   game flag by `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` or by the
-  script layer's inlines `Event_GetFlag`, `Event_SetFlag` and
+  event layer's inlines `Event_GetFlag`, `Event_SetFlag` and
   `Event_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or

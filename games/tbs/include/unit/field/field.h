@@ -14,8 +14,8 @@ struct WorldMapScanline;
 struct ScriptOperands;
 struct WorldPosition;
 
-/// How the object system runs (ActorSystem_Initialize): which camera follows
-/// the objects and which update moves them.
+/// How the actor system runs (ActorSystem_Initialize): which camera follows
+/// the actors and which update moves them.
 enum ActorSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.
   ACTOR_SYSTEM_MAP = 2,
@@ -30,7 +30,8 @@ enum ActorSystemMode {
 /// (Sprite_ComposeFrame, facing.c). Each cuts the facing angle into
 /// sectors and gives each sector a frame and whether it is mirrored.
 enum AnimationFacingKind {
-  /// The script's own frame whatever the facing; zero also marks a free
+  /// The animation script's own frame whatever the facing; zero also marks a
+  /// free
   /// sprite anim.
   ANIM_FACING_NONE = 0,
   ANIM_FACING_ONE_FRAME = 1,    ///< 8 sectors: one frame, mirrored to the left
@@ -71,7 +72,7 @@ enum SpriteFlag {
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
-/// Object.spriteStorageKind, its low four bits: what the object's sprite
+/// Actor.spriteStorageKind, its low four bits: what the actor's sprite
 /// pointer holds.
 enum ActorSpriteKind {
   ACTOR_SPRITE_NONE = 0, ///< nothing drawn
@@ -79,12 +80,12 @@ enum ActorSpriteKind {
   ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
-/// Actor_Create's id / 4096: what sprites the object is made with.
+/// Actor_Create's id / 4096: what sprites the actor is made with.
 enum ActorCreateKind {
   ACTOR_CREATE_ONE_SPRITE = 0, ///< the id's sprite (ACTOR_SPRITE_ONE)
   /// The sprites of the id and id + 1 (ACTOR_SPRITE_GROUP).
   ACTOR_CREATE_GROUP = 2,
-  /// No sprite: any kind but the two above, and the one the camera object
+  /// No sprite: any kind but the two above, and the one the camera actor
   /// takes.
   ACTOR_CREATE_NO_SPRITE = 8
 };
@@ -166,7 +167,7 @@ enum TerrainKind {
 /// What MapGrid_CheckCollision says of a step to a position.
 enum Collision {
   COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
-  COLLISION_NONE = 0,      ///< the object can step there
+  COLLISION_NONE = 0,      ///< the actor can step there
   COLLISION_TOO_HIGH = 1,  ///< the ground there is more than 8 pixels higher
   COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (MB_WALL)
 };

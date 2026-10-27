@@ -16,16 +16,17 @@ struct Sprite;
 struct Unit;
 
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
-/// and the Psynergy listed for the chosen member. It is the HEAP_SLOT_MENU
-/// block as this menu reads it, from the menu's opening to its closing.
+/// and the Psynergy listed for the chosen party member. It is the
+/// HEAP_SLOT_MENU block as this menu reads it, from the menu's opening to its
+/// closing.
 struct PsynergyMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *auxiliaryWindow;
   struct WindowSprite *sideIcon[2]; ///< each side's cursor
-  s8 tabIndex[2];                   ///< each side's member, in memberTable
-  s8 tabCounts[2];                  ///< members each side chooses from
+  s8 tabIndex[2];  ///< each side's party member, in memberTable
+  s8 tabCounts[2]; ///< party members each side chooses from
   struct Window *psynergyWindow;
   struct Window *statusWindow;
   struct Window *shortcutWindow; ///< the L and R shortcuts
@@ -52,11 +53,12 @@ struct PsynergyMenuWork {
   s16 rowPositions[8];          ///< screen pixels
   s32 memberScale[8];           ///< 16.16 fixed point, 0x10000 full size
   u16 sideRow[2];               ///< each side's Psynergy row chosen
-  u16 sideAction[2]; ///< each side's Psynergy chosen, as a member action entry
+  u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
+                     ///< entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
-  u16 psynergies[32]; ///< the chosen member's Psynergy listed
+  u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembers)
   u8 psynergyCount;
   u8 memberCount;
@@ -77,7 +79,7 @@ struct PsynergyMenuWork {
   s8 equipPreview; ///< ItemMenuWork's; not named here
   u8 listMode;     ///< ItemMenuWork's; not named here
   u8 unusedAfterListMode[2];   ///< no view of the menu work names it
-  s8 selectedIndexByMember[8]; ///< each member's entry chosen last
+  s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
 };
 

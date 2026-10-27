@@ -2,12 +2,12 @@
 #define ALCHEMY_SPRITE_IDS_H
 
 /// @file
-/// Sprite numbers of objects, named where the code shows what they are.
+/// Sprite numbers of actors, named where the code shows what they are.
 /// The characters' and Djinn's sprites are in character_ids.h. A sprite's
 /// picture is graphics/sprite/spr_<number>.png, its number in decimal.
 
-/// The sprites the field, its Psynergy and the maps' actor template
-/// tables create objects of by number.
+/// The sprites the field, its Psynergy and the scenes' actor template
+/// tables create actors of by number.
 enum SpriteId {
   /// A treasure chest, shut, opening and open, with the frames of the mimic
   /// some chests turn out to be.
@@ -21,7 +21,7 @@ enum SpriteId {
   /// A blank 32-pixel square (spr_023.png holds no drawn pixel). Its one
   /// actor, an unused one in Bilibin, gives it no role, so it keeps
   /// its size as its name; SPRITE_BLANK_LARGE is the same size, used for
-  /// objects seen only by their shadows.
+  /// actors seen only by their shadows.
   SPRITE_BLANK_32 = 0x17,
   /// Rings spreading out on water: where someone wades (the field's own
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
@@ -198,7 +198,7 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
-  /// The keys the maps show: the barricade key McCoy tosses to the party,
+  /// The keys the scenes show: the barricade key McCoy tosses to the party,
   /// and Lunpa Fortress's Cell Key.
   /// ★ Named from what the player sees: a golden key (spr_245.png)
   SPRITE_KEY = 0xf5,
@@ -779,7 +779,7 @@ enum GoldenHelmetWarriorAnimation {
   WARRIOR_ANIMATION_ARMS_RAISED = 10     ///< both arms raised in victory
 };
 
-/// SPRITE_BABI's animations that maps set by number (spr_052.tsv).
+/// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
 enum BabiAnimation {
   /// Lying in bed, only his head on the pillow showing, its two frames
   /// alternating.

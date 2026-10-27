@@ -27,10 +27,10 @@
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
 /// Thunderstorm (BATTLE_ANIM_PLASMA).
 ///
-/// effect->variant picks how many pillars (gPlasma_Counts), how many sparks
+/// args->variant picks how many pillars (gPlasma_Counts), how many sparks
 /// each throws and how long the screen shakes (gPlasma_Sparks); for Spark
 /// Plasma and Thunderstorm the camera also swings round for the first 64
-/// frames. effect->side picks the row of pillar positions.
+/// frames. args->side picks the row of pillar positions.
 ///
 /// Sparks are PARTICLES 0 to 1023, canvas pixels in 16.16. Sets REG_BLDALPHA,
 /// loads the violet palette into the first 64 background colours (the
@@ -217,7 +217,7 @@ void BattleAnim_RunDynamite(struct BattleAnimArgs *args) {
 /// One to three bursts go off 8 frames apart: each flashes, rings itself with
 /// twelve smaller flashes that fade, and throws out sparks that bounce on
 /// the ground; every burst knocks the targets back.
-/// effect->variant picks the shape from gPlasma_Shapes: sparks per
+/// args->variant picks the shape from gPlasma_Shapes: sparks per
 /// burst, how many bursts (three for the strongest variant, one for the
 /// others), and each burst's offset across. The strongest variant also
 /// scrolls the camera, and SPARK_GROUPS_SEVERE_BLOW flashes the whole canvas
@@ -227,7 +227,7 @@ void BattleAnim_RunDynamite(struct BattleAnimArgs *args) {
 /// Called by BattleAnim_RunNova and BattleAnim_RunDynamite, and with
 /// SPARK_GROUPS_RISING by BattleAnim_RunCastingImpact for Severe Blow and by
 /// BattleAnim_RunThrash and BattleAnim_RunUnusedSevereBlowLeap in thrash.c,
-/// which set effect->variant first (SPARK_GROUPS_SEVERE_BLOW or
+/// which set args->variant first (SPARK_GROUPS_SEVERE_BLOW or
 /// SPARK_GROUPS_THRASH).
 ///
 /// work->particles hold the ring flashes, 16 for each burst; PARTICLES the

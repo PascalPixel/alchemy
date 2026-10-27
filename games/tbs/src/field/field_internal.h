@@ -104,7 +104,7 @@ enum {
   FIELD_VIEW_HEIGHT = 160 * Q16_ONE   ///< the screen's height
 };
 
-/// Sprite ids the field's own code creates objects of.
+/// Sprite ids the field's own code creates actors of.
 enum {
   FIELD_SPRITE_RIPPLE = 24,   ///< the ripple behind the leader in shallow water
   FIELD_SPRITE_FOOTPRINT = 25 ///< a footprint, on maps that show them

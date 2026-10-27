@@ -6,7 +6,7 @@
 #include "types.h"
 #include "actor.h"
 
-/// An object script call: widen the object by 3/25 of its size a frame, and
+/// An actor script call: widen the actor by 3/25 of its size a frame, and
 /// release it once it has reached its destination.
 static s32 FieldEffect_StretchUntilArrived(struct Actor *interpreter) {
   struct Actor *streak = interpreter;

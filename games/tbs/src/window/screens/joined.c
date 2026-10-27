@@ -29,7 +29,7 @@
 
 /// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
 /// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-/// cancelled with B. The Colosso maps ask it (scene/common/colosso_solo.h).
+/// cancelled with B. The Colosso scenes ask it (scene/common/colosso_solo.h).
 /// It takes a VRAM slot for the hand and frees it before returning.
 s32 ColossoMenu_Choose(s32 unused) {
   struct Window *window;
@@ -101,7 +101,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   return row;
 }
 
-/// Shows that a Djinni joined a member while the join fanfare (sound 81)
+/// Shows that a Djinni joined a party member while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
 /// portrait. `djinn` is the Djinni's number in its element. The field's
@@ -136,7 +136,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its
-    // tile with OBJ palette 14.
+    // tile with sprite palette 14.
     p = entry;
     *p++ = zero;
     *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
@@ -146,8 +146,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->voiceSound = zero;
     work->voiceCountdown = zero;
 
-    // The message's arguments: the member (MESSAGE_ARGUMENT_ACTOR) and the
-    // Djinni's name, its ability (ABILITY_DJINNI_FIRST,
+    // The message's arguments: the party member (MESSAGE_ARGUMENT_ACTOR) and
+    // the Djinni's name, its ability (ABILITY_DJINNI_FIRST,
     // MESSAGE_ARGUMENT_ABILITY).
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
@@ -174,7 +174,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
 /// Returns the portrait character of party member `member` (0-8): from
 /// gCharacter_ChildSpriteTable during the prologue, from
-/// gCharacter_SpriteTable otherwise; 0 for any other member.
+/// gCharacter_SpriteTable otherwise; 0 for any other party member.
 s32 Party_LookupCharacterValueByFlag32(u32 index) {
   if (index > 8) {
     return 0;
@@ -185,9 +185,9 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   return gCharacter_ChildSpriteTable[index];
 }
 
-/// Shows that a member joined the party while the join fanfare (sound 81)
+/// Shows that a party member joined the party while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
-/// `<member> joined your party.`, with the member's portrait. The field's
+/// `<member> joined your party.`, with the party member's portrait. The field's
 /// party events reach it by far call (overworld/event_commands/script.c).
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)*gWindowWork;
@@ -226,8 +226,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-/// Shows that two members joined the party while the join fanfare (sound 81)
-/// plays, until it ends or A, B, L or R is pressed. The message is
+/// Shows that two party members joined the party while the join fanfare (sound
+/// 81) plays, until it ends or A, B, L or R is pressed. The message is
 /// `<first> and <second> joined your party.`, with both portraits.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];

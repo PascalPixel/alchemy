@@ -23,7 +23,7 @@
 ///
 /// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_ANIM_FROTH).
 ///
-/// effect->variant picks the volley from gVortices_Counts (motes and frames)
+/// args->variant picks the volley from gVortices_Counts (motes and frames)
 /// and how hard the screen shakes.
 ///
 /// work->particles 0 to 29 are the motes, battle positions in 16.16 until a
@@ -179,7 +179,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *args) {
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane
 /// (BATTLE_ANIM_WHIRLWIND).
 ///
-/// effect->variant picks the shape from gVortices_Shapes: how many tornadoes,
+/// args->variant picks the shape from gVortices_Shapes: how many tornadoes,
 /// how far they sway and how hard the screen shakes.
 ///
 /// work->particles 0 to 15 are the glints, four for each tornado (so at most

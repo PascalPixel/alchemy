@@ -146,7 +146,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
 /// Allocates the zoomed background's scanline work
 /// (HEAP_SLOT_BATTLE_SCANLINES) cleared, and sets the background's mode to
-/// BATTLE_BACKGROUND_NONE, so the next load adds its scanline callback.
+/// BATTLE_BACKGROUND_NONE, so the next load adds its scanline task.
 /// Called once by Battle_Run before BattleBackground_Load.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
@@ -531,8 +531,8 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
 }
 
 /// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's
-/// battle actor, the picture and its shadow.
-/// Does nothing for a unit with no battle actor or motion actor. Called by
+/// battle object, the picture and its shadow.
+/// Does nothing for a unit with no battle object or actor. Called by
 /// BattleHighlight_SetModes and its helpers here, by the opening's
 /// storm (BattleTransition_Run), by the staging (staging.c)
 /// and by auto battle (auto_battle.c).
@@ -631,7 +631,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// acting unit by BattleStaging_DispatchAction, with the targets being chosen
 /// by the command menu (party_commands.c, targets.c, selection.c), and with 0
 /// when either is done. Sets BattleWork.highlightMode and highlightStep, and
-/// adds or removes the callback.
+/// adds or removes the task.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[14];
   struct BattleWork *battle = gBattleWork;

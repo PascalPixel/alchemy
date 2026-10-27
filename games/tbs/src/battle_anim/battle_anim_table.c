@@ -399,7 +399,7 @@ u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
 /// The animation handlers, indexed by animation kind minus one, which
 /// BattleAnim_RunFromTable calls; BATTLE_ANIM_NONE is no animation, for
-/// which it only clears effect->variant.
+/// which it only clears args->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
 /// gAbilityAnimations (battle/ability_staging.c) selects its kind, with that
@@ -706,7 +706,7 @@ s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
 u16 gBoreas_RockCells[] = {0, 1152, 2064};
 u8 gBoreas_RockWidths[] = {24, 24, 20};
 u8 gBoreas_RockHeights[] = {48, 38, 26};
-/// The third object's animations from frame 209, one every 4 frames.
+/// The third sprite's animations from frame 209, one every 4 frames.
 u8 gBoreas_Animations[] = {2, 9, 10, 11};
 // Rock and ice animation: the chips thrown up as the rocks crumble: four large
 // ones, then from frame 192 seven small ones.
@@ -803,7 +803,7 @@ u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 // atalanta.c
 
-/// Staged particle scale: Atalanta's formation objects keep this
+/// Staged particle scale: Atalanta's formation sprites keep this
 /// scale, one to one, throughout.
 struct SpriteScale gAtalanta_UnitScale = {{{0x10000, 0x10000}}};
 
@@ -1012,7 +1012,7 @@ u16 gHelmSplitter_Cells[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
 s8 gHelmSplitter_CellBiasX[] = {53, 36, 16, 2, 2, 2, 2};
 s8 gHelmSplitter_CellBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
-// helm_splitter.c: Object formation coordinates and impact burst cells.
+// helm_splitter.c: Sprite formation coordinates and impact burst cells.
 
 // The offsets of BattleAnim_PlaceFormationObjects' formations in pixels, one
 // axis at a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in
@@ -1043,7 +1043,7 @@ s16 gParticleStreams_DropPoints[][2] = {
 // The seven growing flash cells of the blast sheet, square.
 u16 gParticleStreams_FlashCells[] = BLAST_OFFSETS;
 u16 gParticleStreams_FlashSizes[] = BLAST_CELL_SIZES;
-// Where the formation's objects stand, in pixels from its corner.
+// Where the formation's sprites stand, in pixels from its corner.
 u8 gRamses_ObjectColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 u8 gRamses_ObjectRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 // The puff cells of the blast sheet, square; only the last four are used.
@@ -1076,15 +1076,15 @@ u16 gJudgment_ShardCells[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gJudgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};
 
-// kirin.c: Object row coordinates.
+// kirin.c: Sprite row coordinates.
 
-// Object row: pixel offsets of its nine objects.
+// Sprite row: pixel offsets of its nine sprites.
 u8 gKirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
 // neptune.c: Formation sweep coordinates and gravity.
 
-// The formation's eight objects: pixel offsets, scaled by 1.5 as placed.
+// The formation's eight sprites: pixel offsets, scaled by 1.5 as placed.
 u8 gNeptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 /// Spray gravity, by particle index & 3, in gNereid_Gravity's steps.

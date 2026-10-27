@@ -30,7 +30,7 @@
 ///
 /// The animation runs for CYBELE_FRAMES, in these stages:
 ///
-/// - 0 to 127: the formation objects drop in, landing on frame 31; from 72
+/// - 0 to 127: the formation sprites drop in, landing on frame 31; from 72
 ///   a thorn flies in from the right each frame.
 /// - 128 to 224: vines grow out of the ground, shaking the screen, while
 ///   chips fly; sparks flash around the targets, which rise from 161.
@@ -46,9 +46,9 @@
 ///
 /// Besides the canvas and work->particles (above), it writes the dissolve
 /// order into the first 1024 bytes of Ram_MapGridCellBuffer, greys the first 64
-/// background colours, lifts and drops the targets' objects (their y and
+/// background colours, lifts and drops the targets' actors (their y and
 /// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
-/// It spawns eight formation objects and releases them, the transfer callback
+/// It spawns eight formation sprites and releases them, the transfer task
 /// and the blitters before it closes the canvas layer.
 void BattleAnim_RunCybele(struct BattleAnimArgs *args) {
   void **cursor;
@@ -167,7 +167,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *args) {
     if (frame == 140)
       Sound_PlaySongFar(SE_SWITCH_MECHANISM);
 
-    // Drop the formation objects to a height of 64 pixels, and from frame
+    // Drop the formation sprites to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:
     // her mouth opens as the thorns fly and shuts again.
     speed += 0x4000;

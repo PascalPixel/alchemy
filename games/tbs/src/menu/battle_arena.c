@@ -100,14 +100,15 @@
 // Link transfers use three unit records followed by one recovery-table record.
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
 // a block and ends a send only when its count reaches exactly 0.
-/// The bytes sent for each member: a Unit (BATTLE_UNIT_SIZE, 0x14c) and the
-/// eight bytes after it, 17 blocks of 20.
+/// The bytes sent for each party member: a Unit (BATTLE_UNIT_SIZE, 0x14c) and
+/// the eight bytes after it, 17 blocks of 20.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
-/// The bytes sent for the Djinn recovery table after the members: the table
-/// (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
+/// The bytes sent for the Djinn recovery table after the party members: the
+/// table (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
 /// blocks of 20, two more than the table needs.
 #define LOBBY_RECOVERY_RECORD_BYTES 0x140
-/// The members a linked battle takes; a smaller party sends absent records.
+/// The party members a linked battle takes; a smaller party sends absent
+/// records.
 #define LOBBY_UNIT_RECORD_COUNT 3
 /// gLinkStatus bits 0 and 1: both consoles were heard this frame, as the
 /// battle code's LINK_BOTH_CONNECTED.
@@ -115,7 +116,7 @@
 /// A record fails on the 25th frame it waits without a link or past the
 /// timeout.
 #define LOBBY_TRANSFER_RETRY_LIMIT 24
-/// Frames, about ten seconds, for the three member records, and again for
+/// Frames, about ten seconds, for the three party member records, and again for
 /// the recovery table.
 #define LOBBY_SEND_TIMEOUT_FRAMES 600
 /// Frames, about fifteen seconds, for all four records received.
@@ -128,7 +129,7 @@
 // The Battle Arena's flags, besides its own above, FLAG_MONSTER_BATTLE,
 // FLAG_LINK_BATTLE and the two byte flags flags.h names:
 // - FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
-//   FLAG_LINK_BATTLE): only the first three members take part
+//   FLAG_LINK_BATTLE): only the first three party members take part
 //   (BattleArena_PartyContains).
 // - FLAG_AREA_TEMP_E8: the last linked battle broke off (Battle_Run). In a
 //   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
@@ -212,7 +213,7 @@ enum LobbySlot {
   LOBBY_SLOT_ALONE = 5
 };
 
-/// The Battle Arena's raised events (FieldWork.raisedTrigger).
+/// The Battle Arena's raised triggers (FieldWork.raisedTrigger).
 enum BattleArenaRaisedTrigger {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< BattleArena_PromptToParticipate
@@ -326,7 +327,7 @@ u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
 /// The actor templates entry. After a defeat
 /// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
-/// members and four visitors roughly trade places
+/// party members and four visitors roughly trade places
 /// (gBattleArenaBattleActorTemplates): Garet, Ivan and Mia or Jenna take
 /// three of the visitors' spots, and the visitors stand around where the party
 /// stood.
@@ -529,11 +530,11 @@ static s32 BattleArena_ReportDisconnection(void) {
 #endif
 }
 
-/// Receives the partner's three member records into units 0x80 to 0x82 (the
-/// battle's enemies, by Unit_Get) and its Djinn recovery table into the enemy
-/// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
+/// Receives the partner's three party member records into units 0x80 to 0x82
+/// (the battle's enemies, by Unit_Get) and its Djinn recovery table into the
+/// enemy side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
-/// Unit name holds. Returns how many records hold a member, or -1 when
+/// Unit name holds. Returns how many records hold a party member, or -1 when
 /// a transfer fails, overruns or runs out of time. The EWRAM pool buffer
 /// it allocates and frees is never written: the records are received in
 /// place.
@@ -582,7 +583,7 @@ testRecord:
     result = -1;
     goto done;
   }
-  // Unit's side (0x12a): the sender marks a member 2 and a padding
+  // Unit's side (0x12a): the sender marks a party member 2 and a padding
   // record 0.
   if (record[0x12a] != 0) {
     result++;
@@ -620,7 +621,7 @@ next:
   if (slot > 2) {
     goto second;
   }
-  // The partner's members become this battle's enemies 0x80 to 0x82.
+  // The partner's party members become this battle's enemies 0x80 to 0x82.
   record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
   if ((transferResult = Serial_StartReceive(record)) == -1) {
@@ -667,7 +668,7 @@ done:
   return result;
 }
 
-/// Copies the character ids of the party's first three members
+/// Copies the character ids of the first three party members
 /// (gSaveBlock.party), ends them with 0xff and returns how many. A
 /// null destination only counts them.
 static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
@@ -704,14 +705,14 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
   return memberCount;
 }
 
-/// Sends the party's first three members' records, marked side 2
+/// Sends the first three party members' records, marked side 2
 /// (BATTLE_SIDE_PARTY), and for a smaller party absent records, copies of
-/// the last member marked side 0. Then sends this side's Djinn recovery
-/// table, rewritten for the partner: each entry's member becomes the number
-/// the partner gives that member (0x80 plus its place), and the entries of
-/// members not sent are dropped. Returns 0, or -1 when a send fails or runs
-/// out of time. The copies go through an EWRAM pool buffer freed before
-/// returning.
+/// the last party member marked side 0. Then sends this side's Djinn recovery
+/// table, rewritten for the partner: each entry's party member becomes the
+/// number the partner gives that party member (0x80 plus its place), and the
+/// entries of party members not sent are dropped. Returns 0, or -1 when a send
+/// fails or runs out of time. The copies go through an EWRAM pool buffer freed
+/// before returning.
 static s32 BattleArena_SendPartyRecords(void) {
   // Measured plain form: replacing only the final wait and test polling
   // region with while(active transfers) adds 8 bytes in tbs-en.
@@ -746,7 +747,7 @@ static s32 BattleArena_SendPartyRecords(void) {
     do {
       Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
       heap[0x12a] = 2;
-      // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
+      // As a u8, i - 128 is 0x80 + i: this party member's unit on the partner's
       // side.
       slotMap[memberIds[i]] = i - 128;
       transferResult = Serial_StartSend(heap, size);
@@ -817,8 +818,8 @@ next:
     list = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
     timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-    // Give each Djinni on the list its member's number on the partner's
-    // side, and drop those of members not sent (peerSlots 0).
+    // Give each Djinni on the list its party member's number on the partner's
+    // side, and drop those of party members not sent (peerSlots 0).
     for (j = 0; j < list->count; j++) {
       list->entries[j].unitId = peerSlots[list->entries[j].unitId];
       if (list->entries[j].unitId == 0) {
@@ -857,8 +858,8 @@ done:
 
 /// Exchanges the two parties: the parent sends first, the child (area
 /// flag FLAG_BATTLE_ARENA_LINK_CHILD) receives first. On success stores the
-/// partner's member count in FLAG_LINK_PARTY_COUNT and returns it; on failure
-/// resets the transfer state and returns a negative result.
+/// partner's party member count in FLAG_LINK_PARTY_COUNT and returns it; on
+/// failure resets the transfer state and returns a negative result.
 static s32 BattleArena_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedMemberCount;
@@ -974,8 +975,8 @@ static s32 BattleArena_EnterBattle(void) {
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
     // units (LINK_OWNER_STATES_SIZE, battle/battle/encounter.c). While it is
-    // allocated, the exchange below receives the partner's members and Djinn
-    // into units 0x80 to 0x83. The copy to gActorSpriteSlots
+    // allocated, the exchange below receives the partner's party members and
+    // Djinn into units 0x80 to 0x83. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer
     // + 0x8000) hands them to Battle_Run, which copies them back.
     savedWork = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
@@ -1180,7 +1181,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
 /// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won,
 /// the total when the leader faces north and those won in a row otherwise;
 /// before the first, the line says it will tell them later. Like the original
-/// handler, it never ends its script (no Event_End) and returns nothing.
+/// handler, it never ends its event (no Event_End) and returns nothing.
 static s32 BattleArena_ReportWinTallies(s32 actorId) {
   u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
@@ -1292,7 +1293,7 @@ static s32 BattleArena_OpenSanctum(s32 actorId) {
 #endif
 }
 
-/// Returns 1 when character memberId is among the party's first three members
+/// Returns 1 when character memberId is among the first three party members
 /// while a linked battle is arranged (FLAG_LINK_BATTLE_ARRANGED), or its first
 /// four otherwise; 0 when not.
 static s32 BattleArena_PartyContains(s32 memberId) {
@@ -1366,7 +1367,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 }
 
 /// Step trigger 1, the way out: stops the link, loads the normal reverb code
-/// and goes back to the main menu (its entrance FILE_SCREEN_FROM_SANCTUM).
+/// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1534,10 +1535,10 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// that brought the party here and restarts the Battle Arena's polling. A
 /// linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
 /// BATTLE_ARENA_AFTER_LINK_WIN; any other entrance than the
-/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_FILE_SCREEN, from the main menu)
-/// restarts the link. Updates gSaveBlock.linkTallies, saves after linked
-/// battles and new monster records, and restores the party's HP, PP and Djinn
-/// unless a monster series goes on. Returns 0.
+/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_FILE_SCREEN, from the File
+/// Screen) restarts the link. Updates gSaveBlock.linkTallies, saves after
+/// linked battles and new monster records, and restores the party's HP, PP and
+/// Djinn unless a monster series goes on. Returns 0.
 s32 BattleArena_RunRoundResult(void) {
   s32 i;
   struct FieldWork *work;
@@ -1564,7 +1565,7 @@ s32 BattleArena_RunRoundResult(void) {
     name[6] = 'L';
     name[7] = 'K';
   }
-  // Note who is in the battle party, for the members' lines.
+  // Note who is in the battle party, for the party members' lines.
   for (i = 0; i < 8; i++) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_IN_PARTY_FIRST + i);
     if (BattleArena_PartyContains(i)) {
@@ -1707,7 +1708,7 @@ s32 BattleArena_RunRoundResult(void) {
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     Event_End();
-    // Arriving from the main menu: start the link, clear
+    // Arriving from the File Screen: start the link, clear
     // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is
     // turned off here, with a note when it was on.
   } else {
@@ -1747,7 +1748,7 @@ u8 gBattleArena_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: BATTLE_ARENA_FROM_FILE_SCREEN from the main menu,
+/// Where the party appears: BATTLE_ARENA_FROM_FILE_SCREEN from the File Screen,
 /// the BATTLE_ARENA_AFTER_ ones after a battle (BattleArena_EnterBattle).
 struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_LINK_LOSS, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },

@@ -168,7 +168,7 @@ extern s16 gColosso_MarkerEndY;
 extern s16 gColosso_MarkerBlink;
 extern s16 gColosso_MarkerPriority;
 
-/// The pointer's map callback: glide one step, then draw it while it blinks
+/// The pointer's task: glide one step, then draw it while it blinks
 /// on (a glide keeps it on).
 static void Colosso_UpdateMarker(void) {
   s32 tile;

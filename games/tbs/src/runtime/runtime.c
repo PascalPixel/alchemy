@@ -13,7 +13,7 @@
 ///
 ///   Power-up        system.c: System_Initialize
 ///   Frames          frame.c: WaitFrames, System_VBlankHandler,
-///                   Irq_SetHandler; scheduler.c:
+///                   Irq_SetHandler; task.c:
 ///                   Task_Add
 ///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;
 ///                   vram_cache.c: VramCache_Load
@@ -34,7 +34,7 @@
 #include "runtime/fade.c"
 #include "runtime/render.c"
 #include "runtime/vram_cache.c"
-#include "runtime/scheduler.c"
+#include "runtime/task.c"
 #include "runtime/math.c"
 #include "runtime/text.c"
 #include "runtime/heap.c"

@@ -4,7 +4,7 @@ main	rom_start	games/tbs/src/system/rom_head
 main	rom_start	games/tbs/src/system/far_call/RUNTIME
 main	rom_start	games/tbs/src/system/entry	.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2
 main	rom_start	games/tbs/src/sound/channel_update_entry
-main	iwram_runtime	games/tbs/src/system/runtime
+main	iwram_runtime	games/tbs/src/system/irq
 main	iwram_runtime	games/tbs/src/system/runtime_irq_table
 main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip	.text .data .text.runtime_divide
 main	iwram_runtime	games/tbs/src/system/sound_mixer

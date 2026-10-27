@@ -5,7 +5,7 @@
 #include "../battle_internal.h"
 
 // _call_via_r0 is given the value of IwramIrqModeWord, the instruction
-// `orr r3, r3, #0x92` in runtime.s, not its address, so it would branch to
+// `orr r3, r3, #0x92` in irq.s, not its address, so it would branch to
 // 0xe3833092. The Lost Age's twin, between the same neighbours, calls its ARM
 // high-multiply helper with 5 and 0 before the three stops and nothing after
 // them, and nothing in either game calls the function.

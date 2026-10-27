@@ -15,7 +15,53 @@ Four parts take the game from switching on to a moment such as Isaac standing
 in Xian at the foot of the stairs: start-up, the sequence manager, the scene
 sequence that loads a place, and the scene manager that runs it. Each section
 below has a chart of the part in general and, where it helps, a second chart
-of the same part in Xian. A box keeps its name and colour from chart to chart.
+of the same part in Xian. A box keeps its name and colour from chart to chart, and a place is red.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  power(["Start-up"]) --> seqm
+  subgraph seqm ["Sequence manager"]
+    direction TB
+    subgraph scene ["Scene sequence"]
+      direction TB
+      load["Load the scene"]
+      load --> mgr
+      subgraph mgr ["Scene manager, each frame"]
+        direction TB
+        subgraph queue ["Queued tasks"]
+          direction TB
+          t1["Palette fade"] ~~~ t2["Actors"] ~~~ t3["Camera"] ~~~ t4["Sprites, tile animation, windows"]
+        end
+        queue --> ground["Check the ground under the leader"] --> check{"A request?"}
+        check -->|"no: next frame"| queue
+        check -->|"yes"| handle["Handle it to the end"]
+        handle -->|"next frame"| queue
+      end
+    end
+    battle(["Battle"])
+    dice["Lucky Dice"]
+    wheels["Lucky Wheels"]
+  end
+  handle -->|"an exit or a battle"| req(["Request another sequence, naming it"])
+  battle & dice & wheels --> req
+  req --> seqm
+  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class power sequenceManager
+  class battle battle
+  class req request
+  class load,t1,t2,t3,t4,ground,check,handle,dice,wheels step
+  style seqm fill:#EEF1F6,stroke:#8FA0B8,color:#2E3C50,rx:16,ry:16
+  style scene fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
+  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
+  style queue fill:#FFFFFF,stroke:#9AA3AE
+```
 
 ## Start-up
 
@@ -70,19 +116,33 @@ turns of the loop:
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  xian(["Scene sequence: Xian"]) --> ask1(["Request another sequence: the World Map"])
-  ask1 --> world(["Scene sequence: World Map"]) --> ask2(["Request another sequence: a random battle"])
-  ask2 --> battle(["Battle"]) --> ask3(["Request another sequence: back to the World Map"])
-  ask3 --> again(["Scene sequence: World Map, the party where it stood"])
+  subgraph s1 ["Scene sequence"]
+    xian(["Xian"])
+  end
+  s1 --> ask1(["Request another sequence: the World Map"])
+  ask1 --> s2
+  subgraph s2 ["Scene sequence"]
+    world(["World Map"])
+  end
+  s2 --> ask2(["Request another sequence: a random battle"])
+  ask2 --> battle(["Battle"]) --> ask3(["Request another sequence: back to the World Map, where the party stood"])
+  ask3 --> s3
+  subgraph s3 ["Scene sequence"]
+    again(["World Map"])
+  end
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class xian,world,again sceneSequence
+  class xian,world,again place
   class ask1,ask2,ask3 request
   class battle battle
+  style s1 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
+  style s2 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
+  style s3 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
 ```
 
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
@@ -133,21 +193,30 @@ flowchart TD
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Scene sequence: Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
-  arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
-  code --> map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
-  place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
-  actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
-  own --> fade["Fade in, Xian's name at the top"] --> run(["Scene manager: Xian"])
+  subgraph seq ["Scene sequence"]
+    direction TB
+    pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
+    arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
+    code --> map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
+    place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
+    actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
+    own --> fade["Fade in, Xian's name at the top"]
+  end
+  fade --> mgr
+  subgraph mgr ["Scene manager"]
+    run(["Xian"])
+  end
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class pick sceneSequence
-  class run sceneManager
+  class pick,run place
   class arrive,music,code,map,place,actors,own,fade step
+  style seq fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
+  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
 ```
 
 When an exit names a scene, the sequence manager clears the
@@ -201,24 +270,29 @@ flowchart TD
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["Scene manager: Xian"]) --> queue
-  subgraph queue ["Queued tasks, this frame"]
+  subgraph mgr ["Scene manager"]
     direction TB
-    t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac's player control: a button pressed? no, so no request"]
-    t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
-    t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
+    xian(["Xian"]) --> queue
+    subgraph queue ["Queued tasks, this frame"]
+      direction TB
+      t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac's player control: a button pressed? no, so no request"]
+      t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
+      t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
+    end
+    queue --> ground["Check the ground under Isaac, at the foot of the stairs: nothing there"]
+    ground --> check{"A request?"}
+    check -->|"no: next frame"| queue
   end
-  queue --> ground["Check the ground under Isaac, at the foot of the stairs: nothing there"]
-  ground --> check{"A request?"}
-  check -->|"no: next frame"| frame
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class frame sceneManager
+  class xian place
   class t1,t2,t3,t4,t5,t6,ground,check step
+  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
   style queue fill:#FFFFFF,stroke:#9AA3AE
 ```
 

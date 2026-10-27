@@ -15,6 +15,11 @@ struct Actor;
 struct Actor;
 struct MapGridCell;
 
+/// The actor ids FieldWork.actors maps (enum ActorId): the party's eight
+/// characters, then the actors a scene places. An actor id indexes this table,
+/// not the 64 slots of gActors.
+#define ACTOR_ID_COUNT 66
+
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
   struct Actor *object; ///< the actor placed for it
@@ -48,12 +53,12 @@ enum FieldRaisedTrigger {
 /// loop.
 struct FieldWork {
   /// The actor template tables placed so far, recorded by
-  /// FieldScript_SpawnActorTemplates.
+  /// Event_SpawnActorTemplates.
   struct ActorTemplate *tables[4];
   const struct Trigger *triggers; ///< the map's trigger table
   /// The actors by actor id: 0 to 7 the party's characters, 8 on the
   /// placed actors.
-  struct Actor *actors[66];
+  struct Actor *actors[ACTOR_ID_COUNT];
   struct TreasureSpot
       treasureSpots[10]; ///< the map's treasure spots (TREASURE_SPOT_MAX)
   /// The twelve requests: each nonzero value asks the field loop for one
@@ -82,7 +87,7 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
-  s16 mode;               ///< an enum ObjectSystemMode
+  s16 mode;               ///< an enum ActorSystemMode
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle; 0x100000
@@ -112,7 +117,7 @@ struct FieldWork {
   s32 messageWindow;          ///< the open message window, 0 for none
   s32 sideWindow;             ///< the speaker's portrait window
   /// The leader's two-row actor template table (its row and an end
-  /// row), which Actor_ResetForObject builds through its offset.
+  /// row), which Actor_ResetForLeader builds through its offset.
   u8 leaderTemplates[0x30];
   u8 unusedAfterTemplates[0xa86]; ///< no code names it
   /// Set while a raised or step trigger runs; FieldScript_Start then resets the

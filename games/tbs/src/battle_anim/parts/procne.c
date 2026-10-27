@@ -376,8 +376,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
         place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
         place.height = 0xff0000 + index * 0x400000;
         place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
-        Object_ApplyProjectedPlacementFar(work->animations[index], &place,
-                                          &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[index], &place,
+                                         &scale, 0);
         index++;
       } while (index != 9);
 

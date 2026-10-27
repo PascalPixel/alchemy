@@ -328,33 +328,33 @@ static void EventScript_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 20);
-  ObjectMotion_SetVariantCallback(ACTOR_IODEM, 2);
+  Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_SetMessageId(MsgSuhallaMeaning);
   Script_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
   // The guards describe the attack before Iodem asks who was responsible.
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 132, 420);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_IODEM, 2);
+  Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   Script_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 144, 420);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_SetAttachedEffect(ACTOR_EAST_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 3);
+  Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 3);
   Script_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 20);
   // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
@@ -377,22 +377,22 @@ static void EventScript_IodemQuestionsGuards(void) {
   Script_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 2);
+  Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 1);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 1);
+  Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Script_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 1);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
@@ -403,7 +403,7 @@ static void EventScript_IodemQuestionsGuards(void) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+  Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
@@ -435,12 +435,12 @@ static void EventScript_TalkToEastGuard(void) {
       s32 mode = 0;
       s32 no = ACTOR_EAST_GUARD;
 
-      FieldMessage_ShowAtObject(no, mode);
+      FieldMessage_ShowAtActor(no, mode);
     }
 
     if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
-      ObjectMotion_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
+      Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
       FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
     } else {
       gFieldWork->message += 2;

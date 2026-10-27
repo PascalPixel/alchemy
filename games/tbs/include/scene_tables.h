@@ -10,6 +10,7 @@
 #include "scene_exits.h"
 #include "character_ids.h"
 #include "sprite_ids.h"
+#include "field_work.h"
 
 /// The eight compass headings in 1/65536 turns, from east through south: a
 /// quarter turn is 0x4000, and the screen's y axis points south.
@@ -164,7 +165,7 @@ enum ActorTalkFacing {
   TALK_FACING_PARTY_AND_BACK = 1,
   TALK_FACING_KEEP = 2,
   /// Faces the party, then keeps turning to face the leader once the talk is
-  /// over (gObjectMotion_LinkedActionScript).
+  /// over (gActor_LinkedScript).
   TALK_FACING_PARTY_THEN_WATCH = 3
 };
 
@@ -189,9 +190,8 @@ enum ActorId {
   /// ★ Named from the game: "Sheba" (MsgCharacterName)
   ACTOR_SHEBA = 6,
   ACTOR_FIRST_PLACED = 8,
-  /// The last of the 66 actor slots, as scenes loop over every placed
-  /// actor.
-  ACTOR_LAST_SLOT = 65
+  /// The last actor id, as scenes loop over every placed actor.
+  ACTOR_LAST_ID = ACTOR_ID_COUNT - 1
 };
 
 /// Whole pixels as 16.16 fixed point.

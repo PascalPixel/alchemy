@@ -20,7 +20,7 @@ extern const s16 gColossoLetteringScriptLose[];
 extern char gHexDigits[20];
 extern s32 gColosseumNavampaMatch_PrizeEffectScript[];
 extern s32 gColosseumNavampaMatch_PrizeScript[];
-extern u32 gPushedObject_DirectionSteps[];
+extern u32 gPushedActor_DirectionSteps[];
 extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
 extern u32 gColosseumNavampaMatchExits[];
 extern struct ActorTemplate gColosseumNavampaMatchActorTemplates[];

@@ -7,18 +7,15 @@
 
 enum {
   /// 20 flags per element: the Djinn's caught flags are 48 to 127.
-  ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20,
-  /// The field work's actor slots: the party's eight, then the placed
-  /// actors.
-  ACTOR_SLOT_COUNT = 66
+  ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20
 };
 
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
 /// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
-/// Called by FieldScript_SpawnActorTemplates for every actor
-/// template, and by PsynergyMenu_InitializeEntryObjects (through
+/// Called by Event_SpawnActorTemplates for every actor
+/// template, and by PsynergyMenu_InitializeEntryActors (through
 /// Party_RemapCharacterIdByFlagsFar) for the party's figures.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
@@ -77,10 +74,10 @@ extern const struct ActorTemplate gField_DefaultActorTemplates[2];
 /// party keeps its position. The table is kept by address, so it must last as
 /// long as the map (the overlay's own tables do).
 ///
-/// Called by Actor_ResetForObject (the leader, then the map's table),
-/// Actor_Respawn and FieldScript_CallWithLastActiveObjectId. Records
+/// Called by Actor_ResetForLeader (the leader, then the map's table),
+/// Actor_Respawn and Event_CallWithLastActiveActorId. Records
 /// the table in work->tables and each actor in work->actors.
-void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
+void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
   struct FieldWork *work;
   struct Actor *object;
   struct Actor *previous;
@@ -104,7 +101,7 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
     }
   }
   for (templateSprite = entry->sprite;
-       (s16)templateSprite != -1 && slot <= ACTOR_SLOT_COUNT - 1;
+       (s16)templateSprite != -1 && slot <= ACTOR_ID_COUNT - 1;
        entry++, templateSprite = entry->sprite) {
     // Current actor template tables use sprites 0 to 504, so every live
     // row sets actorIndex.
@@ -119,21 +116,21 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
     // Djinn_ResolvePending hides a Djinni after the party loses or flees.
     // Scene_Arrive clears these temporary flags on a normal entry.
     if ((u32)(condition - FLAG_DJINN_FIRST) <= ACTOR_DJINNI_FLAG_COUNT - 1 &&
-        work->mode != OBJECT_SYSTEM_WORLD_MAP &&
+        work->mode != ACTOR_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
     spriteId = Party_RemapCharacterIdByFlags(entry->sprite);
-    object = Actor_GetByActorId(actorIndex);
+    object = Actor_Lookup(actorIndex);
     if (object == 0) {
-      object = Object_CreateFar(spriteId, entry->x, entry->y, entry->z);
+      object = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
       // ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE: share the previous
       // actor's sprite resource. The new sprite draws from the previous one's
       // VRAM cache entry, its own entry is freed, and both are marked to keep
       // the shared entry when either is released.
       if (entry->flags & ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE) {
-        previous = Actor_GetByActorId(actorIndex - 1);
-        if (previous->spriteStorageKind == OBJECT_SPRITE_ONE &&
-            object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+        previous = Actor_Lookup(actorIndex - 1);
+        if (previous->spriteStorageKind == ACTOR_SPRITE_ONE &&
+            object->spriteStorageKind == ACTOR_SPRITE_ONE) {
           sprite = previous->sprite;
           sprite->retainCacheEntry = 1;
           spriteSlot = sprite->slot;
@@ -146,13 +143,13 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
       // Dora's tunic overlays the young sprites with its child part.
       if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
-        Object_RegisterSpriteMetadataFar(object, SPRITE_TUNIC);
+        Actor_RegisterSpriteMetadataFar(object, SPRITE_TUNIC);
     } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-      Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
+      Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
 
     if (object) {
-      Object_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, 1);
       // lastNo is the animation last selected, which selecting again skips: a
       // random 0 to 29 makes the second selection below restart animation 1
       // from its first frame, unless it happens to be 1. The first selection
@@ -160,14 +157,14 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
       // either way.
       // XXX (no evidence): why the value is random when only whether it is 1
       // matters; nothing else reads lastNo before the selection.
-      if (object->spriteStorageKind == OBJECT_SPRITE_ONE &&
+      if (object->spriteStorageKind == ACTOR_SPRITE_ONE &&
           (sprite = object->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->facing = entry->facing;
       // Solid.
       object->collisionFlags = 1;
       Actor_SetMovementType(object, entry->movement);
-      Object_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, 1);
       (object)->homeX = object->x.fixed / Q16_ONE;
       (object)->homeZ = object->z.fixed / Q16_ONE;
       // An actor template with a height is lifted half a pixel more and
@@ -178,7 +175,7 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
         object->motionFlags = 4;
         object->y.fixed += 0x8000;
       }
-      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World-map actor templates use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
@@ -188,7 +185,7 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
           // live. The native local is then indeterminate or from an earlier
           // row. Checking the sprite grows tbs-en from 608 to 628 bytes.
 #ifdef UBFIX
-          if (object->spriteStorageKind == OBJECT_SPRITE_ONE &&
+          if (object->spriteStorageKind == ACTOR_SPRITE_ONE &&
               (sprite = object->sprite) != NULL)
 #endif
             sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
@@ -207,12 +204,12 @@ void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
 /// Destroys the actor in slot actorIndex, if there is one, and
 /// empties the slot. No caller names it; its far-call veneer has no exported
 /// name.
-void Actor_DestroyAtIndex(s32 actorIndex) {
+void Actor_ReleaseAtIndex(s32 actorIndex) {
   struct FieldWork *work = gFieldWork;
-  void *object = Actor_GetByActorId(actorIndex);
+  void *object = Actor_Lookup(actorIndex);
 
   if (object != NULL) {
-    Object_ReleaseFar(object);
+    Actor_ReleaseFar(object);
 #ifdef UBFIX
     {
       void *empty = NULL;
@@ -236,11 +233,11 @@ void Actor_DestroyAtIndex(s32 actorIndex) {
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
 /// Called by SceneManager_Run on entering a map, and by
-/// FieldScript_RunObjectHookAndWait.
+/// Event_RunActorUpdateAndWait.
 /// Empties every actor slot and table first, without destroying the
 /// actors in them; sets work->camera, the map's origin and
 /// gSaveBlock.movementMode.
-void Actor_ResetForObject(struct ActorTemplate *table) {
+void Actor_ResetForLeader(struct ActorTemplate *table) {
   struct FieldWork *work;
   struct ActorTemplate *entry;
   struct Actor *object;
@@ -266,8 +263,8 @@ void Actor_ResetForObject(struct ActorTemplate *table) {
   entry->sprite = leader;
   SET_POSITION(entry, gSaveBlock.x, 0, gSaveBlock.z);
   entry->facing = gSaveBlock.heading;
-  FieldScript_SpawnActorTemplates(entry, leader);
-  FieldScript_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
+  Event_SpawnActorTemplates(entry, leader);
+  Event_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
   // gSaveBlock.turn keeps the leader's map grid layer (SceneManager_Run saves
@@ -286,19 +283,19 @@ void Actor_ResetForObject(struct ActorTemplate *table) {
     object->y.fixed += height;
     object->groundHeight = object->y.fixed;
     object->motionFlags = 0;
-    Object_SetSpriteFlagsFar(object, 0);
-    Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
+    Actor_SetSpriteFlagsFar(object, 0);
+    Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
   } else {
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
   // the map scrolls by the camera's position. It takes no sprite.
-  camera = Object_CreateFar(OBJECT_CREATE_NO_SPRITE << 12, object->x.fixed,
-                            object->y.fixed, object->z.fixed);
+  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, object->x.fixed,
+                           object->y.fixed, object->z.fixed);
   camera->groundHeight = object->groundHeight;
-  Object_StartCameraFar(camera, (s32)object);
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  Actor_StartCameraFar(camera, (s32)object);
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnim *meta =
         (struct SpriteAnim *)Sprite_AddAnimFar(object->sprite, 23);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
@@ -312,8 +309,8 @@ void Actor_ResetForObject(struct ActorTemplate *table) {
 /// or -1 when the last slot is occupied. Earlier holes are not reused by this
 /// append scan.
 ///
-/// Called by Actor_Respawn and FieldScript_CallWithLastActiveObjectId
-/// to choose where FieldScript_SpawnActorTemplates starts.
+/// Called by Actor_Respawn and Event_CallWithLastActiveActorId
+/// to choose where Event_SpawnActorTemplates starts.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -327,9 +324,9 @@ s32 Actor_FindLastActiveId(void) {
       lastActorIndex = actorIndex;
     }
     actorIndex++;
-  } while (actorIndex <= ACTOR_SLOT_COUNT - 1);
+  } while (actorIndex <= ACTOR_ID_COUNT - 1);
   lastActorIndex++;
-  if (lastActorIndex == ACTOR_SLOT_COUNT) {
+  if (lastActorIndex == ACTOR_ID_COUNT) {
     lastActorIndex = -1;
   }
   return lastActorIndex;
@@ -347,7 +344,7 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 #define FLAG_OUT_OF_VIEW 0x165 ///< kept set, so a template using it does not
 
 #define PLACED_MAX                                                             \
-  (ACTOR_SLOT_COUNT - ACTOR_FIRST_PLACED) ///< placed actors' slots
+  (ACTOR_ID_COUNT - ACTOR_FIRST_PLACED) ///< placed actors' slots
 
 /// Gives each actor template with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
@@ -425,15 +422,15 @@ void Actor_ClearOutOfBounds(void) {
           u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // OBJECT_SPRITE_ONE makes the release free the actor's one
+          // ACTOR_SPRITE_ONE makes the release free the actor's one
           // sprite, and clearing retainCacheEntry (bit 0 of sprite byte 29)
           // frees its VRAM cache entry with it, even one shared with a
           // neighbour (ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE).
-          *removed = OBJECT_SPRITE_ONE;
+          *removed = ACTOR_SPRITE_ONE;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
           sprite[29] = flags & releaseCacheMask;
-          Object_ReleaseFar(actor);
+          Actor_ReleaseFar(actor);
           sprite = NULL;
           *actorSlot = (struct Actor *)sprite;
         }
@@ -461,9 +458,9 @@ void Actor_Respawn(void) {
     if (actor != 0) {
       // As in Actor_ClearOutOfBounds: free the sprite and its
       // VRAM cache entry with the actor.
-      actor->spriteStorageKind = OBJECT_SPRITE_ONE;
+      actor->spriteStorageKind = ACTOR_SPRITE_ONE;
       actor->sprite->retainCacheEntry = 0;
-      Object_ReleaseFar(actor);
+      Actor_ReleaseFar(actor);
       work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
   }
@@ -472,19 +469,19 @@ void Actor_Respawn(void) {
   work->tables[2] = 0;
   work->tables[3] = 0;
   if (templates != 0)
-    FieldScript_SpawnActorTemplates(templates, Actor_FindLastActiveId());
+    Event_SpawnActorTemplates(templates, Actor_FindLastActiveId());
 }
 
 /// Empties all the actor slots, without destroying the actors.
 ///
-/// Called by Actor_ResetForObject.
+/// Called by Actor_ResetForLeader.
 void Actor_ClearAll(void) {
   struct FieldWork *work;
   struct Actor *emptyActor;
   s32 actorIndex;
 
   emptyActor = NULL;
-  actorIndex = ACTOR_SLOT_COUNT - 1;
+  actorIndex = ACTOR_ID_COUNT - 1;
   work = gFieldWork;
   do {
     work->actors[actorIndex] = emptyActor;
@@ -492,14 +489,14 @@ void Actor_ClearAll(void) {
   } while (actorIndex >= 0);
 }
 
-/// Returns the actor in slot index (below ACTOR_SLOT_COUNT), or
+/// Returns the actor in slot index (below ACTOR_ID_COUNT), or
 /// NULL. Indices up to 191 read past the actor slots into the rest of
 /// the field work; larger ones give NULL.
 ///
 /// The field's actor lookup: called across the object folder and,
-/// through Actor_GetByActorIdFar, by map
+/// through Actor_LookupFar, by map
 /// overlays.
-void *Actor_GetByActorId(u32 actorIndex) {
+void *Actor_Lookup(u32 actorIndex) {
   u8 *workBytes = (u8 *)gFieldWork;
   u32 slotOffset;
 #ifdef UBFIX
@@ -541,19 +538,19 @@ void Actor_Snapshot(void) {
   u32 priority;
 
   work = gFieldWork;
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     actorLimit = ACTOR_FIRST_PLACED;
   // Keep each actor and its three sprite-state bytes at matching save
   // indices.
   for (actorIndex = 0; actorIndex < actorLimit; actorIndex++) {
-    object = Actor_GetByActorId(actorIndex);
+    object = Actor_Lookup(actorIndex);
     if (object == NULL)
       continue;
     *indices++ = actorIndex;
     Dma_Set(object, snapshot,
             (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
             REG_DMA3);
-    if (object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+    if (object->spriteStorageKind == ACTOR_SPRITE_ONE) {
       struct Sprite *sprite = object->sprite;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;
@@ -605,7 +602,7 @@ void Actor_Restore(void) {
   restoredCount = 0;
   actorIndex = *indices++;
   while (actorIndex != ACTOR_SNAPSHOT_EMPTY) {
-    object = Actor_GetByActorId(actorIndex);
+    object = Actor_Lookup(actorIndex);
     if (object != NULL) {
       // The copy also brings back the sprite pointer saved with the
       // actor. The animation and sprite flags below are set through that
@@ -617,8 +614,8 @@ void Actor_Restore(void) {
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
-        Object_SelectAnimationFar(object, animation);
-      Object_SetSpriteFlagsFar(object, *spriteFlags);
+        Actor_SelectAnimationFar(object, animation);
+      Actor_SetSpriteFlagsFar(object, *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
@@ -632,7 +629,7 @@ void Actor_Restore(void) {
         camera->groundHeight = y;
         camera->y.fixed = y;
         cameraPosition[1] = y;
-        Object_StartIdleFar(object);
+        Actor_StartIdleFar(object);
       }
     }
     snapshot++;

@@ -2,8 +2,8 @@
 #include "stub.inc"
 	.global FarCall_FieldTable
 FarCall_FieldTable:
-	export ObjectSystem_ConfigureFar, ObjectSystem_Configure
-	export Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
+	export ActorSystem_ConfigureFar, ActorSystem_Configure
+	export Actor_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
 	overlay_veneer Sprite_ResetAnims
 	export Sprite_StartAnimFar, Sprite_StartAnim
@@ -17,22 +17,22 @@ FarCall_FieldTable:
 	export SpriteAnim_ClearFar, SpriteAnim_Clear
 	overlay_veneer SpriteAnim_Reset
 	export SpriteAnim_StartFar, SpriteAnim_Start
-	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
-	export Object_SelectAnimationFar, Object_SelectAnimation
-	export Object_SetAnimationSpeedFar, Object_SetAnimationSpeed
-	overlay_veneer Object_SetAnimationAndSpeed
-	export Object_InitializeFar, Object_Initialize
-	export Object_StartPlayerControlFar, Object_StartPlayerControl
-	export Object_StartWorldMapControlFar, Object_StartWorldMapControl
-	export Object_StartMoveByKeysFar, Object_StartMoveByKeys
-	export Object_StartKeyCheckFar, Object_StartKeyCheck
-	overlay_veneer Object_FindFree
-	export Object_CreateFar, Object_CreateField
-	export Object_ReleaseFar, Object_Release
-	overlay_veneer Object_SetSpriteRotation
-	export Object_StartCameraFar, Object_StartCamera
-	overlay_veneer Object_StartApproachLink
-	export Object_SetPositionAndResetMotionFar, Object_SetPositionAndResetMotion
+	export ActorSystem_InitializeFar, ActorSystem_Initialize
+	export Actor_SelectAnimationFar, Actor_SelectAnimation
+	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
+	overlay_veneer Actor_SetAnimationAndSpeed
+	export Actor_StartScriptFar, Actor_StartScript
+	export Actor_StartPlayerControlFar, Actor_StartPlayerControl
+	export Actor_StartWorldMapControlFar, Actor_StartWorldMapControl
+	export Actor_StartMoveByKeysFar, Actor_StartMoveByKeys
+	export Actor_StartKeyCheckFar, Actor_StartKeyCheck
+	overlay_veneer Actor_FindFree
+	export Actor_CreateFar, Actor_Create
+	export Actor_ReleaseFar, Actor_Release
+	overlay_veneer Actor_SetSpriteRotation
+	export Actor_StartCameraFar, Actor_StartCamera
+	overlay_veneer Actor_StartApproachLink
+	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
 	export render_animated_tile_frameFar, SpriteDissolve_Step
 	export SpriteDissolve_RunFar, SpriteDissolve_Run
 	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
@@ -42,10 +42,10 @@ FarCall_FieldTable:
 	export MapGrid_CenterOnFollowedPointFar, MapGrid_CenterOnFollowedPoint
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
-	export Object_StartIdleFar, Object_StartIdle
-	export Object_WaitForScriptEndFar, Object_WaitForScriptEnd
-	export Object_SetMoveTargetFar, Object_SetMoveTarget
-	export Object_WaitForMoveFar, Object_WaitForMove
+	export Actor_StartIdleFar, Actor_StartIdle
+	export Actor_WaitForScriptEndFar, Actor_WaitForScriptEnd
+	export Actor_SetMoveTargetFar, Actor_SetMoveTarget
+	export Actor_WaitForMoveFar, Actor_WaitForMove
 	overlay_veneer MapGrid_GetScreenRelativePosition
 	overlay_veneer WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
@@ -62,21 +62,21 @@ FarCall_FieldTable:
 	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
-	export Object_SetSpriteFlagsFar, Object_SetSpriteFlags
-	export Object_SetSpriteBlendModeFar, Object_SetSpriteBlendMode
+	export Actor_SetSpriteFlagsFar, Actor_SetSpriteFlags
+	export Actor_SetBlendModeFar, Actor_SetBlendMode
 	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
 	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
 	overlay_veneer Anim_SetIndexAndInitializeObjects
-	export ObjectSystem_SuspendProjectionAndShowSpritesFar, ObjectSystem_SuspendProjectionAndShowSprites
-	export ObjectSystem_ResumeProjectionAndHideLayersFar, ObjectSystem_ResumeProjectionAndHideLayers
-	overlay_veneer Object_SetSpriteScale
+	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
+	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
+	overlay_veneer Actor_SetSpriteScale
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
-	export Object_RegisterSpriteMetadataFar, Object_RegisterSpriteMetadata
+	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
 	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Anim_ApplyChildValuesFar, Anim_ApplyChildValues
 	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes
-	export ObjectScript_CheckOverlapFar, ObjectScript_CheckOverlap
+	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
 	export SpriteAnim_SumCommandLengthsFar, SpriteAnim_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
@@ -86,6 +86,6 @@ FarCall_FieldTable:
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
-	export ObjectScript_FindOverlappingEntryFar, ObjectScript_FindOverlappingEntry
+	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
 	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
 	overlay_veneer SpriteViewer_Run

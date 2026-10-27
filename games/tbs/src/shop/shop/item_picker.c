@@ -32,7 +32,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryObjectsFar(partyWindow, 2, 0, 8, result);
+  PsynergyMenu_InitializeEntryActorsFar(partyWindow, 2, 0, 8, result);
 
   while (1) {
     if (redraw != 0) {
@@ -87,7 +87,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
     }
   }
 
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleaseEntryActorsFar();
   Window_CloseFar(partyWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   WaitFrames(1);

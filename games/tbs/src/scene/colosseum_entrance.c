@@ -455,8 +455,8 @@ static void EventScript_DiscussSeating(void) {
 static void EventScript_DiscussLuckyGuessSeats(void) {
   FieldScript_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED)) {
-    FieldEffect_SpawnLinked(ACTOR_OLD_WOMAN_GOOD_SPOT,
-                            EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    FieldEffect_SpawnAttached(ACTOR_OLD_WOMAN_GOOD_SPOT,
+                              EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     FieldScript_SetMessageId(MsgColosseumWantWatchFinalsFromGood);
     FieldScript_ShowMessageAndWait(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   } else {
@@ -472,7 +472,7 @@ static void EventScript_DiscussLuckyGuessSeats(void) {
 static void EventScript_DiscussLuckyGuessWinnings(void) {
   FieldScript_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_SCALPER, 2);
+    Actor_RunRepeatedMotion(ACTOR_SCALPER, 2);
     FieldScript_SetMessageId(MsgColosseumHoldOnSecond);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_SCALPER);
     Actor_LinkPair(ACTOR_SCALPER, ACTOR_PARTY_LEADER, 0);
@@ -528,11 +528,11 @@ static void EventScript_TalkToAzart(void) {
 
   contestant = Actor_GetById(ACTOR_AZART);
   FieldScript_Start();
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_AZART);
+  Actor_Stop(ACTOR_AZART);
   Actor_LinkPair(ACTOR_AZART, ACTOR_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgColosseumImRatedAsSecondBest);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_AZART, 1);
+  Actor_RunRepeatedMotion(ACTOR_AZART, 1);
   FieldScript_ShowMessageAndWait(ACTOR_AZART, 0);
   // Give his wander back its home, where he is placed: MOVEMENT_TYPE_WANDER
   // reads timer and work as homeX and homeZ (Object.homeX and homeZ), in
@@ -549,7 +549,7 @@ static void EventScript_TalkToAzart(void) {
 
     *work = value;
   }
-  Actor_SetBuiltinAction(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
+  Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   FieldScript_End();
 }
 
@@ -559,7 +559,7 @@ static void EventScript_TalkToGalahad(void) {
   FieldScript_Start();
   Actor_SetAttachedEffect(ACTOR_GALAHAD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GALAHAD, 2);
+  Actor_RunRepeatedMotion(ACTOR_GALAHAD, 2);
   FieldScript_SetMessageId(MsgColosseumWaahDontFrightenMe);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GALAHAD);
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -575,7 +575,7 @@ static void EventScript_TalkToSatrage(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Actor_LinkPair(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
-  ObjectMotion_SetAnimationAndWait(ACTOR_SATRAGE, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SATRAGE, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_SATRAGE, 0);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   ColosseumEntrance_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH + FACING_STEP);
@@ -586,14 +586,14 @@ static void EventScript_TalkToSatrage(void) {
 /// Navampa explains he will not answer (FLAG_NAVAMPA_SPOKE_FOR_DEKKA).
 static void EventScript_TalkToDekka(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DEKKA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DEKKA, 2);
   FieldScript_SetMessageId(MsgColosseumDekkaMustWinFinalsDekka);
   Script_ShowMessageAndWait(ACTOR_DEKKA, 0, 20);
   if (Script_GetFlag(FLAG_NAVAMPA_SPOKE_FOR_DEKKA) != 0) {
     FieldScript_WaitFrames(20);
   } else {
     ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_EAST);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_NAVAMPA, 1);
+    Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     Actor_LinkPair(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
     Import_ActorSetAnimation(ACTOR_NAVAMPA, ANIM_SHAKE_HEAD);
@@ -613,10 +613,10 @@ static void EventScript_TalkToNavampa(void) {
   Actor_LinkPair(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgColosseumAmNavampaGondowanSixthRanked);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_NAVAMPA, 1);
+  Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH + FACING_STEP);
   FieldScript_End();
@@ -634,7 +634,7 @@ static void EventScript_TalkToBuford(void) {
   Actor_FaceDirection(ACTOR_BUFORD, FACING_WEST, 40);
   Actor_LinkPair(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_BUFORD, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_BUFORD, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_SOUTH + FACING_STEP);
   FieldScript_End();
@@ -646,7 +646,7 @@ static void EventScript_AskIfReadyForFinals(void) {
   FieldScript_Start();
   Actor_LinkPair(ACTOR_FINALS_SOLDIER, ACTOR_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgColosseumYouReadyForFinals);
-  FieldMessage_ShowAtObject(ACTOR_FINALS_SOLDIER, 0);
+  FieldMessage_ShowAtActor(ACTOR_FINALS_SOLDIER, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0)
     gFieldWork->message++;
   FieldScript_ShowMessageAndWait(ACTOR_FINALS_SOLDIER, 0);
@@ -670,24 +670,24 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   }
 
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
                       20);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER, FACING_EAST, 60);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER, FACING_EAST, 60);
   Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);
   FieldScript_SetMessageId(MsgColosseumHeyYouRe);
-  ObjectMotion_SetVariantCallback(ACTOR_FIRST_GATE_SOLDIER, 2);
+  Actor_StartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 2);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 1,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
-  FieldCamera_GetScriptObject()->motionFlags = 0;
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 1,
+                    FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
+                    FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3,
+                    FACING_SOUTHEAST + FACING_STEP, 0);
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(172), 1);
   FieldCamera_WaitForArrival();
@@ -695,7 +695,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_WINCE,
                   40);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 1);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
   Actor_SetAttachedEffect(ACTOR_FIRST_GATE_SOLDIER + 2,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -705,39 +705,37 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST);
-  ObjectMotion_SetVariantCallback(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
+  Actor_StartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
   FieldScript_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER + 3, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTHWEST + FACING_STEP,
                       20);
   FieldScript_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER + 1, 1);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 1,
-                                   ANIM_SHAKE_HEAD);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 1, 1);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   // Gather Isaac and his companions for the invitation.
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_WEST);
   FieldScript_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 2, 1);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 2,
-                                   ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 3, 2);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 1,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
-                           FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
+                    0);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 1,
+                    FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
+                    FACING_SOUTHEAST + FACING_STEP, 0);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3,
                                   FACING_SOUTHEAST + FACING_STEP);
   Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -765,7 +763,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_GARET, 246, 200);
+  Actor_ResetAndSetPositionInMode2(ACTOR_GARET, 246, 200);
   Actor_WalkTo(ACTOR_IVAN, 262, 200);
   Actor_WalkToAndWait(ACTOR_MIA, 278, 200);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
@@ -773,35 +771,32 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_GATE_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 2);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
   Script_OpenMessage(ACTOR_FIRST_GATE_SOLDIER, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
 
   // Either leave with the guide or let the companions persuade Isaac.
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-    Actor_SetActionScript(ACTOR_GARET,
-                          gColosseumEntrance_GatherIntoIsaacScript);
-    Actor_SetActionScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
-    Actor_RunActionScriptAndWait(ACTOR_MIA,
-                                 gColosseumEntrance_GatherIntoIsaacScript);
+    Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
+    Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
+    Actor_RunScriptAndWait(ACTOR_MIA, gColosseumEntrance_GatherIntoIsaacScript);
     FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
     FieldCamera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(100), 1);
     Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetActionScript(ACTOR_FIRST_GATE_SOLDIER,
-                          gColosseumEntrance_EnterGatesScript);
+    Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,
+                    gColosseumEntrance_EnterGatesScript);
     FieldScript_WaitFrames(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                          gColosseumEntrance_EnterGatesScript);
+    Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumEntrance_EnterGatesScript);
     FieldScript_WaitFrames(80);
     gFieldWork->transitionFrames = 40;
     FieldScript_FinishScreenTransition();
@@ -819,27 +814,27 @@ static void EventScript_CrowdRecognizesIsaac(void) {
     Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER + 3, EMOTE_IN_FRONT | EMOTE_WINCE,
                     40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER + 2);
-    ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_SHAKE_HEAD);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     FieldScript_WaitFrames(20);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
                         FACING_NORTHWEST + FACING_STEP, 0);
-    ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_WEST, 0);
-    ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST, 60);
-    ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER,
-                             FACING_SOUTHEAST + FACING_STEP, 0);
-    ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
-                             FACING_SOUTHEAST + FACING_STEP, 0);
-    ObjectMotion_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3,
-                             FACING_SOUTHEAST + FACING_STEP, 20);
+    Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_WEST, 0);
+    Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST, 60);
+    Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
+                      0);
+    Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 2,
+                      FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_ArmCallback(ACTOR_FIRST_GATE_SOLDIER + 3,
+                      FACING_SOUTHEAST + FACING_STEP, 20);
     Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     ColosseumEntrance_Turn(ACTOR_MIA, FACING_NORTHWEST);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
@@ -849,23 +844,20 @@ static void EventScript_CrowdRecognizesIsaac(void) {
 
     actorOrAnswer = FieldScript_AskYesNoWithActorAnimation(0, 0);
     if (actorOrAnswer == 0) {
-      ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-      Actor_SetActionScript(ACTOR_GARET,
-                            gColosseumEntrance_GatherIntoIsaacScript);
-      Actor_SetActionScript(ACTOR_IVAN,
-                            gColosseumEntrance_GatherIntoIsaacScript);
-      Actor_RunActionScriptAndWait(ACTOR_MIA,
-                                   gColosseumEntrance_GatherIntoIsaacScript);
+      Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
+      Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
+      Actor_RunScriptAndWait(ACTOR_MIA,
+                             gColosseumEntrance_GatherIntoIsaacScript);
       FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
       FieldCamera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(100), 1);
       Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetActionScript(ACTOR_FIRST_GATE_SOLDIER,
-                            gColosseumEntrance_EnterGatesScript);
+      Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,
+                      gColosseumEntrance_EnterGatesScript);
       FieldScript_WaitFrames(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                            gColosseumEntrance_EnterGatesScript);
+      Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumEntrance_EnterGatesScript);
       FieldScript_WaitFrames(80);
       gFieldWork->transitionFrames = 40;
       FieldScript_FinishScreenTransition();
@@ -873,32 +865,31 @@ static void EventScript_CrowdRecognizesIsaac(void) {
     } else {
       Script_SkipMessages(1);
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+      Actor_StartRepeatedMotion(ACTOR_GARET, 2);
       FieldScript_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-      FieldEffect_SpawnLinked(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
       ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_WEST);
       Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
-      Actor_SetActionScript(ACTOR_IVAN,
-                            gColosseumEntrance_GatherIntoGaretScript);
-      Actor_RunActionScriptAndWait(ACTOR_MIA,
-                                   gColosseumEntrance_GatherIntoGaretScript);
+      Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoGaretScript);
+      Actor_RunScriptAndWait(ACTOR_MIA,
+                             gColosseumEntrance_GatherIntoGaretScript);
       FieldScript_WaitFrames(20);
-      Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER,
-                                   gColosseumEntrance_GatherIntoGaretScript);
+      Actor_RunScriptAndWait(ACTOR_PARTY_LEADER,
+                             gColosseumEntrance_GatherIntoGaretScript);
       Actor_WalkToAndWait(ACTOR_GARET, 262, 188);
       ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_NORTH);
-      ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
       FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
       FieldCamera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(100), 1);
       Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetActionScript(ACTOR_FIRST_GATE_SOLDIER,
-                            gColosseumEntrance_EnterGatesScript);
+      Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,
+                      gColosseumEntrance_EnterGatesScript);
       FieldScript_WaitFrames(10);
       Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetActionScript(ACTOR_GARET, gColosseumEntrance_EnterGatesScript);
+      Actor_SetScript(ACTOR_GARET, gColosseumEntrance_EnterGatesScript);
       FieldScript_WaitFrames(80);
       gFieldWork->transitionFrames = 40;
       FieldScript_FinishScreenTransition();
@@ -932,89 +923,87 @@ static void EventScript_FinalsStart(void) {
     FieldCamera_WaitForArrival();
     Actor_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
                         20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_FINALS_SOLDIER, 1);
+    Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 1);
     FieldScript_SetMessageId(MsgColosseumYouReadyForFinals);
     Script_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
     if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
       FieldScript_WaitFrames(20);
       ColosseumEntrance_FaceDirection(ACTOR_MORGAN, FACING_NORTH + FACING_STEP);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_MORGAN, 1);
+      Actor_RunRepeatedMotion(ACTOR_MORGAN, 1);
       FieldScript_SetMessageId(MsgColosseumDayTiredWaiting);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_MORGAN);
       ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_EAST);
       ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST);
-      ObjectMotion_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Import_ActorSetAnimation(ACTOR_SATRAGE, ANIM_STAND);
-      ObjectMotion_ArmCallback(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 20);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_SATRAGE, 1);
+      Actor_ArmCallback(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 20);
+      Actor_RunRepeatedMotion(ACTOR_SATRAGE, 1);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
       ColosseumEntrance_FaceDirection(ACTOR_DEKKA, FACING_WEST);
-      ObjectMotion_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_NAVAMPA, 2);
+      Actor_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
+      Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 2);
       ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_NORTHWEST);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_NAVAMPA);
       ColosseumEntrance_FaceDirection(ACTOR_BUFORD,
                                       FACING_NORTHWEST + FACING_STEP);
-      ObjectMotion_SetVariantCallback(ACTOR_BUFORD, 2);
+      Actor_StartRepeatedMotion(ACTOR_BUFORD, 2);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_BUFORD);
       ColosseumEntrance_FaceDirection(ACTOR_GONG_SOLDIER,
                                       FACING_SOUTHEAST + FACING_STEP);
-      FieldEffect_ConfigureLinkedObject(
-          ACTOR_GONG_SOLDIER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+      FieldEffect_SetAttached(ACTOR_GONG_SOLDIER,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldScript_WaitFrames(60);
-      ObjectMotion_SetVariantCallback(ACTOR_GONG_SOLDIER, 2);
+      Actor_StartRepeatedMotion(ACTOR_GONG_SOLDIER, 2);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_BELOW |
                                             ACTOR_GONG_SOLDIER);
-      ObjectMotion_EnableActionAndResetMotion(ACTOR_AZART);
+      Actor_Stop(ACTOR_AZART);
       WaitFrames(1);
-      ObjectMotion_SetVariantCallback(ACTOR_AZART, 2);
-      ObjectMotion_SetVariantCallback(ACTOR_GALAHAD, 2);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_DEKKA, 2);
+      Actor_StartRepeatedMotion(ACTOR_AZART, 2);
+      Actor_StartRepeatedMotion(ACTOR_GALAHAD, 2);
+      Actor_RunRepeatedMotion(ACTOR_DEKKA, 2);
       FieldScript_WaitFrames(20);
-      ObjectMotion_ArmCallback(ACTOR_AZART, FACING_EAST, 0);
-      ObjectMotion_ArmCallback(ACTOR_GALAHAD, FACING_WEST, 0);
-      ObjectMotion_ArmCallback(ACTOR_DEKKA, FACING_NORTHWEST + FACING_STEP, 40);
+      Actor_ArmCallback(ACTOR_AZART, FACING_EAST, 0);
+      Actor_ArmCallback(ACTOR_GALAHAD, FACING_WEST, 0);
+      Actor_ArmCallback(ACTOR_DEKKA, FACING_NORTHWEST + FACING_STEP, 40);
       Import_ActorSetAnimation(ACTOR_AZART, ANIM_NOD);
       Import_ActorSetAnimation(ACTOR_GALAHAD, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
       Actor_SetSpeed(ACTOR_AZART, PIXELS(8) / 5, PIXELS(4) / 5);
       Actor_SetSpeed(ACTOR_GALAHAD, PIXELS(8) / 5, PIXELS(4) / 5);
       Actor_SetSpeed(ACTOR_DEKKA, PIXELS(8) / 5, PIXELS(4) / 5);
-      Actor_SetActionScript(ACTOR_AZART,
-                            gColosseumEntrance_ApproachFinalsGroupScript);
-      Actor_SetActionScript(ACTOR_DEKKA,
-                            gColosseumEntrance_JoinFinalsFromSouthScript);
+      Actor_SetScript(ACTOR_AZART,
+                      gColosseumEntrance_ApproachFinalsGroupScript);
+      Actor_SetScript(ACTOR_DEKKA,
+                      gColosseumEntrance_JoinFinalsFromSouthScript);
       FieldScript_WaitFrames(20);
-      ObjectMotion_ArmCallback(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 0);
-      ObjectMotion_ArmCallback(ACTOR_NAVAMPA, FACING_NORTHWEST + FACING_STEP,
-                               0);
-      ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-      ObjectMotion_ArmCallback(ACTOR_MORGAN, FACING_NORTH + FACING_STEP, 0);
-      ObjectMotion_ArmCallback(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_RunActionScriptAndWait(ACTOR_GALAHAD,
-                                   gColosseumEntrance_JoinFinalsFromEastScript);
+      Actor_ArmCallback(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 0);
+      Actor_ArmCallback(ACTOR_NAVAMPA, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+      Actor_ArmCallback(ACTOR_MORGAN, FACING_NORTH + FACING_STEP, 0);
+      Actor_ArmCallback(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_RunScriptAndWait(ACTOR_GALAHAD,
+                             gColosseumEntrance_JoinFinalsFromEastScript);
       FieldScript_WaitFrames(20);
-      ObjectMotion_ArmCallback(ACTOR_FINALS_SOLDIER, FACING_EAST, 0);
-      ObjectMotion_ArmCallback(ACTOR_GONG_SOLDIER, FACING_WEST, 40);
+      Actor_ArmCallback(ACTOR_FINALS_SOLDIER, FACING_EAST, 0);
+      Actor_ArmCallback(ACTOR_GONG_SOLDIER, FACING_WEST, 40);
       Import_ActorSetAnimation(ACTOR_FINALS_SOLDIER, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(ACTOR_GONG_SOLDIER, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_GONG_SOLDIER, ANIM_NOD);
       FieldCamera_MoveWithinMapBounds(PIXELS(808), -1, PIXELS(86), 1);
       FieldCamera_WaitForArrival();
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_FINALS_SOLDIER, 2);
+      Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 2);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
-      ObjectMotion_SetSpeedParameters(ACTOR_FINALS_SOLDIER, PIXELS(1),
-                                      PIXELS(1) / 2);
+      Actor_SetSpeedParameters(ACTOR_FINALS_SOLDIER, PIXELS(1), PIXELS(1) / 2);
       Actor_GetById(ACTOR_FINALS_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      ObjectMotion_SetPositionAndReset(ACTOR_FINALS_SOLDIER, 792, 72);
+      Actor_SetPositionAndReset(ACTOR_FINALS_SOLDIER, 792, 72);
       FieldScript_WaitFrames(1);
       Actor_GetById(ACTOR_FINALS_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
       ColosseumEntrance_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_EAST);
       // Azart stops pacing before the procession.
-      ObjectMotion_EnableActionAndResetMotion(ACTOR_AZART);
+      Actor_Stop(ACTOR_AZART);
       actor = Actor_GetById(ACTOR_AZART);
       actor->update = NULL;
       actor->timer = 0;
@@ -1026,21 +1015,21 @@ static void EventScript_FinalsStart(void) {
       WaitFrames(1);
       // Send contestants through the gate at staggered intervals.
       script = gColosseumEntrance_EnterFinalsScript;
-      Actor_SetActionScript(ACTOR_SATRAGE, script);
+      Actor_SetScript(ACTOR_SATRAGE, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_AZART, script);
+      Actor_SetScript(ACTOR_AZART, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_NAVAMPA, script);
+      Actor_SetScript(ACTOR_NAVAMPA, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_GALAHAD, script);
+      Actor_SetScript(ACTOR_GALAHAD, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_DEKKA, script);
+      Actor_SetScript(ACTOR_DEKKA, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_MORGAN, script);
+      Actor_SetScript(ACTOR_MORGAN, script);
       FieldScript_WaitFrames(20);
-      Actor_SetActionScript(ACTOR_BUFORD, script);
+      Actor_SetScript(ACTOR_BUFORD, script);
       FieldScript_WaitFrames(60);
-      Actor_SetActionScript(ACTOR_PARTY_LEADER, script);
+      Actor_SetScript(ACTOR_PARTY_LEADER, script);
       FieldScript_WaitFrames(80);
       Import_ScriptRequestExit(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
     } else {
@@ -1076,10 +1065,10 @@ static void EventScript_TalkToTrialAttendant(void) {
     Actor_FaceDirection(ACTOR_TRIAL_ATTENDANT, FACING_SOUTHEAST + FACING_STEP,
                         20);
   } else {
-    ObjectMotion_SetVariantCallback(ACTOR_TRIAL_ATTENDANT, 2);
+    Actor_StartRepeatedMotion(ACTOR_TRIAL_ATTENDANT, 2);
     FieldScript_SetMessageId(MsgColosseumSilence);
     Script_ShowMessage(ACTOR_TRIAL_ATTENDANT, 0);
-    FieldCamera_GetScriptObject()->motionFlags = clearedTrialSeen;
+    FieldCamera_GetActor()->motionFlags = clearedTrialSeen;
     WaitFrames(1);
     FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
     FieldCamera_MoveTo(PIXELS(540), -1, PIXELS(208), 1);
@@ -1132,7 +1121,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FAILING_WARRIOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_FAILING_WARRIOR, 1);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_FAILING_WARRIOR, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 164, 904);
@@ -1149,12 +1138,11 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 185, 916);
   Import_ActorSetAnimation(ACTOR_FAILING_WARRIOR, 11);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FAILING_WARRIOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_FAILING_WARRIOR, 1);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FAILING_WARRIOR, 3);
+  Actor_RunRepeatedMotion(ACTOR_FAILING_WARRIOR, 3);
   FieldScript_WaitFrames(40);
-  Actor_SetActionScript(ACTOR_FAILING_WARRIOR,
-                        gColosseumEntrance_PulseScaleScript);
+  Actor_SetScript(ACTOR_FAILING_WARRIOR, gColosseumEntrance_PulseScaleScript);
   FieldScript_WaitFrames(80);
   Actor_SetAttachedEffect(ACTOR_FAILING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1181,7 +1169,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
                       0);
   facing = FACING_SOUTHEAST + FACING_STEP;
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, facing);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_FAILING_WARRIOR);
+  Actor_Stop(ACTOR_FAILING_WARRIOR);
   actor = Actor_GetById(ACTOR_FAILING_WARRIOR);
   actor->facing = FACING_NORTH + FACING_STEP;
   actor->scaleX = Q16_ONE;
@@ -1200,10 +1188,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Import_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_SHAKE_HEAD);
   Import_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_SHAKE_HEAD);
   Import_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_TRIAL_WARRIOR + 4,
-                                   ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FAILING_WARRIOR, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FAILING_WARRIOR, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(10);
   Actor_SetSpeed(ACTOR_FAILING_WARRIOR, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 916);
@@ -1286,7 +1273,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_CLEARING_WARRIOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 1);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 164, 904);
@@ -1303,12 +1290,11 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 185, 916);
   Import_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, 11);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_CLEARING_WARRIOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 1);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_CLEARING_WARRIOR, 3);
+  Actor_RunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 3);
   FieldScript_WaitFrames(40);
-  Actor_SetActionScript(ACTOR_CLEARING_WARRIOR,
-                        gColosseumEntrance_PulseScaleScript);
+  Actor_SetScript(ACTOR_CLEARING_WARRIOR, gColosseumEntrance_PulseScaleScript);
   FieldScript_WaitFrames(80);
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1350,7 +1336,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   FieldScript_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_CLEARING_WARRIOR);
+  Actor_Stop(ACTOR_CLEARING_WARRIOR);
   Import_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
   actor = Actor_GetById(ACTOR_CLEARING_WARRIOR);
   actor->facing = FACING_NORTH + FACING_STEP;
@@ -1482,7 +1468,7 @@ static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
 
 /// Turns an actor to the given facing over ten frames.
 static void ColosseumEntrance_FaceDirection(s32 actorId, s32 facing) {
-  ObjectMotion_ArmCallback(actorId, (u16)facing, 10);
+  Actor_ArmCallback(actorId, (u16)facing, 10);
 }
 
 /// The Colosseum Entrance's setup: once Colosso is over, the tiles and cells by
@@ -1539,24 +1525,24 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   FieldScript_WaitFrames(20);
   // The soldiers explain Isaac's selection and the companions' role.
   FieldScript_SetMessageId(MsgColosseumIsaacOnlyOneEnteringFinals);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
@@ -1568,30 +1554,30 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+  Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_EAST);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_WEST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -1602,7 +1588,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTH);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1610,24 +1596,24 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 1, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_NORTH);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1637,7 +1623,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -1654,7 +1640,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
     flag = 1;
   } else {
     gFieldWork->message++;
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     ColosseumEntrance_FaceDirection(ACTOR_IVAN, FACING_NORTH);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
   }
@@ -1671,7 +1657,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
                                   FACING_SOUTHEAST + FACING_STEP);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
@@ -1679,33 +1665,33 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 1, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
                                   FACING_SOUTHEAST + FACING_STEP);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 2,
                                   FACING_SOUTH + FACING_STEP);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
   ColosseumEntrance_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_WEST);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   // Rejoin the companions before the soldier leads Isaac onward.
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetActionScript(ACTOR_GARET, gColosseumEntrance_RejoinPartyScript);
-  Actor_SetActionScript(ACTOR_IVAN, gColosseumEntrance_RejoinPartyScript);
-  Actor_RunActionScriptAndWait(ACTOR_MIA, gColosseumEntrance_RejoinPartyScript);
+  Actor_SetScript(ACTOR_GARET, gColosseumEntrance_RejoinPartyScript);
+  Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_RejoinPartyScript);
+  Actor_RunScriptAndWait(ACTOR_MIA, gColosseumEntrance_RejoinPartyScript);
   FieldScript_WaitFrames(20);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);
@@ -1773,8 +1759,8 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FINALS_SOLDIER, 2);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_AZART);
+  Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 2);
+  Actor_Stop(ACTOR_AZART);
   WaitFrames(1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Import_ActorSetAnimation(ACTOR_AZART, ANIM_STAND);
@@ -1787,7 +1773,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_SetMessageId(MsgColosseumPrepareYourselvesContestantsFinalsWill);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Azart's wander home, as in EventScript_TalkToAzart.
   {
     u16 *timer = (u16 *)&contestant->timer;
@@ -1801,7 +1787,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
 
     *work = value;
   }
-  Actor_SetBuiltinAction(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
+  Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH + FACING_STEP, 0);
@@ -1844,15 +1830,15 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   FieldScript_SetMessageId(MsgColosseumSeeYouveMadeThroughYour);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 1, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ESCORTING_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_ESCORTING_SOLDIER, 1);
   Import_ActorSetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1861,13 +1847,13 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   actions = gColosseumEntrance_RejoinPartyScript;
-  Actor_SetActionScript(ACTOR_GARET, actions);
-  Actor_SetActionScript(ACTOR_IVAN, actions);
-  Actor_RunActionScriptAndWait(ACTOR_MIA, actions);
+  Actor_SetScript(ACTOR_GARET, actions);
+  Actor_SetScript(ACTOR_IVAN, actions);
+  Actor_RunScriptAndWait(ACTOR_MIA, actions);
   FieldScript_WaitFrames(20);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);
@@ -1947,15 +1933,15 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   FieldScript_SetMessageId(MsgColosseumWonBothMatches);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 1, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FIRST_SOLDIER + 2, 1);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ESCORTING_SOLDIER, 1);
+  Actor_RunRepeatedMotion(ACTOR_ESCORTING_SOLDIER, 1);
   Import_ActorSetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_ESCORTING_SOLDIER);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1964,13 +1950,13 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   actions = gColosseumEntrance_RejoinPartyScript;
-  Actor_SetActionScript(ACTOR_GARET, actions);
-  Actor_SetActionScript(ACTOR_IVAN, actions);
-  Actor_RunActionScriptAndWait(ACTOR_MIA, actions);
+  Actor_SetScript(ACTOR_GARET, actions);
+  Actor_SetScript(ACTOR_IVAN, actions);
+  Actor_RunScriptAndWait(ACTOR_MIA, actions);
   FieldScript_WaitFrames(20);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);
@@ -1998,12 +1984,12 @@ static void ColosseumEntrance_InitializeContestants(void) {
   Actor_ConfigureSpriteColor(ACTOR_DEKKA, SPRITE_COLOR_BRG);
   Actor_ConfigureSpriteColor(ACTOR_NAVAMPA, SPRITE_COLOR_RBG);
   Actor_ConfigureSpriteColor(ACTOR_BUFORD, SPRITE_COLOR_GREY);
-  Actor_SetActionById(ACTOR_AZART, 10);
-  Actor_SetActionById(ACTOR_GALAHAD, 20);
+  Actor_SetAnimationSpeedById(ACTOR_AZART, 10);
+  Actor_SetAnimationSpeedById(ACTOR_GALAHAD, 20);
   Import_ActorSetAnimation(ACTOR_SATRAGE, 0);
-  Actor_SetActionById(ACTOR_DEKKA, 40);
-  Actor_SetActionById(ACTOR_NAVAMPA, 50);
-  Actor_SetActionById(ACTOR_BUFORD, 60);
+  Actor_SetAnimationSpeedById(ACTOR_DEKKA, 40);
+  Actor_SetAnimationSpeedById(ACTOR_NAVAMPA, 50);
+  Actor_SetAnimationSpeedById(ACTOR_BUFORD, 60);
 }
 
 s32 gColosseumEntrance_GatherIntoIsaacScript[] = {

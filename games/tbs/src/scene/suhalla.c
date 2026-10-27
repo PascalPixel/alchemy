@@ -136,7 +136,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 static void EventScript_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(firstMessage + 1);
@@ -153,7 +153,7 @@ static void EventScript_AskIfGoingToLalivero(s32 actorId) {
 static void EventScript_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(firstMessage + 1);

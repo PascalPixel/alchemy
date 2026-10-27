@@ -20,20 +20,20 @@
 	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Resource_GetTableEntry, 1
 	.set import.SpriteAnim_Clear, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_StartCamera, 1
-	.set import.Object_StartIdle, 1
-	.set import.Object_WaitForScriptEnd, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_StartCamera, 1
+	.set import.Actor_StartIdle, 1
+	.set import.Actor_WaitForScriptEnd, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CopyCellIndexRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.MessageArgument_Push, 1
 	.set import.Icon_DrawItem, 1
@@ -55,27 +55,27 @@
 	.set import.FieldScript_End, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.Actor_DestroyById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.Actor_ReleaseById, 1
+	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_RefreshSelectorById, 1
-	.set import.ObjectMotion_ResetAndSetPosition, 1
-	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_ResetAndSetPosition, 1
+	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_RunRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.FieldEffect_SpawnLinked, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
+	.set import.FieldEffect_SpawnAttached, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
@@ -88,11 +88,11 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.Actor_GetByActorId, 1
+	.set import.Actor_Lookup, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Scene_PlayMusic, 1
 	.set import.FieldScript_ClearInvalidPackedValues, 1
-	.set import.Actor_LinkObjectAndSetCallback, 1
+	.set import.Actor_LinkAndSetScript, 1
 	.set import.MemberChooser_Open, 1
 	.set import.Sound_PlaySong, 1
 	.set import.Sound_GetBgmRestoreDelay, 1

@@ -52,7 +52,7 @@ s32 PsynergyMenu_Run(void) {
   s32 psynergy;
   s32 result;
 
-  ((struct ObjectSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM))
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -88,7 +88,7 @@ s32 PsynergyMenu_Run(void) {
   ItemMenu_Close();
   Window_DrawFrameFar(0, 0, 30, 20);
   FreeHeapSlot(HEAP_SLOT_MENU);
-  ((struct ObjectSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM))
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;
 #if TBS_PATCH_2
   Window_MarkVisibleTextTilesFar();
@@ -367,7 +367,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
       PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
-  Icon_PrepareObject(icon);
+  Icon_PrepareActor(icon);
   WaitFrames(1);
   return result;
 }
@@ -585,7 +585,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   // The marker is NULL here too (see above).
   marker = menu->sideIcon[1];
   menu->tabIndex[1] = selection;
-  Icon_PrepareObject(marker);
+  Icon_PrepareActor(marker);
   marker->motion = ICON_HIDDEN;
   WaitFrames(1);
   menu->tabIndex[1] = selection;
@@ -769,7 +769,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
 
   menu = gMenuWork;
   window = MenuCursor_Create(menu);
-  PsynergyMenu_InitializeEntryObjects((void *)window, 2, 2, 8, 0);
+  PsynergyMenu_InitializeEntryActors((void *)window, 2, 2, 8, 0);
 
   window = Window_CreateFar(0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   menu->psynergyWindow = window;
@@ -812,7 +812,7 @@ void PsynergyMenu_CloseWindows(void) {
   struct PsynergyMenuWork *menu;
 
   menu = gMenuWork;
-  Menu_ReleaseEntryObjects();
+  Menu_ReleaseEntryActors();
   Window_CloseFar((void *)menu->auxiliaryWindow, 1);
   Window_CloseFar((void *)menu->psynergyWindow, 1);
   Window_CloseFar((void *)menu->messageWindow, 1);
@@ -1113,7 +1113,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         changed = 0;
         if (menu->psynergies[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareObject(icon);
+          Icon_PrepareActor(icon);
         }
         if (redraw != 0) {
           redraw = 0;
@@ -1287,7 +1287,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   }
 
   menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
-  Icon_PrepareObject(menu->entryGridCursor);
+  Icon_PrepareActor(menu->entryGridCursor);
   menu->sideRow[sideIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->memberIds[sideIndex]] = state.selectedIndex;
   menu->sideAction[sideIndex] = result;

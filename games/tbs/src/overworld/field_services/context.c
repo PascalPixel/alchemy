@@ -12,7 +12,7 @@
 /// Actor_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
 s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Actor *object = Actor_GetByActorId(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -42,7 +42,7 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   z = object->z.fixed - cameraZ - object->y.fixed;
   *position++ = x / 0x10000;
   *position = z / 0x10000;
-  if ((object->spriteStorageKind & 15) == OBJECT_SPRITE_ONE)
+  if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
     *position -= (s8)Resource_GetMetadataRecordFar(
                      object->sprite->entries[0]->animationId)
                      ->boxX;
@@ -70,7 +70,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   Sound_PlaySongFar(gSaveBlock.battleMusic);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_BEAST_CRY);
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
     // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
@@ -103,7 +103,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
-/// Called by the two ObjectEffect_StartContextEffect functions below.
+/// Called by the two Exit_StartContextEffect functions below.
 void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
@@ -111,7 +111,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  object = Actor_Lookup(gSaveBlock.leaderActorId);
   context = object->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -129,7 +129,7 @@ void Exit_PrepareAnimation(s32 animation) {
   object->velocityZ = zero;
   object->targetX = ACTOR_NO_TARGET;
   object->targetZ = ACTOR_NO_TARGET;
-  Object_SelectAnimationFar(object, animation);
+  Actor_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
 
@@ -159,7 +159,7 @@ void Exit_StartStairsDown(void) {
 void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -171,7 +171,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   // The coordinates as plain words: through .fixed, the union moves a store.
   *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + 0x80000;
   *(s32 *)&leader->z &= mask;
-  Object_SelectAnimationFar(leader, animation);
+  Actor_SelectAnimationFar(leader, animation);
   WaitFrames(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
@@ -181,9 +181,9 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;
-  Object_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
-                          leader->z.fixed + 0x80000);
-  Object_WaitForMoveFar(leader);
+  Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
+                         leader->z.fixed + 0x80000);
+  Actor_WaitForMoveFar(leader);
 }
 
 /// Plays the leader's arrival for the way the last map was left: through a
@@ -216,7 +216,7 @@ s32 Entrance_PlayArrival(void) {
 
         GameFlag_ClearFar(flag);
         leaderId = gSaveBlock.leaderActorId;
-        leader = Actor_GetByActorId(leaderId);
+        leader = Actor_Lookup(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
@@ -228,7 +228,7 @@ s32 Entrance_PlayArrival(void) {
         }
         Sound_PlaySongFar(SE_DOOR_CLOSE);
         leader->y.fixed = leader->groundHeight;
-        Object_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
+        Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         FieldScript_WaitFrames(15);
         FieldCamera_FollowActor(leaderId, 1);
         result = 3;

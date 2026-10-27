@@ -1049,7 +1049,7 @@ static void FuchinFallsCave_AnimateFourthLog(void) {
 /// (SPRITE_COLOR_HIDDEN).
 static struct Actor *FuchinFallsCave_CreateForegroundActor(s32 x, s32 y, s32 z,
                                                            s32 resourceId) {
-  struct Actor *actor = Actor_Create(resourceId, x, y, z);
+  struct Actor *actor = FieldActor_Create(resourceId, x, y, z);
 
   if (actor != 0) {
     actor->sprite->image.priority = 1;
@@ -1112,7 +1112,7 @@ static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
-    ObjectMotion_SetActionVariant(id, 3);
+    Actor_SetSpritePriority(id, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->x.fixed = PIXELS(column * 16) + PIXELS(8);
@@ -1535,7 +1535,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     gImilFuchinFalls_TrackLeader = value;
     actor->motionFlags = value;
     actor->y.fixed = value;
-    ObjectMotion_SetActionVariant(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
+    Actor_SetSpritePriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
     Actor_SetSpriteColorById(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE,
                              SPRITE_COLOR_HIDDEN);
     switch (gSaveBlock.entrance) {
@@ -1628,10 +1628,10 @@ static void FuchinFallsCave_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   FieldScript_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, dx, dz);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 0);
+  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, dx, dz);
+  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   FieldScript_End();
 }
@@ -1643,7 +1643,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   GlyphTransfer *glyph;
   u8 clear = 0;
 
-  actor = Actor_Create(SPRITE_BLANK, PIXELS(248), PIXELS(8), PIXELS(152));
+  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(248), PIXELS(8), PIXELS(152));
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1715,12 +1715,13 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
       gImilFuchinFalls_LongDustScript,
   };
 
-  effect = (struct FieldEffect *)Object_CreateField(SPRITE_DUST_PUFF, x, y, z);
+  effect = (struct FieldEffect *)Actor_Create(SPRITE_DUST_PUFF, x, y, z);
   if (effect == 0)
     return;
   sprite = effect->sprite;
-  Object_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_SetScript((struct Actor *)effect, scripts[flags & EFFECT_SCRIPT_MASK]);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript((struct Actor *)effect,
+                    scripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->flags = 0;
   effect->update = FuchinFallsCave_UpdateDustMotion;
@@ -1909,7 +1910,7 @@ Imil_TurnSkaterTowardHeldDirection(union ActorOrEffect *fieldObject) {
   actor->steeringFlags = 0;
   direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (direction == -1) {
-    Object_SelectAnimation(actor, 9);
+    Actor_SelectAnimation(actor, 9);
     return;
   }
   facing = actor->facing;
@@ -1919,8 +1920,8 @@ Imil_TurnSkaterTowardHeldDirection(union ActorOrEffect *fieldObject) {
   if (direction < -0x1000)
     direction = -0x1000;
   actor->facing = facing + direction;
-  Object_SelectAnimation(actor, 2);
-  Object_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
+  Actor_SelectAnimation(actor, 2);
+  Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
 }
 
 /// Slides along Imil Falls Cave's ice until terrain or a metatile behavior
@@ -1934,7 +1935,7 @@ static void Imil_SlideActorAcrossIce(void) {
   s32 z;
   s32 x;
 
-  actor = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];
@@ -1968,11 +1969,11 @@ static void Imil_SlideActorAcrossIce(void) {
     actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1) / 10;
     actor->timer = 0;
-    Object_SetPosition(actor, x, actor->y.fixed, z);
+    FieldActor_SetMoveTarget(actor, x, actor->y.fixed, z);
 
-    Object_SelectAnimation(actor, 2);
-    Object_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
-    Object_WaitForMove(actor);
+    Actor_SelectAnimation(actor, 2);
+    Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
+    Actor_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 
     // Keep sliding through cells with the same metatile behavior.
@@ -1992,8 +1993,8 @@ static void Imil_SlideActorAcrossIce(void) {
       z = probe.z;
       actor->speedLimit = PIXELS(2);
       actor->acceleration = PIXELS(1) / 10;
-      Object_SetPosition(actor, probe.x, probe.y, probe.z);
-      Object_WaitForMove(actor);
+      FieldActor_SetMoveTarget(actor, probe.x, probe.y, probe.z);
+      Actor_WaitForMove(actor);
       if (nextBehavior != startBehavior) {
         goto blocked;
       }
@@ -2001,8 +2002,8 @@ static void Imil_SlideActorAcrossIce(void) {
 
     actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
-    Object_SetPosition(actor, x, actor->y.fixed, z);
-    Object_WaitForMove(actor);
+    FieldActor_SetMoveTarget(actor, x, actor->y.fixed, z);
+    Actor_WaitForMove(actor);
     WaitFrames(2);
   }
 
@@ -2423,17 +2424,17 @@ struct Trigger gImilFuchinFalls_DragonRoomTriggers[] = {
 s32 gImilFuchinFalls_ShortDustScript[] = {
     SC_WAIT(1), SC_LOOP(22, SC_TOP),  SC_CALL(FuchinFallsCave_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gImilFuchinFalls_MediumDustScript[] = {
     SC_WAIT(1), SC_LOOP(44, SC_TOP),  SC_CALL(FuchinFallsCave_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gImilFuchinFalls_LongDustScript[] = {
     SC_WAIT(1), SC_LOOP(126, SC_TOP), SC_CALL(FuchinFallsCave_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };

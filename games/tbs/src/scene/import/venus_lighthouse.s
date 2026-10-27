@@ -8,22 +8,22 @@
 	.ifndef TBS_EDITION_JA
 	.set import.Vector_AddPolarOffset, 1
 	.endif
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_Release, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.Object_WaitForScriptEnd, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_WaitForScriptEnd, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.BlendScript_Suspend, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
@@ -36,36 +36,36 @@
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_EnableActionAndSetCallback, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetMovementTypeById, 1
 	.set import.Actor_RefreshSelectorById, 1
-	.set import.ObjectMotion_ResetAndSetPosition, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_ResetAndSetPosition, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.Actor_SetActionById, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.Actor_SetAnimationSpeedById, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_JumpDownLedge, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.FieldEffect_SpawnLinked, 1
-	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
+	.set import.FieldEffect_SpawnAttached, 1
+	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Actor_PlaceCurrentWithinCameraBounds, 1
-	.set import.FieldCamera_GetScriptObject, 1
+	.set import.FieldCamera_GetActor, 1
 	.set import.Import_ScriptRequestExit, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
@@ -83,7 +83,7 @@
 	.ifdef TBS_EDITION_IT
 	.set import.Field_EndBusyAndReveal, 1
 	.endif
-	.set import.ObjectMotion_CommitPositionAndActivate, 1
+	.set import.Actor_CommitPositionAndActivate, 1
 	.set import.Scene_QueueMusic, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1

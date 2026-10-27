@@ -79,7 +79,7 @@ struct Actor {
   /// fixed-point pixels per frame (0x10000 when created); also scales a
   /// floating actor's bob.
   s32 gravity;
-  /// Zeroed by Actor_Create and not read by the engine; scene code keeps a
+  /// Zeroed by FieldActor_Create and not read by the engine; scene code keeps a
   /// resting height, a sway or a countdown here.
   s32 riseBaseY;
   /// Its sprite, by spriteStorageKind.
@@ -138,7 +138,7 @@ struct Actor {
       s16 arcFrames; ///< frames since the arcs started
     };
     /// A Venus Djinni's falling motes
-    /// (FieldEffect_UpdateDescendingOrbitObject).
+    /// (FieldEffect_UpdateDescendingOrbitActor).
     struct {
       u16 orbitFrames; ///< frames left of the spiral, 100 at the start
       s16 orbitAngle;  ///< its start on the circle, 1/65536 turns

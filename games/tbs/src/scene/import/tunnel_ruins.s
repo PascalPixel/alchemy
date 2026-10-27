@@ -7,19 +7,19 @@
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_Release, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_Release, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.FieldMessage_Show, 1
@@ -31,22 +31,22 @@
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetMovementTypeById, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_WaitForAnimationChange, 1
+	.set import.Actor_WaitForAnimationChange, 1
 	.set import.Actor_JumpDownLedge, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.Actor_SetSpritePriority, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.FieldCamera_GetScriptObject, 1
+	.set import.FieldCamera_GetActor, 1
 	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Scene_PlayQueuedMusic, 1

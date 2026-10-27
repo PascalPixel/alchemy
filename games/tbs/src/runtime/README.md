@@ -283,7 +283,7 @@ No task waits, and none adds a task. A call graph of the English build's
 objects, main image and overlays, from each function the code adds as a task,
 each object hook and each `SC_CALL` callback, finds nine tasks with a path of
 calls to `WaitFrames`, and none takes it: the scene tasks turn actors
-with a wait of 0 (`ObjectMotion_ArmCallback`), the world map's lighthouse
+with a wait of 0 (`Actor_ArmCallback`), the world map's lighthouse
 jitter moves the camera with a glide, Lucky Wheels and the link countdown
 open instant windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite
 respawn tests `gTasksRunning`. The tenth path is the debug scene selector,

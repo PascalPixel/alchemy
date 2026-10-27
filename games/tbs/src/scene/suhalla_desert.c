@@ -327,15 +327,15 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
       Actor_SetDestination(leaderActorId, storm->x.part.pixel,
                            storm->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(leaderActorId);
+    Actor_WaitForMoveById(leaderActorId);
     // Start the capture countdown once the approach finishes.
     Script_PlaySong(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
     selectedActor->motionFlags = captureActive;
-    Object_SetPosition(selectedActor, selectedActor->x.fixed,
-                       selectedActor->y.fixed + PIXELS(32),
-                       selectedActor->z.fixed);
-    ObjectMotion_CommitCurrentPositionAndActivate(leaderActorId);
+    FieldActor_SetMoveTarget(selectedActor, selectedActor->x.fixed,
+                             selectedActor->y.fixed + PIXELS(32),
+                             selectedActor->z.fixed);
+    Actor_WaitForMoveById(leaderActorId);
     selectedActor->velocityY = captureActive;
     selectedActor->motionFlags = ACTOR_FLOATS;
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
@@ -442,15 +442,14 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceActor(ACTOR_IODEM, FACING_SOUTH, 0);
 #endif
     Actor_GetById(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_IODEM, leaderX,
-                                            (leaderZ - 16));
+    Actor_ResetAndSetPositionInMode2(ACTOR_IODEM, leaderX, (leaderZ - 16));
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, (leaderX + 8),
-                                     (leaderZ - 40));
+    Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, (leaderX + 8),
+                              (leaderZ - 40));
     FieldScript_WaitFrames(1);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
-    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     FieldScript_SetMessageId(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
@@ -461,18 +460,18 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+    Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      ObjectMotion_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
-                                       leader->z.part.pixel);
+      Actor_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
+                                leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Actor_WaitForMoveById(ACTOR_IODEM);
     Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
   }
   FieldScript_End();
@@ -543,32 +542,32 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 444, 1240);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Script_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Script_ShowMessage(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+    Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Script_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Script_AskYesNo(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Script_ShowMessage(ACTOR_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Script_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
     Script_ShowMessage(ACTOR_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_SetPosition(ACTOR_IODEM, 0, 0);
     FieldScript_End();
   }
@@ -639,7 +638,7 @@ static void EventScript_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF);
     Actor_SetPosition(ACTOR_CHASING_SANDSTORM, PIXELS(120), PIXELS(824));
-    Actor_SetActionScript(ACTOR_CHASING_SANDSTORM, gSuhallaDesertChaseScript);
+    Actor_SetScript(ACTOR_CHASING_SANDSTORM, gSuhallaDesertChaseScript);
   }
 }
 
@@ -684,7 +683,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
     } else {
       if (stormId == ACTOR_CHASING_SANDSTORM) {
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
-        ObjectMotion_EnableActionAndResetMotion(ACTOR_CHASING_SANDSTORM);
+        Actor_Stop(ACTOR_CHASING_SANDSTORM);
         Import_ActorSetPosition(ACTOR_CHASING_SANDSTORM, 0, 0);
       }
     }
@@ -712,7 +711,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   Sound_PlaySong(SE_GUSH);
   // BUG: the native passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  Object_SetSpriteFlags(selectedActor, 0);
+  Actor_SetSpriteFlags(selectedActor, 0);
 #else
   Actor_SetSpriteFlags((struct Actor *)gSaveBlock.leaderActorId, 0);
 #endif
@@ -963,17 +962,17 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

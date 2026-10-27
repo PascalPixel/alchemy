@@ -491,7 +491,7 @@ s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
 }
 
 /// Shows a menu icon at its stored position, without rotation or scaling.
-void Icon_PrepareObject(struct WindowSprite *object) {
+void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
     object->motion = ICON_SHOWN;
     object->oam.x = object->x;
@@ -512,7 +512,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
 /// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
-/// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
+/// chooser) pass on to PsynergyMenu_InitializeEntryActors for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
@@ -547,10 +547,10 @@ struct Window *MenuCursor_Create(void *source) {
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
 /// Clears the unused figure slots and starts the callback that places them
 /// every frame. Every screen of the field menu calls it as it opens, and the
-/// shops through PsynergyMenu_InitializeEntryObjectsFar;
-/// Menu_ReleaseEntryObjects frees the figures.
-void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
-                                         s32 spacing, s32 unused) {
+/// shops through PsynergyMenu_InitializeEntryActorsFar;
+/// Menu_ReleaseEntryActors frees the figures.
+void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
+                                        s32 spacing, s32 unused) {
   u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   struct Window *window = source;
@@ -589,13 +589,13 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   {
     s32 priority = 200;
     priority <<= 4;
-    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdateEntryActorTransforms, priority);
   }
 }
 
-/// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
+/// Releases the party figures PsynergyMenu_InitializeEntryActors created and
 /// stops their placement callback.
-void Menu_ReleaseEntryObjects(void) {
+void Menu_ReleaseEntryActors(void) {
   u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
@@ -614,13 +614,13 @@ void Menu_ReleaseEntryObjects(void) {
       }
     } while (--i != 0);
   }
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryActorTransforms);
 }
 
 /// Task: each frame, places every party member sprite created by
-/// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
+/// PsynergyMenu_InitializeEntryActors at its menu position and scale, through
 /// the field's projected placement.
-void Menu_UpdateEntryObjectTransforms(void) {
+void Menu_UpdateEntryActorTransforms(void) {
   struct PsynergyMenuWork *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -644,8 +644,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY; // always 482
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(figure, &position, &scale,
-                                        FACING_SOUTH);
+      Actor_ApplyProjectedPlacementFar(figure, &position, &scale, FACING_SOUTH);
     }
   }
 }
@@ -765,7 +764,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   icon = *slot;
   icon->y = (index / columns) * 16 + originY;
   icon->x = (index % columns) * 16 + originX;
-  Icon_PrepareObject(icon);
+  Icon_PrepareActor(icon);
 }
 
 /// Places the icon at slotIndex (0 above 15) in a columns-wide grid of
@@ -779,7 +778,7 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
   icon = *slot;
   icon->y = slotIndex / columns * 16 + originY;
   icon->x = slotIndex % columns * 24 + originX;
-  Icon_PrepareObject(icon);
+  Icon_PrepareActor(icon);
 }
 
 /// Lays the inventory's 15 item icons out five to a row from (116, y): y is
@@ -1224,7 +1223,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
        i++) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
-    Icon_PrepareObject(icon);
+    Icon_PrepareActor(icon);
     icon->motion = ICON_SHOWN;
   }
 }

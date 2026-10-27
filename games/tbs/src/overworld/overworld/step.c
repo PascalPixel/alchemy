@@ -89,7 +89,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.z = leader->z.fixed;
   Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
 
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // World map metatiles are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
@@ -230,7 +230,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   for (i = 0; i < partyCount; i++)
     previousHp[i] = Unit_GetFar(gSaveBlock.party[i])->hp;
 
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
                                                   (((z / 0x200000) & 31) << 5)];
   } else {
@@ -261,7 +261,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     encounterSpeed = leader->speedLimit;
     if (GameFlag_GetFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
-    if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       fullEncounterRate = 1;
       work->encounter =
           Encounter_RollWorldMap((s32)&leader->x.fixed, encounterSpeed);
@@ -328,11 +328,11 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   if (gSaveBlock.hazardMode == HAZARD_COUNT_FRAMES) {
     gSaveBlock.hazardSteps++;
     if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit / 2)
-      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                      ATTACHED_EFFECT_ATTACH);
+      FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                            ATTACHED_EFFECT_ATTACH);
     if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit)
-      FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                      ATTACHED_EFFECT_REMOVE);
+      FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                            ATTACHED_EFFECT_REMOVE);
   }
   if (gSaveBlock.hazardSteps >= gSaveBlock.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
@@ -350,8 +350,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
+    FieldEffect_SetAttached(leaderId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
       unitVitals = Unit_GetFar(gSaveBlock.party[i]);
@@ -492,7 +492,7 @@ void WorldMap_Freeze(void) {
   struct ScreenTransitionState *state;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
@@ -511,7 +511,7 @@ void WorldMap_Unfreeze(void) {
   struct FieldWork *work;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_LoadAreaGraphicsFar();
     work->camera->paused = 0;
   }

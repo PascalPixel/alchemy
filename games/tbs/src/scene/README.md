@@ -108,7 +108,7 @@ takes that character's own place instead.
 
 Each scene names its actors in an enum in row order,
 starting from `ACTOR_FIRST_PLACED`; `ACTOR_PARTY_LEADER` is the one the
-player moves, and `FieldScript_SpawnActorTemplates` places the rows.
+player moves, and `Event_SpawnActorTemplates` places the rows.
 
 ### What a trigger row says
 
@@ -324,7 +324,7 @@ A scene's functions take its name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions a
 trigger table names are `EventScript_` instead. Shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
-`PushedObject_`, and `FieldEffect_` for the field effects), and some keep
+`PushedActor_`, and `FieldEffect_` for the field effects), and some keep
 older descriptive names (`Scene_`) until the scenes that call them are humanized.
 A run of functions inside one overlay that is about one thing takes that
 thing's name, and a party member's or the leader's part in a script takes

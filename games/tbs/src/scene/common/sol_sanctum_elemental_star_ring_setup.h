@@ -208,7 +208,7 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
         *flags = cleared;
       }
       light->motionFlags = cleared;
-      Actor_SetBlendMode(Actor_GetById(first), OBJECT_BLEND_TRANSLUCENT);
+      Actor_SetBlendMode(Actor_GetById(first), ACTOR_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];
       entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
       entry->timer = 3;

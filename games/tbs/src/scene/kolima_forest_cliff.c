@@ -80,21 +80,21 @@ const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void) {
 /// become ground the party can cross (sets
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {
-  struct PushedObjectProbe result;
+  struct PushedActorProbe result;
   FieldScript_Start();
-  if (PushedObject_FindClearPosition(&result)) {
+  if (PushedActor_FindClearPosition(&result)) {
     Actor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct Actor *actor;
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
-      ObjectMotion_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
+      Actor_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
       Sound_PlaySong(SE_LOG_FALL);
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-      PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
+      PushedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
       actor = Actor_GetById(ACTOR_RIVER_LOG);
       Actor_SetSpriteFlags(actor, 0);
@@ -123,7 +123,7 @@ s32 KolimaForestCliff_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
     Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-    PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
+    PushedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIVER_LOG), 0);
   }
 
@@ -141,7 +141,7 @@ s32 KolimaForestCliff_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -151,11 +151,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,

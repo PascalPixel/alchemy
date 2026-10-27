@@ -149,12 +149,12 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct Sprite *sprite;
 
   point = gFieldWork->actors[gSaveBlock.leaderActorId];
-  spark = Actor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
-                       point->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
+                            point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
+    Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedActor = point;
@@ -164,12 +164,12 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->image.priority = 1;
     }
   }
-  spark = Actor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
-                       point->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
+                            point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    Actor_SetScript(spark, gMercuryLighthouse_SparkScript);
+    Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedActor = point;
@@ -203,13 +203,13 @@ void MercuryLighthouse_ChargeLights(void) {
   FieldScript_Start();
   pillar = state->pillar;
   if (pillar == 0) {
-    actor = Actor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-                         leader->y.fixed + 0x180000, leader->z.fixed);
+    actor = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                              leader->y.fixed + 0x180000, leader->z.fixed);
     if (actor != 0) {
       struct Sprite *sprite = actor->sprite;
 
       actor->groundHeight = leader->groundHeight;
-      Actor_SetScript(actor, gMercuryLighthouse_PillarScript);
+      Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->linkedActor = leader;
       actor->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
@@ -231,7 +231,7 @@ void MercuryLighthouse_ChargeLights(void) {
     MercuryLighthouse_SpawnSparkPair();
     WaitFrames(30);
     pillar->spriteStorageKind = 1;
-    Object_SelectAnimation(pillar, 5 - step);
+    Actor_SelectAnimation(pillar, 5 - step);
   }
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
@@ -260,8 +260,8 @@ void MercuryLighthouse_LoseLights(void) {
   target = state->pillar;
   if (target != 0) {
     target->timer = 0;
-    Actor_SetScript(target, gMercuryLighthouse_ScaleCounterScript);
-    Object_SelectAnimation(target, 7);
+    Actor_StartScript(target, gMercuryLighthouse_ScaleCounterScript);
+    Actor_SelectAnimation(target, 7);
     state->pillar = NULL;
   }
 }
@@ -314,30 +314,30 @@ void MercuryLighthouse_HopAcrossPool(void) {
     return;
 
   FieldScript_Start();
-  if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
+  if (FieldActor_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
       0)
     return;
   obj = state->stepEffect;
   if (obj != NULL) {
     obj->timer = 0;
-    Actor_SetScript(obj, gMercuryLighthouse_ScaleCounterScript);
-    Object_SelectAnimation(obj, 7);
+    Actor_StartScript(obj, gMercuryLighthouse_ScaleCounterScript);
+    Actor_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
     source = state->pillar;
-    obj = Actor_Create(SPRITE_GOLDEN_RINGS, source->x.fixed, source->y.fixed,
-                       source->z.fixed);
+    obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, source->x.fixed,
+                            source->y.fixed, source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;
-      Actor_SetScript(obj, gMercuryLighthouse_RampScript);
+      Actor_StartScript(obj, gMercuryLighthouse_RampScript);
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = 2;
       obj->speedLimit = 0x40000;
       obj->acceleration = 0x20000;
-      Object_SetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+      FieldActor_SetMoveTarget(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 6);
         zero = 0;
@@ -352,21 +352,21 @@ void MercuryLighthouse_HopAcrossPool(void) {
       state->pillar = NULL;
       GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     } else if (state->pillar != NULL) {
-      Object_SelectAnimation(state->pillar, 6 - n);
+      Actor_SelectAnimation(state->pillar, 6 - n);
     }
   }
-  Object_SelectAnimation(actor, 6);
+  Actor_SelectAnimation(actor, 6);
   WaitFrames(3);
   Sound_PlaySong(SE_JUMP);
-  Object_SelectAnimation(actor, 7);
+  Actor_SelectAnimation(actor, 7);
   actor->speedLimit = 0x30000;
   actor->acceleration = 0x20000;
   actor->velocityY = 0x40000;
   *flags &= 0x7e;
   Actor_SetSpriteFlags(actor, 0);
-  ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER, pos[0].part.pixel,
-                                    pos[2].part.pixel);
-  Object_SelectAnimation(actor, 6);
+  Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pos[0].part.pixel,
+                             pos[2].part.pixel);
+  Actor_SelectAnimation(actor, 6);
   WaitFrames(2);
   if (to->behavior != state->poolBehavior)
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -375,7 +375,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
-    Object_SelectAnimation(actor, 18);
+    Actor_SelectAnimation(actor, 18);
     Sound_PlaySong(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)

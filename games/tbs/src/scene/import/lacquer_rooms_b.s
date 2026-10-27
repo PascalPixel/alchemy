@@ -1,10 +1,10 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Clear, 1
 	.set import.FieldScript_WaitFrames, 1
@@ -13,7 +13,7 @@
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

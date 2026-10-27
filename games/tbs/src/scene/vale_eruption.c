@@ -195,29 +195,29 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(30);
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
   Script_ShowMessage(ACTOR_GARETS_SISTER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       0);
   Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
   Script_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GUARD, 1);
+  Actor_RunRepeatedMotion(ACTOR_GUARD, 1);
   Script_ShowMessage(ACTOR_GUARD, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GUARD, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Script_ShowMessage(ACTOR_DORA, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
@@ -227,12 +227,12 @@ static void EventScript_ReturnFromMtAleph(void) {
   Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_LinkPair(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
   Actor_LinkPair(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
-  ObjectMotion_SetVariantCallback(ACTOR_GREAT_HEALER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_SISTER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_BROTHER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GUARD, 2);
+  Actor_StartRepeatedMotion(ACTOR_GREAT_HEALER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_SISTER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_BROTHER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GUARD, 2);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
 
@@ -259,10 +259,10 @@ static void EventScript_ReturnFromMtAleph(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
 
@@ -294,7 +294,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
@@ -306,22 +306,22 @@ static void EventScript_ReturnFromMtAleph(void) {
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(50);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
   // The mayor: "Come over here, both of you!"
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RefreshSelectorById(ACTOR_GARET);
   FieldScript_WaitFrames(50);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -334,9 +334,9 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
   FieldScript_WaitFrames(30);
-  Actor_SetActionScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
+  Actor_SetScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -350,7 +350,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(30);
 
   // "Where have you been?" "What happened?"
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
@@ -358,7 +358,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(50);
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -367,7 +367,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
   // Dora notices who is missing.
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -386,7 +386,7 @@ static void EventScript_ReturnFromMtAleph(void) {
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+    Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Script_SkipMessages(1);
   } else {
@@ -396,7 +396,7 @@ static void EventScript_ReturnFromMtAleph(void) {
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+    Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Script_SkipMessages(1);
     Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   }
@@ -404,40 +404,40 @@ static void EventScript_ReturnFromMtAleph(void) {
   // Garet starts to tell, and both shake their heads again.
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceActor(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(20);
   // The mayor agrees with a nod; the Great Healer sends them inside.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST + FACING_STEP,
                       0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(50);
   Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
   Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(30);
 
   // The sanctum's door opens and everyone files inside.
@@ -454,16 +454,16 @@ static void EventScript_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   FieldScript_WaitFrames(40);
   Actor_WalkTo(ACTOR_DORA, 255, 390);
   actionScript = gValeEruption_EnterSanctum;
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, actionScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, actionScript);
   FieldScript_WaitFrames(40);
-  Actor_SetActionScript(ACTOR_GARET, actionScript);
+  Actor_SetScript(ACTOR_GARET, actionScript);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);

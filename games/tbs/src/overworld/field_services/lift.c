@@ -11,7 +11,7 @@
 ///
 /// This is Lift cast on a target, which FieldEffect_DispatchRequestKind calls.
 /// It leaves the target raised and floating (motion flag bit 2), with its
-/// update set to Object_CycleSpriteColors.
+/// update set to Actor_CycleSpriteColors.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
   struct Actor *caster;
@@ -34,7 +34,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
   caster->linkedActor = target;
-  Object_InitializeFar(caster, gFieldEffect_CommonParticleScript + 3);
+  Actor_StartScriptFar(caster, gFieldEffect_CommonParticleScript + 3);
 
   x = effectWork->x;
   pos[0] = x;
@@ -52,12 +52,11 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];
     if (hand != NULL)
-      ObjectMotion_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000,
-                                                       hand->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000, hand->facing);
   }
 
-  Object_WaitForMoveFar(pair[0]);
-  target->update = Object_CycleSpriteColors;
+  Actor_WaitForMoveFar(pair[0]);
+  target->update = Actor_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_START);
   target->motionFlags = ACTOR_FLOATS;
 
@@ -91,18 +90,18 @@ DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunLift, FieldEffect_SpawnItemBreakMode3)
 /// two hands, for FieldEffect_RunLiftOnTarget and FieldEffect_RunLift; returns
 /// NULL when no object could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
-/// autoFaceMotion as created; both are at sprite priority 0 (Object_Spawn).
+/// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
 struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = Object_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
-    Object_SelectAnimationFar(fragment, 3);
+    Actor_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < Q16_ONE) {
       do {
@@ -195,22 +194,22 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
+  impact = Actor_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
-    Object_InitializeFar(impact, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(impact, gFieldEffect_CommonParticleScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
   for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
-    fragment = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+    fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
-      Object_InitializeFar(fragment, gFieldEffect_FragmentScript);
+      Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
       fragment->speedLimit = Random16() + (1 << 16);
       fragment->acceleration = 1 << 16;
       fragment->motionFlags = 0;
-      ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+      Actor_SetTargetPositionFromMagnitudeAngle(
           fragment, Random16() * 24 + (8 << 16), Random16());
     }
   }

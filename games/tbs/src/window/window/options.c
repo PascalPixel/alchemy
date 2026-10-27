@@ -516,7 +516,7 @@ s32 OptionMenu_Run(void) {
       for (i = 0; i <= 2; i++) {
         frame = work->frame[0][i];
         frame->sentinel = 0xfb;
-        Icon_PrepareObjectFar(frame);
+        Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->frame[0][i]->index;
         dimmed = 0;
         if (i != work->option[2])
@@ -526,7 +526,7 @@ s32 OptionMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         frame = work->frame[1][i];
         frame->sentinel = 0xfb;
-        Icon_PrepareObjectFar(frame);
+        Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->frame[1][i]->index;
         dimmed = 0;
         if (i != work->option[3])
@@ -536,7 +536,7 @@ s32 OptionMenu_Run(void) {
       for (i = 0; i <= 1; i++) {
         frame = work->frame[2][i];
         frame->sentinel = 0xfb;
-        Icon_PrepareObjectFar(frame);
+        Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->frame[2][i]->index;
         dimmed = 0;
         if (i != work->option[4])
@@ -822,7 +822,7 @@ s32 PauseMenu_Choose(void) {
         do {
           icon = work->icon[i];
           icon->sentinel = 0xFB;
-          Icon_PrepareObjectFar(icon);
+          Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
           if (i != work->page) {

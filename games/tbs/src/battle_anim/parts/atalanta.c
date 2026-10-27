@@ -160,8 +160,8 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
         for (column = 0; column != 3; column++) {
           position.x = (pathX + 80 + column * 32) << 16;
           position.y = (64 - pathY + row * 32) << 16;
-          Object_ApplyProjectedPlacementFar(work->animations[row * 3 + column],
-                                            &position, &gAtalanta_UnitScale, 0);
+          Actor_ApplyProjectedPlacementFar(work->animations[row * 3 + column],
+                                           &position, &gAtalanta_UnitScale, 0);
         }
       }
     }

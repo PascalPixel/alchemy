@@ -214,8 +214,8 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
       for (j = 0; j != 3; j++) {
         position.x = (j * 32 + 144 - shakeX) << 16;
         position.y = (row * 32 + 76 - shakeY) << 16;
-        Object_ApplyProjectedPlacementFar(work->animations[row * 3 + j],
-                                          &position, &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[row * 3 + j],
+                                         &position, &scale, 0);
       }
     }
 

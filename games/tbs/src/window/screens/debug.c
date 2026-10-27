@@ -370,7 +370,7 @@ s32 DebugBrowser_Icons(void) {
   page = 0;
   mode = 0;
   redraw = 1;
-  gObjectSystemWork->suspended = redraw;
+  gActorSystemWork->suspended = redraw;
   WaitFrames(1);
 
   while (1) {
@@ -433,7 +433,7 @@ s32 DebugBrowser_Icons(void) {
     WaitFrames(1);
   }
   Window_Close(window, 2);
-  gObjectSystemWork->suspended = 0;
+  gActorSystemWork->suspended = 0;
   return 0;
 }
 

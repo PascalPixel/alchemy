@@ -51,7 +51,7 @@ void Weather_UpdateRain(void) {
 
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
-      // ObjectMotion_SetHorizontalPositionWithTerrain (see the XXX there).
+      // Actor_SetHorizontalPositionWithTerrain (see the XXX there).
       x = leader[0] + (Random16() << 8) - 0x800000;
       y = leader[2] + (Random16() << 8) - 0x800000;
       particle->positionX = x;
@@ -377,7 +377,7 @@ void FieldEffect_UpdateSparkles(void) {
         // point shifted down 16 bits (0, or -1 off the left or top), where
         // MapGrid_GetTerrainHeight takes 16.16 pixels; the burst's first
         // sparkle reads it the same way (see the XXX in
-        // ObjectMotion_SetHorizontalPositionWithTerrain).
+        // Actor_SetHorizontalPositionWithTerrain).
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
         sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)

@@ -498,7 +498,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   }
   FieldScript_Start();
   FieldScript_SetMessageId(MsgLobbyWantParticipatePlease);
-  FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+  FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
   WaitFrames(5);
   GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   FieldScript_End();
@@ -521,7 +521,7 @@ static s32 BattleArena_ReportDisconnection(void) {
   FieldScript_Start();
   work->raisedTrigger = LOBBY_EVENT_NONE;
   FieldScript_SetMessageId(MsgLobbyLinkDisconnected);
-  FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+  FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
   GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
   FieldScript_End();
 #ifdef UBFIX
@@ -985,32 +985,32 @@ static s32 BattleArena_EnterBattle(void) {
     WaitFrames(8);
     TilesetAnim_Pause(5);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
+      Actor_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
       FieldScript_SetMessageId(MsgLobbyGoodLuck);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       WaitFrames(45);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
-      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
+      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
-        ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
+        Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         WaitFrames(8);
         TilesetAnim_Pause(5);
-        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+        Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
@@ -1026,7 +1026,7 @@ static s32 BattleArena_EnterBattle(void) {
         return LOBBY_NO_RESULT;
       }
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
       FieldScript_SetNextDestination((s32)&SceneId_BattleArena,
@@ -1083,7 +1083,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     WaitFrames(1);
@@ -1093,7 +1093,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     BattleArena_InitializeSerial();
     if (!Script_GetFlag(FLAG_MONSTER_BATTLE)) {
       FieldScript_SetMessageId(messageBase + 5);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       answer = FieldScript_AskYesNoWithActorAnimation(0, 0);
       // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte and
       // LINK_TALLY_MONSTER_STREAK start at 0.
@@ -1121,7 +1121,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     if (Script_GetFlag(FLAG_MONSTER_BATTLE)) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       FieldScript_SetMessageId(MsgLobbyOpponentArrived);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
@@ -1135,11 +1135,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
     message:
       FieldScript_SetMessageId(messageId);
     open_message:
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
     } else if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
                !Script_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED)) {
       FieldScript_SetMessageId(messageBase);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
     } else {
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
@@ -1148,7 +1148,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       } else {
         FieldScript_SetMessageId(messageBase + 1);
       }
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       if (FieldScript_AskYesNoWithActorAnimation(0, 0) == YES) {
         // Yes, and the partner is still there; else the link is lost.
         if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
@@ -1167,7 +1167,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         }
       } else {
         FieldScript_SetMessageId(messageBase);
-        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -1187,7 +1187,7 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
   s32 messageBase;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1230,7 +1230,7 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
   s32 loadResult;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   FieldScript_SetMessageId(MsgLobbyChooseParameters);
   FieldScript_ShowMessageAndWait(actorId, 0);
   window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
@@ -1333,7 +1333,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 speakerPresent = BattleArena_PartyContains(actorId);
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first holds
@@ -1403,11 +1403,11 @@ static s32 BattleArena_TalkToVisitor(s32 actorId) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED))
     step = 2 - (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON) != 0);
   FieldScript_SetMessageId(message + step);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1422,7 +1422,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
+  Actor_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (!Script_GetFlag(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1434,7 +1434,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   }
   FieldScript_SetMessageId(message);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1448,7 +1448,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
   FieldScript_Start();
   state = &gSaveBlock;
-  ObjectMotion_SetAngleToward(actorId, state->leaderActorId, 0);
+  Actor_SetAngleToward(actorId, state->leaderActorId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
                          MESSAGE_ARGUMENT_NUMBER);
@@ -1456,7 +1456,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
   } else {
     FieldScript_SetMessageId(MsgLobbyCantWaitSee);
   }
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1600,9 +1600,9 @@ s32 BattleArena_RunRoundResult(void) {
     } else {
       FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
-    ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
+    Actor_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
     FieldScript_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
-    FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+    FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
     if (FieldScript_AskYesNoWithActorAnimation(0, 0) == YES) {
       if (wins > 90) {
         wins = 90;
@@ -1619,11 +1619,11 @@ s32 BattleArena_RunRoundResult(void) {
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
             gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK];
         FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
-        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
         BattleArena_SaveMonsterBattleResults();
       } else {
         FieldScript_SetMessageId(MsgLobbyWonNumberBattle);
-        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       }
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
@@ -1636,7 +1636,7 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
-    ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
+    Actor_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
     MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
                          MESSAGE_ARGUMENT_NUMBER);
     if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
@@ -1644,11 +1644,11 @@ s32 BattleArena_RunRoundResult(void) {
       gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
           gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK];
       FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       BattleArena_SaveMonsterBattleResults();
     } else {
       FieldScript_SetMessageId(MsgLobbyWonNumberBattleTold);
-      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
     }
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     GameFlag_Clear(FLAG_MONSTER_BATTLE);
@@ -1718,7 +1718,7 @@ s32 BattleArena_RunRoundResult(void) {
       FieldScript_Start();
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
-      ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
+      Actor_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
       FieldScript_SetMessageId(MsgLobbyNoteCantUse);
       FieldScript_ShowMessageAndWait(ACTOR_ATTENDANT, 0);
       FieldScript_End();

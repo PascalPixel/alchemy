@@ -21,8 +21,8 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   work->encounter = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
@@ -54,8 +54,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // position.
   state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->encounter = Encounter_GetDjinnFormation(no);
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Actor *leader = Actor_GetByActorId(state->leaderActorId);
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    struct Actor *leader = Actor_Lookup(state->leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }

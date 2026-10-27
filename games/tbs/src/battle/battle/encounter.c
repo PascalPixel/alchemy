@@ -56,7 +56,7 @@ s32 Battle_Run(s32 enemyGroup) {
   volatile u32 fill;
 
   // The battle's work areas. The object system's sprite and layer pools
-  // are taken here from EWRAM first: ObjectSystem_InitializeFar's own requests
+  // are taken here from EWRAM first: ActorSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
   // is (field/field/animation.c, runtime/runtime/heap.c).
   camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
@@ -97,7 +97,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->background = FieldScript_GetSpecialValueFar();
   AllocHeapSlotEwram(HEAP_SLOT_SPRITES, 0xe00);
   AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS, 0x600);
-  ObjectSystem_InitializeFar(OBJECT_SYSTEM_BATTLE);
+  ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
   else

@@ -6,7 +6,7 @@
 #include "../field_services_internal.h"
 
 /// Update hook shared by the Djinni battle-start and Mercury afterimages.
-void ObjectMotion_MoveHalfwayTowardTarget(union ActorOrEffect *fieldObject) {
+void Actor_MoveHalfwayTowardTarget(union ActorOrEffect *fieldObject) {
   FieldEffect_MoveAfterimageHalfway(fieldObject);
 }
 
@@ -37,12 +37,12 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   FieldScript_Start();
   WaitFrames(10);
   Sound_PlaySongFar(SE_NOTE_LOW);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   back = dir + 0x8000;
   WaitFrames(20);
-  ObjectMotion_ArmCallback(djinniId, back, 0);
+  Actor_ArmCallback(djinniId, back, 0);
   WaitFrames(10);
   // Sprite priority 0, over every background, until the end. With
   // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
@@ -54,18 +54,18 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 4, 0);
-  Object_WaitForMoveFar(djinni);
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
+  Actor_Jump(djinniId, 4, 0);
+  Actor_WaitForMoveFar(djinni);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 4, 0);
-  Object_WaitForMoveFar(djinni);
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
+  Actor_Jump(djinniId, 4, 0);
+  Actor_WaitForMoveFar(djinni);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 4, 0);
-  Object_WaitForMoveFar(djinni);
+  Actor_Jump(djinniId, 4, 0);
+  Actor_WaitForMoveFar(djinni);
   WaitFrames(20);
 
   // Afterimages of the same sprite at 15/16 size, each closing half the
@@ -84,8 +84,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
-    copy = Object_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
-                            djinni->z.fixed);
+    copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
+                           djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -93,12 +93,12 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= 1;
-      copy->update = ObjectMotion_MoveHalfwayTowardTarget;
+      copy->update = Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
       Anim_ApplyChildValuesFar(copy, tint);
-      Object_SelectAnimationFar(copy, 0);
-      Object_SetSpriteFlagsFar(copy, 0);
+      Actor_SelectAnimationFar(copy, 0);
+      Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->linkedActor = prev;
       prev = copy;
@@ -107,10 +107,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16,
-                                                   dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16, dir + 0x8000);
   Sound_PlaySongFar(SE_WHOOSH);
-  ObjectMotion_Launch(djinniId, 12, 0);
+  Actor_Jump(djinniId, 12, 0);
   WaitFrames(24);
   djinni->motionFlags = 0;
   djinni->velocityX = 0;
@@ -119,7 +118,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetX = ACTOR_NO_TARGET;
   djinni->targetZ = ACTOR_NO_TARGET;
   djinni->targetY = ACTOR_NO_TARGET;
-  Object_SelectAnimationFar(djinni, 0);
+  Actor_SelectAnimationFar(djinni, 0);
   djinni->sprite->image.priority = 2;
   FieldScript_End();
 }
@@ -152,7 +151,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     if (slot != -1) {
       // On the world map the actors far from the view are removed while
       // the effect plays and placed again after it.
-      if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
         Actor_ClearOutOfBounds();
 
       if (element == 0) // Venus
@@ -165,7 +164,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
         Djinn_RunJupiterJoinEffect(slot);
 
       work->actors[slot] = 0;
-      if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
         Actor_Respawn();
     }
 
@@ -204,7 +203,7 @@ void Actor_PlaceMapActors(void) {
         if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
                                 event - DJINNI_BATTLE_EVENT_FIRST)
           continue;
-        object = Actor_GetByActorId(id);
+        object = Actor_Lookup(id);
         if (object == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its template's position in a new
@@ -213,16 +212,15 @@ void Actor_PlaceMapActors(void) {
         if (flags == 0) {
           object->groundHeight = flags;
           object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-          Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
-                                              desc->z);
+          Actor_SetPositionAndResetMotionFar(object, desc->x, desc->y, desc->z);
         } else {
-          struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+          struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
 
-          Object_SetPositionAndResetMotionFar(object, leader->x.fixed,
-                                              leader->y.fixed,
-                                              leader->z.fixed - (32 << 16));
+          Actor_SetPositionAndResetMotionFar(object, leader->x.fixed,
+                                             leader->y.fixed,
+                                             leader->z.fixed - (32 << 16));
         }
-        Object_SelectAnimationFar(object, 1);
+        Actor_SelectAnimationFar(object, 1);
       }
     }
   }

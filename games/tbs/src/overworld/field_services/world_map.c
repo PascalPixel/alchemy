@@ -253,7 +253,7 @@ void WorldPicture_UpdateMarkers(void) {
   // runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
-    areaActor = Actor_GetByActorId(gSaveBlock.leaderActorId);
+    areaActor = Actor_Lookup(gSaveBlock.leaderActorId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
     // A missing selected actor violates the screen's lifetime contract;
@@ -326,7 +326,7 @@ void WorldPicture_UpdateMarkers(void) {
     }
     if (!GameFlag_GetFar(flag))
       continue;
-    areaActor = Actor_GetByActorId(markerIndex);
+    areaActor = Actor_Lookup(markerIndex);
     if (areaActor == NULL)
       continue;
 
@@ -445,7 +445,7 @@ void WorldPicture_Show(s32 picture) {
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  struct ObjectSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM);
+  struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct TilesetAnim *layer;
   u8 savedFlags[sizeof(gridState->animations) /
@@ -455,7 +455,7 @@ void WorldPicture_Show(s32 picture) {
   s32 savedStatus;
   s16 blend;
 
-  if (work->mode != OBJECT_SYSTEM_WORLD_MAP)
+  if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   work->camera->paused = 1;
   savedStatus = work->transitionFrames;
@@ -513,7 +513,7 @@ void WorldPicture_Show(s32 picture) {
 
 /// On the world map, shows only the map's actors within 320 pixels
 /// sideways, 600 above and 400 below the camera.
-void Field_UpdateObjectVisibilityBounds(void) {
+void Field_UpdateActorVisibilityBounds(void) {
   struct Actor *object;
   s32 x;
   s32 y;
@@ -536,16 +536,16 @@ void Field_UpdateObjectVisibilityBounds(void) {
 
   id = ACTOR_FIRST_PLACED;
   do {
-    object = Actor_GetByActorId(id);
+    object = Actor_Lookup(id);
 
     if (object != 0) {
       s32 ox = object->x.fixed;
       s32 oy = object->z.fixed;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
-        object->spriteStorageKind = OBJECT_SPRITE_NONE;
+        object->spriteStorageKind = ACTOR_SPRITE_NONE;
       } else {
-        object->spriteStorageKind = OBJECT_SPRITE_ONE;
+        object->spriteStorageKind = ACTOR_SPRITE_ONE;
       }
     }
     id++;
@@ -560,9 +560,9 @@ void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Task_SuspendOverlayTasks();
-    Field_UpdateObjectVisibilityBounds();
+    Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();
     FieldEffect_ScheduleRatioTransition(0x9d89, 6);
     if (gKeysHeld & KEY_L) {

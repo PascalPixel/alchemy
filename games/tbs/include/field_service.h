@@ -4,12 +4,15 @@
 /// @file
 /// The map service layer: one typed inline for each engine service a map
 /// calls by its own name, passing it on to the main image's import
-/// (Actor_Jump calls ObjectMotion_Launch).
+/// (Actor_FaceEachOther calls Actor_LinkPair).
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device. A map writes
-/// `Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);` and the inline makes the
-/// call.
+/// `Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);` and the inline
+/// makes the call. Where a site matches only through a second inline over the
+/// same routine, that inline takes the FieldActor_ prefix, as
+/// FieldActor_JumpDownLedge does; where an inline would have its routine's
+/// name, the routine keeps it and the inline takes the prefix.
 
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -25,47 +28,9 @@ static inline void Actor_FaceEachOther(s32 actorId, s32 other, s32 frames) {
   Actor_LinkPair(actorId, other, frames);
 }
 
-/// Makes an actor hop, height being its launch speed in pixels a frame,
-/// and lets frames pass while it comes down.
-static inline void Actor_Jump(s32 actorId, s32 height, s32 frames) {
-  ObjectMotion_Launch(actorId, height, frames);
-}
-
-/// Makes an actor bob, squashing and springing back a few times, and
-/// waits for it to finish.
-static inline void Actor_RunRepeatedMotion(s32 actorId, s32 repeats) {
-  ObjectMotion_SetVarCbAndRefresh(actorId, repeats);
-}
-
 /// Switches an actor to an ActorAnimation, such as ANIM_NOD.
 static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
   Import_ActorSetAnimation(actorId, animation);
-}
-
-/// Plays an actor's animation through before the script goes on.
-static inline void Actor_SetAnimationAndWait(s32 actorId, s32 animation) {
-  ObjectMotion_SetAnimationAndWait(actorId, animation);
-}
-
-/// Draws an actor at a fixed priority against the scenery instead of by
-/// its depth.
-static inline void Actor_SetSpritePriority(s32 actorId, s32 priority) {
-  ObjectMotion_SetActionVariant(actorId, priority);
-}
-
-/// Starts an actor bobbing while the script carries on.
-static inline void Actor_StartRepeatedMotion(s32 actorId, s32 repeats) {
-  ObjectMotion_SetVariantCallback(actorId, repeats);
-}
-
-/// Stops whatever an actor is doing and hands it to the script.
-static inline void Actor_Stop(s32 actorId) {
-  ObjectMotion_EnableActionAndResetMotion(actorId);
-}
-
-/// Holds the script until an actor has reached where it was sent.
-static inline void Actor_WaitForMove(s32 actorId) {
-  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
 }
 
 /// Holds the script until the camera's pan is done.
@@ -89,11 +54,6 @@ static inline s32 Script_ChooseYesNo(s32 actorId, s32 flags) {
 
 /// Ends an event and gives the field back to the player.
 static inline void Script_End(void) { FieldScript_End(); }
-
-/// Returns the camera object, for a script that moves the view itself.
-static inline struct Actor *Script_GetViewCenter(void) {
-  return FieldCamera_GetScriptObject();
-}
 
 /// Starts the script's screen transition, which Script_WaitForScreen waits out.
 static inline void Script_OpenScreen(void) {
@@ -170,37 +130,33 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
 
 /// The walk and wait of Actor_WalkByAndWait, by a second inline over the
 /// same routine.
-static inline void FieldObjectMotion_CommitPositionAndActivate(s32 actorId,
-                                                               s32 xOffset,
-                                                               s32 zOffset) {
-  ObjectMotion_CommitPositionAndActivate(actorId, xOffset, zOffset);
+static inline void FieldActor_WalkByAndWait(s32 actorId, s32 xOffset,
+                                            s32 zOffset) {
+  Actor_CommitPositionAndActivate(actorId, xOffset, zOffset);
 }
 
 /// Actor_SetDestinationOffset, by a second inline over the same routine.
-static inline void FieldObjectMotion_OffsetPositionAndResetMotion(s32 actorId,
-                                                                  s32 xOffset,
-                                                                  s32 zOffset) {
-  ObjectMotion_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
+static inline void FieldActor_SetDestinationOffset(s32 actorId, s32 xOffset,
+                                                   s32 zOffset) {
+  Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
 }
 
 /// Actor_CenterAndWalk, by a second inline over the same routine.
-static inline void FieldObjectMotion_CenterOnColumn(s32 actorId, s32 priority,
-                                                    s32 zOffset) {
-  ObjectMotion_CenterOnColumn(actorId, priority, zOffset);
+static inline void FieldActor_CenterAndWalk(s32 actorId, s32 priority,
+                                            s32 zOffset) {
+  Actor_CenterOnColumn(actorId, priority, zOffset);
 }
 
-/// Actor_SetDestination as ObjectMotion_ResetAndSetPosition, the name of
+/// Actor_SetDestination as Actor_ResetAndSetPosition, the name of
 /// the routine behind it.
-static inline void FieldObjectMotion_ResetAndSetPosition(s32 actorId, s32 x,
-                                                         s32 z) {
-  ObjectMotion_ResetAndSetPosition(actorId, x, z);
+static inline void FieldActor_SetDestination(s32 actorId, s32 x, s32 z) {
+  Actor_ResetAndSetPosition(actorId, x, z);
 }
 
-/// Actor_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
+/// Actor_MoveToAndWait, written with Actor_SetPositionAndCommit's
 /// name.
-static inline void Object_MotionSetPositionAndCommit(s32 actorId, s32 x,
-                                                     s32 z) {
-  ObjectMotion_SetPositionAndCommit(actorId, x, z);
+static inline void FieldActor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
+  Actor_SetPositionAndCommit(actorId, x, z);
 }
 
 /// Task_AddFrame (engine_call.h) under a second name.
@@ -223,16 +179,16 @@ static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
 }
 
 /// Puts an actor on the leader and sends it walking off by (dx, dz),
-/// then starts the action facing names (ObjectMotion_LaunchFromFocusedObject).
-static inline void FieldMotion_LaunchFromFocusedObject(s32 actorId, s32 dx,
-                                                       s32 dz, s32 facing) {
-  ObjectMotion_LaunchFromFocusedObject(actorId, dx, dz, facing);
+/// then starts the action facing names (Actor_LaunchFromLeader).
+static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
+                                               s32 facing) {
+  Actor_LaunchFromLeader(actorId, dx, dz, facing);
 }
 
 /// Makes an actor follow another and starts a script on it
 /// (Actor_SetTargetAndCallback).
-static inline void Object_SetTargetAndCallback(s32 object, s32 target,
-                                               const s32 *actions) {
+static inline void FieldActor_SetTargetAndCallback(s32 object, s32 target,
+                                                   const s32 *actions) {
   Actor_SetTargetAndCallback(object, target, actions);
 }
 

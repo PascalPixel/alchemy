@@ -7,26 +7,26 @@
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Irq_SetHandler, 1
 	.set import.AllocHeapSlotEwram, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_StartCamera, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_StartCamera, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_ResetAndSetPosition, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_ResetAndSetPosition, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.FieldCamera_SetSpeedParameters, 1

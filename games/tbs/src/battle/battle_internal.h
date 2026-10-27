@@ -166,10 +166,10 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// Object.spriteStorageKind holds an enum ObjectSpriteKind in its low four
+// Object.spriteStorageKind holds an enum ActorSpriteKind in its low four
 // bits; a group's sprite word points to a table of four sprites.
-#define OBJECT_SPRITE_KIND_MASK 15
-#define OBJECT_SPRITE_GROUP_SIZE 4
+#define ACTOR_SPRITE_KIND_MASK 15
+#define ACTOR_SPRITE_GROUP_SIZE 4
 
 /// BattleTurn_Build's results besides 0, which stages the turn.
 #define TURN_REPORTED -1  ///< the action failed and its message is shown

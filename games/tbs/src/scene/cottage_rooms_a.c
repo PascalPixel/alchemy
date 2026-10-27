@@ -280,9 +280,9 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   if (Script_GetFlag(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     FieldScript_SetMessageId(MsgValeYouMustSaveJenna);
     Script_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    Object_SetTargetAndCallback(ACTOR_ITEM_MERCHANT,
-                                ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                gCottageRoomsA_FaceTargetScript);
+    FieldActor_SetTargetAndCallback(ACTOR_ITEM_MERCHANT,
+                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                    gCottageRoomsA_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     FieldScript_SetMessageId(gift);
@@ -555,14 +555,14 @@ static inline void CottageRoomsA_FamilyNods(void) {
   Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
 /// Starts the repeated motion before waiting for the requested animation.
 static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
                                                               s32 animation) {
-  ObjectMotion_SetVariantCallback(actorId, 1);
-  ObjectMotion_SetAnimationAndWait(actorId, animation);
+  Actor_StartRepeatedMotion(actorId, 1);
+  Actor_SetAnimationAndWait(actorId, animation);
 }
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home: his
@@ -587,7 +587,7 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(ACTOR_MIA, 1);
+  Actor_SetSpritePriority(ACTOR_MIA, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -610,7 +610,7 @@ static void EventScript_GaretComesHome(void) {
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
@@ -630,45 +630,45 @@ static void EventScript_GaretComesHome(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
-  Object_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                              gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(ACTOR_GARET,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                              gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(ACTOR_IVAN,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                              gCottageRoomsA_FaceTargetScript);
-  Object_SetTargetAndCallback(ACTOR_MIA,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                              gCottageRoomsA_FaceTargetScript);
+  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  gCottageRoomsA_FaceTargetScript);
+  FieldActor_SetTargetAndCallback(ACTOR_GARET,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  gCottageRoomsA_FaceTargetScript);
+  FieldActor_SetTargetAndCallback(ACTOR_IVAN,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  gCottageRoomsA_FaceTargetScript);
+  FieldActor_SetTargetAndCallback(ACTOR_MIA,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  gCottageRoomsA_FaceTargetScript);
   FieldScript_WaitFrames(300);
-  FieldCamera_GetScriptObject()->motionFlags = motionFlags;
+  FieldCamera_GetActor()->motionFlags = motionFlags;
   // The camera pans slowly up to Garet's parents. His father, pacing, asks
   // whether they should look for Garet; Isaac still does not know about
   // Dora. His mother teases that he misses Garet.
   FieldCamera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
   FieldCamera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   FieldScript_WaitFrames(240);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_GARETS_FATHER);
+  Actor_Stop(ACTOR_GARETS_FATHER);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_WalkToAndWait(ACTOR_GARETS_FATHER, 819, 405);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 20);
   FieldScript_SetMessageId(MsgValeHey2);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 ACTOR_GARETS_FATHER,
                             0, 20);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_GARET);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_IVAN);
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_MIA);
+  Actor_Stop(ACTOR_PARTY_LEADER);
+  Actor_Stop(ACTOR_GARET);
+  Actor_Stop(ACTOR_IVAN);
+  Actor_Stop(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 ACTOR_GARETS_FATHER,
@@ -676,7 +676,7 @@ static void EventScript_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 ACTOR_GARETS_FATHER,
@@ -685,7 +685,7 @@ static void EventScript_GaretComesHome(void) {
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             40);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_FATHER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
@@ -701,31 +701,31 @@ static void EventScript_GaretComesHome(void) {
   // Garet's grandmother sees him and chokes on her words; his mother asks if
   // she is choking, his father thinks she misses Garet too.
   Actor_ShowEmote(ACTOR_GARETS_GRANDMOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 1);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 2);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 3);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 3);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                             40);
   Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_MOTHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDMOTHER, 2);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 2);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                             10);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0, 10);
   // No, it really is Garet: both parents turn and call his name together.
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
-  ObjectMotion_Launch(ACTOR_GARETS_GRANDMOTHER, 2, 0);
+  Actor_Jump(ACTOR_GARETS_GRANDMOTHER, 2, 0);
   Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                             10);
@@ -733,8 +733,8 @@ static void EventScript_GaretComesHome(void) {
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 80);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 60);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_FATHER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARETS_MOTHER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
   Script_ShowTwoMessagesAndWait(ACTOR_GARETS_FATHER, 11, 6, 6, 6,
                                 ACTOR_GARETS_MOTHER, 12, 1, 7, 1, 0);
   FieldScript_WaitFrames(20);
@@ -742,14 +742,14 @@ static void EventScript_GaretComesHome(void) {
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   // His grandfather wakes, and the sleep stops drifting.
   Task_Remove(timedUpdate);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
-                                   ANIM_GRANDFATHER_LOOK_ABOUT);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
+                            ANIM_GRANDFATHER_LOOK_ABOUT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                             20);
@@ -766,10 +766,10 @@ static void EventScript_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
-                                   ANIM_GRANDFATHER_LOOK_ABOUT);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
+                            ANIM_GRANDFATHER_LOOK_ABOUT);
   FieldScript_WaitFrames(60);
-  ObjectMotion_Launch(ACTOR_GARETS_GRANDFATHER, 6, 0);
+  Actor_Jump(ACTOR_GARETS_GRANDFATHER, 6, 0);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                             20);
   // Garet goes to him; the grandfather asks whether the Wise One's mission
@@ -777,10 +777,10 @@ static void EventScript_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_GARET, 789, 473);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Script_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 0);
@@ -792,9 +792,9 @@ static void EventScript_GaretComesHome(void) {
   }
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Script_ShowMessage(ACTOR_GARETS_FATHER, 0);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   // His mother knows he is leaving again soon; his grandparents are glad to
   // see him well.
@@ -803,20 +803,20 @@ static void EventScript_GaretComesHome(void) {
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 10);
   Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // Garet introduces his new friends.
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -826,10 +826,10 @@ static void EventScript_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -837,12 +837,12 @@ static void EventScript_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_IVAN, 819, 489);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   CottageRoomsA_FamilyNods();
   Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_MIA, 1);
+  Actor_SetSpritePriority(ACTOR_MIA, 1);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_MIA, 794, 520);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
@@ -869,10 +869,10 @@ static void EventScript_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // His father: enough chit-chat, relax and enjoy your stay.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_FATHER, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 1);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
   Script_ShowMessageAndWait(ACTOR_GARETS_FATHER, 0, 20);
@@ -883,14 +883,14 @@ static void EventScript_GaretComesHome(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   partyScript = gCottageRoomsA_PartyLeavesScript;
-  Actor_SetActionScript(ACTOR_GARET, partyScript);
-  Actor_SetActionScript(ACTOR_IVAN, partyScript);
-  Actor_RunActionScriptAndWait(ACTOR_MIA, partyScript);
-  Actor_SetActionScript(ACTOR_GARETS_FATHER, gCottageRoomsA_FatherPacingScript);
+  Actor_SetScript(ACTOR_GARET, partyScript);
+  Actor_SetScript(ACTOR_IVAN, partyScript);
+  Actor_RunScriptAndWait(ACTOR_MIA, partyScript);
+  Actor_SetScript(ACTOR_GARETS_FATHER, gCottageRoomsA_FatherPacingScript);
   Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 837, 376);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_NORTH + FACING_STEP, 20);
   GameFlag_Set(FLAG_GARET_CAME_HOME);
@@ -941,7 +941,7 @@ static void CottageRoomsA_SpawnSleepZ(void) {
     actor->timer = 25;      // 25/256 pixel per frame.
     actor->userValue = 128; // 1/2 pixel per frame.
   }
-  Actor_SetActionScript(actorId, gCottageRoomsA_SleepZScript);
+  Actor_SetScript(actorId, gCottageRoomsA_SleepZScript);
 }
 
 s32 gCottageRoomsA_FaceTargetScript[] = {

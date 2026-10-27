@@ -113,7 +113,7 @@ enum SpriteId {
   SPRITE_LOG_NORTH_SOUTH = 0xcd,
   /// ★ Named from what the player sees: a log lying west to east (its render)
   SPRITE_LOG_WEST_EAST = 0xcf,
-  /// The effect FieldEffect_ConfigureLinkedObject attaches to an actor
+  /// The effect FieldEffect_SetAttached attaches to an actor
   /// or shows
   /// once, as the leader flinches on hazard ground.
   SPRITE_ATTACHED_EFFECT = 209,
@@ -183,7 +183,7 @@ enum SpriteId {
   SPRITE_PUDDLE = 0xe3,
   /// Isaac's tunic: placed beside his bed on the stormy night, and drawn as a
   /// second layer over the child sprites of Isaac and Garet while
-  /// FLAG_ISAAC_WEARS_TUNIC is set (Object_RegisterSpriteMetadata).
+  /// FLAG_ISAAC_WEARS_TUNIC is set (Actor_RegisterSpriteMetadata).
   /// ★ Named from the game: "Don't go out without your tunic!"
   /// (MsgValeComeOnHurry)
   SPRITE_TUNIC = 0xe2,

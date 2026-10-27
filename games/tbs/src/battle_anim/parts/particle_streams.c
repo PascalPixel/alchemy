@@ -413,18 +413,18 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
         scale.y = size;
         position.x = (x << 16) + 0x500000;
         position.y = (64 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->animations[0], &position,
-                                          &scale, 0);
-        Object_ApplyProjectedPlacementFar(work->animations[1], &position,
-                                          &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                         0);
+        Actor_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
+                                         0);
       } else {
         size = angle + 0x10000;
         scale.x = size;
         scale.y = size;
         position.x = (x << 16) + 0x600000;
         position.y = (96 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->animations[0], &position,
-                                          &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                         0);
       }
       // A new mote rises from a random point on the lower half of a circle
       // of radius 30 * size beneath the formation.
@@ -680,17 +680,17 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       scale.y = size;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
-                                        0);
-      Object_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
-                                        0);
+      Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                       0);
+      Actor_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
+                                       0);
     } else {
       scale.x = grow;
       scale.y = grow;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
-                                        0);
+      Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                       0);
     }
     work->shakeFrames = 1;
     BattleCamera_Shake(8, 8);

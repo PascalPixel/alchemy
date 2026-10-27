@@ -134,8 +134,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->gravity = 0xab85;
       actor->steeringFlags = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
-      Object_SelectAnimationFar(actor, POSE_LEAP);
+      Actor_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
+      Actor_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
       Sound_PlaySongFar(SE_WHOOSH);
@@ -151,7 +151,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z.fixed = target->z.fixed;
-      Object_StartIdleFar(actor);
+      Actor_StartIdleFar(actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes

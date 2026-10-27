@@ -134,7 +134,7 @@ next_page:
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryObjectsFar(partyWindow, 2, 0, 8, 0);
+  PsynergyMenu_InitializeEntryActorsFar(partyWindow, 2, 0, 8, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = 1;
 
@@ -215,7 +215,7 @@ next_page:
     WaitFrames(1);
   }
 
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleaseEntryActorsFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   WaitFrames(1);

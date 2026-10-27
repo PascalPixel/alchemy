@@ -8,9 +8,9 @@
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
-	.set import.Actor_DestroyById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_CenterOnColumn, 1
+	.set import.Actor_ReleaseById, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_CenterOnColumn, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1

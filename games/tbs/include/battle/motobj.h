@@ -2,7 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 /// @file
-/// BattleSpriteObject, the view of struct Actor one battle function gives a
+/// BattleActor, the view of struct Actor one battle function gives a
 /// unit its sprites through, and SpriteAnimHeadView, the start of a sprite
 /// anim.
 
@@ -20,7 +20,7 @@ union ActorOrEffect;
 /// struct Sprite pointer, the store of a two-part enemy's sprite list moves
 /// after the next store, and a view that pads the fields it does not read
 /// with bytes moves it too (MATCHING.md).
-struct BattleSpriteObject {
+struct BattleActor {
   const s32 *script;
   u16 scriptCursor;
   u16 facing;
@@ -62,7 +62,7 @@ struct BattleSpriteObject {
   u8 riseEnabled;
   s16 timer;
   u16 userValue;
-  struct BattleSpriteObject *linkedActor;
+  struct BattleActor *linkedActor;
   void (*update)(union ActorOrEffect *fieldObject);
 };
 
@@ -83,15 +83,15 @@ struct SpriteAnimHeadView {
   u8 priority;
 };
 
-STATIC_ASSERT(sizeof(struct BattleSpriteObject) == 0x70);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, scaleX) == 0x18);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, x) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, velocityX) == 0x24);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, targetX) == 0x38);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, spriteStorageKind) == 0x54);
-STATIC_ASSERT(offsetof(struct BattleSpriteObject, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct BattleActor) == 0x70);
+STATIC_ASSERT(offsetof(struct BattleActor, scaleX) == 0x18);
+STATIC_ASSERT(offsetof(struct BattleActor, x) == 0x08);
+STATIC_ASSERT(offsetof(struct BattleActor, velocityX) == 0x24);
+STATIC_ASSERT(offsetof(struct BattleActor, targetX) == 0x38);
+STATIC_ASSERT(offsetof(struct BattleActor, motionFlags) == 0x55);
+STATIC_ASSERT(offsetof(struct BattleActor, sprite) == 0x50);
+STATIC_ASSERT(offsetof(struct BattleActor, spriteStorageKind) == 0x54);
+STATIC_ASSERT(offsetof(struct BattleActor, update) == 0x6c);
 STATIC_ASSERT(sizeof(struct SpriteAnimHeadView) == 0x08);
 STATIC_ASSERT(offsetof(struct SpriteAnimHeadView, palette) == 0x05);
 STATIC_ASSERT(offsetof(struct SpriteAnimHeadView, priority) == 0x06);

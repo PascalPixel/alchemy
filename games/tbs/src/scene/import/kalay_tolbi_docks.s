@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
 	.set import.Text_DrawMessageAsTiles, 1
@@ -20,29 +20,29 @@
 	.set import.PartyInventory_GiveItem, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.ObjectMotion_ResetAndSetPosition, 1
-	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetMovementTypeById, 1
+	.set import.Actor_ResetAndSetPosition, 1
+	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_Launch, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_Jump, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_RunRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.FieldEffect_SpawnLinked, 1
-	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
+	.set import.FieldEffect_SpawnAttached, 1
+	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Import_ScriptRequestExit, 1
@@ -50,8 +50,8 @@
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.ObjectMotion_LaunchFromFocusedObject, 1
-	.set import.ObjectMotion_OffsetPositionAndReset, 1
-	.set import.ObjectMotion_CommitPositionAndActivate, 1
+	.set import.Actor_LaunchFromLeader, 1
+	.set import.Actor_OffsetPositionAndReset, 1
+	.set import.Actor_CommitPositionAndActivate, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

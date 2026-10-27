@@ -180,7 +180,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
-  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
+  Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
   Sound_PlaySong(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -197,7 +197,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   }
   stump->velocityY = PIXELS(5);
   Actor_SetDestination(stumpId, 346, 292);
-  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
+  Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
@@ -223,17 +223,17 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

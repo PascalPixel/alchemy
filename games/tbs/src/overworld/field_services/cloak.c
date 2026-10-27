@@ -32,7 +32,7 @@ void FieldEffect_CheckCloakTile(void) {
   slot = (u32)&gFieldWork;
 #endif
   work = gFieldWork;
-  leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  leader = Actor_Lookup(gSaveBlock.leaderActorId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
@@ -42,7 +42,7 @@ void FieldEffect_CheckCloakTile(void) {
 #endif
 
   // Whole metatiles or cells, rounded toward zero as a division would be.
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
@@ -95,13 +95,13 @@ void FieldEffect_EndCloak(void) {
   struct SpriteAnim *entry;
   u32 i;
 
-  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  object = Actor_Lookup(gSaveBlock.leaderActorId);
   animation = object->sprite;
   entry = animation->entries[0];
 
   Sound_PlaySongFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
-  Object_SelectAnimationFar(object, 0);
+  Actor_SelectAnimationFar(object, 0);
   object->update = 0;
 
   for (i = 0; i < 5; ++i) {
@@ -147,14 +147,14 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
-  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   struct Sprite *animation = leader->sprite;
   struct SpriteAnim *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 
   Sound_PlaySongFar(SE_PSYNERGY_START);
-  Object_SelectAnimationFar(leader, 0);
+  Actor_SelectAnimationFar(leader, 0);
   leader->update = 0;
   n = 0;
   do {

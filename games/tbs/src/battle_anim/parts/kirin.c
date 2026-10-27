@@ -198,8 +198,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       do {
         place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
         place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
-        Object_ApplyProjectedPlacementFar(work->animations[i], &place, &pair,
-                                          0);
+        Actor_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
         i++;
       } while (i != KIRIN_OBJECTS);
     }
@@ -367,8 +366,8 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
         do {
           risePlace.x = (rowX + gKirin_Columns[i]) << 16;
           risePlace.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
-          Object_ApplyProjectedPlacementFar(work->animations[i], &risePlace,
-                                            &riseScaleCopy, 0);
+          Actor_ApplyProjectedPlacementFar(work->animations[i], &risePlace,
+                                           &riseScaleCopy, 0);
           i++;
         } while (i != KIRIN_OBJECTS);
       }

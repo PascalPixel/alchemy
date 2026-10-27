@@ -32,12 +32,12 @@
 /// colour 1 and fill colour 4. His position and facing are kept for
 /// Colosso_RestoreWarrior.
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct Actor *actor;
   struct Sprite *sprite;
   s32 i;
 
-  system = gObjectSystemWork;
+  system = gActorSystemWork;
   actor = Actor_GetById(id);
   system->edge = 1;
   system->fill = 4;
@@ -45,16 +45,16 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   gColosso_WarriorStartZ = actor->z.fixed;
   sprite = (struct Sprite *)actor->sprite;
   gColosso_WarriorStartAngle = actor->facing;
-  ObjectMotion_SetActionVariant(id, 2);
+  Actor_SetSpritePriority(id, 2);
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor->facing = FACING_SOUTH;
   Actor_SetSpriteFlags(actor, 3);
-  Object_SelectAnimation(actor, 0);
-  Object_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, 0);
+  Actor_SelectAnimation(actor, 1);
   Import_ActorSetPosition(id, x << 16, z << 16);
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
-  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_SetAngleToward(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
@@ -79,7 +79,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   FieldScript_WaitFrames(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
-  ObjectMotion_SetAnimationAndWait(id, 3);
+  Actor_SetAnimationAndWait(id, 3);
   FieldScript_WaitFrames(20);
 }
 
@@ -88,12 +88,12 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 /// position and facing with his motion stopped, and the outline colours are
 /// the field's again (edge 15, fill 0).
 void Colosso_RestoreWarrior(s32 id) {
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct Actor *actor;
   s32 zero;
   u8 *control;
 
-  system = gObjectSystemWork;
+  system = gActorSystemWork;
   actor = Actor_GetById(id);
   if (gSaveBlock.movementMode == 1) {
     gSaveBlock.movementMode = 0;
@@ -110,8 +110,8 @@ void Colosso_RestoreWarrior(s32 id) {
   // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
   // reference.
   control = (u8 *)system;
-  control[offsetof(struct ObjectSystemWork, fill)] = zero;
-  control[offsetof(struct ObjectSystemWork, edge)] = 15;
+  control[offsetof(struct ActorSystemWork, fill)] = zero;
+  control[offsetof(struct ActorSystemWork, edge)] = 15;
   actor->x.fixed = gColosso_WarriorStartX;
   actor->z.fixed = gColosso_WarriorStartZ;
   actor->facing = gColosso_WarriorStartAngle;
@@ -124,8 +124,8 @@ void Colosso_RestoreWarrior(s32 id) {
   actor->y.fixed = zero;
   (actor)->groundHeight = zero;
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Object_SelectAnimation(actor, 0);
-  Object_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, 0);
+  Actor_SelectAnimation(actor, 1);
   WaitFrames(1);
 }
 
@@ -133,7 +133,7 @@ void Colosso_RestoreWarrior(s32 id) {
 void Actor_ResetMotionFields(s32 actorId) {
   struct Actor *o = Actor_GetById(actorId);
 
-  Object_StartIdle(o);
+  Actor_StartIdle(o);
   o->velocityX = 0;
   o->velocityZ = 0;
   o->targetX = ACTOR_NO_TARGET;
@@ -257,7 +257,7 @@ void Colosso_HidePointer(void) {
 /// Walks the actor at 2 pixels a frame towards pixel (x, z) and returns
 /// at once.
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
-  struct Actor *actor = Actor_GetByActorId(actorId);
+  struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
     s32 speed = 0x20000;
@@ -266,16 +266,16 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
     actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    Object_StartIdle(actor);
-    Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_StartIdle(actor);
+    Actor_SelectAnimation(actor, 5);
+    Actor_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
   }
 }
 
 /// Walks the actor at 1.25 pixels a frame to pixel (x, z), waits until
 /// it arrives and stands it there.
 void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
-  struct Actor *actor = Actor_GetByActorId(actorId);
+  struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
     s32 speed = 0x14000;
@@ -284,10 +284,10 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
     actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    Object_StartIdle(actor);
-    Object_SelectAnimation(actor, 5);
-    Object_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
-    Object_WaitForMove(actor);
-    Object_SelectAnimation(actor, 1);
+    Actor_StartIdle(actor);
+    Actor_SelectAnimation(actor, 5);
+    Actor_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_WaitForMove(actor);
+    Actor_SelectAnimation(actor, 1);
   }
 }

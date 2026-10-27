@@ -53,8 +53,9 @@ static inline void FieldMessage_DecodeRawUnbounded(s32 message, u16 *buffer) {
   Message_DecodeRawUnbounded(message, buffer);
 }
 
-static inline void Field_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
-  MapGrid_SetViewBounds(minX, minY, maxX, maxY);
+static inline void Field_SetCameraBounds(s32 minX, s32 minY, s32 maxX,
+                                         s32 maxY) {
+  MapGrid_SetCameraBounds(minX, minY, maxX, maxY);
 }
 
 static inline void FieldActor_JumpDownLedge(s32 actorId, s32 mode, s32 action) {
@@ -62,8 +63,8 @@ static inline void FieldActor_JumpDownLedge(s32 actorId, s32 mode, s32 action) {
 }
 
 static inline s32
-FieldObject_CheckMovementCollision(struct Actor *actor,
-                                   struct FieldPosition *position) {
+FieldActor_CheckMovementCollision(struct Actor *actor,
+                                  struct FieldPosition *position) {
   return MapGrid_CheckCollision(actor, position);
 }
 

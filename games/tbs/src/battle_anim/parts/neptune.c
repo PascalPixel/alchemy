@@ -249,7 +249,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
             (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
         pos.y =
             (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
-        Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &scale, 0);
       }
     }
 

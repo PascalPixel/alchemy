@@ -13,7 +13,7 @@
 static void Vault_FindBone(void) {
   FieldScript_Start();
   if (PartyInventory_HasSpace() == 0) {
-    ObjectMotion_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
     FieldScript_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);

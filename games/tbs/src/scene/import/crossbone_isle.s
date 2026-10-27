@@ -10,16 +10,16 @@
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
@@ -29,15 +29,15 @@
 	.set import.FieldScript_End, 1
 	.set import.PartyInventory_GiveItem, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_CenterOnColumn, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_CenterOnColumn, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.Actor_SetSpritePriority, 1
 	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1

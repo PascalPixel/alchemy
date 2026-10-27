@@ -137,25 +137,25 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void EventScript_LeaderSilencesThieves(void) {
   FieldScript_Start();
 
-  ObjectMotion_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
+  Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
   FieldScript_WaitFrames(40);
 
-  ObjectMotion_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
+  Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
   FieldScript_WaitFrames(40);
 
   // "Shut yer yaps!"; the two thieves start.
   FieldScript_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
   FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
-  ObjectMotion_SetVariantCallback(ACTOR_LEFT_THIEF, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_RIGHT_THIEF, 2);
+  Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
+  Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
   FieldScript_WaitFrames(20);
 
   // Turn from the two thieves to the party for the remaining dialogue.
   Actor_LinkPair(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_THIEF_LEADER, 1);
+  Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
   FieldScript_WaitFrames(20);
 
   FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
@@ -170,7 +170,7 @@ static void EventScript_LeaderSilencesThieves(void) {
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_LeftThiefRegretsEscape(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_LEFT_THIEF, 2);
+  Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgVaultLeftThiefRegretsEscape);
   FieldScript_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
@@ -184,7 +184,7 @@ static void EventScript_LeftThiefRegretsEscape(void) {
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_RightThiefRegretsStaying(void) {
   FieldScript_Start();
-  ObjectMotion_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgVaultRightThiefRegretsStaying);
   FieldScript_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);

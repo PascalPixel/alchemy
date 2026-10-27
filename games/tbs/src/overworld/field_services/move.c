@@ -49,7 +49,7 @@ void FieldEffect_UpdateItemBreakFragment(union ActorOrEffect *fieldObject) {
   radius <<= 4;
   Vector_AddPolarOffset(radius, Random16(), &position);
 
-  fragment = Object_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  fragment = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
@@ -93,7 +93,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     return;
   FieldEffect_FadeToEffectColor();
   user->linkedActor = target;
-  Object_InitializeFar(user, gFieldEffect_SourceHoldScript);
+  Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_StartItemBreak(user);
   if (pusher == NULL) {
     FieldEffect_FadeFromEffectColor();
@@ -106,7 +106,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   Vector_AddPolarOffset(16 << 16, angle, candidate);
-  Object_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
+  Actor_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
   FieldEffect_SnapScaleToFull(pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
@@ -114,7 +114,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   pusher->speedLimit = 4 << 16;
   pusher->acceleration = 0x8000;
   pusher->motionFlags = ACTOR_FLOATS;
-  target->update = Object_CycleSpriteColors;
+  target->update = Actor_CycleSpriteColors;
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
@@ -132,8 +132,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       position.y = target->y.fixed + (16 << 16);
       position.z = target->z.fixed;
       Vector_AddPolarOffset(16 << 16, angle, &position);
-      Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-      Object_SelectAnimationFar(pusher, 1);
+      Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+      Actor_SelectAnimationFar(pusher, 1);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
     }
@@ -145,8 +145,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     position.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &position);
     Vector_AddPolarOffset(2 << 16, direction, &position);
-    Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-    Object_WaitForMoveFar(pusher);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+    Actor_WaitForMoveFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
     position.z = target->z.fixed;
@@ -159,15 +159,15 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     // level ground or a drop does not.
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&position) >
         0) {
-      Object_SelectAnimationFar(pusher, 4);
+      Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ObjectScript_FindOverlappingEntryFar(target, (s32 *)candidate);
+    hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
-        Object_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
@@ -180,7 +180,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       cellZ = user->z.fixed & MOVE_CELL_MASK;
       if (cellX == (candidate->x & MOVE_CELL_MASK) &&
           cellZ == (candidate->z & MOVE_CELL_MASK)) {
-        Object_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
@@ -190,7 +190,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
         // The caster can be pushed only onto flat ground.
         if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
-          Object_SelectAnimationFar(pusher, 4);
+          Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlaySongFar(SE_MENU_ERROR);
           continue;
@@ -206,27 +206,27 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Sound_PlaySongFar(SE_NOTE_HIGH);
     x = position.x;
     z = position.z;
-    Object_SelectAnimationFar(
+    Actor_SelectAnimationFar(
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
     target->paused = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTargetFar(target, position.x, position.y, position.z);
+    Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
     Vector_AddPolarOffset(16 << 16, direction, &position);
-    Object_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
-                            position.z);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
+                           position.z);
     if (moved == 1) {
       Actor_GetById(effectWork->firstObjectId)->steeringFlags &= 0xfe;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
-      Object_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
+      Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     // Land exactly on the cell, whatever the braking left.
-    Object_WaitForMoveFar(target);
+    Actor_WaitForMoveFar(target);
     target->x.fixed = x;
     target->z.fixed = z;
     target->velocityX = 0;
@@ -236,7 +236,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 
   // Restore the target's colours, script and update, and remove the hand.
   Anim_ApplyChildValuesFar(target, effectWork->savedPalette);
-  Object_InitializeFar(target, effectWork->savedScript);
+  Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
   FieldEffect_StopCasterHook();
   if (moved == 1)
@@ -318,7 +318,7 @@ void FieldEffect_RunMove(void) {
   object = FieldEffect_StartItemBreak(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
-    Object_SelectAnimationFar(object, 4);
+    Actor_SelectAnimationFar(object, 4);
     WaitFrames(30);
   }
   FieldEffect_FadeFromEffectColor();
@@ -328,7 +328,7 @@ void FieldEffect_RunMove(void) {
 /// Spawns Move's hand (object 215) 16 pixels above object, at quarter size,
 /// and moves it 16 pixels the way object faces (to the nearest quarter
 /// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
-/// spawned (Object_Spawn); the caller releases it (UpdateRisingParticleBurst).
+/// spawned (Actor_Spawn); the caller releases it (UpdateRisingParticleBurst).
 void *FieldEffect_StartItemBreak(void *object) {
   struct Actor *source = object;
   struct Actor *parent;
@@ -341,8 +341,8 @@ void *FieldEffect_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->facing + 0x2000) & 0xc000; // to the nearest quarter turn
-  parent = Object_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
-                        source->y.fixed + (16 << 16), source->z.fixed);
+  parent = Actor_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
+                       source->y.fixed + (16 << 16), source->z.fixed);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
@@ -351,16 +351,16 @@ void *FieldEffect_StartItemBreak(void *object) {
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
-  Object_SelectAnimationFar(parent, 3);
-  ObjectMotion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
+  Actor_SelectAnimationFar(parent, 3);
+  Actor_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Object_Spawn(SPRITE_SPARKLE, source->x.fixed,
-                         source->y.fixed + (16 << 16), source->z.fixed);
+    child = Actor_Spawn(SPRITE_SPARKLE, source->x.fixed,
+                        source->y.fixed + (16 << 16), source->z.fixed);
     if (child != 0) {
-      Object_InitializeFar(child, gFieldEffect_FragmentScript);
+      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
@@ -370,7 +370,7 @@ void *FieldEffect_StartItemBreak(void *object) {
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
-      ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+      Actor_SetTargetPositionFromMagnitudeAngle(
           child, radius, ((jitter - Random16()) >> 3) + source->facing);
     }
   }
@@ -396,7 +396,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *object) {
       object->scaleX = next;
       object->scaleY = next;
     }
-    Object_WaitForMoveFar(object);
+    Actor_WaitForMoveFar(object);
   }
 }
 
@@ -421,7 +421,7 @@ void UpdateRisingParticleBurst(void *object) {
   }
   for (i = 7; i >= 0; i--) {
     child =
-        Object_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
+        Actor_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
@@ -429,7 +429,7 @@ void UpdateRisingParticleBurst(void *object) {
        * uses, 24 of 93 instructions differ in tbs-en. */
       s32 unit = Q16_ONE;
 
-      Object_InitializeFar(child, gFieldEffect_FragmentScript);
+      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;
@@ -439,11 +439,11 @@ void UpdateRisingParticleBurst(void *object) {
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
       dist += 8 << 16;
-      ObjectMotion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
-  Object_ReleaseFar(src);
+  Actor_ReleaseFar(src);
 }
 
 #undef MOVE_CELL_MASK

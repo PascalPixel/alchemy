@@ -121,7 +121,7 @@ void FieldEffect_UpdateMindReadWave(void) {
           (s16)Scene_FindActorTemplate(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = Object_CreateFar(281, to.x, to.y, to.z);
+      particle = Actor_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
@@ -132,7 +132,7 @@ void FieldEffect_UpdateMindReadWave(void) {
         // No shadow or outline, sprite priority 1.
         sprite->flags = 0;
         sprite->priority = 1;
-        Object_SetMoveTargetFar(particle, from.x, from.y, from.z);
+        Actor_SetMoveTargetFar(particle, from.x, from.y, from.z);
       }
     }
   }
@@ -235,7 +235,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 }
 
 /// Per-frame update: once the object has arrived (no destination left on any
-/// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
+/// axis), frees it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
   struct Actor *object = (struct Actor *)fieldObject;
@@ -247,7 +247,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
-      Object_InitializeFar(object, gFieldEffect_UntargetedObjectScript);
+      Actor_StartScriptFar(object, gFieldEffect_UntargetedActorScript);
     }
   }
 }

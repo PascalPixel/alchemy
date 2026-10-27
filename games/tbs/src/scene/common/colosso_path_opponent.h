@@ -58,7 +58,7 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      Object_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, 1);
       if (work->gauge.finishX < actor->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
@@ -74,9 +74,9 @@ static void Colosso_UpdatePathOpponent(void) {
       actor->timer = *itemActorId;
       actor->acceleration = 0x4000;
       actor->speedLimit = 0x10000;
-      Object_SetPosition(actor, x, 0, fz);
+      FieldActor_SetMoveTarget(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
-      Actor_SetScript(actor, gColosso_OpponentFinishScript);
+      Actor_StartScript(actor, gColosso_OpponentFinishScript);
       return;
     }
     x <<= 16;
@@ -103,9 +103,9 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->still++;
     }
     if (rec->still > 2) {
-      Object_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, 1);
     } else {
-      Object_SelectAnimation(actor, 5);
+      Actor_SelectAnimation(actor, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = actor->x.part.pixel;
@@ -214,7 +214,7 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    actor = Actor_GetByActorId(gauge->opponentActorId);
+    actor = Actor_Lookup(gauge->opponentActorId);
     if (actor != 0) {
       x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
@@ -226,7 +226,7 @@ static void Colosso_DrawGauge(void) {
       *dst++ = (tile + 12) | 0xe400;
       Oam_AddSpriteAtDepth(entry++, 255);
     }
-    actor = Actor_GetByActorId(gauge->playerActorId);
+    actor = Actor_Lookup(gauge->playerActorId);
     if (actor != 0) {
       x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;

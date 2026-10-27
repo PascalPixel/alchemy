@@ -35,7 +35,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  Actor_GetByActorId(gSaveBlock.leaderActorId);
+  Actor_Lookup(gSaveBlock.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -47,7 +47,7 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
     PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
   }
@@ -118,11 +118,11 @@ s32 Field_UsePsynergy(u32 code) {
     GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
 
   // Play the effect.
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, target);
+  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, target);
   FieldEffect_StartCast();
 
   Field_RunEventAction(before, userId, target);
@@ -140,7 +140,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
   work->psynergyActing = 0;
   FieldEffect_End();
-  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_Respawn();
   return 0;
 }

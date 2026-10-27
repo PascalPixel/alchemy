@@ -395,7 +395,7 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_FIRST_PLANT);
       if (actor != 0) {
         actor->collisionFlags = 0;
-        Object_SelectAnimation(actor, 4);
+        Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
@@ -404,7 +404,7 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
       if (actor != 0) {
         actor->collisionFlags = 0;
-        Object_SelectAnimation(actor, 4);
+        Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
@@ -413,7 +413,7 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
       if (actor != 0) {
         actor->collisionFlags = 0;
-        Object_SelectAnimation(actor, 4);
+        Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
@@ -422,7 +422,7 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
       if (actor != 0) {
         actor->collisionFlags = 0;
-        Object_SelectAnimation(actor, 4);
+        Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), MB_CLIMB);
@@ -470,7 +470,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
     Actor_SetPosition(ACTOR_SINKING_PILLAR, PIXELS(650), PIXELS(168));
     actor->y.fixed = -PIXELS(32);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
-    ObjectMotion_SetActionVariant(ACTOR_SINKING_PILLAR, 3);
+    Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
     actor->motionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(42, 10, 1, 1, 40, 10);
@@ -516,7 +516,7 @@ static void EventScript_MovePillar(void) {
   FieldScript_WaitFrames(40);
 
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SINKING_PILLAR), 0);
-  ObjectMotion_SetActionVariant(ACTOR_SINKING_PILLAR, 3);
+  Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
 
   pillar->motionFlags = 0;
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -536,7 +536,7 @@ static void EventScript_MovePillar(void) {
 /// 20): push it a step.
 static void EventScript_PushPillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
   EventScript_MovePillar();
 }
@@ -755,10 +755,10 @@ static void CrossboneIsle_RestoreIvy(void) {
 /// Walking into one of Crossbone Isle's two logs: push it if the cell beyond
 /// is clear.
 static void EventScript_PushIsleLog(void) {
-  struct PushedObjectProbe probe;
+  struct PushedActorProbe probe;
 
   FieldScript_Start();
-  if (PushedObject_FindClearPosition(&probe) != 0) {
+  if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
   }
   FieldScript_End();
@@ -783,10 +783,11 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
     selectedActor->speedLimit = PIXELS(1);
     selectedActor->acceleration = PIXELS(1) / 2;
-    Object_SetPosition(selectedActor, fixedX, selectedActor->y.fixed, fixedZ);
+    FieldActor_SetMoveTarget(selectedActor, fixedX, selectedActor->y.fixed,
+                             fixedZ);
   }
   // Position the log on the same cell-center grid as the selected actor.
-  Object_SelectAnimation(selectedActor, 27);
+  Actor_SelectAnimation(selectedActor, 27);
   {
     fixedX =
         ((logActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) + PIXELS(8);
@@ -795,16 +796,16 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
     logActor->speedLimit = PIXELS(1);
     logActor->acceleration = PIXELS(1) / 2;
-    Object_SetPosition(logActor, fixedX, logActor->y.fixed, fixedZ);
+    FieldActor_SetMoveTarget(logActor, fixedX, logActor->y.fixed, fixedZ);
   }
   // The log's mode depends on which side of the grid it moves toward.
   if (xOffset < 0 || zOffset < 0) {
-    Object_SelectAnimation(logActor, 4);
+    Actor_SelectAnimation(logActor, 4);
   } else {
-    Object_SelectAnimation(logActor, 3);
+    Actor_SelectAnimation(logActor, 3);
   }
   Sound_PlaySong(SE_LOG_PUSH);
-  Object_WaitForMove(selectedActor);
+  Actor_WaitForMove(selectedActor);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_End();
 }
@@ -819,7 +820,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
   if (actor != 0) {
     s32 priorityFlags;
 
-    ObjectMotion_SetActionVariant(actorId, 3);
+    Actor_SetSpritePriority(actorId, 3);
     priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     priorityFlags |= actor->priorityFlags;
     actor->priorityFlags = priorityFlags;
@@ -841,7 +842,7 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
   if (actor != 0) {
     s32 priorityFlags;
 
-    ObjectMotion_SetActionVariant(actorId, 3);
+    Actor_SetSpritePriority(actorId, 3);
     priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     priorityFlags |= actor->priorityFlags;
     actor->priorityFlags = priorityFlags;
@@ -960,17 +961,17 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     Vector_AddPolarOffset(PIXELS(32), direction, &destination);
   }
   // Keep the original motion flags while playing the leader's push step.
-  if (FieldObject_CheckMovementCollision(actor, &destination) == 0) {
+  if (FieldActor_CheckMovementCollision(actor, &destination) == 0) {
 #else
-  if (FieldObject_CheckMovementCollision(actor, requested) == 0) {
+  if (FieldActor_CheckMovementCollision(actor, requested) == 0) {
 #endif
     s32 movingFlags;
 
     FieldScript_Start();
-    Object_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    Object_SelectAnimation(actor, 7);
+    Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
     actor->velocityY = PIXELS(4);
@@ -985,10 +986,10 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
       s16 *pixelCoordinates = (s16 *)requested;
 #endif
 
-      ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER, pixelCoordinates[1],
-                                        pixelCoordinates[5]);
+      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pixelCoordinates[1],
+                                 pixelCoordinates[5]);
     }
-    Object_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, 6);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
     FieldScript_End();
@@ -2041,7 +2042,7 @@ static void EventScript_SlideNinthLogEast(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -2051,11 +2052,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -2070,7 +2071,7 @@ s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
@@ -2079,7 +2080,7 @@ s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
@@ -2088,7 +2089,7 @@ s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u16 gCrossboneIsle_EntranceCells[] = {

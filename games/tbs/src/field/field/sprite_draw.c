@@ -19,13 +19,13 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
 /// and Render_PlaceProjectedSprite. Writes the anims' script position,
 /// timer and frame, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
-/// and the ObjectSystemWork's count of bytes composed; takes heap slot
+/// and the ActorSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
 s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   SpriteDrawFn decodeFrame;
   s32 decoderWasLoaded;
   struct SpriteAnim *layer;
@@ -46,17 +46,17 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   // The object system's work and the frame decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
-  system = gObjectSystemWork;
+  system = gActorSystemWork;
   decoderWasLoaded = 1;
-  // UB: gObjectSystemWork is one pointer, not an array reaching the decoder
+  // UB: gActorSystemWork is one pointer, not an array reaching the decoder
   // cell. The native form derives both cell addresses from this one base; using
   // HEAP_SLOT_BLOCK directly changes allocation and adds a literal-pool entry.
 #ifdef UBFIX
   decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
   decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
-                               gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                  HEAP_SLOT_OBJECT_SYSTEM];
+                               gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                 HEAP_SLOT_ACTOR_SYSTEM];
 #endif
   if (decodeFrame == 0) {
     code =
@@ -69,8 +69,8 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
     decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
-                                 gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                    HEAP_SLOT_OBJECT_SYSTEM];
+                                 gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                   HEAP_SLOT_ACTOR_SYSTEM];
 #endif
     decoderWasLoaded = 0;
   }
@@ -380,8 +380,8 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 /// has one) and then the image in a draw slot by depth; an object 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
 ///
-/// Called by ObjectSystem_PlaceSprites for each one-sprite object on a
-/// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
+/// Called by ActorSystem_PlaceSprites for each one-sprite object on a
+/// layered map, by the sprite viewer, and as Actor_ApplyProjectedPlacementFar
 /// by the battle animations, the Psynergy effects and the menus.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
@@ -477,9 +477,9 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
 ///
-/// Called by ObjectSystem_ProjectSprites for each object on the world map
+/// Called by ActorSystem_ProjectSprites for each object on the world map
 /// and in the battle; while a menu suspends projection
-/// (ObjectSystemWork.suspended) every sprite is treated as off screen.
+/// (ActorSystemWork.suspended) every sprite is treated as off screen.
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth) {
   s32 flip;
@@ -500,7 +500,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
-  if (gObjectSystemWork->suspended == 0) {
+  if (gActorSystemWork->suspended == 0) {
     z = Transform_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {

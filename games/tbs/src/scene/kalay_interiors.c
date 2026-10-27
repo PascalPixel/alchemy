@@ -337,7 +337,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   FieldScript_Start();
 
   // Prevent idle movement while the doorway cells are animated.
-  for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_SLOT; slot++) {
+  for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_ID; slot++) {
     struct Actor *actor = Actor_GetById(slot);
 
     if (actor != 0) {
@@ -371,13 +371,13 @@ static void KalayInteriors_OpenDoorAndExit(void) {
     MapGrid_AnimateCells(gKalayInteriors_DoorCells[doorIndex].steps, x, y);
   }
 
-  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
+  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;
 
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  ObjectMotion_CenterOnColumn(ACTOR_PARTY_LEADER, 3, -8);
+  Actor_CenterOnColumn(ACTOR_PARTY_LEADER, 3, -8);
   FieldScript_WaitFrames(10);
 
   Import_ScriptRequestExit(work->stepTrigger);
@@ -421,23 +421,23 @@ static void KalayInteriors_ApplyRoomState(void) {
   case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
   case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
     if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Actor_DestroyById(ACTOR_FIRST_TOURIST);
-      Actor_DestroyById(ACTOR_SECOND_TOURIST);
-      Actor_DestroyById(ACTOR_TOUR_GUIDE);
-      Actor_DestroyById(ACTOR_SECOND_TOUR_GUIDE);
-      Actor_DestroyById(ACTOR_THIRD_TOURIST);
-      Actor_DestroyById(ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO);
-      Actor_DestroyById(ACTOR_OURANOS);
-      Actor_DestroyById(ACTOR_SEAN);
-      Actor_DestroyById(ACTOR_FOURTH_TOURIST);
+      Actor_ReleaseById(ACTOR_FIRST_TOURIST);
+      Actor_ReleaseById(ACTOR_SECOND_TOURIST);
+      Actor_ReleaseById(ACTOR_TOUR_GUIDE);
+      Actor_ReleaseById(ACTOR_SECOND_TOUR_GUIDE);
+      Actor_ReleaseById(ACTOR_THIRD_TOURIST);
+      Actor_ReleaseById(ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO);
+      Actor_ReleaseById(ACTOR_OURANOS);
+      Actor_ReleaseById(ACTOR_SEAN);
+      Actor_ReleaseById(ACTOR_FOURTH_TOURIST);
     } else {
       Actor_ConfigureSpriteColor(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
     }
     return;
   default:
     if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Actor_DestroyById(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
-      Actor_DestroyById(ACTOR_WOMAN_BOUND_FOR_THE_TOUR);
+      Actor_ReleaseById(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
+      Actor_ReleaseById(ACTOR_WOMAN_BOUND_FOR_THE_TOUR);
     }
     break;
   }

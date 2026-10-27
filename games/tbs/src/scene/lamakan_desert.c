@@ -448,7 +448,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// Manticore starts its battle, which returns the party to
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void LamakanDesert_FightManticore(void) {
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MANTICORE, 2);
+  Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
   FieldScript_SetNextDestination(
       (s32)&SceneId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
@@ -617,7 +617,7 @@ static void LamakanDesert_BatheInOasis(void) {
     const struct LamakanDesertOasis *spot =
         (const struct LamakanDesertOasis *)&points[nearest];
 
-    Object_SetPosition(actor, spot->x, 0, spot->z);
+    FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Script_PlaySong(SE_JUMP);
@@ -779,11 +779,11 @@ static void LamakanDesert_FallIntoPit(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
+  Actor_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
   FieldScript_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -791,7 +791,7 @@ static void LamakanDesert_FallIntoPit(void) {
   record = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
-  Actor_SetActionById(ACTOR_PARTY_LEADER, 24);
+  Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
   record = Actor_GetById(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
@@ -802,8 +802,8 @@ static void LamakanDesert_FallIntoPit(void) {
 #endif
   record = Actor_Get(best);
   if (record != 0) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                                     record->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
+                              record->z.part.pixel);
   }
   FieldScript_WaitFrames(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
@@ -842,7 +842,7 @@ static void LamakanDesert_SlideDownDune(void) {
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
   probePosition.z = actor->z.fixed + 0x18000;
-  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
+  hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
@@ -856,14 +856,14 @@ static void LamakanDesert_SlideDownDune(void) {
     // Let the fall complete before returning to ordinary field movement.
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Object_SetPosition(actor, actor->x.fixed, actor->y.fixed,
-                       actor->z.fixed + 0x80000);
-    Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    Object_WaitForMove(actor);
+    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
+                             actor->z.fixed + 0x80000);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
+    Actor_WaitForMove(actor);
     do {
       WaitFrames(1);
     } while (actor->y.fixed != actor->groundHeight);
-    Object_SelectAnimation(actor, ANIM_LEADER_SPRING);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(3);
     return;
   }
@@ -871,21 +871,21 @@ static void LamakanDesert_SlideDownDune(void) {
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
   probePosition.z = actor->z.fixed + 0x80000;
-  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
+  hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
   probePosition.x = actor->x.fixed + 0x5b333;
   probePosition.y = actor->y.fixed;
   probePosition.z = actor->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
+  hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
   probePosition.x = actor->x.fixed - 0x5b333;
   probePosition.y = actor->y.fixed;
   probePosition.z = actor->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
+  hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
@@ -928,7 +928,7 @@ static void LamakanDesert_MeetManticore(void) {
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
       FieldScript_WaitFrames(40);
-      ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+      Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldScript_WaitFrames(40);
@@ -943,12 +943,12 @@ static void LamakanDesert_MeetManticore(void) {
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
                                  backwardOffset.z / 0x10000);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       FieldScript_WaitFrames(2);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       FieldScript_WaitFrames(30);
       Script_PlaySong(SE_BOSS_ROAR);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_MANTICORE, 2);
+      Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
       FieldScript_WaitFrames(20);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
@@ -1192,17 +1192,17 @@ static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
 const s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 const s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 const s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 // clang-format off

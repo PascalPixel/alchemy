@@ -7,7 +7,7 @@
 #include "script_motion.h"
 #include "macros.h"
 
-#define OBJECT_SLOTS 8 ///< script-driven objects updated each frame
+#define ACTOR_SLOTS 8 ///< script-driven objects updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
 #define TURN_MAX 0x1000 ///< the most an object turns in one frame
 
@@ -18,7 +18,7 @@
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
-extern struct ObjectArmView *gObjects;
+extern struct ActorArmView *gActors;
 
 // Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -31,13 +31,13 @@ s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 /// bounce off the ground; detect arrival at the target; and turn it to face
 /// the way it moves. Copied to RAM and run from there. Writes each object's
 /// position, velocity and facing, and unsets its target on arrival. Only
-/// Object_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
-/// the field runs Object_UpdateAllThumb instead.
-void Object_UpdateAll(void) {
-  struct ObjectArmView *object;
+/// Actor_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
+/// the field runs Actor_UpdateAllThumb instead.
+void Actor_UpdateAll(void) {
+  struct ActorArmView *object;
   s32 y;
   s32 arrived;
-  struct ObjectArmView *nextObject;
+  struct ActorArmView *nextObject;
   s32 nextSlot;
   s32 slot;
   s32 x;
@@ -52,7 +52,7 @@ void Object_UpdateAll(void) {
   s32 turnDelta;
   u16 travelAngle;
 
-  for (slot = 0, object = gObjects; slot < OBJECT_SLOTS;
+  for (slot = 0, object = gActors; slot < ACTOR_SLOTS;
        slot = nextSlot, object = nextObject) {
     nextSlot = slot + 1;
     nextObject = object + 1;
@@ -80,7 +80,7 @@ void Object_UpdateAll(void) {
 #endif
 
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command]((struct Actor *)object) == 0)
+          if (gActorScript_CommandTable[command]((struct Actor *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
@@ -121,7 +121,7 @@ void Object_UpdateAll(void) {
           // deltaX and deltaZ are 16.16 too, so each axis gains its share of
           // the acceleration; further away they are whole pixels, and MulQ16
           // makes the gain 65536 times smaller, which rounds to almost
-          // nothing. Object_UpdateAllThumb's free flight multiplies its
+          // nothing. Actor_UpdateAllThumb's free flight multiplies its
           // whole-pixel offsets by the ratio without MulQ16, so the two
           // updates would steer towards a far target differently; nothing
           // runs this one, so the player never sees it.

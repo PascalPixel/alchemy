@@ -217,7 +217,7 @@ s32 Sanctum_RunPartyService(void) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   // redraw is 1 here: the hand's first move to a member takes one frame
   shop->mode = redraw;
-  PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
+  PsynergyMenu_InitializeEntryActorsFar(listWindow, 2, 0, 8, 0);
   priceWindow =
       Window_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
                        3, WINDOW_FLAG_INSTANT);
@@ -314,7 +314,7 @@ s32 Sanctum_RunPartyService(void) {
     continue;
   }
 
-  Menu_ReleaseEntryObjectsFar();
+  Menu_ReleaseEntryActorsFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);
   WaitFrames(1);
@@ -504,7 +504,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   do {
     FieldEffectSprite_InitializeFar(effect, 0x11c, position.x, position.z);
     FieldEffectSprite_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
-    FieldEffectSprite_SetObjectModeFar(effect, 7);
+    FieldEffectSprite_SetActorModeFar(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;

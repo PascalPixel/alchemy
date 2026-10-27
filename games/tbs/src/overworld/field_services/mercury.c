@@ -42,18 +42,18 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
   Sound_PlaySongFar(SE_NOTE_LOW);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 3, 14);
+  Actor_Jump(djinniId, 3, 14);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 5, 16);
+  Actor_Jump(djinniId, 5, 16);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 7, 18);
+  Actor_Jump(djinniId, 7, 18);
   WaitFrames(20);
 
   // Eight afterimages of the same sprite at 15/16 size, each closing half
@@ -64,8 +64,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   previous = djinni;
   cursor = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
-    copy = Object_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
-                            djinni->z.fixed);
+    copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
+                           djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -76,8 +76,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Anim_ApplyChildValuesFar(copy, SPRITE_COLOR_BLUE_TINT);
-      Object_SelectAnimationFar(copy, 0);
-      Object_SetSpriteFlagsFar(copy, 0);
+      Actor_SelectAnimationFar(copy, 0);
+      Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linkedActor = previous;
       previous = copy;
@@ -94,17 +94,17 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     djinni->y.fixed += 8 << 16;
     WaitFrames(1);
   }
-  Object_ReleaseFar(djinni);
+  Actor_ReleaseFar(djinni);
   list = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
-    Object_ReleaseFar((*list++));
+    Actor_ReleaseFar((*list++));
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
-                            ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on
@@ -120,7 +120,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     FieldEffectSprite_Initialize(effect, 240, position.x, position.z);
     FieldEffectSprite_SetCallback(effect,
                                   FieldEffect_UpdateRandomTargetParticle);
-    FieldEffectSprite_SetObjectMode(effect, 7);
+    FieldEffectSprite_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);

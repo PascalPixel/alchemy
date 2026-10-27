@@ -192,10 +192,6 @@ enum BilibinActorId {
   ACTOR_FORMER_TREE_MAN
 };
 
-/// The actor slots EventScript_OpenDoorAndLeave stills, the party's and
-/// the placed ones'.
-enum { BILIBIN_ACTOR_SLOT_COUNT = 66 };
-
 /// Actors of the Bilibin Barricade (BilibinBarricade), numbering its
 /// actor templates from ACTOR_FIRST_PLACED.
 enum BilibinBarricadeActorId {
@@ -456,7 +452,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   work = gFieldWork;
   FieldScript_Start();
   // Freeze placed actors before the exit cells start animating.
-  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < BILIBIN_ACTOR_SLOT_COUNT;
+  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
        actorSlot++) {
     actor = Actor_GetById(actorSlot);
     if (actor != 0) {
@@ -486,9 +482,9 @@ static void EventScript_OpenDoorAndLeave(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
   if (exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
-    ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 3);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   } else {
-    ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   }
   FieldScript_WaitFrames(16);
   Import_ScriptRequestExit(exitIndex + BILIBIN_TO_INN);
@@ -507,8 +503,8 @@ static void EventScript_PullJillFromRiver(void) {
   jillTree = Actor_GetById(ACTOR_JILL_TREE);
   if ((jillTree->x.fixed >> 20) == 6) {
     FieldScript_Start();
-    ObjectMotion_SetActionVariant(ACTOR_JILL_TREE, 1);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+    Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     FieldScript_WaitFrames(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_SetSpeed(ACTOR_JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -542,7 +538,7 @@ static void EventScript_PullJillFromRiver(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-    ObjectMotion_SetActionVariant(ACTOR_JILL_TREE, 2);
+    Actor_SetSpritePriority(ACTOR_JILL_TREE, 2);
     FieldEffect_StartMindReadWave(0, ACTOR_JILL_TREE);
     WaitFrames(10);
     FieldScript_SetMessageId(MsgBilibinThankSavedMeFromBeing);
@@ -605,12 +601,12 @@ static void EventScript_JillGivesHardNut(void) {
                       0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GANG_MEMBER_WEST, 2);
+  Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
   Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_JILL,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
@@ -618,10 +614,10 @@ static void EventScript_JillGivesHardNut(void) {
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
                       10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_JILL, 1);
+  Actor_RunRepeatedMotion(ACTOR_JILL, 1);
   Script_ShowMessageAndWait(ACTOR_JILL, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -630,14 +626,14 @@ static void EventScript_JillGivesHardNut(void) {
   FieldScript_WaitFrames(1);
   Actor_GetById(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   Script_ShowMessageAndWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
   ItemDisplay_ShowItem(ITEM_HARD_NUT, 3);
   PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
-  ObjectMotion_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
@@ -651,21 +647,21 @@ static void EventScript_JillGivesHardNut(void) {
     jill->steeringFlags = steeringFlags;
   }
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GANG_MEMBER_EAST, 2);
+  Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
   Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
-  Object_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                              gBilibin_FaceLeaderScript);
-  Object_SetTargetAndCallback(ACTOR_GANG_MEMBER_WEST,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                              gBilibin_FaceLeaderScript);
-  Object_SetTargetAndCallback(ACTOR_JILL,
-                              ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                              gBilibin_FaceLeaderScript);
+  FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  gBilibin_FaceLeaderScript);
+  FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_WEST,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  gBilibin_FaceLeaderScript);
+  FieldActor_SetTargetAndCallback(ACTOR_JILL,
+                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   FieldScript_End();
 }
@@ -760,7 +756,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-      ObjectMotion_Launch(ACTOR_PARTY_LEADER, 6, 0);
+      Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
       if (statueRow == 13) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
@@ -839,7 +835,7 @@ static void Bilibin_RestoreRiverActors(void) {
         Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(132), PIXELS(186));
       } else {
         Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(88), PIXELS(196));
-        ObjectMotion_SetActionVariant(ACTOR_JILL_TREE, 3);
+        Actor_SetSpritePriority(ACTOR_JILL_TREE, 3);
         jillTree->collisionFlags |= ACTOR_NEAR_TALK;
       }
     } else {
@@ -920,23 +916,25 @@ static void EventScript_PushStatueOrCrates(void) {
     destination.y = pushed->y.fixed;
     destination.z =
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
-    if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
+    if (FieldActor_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      Object_SelectAnimation(leader, ANIM_PUSH);
+      Actor_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       pushed->speedLimit = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
-      Object_SetPosition(pushed, destination.x, destination.y, destination.z);
+      FieldActor_SetMoveTarget(pushed, destination.x, destination.y,
+                               destination.z);
       leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      Object_SetPosition(leader, destination.x, destination.y, destination.z);
-      Object_WaitForMove(pushed);
+      FieldActor_SetMoveTarget(leader, destination.x, destination.y,
+                               destination.z);
+      Actor_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      Object_SelectAnimation(leader, ANIM_STAND);
+      Actor_SelectAnimation(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved
       // actor.
       if (gSaveBlock.sceneId == (s32)&SceneId_BilibinBarricade)
@@ -974,13 +972,13 @@ static void Bilibin_SpawnRipple(struct Actor *actor) {
   struct Actor *effect;
   struct Sprite *sprite;
 
-  effect = Actor_Create(SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed,
-                        actor->z.fixed);
+  effect = FieldActor_Create(SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed,
+                             actor->z.fixed);
   if (effect == NULL)
     return;
 
   sprite = effect->sprite;
-  Actor_SetScript(effect, gBilibin_RippleScript);
+  Actor_StartScript(effect, gBilibin_RippleScript);
   effect->motionFlags = 0;
   effect->layer = 1;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -1367,5 +1365,5 @@ s32 gBilibin_FacingCellSteps[] = {
 
 s32 gBilibin_RippleScript[] = {
     SC_WAIT(30),
-    SC_FREE,
+    SC_RELEASE,
 };

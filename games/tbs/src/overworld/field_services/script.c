@@ -39,7 +39,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 /// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
 /// task for the length of a script (FieldScript_Start). R also
 /// skips the actors' messages, which open nothing while fastForward is
-/// set (FieldMessage_ShowAtObject).
+/// set (FieldMessage_ShowAtActor).
 void FieldScript_UpdateDebugSkip(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -72,7 +72,7 @@ void FieldScript_WaitFrames(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *object;
 
-  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  object = Actor_Lookup(gSaveBlock.leaderActorId);
   object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
   object->targetX = ACTOR_NO_TARGET;
@@ -80,10 +80,10 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
-    Object_SelectAnimationFar(object, 0xC);
+    Actor_SelectAnimationFar(object, 0xC);
     return;
   }
-  Object_SelectAnimationFar(object, 1);
+  Actor_SelectAnimationFar(object, 1);
 }
 
 /// The script command "begin script": closes any area name window, stops the
@@ -131,26 +131,26 @@ void FieldScript_End(void) {
 UNUSED void FieldScript_NoOpHookA(void) {}
 
 /// An empty hook; it does nothing in the released game. Only
-/// FieldScript_RunObjectHookAndWait calls it.
+/// Event_RunActorUpdateAndWait calls it.
 void FieldScript_NoOpHook(void) {}
 
 /// Respawns the map's actors from an actor template table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
 /// in the overworld bank's far-call table; nothing in ☀️ names it.
-void FieldScript_RunObjectHookAndWait(struct ActorTemplate *table) {
+void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   FieldScript_NoOpHook();
-  Actor_ResetForObject(table);
+  Actor_ResetForLeader(table);
   WaitFrames(1);
   // XXX (no evidence): why the leader's object is fetched and dropped; no
   // code calls this function, so no caller reads a result.
-  Actor_GetByActorId(gSaveBlock.leaderActorId);
+  Actor_Lookup(gSaveBlock.leaderActorId);
 }
 
 /// Spawns the actors of an actor template table after the last
 /// actor in use. Called by the Kolima, Kalay and Tolbi ship map scripts
 /// to bring actors in during an event.
-void FieldScript_CallWithLastActiveObjectId(struct ActorTemplate *table) {
-  FieldScript_SpawnActorTemplates(table, Actor_FindLastActiveId());
+void Event_CallWithLastActiveActorId(struct ActorTemplate *table) {
+  Event_SpawnActorTemplates(table, Actor_FindLastActiveId());
 }
 
 /// Sets the map's trigger table, which the field checks as the leader moves:
@@ -165,7 +165,7 @@ void FieldScript_SetTriggers(const struct Trigger *triggers) {
 /// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
 /// announce too). Called by six map scripts as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
-void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
+void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
   Unit_GetFar(unit);
   Party_AddMemberFar(unit);
   if (announce != 0) {
@@ -175,7 +175,7 @@ void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
 
 /// Adds two units to the party and announces them together. Vale's map
 /// script calls it twice.
-void FieldScript_PrepareTwoObjectsAndApply(s32 first, s32 second) {
+void Event_PrepareTwoActorsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
@@ -392,12 +392,12 @@ void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being
 /// animation: the actor has finished a one-off animation such as a nod.
-/// Only actors drawn as a sprite (OBJECT_SPRITE_ONE) are
+/// Only actors drawn as a sprite (ACTOR_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
-  struct Actor *actorObject = Actor_GetByActorId(actorId);
+  struct Actor *actorObject = Actor_Lookup(actorId);
 
-  if (actorObject != 0 && actorObject->spriteStorageKind == OBJECT_SPRITE_ONE) {
+  if (actorObject != 0 && actorObject->spriteStorageKind == ACTOR_SPRITE_ONE) {
     s32 frames = 0;
     u8 *animationNumber = &actorObject->sprite->lastNo;
 

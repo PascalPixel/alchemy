@@ -14,8 +14,8 @@ gRareItemStock:
 	.global gOverflowItem
 gOverflowItem:
 	.space 0x0000000e
-	.global gPlayerObjectId
-gPlayerObjectId:
+	.global gPlayerActorId
+gPlayerActorId:
 	.space 0x0000005a
 	.global gBattleArenaRecord
 gBattleArenaRecord:

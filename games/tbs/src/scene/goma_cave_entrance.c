@@ -189,8 +189,8 @@ static void EventScript_PushWestPillar(void) {
   offsetX = (11 - (work->stepTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_WEST_PILLAR);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_WEST_PILLAR);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   EventScript_MoveWestPillar();
@@ -292,10 +292,10 @@ static void EventScript_IvanRejoins(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
@@ -305,7 +305,7 @@ static void EventScript_IvanRejoins(void) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+    Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
     FieldScript_End();
   } else {
@@ -315,7 +315,7 @@ static void EventScript_IvanRejoins(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 248);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 208);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -323,22 +323,22 @@ static void EventScript_IvanRejoins(void) {
     FieldScript_WaitFrames(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Actor_WalkToAndWait(ACTOR_IVAN, 264, 200);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 168);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 184);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
     Actor_WalkToAndWait(ACTOR_IVAN, 232, 184);
     FieldScript_WaitFrames(20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     Script_ShowMessageAndWait(ACTOR_IVAN, 0, 120);
@@ -350,18 +350,18 @@ static void EventScript_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
     FieldScript_WaitFrames(60);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-    ObjectMotion_SetVariantCallback(ACTOR_IVAN, 1);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
     FieldScript_WaitFrames(30);
     Script_ShowMessageAndWait(ACTOR_IVAN, 0, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
-    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
@@ -373,7 +373,7 @@ static void EventScript_IvanRejoins(void) {
 #endif
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    ObjectMotion_Launch(ACTOR_GARET, 2, 0);
+    Actor_Jump(ACTOR_GARET, 2, 0);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_WalkToAndWait(ACTOR_IVAN, 264, 184);
@@ -382,7 +382,7 @@ static void EventScript_IvanRejoins(void) {
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -399,7 +399,7 @@ static void EventScript_IvanRejoins(void) {
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
@@ -407,23 +407,23 @@ static void EventScript_IvanRejoins(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldScript_WaitFrames(80);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
-    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
-    ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Actor_StartRepeatedMotion(ACTOR_GARET, 1);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -432,26 +432,26 @@ static void EventScript_IvanRejoins(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
-    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 40);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
-    FieldScript_PrepareObjectAndApplyValue(IVAN, 1);
+    Event_PrepareActorAndApplyValue(IVAN, 1);
     FieldScript_WaitFrames(60);
     GomaCaveEntrance_GiveShamansRod();
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     FieldScript_WaitFrames(20);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 184);
     FieldScript_WaitFrames(20);
@@ -466,14 +466,14 @@ static void EventScript_IvanRejoins(void) {
     FieldScript_WaitFrames(20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(50);
     Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkTo(ACTOR_GARET, 248, 168);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 168);
     Actor_SetPosition(ACTOR_IVAN, PIXELS(0), PIXELS(0));
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+    Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
@@ -509,7 +509,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 
   effectWork = gFieldEffectWork;
   FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  FieldEffect_SetupObjectPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
+  FieldEffect_SetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   FieldEffect_StartCast();
@@ -551,11 +551,11 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   }
   stump->update = GomaCaveEntrance_SpinStump;
   Actor_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
-  ObjectMotion_ResetAndSetPosition(stumpId, 160, 192);
+  Actor_ResetAndSetPosition(stumpId, 160, 192);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
-  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
+  Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, PIXELS(32));
   Sound_PlaySong(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -570,8 +570,8 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
                       v->y, v->z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
-  ObjectMotion_ResetAndSetPosition(stumpId, 139, 196);
-  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
+  Actor_ResetAndSetPosition(stumpId, 139, 196);
+  Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, PIXELS(32));
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
@@ -651,17 +651,17 @@ retry:
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

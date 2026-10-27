@@ -8,7 +8,7 @@
 /// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
 /// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
-/// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
+/// (FieldEffect_UpdateDescendingOrbitActor) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
 /// Djinni's actor slot. Uses all 24 field effect sprites, tints the
 /// field palette green and fades it back at the end.
@@ -36,24 +36,24 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 4, 15);
+  Actor_Jump(djinniId, 4, 15);
   Sound_PlaySongFar(SE_JUMP);
-  ObjectMotion_Launch(djinniId, 4, 15);
+  Actor_Jump(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
   djinni->update = FieldEffect_AdvanceSpinAngle;
   Sound_PlaySongFar(SE_HIGH_JUMP);
-  ObjectMotion_Launch(djinniId, 8, 22);
+  Actor_Jump(djinniId, 8, 22);
   Sound_PlaySongFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
-  djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
-  Object_SelectAnimationFar(djinni, 3);
+  djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
+  Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
-                            ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -69,7 +69,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
                                  position.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialSpread);
-    FieldEffectSprite_SetObjectMode(effect, 7);
+    FieldEffectSprite_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = 0x8000;
     effect->scaleY = Random16() + 0x18000;
@@ -108,16 +108,16 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed + 0x780000;
     position.z = leader->z.fixed;
-    djinni = Object_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
+    djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
       djinni->orbitAngle = (remaining << 16) / 24;
-      djinni->update = FieldEffect_UpdateDescendingOrbitObject;
+      djinni->update = FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
-      Object_SelectAnimationFar(djinni, 7);
+      Actor_SelectAnimationFar(djinni, 7);
       Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }
@@ -134,7 +134,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // Actor.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = Object_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
+    djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;
@@ -143,11 +143,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->velocityY = 0x50000;
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + 0x16666;
-    ObjectMotion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000,
-                                                     Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Anim_ApplyChildValuesFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
-    Object_InitializeFar(djinni, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(djinni, gFieldEffect_CommonParticleScript);
   }
 
   WaitFrames(15);

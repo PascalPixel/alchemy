@@ -8,7 +8,7 @@
 
 /// A floating Nut's sprite, seen as the attribute bits, palette and state its
 /// maps set.
-typedef struct OrbitingMapObjectSprite {
+typedef struct OrbitingMapActorSprite {
   u8 padding00[5]; ///< Sprite's queue link and attribute 0's y
   /// Sprite's attribute 0 high byte.
   /// bits: 7..6 shape | 5 full colour | 4 mosaic | 3..2 object mode |
@@ -32,11 +32,11 @@ typedef struct OrbitingMapObjectSprite {
   u8 palette;
   u8 padding1d[10];
   u8 state; ///< Sprite's count of layers; the Nut's maps zero it
-} OrbitingMapObjectSprite;
+} OrbitingMapActorSprite;
 
 /// A floating Nut's actor: its position, the spot it sways around and
 /// how far through the sway it is, its sprite and its callback.
-typedef struct OrbitingMapObject {
+typedef struct OrbitingMapActor {
   u8 padding00[8];
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
@@ -53,7 +53,7 @@ typedef struct OrbitingMapObject {
   s32 orbitCenterY; ///< 16.16 fixed-point pixels
   s32 orbitCenterZ; ///< 16.16 fixed-point pixels
   u8 padding44[12];
-  OrbitingMapObjectSprite *sprite;
+  OrbitingMapActorSprite *sprite;
   u8 padding54;
   u8 mode; ///< Actor's motionFlags; the Nut's maps zero it
   /// Object.arrivalAxis, the axis watched for arrival; Scene_FloatNut
@@ -71,6 +71,6 @@ typedef struct OrbitingMapObject {
   /// Actor's update hook; Scene_FloatNut sets
   /// Scene_UpdateFloatingNut.
   u32 callback;
-} OrbitingMapObject;
+} OrbitingMapActor;
 
 #endif

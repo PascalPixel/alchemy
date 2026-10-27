@@ -3,17 +3,17 @@
 	.set import.WaitFrames, 1
 	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_Release, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_Release, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
@@ -21,19 +21,19 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
+	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_WaitForArrival, 1

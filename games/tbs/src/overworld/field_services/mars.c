@@ -34,22 +34,22 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(30);
   // Turn to face the camera (angle 0x4000), then bounce three times, a rising
   // note on each.
-  ObjectMotion_ArmCallback(djinniId, FACING_SOUTH, 0);
+  Actor_ArmCallback(djinniId, FACING_SOUTH, 0);
   WaitFrames(20);
   Sound_PlaySongFar(SE_NOTE_LOW);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_MID);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
   Sound_PlaySongFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
-  djinni->update = FieldEffect_ShrinkObjectAndDestroySlow;
-  Object_SelectAnimationFar(djinni, 3);
+  djinni->update = FieldEffect_ShrinkActorAndDestroySlow;
+  Actor_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x.fixed;
@@ -65,7 +65,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
                                  position.z);
     FieldEffectSprite_SetCallback(effect,
                                   FieldEffect_UpdatePhasedRadialParticle);
-    FieldEffectSprite_SetObjectMode(effect, 7);
+    FieldEffectSprite_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
@@ -76,10 +76,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
-                            ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -100,7 +100,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader pulses while the sparks swarm it.
   WaitFrames(60);
-  leader->update = FieldEffect_SetObjectAlternatingWords;
+  leader->update = FieldEffect_SetActorAlternatingWords;
   WaitFrames(100);
 
   // Every spark still in use goes. This loop's cursor starts as
@@ -137,13 +137,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
 /// Spins and shrinks an object by 0x400 a frame, then releases it: 53 frames
 /// from full size.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, 0xFFFFFC00)
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
-void FieldEffect_UpdateDescendingOrbitObject(union ActorOrEffect *fieldObject) {
+void FieldEffect_UpdateDescendingOrbitActor(union ActorOrEffect *fieldObject) {
   struct Actor *mote = (struct Actor *)fieldObject;
   struct Vector3 position;
   struct Actor *leader;
@@ -164,7 +164,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union ActorOrEffect *fieldObject) {
   y = mote->y.fixed + 0xFFFF0000;
   mote->y.fixed = y;
   if (y < leader->y.fixed + 0x140000)
-    Object_ReleaseFar(mote);
+    Actor_ReleaseFar(mote);
 }
 
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on

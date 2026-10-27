@@ -61,7 +61,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
 /// pixels, in 16.16. As for the party figures
-/// (Menu_UpdateEntryObjectTransforms), the height is 482 less the origin and
+/// (Menu_UpdateEntryActorTransforms), the height is 482 less the origin and
 /// the ground lies that far below the row, so the image stands at its row.
 #define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
 #define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
@@ -90,8 +90,8 @@ void DjinnFigures_UpdateAllPositions(void) {
       placement.height = vertical;
       placement.y = ((s32)state->positionsY[index] << 16) + vertical;
       placement.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(animation, &placement, &scale,
-                                        FACING_SOUTH);
+      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale,
+                                       FACING_SOUTH);
     }
     index += 1;
     if (index > 3)
@@ -146,7 +146,7 @@ void DjinnFigures_UpdateBottomRow(void) {
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;
-      Object_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
+      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
     }
     objectIndex++;
   } while (objectIndex <= 3);

@@ -113,7 +113,7 @@ extern u8 LoadedRuntime_Size[];
 extern const u16 gMath_ArcTanTable[];
 /// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
 /// 93.
-extern const u8 gObject_ShadowTiles[];
+extern const u8 gActor_ShadowTiles[];
 /// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
 extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by

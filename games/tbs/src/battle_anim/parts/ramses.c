@@ -147,8 +147,8 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
     for (i = 0; i != 7; i++) {
       position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
       position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
-      Object_ApplyProjectedPlacementFar(work->animations[i], &position, &scale,
-                                        0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &position, &scale,
+                                       0);
     }
     // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
     // of a turn a frame.
@@ -194,11 +194,11 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
       position.x = orb.x;
       position.height = -0x1000000;
       position.y = orb.y - 0x1000000;
-      Object_ApplyProjectedPlacementFar(work->animations[7], &position, &scale,
-                                        0);
+      Actor_ApplyProjectedPlacementFar(work->animations[7], &position, &scale,
+                                       0);
       position.x = orb.x + 0x200000;
-      Object_ApplyProjectedPlacementFar(work->animations[8], &position, &scale,
-                                        0);
+      Actor_ApplyProjectedPlacementFar(work->animations[8], &position, &scale,
+                                       0);
     }
     position.height = 0;
     // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
@@ -212,8 +212,8 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Object_ApplyProjectedPlacementFar(work->animations[9 + i], &position,
-                                          &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->animations[9 + i], &position,
+                                         &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > 96)

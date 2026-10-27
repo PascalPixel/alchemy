@@ -3,12 +3,12 @@
 	.set import.WaitFrames, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.Object_SetSpriteFlags, 1
-	.set import.Object_SetSpriteBlendMode, 1
+	.set import.Actor_SetSpriteFlags, 1
+	.set import.Actor_SetBlendMode, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.Unit_Get, 1
@@ -22,32 +22,32 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.FieldScript_PrepareObjectAndApplyValue, 1
+	.set import.Event_PrepareActorAndApplyValue, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_ResetAndSetPosition, 1
-	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_ResetAndSetPosition, 1
+	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_Launch, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_Jump, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_RunRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.FieldEffect_SpawnLinked, 1
-	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.FieldEffect_SpawnAttached, 1
+	.set import.FieldEffect_SetAttached, 1
 	.set import.Field_DispatchTypeHandler, 1
 	.set import.FieldEffect_LoadActionEffectResources, 1
-	.set import.FieldEffect_SetupObjectPair, 1
+	.set import.FieldEffect_SetupActorPair, 1
 	.set import.FieldEffect_StopCasterHook, 1
 	.set import.FieldEffect_StartCast, 1
 	.set import.Scene_QueueMusic, 1

@@ -3,13 +3,13 @@
 
 /// @file
 /// Object scripts: one s32 command word, then its operands, as
-/// gObjectScript_CommandTable runs them. Each macro expands to the words of
+/// gActorScript_CommandTable runs them. Each macro expands to the words of
 /// one command. Coordinates are 16.16 fixed point (PIXELS).
 
 #include "types.h"
 
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
-/// A jump's operand: the label SC_LABEL(n), which ObjectScript_FindLabel
+/// A jump's operand: the label SC_LABEL(n), which ActorScript_FindLabel
 /// matches without bit 30.
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
 #define SC_TOP 0          ///< Script start
@@ -49,19 +49,19 @@
 #define SC_PLAYER 0x18              ///< Player input control
 #define SC_KEYS 0x19              ///< Move 8 pixels a step by the direction pad
 #define SC_WORLD 0x1a             ///< World map control
-#define SC_FREE 0x1b              ///< Release
+#define SC_RELEASE 0x1b           ///< Release
 #define SC_ANIMATION(v) 0x1c, (v) ///< Switch the sprites to animation v.
 #define SC_NOP(v) 0x1d, (v)       ///< Skip its operand.
 #define SC_SE(n) 0x1e, (n)        ///< Sound effect
 #define SC_BASE 0x1f              ///< Restart from the next word.
-#define SC_HIDE_SPRITES 0x20      ///< Hide the sprites (OBJECT_SPRITE_NONE).
-#define SC_SHOW_SPRITE 0x21       ///< Show one sprite (OBJECT_SPRITE_ONE).
+#define SC_HIDE_SPRITES 0x20      ///< Hide the sprites (ACTOR_SPRITE_NONE).
+#define SC_SHOW_SPRITE 0x21       ///< Show one sprite (ACTOR_SPRITE_ONE).
 /// Call fn with the object each frame until it returns zero.
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23 ///< Check the configured keys.
 
 /// Script work values for SC_SET, SC_ADD and SC_CMP
-enum ObjectScriptValue {
+enum ActorScriptValue {
   SW_SCRIPT = 0x00,
   SW_CURSOR = 0x01,
   SW_FACING = 0x03,
@@ -96,7 +96,7 @@ enum ObjectScriptValue {
   SW_TIMER = 0x23,
   /// Actor.work, map scratch: a map script sets it for the map code
   /// that reads or waits on it.
-  SW_WORK = 0x24,
+  SW_USER_VALUE = 0x24,
   SW_HOOK = 0x26,
   SW_RISE_COUNTER = 0x27, ///< Actor.riseCounter, map code's own byte
   SW_RISE_ENABLED = 0x28  ///< Actor.riseEnabled, map code's own byte

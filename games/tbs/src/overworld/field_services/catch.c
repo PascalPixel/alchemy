@@ -50,7 +50,7 @@ void FieldEffect_RunCatch(void) {
   spawn.x = effectWork->x;
   spawn.y = effectWork->y + (32 << 16);
   spawn.z = effectWork->z;
-  object = Object_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
@@ -58,7 +58,7 @@ void FieldEffect_RunCatch(void) {
   object->facing = actor->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
-  Object_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, 5);
   Anim_ApplyChildValuesFar(object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
@@ -77,7 +77,7 @@ void FieldEffect_RunCatch(void) {
     step++;
   } while (step < steps);
   WaitFrames(10);
-  Object_SelectAnimationFar(object, 6);
+  Actor_SelectAnimationFar(object, 6);
   WaitFrames(15);
 
   // Press down 2 pixels a frame for 10 frames.
@@ -85,15 +85,15 @@ void FieldEffect_RunCatch(void) {
     object->y.fixed -= 2 << 16;
     WaitFrames(1);
   }
-  Object_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, 5);
   Sound_PlaySongFar(SE_WATER);
   // As the hand presses down, the caught object vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches. The map's after event
   // then puts it away for good, as Vale's EventScript_CatchNut moves the Nut
   // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
   if (child != 0)
-    Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
-                                        -(9 << 16));
+    Actor_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
+                                       -(9 << 16));
   WaitFrames(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
@@ -118,6 +118,6 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  Object_ReleaseFar(object);
+  Actor_ReleaseFar(object);
   FieldEffect_FadeFromEffectColor();
 }

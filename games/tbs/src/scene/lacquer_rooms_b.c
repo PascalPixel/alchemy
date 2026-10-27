@@ -268,9 +268,9 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgXianWarriorWelcome);
   FieldScript_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
-  ObjectMotion_SetAngleToward(ACTOR_FEIZHI, ACTOR_HSU, 0);
+  Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_HSU, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAngleToward(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FEIZHI, 0);
   FieldScript_End();
@@ -285,7 +285,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 }
 
 /// Opens the room through a window transition and places hidden still objects
-/// of SPRITE_CHEST's sheet (Actor_CreateConfiguredObject): one in the
+/// of SPRITE_CHEST's sheet (Actor_CreateConfigured): one in the
 /// inn (LACQUER_ROOMS_B_INN_SOUTH and
 /// LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
@@ -300,10 +300,10 @@ s32 LacquerRoomsB_Initialize(void) {
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||
       entrance == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) {
-    Actor_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417), SPRITE_CHEST);
+    Actor_CreateConfigured(PIXELS(248), 0, PIXELS(417), SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP) {
-    Actor_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), SPRITE_CHEST);
-    Actor_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), SPRITE_CHEST);
+    Actor_CreateConfigured(PIXELS(460), 0, PIXELS(568), SPRITE_CHEST);
+    Actor_CreateConfigured(PIXELS(484), 0, PIXELS(568), SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     Import_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
@@ -313,17 +313,17 @@ s32 LacquerRoomsB_Initialize(void) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

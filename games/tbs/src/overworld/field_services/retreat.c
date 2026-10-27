@@ -23,7 +23,7 @@ void FieldEffect_UpdateSpinAngle(union ActorOrEffect *fieldObject) {
 /// pixel a frame; once its scale falls below 0x3000 (84 frames from full
 /// size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldEffect_UpdateDescendingObject(union ActorOrEffect *fieldObject) {
+void FieldEffect_UpdateDescendingActor(union ActorOrEffect *fieldObject) {
   struct Actor *actor = (struct Actor *)fieldObject;
   u32 scale;
 
@@ -33,7 +33,7 @@ void FieldEffect_UpdateDescendingObject(union ActorOrEffect *fieldObject) {
   actor->y.fixed += 1 << 16;
   actor->scaleX = scale;
   if ((s32)scale < 0x3000)
-    actor->spriteStorageKind = OBJECT_SPRITE_NONE;
+    actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
 /// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
@@ -100,7 +100,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 ///
 /// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
-/// and shrinks out of sight (FieldEffect_UpdateDescendingObject) as the
+/// and shrinks out of sight (FieldEffect_UpdateDescendingActor) as the
 /// particles fly. It is hidden, not released, and the effect opens a script
 /// (FieldScript_Start) it does not end: the Retreat exit raised before it
 /// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
@@ -117,25 +117,25 @@ void FieldEffect_RunRetreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);
-  ObjectMotion_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
+  Actor_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
   WaitFrames(30);
-  actor->update = Object_CycleSpriteColors;
+  actor->update = Actor_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
-  Object_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
 
   // Start spinning.
   Sound_PlaySongFar(SE_SHIMMER);
   Anim_ApplyChildValuesFar(actor, SPRITE_COLOR_NORMAL);
-  Object_SelectAnimationFar(actor, 3);
+  Actor_SelectAnimationFar(actor, 3);
   actor->update = FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  Object_SetSpriteFlagsFar(actor, 0);
+  Actor_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags = 0;
-  actor->update = FieldEffect_UpdateDescendingObject;
+  actor->update = FieldEffect_UpdateDescendingActor;
   actor->targetX = ACTOR_NO_TARGET;
   pos.x = actor->x.fixed;
   pos.y = actor->y.fixed;
@@ -147,7 +147,7 @@ void FieldEffect_RunRetreat(void) {
     s32 scale;
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    FieldEffectSprite_SetObjectMode(effect, 7);
+    FieldEffectSprite_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
     effect->scaleY = scale;
@@ -192,7 +192,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    Object_ReleaseFar(particle);
+    Actor_ReleaseFar(particle);
     return;
   }
 
@@ -223,7 +223,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    Object_ReleaseFar(particle);
+    Actor_ReleaseFar(particle);
     return;
   }
 
@@ -278,7 +278,7 @@ struct DescendingArcSprite {
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
 /// it, at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
 /// The upside-down arc draws in front of everything (priority 0), the other at
-/// the caster's priority, as FieldEffect_SpawnScaledArcObjects does. Called by
+/// the caster's priority, as FieldEffect_SpawnScaledArcActors does. Called by
 /// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   struct Actor *source = arc;
@@ -291,8 +291,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    actor = Object_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
-                             source->y.fixed + 0x400000, source->z.fixed);
+    actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
+                            source->y.fixed + 0x400000, source->z.fixed);
     actors[arcIndex] = actor;
     if (actor == NULL)
       continue;

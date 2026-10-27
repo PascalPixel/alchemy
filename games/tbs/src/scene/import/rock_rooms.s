@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1

@@ -24,7 +24,7 @@ struct HeapSlotsFromWindowView {
 /// for it to be read. Records the speaker and both windows in the field work
 /// (speaker, messageWindow, sideWindow). With the debug fastForward set
 /// nothing opens and it returns NULL, but the message still advances.
-struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
+struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   struct WindowWork *win;
   struct FieldWork *work;
   s32 sprite;
@@ -69,14 +69,14 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
   message = work->message;
   actorId &= 0xfff;
   x = 0;
-  object = Actor_GetByActorId(actorId);
+  object = Actor_Lookup(actorId);
   work->speaker = actorId;
   y = 0;
   found = 0;
   if (work->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
-      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Transform_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -92,8 +92,8 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
       }
     } else if (actorId <= 7) {
       sprite = actorId;
-      object = Actor_GetByActorId(gSaveBlock.leaderActorId);
-      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+      object = Actor_Lookup(gSaveBlock.leaderActorId);
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Transform_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -249,7 +249,7 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
 }
 
 /// The script command "show message": opens the current message at actorId
-/// (FieldMessage_ShowAtObject) and waits until it has been read and its
+/// (FieldMessage_ShowAtActor) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
 /// Select, L, R and A are all held. About 70 maps reach it (Script_ShowMessage,
@@ -259,14 +259,14 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
 void FieldScript_ShowMessageAndWait(s32 actorId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = gFieldWork;
-  struct Window *window = FieldMessage_ShowAtObject(actorId, flags);
+  struct Window *window = FieldMessage_ShowAtActor(actorId, flags);
   s32 sprite;
   u32 frames;
 
   frames = 0;
   WaitFrames(1);
   // A party member the map does not place has its portrait under its
-  // character id, as FieldMessage_ShowAtObject opened it.
+  // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_ReadActiveValue(actorId);
   if (actorId <= 7) {
     member = actorId & 0x0fff;
@@ -308,7 +308,7 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   struct FieldWork *runtime;
   struct SaveBlock *save;
 
-  FieldMessage_ShowAtObject(actorId, flags);
+  FieldMessage_ShowAtActor(actorId, flags);
   save = &gSaveBlock;
   answer = FieldScript_AskYesNoWithActorAnimation(save->leaderActorId, 0);
   if (answer == 0) {
@@ -347,25 +347,25 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
   speaker &= 0xfff;
 #ifdef UBFIX
   // Only the actor slots hold actor pointers;
-  // Actor_GetByActorId's legacy range also exposes the event fields after
+  // Actor_Lookup's legacy range also exposes the event fields after
   // them.
   if ((u32)speaker < sizeof(state->actors) / sizeof(state->actors[0]))
-    object = Actor_GetByActorId(speaker);
+    object = Actor_Lookup(speaker);
   else
     object = NULL;
 #else
-  Actor_GetByActorId(speaker);
+  Actor_Lookup(speaker);
 #endif
   state->speaker = speaker;
   if (state->fastForward == 0) {
 #ifdef UBFIX
     s32 positionFound = 0;
 
-    // Supply the actual speaker position as FieldMessage_ShowAtObject does.
+    // Supply the actual speaker position as FieldMessage_ShowAtActor does.
     // A missing actor or failed projection has no position to open
     // around; still consume the message, as the fast-forward path does.
     if (object != NULL) {
-      if (state->mode == OBJECT_SYSTEM_WORLD_MAP)
+      if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
             Transform_ProjectPoint(
                 (const u8 *)object + offsetof(struct Actor, x), pos) != 0;

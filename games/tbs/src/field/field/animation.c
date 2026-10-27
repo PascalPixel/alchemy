@@ -37,7 +37,7 @@ extern struct SpriteFrameCacheSource gSpriteFrameCache_Sources[];
 /// (variant is the class's palette).
 s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct SpriteFrameCache *record;
   struct SpriteFrameCacheSource *entry;
   u32 *offset;
@@ -52,7 +52,7 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
-  system = gObjectSystemWork;
+  system = gActorSystemWork;
   record = &system->frameCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
@@ -108,7 +108,7 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 /// here; called by the anim set-up functions below.
 s32 SpriteFrameCache_FindByTag(s32 tag) {
   u32 i;
-  struct SpriteFrameCache *slot = gObjectSystemWork->frameCaches;
+  struct SpriteFrameCache *slot = gActorSystemWork->frameCaches;
 
   for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
     if (slot->tag == tag)
@@ -193,7 +193,7 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
 /// four. The first anim also sets the sprite's size, scale and offsets.
 /// Returns the anim, 0 when no sprite anim is free, or -1 when the sprite
 /// has four anims already. Called by Sprite_Create for a sprite's
-/// first anim, by Object_RegisterSpriteMetadata and the sprite
+/// first anim, by Actor_RegisterSpriteMetadata and the sprite
 /// viewer, and as Sprite_AddAnimFar by the battle, the Psynergy
 /// effects and the field map's actors.
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
@@ -410,18 +410,18 @@ void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step) {
 
 /// Allocates and zeroes the 64 sprites and 64 sprite anims
 /// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMS, from EWRAM
-/// first in OBJECT_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
+/// first in ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
 /// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
-/// the sprite tile uploader in RAM. Called by ObjectSystem_Initialize.
-/// Battle_Run (OBJECT_SYSTEM_BATTLE) takes both slots from EWRAM, at
+/// the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
+/// Battle_Run (ACTOR_SYSTEM_BATTLE) takes both slots from EWRAM, at
 /// the same sizes, before it starts the object system, so in battle this gets
 /// those blocks back.
-void ObjectSystem_Configure(s32 mode) {
+void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
 
-  // On the world map (OBJECT_SYSTEM_WORLD_MAP) the two pools are taken from
+  // On the world map (ACTOR_SYSTEM_WORLD_MAP) the two pools are taken from
   // EWRAM first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
   if (mode == 3) {
@@ -443,7 +443,7 @@ void ObjectSystem_Configure(s32 mode) {
   Dma_Fill32Cell(zero, 0, layers,
                  ANIM_OBJECT_COUNT * sizeof(struct SpriteAnim));
   VramCache_Load(ANIM_SHADOW_CACHE_ENTRY, ANIM_SHADOW_TILE_BYTES,
-                 gObject_ShadowTiles);
+                 gActor_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_FRAME_UPLOADER, Tile_CopyStrided,
                    Tile_CopyStridedCodeSize);
 }
@@ -518,7 +518,7 @@ void SpriteAnim_Clear(struct SpriteAnim *record) {
 /// no room or the id has no image. The caller owns it until
 /// Sprite_Destroy. When no sprite anim is free the sprite is still
 /// returned, with no anim and a width of 0, so it also counts as free. Called
-/// by Object_CreateField and the sprite viewer, and as Sprite_CreateFar
+/// by Actor_Create and the sprite viewer, and as Sprite_CreateFar
 /// by the battle, the battle animations, the Psynergy effects and the menus.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
@@ -634,7 +634,7 @@ struct Sprite *Sprite_Create(s32 id) {
 
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
 /// its four sprite anims, and then zeroes its 56 bytes. Called by
-/// Object_Release and, as Sprite_DestroyFar, by the battle
+/// Actor_Release and, as Sprite_DestroyFar, by the battle
 /// and its animations, the Psynergy effects and the menus.
 void Sprite_Destroy(struct Sprite *sprite) {
   s32 remaining;

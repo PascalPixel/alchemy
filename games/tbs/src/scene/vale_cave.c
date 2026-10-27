@@ -345,8 +345,8 @@ static void EventScript_RevealHiddenTile(void) {
 /// Sinks a stack of crates into its hole, spawning a particle each frame around
 /// the opening.
 static inline void
-ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
-                                 struct EffectOptions *particleOptions) {
+ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
+                                struct EffectOptions *particleOptions) {
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
@@ -378,12 +378,12 @@ static void EventScript_MoveWestCratesIntoHole(void) {
   if (Actor_GetById(ACTOR_WEST_CRATES)->x.fixed >> 20 == 23) {
     // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
-    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
+    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
     Actor_GetById(ACTOR_WEST_CRATES)->x.fixed += PIXELS(2);
-    leftEffect = Actor_PrepareObject(
+    leftEffect = Actor_Prepare(
         Actor_GetById(ACTOR_WEST_CRATES)->x.fixed, 0,
         Actor_GetById(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
-    rightEffect = Actor_PrepareObject(
+    rightEffect = Actor_Prepare(
         Actor_GetById(ACTOR_WEST_CRATES)->x.fixed + PIXELS(16), 0,
         Actor_GetById(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     Actor_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
@@ -393,8 +393,8 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
     Sound_PlaySong(SE_BURST);
-    ValeCave_SinkObjectWithParticles(ACTOR_WEST_CRATES, PIXELS(368),
-                                     PIXELS(624), particleOptions);
+    ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, PIXELS(368), PIXELS(624),
+                                    particleOptions);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     Actor_GetById(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
@@ -422,10 +422,10 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 
   FieldScript_Start();
   if (Actor_GetById(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
-    leftEffect = Actor_PrepareObject(
+    leftEffect = Actor_Prepare(
         Actor_GetById(ACTOR_EAST_CRATES)->x.fixed - PIXELS(8), 0,
         Actor_GetById(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
-    rightEffect = Actor_PrepareObject(
+    rightEffect = Actor_Prepare(
         Actor_GetById(ACTOR_EAST_CRATES)->x.fixed + PIXELS(8), 0,
         Actor_GetById(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     // This clears the western crates' motion flags, not these crates', where
@@ -439,8 +439,8 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
     Sound_PlaySong(SE_BURST);
-    ValeCave_SinkObjectWithParticles(ACTOR_EAST_CRATES, PIXELS(432),
-                                     PIXELS(656), particleOptions);
+    ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, PIXELS(432), PIXELS(656),
+                                    particleOptions);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     Actor_GetById(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
@@ -460,7 +460,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 /// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set.
 static void EventScript_PushEastCratesIntoHole(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
   EventScript_MoveEastCratesIntoHole();
 }
@@ -490,22 +490,22 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
   landingPosition[2].fixed = leader->z.fixed + PIXELS(32);
 #endif
   // Keep the normal motion flags while staging the hop.
-  if (FieldObject_CheckMovementCollision(
+  if (FieldActor_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
     FieldScript_Start();
-    Object_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    Object_SelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, 7);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
-    ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                                      landingPosition[0].part.pixel,
-                                      landingPosition[2].part.pixel);
-    Object_SelectAnimation(leader, 6);
+    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
+                               landingPosition[0].part.pixel,
+                               landingPosition[2].part.pixel);
+    Actor_SelectAnimation(leader, 6);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     FieldScript_End();
@@ -533,7 +533,7 @@ static void EventScript_KiteRunsOff(void) {
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_KITE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_KITE, 2);
+    Actor_RunRepeatedMotion(ACTOR_KITE, 2);
     FieldScript_WaitFrames(20);
     Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
@@ -566,7 +566,7 @@ static void EventScript_KiteRunsBehindLedge(void) {
       FieldScript_Start();
       Actor_SetAttachedEffect(ACTOR_KITE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_KITE, 2);
+      Actor_RunRepeatedMotion(ACTOR_KITE, 2);
       FieldScript_WaitFrames(20);
       Actor_SetSpeed(ACTOR_KITE, PIXELS(2), PIXELS(1));
       Actor_WalkToAndWait(ACTOR_KITE, 760, 280);
@@ -597,7 +597,7 @@ static void EventScript_KiteKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gSaveBlock.pausedObject != ACTOR_KITE) {
+    if (gSaveBlock.haltedActor != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_KITE);
@@ -612,7 +612,7 @@ static void EventScript_KiteKeepsAway(void) {
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
       routeIndex <<= 3;
       targetZOffset = routeIndex + sizeof(s32);
-      ObjectMotion_ResetAndSetPositionInMode2(
+      Actor_ResetAndSetPositionInMode2(
           ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
           *(const s32 *)(walkTargetBytes + targetZOffset));
     }
@@ -639,10 +639,10 @@ static void EventScript_PushLogOverEdge(void) {
   struct Actor *movedLog;
   s32 stationaryMotion;
   s32 clearedRows;
-  struct PushedObjectProbe probe;
+  struct PushedActorProbe probe;
 
   FieldScript_Start();
-  if (PushedObject_FindClearPosition(&probe) != 0) {
+  if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
     if ((probe.position.x >> 20) == 17) {
@@ -651,13 +651,13 @@ static void EventScript_PushLogOverEdge(void) {
       Actor_GetById(probe.actorSlot)->motionFlags = stationaryMotion;
       movedLog = Actor_GetById(probe.actorSlot);
       movedLog->bounce = stationaryMotion;
-      ObjectMotion_OffsetPositionAndResetMotion(probe.actorSlot, -12, 0);
-      ObjectMotion_CommitCurrentPositionAndActivate(probe.actorSlot);
+      Actor_OffsetPositionAndResetMotion(probe.actorSlot, -12, 0);
+      Actor_WaitForMoveById(probe.actorSlot);
       Import_ActorSetAnimation(probe.actorSlot, 3);
-      ObjectMotion_SetActionVariant(ACTOR_EAST_LOG, 3);
+      Actor_SetSpritePriority(ACTOR_EAST_LOG, 3);
       Actor_GetById(probe.actorSlot)->motionFlags =
           ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      ObjectMotion_OffsetPositionAndResetMotion(probe.actorSlot, -6, 0);
+      Actor_OffsetPositionAndResetMotion(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_GetById(probe.actorSlot));
       Import_ActorSetAnimation(probe.actorSlot, 8);
       {
@@ -667,16 +667,15 @@ static void EventScript_PushLogOverEdge(void) {
       }
       // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
-      PushedObject_FillGridAttributeRectangle(0, (probe.position.x >> 20),
-                                              ((probe.position.z >> 20) - 2), 1,
-                                              clearedRows, stationaryMotion);
-      PushedObject_FillGridAttributeRectangle(2, (probe.position.x >> 20),
-                                              ((probe.position.z >> 20) - 2), 1,
-                                              clearedRows, stationaryMotion);
-      PushedObject_FillGridAttributeRectangle(2, 16, 18, 1, 2,
-                                              stationaryMotion);
-      PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
-                                              stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(0, (probe.position.x >> 20),
+                                             ((probe.position.z >> 20) - 2), 1,
+                                             clearedRows, stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(2, (probe.position.x >> 20),
+                                             ((probe.position.z >> 20) - 2), 1,
+                                             clearedRows, stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
+                                             stationaryMotion);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
       Sound_PlaySong(SE_LOG_FALL);
     }
@@ -699,7 +698,7 @@ static void EventScript_PushLogOffLedge(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(15);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
+  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
   FieldScript_WaitFrames(4);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_MOVE);
@@ -709,22 +708,22 @@ static void EventScript_PushLogOffLedge(void) {
   Actor_GetById(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
   pushedLog->bounce = stationaryMotion;
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 12, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 12, 0);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_WEST_LOG);
+  Actor_WaitForMoveById(ACTOR_WEST_LOG);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 3);
   Actor_GetById(ACTOR_WEST_LOG)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 6, 0);
+  Actor_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 6, 0);
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 8);
-  ObjectMotion_SetActionVariant(ACTOR_WEST_LOG, 3);
+  Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
   Actor_GetById(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
-  PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
+  PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
+  PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
   Script_PlaySong(SE_LOG_FALL);
   FieldScript_End();
@@ -737,15 +736,15 @@ static void EventScript_PushLogOffLedge(void) {
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW when it stops on row 20, else
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void EventScript_PushLogNorth(void) {
-  struct PushedObjectProbe probe;
+  struct PushedActorProbe probe;
 
   FieldScript_Start();
-  if (PushedObject_FindClearPosition(&probe) != 0) {
+  if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the metatile behavior footprint.
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
+    Actor_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
     FieldScript_WaitFrames(45);
     Sound_PlaySong(SE_LOG_FALL);
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 8);
@@ -755,7 +754,7 @@ static void EventScript_PushLogNorth(void) {
       s32 emptyAttributes = 0;
 
       slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      PushedObject_FillGridAttributeRectangle(
+      PushedActor_FillGridAttributeRectangle(
           0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
     }
     if ((probe.position.z >> 20) == 20) {
@@ -802,8 +801,8 @@ s32 ValeCave_Initialize(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     WaitFrames(1);
-    ObjectMotion_SetActionVariant(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
-    ObjectMotion_SetActionVariant(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
+    Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
+    Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   ValeCave_ApplyEntryState();
@@ -876,7 +875,7 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   struct Actor *actor = Actor_GetById(actorId);
 
   if (actor != 0) {
-    ObjectMotion_SetActionVariant(actorId, 3);
+    Actor_SetSpritePriority(actorId, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->x.fixed = (column << 20) + PIXELS(8);
@@ -902,13 +901,13 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
-      ObjectMotion_SetActionVariant(ACTOR_SECOND_STANDING_LOG, 3);
-      ObjectMotion_SetActionVariant(ACTOR_SECOND_STANDING_CRATES, 3);
+      Actor_SetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
+      Actor_SetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
       // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
       // nothing. XXX (no evidence): what it and the chest below were meant to
       // show; the sprites alone hold neither, and neither object is solid or a
       // target.
-      Actor_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), SPRITE_CRATE);
+      Actor_CreateConfigured(PIXELS(120), 0, PIXELS(232), SPRITE_CRATE);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:
@@ -936,7 +935,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
       // The holes' part: a still chest object that shows nothing, the riding
       // log's passage, and the holes already filled.
-      Actor_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552), SPRITE_CHEST);
+      Actor_CreateConfigured(PIXELS(642), 0, PIXELS(552), SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_CRATES_SUNK) != 0) {
@@ -955,29 +954,29 @@ static void ValeCave_ApplyEntryState(void) {
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE) != 0) {
-        PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
-        PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
       } else {
         Scene_RedrawActorFootprint(ACTOR_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
-        PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
-        PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
       } else {
         Scene_RedrawActorFootprint(ACTOR_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
       if (southLogOnSouthernRow != 0) {
-        PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, MB_NORMAL);
       } else if (GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW) != 0) {
-        PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
-                                                southLogOnSouthernRow);
+        PushedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2,
+                                               southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
         Scene_RedrawActorFootprint(ACTOR_SOUTH_LOG);
-        ObjectMotion_SetActionVariant(ACTOR_SOUTH_LOG, 3);
+        Actor_SetSpritePriority(ACTOR_SOUTH_LOG, 3);
       }
       break;
     }
@@ -1001,17 +1000,17 @@ static void EventScript_TouchRidingLog(void) {
 
 s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gValeCave_MediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gValeCave_LongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 // Pixel step by direction: X in the upper halfword, Z in the lower.
@@ -1022,7 +1021,7 @@ s32 gValeCave_LongEffectScript[] = {
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 #endif
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1032,11 +1031,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,

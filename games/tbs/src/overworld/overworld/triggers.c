@@ -64,7 +64,7 @@ found:
 ///
 /// Used for every condition column of a map's tables: events
 /// (Scene_FindTrigger, Field_ExamineCell), actor templates
-/// (FieldScript_SpawnActorTemplates), exit regions
+/// (Event_SpawnActorTemplates), exit regions
 /// (Field_CheckExitRegions) and item triggers.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
@@ -117,8 +117,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct TriggerView *trigger = (struct TriggerView *)work->triggers;
   s32 flags;
-  u32 facing =
-      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+  u32 facing = ((struct Actor *)Actor_Lookup(gSaveBlock.leaderActorId))->facing;
 
   flags = trigger->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
@@ -175,7 +174,7 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor
 /// stopped with Halt
-/// (gSaveBlock.pausedObject), its TRIGGER_TALK_HALTED event if it has one,
+/// (gSaveBlock.haltedActor), its TRIGGER_TALK_HALTED event if it has one,
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
@@ -184,7 +183,7 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
   struct TriggerView *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
-  s32 pausedActorId = gSaveBlock.pausedObject;
+  s32 pausedActorId = gSaveBlock.haltedActor;
 
   if (pausedActorId == id) {
     struct TriggerView *pausedTrigger =
@@ -206,7 +205,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// stood in for it; SceneManager_Run ignores the result.
 ///
 /// Called by SceneManager_Run for its talk request (work->talk). Resumes
-/// the stopped actor and sets gSaveBlock.pausedObject back to -1
+/// the stopped actor and sets gSaveBlock.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorTemplate *template = Scene_FindActorTemplate(id);
@@ -218,7 +217,7 @@ s32 Scene_TalkToActor(s32 id) {
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
-  if (gSaveBlock.pausedObject == id) {
+  if (gSaveBlock.haltedActor == id) {
     actorPaused = 1;
     trigger = Scene_FindTrigger(7, id);
     if (trigger == 0) {
@@ -253,7 +252,7 @@ s32 Scene_TalkToActor(s32 id) {
       u8 *movementState = &actor->paused;
 
       *movementState = 1;
-      Object_SetAnimationSpeedFar(actor, 0);
+      Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
@@ -284,15 +283,14 @@ s32 Scene_TalkToActor(s32 id) {
         if ((s8)template->talkFacing == 3) {
           actor->linkedActor = Actor_GetById(gSaveBlock.leaderActorId);
           actor->steeringFlags |= 1;
-          Actor_SetMovementType(actor, (s32)gObjectMotion_LinkedActionScript);
+          Actor_SetMovementType(actor, (s32)gActor_LinkedScript);
         } else if ((s8)template->talkFacing == 1) {
           actor->timer = savedAngle;
-          Object_InitializeFar(actor,
-                               (const s32 *)gObjectMotion_StepAngleScript);
+          Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
         }
       }
       actor->paused = 0;
-      Object_SetAnimationSpeedFar(actor, 16);
+      Actor_SetAnimationSpeedFar(actor, 16);
     }
     result = 0;
   }
@@ -300,8 +298,8 @@ finish:
   // Both a normal event and the paused actor's fallback line release
   // the pause.
   if (actorPaused) {
-    FieldEffect_ResumeObject(gSaveBlock.pausedObject);
-    gSaveBlock.pausedObject = -1;
+    FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+    gSaveBlock.haltedActor = -1;
   }
   return result;
 }
@@ -537,7 +535,7 @@ s32 Field_ExamineCell(s32 tile) {
               Sound_PlaySongFar(SE_RECOVERY);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, FIELD_MESSAGE_ZOOM);
               PartyStatus_CloseFar();
-              Object_SelectAnimationFar(object, 2);
+              Actor_SelectAnimationFar(object, 2);
               Sound_PlaySongFar(SE_GLITTER);
               FieldScript_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, FIELD_MESSAGE_ZOOM);
@@ -586,7 +584,7 @@ s32 Field_ExamineCell(s32 tile) {
               Party_AdjustCoinsFar((u16)trigger->value);
               if (condition != -1)
                 GameFlag_SetFar(condition);
-              Object_ReleaseFar(object);
+              Actor_ReleaseFar(object);
             } else {
               // An item, which stays in the chest when nobody can carry it.
               void *object;
@@ -603,7 +601,7 @@ s32 Field_ExamineCell(s32 tile) {
                                         MESSAGE_ARGUMENT_ITEM);
                 FieldMessage_ShowFar(MsgFoundItem, FIELD_MESSAGE_ZOOM);
                 FieldMessage_ShowFar(MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
-                Object_DestroyIfPresent(object);
+                Actor_ReleaseIfPresent(object);
                 if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                   TreasureSpot_CloseChest(tile);
               } else {
@@ -625,7 +623,7 @@ s32 Field_ExamineCell(s32 tile) {
                 }
                 if (condition != -1)
                   GameFlag_SetFar(condition);
-                Object_ReleaseFar(object);
+                Actor_ReleaseFar(object);
               }
             }
           } else {

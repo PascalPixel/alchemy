@@ -22,7 +22,7 @@ s32 Shop_ChooseMember(void) {
   listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = 4;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
+  PsynergyMenu_InitializeEntryActorsFar(listWindow, 2, 0, 8, 0);
 
   for (;;) {
     if (redraw != 0) {
@@ -55,7 +55,7 @@ s32 Shop_ChooseMember(void) {
 
     if ((gKeysPressed & KEY_B) != 0) {
       Sound_PlaySongFar(SE_MENU_CANCEL);
-      Menu_ReleaseEntryObjectsFar();
+      Menu_ReleaseEntryActorsFar();
       Window_CloseFar(listWindow, 2);
       Window_CloseFar(shop->itemWindow, 2);
       Window_CloseFar(shop->moneyWindow, 2);
@@ -262,7 +262,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 0x30);
     result = Shop_SelectQuantity(0, quantityLimit, unitSalePrice);
     WaitFrames(1);
-    Icon_PrepareObjectFar(shop->cursor.anchor);
+    Icon_PrepareActorFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);
   }
   return result;

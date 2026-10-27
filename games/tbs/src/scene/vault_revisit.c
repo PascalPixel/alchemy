@@ -179,7 +179,7 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
 /// while back, aren't you? You've returned to Vault!"
 static void EventScript_RecognizeThiefCatchers(void) {
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
+  Actor_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageAndWait(ACTOR_WELCOMING_YOUNG_MAN, 0);
@@ -201,7 +201,7 @@ static void EventScript_TalkOfLunpaThieves(void) {
 static void EventScript_PraisePartyStrength(void) {
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
+  Actor_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
@@ -276,7 +276,7 @@ static void EventScript_AskAboutJailbreak(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultGuysCheckJail);
   Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
-  FieldMessage_ShowAtObject(ACTOR_STRONGMAN_ON_WATCH, 0);
+  FieldMessage_ShowAtActor(ACTOR_STRONGMAN_ON_WATCH, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message += 1;
   }
@@ -289,10 +289,9 @@ static void EventScript_AskAboutJailbreak(void) {
 /// recognizes the party.
 static void EventScript_ReadMindAndRecognizeThiefCatchers(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WELCOMING_YOUNG_MAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER,
-                              20);
+  Actor_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageThenWait(ACTOR_WELCOMING_YOUNG_MAN, 0, 20);
@@ -312,9 +311,9 @@ static void EventScript_ReadMindOnDodonpa(void) {
 /// Mind Read before the old man has spoken: he turns and praises the party.
 static void EventScript_ReadMindAndPraisePartyStrength(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MAYORS_VISITOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
+  Actor_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
@@ -375,7 +374,7 @@ static void EventScript_ReadMindOnJailKey(void) {
     FieldScript_Start();
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
     Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_STRONGMAN_ON_WATCH, 1);
+    Actor_RunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgVaultGuysCheckJail);
     Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
@@ -385,7 +384,7 @@ static void EventScript_ReadMindOnJailKey(void) {
     }
     Script_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = requestHeard;
-    Actor_SetBuiltinAction(ACTOR_STRONGMAN_ON_WATCH, 2);
+    Actor_SetMovementTypeById(ACTOR_STRONGMAN_ON_WATCH, 2);
     FieldScript_End();
     GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   } else {
@@ -403,12 +402,12 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
                                             int velocityY) {
   struct Actor *jumpingActor = Actor_GetById(actorId);
   int frames;
-  ObjectMotion_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
   jumpingActor->gravity = PIXELS(1) / 2;
   jumpingActor->bounce = 0;
   jumpingActor->velocityY = velocityY;
   Actor_SetSpriteFlags(jumpingActor, 0);
-  ObjectMotion_SetPositionAndCommit(actorId, x, z);
+  Actor_SetPositionAndCommit(actorId, x, z);
   Import_ActorSetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     WaitFrames(1);
@@ -429,9 +428,9 @@ static void EventScript_RingBell(void) {
   if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
+    Actor_Jump(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(12);
-    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
+    Actor_Jump(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(20);
     // Let the Djinni leap from hiding before it walks to the bell.
     VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
@@ -553,7 +552,7 @@ static void EventScript_SapJoins(void) {
 
 /// Jumps at the hidden passage, then pauses so the party can see the clue.
 static inline void VaultRevisit_DogJumpAtPassage(void) {
-  ObjectMotion_Launch(ACTOR_VAULT_DOG, 6, 0);
+  Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
   FieldScript_WaitFrames(30);
 }
 
@@ -565,7 +564,7 @@ static void EventScript_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   FieldScript_Start();
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_VAULT_DOG, 2);
+  Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   FieldScript_WaitFrames(10);
@@ -663,7 +662,7 @@ s32 Scene_Initialize(void) {
   // A still object on the well that shows nothing. XXX (no evidence): what it
   // was meant to show; its tiles in video memory are blank and nothing refers
   // to it.
-  Actor_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
+  Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   WaitFrames(1);
   // Resume the two walking villagers' proximity reactions.
@@ -706,17 +705,17 @@ s32 Scene_Initialize(void) {
 // The three scripts of gFieldEffect_DurationScripts, as in vault.c.
 s32 gVaultRevisit_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gVaultRevisit_MediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gVaultRevisit_LongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

@@ -168,7 +168,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
     piece = record->actor;
 
     if (*gKolimaForestFloodgateMap == 1) {
-      Object_SelectAnimation(piece, 4);
+      Actor_SelectAnimation(piece, 4);
       piece->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
       piece->motionFlags = 0;
@@ -180,7 +180,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
         MapGrid_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
-      Object_SelectAnimation(piece, 1);
+      Actor_SelectAnimation(piece, 1);
       piece->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
       piece->motionFlags = ACTOR_FALLS;
       piece->y.fixed = 0;
@@ -353,14 +353,14 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
-  ObjectMotion_ResetAndSetPosition(ACTOR_SHORT_LOG, 72, 176);
+  Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 72, 176);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, -8, 0);
+  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, -8, 0);
   FieldScript_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_SHORT_LOG);
+  Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
@@ -380,14 +380,14 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
-  ObjectMotion_ResetAndSetPosition(ACTOR_SHORT_LOG, 104, 176);
+  Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 104, 176);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
+  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
   FieldScript_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_SHORT_LOG);
+  Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
@@ -451,11 +451,11 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
       x = (entry->x << 20) + 0x80000;
       z = (entry->z << 20) + 0x200000;
     }
-    actor = Actor_Create(entry->sprite, x, 0, z);
+    actor = FieldActor_Create(entry->sprite, x, 0, z);
     if (actor == NULL)
       return;
     entry->actor = actor;
-    Object_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, 1);
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->radius = 32;
@@ -592,20 +592,20 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
-  Object_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
-  Object_SetPosition(actor, x, 0, z);
+  Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
+  FieldActor_SetMoveTarget(actor, x, 0, z);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  Object_StartCamera(work->camera, (s32)actor);
+  Actor_StartCamera(work->camera, (s32)actor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
   FieldScript_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Object_WaitForMove(actor);
-  Object_SelectAnimation(actor, 1);
+  Actor_WaitForMove(actor);
+  Actor_SelectAnimation(actor, 1);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);

@@ -112,18 +112,18 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       kid->paused = 1;
-      Object_SelectAnimation(kid, ANIM_STAND);
+      Actor_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
     if (target == Actor_GetById(ACTOR_PARTY_LEADER) &&
         (farRight == facing || farLeft == facing)) {
       kid->paused = 1;
-      Object_SelectAnimation(kid, ANIM_STAND);
+      Actor_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
   } else {
     kid->paused = 0;
-    Object_SelectAnimation(kid, ANIM_WALK);
+    Actor_SelectAnimation(kid, ANIM_WALK);
   }
   return stopped;
 }
@@ -356,7 +356,7 @@ static void Tolbi_TalkToMother(void) {
 static void Tolbi_TalkToCryingBoy(void) {
   FieldScript_Start();
   Actor_FaceDirection(ACTOR_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
-  ObjectMotion_SetVariantCallback(ACTOR_TOLBI_CRYING_BOY, 2);
+  Actor_StartRepeatedMotion(ACTOR_TOLBI_CRYING_BOY, 2);
   FieldScript_SetMessageId(MsgTolbiWaahBuySweets);
   FieldScript_ShowMessageAndWait(ACTOR_TOLBI_CRYING_BOY, 0);
   FieldScript_End();
@@ -455,7 +455,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
   // The two children run their loop south-east of the fountain.
   Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
-  Actor_SetActionScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
+  Actor_SetScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Actor_GetById(ACTOR_TOLBI_OLDER_BROTHER);
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
@@ -466,7 +466,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   actor->update = kidUpdate;
   clearFlags = 0;
   Import_ActorSetPosition(ACTOR_TOLBI_YOUNGER_SISTER, PIXELS(368), PIXELS(320));
-  Actor_SetActionScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
+  Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_GetById(ACTOR_TOLBI_YOUNGER_SISTER);
   actor->timer = clearFlags;
   actor->update = kidUpdate;
@@ -513,7 +513,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   FieldScript_Start();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectMotion_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
+  Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgTolbiWantTestLuck);
   Script_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
@@ -524,7 +524,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
     FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
@@ -556,8 +556,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
-  ObjectMotion_SetSpeedParameters(ACTOR_TOLBI_SOLDIER_B, PIXELS(1),
-                                  PIXELS(1) / 2);
+  Actor_SetSpeedParameters(ACTOR_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
   FieldScript_SetMessageId(firstMsg);
 
@@ -568,23 +567,23 @@ static void Tolbi_MeetSearchingSoldiers(void) {
                              SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TOLBI_MISSING_PERSON_POSTER), 0);
   Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, PIXELS(95), PIXELS(40));
-  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 248);
-  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_B, 56, 248);
+  Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 248);
+  Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_B, 56, 248);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 64, 264);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_TOLBI_SOLDIER_A);
+  Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
   Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_B, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  ObjectMotion_SetAngleToward(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_A,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_B,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(ACTOR_TOLBI_SOLDIER_A, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_TOLBI_SOLDIER_B, 2);
+  Actor_StartRepeatedMotion(ACTOR_TOLBI_SOLDIER_A, 2);
+  Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
   FieldScript_WaitFrames(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
@@ -598,43 +597,43 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_TOLBI_SOLDIER_B, 2);
+    Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
     FieldScript_WaitFrames(30);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
     FieldScript_WaitFrames(30);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     FieldScript_WaitFrames(30);
     FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
     FieldScript_WaitFrames(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     FieldScript_WaitFrames(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 232, 248);
     FieldScript_WaitFrames(2);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 232, 248);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_TOLBI_SOLDIER_A);
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 248, 248);
-    ObjectMotion_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 248, 248);
+    Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
+    Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 248, 248);
+    Actor_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 248, 248);
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_TOLBI_SOLDIER_B, 2);
+    Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
     FieldScript_WaitFrames(30);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
     FieldScript_WaitFrames(30);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
-    ObjectMotion_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     FieldScript_WaitFrames(30);
     gFieldWork->message += 1;
     FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
@@ -643,12 +642,12 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     FieldScript_WaitFrames(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 184);
-    ObjectMotion_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 56, 184);
+    Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 184);
+    Actor_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 56, 184);
   }
   Import_ActorSetPosition(ACTOR_TOLBI_SOLDIER_A, 0, 0);
   Import_ActorSetPosition(ACTOR_TOLBI_SOLDIER_B, 0, 0);

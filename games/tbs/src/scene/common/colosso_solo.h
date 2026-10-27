@@ -230,7 +230,7 @@ void Colosso_AskDoneCheering(s32 id) {
   FieldScript_Start();
   msg = MsgColossoCheering;
   FieldScript_SetMessageId(msg);
-  FieldMessage_ShowAtObject(id, 0);
+  FieldMessage_ShowAtActor(id, 0);
   gFieldWork->choiceMessage = MsgColossoCheeringChoices;
   gFieldWork->choiceWidth = 4;
   res = FieldScript_AskYesNoWithActorAnimation(slot, 0);
@@ -283,10 +283,10 @@ static void Colosso_AskReadyToRace(s32 actorId) {
     if (FieldScript_AskYesNoAndShowResponse(actorId, 0) == 0) {
       InitializeActorZero();
       InitializeSelectedActor(actorId);
-      ObjectMotion_ResetAndSetPositionInMode2(actorId, x, z + 64);
+      Actor_ResetAndSetPositionInMode2(actorId, x, z + 64);
       FieldScript_WaitFrames(15);
-      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
-      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
+      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
+      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
       Import_ScriptRequestExit(COLOSSO_SOLO_TO_COLOSSEUM);
@@ -346,7 +346,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   }
   GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
   FieldScript_SetMessageId(MsgColossoWouldYouLikeHearDescription);
-  FieldMessage_ShowAtObject(speaker, 0);
+  FieldMessage_ShowAtActor(speaker, 0);
   return FieldScript_AskYesNoWithActorAnimation(0, 0);
 }
 
@@ -461,14 +461,14 @@ L_main:
   frontZ = guideZ + 16;
   Actor_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
-  ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, besideX, frontZ);
+  Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, besideX, frontZ);
   Actor_LinkPair(friendId, ACTOR_PARTY_LEADER, 30);
   Import_ActorSetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(guide, guideX, behindZ);
-  ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
-  Actor_LinkObjectAndSetCallback(ACTOR_PARTY_LEADER, friendId);
+  Actor_ResetAndSetPositionInMode2(guide, besideX, behindZ);
+  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
   Import_ActorSetAnimation(guide, 1);
   Actor_FaceDirection(guide, FACING_WEST, 0);

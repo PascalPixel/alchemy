@@ -327,7 +327,7 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// height function of the cell's terrain kind applied to its samples.
 /// y is the map's down axis, an object's z.
 ///
-/// Called each frame by Object_UpdateAllThumb for objects that follow the
+/// Called each frame by Actor_UpdateAllThumb for objects that follow the
 /// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
 /// field map's objects, the Psynergy effects and about ten map overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {

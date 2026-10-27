@@ -304,8 +304,8 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
           // DEAD: always true, as slot is a remainder of a positive count; the
           // ROM keeps the test.
           if (slot != -1)
-            Object_ApplyProjectedPlacementFar(work->animations[slot], &position,
-                                              &scale, 0);
+            Actor_ApplyProjectedPlacementFar(work->animations[slot], &position,
+                                             &scale, 0);
           rock->y -= rock->z;
           rock->velocityX += rock->velocityY;
           if (rock->velocityX > 12)

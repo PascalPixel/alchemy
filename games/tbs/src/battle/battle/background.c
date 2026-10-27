@@ -548,14 +548,14 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   object = slot->object;
   if (object == 0)
     return;
-  switch (object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK) {
-  case OBJECT_SPRITE_ONE: {
+  switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  case ACTOR_SPRITE_ONE: {
     record = object->sprite;
     record->image.objectMode = mode;
     record->shadow.objectMode = mode;
     break;
   }
-  case OBJECT_SPRITE_GROUP: {
+  case ACTOR_SPRITE_GROUP: {
     records = (struct Sprite **)object->sprite;
     recordIndex = 0;
     do {
@@ -565,7 +565,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
       recordIndex++;
-    } while (recordIndex <= OBJECT_SPRITE_GROUP_SIZE - 1);
+    } while (recordIndex <= ACTOR_SPRITE_GROUP_SIZE - 1);
     break;
   }
   }

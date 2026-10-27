@@ -54,7 +54,7 @@ void Kolima_UpdateCurseDust(void) {
     break;
   }
   if ((gFrameCount & 7) == 0 &&
-      (actor = Actor_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
+      (actor = FieldActor_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
       Sound_PlaySong(SE_GLITTER);
@@ -75,7 +75,7 @@ void Kolima_UpdateCurseDust(void) {
     sprite->flags = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
-    Object_SelectAnimation(actor, 1);
-    Actor_SetScript(actor, gFallingEffectScript);
+    Actor_SelectAnimation(actor, 1);
+    Actor_StartScript(actor, gFallingEffectScript);
   }
 }

@@ -175,7 +175,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
 
   work = gFieldWork;
   FieldScript_Start();
-  ObjectMotion_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 0);
+  Actor_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 0);
   Import_ScriptRequestExit(work->stepTrigger);
   FieldScript_End();
 }
@@ -210,7 +210,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL,
                                  FACE_GESTURE_OPEN_EYES);
     FieldScript_ShowMessageThenWait(ACTOR_LAUREL, 0, 10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(40);
     FieldScript_ShowMessageAndWait(ACTOR_LAUREL, 0);
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL,
@@ -265,7 +265,7 @@ static void KolimaForestTree_TalkToTret(void) {
       WaitFrames(40);
       Script_ShowMessageAndWait(
           SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0, 10);
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+      Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
@@ -328,7 +328,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
 
   // The wrathful side throws the leader back before the water can heal Tret.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
@@ -338,7 +338,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   WaitFrames(30);
   gKolimaForestTreePlaySparkSound = 0;
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
@@ -368,7 +368,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   FieldScript_SetMessageId(MsgKolimaControlTretsHeartShallNot);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE,
                             0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0);
   Scene_PlayMusic();
@@ -382,9 +382,9 @@ static void KolimaForestTree_RejectHermesWater(void) {
   }
   leader->gravity = PIXELS(1);
   leader->bounce = Q16_ONE / 4;
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(40);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 0);
+  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(20);
 }
@@ -394,7 +394,7 @@ static __inline__ void KolimaForestTree_NodTogether(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 }
 
 /// Turns the companions together and pauses after the final facing change.
@@ -439,15 +439,15 @@ static void KolimaForestTree_RestoreTret(void) {
   if (leader != 0) {
     Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetActionScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
-  Actor_SetActionScript(ACTOR_IVAN, gKolimaForestTree_IvanApproachActions);
+  Actor_SetScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
+  Actor_SetScript(ACTOR_IVAN, gKolimaForestTree_IvanApproachActions);
   if (includeMia != 0) {
     Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetActionScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
+    Actor_SetScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
   }
   Actor_RefreshSelectorById(ACTOR_IVAN);
   FieldScript_WaitFrames(40);
@@ -505,10 +505,10 @@ static void KolimaForestTree_RestoreTret(void) {
   // Tret and Laurel discover that their powers have returned.
   FieldScript_SetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
   Script_ShowMessage(ACTOR_TRET, 0);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   KolimaForestTree_FaceParty(FACING_NORTH, 20);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
@@ -562,12 +562,12 @@ static void KolimaForestTree_RestoreTret(void) {
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Script_ShowMessage(ACTOR_GARET, 0);
     if (includeMia != 0) {
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 2);
+      Actor_RunRepeatedMotion(ACTOR_MIA, 2);
       Script_ShowMessage(ACTOR_MIA, 0);
     } else {
       gFieldWork->message += 1;
     }
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Script_ShowMessage(ACTOR_IVAN, 0);
     Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
     Script_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -609,14 +609,14 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Script_OpenMessage(ACTOR_GARET, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
-    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
   }
   Script_ShowMessage(ACTOR_GARET, 0);
@@ -658,7 +658,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
   Script_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
@@ -692,12 +692,12 @@ static void KolimaForestTree_RestoreTret(void) {
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   FieldScript_WaitFrames(100);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 40);
-  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 1);
+  Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -724,10 +724,10 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -753,11 +753,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Script_PlaySong(SONG_FADE_OUT_BGM);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
-  Actor_SetActionScript(ACTOR_GARET, finalActions);
+  Actor_SetScript(ACTOR_GARET, finalActions);
   if (includeMia != 0) {
-    Actor_SetActionScript(ACTOR_MIA, finalActions);
+    Actor_SetScript(ACTOR_MIA, finalActions);
   }
-  Actor_RunActionScriptAndWait(ACTOR_IVAN, finalActions);
+  Actor_RunScriptAndWait(ACTOR_IVAN, finalActions);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
@@ -767,7 +767,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
   Script_PlaySong(MUS_TOWN);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
@@ -802,9 +802,9 @@ s32 KolimaForestTree_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INVISIBLE_LAUREL), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TRET), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_LAUREL), 0);
-  ObjectMotion_SetActionVariant(ACTOR_TRET, 2);
-  ObjectMotion_SetActionVariant(ACTOR_TRETS_WRATHFUL_SIDE, 2);
-  ObjectMotion_SetActionVariant(ACTOR_LAUREL, 2);
+  Actor_SetSpritePriority(ACTOR_TRET, 2);
+  Actor_SetSpritePriority(ACTOR_TRETS_WRATHFUL_SIDE, 2);
+  Actor_SetSpritePriority(ACTOR_LAUREL, 2);
   tretBlank->motionFlags = 0;
   tretBlank->y.fixed = PIXELS(28);
   laurelBlank->motionFlags = 0;
@@ -841,7 +841,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
     return;
   if (gKolimaForestTreePlaySparkSound != 0)
     Sound_PlaySong(SE_SPARKLE_FALL);
-  effect = Actor_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
+  effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
   if (effect == 0)
     return;
   sprite = effect->sprite;
@@ -854,9 +854,9 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->speedLimit = PIXELS(4);
   effect->acceleration = PIXELS(4);
   effect->motionFlags = phase;
-  Object_SelectAnimation(effect, 2);
-  Object_SetPosition(effect, targetX, 0, targetZ);
-  Actor_SetScript(effect, gKolimaForestTreeEffectScript);
+  Actor_SelectAnimation(effect, 2);
+  FieldActor_SetMoveTarget(effect, targetX, 0, targetZ);
+  Actor_StartScript(effect, gKolimaForestTreeEffectScript);
 }
 
 /// Alternates the saved healthy and withered palettes over thirty frames.
@@ -1022,16 +1022,16 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   case 40:
     Sound_PlaySong(SE_SHIMMER);
     for (sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
-      spark = Actor_Create(SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
-                           gKolimaForestTreeSparkOrigin[1],
-                           gKolimaForestTreeSparkOrigin[2]);
+      spark = FieldActor_Create(SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
+                                gKolimaForestTreeSparkOrigin[1],
+                                gKolimaForestTreeSparkOrigin[2]);
       if (spark != 0) {
         previousSprite =
             Sprite_ShareVramCacheEntry(spark->sprite, previousSprite);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 1;
         Actor_SetSpriteFlags(spark, 0);
-        Object_SelectAnimation(spark, 1);
+        Actor_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->userValue = (sparkIndex * 60 * Q16_ONE) / 360;
         spark->targetX = gKolimaForestTreeSparkOrigin[0];

@@ -47,13 +47,13 @@ void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window);
 s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x, s32 y);
 s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y);
-void Icon_PrepareObject(struct WindowSprite *object);
+void Icon_PrepareActor(struct WindowSprite *object);
 void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit);
 struct Window *MenuCursor_Create(void *source);
-void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
-                                         s32 spacing, s32 unused);
-void Menu_ReleaseEntryObjects(void);
-void Menu_UpdateEntryObjectTransforms(void);
+void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
+                                        s32 spacing, s32 unused);
+void Menu_ReleaseEntryActors(void);
+void Menu_UpdateEntryActorTransforms(void);
 void MenuCursor_Position(s32 xOffset, s32 yOffset);
 void MenuCursor_Slide(s32 x, s32 y);
 void PsynergyMenu_ReservedNoOp(void);
@@ -222,12 +222,12 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);
 void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode);
 void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items);
-void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns);
-void Menu_PlaceEntryObjectInGrid(struct WindowSprite *icon, s32 index,
-                                 s32 originX, s32 originY, s32 columns);
+void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns);
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_PositionCategory(void);
-s32 Menu_CreateEightEntryObjects(struct Window *window);
+s32 Menu_CreateEightEntryActors(struct Window *window);
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ResetCategory(void);
 s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled);
@@ -243,7 +243,7 @@ void Ability_PlayUseAnimation(s32 action);
 
 s32 Menu_ReservedStatusZero(void);
 s32 Menu_WrapIndex(s32 value, s32 modulus);
-s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset);
+s32 Menu_SetFirstActorRowCoordinates(s32 yOffset);
 s32 DjinnMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
 void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta);

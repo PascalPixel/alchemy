@@ -106,8 +106,8 @@ s32 ItemMenu_Run(void) {
   backup = AllocEwram(size);
 #endif
   screen = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_OBJECT_SYSTEM];
-  ((struct ObjectSystemWork *)cache[0])->suspended = 1;
+  cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_ACTOR_SYSTEM];
+  ((struct ActorSystemWork *)cache[0])->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
@@ -135,7 +135,7 @@ s32 ItemMenu_Run(void) {
   Menu_EnsureCancelSound();
   if (result == 1) {
     struct FieldWork *selection =
-        cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM];
+        cache[HEAP_SLOT_FIELD - HEAP_SLOT_ACTOR_SYSTEM];
 
     selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->itemSlot = screen->selectedSlots[0];
@@ -143,13 +143,13 @@ s32 ItemMenu_Run(void) {
 
   // Close the menu and give the screen back to the field.
   WindowSprite_ClearListFar(screen->statusWindow);
-  process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_OBJECT_SYSTEM];
+  process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_ACTOR_SYSTEM];
   ((struct WindowWork *)*process)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawFrameFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
   FreeHeapSlot(HEAP_SLOT_MENU);
-  ((struct ObjectSystemWork *)cache[0])->suspended = 0;
+  ((struct ActorSystemWork *)cache[0])->suspended = 0;
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
@@ -455,7 +455,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->selectedItemIcon->motion = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
-      Icon_PrepareObject(menu->selectedItemIcon);
+      Icon_PrepareActor(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar((void *)menu->listWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       // Yes: take result + 1 of the stack out, one at a time. A dropped rare
@@ -888,7 +888,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 memberIndex;
 
-  PsynergyMenu_InitializeEntryObjects(MenuCursor_Create(menu), 2, 2, 8, 0);
+  PsynergyMenu_InitializeEntryActors(MenuCursor_Create(menu), 2, 2, 8, 0);
   // The four figures stand at screen y 30; the screens raise the member
   // chosen to 26.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
@@ -995,7 +995,7 @@ void ItemMenu_Close(void) {
   struct WindowSprite *cursor;
 
   menu = gMenuWork;
-  Menu_ReleaseEntryObjects();
+  Menu_ReleaseEntryActors();
   ItemMenu_HideAllIcons();
   WaitFrames(1);
   cursor = menu->cursor;
@@ -1034,7 +1034,7 @@ s32 ItemMenu_SelectMember(s32 side) {
   unit = Unit_GetFar(menu->memberIds[memberIndex]);
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
-  Icon_PrepareObject(menu->sideIcons[side]);
+  Icon_PrepareActor(menu->sideIcons[side]);
   WaitFrames(1);
   return result;
 }
@@ -1299,7 +1299,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   // The marker is NULL here too (see above).
   targetMarker = menu->sideIcons[1];
   menu->sideIndex[1] = memberIndex;
-  Icon_PrepareObject(targetMarker);
+  Icon_PrepareActor(targetMarker);
   targetMarker->motion = ICON_HIDDEN;
   EquipmentMenu_StopCompatibilityIndicators();
   WaitFrames(1);
@@ -1385,7 +1385,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
   for (slot = 0; slot < 32; slot++) {
     if (items[slot] == 0) {
-      Icon_PrepareObject(menu->entryIcons[slot]);
+      Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
     }
   }
@@ -2074,7 +2074,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   // Hide the party figures (without their placement callback they are not
   // drawn) and the status panel's portrait (the work's cursor), which the
   // window covers, meanwhile.
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryActorTransforms);
 
   {
     struct WindowSprite *cursor = menu->cursor;
@@ -2117,11 +2117,11 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Window_CloseFar((void *)window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
-  // As PsynergyMenu_InitializeEntryObjects schedules it.
+  // As PsynergyMenu_InitializeEntryActors schedules it.
   {
     s32 priority = TASK_PASS_FRAME;
 
-    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdateEntryActorTransforms, priority);
   }
 
   // The Japanese window, 13 tiles wide, leaves the command grid at tile 13
@@ -2549,7 +2549,7 @@ void ItemMenu_DrawItemHead(void) {
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;
   menu->selectedItemIcon->y = 8;
-  Icon_PrepareObject(menu->selectedItemIcon);
+  Icon_PrepareActor(menu->selectedItemIcon);
   Text_DrawStringAtOffsetFar(Unit_GetFar(menu->sideMember[0])->name,
                              menu->questionWindow, 16, 0);
   Text_DrawMessageAsTilesFar((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
@@ -2889,7 +2889,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         changed = 0;
         if (memberUnit->inventory[previous] != 0) {
           icon = menu->entryIcons[previous];
-          Icon_PrepareObject(icon);
+          Icon_PrepareActor(icon);
         }
         if (redraw != 0) {
           WaitFrames(1);
@@ -2909,7 +2909,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           icon = menu->entryIcons[state.selectedIndex];
           // Animate the selected icon: 9 is WINDOW_SPRITE_MOTION_SWELL, pulsing
           // between 1 and 1.5 times its size, from its first step, in depth
-          // slot 250. Icon_PrepareObject stills it again when the cursor
+          // slot 250. Icon_PrepareActor stills it again when the cursor
           // leaves.
           icon->motion = 9;
           icon->animationStep = 0;
@@ -2993,7 +2993,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
   }
 
   Window_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
-  Icon_PrepareObject(menu->gridCursor);
+  Icon_PrepareActor(menu->gridCursor);
   menu->selectedSlots[sideIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->sideMember[sideIndex]] =
       state.selectedIndex;

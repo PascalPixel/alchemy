@@ -18,7 +18,7 @@ void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
       if (effect->updateMotion != 0)
         FieldEffectSprite_UpdateMotion(effect);
       if (effect->render != 0)
-        FieldEffect_DrawScaledObject(effect);
+        FieldEffect_DrawScaledActor(effect);
     }
   }
 }
@@ -28,7 +28,7 @@ void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
 /// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
-void FieldEffect_DrawScaledObject(struct FieldEffectSprite *object) {
+void FieldEffect_DrawScaledActor(struct FieldEffectSprite *object) {
   struct Sprite *sprite;
   s32 offset;
   struct SpriteScale scale;
@@ -46,7 +46,7 @@ void FieldEffect_DrawScaledObject(struct FieldEffectSprite *object) {
   position.groundHeight = 0;
   if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
       object->z < 0xe00000)
-    Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
+    Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
 /// Moves a field effect sprite toward its target, turning at most turnStepMax
@@ -134,8 +134,8 @@ void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
 }
 
 /// Sets the animation of a field effect sprite.
-void FieldEffectSprite_SetObjectMode(struct FieldEffectSprite *effect,
-                                     s32 mode) {
+void FieldEffectSprite_SetActorMode(struct FieldEffectSprite *effect,
+                                    s32 mode) {
   Sprite_StartAnimFar(effect->object, mode);
 }
 
@@ -184,7 +184,7 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
   effect->active = 1;
   effect->randomValue = Random16();
   effect->flags = 4;
-  FieldEffectSprite_SetObjectMode(effect, 1);
+  FieldEffectSprite_SetActorMode(effect, 1);
 }
 
 /// Frees a field effect sprite and its sprite, clearing it to zero

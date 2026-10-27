@@ -184,11 +184,11 @@ gSpriteAnims:
 	.global gSprites
 gSprites:
 	.space 0x00000004
-	.global gObjects
-gObjects:
+	.global gActors
+gActors:
 	.space 0x00000004
-	.global gObjectSystemWork
-gObjectSystemWork:
+	.global gActorSystemWork
+gActorSystemWork:
 	.space 0x00000004
 	.global gWorldMapFrameWork
 gWorldMapFrameWork:

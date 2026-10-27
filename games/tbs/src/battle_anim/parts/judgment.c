@@ -317,7 +317,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
       place.x = ((i % 4) << 21) + (152 << 15);
       place.y = ((i / 4) << 21) + depth;
-      Object_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -956,8 +956,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
           debrisPlace.x = particle->x;
           debrisPlace.height = 0xff0000;
           debrisPlace.y = particle->y + 0xff0000;
-          Object_ApplyProjectedPlacementFar(work->animations[i], &debrisPlace,
-                                            &scale, 0);
+          Actor_ApplyProjectedPlacementFar(work->animations[i], &debrisPlace,
+                                           &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < 0x100000) {
             if (frame <= 279) {

@@ -25,13 +25,13 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
 
 /// Returns the sprite id stored by a live actor's animated sprite, or 0
 /// when that actor has no animated sprite or its sprite-id pointer is
-/// absent. The actor must exist: a NULL from Actor_GetByActorId is
+/// absent. The actor must exist: a NULL from Actor_Lookup is
 /// read through. Called by Speaker_GetIdleFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct Actor *object = Actor_GetByActorId(id);
+  struct Actor *object = Actor_Lookup(id);
   struct SpeakerSprite *sprite;
 
-  if (object->spriteStorageKind != OBJECT_SPRITE_ONE ||
+  if (object->spriteStorageKind != ACTOR_SPRITE_ONE ||
       (sprite = (struct SpeakerSprite *)object->sprite) == NULL ||
       sprite->firstEntry == NULL) {
     return 0;
@@ -59,7 +59,7 @@ s32 Speaker_GetVoice(u32 id) {
 /// line when it has nothing to say: Scene_TalkToActor picks a Halted
 /// actor's pair of lines with them, and Halt cast with no trigger
 /// (FieldEffect_Run) stops nothing when the nearest actor's flags are
-/// 0xff (FieldEffect_FilterObjectIdByFlags).
+/// 0xff (FieldEffect_FilterActorIdByFlags).
 s32 Speaker_GetIdleFlags(s32 id) {
   return Speaker_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;
 }

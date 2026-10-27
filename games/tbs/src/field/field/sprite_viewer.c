@@ -113,7 +113,7 @@ restart:
   ring = AllocHeapSlotEwram(HEAP_SLOT_BATTLE,
                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
-  ObjectSystem_Initialize(OBJECT_SYSTEM_LAYOUT);
+  ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
   // With no map loaded, the map cell buffer holds anim 0's frames; a
   // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the
   // actor sprite buffer, as sprite frame cache 1.

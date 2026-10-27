@@ -232,7 +232,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;
-      Object_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
+      Actor_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
       BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_DAMAGE, -1, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on

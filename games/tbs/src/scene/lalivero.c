@@ -67,7 +67,7 @@ enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 /// gLaliveroActorTemplates. gLaliveroActorTemplatesAfterLighthouse,
 /// for the later visit, places the same people in the same rows, then the sign
 /// and the Black Orb; its rows for Garet, Ivan and Mia take their own actor ids
-/// (FieldScript_SpawnActorTemplates).
+/// (Event_SpawnActorTemplates).
 enum LaliveroActorId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
   /// We were taken by surprise..."; later "Ha ha! I thought they had done me in
@@ -197,7 +197,7 @@ static void EventScript_TalkToVillagerTheyTookSheba(s32 actorId) {
   Script_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   FieldScript_WaitFrames(20);
-  Actor_SetActionScript(actorId, gLalivero_CryingScript);
+  Actor_SetScript(actorId, gLalivero_CryingScript);
 }
 
 /// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
@@ -205,7 +205,7 @@ static void EventScript_TalkToVillagerTheyTookSheba(s32 actorId) {
 static void EventScript_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
   FieldScript_SetMessageId(message);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(message + 1);
@@ -225,7 +225,7 @@ static void EventScript_WharfGuardLetsPartyThrough(void) {
   FieldScript_ShowMessageAndWait(ACTOR_WHARF_GUARD, 0);
   Actor_SetSpeed(ACTOR_WHARF_GUARD, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
-  ObjectMotion_ArmCallback(ACTOR_WHARF_GUARD, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_WHARF_GUARD, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
 }
 
@@ -283,8 +283,8 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
   // Iodem steps out from the party and looks them over.
-  FieldMotion_LaunchFromFocusedObject(ACTOR_IODEM, 8, -16, FACING_NORTH);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+  FieldActor_LaunchFromLeader(ACTOR_IODEM, 8, -16, FACING_NORTH);
+  Actor_WaitForMoveById(ACTOR_IODEM);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
@@ -294,7 +294,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 40);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -304,25 +304,25 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(30);
   // The soldiers know Iodem's voice: seven attackers took Sheba.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
@@ -333,16 +333,16 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
@@ -350,7 +350,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
@@ -358,7 +358,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(20);
   // Iodem paces while they tell where the attackers went.
@@ -374,7 +374,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
@@ -383,11 +383,11 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_IODEM, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 384);
@@ -395,13 +395,13 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -417,18 +417,18 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EAST_SOLDIER, 30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   FieldScript_WaitFrames(10);
@@ -438,13 +438,13 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // Iodem walks back into the leader.
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
@@ -454,7 +454,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+  Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
   FieldScript_WaitFrames(10);
   FieldScript_End();
@@ -477,10 +477,10 @@ static void EventScript_IodemGivesBlackOrb(void) {
   // picks Mia's reply.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 376);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_GARET, -32, 0, FACING_EAST);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_MIA, -16, 16, FACING_NORTHEAST);
-  ObjectMotion_LaunchFromFocusedObject(ACTOR_IVAN, 0, 16, FACING_NORTH);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  FieldActor_LaunchFromLeader(ACTOR_GARET, -32, 0, FACING_EAST);
+  FieldActor_LaunchFromLeader(ACTOR_MIA, -16, 16, FACING_NORTHEAST);
+  Actor_LaunchFromLeader(ACTOR_IVAN, 0, 16, FACING_NORTH);
+  Actor_WaitForMoveById(ACTOR_GARET);
   FieldScript_WaitFrames(30);
   Script_OpenMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -488,13 +488,13 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(10);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     Script_ShowMessage(ACTOR_MIA, 0);
     gFieldWork->message += 1;
   } else {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     gFieldWork->message += 1;
     Script_ShowMessage(ACTOR_MIA, 0);
@@ -507,7 +507,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The party lines up facing Iodem's door.
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -16, 0);
@@ -526,7 +526,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   // behind him (cells 32, 0).
   Actor_SetSpeed(ACTOR_IODEM, 0xcccc, 0x6666);
   Actor_GetById(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
-  ObjectMotion_SetActionVariant(ACTOR_IODEM, 2);
+  Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
   Script_PlaySong(SE_DOOR_OPEN);
   FieldScript_WaitFrames(20);
@@ -550,25 +550,25 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(40);
   Actor_WalkByAndWait(ACTOR_IODEM, 16, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -578,7 +578,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -591,14 +591,14 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -607,13 +607,13 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Script_OpenMessage(ACTOR_GARET, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     Script_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message += 1;
   } else {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     gFieldWork->message += 1;
     Script_ShowMessage(ACTOR_IODEM, 0);
@@ -631,11 +631,11 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Script_ShowMessage(-1, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  ObjectMotion_Launch(ACTOR_MIA, 4, 13);
-  ObjectMotion_Launch(ACTOR_MIA, 4, 30);
+  Actor_Jump(ACTOR_MIA, 4, 13);
+  Actor_Jump(ACTOR_MIA, 4, 30);
   Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
@@ -645,26 +645,26 @@ static void EventScript_IodemGivesBlackOrb(void) {
   }
   FieldScript_SetMessageId(MsgLaliveroBabiToldMeShipAncients);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // He holds the orb out, the leader takes it, and he steps back.
   Actor_SetSpeed(ACTOR_BLACK_ORB, 0xcccc, 0x6666);
@@ -684,17 +684,17 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(50);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // Iodem goes back inside.
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
@@ -717,11 +717,11 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
@@ -729,7 +729,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
   Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
@@ -740,14 +740,14 @@ static void EventScript_IodemGivesBlackOrb(void) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+  Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -755,7 +755,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+  Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   FieldScript_WaitFrames(10);
   FieldScript_End();
@@ -766,11 +766,11 @@ static void EventScript_IodemGivesBlackOrb(void) {
 static void Lalivero_TalkAboutIdejimaShip(void) {
   FieldScript_SetMessageId(MsgLaliveroThoughtShipWeSawAt);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -779,18 +779,18 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 55);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -798,7 +798,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   FieldScript_WaitFrames(65);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_IVAN, 0);
 }

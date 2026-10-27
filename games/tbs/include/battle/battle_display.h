@@ -20,7 +20,7 @@ struct BattleCamera {
   /// the focus along the turned view.
   s32 eye[3];
   s32 focus[3]; ///< the focus, 16.16 fixed-point pixels
-  /// When set, ObjectSystem_ProjectSprites faces the sprites from it instead
+  /// When set, ActorSystem_ProjectSprites faces the sprites from it instead
   /// of eye; every camera setup clears it and nothing sets it.
   s32 *followEye;
   s32 *followPosition;        ///< when set, followed instead of focus

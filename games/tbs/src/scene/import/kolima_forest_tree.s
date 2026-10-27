@@ -6,12 +6,12 @@
 	.set import.Task_Remove, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.VramCache_FreeEntry, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_Initialize, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_Release, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_StartScript, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_Release, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_Find, 1
@@ -23,26 +23,26 @@
 	.set import.FieldScript_End, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_EnableActionAndSetCallback, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetMovementTypeById, 1
 	.set import.Actor_RefreshSelectorById, 1
-	.set import.Actor_SetActionCallbackAndRefreshById, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
+	.set import.Actor_SetMovementTypeAndWaitById, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_SetPositionAndReset, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_Launch, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_Jump, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.FieldEffect_SpawnLinked, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
+	.set import.FieldEffect_SpawnAttached, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
@@ -53,6 +53,6 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Sprite_ShareVramCacheEntry, 1
 	.set import.Scene_PlayMusic, 1
-	.set import.ObjectMotion_CommitPositionAndActivate, 1
+	.set import.Actor_CommitPositionAndActivate, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -293,10 +293,10 @@ static inline void BabiPalace_WalkIntoLeader(s32 member) {
   Actor_SetAnimation(member, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectMotion_ResetAndSetPosition(member, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(member, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  Actor_WaitForMove(member);
+  Actor_WaitForMoveById(member);
   Actor_SetPosition(member, 0, 0);
 }
 
@@ -360,7 +360,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// Asks a yes or no question; the answers are the two messages after it.
 static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
     FieldScript_SetMessageId(question + 1);
   else
@@ -481,14 +481,14 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(10);
-    FieldEffect_SpawnLinked(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
     FieldScript_SetMessageId(question + 1);
   } else {
     FieldScript_WaitFrames(10);
-    FieldEffect_SpawnLinked(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
+    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
     FieldScript_SetMessageId(question + 2);
   }
   FieldScript_ShowMessageAndWait(actorId, 0);
@@ -503,7 +503,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   actor = Actor_Get(actorId);
   Script_Start();
   indigestionScript = gBabiPalace_IndigestionScript;
-  Actor_SetActionScript(actorId, indigestionScript);
+  Actor_SetScript(actorId, indigestionScript);
   Script_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
   Script_ShowMessage(actorId, 0);
   Actor_Stop(actorId);
@@ -523,13 +523,13 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Script_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
   Script_Wait(30);
-  Actor_SetActionScript(actorId, indigestionScript);
+  Actor_SetScript(actorId, indigestionScript);
   Script_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTHEAST, 0);
   Script_Wait(10);
   actor->scaleY = 0x10000;
   actor->scaleX = 0x10000;
-  Actor_SetActionScript(actorId, indigestionScript);
+  Actor_SetScript(actorId, indigestionScript);
   Script_End();
 }
 
@@ -579,10 +579,10 @@ static void BabiPalace_OfferCloakBall(void) {
   FieldScript_SetMessageId(msg);
   FieldScript_ShowMessageAndWait(-1, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_BABI, 2);
+  Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
-  FieldMessage_ShowAtObject(ACTOR_BABI, 0);
+  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
+  FieldMessage_ShowAtActor(ACTOR_BABI, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     FieldScript_SetMessageId(msg + 2);
     FieldScript_ShowMessageAndWait(ACTOR_BABI, 0);
@@ -591,9 +591,9 @@ static void BabiPalace_OfferCloakBall(void) {
     FieldScript_SetMessageId(msg + 3);
     FieldScript_ShowMessageAndWait(ACTOR_BABI, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(30);
-    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
     Import_ActorSetPosition(ACTOR_CLOAK_BALL, 0, 0);
     ItemDisplay_ShowItem(ITEM_CLOAK_BALL, 3);
@@ -762,7 +762,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 120);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(10);
-    FieldMotion_LaunchFromFocusedObject(ACTOR_GARET, 16, 0, FACING_WEST);
+    FieldActor_LaunchFromLeader(ACTOR_GARET, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_GARET);
     Script_Wait(10);
     Script_ShowMessage(ACTOR_GARET, 0);
@@ -776,7 +776,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(ACTOR_IVAN, -16, 0, FACING_EAST);
+    FieldActor_LaunchFromLeader(ACTOR_IVAN, -16, 0, FACING_EAST);
     Actor_RefreshSelectorById(ACTOR_IVAN);
     Script_Wait(10);
     Script_ShowMessage(ACTOR_IVAN, 0);
@@ -790,7 +790,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(ACTOR_MIA, 16, 0, FACING_WEST);
+    FieldActor_LaunchFromLeader(ACTOR_MIA, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_MIA);
     Script_Wait(10);
     Script_ShowMessage(ACTOR_MIA, 0);
@@ -858,10 +858,10 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_WalkBy(ACTOR_MIA, -112, 0);
     Script_Wait(50);
     Actor_WalkByAndWait(ACTOR_IVAN, 0, -24);
-    Actor_WaitForMove(ACTOR_GARET);
+    Actor_WaitForMoveById(ACTOR_GARET);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
-    Actor_WaitForMove(ACTOR_MIA);
+    Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Script_Wait(20);
     Script_ShowMessage(ACTOR_GARET, 0);
@@ -1429,10 +1429,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 0x2f8);
   Script_Wait(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_GARET, -16, 16, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_MIA, 0, 24, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_IVAN, 16, 16, FACING_NORTH);
-  Actor_WaitForMove(ACTOR_GARET);
+  FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Script_Wait(30);
   Script_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -2234,10 +2234,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Script_Wait(20);
   // The party tracks each departing speaker before gathering back together.
-  Actor_LinkObjectAndSetCallback(ACTOR_PARTY_LEADER, ACTOR_IODEM);
-  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_IODEM);
-  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_IODEM);
-  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_IODEM);
+  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_IODEM);
+  Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_IODEM);
+  Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_IODEM);
+  Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_IODEM);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -2253,7 +2253,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_WalkByAndWait(ACTOR_GARET, -16, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-  Actor_WaitForMove(ACTOR_IODEM);
+  Actor_WaitForMoveById(ACTOR_IODEM);
   Script_Wait(80);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2261,10 +2261,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
-  Actor_LinkObjectAndSetCallback(ACTOR_PARTY_LEADER, ACTOR_BABI);
-  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_BABI);
-  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_BABI);
-  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_BABI);
+  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_BABI);
+  Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_BABI);
+  Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_BABI);
+  Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_BABI);
   Script_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Script_Wait(30);
@@ -2421,7 +2421,7 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_SetMessageId(question + 1);
     FieldScript_ShowMessageAndWait(actorId, 0);

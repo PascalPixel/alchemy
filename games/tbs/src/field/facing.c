@@ -76,7 +76,7 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
 const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
-/// ObjectSystem_ProjectSprites applies it while battle commands are chosen.
+/// ActorSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
@@ -85,9 +85,9 @@ const s32 gCamera_FixedViewMatrix[12] = {
 };
 
 /// One period of a triangle wave, which bobs a floating object up and down.
-/// Object_UpdateAllThumb reads it at half the object's phase, scaled by its
+/// Actor_UpdateAllThumb reads it at half the object's phase, scaled by its
 /// gravity.
-const s32 gScriptObject_CycleTable[32] = {
+const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
     -1, -2, -3, -4, -5, -6, -7, -8,
@@ -95,39 +95,39 @@ const s32 gScriptObject_CycleTable[32] = {
 };
 
 /// The idle script an object returns to when its own one ends: a lone SC_END,
-/// which reloads it. ObjectScript_End (SC_END) points an object here.
-const s32 gObjectScript_EndScript[1] = {
+/// which reloads it. ActorScript_End (SC_END) points an object here.
+const s32 gActorScript_EndScript[1] = {
     SC_END,
 };
 
 /// Halfwords that follow the main script; no code in The Broken Seal names
 /// them.
-const s16 gObjectScript_EndScriptTail[8] = {
+const s16 gActorScript_EndScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 
 /// The heading for each state of the direction pad (bits 4-7 of the keys:
 /// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down 0x4000, Left
 /// 0x8000 and Up 0xc000; 0xffff means no direction is held, or only an
-/// opposite pair. Read by Object_UpdateLeaderControl,
-/// Object_MoveOnWorldMap and Object_MoveByKeys.
+/// opposite pair. Read by Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap and Actor_MoveByKeys.
 const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30
-/// frames, then release the object. Object_UpdateLeaderControl starts
-/// the first and Object_MoveOnWorldMap the second (three words in).
+/// frames, then release the object. Actor_UpdatePlayerControl starts
+/// the first and Actor_MoveOnWorldMap the second (three words in).
 const s32 gWorldMap_FootprintActions[6] = {
-    SC_WAIT(120), SC_FREE,
-    SC_WAIT(30), SC_FREE,
+    SC_WAIT(120), SC_RELEASE,
+    SC_WAIT(30), SC_RELEASE,
 };
 
 /// The yaw the world map camera leans to for each state of the direction pad,
 /// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
 /// but not both; 0 otherwise. It is a target, not a rate: each frame
-/// Object_MoveOnWorldMap turns the camera an eighth of the way there, at most
+/// Actor_MoveOnWorldMap turns the camera an eighth of the way there, at most
 /// 0x200, and the whole way once that step is under 16, so with the pad
 /// released it returns to 0.
 const s32 gWorldMap_KeyYaws[16] = {

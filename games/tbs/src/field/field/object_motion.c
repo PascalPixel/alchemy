@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 ObjectScript_SetBase(struct Actor *interpreter) {
+s32 ActorScript_SetBase(struct Actor *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -17,16 +17,16 @@ s32 ObjectScript_SetBase(struct Actor *interpreter) {
 
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
-s32 ObjectScript_HideSprites(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
+s32 ActorScript_HideSprites(struct Actor *interpreter) {
+  interpreter->spriteStorageKind = ACTOR_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
-/// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
+/// SC_SHOW_SPRITE: sets spriteStorageKind to ACTOR_SPRITE_ONE, one sprite
 /// drawn, and moves on to the next command.
-s32 ObjectScript_ShowSprite(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
+s32 ActorScript_ShowSprite(struct Actor *interpreter) {
+  interpreter->spriteStorageKind = ACTOR_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;
 }
@@ -34,13 +34,13 @@ s32 ObjectScript_ShowSprite(struct Actor *interpreter) {
 /// Waits a frame at a time until an object has arrived at its target, at
 /// most 600 frames (ten seconds), after which it returns with the object still
 /// on its way. It takes void * because callers pass every view of an
-/// object. Called through Object_WaitForMoveFar by the Psynergy effects
+/// object. Called through Actor_WaitForMoveFar by the Psynergy effects
 /// and by about 50 map overlays.
-void Object_WaitForMove(void *fieldObject) {
+void Actor_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;
-  while (waitedFrames < 600 && Object_IsTargetUnset(fieldObject) == 0) {
+  while (waitedFrames < 600 && Actor_IsTargetUnset(fieldObject) == 0) {
     WaitFrames(1);
     waitedFrames++;
   }
@@ -48,9 +48,9 @@ void Object_WaitForMove(void *fieldObject) {
 
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
-/// neither its target x nor z. Called by Object_WaitForMove and SC_SYNC
-/// (ObjectScript_WaitForArrival).
-s32 Object_IsTargetUnset(struct Actor *object) {
+/// neither its target x nor z. Called by Actor_WaitForMove and SC_SYNC
+/// (ActorScript_WaitForArrival).
+s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
   s32 second;
 
@@ -70,17 +70,17 @@ s32 Object_IsTargetUnset(struct Actor *object) {
   return 1;
 }
 
-static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
+static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 
-/// Advances all 64 objects by one frame, as Object_UpdateAll does for
+/// Advances all 64 objects by one frame, as Actor_UpdateAll does for
 /// the eight script objects, with the field's extras: free flight in 3D,
 /// following the ground, floating, and solid objects that refuse to overlap.
-/// ObjectSystem_Initialize adds it as the task that updates the objects in
+/// ActorSystem_Initialize adds it as the task that updates the objects in
 /// every mode but the battle's (4). Writes each live object's position,
 /// velocity, target, wait and facing.
-void Object_UpdateAllThumb(void) {
+void Actor_UpdateAllThumb(void) {
   struct Actor *object;
-  const ObjectScriptWords *script;
+  const ActorScriptWords *script;
   s32 objectsRemaining;
   s32 x;
   s32 y;
@@ -103,21 +103,21 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = gObjects;
-  for (objectsRemaining = OBJECT_COUNT - 1; objectsRemaining >= 0;
+  object = gActors;
+  for (objectsRemaining = ACTOR_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 
     // The script indexed as words, which compiles as the old word-array
     // member did.
-    script = (const ObjectScriptWords *)object->script;
+    script = (const ActorScriptWords *)object->script;
     if (script == NULL)
       continue;
 
     // The hook runs even for a paused object, and may free it.
     if (object->update != NULL) {
       object->update((union ActorOrEffect *)object);
-      script = (const ObjectScriptWords *)object->script;
+      script = (const ActorScriptWords *)object->script;
     }
     if (script == NULL)
       continue;
@@ -137,12 +137,12 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)object->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command]((struct Actor *)object) == 0)
+          if (gActorScript_CommandTable[command]((struct Actor *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
         }
-        script = (const ObjectScriptWords *)object->script;
+        script = (const ActorScriptWords *)object->script;
       }
       if (object->script == NULL)
         continue;
@@ -160,9 +160,8 @@ void Object_UpdateAllThumb(void) {
           dx = (object->targetX - x) / 65536;
           dy = (object->targetY - y) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance =
-              Iwram_Sqrt(ObjectMotion_Square(dx) + ObjectMotion_Square(dy) +
-                         ObjectMotion_Square(dz));
+          distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dy) +
+                                Actor_Square(dz));
           if (distance == 0) {
             x = object->targetX;
             y = object->targetY;
@@ -213,9 +212,7 @@ void Object_UpdateAllThumb(void) {
         if (object->targetX != TARGET_UNSET) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance =
-              Iwram_Sqrt(ObjectMotion_Square(dx) + ObjectMotion_Square(dz))
-              << 16;
+          distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)) << 16;
           // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
           // further away the squares would overflow.
           if (distance <= 0x00ffffff) {
@@ -321,10 +318,10 @@ void Object_UpdateAllThumb(void) {
           phase = (object->bounce & 0x3f);
           if ((object->motionFlags & ACTOR_FLOATS_HIGH) != 0)
             object->velocityY =
-                gScriptObject_CycleTable[phase >> 1] * object->gravity / 16;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 16;
           else
             object->velocityY =
-                gScriptObject_CycleTable[phase >> 1] * object->gravity / 64;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 64;
           object->bounce++;
         }
       }
@@ -340,7 +337,7 @@ void Object_UpdateAllThumb(void) {
     // it after 60.
     if ((object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
-      if (ObjectScript_CheckOverlap(object, pos) != 0) {
+      if (ActorScript_CheckOverlap(object, pos) != 0) {
         object->refused++;
         continue;
       }
@@ -410,11 +407,11 @@ void Object_UpdateAllThumb(void) {
 }
 
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it. Reached through SC_POSITION and Object_CreateField, and as
-/// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
+/// and stops it. Reached through SC_POSITION and Actor_Create, and as
+/// Actor_SetPositionAndResetMotionFar from the Psynergy effects and the
 /// field map's actors.
-void Object_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
-                                      s32 z) {
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
+                                     s32 z) {
   object->z.fixed = z;
   object->targetX = TARGET_UNSET;
   object->targetY = TARGET_UNSET;
@@ -432,9 +429,9 @@ void Object_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
 /// free-flying object).
 ///
 /// Reached through SC_MOVE and the other move commands, the player control,
-/// and as Object_SetMoveTargetFar from the battle's motion, the battle
+/// and as Actor_SetMoveTargetFar from the battle's motion, the battle
 /// effects and the Psynergy effects. Sets the target and arrivalAxis.
-void Object_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
   s32 dz;
@@ -505,12 +502,12 @@ void Object_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   }
 }
 
-/// Unused: copies Object_UpdateAll (ARM code) to the heap, runs it once and
+/// Unused: copies Actor_UpdateAll (ARM code) to the heap, runs it once and
 /// frees it.
-UNUSED void Object_RunUpdateAllFromHeap(void) {
+UNUSED void Actor_RunUpdateAllFromHeap(void) {
   void (*updateObjects)(void);
 
-  RamCode_Load(updateObjects, Object_UpdateAll, Object_UpdateAllCodeSize);
+  RamCode_Load(updateObjects, Actor_UpdateAll, Actor_UpdateAllCodeSize);
   updateObjects();
   Free(updateObjects);
 }
@@ -518,9 +515,9 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// Advances the first 14 objects' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
-/// ObjectSystem_Initialize adds it as a task in place of Object_UpdateAllThumb
-/// in OBJECT_SYSTEM_BATTLE.
-void Object_UpdateAllMotion(void) {
+/// ActorSystem_Initialize adds it as a task in place of Actor_UpdateAllThumb
+/// in ACTOR_SYSTEM_BATTLE.
+void Actor_UpdateAllMotion(void) {
   struct Actor *object;
   s32 objectsRemaining;
   s32 y;
@@ -536,7 +533,7 @@ void Object_UpdateAllMotion(void) {
 
   // Fourteen objects, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
-  object = gObjects;
+  object = gActors;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)
@@ -554,7 +551,7 @@ void Object_UpdateAllMotion(void) {
 #ifndef UBFIX
       arrivedAtTarget = 0;
 #endif
-      // Steer in the XZ plane as Object_UpdateAllThumb does on the ground,
+      // Steer in the XZ plane as Actor_UpdateAllThumb does on the ground,
       // or brake; this loop has no free flight, ground following or floating.
       if (object->targetX != TARGET_UNSET) {
         dx = (object->targetX - x) / 65536;

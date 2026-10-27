@@ -43,10 +43,10 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = x * 65536;
   fixedZ = y * 65536;
-  // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
-  // Actor_Create makes no sprite; BattleObject_SpawnObjectsForList
+  // The id 0xf000 has no sprite kind of enum ActorCreateKind, so
+  // FieldActor_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
-  object = Object_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
@@ -272,7 +272,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
   }
-  Object_InitializeFar(object, gBattleObject_EmptyScript);
+  Actor_StartScriptFar(object, gBattleObject_EmptyScript);
 }
 
 /// Reads the battlefield position of party place index from

@@ -85,7 +85,7 @@ struct TilesetAnim {
 
 /// A layout's three layers, by what they hold. Most layouts give them
 /// priorities 3, 2 and 1. An actor takes its sprite's priority from the
-/// cell under it (ACTOR_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
+/// cell under it (ACTOR_PRIORITY_AUTOMATIC, ActorSystem_PlaceSprites):
 /// 2 on open ground, which puts it over the middle layer and under the overhead
 /// one, and 3 where the cells put it behind a building. Each layer shows on its
 /// own background: `BG3`, `BG2` and `BG1`.

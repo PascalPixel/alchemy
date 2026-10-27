@@ -35,7 +35,7 @@
 	.endif
 	.set import.Import_ActorSetAnimation, 1
 	.ifdef TBS_EDITION_JA
-	.set import.ObjectMotion_WaitForAnimationChange, 1
+	.set import.Actor_WaitForAnimationChange, 1
 	.endif
 	.ifndef TBS_EDITION_JA
 	.set import.FieldScript_SetMessageId, 1
@@ -44,7 +44,7 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldEffect_SpawnAttached, 1
 	.endif
 	.set import.Import_ScriptRequestExit, 1
 	.set import.ItemMenu_DrawItemDetails, 1

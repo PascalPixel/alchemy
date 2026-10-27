@@ -16,8 +16,8 @@ struct Actor;
 typedef s32 (*ScriptCommand)(struct Actor *);
 
 /// The whole 0x70-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field
-/// is one work value (enum ObjectScriptValue in objcmd.h), reached through
-/// gObjectScript_OperandHandlerTable, and named for what the engine keeps
+/// is one work value (enum ActorScriptValue in objcmd.h), reached through
+/// gActorScript_OperandHandlerTable, and named for what the engine keeps
 /// there. The types are the widths the handlers read, not the engine's own.
 struct ScriptOperands {
   u32 scriptAddress; ///< SW_SCRIPT; an add steps it by whole words
@@ -41,7 +41,7 @@ struct ScriptOperands {
   u32 targetZ;       ///< SW_TARGET_Z
   u32 bounce;        ///< SW_BOUNCE, or a floating object's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// Work value 0x17: the word Object_CreateField zeroes and only map code
+  /// Work value 0x17: the word Actor_Create zeroes and only map code
   /// reads.
   u32 riseBaseY;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
@@ -57,7 +57,7 @@ struct ScriptOperands {
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< Object.refused; no work value
-  u8 frozen;            ///< ObjectArmView.frozen; no work value
+  u8 frozen;            ///< ActorArmView.frozen; no work value
   u8 riseCounter;       ///< SW_RISE_COUNTER, kept by map code
   u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by map code
   s16 timer;            ///< work value 0x23, what its action script reads

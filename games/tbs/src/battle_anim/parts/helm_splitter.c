@@ -92,9 +92,9 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     object->gravity = 0xdeb8;
     object->bounce = 0;
     object->steeringFlags = 1;
-    Object_StartIdleFar(object);
-    Object_SetMoveTargetFar(object, x, 0, z);
-    Object_SelectAnimationFar(object, POSE_LEAP);
+    Actor_StartIdleFar(object);
+    Actor_SetMoveTargetFar(object, x, 0, z);
+    Actor_SelectAnimationFar(object, POSE_LEAP);
   }
 
   // Play the swirl and impact, then let the sparks bounce and fade.
@@ -183,7 +183,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 /// Each summon that ends in an impact burst keeps its objects in its own
 /// formation, every frame while it plays and then through
 /// BattleAnim_RunImpactBurst. Places the objects through
-/// Object_ApplyProjectedPlacementFar and changes nothing else.
+/// Actor_ApplyProjectedPlacementFar and changes nothing else.
 ///
 /// formation: the summon's layout (enum SummonFormation); any other value
 ///            places nothing.
@@ -206,28 +206,28 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     for (i = 0; i != 9; i++) {
       pos.x = (i % 3 << 21) + x;
       pos.y = (i / 3 << 21) + z;
-      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
       pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
       pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
-      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
       pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
-      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
       pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;
-      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &big, 0);
+      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &big, 0);
     }
     break;
   }

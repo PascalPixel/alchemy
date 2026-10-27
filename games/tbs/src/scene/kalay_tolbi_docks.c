@@ -480,7 +480,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketHolder = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketHolder, ITEM_BOAT_TICKET);
-      ObjectMotion_SetAnimationAndWait(ACTOR_CHECKING_TICKETS, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_CHECKING_TICKETS, ANIM_NOD);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
       gFieldWork->message++;
@@ -507,7 +507,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 
   if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     FieldScript_SetMessageId(MsgKalayBoardWaitSetSail);
-    FieldMessage_ShowAtObject(ACTOR_DOCK_WORKER, 0);
+    FieldMessage_ShowAtActor(ACTOR_DOCK_WORKER, 0);
   } else if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     FieldScript_SetMessageId(MsgKalayHaveTicketsGiveHim);
     FieldScript_ShowMessageAndWait(ACTOR_DOCK_WORKER, 0);
@@ -570,19 +570,19 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 #endif
       if (FieldScript_AskYesNoWithActorAnimation(-1, 0) == 1) {
         Window_Close(coinsWindow, 2);
-        ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
         FieldScript_WaitFrames(10);
         Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
         Window_Close(coinsWindow, 2);
-        ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         FieldScript_WaitFrames(10);
         gFieldWork->message++;
         Script_PlaySong(SE_MENU_CANCEL);
         Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else {
         Window_Close(coinsWindow, 2);
-        ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         FieldScript_WaitFrames(10);
         gFieldWork->message += 3;
         Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
@@ -667,7 +667,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   FieldScript_Start();
   Script_PlaySong(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 3);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   if (gSaveBlock.sceneId == (s32)&SceneId_KalayDocks) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
@@ -807,7 +807,7 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
 
   Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
-  ObjectMotion_SetActionVariant(actorId, 3);
+  Actor_SetSpritePriority(actorId, 3);
   actor->motionFlags = 0;
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
@@ -832,8 +832,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_GARET, -16, 0, FACING_WEST);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 0, FACING_WEST);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(20);
   // Follow Garet to the water before the man joins him.
@@ -845,8 +845,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(ACTOR_GARET, 6, 15);
-  ObjectMotion_Launch(ACTOR_GARET, 6, 40);
+  Actor_Jump(ACTOR_GARET, 6, 15);
+  Actor_Jump(ACTOR_GARET, 6, 40);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
@@ -861,8 +861,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
-                                   ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
+                            ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(10);
   Script_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   FieldScript_WaitFrames(20);
@@ -882,9 +882,9 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -893,11 +893,11 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   if (actor != 0) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   FieldScript_WaitFrames(20);
   Actor_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
-  Actor_SetBuiltinAction(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
+  Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
   actor = Actor_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
   {
     s32 pixelX = actor->x.fixed / 0x10000;
@@ -941,22 +941,22 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
-  ObjectMotion_Launch(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
-  ObjectMotion_Launch(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
+  Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
+  Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
   Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_STRANDED_WOMAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_STRANDED_WOMAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 55);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x20000, 0x10000);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
-  ObjectMotion_Launch(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
+  Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
@@ -968,7 +968,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(ACTOR_TOUR_GUIDE, 2);
+  Actor_StartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
   Script_PlaySong(SE_SWITCH);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SE_SWITCH);
@@ -977,7 +977,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   FieldScript_WaitFrames(10);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x6666, 0x3333);
-  ObjectMotion_Launch(ACTOR_TOUR_GUIDE, 6, 0);
+  Actor_Jump(ACTOR_TOUR_GUIDE, 6, 0);
   Script_PlaySong(SE_DOOR_CLOSE);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
   FieldScript_WaitFrames(20);
@@ -988,13 +988,13 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_BODYGUARD, 0);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(35);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ANGRY_YOUNG_MAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   FieldScript_WaitFrames(10);
@@ -1009,7 +1009,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_TOUR_GUIDE, 2);
+  Actor_RunRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   FieldScript_WaitFrames(10);
@@ -1022,7 +1022,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ANGRY_YOUNG_MAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x13333, 0x9999);
@@ -1038,11 +1038,11 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ANGRY_YOUNG_MAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_BODYGUARD, 0);
   FieldScript_WaitFrames(10);
@@ -1052,18 +1052,18 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x1cccc, 0xe666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
-  ObjectMotion_Launch(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
+  Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Script_PlaySong(SE_IMPACT);
-  ObjectMotion_Launch(ACTOR_BODYGUARD, 6, 0);
+  Actor_Jump(ACTOR_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
-  Actor_SetActionScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);
+  Actor_SetScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  ObjectMotion_Launch(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
+  Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
   actor->collisionFlags = 0;
@@ -1083,7 +1083,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   FieldScript_WaitFrames(10);
   Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_BODYGUARD, 0);
   FieldScript_WaitFrames(20);
@@ -1092,14 +1092,14 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_BODYGUARD, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_ANGRY_YOUNG_MAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_EAST, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);

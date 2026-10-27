@@ -78,9 +78,9 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(work->effect->user);
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->targets[0]);
-  Object_StartIdleFar(user);
-  Object_SetMoveTargetFar(user, x, 0, z);
-  Object_SelectAnimationFar(user, POSE_LEAP);
+  Actor_StartIdleFar(user);
+  Actor_SetMoveTargetFar(user, x, 0, z);
+  Actor_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
   user->acceleration = 2 << 16;
@@ -95,7 +95,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
     // Object.gravity is taken off velocityY each frame the object is above
-    // the ground (Object_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
+    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
     // here is about 0.57, the bounce's 0xab85 and 0x7851 about 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = 15 << 16;
@@ -122,8 +122,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->steeringFlags = 0;
-      Object_StartIdleFar(user);
-      Object_SetMoveTargetFar(user, 0, 0, user->z.fixed);
+      Actor_StartIdleFar(user);
+      Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
     }
     ANIM_VIEW_FROM_CAMERA(camera);
     SET_VECTOR(point, user->x.fixed, user->y.fixed, user->z.fixed);
@@ -157,7 +157,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       user->scaleY = -user->scaleY;
       user->y.fixed -= userHeight;
       target->y.fixed -= targetHeight;
-      Object_SelectAnimationFar(user, 0);
+      Actor_SelectAnimationFar(user, 0);
     }
     // The cues: the damage with a heavy impact on the hit, and a shake on
     // the leap and on the frame before the hit.

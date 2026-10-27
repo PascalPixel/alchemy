@@ -143,7 +143,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     ((struct Actor *)obj)->facing = ((struct Actor *)obj)->facing + 0x2000;    \
     ((struct Actor *)obj)->scaleX = scale;                                     \
     if (scale < 0x3000) {                                                      \
-      Object_ReleaseFar(obj);                                                  \
+      Actor_ReleaseFar(obj);                                                   \
     }                                                                          \
   }
 
@@ -170,9 +170,9 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = 0x1999;
-    Object_SelectAnimationFar(fragment, 0);
+    Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
-    Object_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(fragment, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -206,30 +206,28 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        ObjectMotion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000,        \
-                                                         obj->facing);         \
+        Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing); \
     }                                                                          \
                                                                                \
-    Object_WaitForMoveFar(pair[0]);                                            \
+    Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlaySongFar(SE_HEAVY_IMPACT);                                        \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + 0x100000;                                        \
       pos.z = effectWork->z;                                                   \
-      obj = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                 \
+      obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                  \
       if (obj != 0) {                                                          \
-        Object_InitializeFar(obj, gFieldEffect_FragmentScript);                \
+        Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);                \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
         dist = Random16() * 24 + 0x80000;                                      \
-        ObjectMotion_SetTargetPositionFromMagnitudeAngle(obj, dist,            \
-                                                         Random16());          \
+        Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());      \
       }                                                                        \
     }                                                                          \
                                                                                \
-    Object_ReleaseFar(pair[0]);                                                \
-    Object_ReleaseFar(pair[1]);                                                \
+    Actor_ReleaseFar(pair[0]);                                                 \
+    Actor_ReleaseFar(pair[1]);                                                 \
     FieldEffect_FadeFromEffectColor();                                         \
   }
 

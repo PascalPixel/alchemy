@@ -82,15 +82,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       if (slot != 0) {
         object = slot->object;
 
-        switch (object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK) {
-        case OBJECT_SPRITE_ONE: {
+        switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+        case ACTOR_SPRITE_ONE: {
           record = object->sprite;
           record->image.priority = sidePriorities[0];
           break;
         }
-        case OBJECT_SPRITE_GROUP: {
+        case ACTOR_SPRITE_GROUP: {
           records = (struct Sprite **)object->sprite;
-          for (recordIndex = 0; recordIndex < OBJECT_SPRITE_GROUP_SIZE;
+          for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
                recordIndex++) {
             record = *records++;
             if (record != 0)
@@ -112,15 +112,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       if (slot != 0) {
         object = slot->object;
 
-        switch (object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK) {
-        case OBJECT_SPRITE_ONE: {
+        switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+        case ACTOR_SPRITE_ONE: {
           record = object->sprite;
           record->image.priority = sidePriorities[1];
           break;
         }
-        case OBJECT_SPRITE_GROUP: {
+        case ACTOR_SPRITE_GROUP: {
           records = (struct Sprite **)object->sprite;
-          for (recordIndex = 0; recordIndex < OBJECT_SPRITE_GROUP_SIZE;
+          for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
                recordIndex++) {
             record = *records++;
             if (record != 0)
@@ -314,9 +314,9 @@ s32 BattleObject_UpdatePose(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  Object_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
-  Object_SetAnimationSpeedFar(BattleObject_Get(unitId)->object,
-                              (unitId & 3) + 14);
+  Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->object,
+                             (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
@@ -340,7 +340,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
         Sprite_DestroyFar(record);
         recordIndex += 1;
       }
-      object->spriteStorageKind = OBJECT_SPRITE_NONE;
+      object->spriteStorageKind = ACTOR_SPRITE_NONE;
       object->sprite = NULL;
     }
   }
@@ -363,7 +363,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
   struct BattleObject *battleObject;
-  struct BattleSpriteObject *object;
+  struct BattleActor *object;
   struct Sprite *record;
   struct SpriteAnimHeadView *entry;
   struct Sprite **records;
@@ -394,25 +394,25 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     if (battleObject == 0)
       continue;
     BattleUnit_BuildStatusFlags(unitId, battleObject);
-    object = (struct BattleSpriteObject *)battleObject->object;
+    object = (struct BattleActor *)battleObject->object;
     if (object == 0)
       continue;
-    if (object->spriteStorageKind != OBJECT_SPRITE_NONE)
+    if (object->spriteStorageKind != ACTOR_SPRITE_NONE)
       continue;
     if ((battleObject->resource & SPRITE_ID_MASK) ==
             SPRITE_WITH_SECOND_PART_A ||
         (battleObject->resource & SPRITE_ID_MASK) ==
             SPRITE_WITH_SECOND_PART_B) {
       // A two-part enemy: a table of its two sprites, in the object system's
-      // next sprite group table (gObjectSystemWork is struct ObjectSystemWork;
+      // next sprite group table (gActorSystemWork is struct ActorSystemWork;
       // its count is not advanced here). Its height is half the first
       // part's box.
       // BUG: a failed create leaves record null, and its flags are still
       // written.
-      records = (struct Sprite **)gObjectSystemWork->spriteGroups +
-                gObjectSystemWork->count;
+      records = (struct Sprite **)gActorSystemWork->spriteGroups +
+                gActorSystemWork->count;
       spriteId = battleObject->resource;
-      object->spriteStorageKind = OBJECT_SPRITE_GROUP;
+      object->spriteStorageKind = ACTOR_SPRITE_GROUP;
       object->sprite = records;
       Iwram_ClearWords(records, 16);
       record = Sprite_CreateFar(spriteId);
@@ -436,7 +436,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // (bit 0) among them, as the two-part enemies' are cleared above.
       record = Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
-        object->spriteStorageKind = OBJECT_SPRITE_ONE;
+        object->spriteStorageKind = ACTOR_SPRITE_ONE;
         object->sprite = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         entry = (struct SpriteAnimHeadView *)record->entries[0];
@@ -474,7 +474,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       for (;;) {
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObject_Get(spriteId)) != 0 &&
-            (object = (struct BattleSpriteObject *)battleObject->object) != 0)
+            (object = (struct BattleActor *)battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
         if (unitIndex >= UNIT_MAX ||
@@ -525,14 +525,14 @@ void ResetBattleObjectRecordGroups(struct Actor *object) {
   void *recordGroup;
 
   if (object != NULL) {
-    storageKind = object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK;
+    storageKind = object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
     switch (storageKind) {
-    case OBJECT_SPRITE_ONE:
+    case ACTOR_SPRITE_ONE:
       ResetMotionRecordGroup(object->sprite);
       return;
-    case OBJECT_SPRITE_GROUP:
+    case ACTOR_SPRITE_GROUP:
       recordGroups = (void **)object->sprite;
-      remaining = OBJECT_SPRITE_GROUP_SIZE - 1;
+      remaining = ACTOR_SPRITE_GROUP_SIZE - 1;
       do {
         recordGroup = *recordGroups++;
         if (recordGroup != NULL) {
@@ -579,7 +579,7 @@ void *BattleObject_DestroyAll(void) {
     }
     battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
-      Object_ReleaseFar(battleObject->object);
+      Actor_ReleaseFar(battleObject->object);
       battleObject->object = NULL;
       battleObject->active = 0;
     }
@@ -638,12 +638,12 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 /// Returns sprite recordIndex of an object (0 only, for a single sprite), or
 /// null when it has no such sprite. Called throughout the battle parts.
 void *GetMotionRecord(struct Actor *object, s32 recordIndex) {
-  s32 storageKind = object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK;
-  if (storageKind == OBJECT_SPRITE_ONE) {
+  s32 storageKind = object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
+  if (storageKind == ACTOR_SPRITE_ONE) {
     if (recordIndex == 0) {
       return object->sprite;
     }
-  } else if (storageKind == OBJECT_SPRITE_GROUP) {
+  } else if (storageKind == ACTOR_SPRITE_GROUP) {
     return ((void **)object->sprite)[recordIndex];
   }
   return NULL;

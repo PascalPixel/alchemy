@@ -1,8 +1,8 @@
 /// @file
 /// Object script commands: waits, jumps, flags, moves and work values.
 ///
-/// Each `SC_` handler here is reached through gObjectScript_CommandTable
-/// (object_script.c), which Object_UpdateAll and Object_UpdateAllThumb call
+/// Each `SC_` handler here is reached through gActorScript_CommandTable
+/// (object_script.c), which Actor_UpdateAll and Actor_UpdateAllThumb call
 /// for each live object; each returns 1 to run on and 0 to end the object's
 /// frame (the protocol is in this folder's README).
 
@@ -34,7 +34,7 @@ enum {
 /// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
 /// interpreter->wait to n - 1, which the update loops count down, and moves
 /// past its operand. Returns 0 to end the object's commands for this frame.
-s32 ObjectScript_Wait(struct Actor *interpreter) {
+s32 ActorScript_Wait(struct Actor *interpreter) {
   s16 commandCursor = interpreter->scriptCursor;
 
   interpreter->wait = interpreter->script[commandCursor + 1] - 1;
@@ -44,15 +44,15 @@ s32 ObjectScript_Wait(struct Actor *interpreter) {
 
 /// SC_SYNC: waits until the object arrives at its target, or until a solid
 /// object has blocked it for 60 frames (refused is the blocked count, which
-/// Object_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
+/// Actor_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
 /// refused when it gave up, and 0 (wait) until then.
-s32 ObjectScript_WaitForArrival(struct Actor *interpreter) {
+s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
     interpreter->scriptCursor++;
     return 1;
   }
-  if (Object_IsTargetUnset(interpreter) != 0) {
+  if (Actor_IsTargetUnset(interpreter) != 0) {
     interpreter->scriptCursor++;
     return 1;
   }
@@ -63,7 +63,7 @@ s32 ObjectScript_WaitForArrival(struct Actor *interpreter) {
 /// it again next frame; zero moves on, past the command unless fn moved the
 /// cursor itself. Map scripts and the field effect scripts of fxdata.c use
 /// it to run their own per-object steps.
-s32 ObjectScript_InvokeCallback(struct Actor *interpreter) {
+s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
   s16 initialCursor = interpreter->scriptCursor;
   ScriptCommand callback =
       (ScriptCommand)interpreter->script[initialCursor + 1];
@@ -80,7 +80,7 @@ s32 ObjectScript_InvokeCallback(struct Actor *interpreter) {
 /// words, or 0 (the start) when key is 0 or not found, so a missing label
 /// restarts the script. Clears the wait.
 /// Called by the jumps: SC_JUMP, SC_LOOP, SC_IF and SC_IFNOT.
-s32 ObjectScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
+s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
   s16 *waitCounter = &interpreter->wait;
@@ -108,7 +108,7 @@ s32 ObjectScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 /// interpreter->repeatCount and clears it when the loop ends, so loops do not
 /// nest. The engine's own scripts (object_script.c) end with
 /// SC_LOOP(SC_FOREVER, SC_TOP).
-s32 ObjectScript_RepeatOrJump(struct Actor *interpreter) {
+s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
@@ -119,13 +119,13 @@ s32 ObjectScript_RepeatOrJump(struct Actor *interpreter) {
   repeatLimit = *arguments++;
   jumpKey = *arguments;
   if (repeatLimit == SC_FOREVER) {
-    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, jumpKey);
+    interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
     nextCount = *repeatCount + 1;
     *repeatCount = nextCount;
     if ((u8)nextCount < (s16)repeatLimit) {
-      interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, jumpKey);
+      interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
     } else {
       *repeatCount = 0;
       interpreter->scriptCursor += 3;
@@ -135,20 +135,20 @@ s32 ObjectScript_RepeatOrJump(struct Actor *interpreter) {
 }
 
 /// SC_JUMP(to): jumps to label to.
-s32 ObjectScript_JumpToLabel(struct Actor *interpreter) {
-  interpreter->scriptCursor = ObjectScript_FindLabel(
+s32 ActorScript_JumpToLabel(struct Actor *interpreter) {
+  interpreter->scriptCursor = ActorScript_FindLabel(
       interpreter, interpreter->script[interpreter->scriptCursor + 1]);
   return 1;
 }
 
 /// SC_IF(to): jumps to label to when the last test was true.
-s32 ObjectScript_JumpIfTrue(struct Actor *interpreter) {
+s32 ActorScript_JumpIfTrue(struct Actor *interpreter) {
   s32 commandCursor = interpreter->scriptCursor;
   const s32 *script = interpreter->script;
   u32 labelKey = script[commandCursor + 1];
 
   if (interpreter->conditionResult != 0) {
-    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, labelKey);
+    interpreter->scriptCursor = ActorScript_FindLabel(interpreter, labelKey);
   } else {
     interpreter->scriptCursor += 2;
   }
@@ -156,32 +156,32 @@ s32 ObjectScript_JumpIfTrue(struct Actor *interpreter) {
 }
 
 /// SC_IFNOT(to): jumps to label to when the last test was false.
-s32 ObjectScript_JumpIfFalse(struct Actor *interpreter) {
+s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
   s32 commandCursor = interpreter->scriptCursor;
   const s32 *script = interpreter->script;
   u32 labelKey = script[commandCursor + 1];
 
   if (interpreter->conditionResult == 0) {
-    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, labelKey);
+    interpreter->scriptCursor = ActorScript_FindLabel(interpreter, labelKey);
   } else {
     interpreter->scriptCursor += 2;
   }
   return 1;
 }
 
-/// SC_END: hands the object back to the idle script, gObjectScript_EndScript,
+/// SC_END: hands the object back to the idle script, gActorScript_EndScript,
 /// whose lone SC_END runs again each frame. Returns 0. The table's unused
 /// command numbers from 0x24 also point here.
-s32 ObjectScript_End(struct Actor *interpreter) {
+s32 ActorScript_End(struct Actor *interpreter) {
   s32 result;
 
-  interpreter->script = gObjectScript_EndScript;
+  interpreter->script = gActorScript_EndScript;
   interpreter->scriptCursor = (result = 0);
   return result;
 }
 
 /// SC_FLAG_CHECK(f): tests game flag f.
-s32 ObjectScript_TestFlag(struct Actor *interpreter) {
+s32 ActorScript_TestFlag(struct Actor *interpreter) {
   interpreter->conditionResult =
       GameFlag_GetFar(interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
@@ -202,11 +202,11 @@ s32 ObjectScript_TestFlag(struct Actor *interpreter) {
   }
 
 /// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
-SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_SetFlagAndTest, GameFlag_SetFar)
-SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_ClearFlagAndTest, GameFlag_ClearFar)
+SCRIPT_DEFINE_FLAG_COMMAND(ActorScript_SetFlagAndTest, GameFlag_SetFar)
+SCRIPT_DEFINE_FLAG_COMMAND(ActorScript_ClearFlagAndTest, GameFlag_ClearFar)
 
 /// SC_FLAG_REV(f): tests game flag f, then flips it.
-s32 ObjectScript_ToggleFlagAndTest(struct Actor *interpreter) {
+s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter) {
   s32 flagId;
   s32 previousFlagValue;
 
@@ -224,29 +224,29 @@ s32 ObjectScript_ToggleFlagAndTest(struct Actor *interpreter) {
 }
 
 /// SC_ANIMATION(v): switches the object's sprites to animation v.
-s32 ObjectScript_SetAnimation(struct Actor *interpreter) {
-  Object_SelectAnimation(interpreter,
-                         interpreter->script[interpreter->scriptCursor + 1]);
+s32 ActorScript_SetAnimation(struct Actor *interpreter) {
+  Actor_SelectAnimation(interpreter,
+                        interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
 }
 
-/// SC_FREE: releases the object through Object_Release, which
+/// SC_RELEASE: releases the object through Actor_Release, which
 /// releases its sprites and zeroes its slot. Returns 0: with its script now
 /// null, the update loop skips the rest of the object's frame.
-s32 ObjectScript_FreeObject(struct Actor *interpreter) {
-  Object_Release(interpreter);
+s32 ActorScript_Release(struct Actor *interpreter) {
+  Actor_Release(interpreter);
   return 0;
 }
 
 /// SC_NOP(v): does nothing with its operand.
-s32 ObjectScript_Nop(struct Actor *interpreter) {
+s32 ActorScript_Nop(struct Actor *interpreter) {
   interpreter->scriptCursor += 2;
   return 1;
 }
 
 /// SC_SE(n): sends sound command n (a sound effect).
-s32 ObjectScript_PlaySound(struct Actor *interpreter) {
+s32 ActorScript_PlaySound(struct Actor *interpreter) {
   Sound_PlaySongFar(interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
@@ -257,14 +257,14 @@ s32 ObjectScript_PlaySound(struct Actor *interpreter) {
 /// The object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
 /// player's control (player_control.c), the motion loop's solid test
 /// (object_motion.c), and the carry and Force effects through
-/// ObjectScript_CheckOverlapFar.
-s32 ObjectScript_CheckOverlap(struct Actor *object, s32 *values) {
+/// ActorScript_CheckOverlapFar.
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
-  struct Actor *candidate = gObjects;
+  struct Actor *candidate = gActors;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < OBJECT_COUNT;
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
         candidate != object) {
@@ -277,16 +277,16 @@ s32 ObjectScript_CheckOverlap(struct Actor *object, s32 *values) {
 }
 
 /// Returns the first solid object that an object at position values would
-/// overlap, as ObjectScript_CheckOverlap tests, or NULL. Called by the Move
-/// effect (move.c) through ObjectScript_FindOverlappingEntryFar.
-struct Actor *ObjectScript_FindOverlappingEntry(struct Actor *object,
-                                                s32 *values) {
+/// overlap, as ActorScript_CheckOverlap tests, or NULL. Called by the Move
+/// effect (move.c) through ActorScript_FindOverlappingEntryFar.
+struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
+                                               s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
-  struct Actor *candidate = gObjects;
+  struct Actor *candidate = gActors;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < OBJECT_COUNT;
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
         candidate != object) {
@@ -299,7 +299,7 @@ struct Actor *ObjectScript_FindOverlappingEntry(struct Actor *object,
 }
 
 /// Reads three coordinate words and applies the selected positioning operation.
-static __inline__ s32 ObjectScript_ApplyPositionCommand(
+static __inline__ s32 ActorScript_ApplyPositionCommand(
     struct Actor *interpreter,
     void (*applyPosition)(struct Actor *object, s32 x, s32 y, s32 z)) {
   s32 x;
@@ -320,18 +320,18 @@ static __inline__ s32 ObjectScript_ApplyPositionCommand(
 }
 
 /// SC_POSITION(x, y, z): places the object at (x, y, z) and stops it.
-s32 ObjectScript_SetPositionAndResetMotion(struct Actor *interpreter) {
-  return ObjectScript_ApplyPositionCommand(interpreter,
-                                           Object_SetPositionAndResetMotion);
+s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter) {
+  return ActorScript_ApplyPositionCommand(interpreter,
+                                          Actor_SetPositionAndResetMotion);
 }
 
 /// SC_MOVE(x, y, z): sends the object towards (x, y, z).
-s32 ObjectScript_ApplyAbsolutePosition(struct Actor *interpreter) {
-  return ObjectScript_ApplyPositionCommand(interpreter, Object_SetMoveTarget);
+s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
+  return ActorScript_ApplyPositionCommand(interpreter, Actor_SetMoveTarget);
 }
 
 /// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
-s32 ObjectScript_ApplyRelativePosition(struct Actor *interpreter) {
+s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   u8 *commandBytes = (u8 *)(object->script + (s16)object->scriptCursor);
@@ -340,15 +340,15 @@ s32 ObjectScript_ApplyRelativePosition(struct Actor *interpreter) {
   s32 deltaY = *arguments++;
   s32 deltaZ = *arguments;
 
-  Object_SetMoveTarget(object, object->x.fixed + deltaX,
-                       object->y.fixed + deltaY, object->z.fixed + deltaZ);
+  Actor_SetMoveTarget(object, object->x.fixed + deltaX,
+                      object->y.fixed + deltaY, object->z.fixed + deltaZ);
   object->scriptCursor += 4;
   return 1;
 }
 
 /// SC_FACE_LINK: stores the angle from the object to its linked object in
 /// scriptValue, measured on the ground plane (x and z).
-s32 ObjectScript_StoreAngleToLinkedObject(struct Actor *interpreter) {
+s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct Actor *target;
@@ -361,21 +361,21 @@ s32 ObjectScript_StoreAngleToLinkedObject(struct Actor *interpreter) {
 }
 
 /// SC_MOVE_LINK: sends the object towards its linked object.
-s32 ObjectScript_ApplyLinkedObjectPosition(struct Actor *interpreter) {
+s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct Actor *target;
 
   target = object->linkedActor;
-  Object_SetMoveTarget(object, target->x.fixed, target->y.fixed,
-                       target->z.fixed);
+  Actor_SetMoveTarget(object, target->x.fixed, target->y.fixed,
+                      target->z.fixed);
   object->scriptCursor++;
   return 1;
 }
 
 /// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
 /// that is never filled in; the operands are skipped unread.
-s32 ObjectScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
+s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   s32 localOffset[3];
@@ -385,9 +385,9 @@ s32 ObjectScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
 #ifdef UBFIX
   localOffset[0] = localOffset[1] = localOffset[2] = 0;
 #endif
-  Object_SetMoveTarget(object, object->x.fixed + localOffset[0],
-                       object->y.fixed + localOffset[1],
-                       object->z.fixed + localOffset[2]);
+  Actor_SetMoveTarget(object, object->x.fixed + localOffset[0],
+                      object->y.fixed + localOffset[1],
+                      object->z.fixed + localOffset[2]);
   object->scriptCursor += 3;
   return 1;
 }
@@ -397,8 +397,8 @@ s32 ObjectScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
 /// at most its speed limit, and a quarter of a large height difference; when
 /// action is set it jumps there at once.
 ///
-/// Run each frame by gObject_CameraScript, which
-/// Object_StartCamera starts. Clears the camera's flags and target,
+/// Run each frame by gActor_CameraScript, which
+/// Actor_StartCamera starts. Clears the camera's flags and target,
 /// moves its position, and counts its step.
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   struct Actor *cameraObject = interpreter;
@@ -457,7 +457,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       SET_ACTOR_POSITION(cameraObject, x, y, z);
     } else {
       // The distance in the XZ plane: dy is computed as in
-      // Object_SetMoveTarget but not used for the distance.
+      // Actor_SetMoveTarget but not used for the distance.
       dx = (x - cameraObject->x.fixed) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
        * in global allocation and keeps it in r5 as native; without it, 52 of
@@ -502,10 +502,10 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 ///
-/// Run each frame by gObject_ApproachLinkScript, which
-/// Object_StartApproachLink starts. Copies the linked object's speed
+/// Run each frame by gActor_ApproachLinkScript, which
+/// Actor_StartApproachLink starts. Copies the linked object's speed
 /// limit and acceleration, and sets the move target.
-s32 Object_ApproachLinkedObject(struct Actor *interpreter) {
+s32 Actor_ApproachLinkedActor(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   s32 distancePixels;
@@ -536,13 +536,13 @@ s32 Object_ApproachLinkedObject(struct Actor *interpreter) {
     remainingDistance = distancePixels - SCRIPT_APPROACH_DISTANCE;
     moveX = scaledDeltaX * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
-    Object_SetMoveTarget(object, object->x.fixed + moveX, object->y.fixed,
-                         object->z.fixed + moveZ);
-    Object_SelectAnimation(object, 2);
+    Actor_SetMoveTarget(object, object->x.fixed + moveX, object->y.fixed,
+                        object->z.fixed + moveZ);
+    Actor_SelectAnimation(object, 2);
     object->scriptCursor = (object->scriptCursor + 1);
     return 1;
   }
-  Object_SelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   return 0;
 }
 
@@ -552,7 +552,7 @@ s32 Object_ApproachLinkedObject(struct Actor *interpreter) {
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
 /// No script in games/tbs names SC_WANDER; map scripts use SC_WANDER_HOME.
-s32 Object_Wander(struct Actor *interpreter) {
+s32 Actor_Wander(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition candidatePosition;
@@ -589,7 +589,7 @@ retry:
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = object->facing + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (ObjectScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0 ||
+    if (ActorScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0 ||
         MapGrid_CheckCollision(object, &candidatePosition) != COLLISION_NONE)
       goto retry;
     // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
@@ -638,8 +638,8 @@ retry:
     object->wait = 1;
     return 0;
   }
-  Object_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
-                       candidatePosition.z);
+  Actor_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
+                      candidatePosition.z);
   object->scriptCursor += 4;
   return 1;
 }
@@ -651,7 +651,7 @@ retry:
 /// Used by scripts in Vault and Vale (vault.c, vale_plaza.c). Sets bit 1 of
 /// collisionFlags while it roams and clears it on the way home, sets the move
 /// target, and always moves on to the next command.
-s32 ObjectScript_WanderNearHome(struct Actor *interpreter) {
+s32 ActorScript_WanderNearHome(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition candidatePosition;
@@ -690,7 +690,7 @@ s32 ObjectScript_WanderNearHome(struct Actor *interpreter) {
       // at 90 degrees either side.
       Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                             &candidatePosition);
-      if (ObjectScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0)
+      if (ActorScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0)
         goto roam;
       SET_POSITION(&candidatePosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
@@ -735,8 +735,8 @@ s32 ObjectScript_WanderNearHome(struct Actor *interpreter) {
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       object->collisionFlags |= 2;
-      Object_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
-                           candidatePosition.z);
+      Actor_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
+                          candidatePosition.z);
       goto done;
     }
   }
@@ -755,7 +755,7 @@ back:
                  object->z.fixed);
     Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                           &candidatePosition);
-    if (ObjectScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0)
+    if (ActorScript_CheckOverlap(object, (s32 *)&candidatePosition) != 0)
       goto back;
     SET_POSITION(&candidatePosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
@@ -763,8 +763,8 @@ back:
     if (MapGrid_CheckCollision(object, &candidatePosition) != COLLISION_NONE)
       goto back;
     object->collisionFlags &= ~2;
-    Object_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
-                         candidatePosition.z);
+    Actor_SetMoveTarget(object, candidatePosition.x, candidatePosition.y,
+                        candidatePosition.z);
   }
 done:
   object->scriptCursor += 4;
@@ -820,15 +820,15 @@ enum ScriptOperandOperation {
     }                                                                          \
   }
 
-/// The work value handlers, one for each entry of enum ObjectScriptValue (see
-/// gObjectScript_OperandHandlerTable in operand.c); each names the object field
+/// The work value handlers, one for each entry of enum ActorScriptValue (see
+/// gActorScript_OperandHandlerTable in operand.c); each names the object field
 /// it sets, adds to or compares.
-SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareScriptAddress,
+SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareScriptAddress,
                               scriptAddress)
 
 /// Work value SW_CURSOR: sets, adds to or compares the script cursor.
-void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
+                                    s32 operation, s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
     operands->cursor = value;
   } else if (operation == SCRIPT_OPERAND_ADD) {
@@ -838,14 +838,14 @@ void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
   }
 }
 
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareFacing, facing, u16)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareX, x)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareY, y)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareZ, z)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareFacing, facing, u16)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareX, x)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareY, y)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareZ, z)
 
 /// Work value SW_RADIUS: sets, adds to or compares the object's radius.
-void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
     state->radius = value;
     return;
@@ -857,42 +857,42 @@ void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
   state->conditionResult = state->radius == (s16)value;
 }
 
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareScaleX, scaleX)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareScaleY, scaleY)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareVelocityX, velocityX)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareVelocityY, velocityY)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareVelocityZ, velocityZ)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareSpeedLimit, speedLimit)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareAcceleration, acceleration)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTargetX, targetX)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTargetY, targetY)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTargetZ, targetZ)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareVerticalMotion, bounce)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareGravity, gravity)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTerrainHeight, groundHeight)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareRiseBaseY, riseBaseY)
-SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareSprite, sprite)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSpriteStorageKind,
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleX, scaleX)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareScaleY, scaleY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityX, velocityX)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityY, velocityY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVelocityZ, velocityZ)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareSpeedLimit, speedLimit)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareAcceleration, acceleration)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetX, targetX)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetY, targetY)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTargetZ, targetZ)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareVerticalMotion, bounce)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareGravity, gravity)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareTerrainHeight, groundHeight)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareRiseBaseY, riseBaseY)
+SCRIPT_DEFINE_OPERAND_ADDRESS(ActorScript_SetOrCompareSprite, sprite)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSpriteStorageKind,
                              spriteStorageKind, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareMotionFlags, motionFlags,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareMotionFlags, motionFlags,
                              u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareArrivalAxis, arrivalAxis,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareArrivalAxis, arrivalAxis,
                              u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareComparisonResult,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareComparisonResult,
                              conditionResult, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSnapToTarget,
-                             snapToTarget, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareCollisionFlags,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSnapToTarget, snapToTarget,
+                             u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareCollisionFlags,
                              collisionFlags, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSteeringFlags,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareSteeringFlags,
                              steeringFlags, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrComparePaused, paused, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRepeatCount, repeatCount,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrComparePaused, paused, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
 /// Work value SW_WAIT: sets, adds to or compares the wait counter.
-void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
-                                   s32 value) {
+void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                  s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
     work->wait = value;
     return;
@@ -904,15 +904,13 @@ void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
   work->conditionResult = (s16)work->wait == (s16)value;
 }
 
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareActionParameter, timer,
-                             s16)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareFootprintSide, userValue,
-                             s16)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareLinkedObject, linkedActor)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareUpdateAddress, update)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRiseCounter, riseCounter,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareLinkedActor, linkedActor)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
                              u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRiseEnabled, riseEnabled,
+SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
                              u8)
 
 /// Reads the two words after the command (a work value number and a value)
@@ -920,12 +918,12 @@ SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRiseEnabled, riseEnabled,
 /// against the table's 41 entries; only a null entry is skipped, and the
 /// table has none. Moves past both operands and returns 1.
 static __inline__ s32
-ObjectScript_ApplyOperandCommand(struct ScriptOperands *operands,
-                                 s32 operation) {
+ActorScript_ApplyOperandCommand(struct ScriptOperands *operands,
+                                s32 operation) {
   s16 commandCursor = operands->cursor;
   const s32 *arguments =
       (const s32 *)operands->scriptAddress + commandCursor + 1;
-  OperandFunc handler = gObjectScript_OperandHandlerTable[arguments[0]];
+  OperandFunc handler = gActorScript_OperandHandlerTable[arguments[0]];
 
   if (handler != 0)
     handler(operands, operation, arguments[1]);
@@ -934,24 +932,24 @@ ObjectScript_ApplyOperandCommand(struct ScriptOperands *operands,
 }
 
 /// SC_SET(w, v): sets work value w to v.
-s32 ObjectScript_ApplyOperandSet(struct Actor *interpreter) {
+s32 ActorScript_ApplyOperandSet(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
+  return ActorScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
 }
 
 /// SC_ADD(w, v): adds v to work value w.
-s32 ObjectScript_ApplyOperandAdd(struct Actor *interpreter) {
+s32 ActorScript_ApplyOperandAdd(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
+  return ActorScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
 }
 
 /// SC_CMP(w, v): tests whether work value w equals v.
-s32 ObjectScript_ApplyOperandCompare(struct Actor *interpreter) {
+s32 ActorScript_ApplyOperandCompare(struct Actor *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
-  return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_COMPARE);
+  return ActorScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_COMPARE);
 }
 
 #undef SCRIPT_DEFINE_FLAG_COMMAND

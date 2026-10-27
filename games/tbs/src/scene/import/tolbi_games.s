@@ -6,8 +6,8 @@
 	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_SetAnimationSpeed, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_SetAnimationSpeed, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
@@ -29,14 +29,14 @@
 	.set import.PartyInventory_GiveItem, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetPositionAndReset, 1
+	.set import.Actor_SetPositionAndReset, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.ObjectMotion_ArmCallback, 1
+	.set import.Actor_ArmCallback, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_RequestDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1

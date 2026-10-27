@@ -260,7 +260,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId) {
-      Object_SelectAnimationFar(actorRecord, POSE_CAST);
+      Actor_SelectAnimationFar(actorRecord, POSE_CAST);
     }
   }
 
@@ -363,7 +363,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
-  Object_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
   work.effect.targetCount = 1;
@@ -422,8 +422,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
   object = BattleObject_Get(work.effect.user)->object;
-  Object_SelectAnimationFar(object, POSE_CAST);
-  Object_SetAnimationSpeedFar(object, 16);
+  Actor_SelectAnimationFar(object, POSE_CAST);
+  Actor_SetAnimationSpeedFar(object, 16);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = ANIM_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
@@ -459,7 +459,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     BattleAnim_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
     BattleAnim_RunTableEffectFar(&work.effect);
-    Object_SelectAnimationFar(object, POSE_STANDING);
+    Actor_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
@@ -494,7 +494,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 
   // The damage pose, and the status window with names and HP only.
   battleObject = BattleObject_Get(unitId);
-  Object_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
+  Actor_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
   PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
   MessageArgument_ClearAllFar();
 
@@ -525,7 +525,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   battleObject = BattleObject_Get(unitId);
-  Object_SelectAnimationFar(battleObject->object, POSE_STANDING);
+  Actor_SelectAnimationFar(battleObject->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last

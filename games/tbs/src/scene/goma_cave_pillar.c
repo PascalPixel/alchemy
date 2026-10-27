@@ -144,7 +144,7 @@ enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 /// surprise, and the battle with the Djinni begins.
 static void EventScript_FightForge(void) {
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectMotion_Launch(ACTOR_WITNESS, 2, 0);
+  Actor_Jump(ACTOR_WITNESS, 2, 0);
   Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
 
@@ -200,12 +200,12 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   table = gGomaCavePillar_FragmentScripts;
-  fragment = Actor_Create(SPRITE_DUST_PUFF, x, y, z);
+  fragment = FieldActor_Create(SPRITE_DUST_PUFF, x, y, z);
   if (fragment == 0)
     return;
   sprite = fragment->sprite;
-  Object_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
-  Actor_SetScript(fragment, table.script[scriptAndChildValue & 15]);
+  Actor_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
+  Actor_StartScript(fragment, table.script[scriptAndChildValue & 15]);
   Actor_SetSpriteColor(fragment, ((u32)scriptAndChildValue >> 16) & 15);
   fragment->motionFlags = 0;
   sprite->flags = 0;
@@ -367,28 +367,27 @@ static void EventScript_PushStumpOver(void) {
     // than in SPRITE_COLOR_HIDDEN, which would hide the stump the same way.
     Actor_ConfigureSpriteColor(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
     blendActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
-    Actor_SetBlendMode(blendActor, OBJECT_BLEND_TRANSLUCENT);
+    Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
     Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
     FieldScript_WaitFrames(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     Task_AddFrame(fragmentCallback, TASK_PASS_FRAME);
     Sound_PlaySong(SE_RUMBLE);
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_STUMP);
+    Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
+    Actor_WaitForMoveById(ACTOR_STUMP);
     FieldScript_WaitFrames(10);
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_STUMP, 2, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_STUMP);
+    Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 2, 0);
+    Actor_WaitForMoveById(ACTOR_STUMP);
     bounceActor = Actor_GetById(ACTOR_STUMP);
     bounceActor->bounce = zero;
     gravityActor = Actor_GetById(ACTOR_STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
     FieldScript_WaitFrames(3);
     // It tips over the edge.
-    ObjectMotion_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2,
-                                    PIXELS(1) / 4);
+    Actor_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Sound_PlaySong(SE_STOP_ACTION_SE);
-    ObjectMotion_ResetAndSetPosition(ACTOR_STUMP, 416, 200);
+    Actor_ResetAndSetPosition(ACTOR_STUMP, 416, 200);
     movedActor = Actor_GetById(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
     Task_Remove(fragmentCallback);
@@ -481,7 +480,7 @@ static void EventScript_MoveEastPillar(void) {
 /// its place.
 static void EventScript_PushEastPillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   GomaCavePillar_SettleEastPillar();
   FieldScript_End();
 }
@@ -505,21 +504,21 @@ static void EventScript_JumpGapWest(void) {
   destination = &target;
   destination->y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
-  if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
+  if (FieldActor_CheckMovementCollision(leader, destination) == 0) {
     FieldScript_Start();
-    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
+    Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
-    ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                                      *(s16 *)((u8 *)destination + 2),
-                                      *(s16 *)((u8 *)destination + 10));
-    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
+                               *(s16 *)((u8 *)destination + 2),
+                               *(s16 *)((u8 *)destination + 10));
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     FieldScript_End();
@@ -543,14 +542,14 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   switch (frame) {
   case 60:
     Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
-    FieldEffect_SpawnLinked(ACTOR_WITNESS, EMOTE_WINCE, 0);
+    FieldEffect_SpawnAttached(ACTOR_WITNESS, EMOTE_WINCE, 0);
     break;
   case 180:
-    ObjectMotion_SetVariantCallback(ACTOR_WITNESS, 3);
+    Actor_StartRepeatedMotion(ACTOR_WITNESS, 3);
     break;
   case 240:
   case 270:
-    ObjectMotion_Launch(ACTOR_WITNESS, 4, 0);
+    Actor_Jump(ACTOR_WITNESS, 4, 0);
     break;
   case 480:
     Import_ActorSetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
@@ -567,11 +566,11 @@ static void EventScript_WitnessCheersForgeCaught(void) {
   Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
   FieldScript_Start();
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WITNESS, 2);
+  Actor_RunRepeatedMotion(ACTOR_WITNESS, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   FieldScript_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
   Script_ShowMessage(ACTOR_WITNESS, 0);
-  ObjectMotion_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpeed(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
@@ -640,7 +639,7 @@ s32 Scene_Initialize(void) {
 /// half.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -650,11 +649,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -676,7 +675,7 @@ s32 gGomaCavePillar_FragmentScriptShort[] = {
     SC_LOOP(22, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gGomaCavePillar_FragmentScriptMedium[] = {
@@ -684,7 +683,7 @@ s32 gGomaCavePillar_FragmentScriptMedium[] = {
     SC_LOOP(44, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gGomaCavePillar_FragmentScriptLong[] = {
@@ -692,7 +691,7 @@ s32 gGomaCavePillar_FragmentScriptLong[] = {
     SC_LOOP(126, SC_TOP),
     SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 struct SceneEntrance gGomaCavePillar_Entrances[] = {

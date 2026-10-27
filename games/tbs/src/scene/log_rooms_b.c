@@ -215,7 +215,7 @@ static void EventScript_WelcomeIsaacBack(void) {
   Actor_LinkPair(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
   Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -267,11 +267,11 @@ static void EventScript_OfferBones(void) {
     FieldScript_WaitFrames(20);
     Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GIRL_AT_THE_INN, 2);
+    Actor_RunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
     FieldScript_WaitFrames(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      ObjectMotion_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
+      Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
       FieldScript_WaitFrames(20);
       FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
@@ -285,7 +285,7 @@ static void EventScript_OfferBones(void) {
     // pose.
     gFieldWork->message++;
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
@@ -300,7 +300,7 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
   u8 unpaused = 0;
 
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MAYOR, 1);
+  Actor_RunRepeatedMotion(ACTOR_MAYOR, 1);
   FieldScript_End();
   // Keep the actor paused through the conversation, then resume
   // action 2.
@@ -309,7 +309,7 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
   EventScript_WelcomeIsaacBack();
   paused = &Actor_GetById(ACTOR_MAYOR)->paused;
   *paused = unpaused;
-  Actor_SetBuiltinAction(ACTOR_MAYOR, 2);
+  Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
 }
 
 // Shared Bone-item dialogue follows the actor conversations.

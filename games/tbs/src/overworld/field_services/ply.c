@@ -21,7 +21,7 @@ void FieldEffect_SwayParticle(union ActorOrEffect *fieldObject) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
 /// particles; each one's work holds its starting angle.
-void FieldEffect_UpdateShrinkingOrbitObject(union ActorOrEffect *fieldObject) {
+void FieldEffect_UpdateShrinkingOrbitActor(union ActorOrEffect *fieldObject) {
   struct Actor *particle = (struct Actor *)fieldObject;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
@@ -44,7 +44,7 @@ void FieldEffect_UpdateShrinkingOrbitObject(union ActorOrEffect *fieldObject) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      Object_InitializeFar(particle, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -75,7 +75,7 @@ void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
     SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + (2 << 16),
                emitter->z.fixed);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
+    spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
     // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
@@ -87,7 +87,7 @@ void FieldEffect_RunSparkEmitter(union ActorOrEffect *fieldObject) {
       spark->targetX = spark->x.fixed;
       Anim_ApplyChildValuesFar(spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      Object_InitializeFar(spark, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(spark, gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -123,12 +123,12 @@ void FieldEffect_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    actor = Object_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
-                         target->z.fixed);
+    actor = Actor_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
+                        target->z.fixed);
     if (actor != 0) {
       actor->scaleY = 0xb333; // 0.7
       actor->scaleX = 0xb333;
-      actor->update = FieldEffect_UpdateShrinkingOrbitObject;
+      actor->update = FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
       actor->userValue = i << 13;
       actor->motionFlags = ACTOR_FLOATS;
@@ -148,7 +148,7 @@ void FieldEffect_RunPly(void) {
   WaitFrames(110);
 
   // The one in the centre.
-  target = Object_Spawn(233, 0, 0, 0);
+  target = Actor_Spawn(233, 0, 0, 0);
   actor = target;
   if (target != 0) {
     target->scaleY = 0xb333;
@@ -199,9 +199,9 @@ void FieldEffect_RunPly(void) {
     target->speedLimit = 0x50000;
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    ObjectMotion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
-    Object_WaitForMoveFar(target);
-    Object_ReleaseFar(target);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Actor_WaitForMoveFar(target);
+    Actor_ReleaseFar(target);
   }
   // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.

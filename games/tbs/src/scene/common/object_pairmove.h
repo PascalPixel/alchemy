@@ -23,22 +23,22 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
     actor->speedLimit = 0x10000;
     actor->acceleration = 0x8000;
-    Object_SetPosition(actor, x, actor->y.fixed, z);
+    FieldActor_SetMoveTarget(actor, x, actor->y.fixed, z);
   }
-  Object_SelectAnimation(actor, 27);
+  Actor_SelectAnimation(actor, 27);
   {
     x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
     other->speedLimit = 0x10000;
     other->acceleration = 0x8000;
-    Object_SetPosition(other, x, other->y.fixed, z);
+    FieldActor_SetMoveTarget(other, x, other->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    Object_SelectAnimation(other, 4);
+    Actor_SelectAnimation(other, 4);
   } else {
-    Object_SelectAnimation(other, 3);
+    Actor_SelectAnimation(other, 3);
   }
-  Object_WaitForMove(actor);
+  Actor_WaitForMove(actor);
   FieldScript_End();
 }

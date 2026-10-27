@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// A map cell's word, as the camera reads it.
-struct ObjectCameraTile {
+struct ActorCameraTile {
   u32 block : 12;   ///< the metatile number
   u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; ///< if not 0, the priority of an object standing on it
@@ -14,7 +14,7 @@ struct ObjectCameraTile {
 };
 
 /// A point the fixed camera looks from or at.
-struct ObjectCameraPoint {
+struct ActorCameraPoint {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
@@ -24,32 +24,32 @@ struct ObjectCameraPoint {
 /// gBattleCamera, a struct BattleCamera), as the fixed camera reads it: the eye
 /// and target it looks from and at, or the points that stand in for them. The
 /// battle, the world map or Lucky Dice owns the block.
-struct ObjectCameraFixed {
-  struct ObjectCameraPoint eye;
-  struct ObjectCameraPoint target;
-  struct ObjectCameraPoint *followEye;      ///< when set, used as the eye
-  struct ObjectCameraPoint *followPosition; ///< when set, used as the target
+struct ActorCameraFixed {
+  struct ActorCameraPoint eye;
+  struct ActorCameraPoint target;
+  struct ActorCameraPoint *followEye;      ///< when set, used as the eye
+  struct ActorCameraPoint *followPosition; ///< when set, used as the target
 };
 
 /// Each frame, with the scrolling camera: places every object's sprite on the
 /// screen. An object on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
-/// ObjectSystem_Initialize adds it as a task (priority TASK_PASS_FRAME,
+/// ActorSystem_Initialize adds it as a task (priority TASK_PASS_FRAME,
 /// after the objects move) for every mode but 3 and 4;
-/// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
+/// ActorSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count, may change an object's layer and its sprite's
 /// priorities, and holds the frame decoder in heap slot HEAP_SLOT_FRAME_SCRATCH
 /// only while it runs.
-void ObjectSystem_PlaceSprites(void) {
+void ActorSystem_PlaceSprites(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
    * in tbs-en. */
-  UNUSED struct ObjectCameraPoint unusedPoints[3];
+  UNUSED struct ActorCameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapGridScrollWork *grid;
   s32 viewX;
   s32 viewZ;
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct Actor *object;
   struct Sprite *sprite;
 #ifndef UBFIX
@@ -59,19 +59,19 @@ void ObjectSystem_PlaceSprites(void) {
   s32 dx;
   s32 dz;
   s32 screenTop;
-  struct ObjectCameraTile *tile;
+  struct ActorCameraTile *tile;
   u32 priority;
   struct SpriteScale scale;
   struct SpritePlacement drawPosition;
   u32 layerPlusOne;
 
   // MapGridScrollWork owns all three layer cell pointers at their 0x30-byte
-  // stride. UB: map and system work are separate globals, beyond gObjects.
+  // stride. UB: map and system work are separate globals, beyond gActors.
   // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
   grid = gMapGridWork[0];
 #else
-  grid = *(struct MapGridScrollWork **)(((u8 *)&gObjects) + 12);
+  grid = *(struct MapGridScrollWork **)(((u8 *)&gActors) + 12);
 #endif
 #ifdef UBFIX
   viewX = grid->viewX & 0xffff0000;
@@ -82,26 +82,26 @@ void ObjectSystem_PlaceSprites(void) {
   viewZ = viewCoordinates[1] & 0xffff0000;
 #endif
 #ifdef UBFIX
-  system = gObjectSystemWork;
+  system = gActorSystemWork;
 #else
-  system = *(struct ObjectSystemWork **)(((u8 *)&gObjects) + 4);
+  system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
 #endif
   // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
   system->used = 0;
-  object = gObjects;
-  for (objectIndex = 0; objectIndex < OBJECT_COUNT; objectIndex++, object++) {
+  object = gActors;
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, object++) {
     if (object->script == 0)
       continue;
     // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
     if (object->x.fixed != 0 || object->z.fixed != 0) {
       kind = object->spriteStorageKind & 15;
-      if (kind == OBJECT_SPRITE_NONE)
+      if (kind == ACTOR_SPRITE_NONE)
         continue;
       // This camera places single sprites only; groups are left.
-      if (kind != OBJECT_SPRITE_ONE)
+      if (kind != ACTOR_SPRITE_ONE)
         continue;
       // While a menu has sprite projection suspended, only held objects are
       // drawn.
@@ -122,7 +122,7 @@ void ObjectSystem_PlaceSprites(void) {
           screenTop < 0xe00000) {
         // The cell under the object: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
-        tile = &((struct ObjectCameraTile *)grid->layers[object->layer]
+        tile = &((struct ActorCameraTile *)grid->layers[object->layer]
                      .cells)[(object->x.fixed >> 20) +
                              ((object->z.fixed >> 20) << 7)];
         if (object->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
@@ -173,7 +173,7 @@ void ObjectSystem_PlaceSprites(void) {
       }
     } else {
       kind = object->spriteStorageKind & 15;
-      if (kind == OBJECT_SPRITE_ONE) {
+      if (kind == ACTOR_SPRITE_ONE) {
         sprite = object->sprite;
         if (object->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
@@ -186,22 +186,22 @@ void ObjectSystem_PlaceSprites(void) {
 }
 
 /// Unused: returns 1; nothing calls it.
-UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
+UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every object's sprite, from the
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// Battle_GatherActions) it uses the fixed view matrix and 1.0
-/// scale. ObjectSystem_Initialize adds it as a task (priority
-/// TASK_PASS_FRAME) for OBJECT_SYSTEM_WORLD_MAP and
-/// OBJECT_SYSTEM_BATTLE; ObjectSystem_SuspendProjectionAndShowSprites suspends
+/// scale. ActorSystem_Initialize adds it as a task (priority
+/// TASK_PASS_FRAME) for ACTOR_SYSTEM_WORLD_MAP and
+/// ACTOR_SYSTEM_BATTLE; ActorSystem_SuspendProjectionAndShowSprites suspends
 /// it. Resets the system's used count.
-void ObjectSystem_ProjectSprites(void) {
+void ActorSystem_ProjectSprites(void) {
   s32 i;
-  struct ObjectCameraFixed *camera;
-  struct ObjectSystemWork *system;
-  struct ObjectCameraPoint *eye;
-  struct ObjectCameraPoint *target;
+  struct ActorCameraFixed *camera;
+  struct ActorSystemWork *system;
+  struct ActorCameraPoint *eye;
+  struct ActorCameraPoint *target;
   struct Actor *object;
   s32 angle;
   s32 spritesRemaining;
@@ -215,16 +215,16 @@ void ObjectSystem_ProjectSprites(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * two points above the scales; without it, 2 of 181 instructions differ in
    * tbs-en. */
-  UNUSED struct ObjectCameraPoint unusedPoints[2];
+  UNUSED struct ActorCameraPoint unusedPoints[2];
 
-  // UB: camera and system work are separate globals, beyond gObjects.
+  // UB: camera and system work are separate globals, beyond gActors.
   // Reading their named slots adds four bytes in the forced EN build.
 #ifdef UBFIX
-  camera = (struct ObjectCameraFixed *)gBattleCamera;
-  system = gObjectSystemWork;
+  camera = (struct ActorCameraFixed *)gBattleCamera;
+  system = gActorSystemWork;
 #else
-  camera = *(struct ObjectCameraFixed **)(((u8 *)&gObjects) + 0x1c);
-  system = *(struct ObjectSystemWork **)(((u8 *)&gObjects) + 4);
+  camera = *(struct ActorCameraFixed **)(((u8 *)&gActors) + 0x1c);
+  system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
 #endif
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
@@ -251,15 +251,15 @@ void ObjectSystem_ProjectSprites(void) {
   }
   // The objects are placed from the last down. A sprite's layer byte is its
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
-  object = gObjects;
-  object += OBJECT_COUNT - 1;
+  object = gActors;
+  object += ACTOR_COUNT - 1;
   fixedScale = Q16_ONE;
-  for (i = OBJECT_COUNT - 1; i >= 0; i--, object--) {
+  for (i = ACTOR_COUNT - 1; i >= 0; i--, object--) {
     if (object->script == 0)
       continue;
     kind = object->spriteStorageKind & 15;
     switch (kind) {
-    case OBJECT_SPRITE_ONE:
+    case ACTOR_SPRITE_ONE:
       objectPosition = &object->x.fixed;
       scale[0] = object->scaleX;
       scale[1] = object->scaleY;
@@ -271,7 +271,7 @@ void ObjectSystem_ProjectSprites(void) {
       Render_PlaceProjectedSprite(sprite, objectPosition, scale,
                                   object->facing + angle, object->layer);
       break;
-    case OBJECT_SPRITE_GROUP:
+    case ACTOR_SPRITE_GROUP:
       groupScale[0] = object->scaleX;
       groupScale[1] = object->scaleY;
       if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
@@ -288,7 +288,7 @@ void ObjectSystem_ProjectSprites(void) {
                                       object->facing + angle, object->layer);
       }
       break;
-    case OBJECT_SPRITE_NONE:
+    case ACTOR_SPRITE_NONE:
       break;
     }
   }

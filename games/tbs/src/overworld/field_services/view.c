@@ -10,7 +10,7 @@
 
 /// The script command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (FieldCamera_MoveWithinMapBounds).
-void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
+void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
   grid->minX = minX;
@@ -74,7 +74,7 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 
   if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
                                               sizeof(struct FieldWork)))
-          ->mode != OBJECT_SYSTEM_WORLD_MAP)
+          ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
     inverse = Iwram_RatioMulQ14(zoom, Q16_ONE); // 1 / zoom
@@ -98,7 +98,7 @@ void FieldScript_WaitForZoomTransition(void) {
 
   if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
                                               sizeof(struct FieldWork)))
-          ->mode == OBJECT_SYSTEM_WORLD_MAP) {
+          ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
       do {
@@ -115,9 +115,9 @@ void FieldScript_WaitForZoomTransition(void) {
 // consumer ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
+void FieldEffect_CopyLinkedActorPosition(union ActorOrEffect *fieldObject) {
 #else
-s32 FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
+s32 FieldEffect_CopyLinkedActorPosition(union ActorOrEffect *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
   struct Actor *actor = self;
@@ -147,34 +147,34 @@ s32 FieldEffect_CopyLinkedObjectPosition(union ActorOrEffect *fieldObject) {
 /// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
 /// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
 /// actor's. The bubble rides the actor and frees itself after 46 frames
-/// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
+/// (gFieldEffect_LinkedActorScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
-void FieldEffect_SpawnLinked(s32 actorId, s32 emote, s32 wait) {
+void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
   struct Actor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     Sound_PlaySongFar(SE_CHIME);
   }
 
-  target = Actor_GetByActorId(actorId);
+  target = Actor_Lookup(actorId);
   if (target != 0) {
     struct Actor *bubble =
-        Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
+        Actor_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Object_InitializeFar(bubble, gFieldEffect_LinkedObjectScript);
-      Object_SelectAnimationFar(bubble, emote & 15);
+      Actor_StartScriptFar(bubble, gFieldEffect_LinkedActorScript);
+      Actor_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->userValue = actorId;
       sprite = bubble->sprite;
 #ifdef UBFIX
-      bubble->update = FieldEffect_CopyLinkedObjectPosition;
+      bubble->update = FieldEffect_CopyLinkedActorPosition;
 #else
       bubble->update =
-          (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedObjectPosition;
+          (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedActorPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedActor = target;
@@ -210,13 +210,13 @@ void FieldEffect_SpawnLinked(s32 actorId, s32 emote, s32 wait) {
 /// The script command "actor set attached effect", by enum
 /// AttachedEffectFlag: removes the object attached to an actor, attaches
 /// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
-/// 2) that ends by itself (gObjectMotion_WaitScript, 40 frames). The attached
+/// 2) that ends by itself (gActor_WaitScript, 40 frames). The attached
 /// object is kept as the actor's linkedObject, so ATTACHED_EFFECT_ATTACH
 /// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (overworld/step.c).
-void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
-  struct Actor *actor = Actor_GetByActorId(actorId);
+void FieldEffect_SetAttached(s32 actorId, s32 flags) {
+  struct Actor *actor = Actor_Lookup(actorId);
   struct Actor *effect;
   struct Sprite *visual;
   s32 mode;
@@ -229,14 +229,14 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->linkedActor == 0) {
-      effect = Object_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
-                                actor->y.fixed, actor->z.fixed);
+      effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
+                               actor->y.fixed, actor->z.fixed);
     }
   } else {
     effect = actor->linkedActor;
     if (effect == 0)
       return;
-    Object_ReleaseFar(effect);
+    Actor_ReleaseFar(effect);
     actor->linkedActor = 0;
     return;
   }
@@ -247,13 +247,13 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
-    Object_SelectAnimationFar(effect, 1);
+    Actor_SelectAnimationFar(effect, 1);
     actor->linkedActor = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
-    Object_SelectAnimationFar(effect, 2);
-    Object_InitializeFar(effect, (const s32 *)gObjectMotion_WaitScript);
+    Actor_SelectAnimationFar(effect, 2);
+    Actor_StartScriptFar(effect, (const s32 *)gActor_WaitScript);
     effect->timer = 1;
     break;
   }
@@ -261,10 +261,10 @@ void FieldEffect_ConfigureLinkedObject(s32 actorId, s32 flags) {
   effect->userValue = actorId;
   effect->motionFlags = 0;
 #ifdef UBFIX
-  effect->update = FieldEffect_CopyLinkedObjectPosition;
+  effect->update = FieldEffect_CopyLinkedActorPosition;
 #else
   effect->update =
-      (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedObjectPosition;
+      (void (*)(union ActorOrEffect *))FieldEffect_CopyLinkedActorPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

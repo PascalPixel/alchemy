@@ -3,14 +3,14 @@
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_CreateField, 1
-	.set import.Object_Release, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_Create, 1
+	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
@@ -21,30 +21,30 @@
 	.set import.Scene_AssignViewFlags, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.Actor_DestroyById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_SetPositionAndCommit, 1
-	.set import.ObjectMotion_CenterOnColumn, 1
-	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
+	.set import.Actor_ReleaseById, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_SetPositionAndCommit, 1
+	.set import.Actor_CenterOnColumn, 1
+	.set import.Actor_OffsetPositionAndResetMotion, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_RunRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.Actor_SetSpritePriority, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.FieldCamera_GetScriptObject, 1
+	.set import.FieldCamera_GetActor, 1
 	.set import.Import_ScriptRequestExit, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1

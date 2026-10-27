@@ -334,7 +334,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Script_PlaySong(SE_DUST_PUFF);
   FieldScript_WaitFrames(3);
   actor->layer = 2;
-  ObjectMotion_SetActionVariant(leaderActorId, 3);
+  Actor_SetSpritePriority(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
     actor->facing += 2 * FACING_STEP;
@@ -488,9 +488,9 @@ static void EventScript_FightTret(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_MIA, 2);
+  Actor_SetSpritePriority(ACTOR_MIA, 2);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Import_ActorSetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
@@ -504,11 +504,11 @@ static void EventScript_FightTret(void) {
     if (leader != NULL) {
       Import_ActorSetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetActionScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
+    Actor_SetScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
   }
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
-  Actor_SetActionScript(ACTOR_GARET, gTreeRooms_GaretGathersActions);
-  Actor_RunActionScriptAndWait(ACTOR_IVAN, gTreeRooms_IvanGathersActions);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
+  Actor_SetScript(ACTOR_GARET, gTreeRooms_GaretGathersActions);
+  Actor_RunScriptAndWait(ACTOR_IVAN, gTreeRooms_IvanGathersActions);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -520,20 +520,20 @@ static void EventScript_FightTret(void) {
   FieldScript_WaitFrames(20);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
   Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 1);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -541,8 +541,8 @@ static void EventScript_FightTret(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEffect_ConfigureLinkedObject(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   FieldScript_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0);
@@ -574,9 +574,9 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   // Restore the party positions before opening the post-battle conversation.
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_MIA, 2);
+  Actor_SetSpritePriority(ACTOR_MIA, 2);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindMember(ITEM_HERMES_WATER);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_Start();
@@ -624,10 +624,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   FieldScript_SetMessageId(MsgTretMmmmm);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   FieldCamera_WaitForArrival();
@@ -647,7 +647,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
@@ -663,21 +663,21 @@ static void TreeRooms_PlayPostBattleConversation(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   // Garet and Ivan will not let Tret die while they still need his help.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
@@ -709,10 +709,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
   FieldScript_WaitFrames(20);
@@ -738,7 +738,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Script_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
-  Actor_RunActionScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
+  Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
   FieldScript_WaitFrames(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessage(SPEAKER(ACTOR_GARET), 0);
@@ -747,24 +747,24 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 10);
   if (hasMia != 0) {
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     FieldScript_ShowMessageThenWait(SPEAKER(ACTOR_MIA), 0, 10);
   }
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   actions = gTreeRooms_RejoinLeaderActions;
-  Actor_SetActionScript(ACTOR_GARET, actions);
+  Actor_SetScript(ACTOR_GARET, actions);
   if (hasMia != 0) {
-    Actor_SetActionScript(ACTOR_MIA, actions);
+    Actor_SetScript(ACTOR_MIA, actions);
   }
-  Actor_RunActionScriptAndWait(ACTOR_IVAN, actions);
+  Actor_RunScriptAndWait(ACTOR_IVAN, actions);
   FieldScript_WaitFrames(20);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(FLAG_TRET_DEFEATED);
@@ -875,10 +875,10 @@ s32 TreeRooms_EnterRoom(void) {
     FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
     FieldScript_WaitFrames(20);
     actor->layer = 2;
-    ObjectMotion_SetActionVariant(leaderActorId, 3);
+    Actor_SetSpritePriority(leaderActorId, 3);
     FieldScript_WaitFrames(2);
-    FieldEffect_ConfigureLinkedObject(
-        leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+    FieldEffect_SetAttached(leaderActorId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     FieldScript_WaitFrames(8);
   } else if (entrance == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1091,15 +1091,15 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
-      spark = Actor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
-                           sSparkOrigin.z);
+      spark = FieldActor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
+                                sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
             Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
         Actor_SetSpriteFlags(spark, 0);
-        Object_SelectAnimation(spark, 1);
+        Actor_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->userValue = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
         spark->targetX = sSparkOrigin.x;
@@ -1200,8 +1200,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_ConfigureLinkedObject(
-      ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   FieldScript_End();
@@ -1209,17 +1209,17 @@ static void TreeRooms_RunLandingDustEvent(void) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 /// The torn cocoons redrawn after a battle: the cocoon's flag, whether it is

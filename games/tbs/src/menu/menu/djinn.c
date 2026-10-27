@@ -50,7 +50,7 @@ s32 Menu_WrapIndex(s32 value, s32 modulus) {
 
 /// Places the four party figures over their Djinn columns, 56 pixels apart
 /// from x 32, at screen y 61 plus yOffset. Returns that y.
-s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
+s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
   struct DjinnMenuWork *menu;
   s32 memberX;
   s32 memberIndex;
@@ -84,7 +84,7 @@ s32 DjinnMenu_Run(void) {
   menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   savedMessageSpeed = gSaveBlock.messageSpeed;
   gSaveBlock.messageSpeed = MESSAGE_SPEED_FAST;
-  enabled = gObjectSystemWork->suspended = 1;
+  enabled = gActorSystemWork->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
@@ -112,7 +112,7 @@ s32 DjinnMenu_Run(void) {
   menu->memberCount = Party_ListMembersFar(menu->members);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
-  Menu_SetFirstObjectRowCoordinates(0);
+  Menu_SetFirstActorRowCoordinates(0);
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
@@ -128,7 +128,7 @@ s32 DjinnMenu_Run(void) {
   WaitFrames(1);
   ItemMenu_Close();
   Window_DrawFrameFar(0, 0, 30, 20);
-  gObjectSystemWork->suspended = 0;
+  gActorSystemWork->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
@@ -226,7 +226,7 @@ s32 DjinnMenu_RunScreen(void) {
     case DJINN_STEP_RESERVED:
       break;
     case DJINN_STEP_SELECT_DJINN:
-      Menu_SetFirstObjectRowCoordinates(0);
+      Menu_SetFirstActorRowCoordinates(0);
       DjinnFigures_SetSlotPosition(1, 0, 200, 0);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
@@ -271,7 +271,7 @@ s32 DjinnMenu_RunScreen(void) {
     // this chooser runs.
     case DJINN_STEP_SELECT_ACTION:
       DjinnMenu_DrawElementList(&menu->backdrop->list);
-      Menu_SetFirstObjectRowCoordinates(-8);
+      Menu_SetFirstActorRowCoordinates(-8);
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       DjinnFigures_SetSlotPosition(0, menu->selectedColumn[0] * 56 + 48, 54, 0);
@@ -867,7 +867,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
   return result;
 }
 

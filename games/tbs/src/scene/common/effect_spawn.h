@@ -116,10 +116,10 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
 
 #ifdef EFFECT_SPAWN_RESIDENT
 /// The resident version uses far calls to the engine.
-EFFECT_SPAWN(FieldEffect_SpawnResident, Object_CreateFar,
-             Object_SelectAnimationFar, Object_InitializeFar)
+EFFECT_SPAWN(FieldEffect_SpawnResident, Actor_CreateFar,
+             Actor_SelectAnimationFar, Actor_StartScriptFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(FieldEffect_Spawn, Actor_Create, Object_SelectAnimation,
-             Actor_SetScript)
+EFFECT_SPAWN(FieldEffect_Spawn, FieldActor_Create, Actor_SelectAnimation,
+             Actor_StartScript)
 #endif

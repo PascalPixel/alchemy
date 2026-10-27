@@ -62,8 +62,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
-  Object_SelectAnimationFar(caster, POSE_LEAP);
-  Object_SetAnimationSpeedFar(caster, 48);
+  Actor_SelectAnimationFar(caster, POSE_LEAP);
+  Actor_SetAnimationSpeedFar(caster, 48);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -178,13 +178,13 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           target->velocityY = 0x50000;
           target->gravity = 0xab85;
           target->steeringFlags = 0;
-          Object_StartIdleFar(target);
+          Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Object_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
-                                    target->z.fixed);
+            Actor_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
+                                   target->z.fixed);
           else
-            Object_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
-                                    target->z.fixed);
+            Actor_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
+                                   target->z.fixed);
           if (i == 2) {
             ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {

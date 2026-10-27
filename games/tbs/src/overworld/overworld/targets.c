@@ -50,13 +50,13 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
   nearestActorId = -1;
   nearestDistance = 32;
-  source = Actor_GetByActorId(id);
+  source = Actor_Lookup(id);
   if (source != 0) {
-    for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
+    for (actorIndex = 0; actorIndex <= ACTOR_LAST; actorIndex++) {
       if (actorIndex == id)
         continue;
 
-      candidate = Actor_GetByActorId(actorIndex);
+      candidate = Actor_Lookup(actorIndex);
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
@@ -128,17 +128,17 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   nearestActorId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = Actor_GetByActorId(id);
+  source = Actor_Lookup(id);
   if (source == 0)
     return nearestActorId;
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->facing + 0x2000) & 0xc000;
-  for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
+  for (actorIndex = 0; actorIndex <= ACTOR_LAST; actorIndex++) {
     if (actorIndex == id)
       continue;
 
-    candidate = Actor_GetByActorId(actorIndex);
+    candidate = Actor_Lookup(actorIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
@@ -218,7 +218,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   emitter = 0;
   if (targetActor != 0) {
     Sound_PlaySongFar(SE_CHEST_OPEN);
-    Object_SelectAnimationFar(targetActor, 4);
+    Actor_SelectAnimationFar(targetActor, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(actorId, itemId);
   }
@@ -238,7 +238,7 @@ void Anim_ApplyChildPalette(struct Actor *object, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((object->spriteStorageKind & 15) == OBJECT_SPRITE_ONE) {
+  if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
     sprite = object->sprite;
     replacement = palette - 1;
     if (palette == 0)

@@ -216,9 +216,9 @@ Some memory is read through a struct of its own, a field-for-field copy of
 the map that differs only where its reader does, because that reader's
 code matches only through it. [An actor](../glossary.md#actor)'s 112 bytes
 are `struct Actor` almost everywhere, but `BattleObject_SpawnObjectsForList`
-reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
+reads them as `BattleActor`, with the sprite word untyped; `update.c`,
 ARM code built with GCC 2.95.2, which cannot read `Actor`'s anonymous
-unions, keeps `ObjectArmView`; and the operand handlers of `SC_SET`,
+unions, keeps `ActorArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
 (`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
@@ -332,8 +332,8 @@ is, and its note says so.
 
 - A table whose shared extern lacks `const` is placed in read-only data with
   `__attribute__((section(".rodata")))` instead (Lunpa's
-  `gPushedObject_DirectionSteps`, `gPushedObject_FootprintKinds` and
-  `gPushedObject_FootprintBounds`); `gFont_MarkGlyphCodes` is placed the same
+  `gPushedActor_DirectionSteps`, `gPushedActor_FootprintKinds` and
+  `gPushedActor_FootprintBounds`); `gFont_MarkGlyphCodes` is placed the same
   way because a `const` extern changes the schedule of its reader.
 - One table can go by several extern names, given as `__asm__` labels, where
   the ROM keeps a literal for each use (`Resource_LoadTableEntry`).

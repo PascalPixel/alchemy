@@ -335,10 +335,10 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(ACTOR_JENNA, 2, 0);
+  Actor_Jump(ACTOR_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
   EventScript_SayThenWait(ACTOR_JENNA, 6);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
@@ -350,12 +350,12 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
   // Kraden hops up to the party: "Excellent work, Isaac!"
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   FieldScript_WaitFrames(40);
@@ -392,14 +392,14 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_WaitFrames(20);
   // Garet: two beams shot out of the statues Isaac moved, and the hole
   // appeared. Jenna: Isaac dropped the statue into it.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   EventScript_SayThenWait(ACTOR_GARET, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   EventScript_SayThenWait(ACTOR_JENNA, 6);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(40);
   // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(ACTOR_KRADEN, 80);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
@@ -414,13 +414,13 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_WaitFrames(30);
   // Kraden: the other statue was there to disarm the trap, and now they
   // should be all right.
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(40);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -428,16 +428,16 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // Kraden: he will observe from the Luna room. He leaves south.
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 217);
   FieldScript_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 321);
@@ -455,7 +455,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -463,7 +463,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
     Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_JENNA);
+  Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Script_ClearFlag(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -502,12 +502,12 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(ACTOR_JENNA, 2, 0);
+  Actor_Jump(ACTOR_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
   EventScript_SayThenWait(ACTOR_JENNA, 6);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(6);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
   FieldCamera_SetSpeedParameters(PIXELS(28) / 5, PIXELS(7) / 10);
   FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
@@ -516,45 +516,45 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   FieldScript_WaitFrames(40);
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 3);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 2, 0);
-  ObjectMotion_Launch(ACTOR_GARET, 2, 0);
-  ObjectMotion_Launch(ACTOR_JENNA, 2, 0);
+  Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
+  Actor_Jump(ACTOR_GARET, 2, 0);
+  Actor_Jump(ACTOR_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
   // Garet: "This is...a trap?" Kraden: "Go look in the Luna room".
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   EventScript_SayThenWait(ACTOR_GARET, 6);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 1);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAngleToward(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAngleToward(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_KRADEN, ACTOR_JENNA, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldScript_WaitFrames(10);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_KRADEN, 432, 200);
+  Actor_ResetAndSetPositionInMode2(ACTOR_KRADEN, 432, 200);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
@@ -563,7 +563,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_EAST, 0);
   FieldScript_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
@@ -573,23 +573,23 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(574), -1, PIXELS(171), 1);
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
-  ObjectMotion_SetPositionAndReset(ACTOR_KRADEN, 576, 184);
+  Actor_SetPositionAndReset(ACTOR_KRADEN, 576, 184);
   FieldScript_WaitFrames(80);
   // Kraden: they are looking in the right place, but moving one statue
   // springs the trap. Jenna: why would anyone put a trap here?
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(ACTOR_KRADEN, 20);
-  FieldEffect_SpawnLinked(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldEffect_SpawnAttached(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_JENNA, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   EventScript_SayThenWait(ACTOR_JENNA, 6);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_WEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
   // Kraden: they have hidden something very important, perhaps the key to
   // Alchemy itself.
@@ -598,7 +598,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
   Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(40);
@@ -606,7 +606,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldScript_WaitFrames(40);
   // Kraden: "Should I tell you more?" Either answer, he thinks they would not
   // understand yet.
-  FieldMessage_ShowAtObject(ACTOR_KRADEN, 0);
+  FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -619,31 +619,31 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: "We must try to find a solution to this mystery." Garet:
   // "Sheesh... Another mystery?" Kraden will keep checking the Luna room.
   FieldScript_SetMessageId(MsgSolSanctumTryFindSolution);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  FieldEffect_SpawnLinked(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldEffect_SpawnAttached(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
   EventScript_SayThenWait(ACTOR_GARET, 6);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_SOUTH, 0);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(ACTOR_KRADEN, 6, 0);
+  Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  ObjectMotion_SetPositionAndReset(ACTOR_KRADEN, 576, 232);
+  Actor_SetPositionAndReset(ACTOR_KRADEN, 576, 232);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(40);
   // Kraden, leaving: his intuition says the light is the key to the secret.
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  ObjectMotion_ArmCallback(ACTOR_KRADEN, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
   EventScript_SayThenWait(ACTOR_KRADEN, 6);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
   Import_ActorSetPosition(ACTOR_KRADEN, 0, 0);
@@ -652,29 +652,29 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(136), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
   // Jenna: "let's see if we can't figure this out ourselves."
   EventScript_SayThenWait(ACTOR_JENNA, 6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_JENNA);
+  Actor_WaitForMoveById(ACTOR_JENNA);
   Import_ActorSetPosition(ACTOR_JENNA, 0, 0);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Import_ActorSetPosition(ACTOR_GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
@@ -874,7 +874,7 @@ s32 SolSanctumStatue_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_MOVED_CENTER_STATUE), 0);
   Actor_GetById(ACTOR_MOVED_CENTER_STATUE)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(ACTOR_MOVED_CENTER_STATUE, 1);
+  Actor_SetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
   // Only entrances 3 and 4 keep Jenna and Garet staged for their
   // conversations.
   if ((u16)(gSaveBlock.entrance - 3) > 1) {
@@ -1148,9 +1148,9 @@ static void EventScript_CenterStatueMoved(void) {
             ~ACTOR_FACES_MOTION;
         Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(3), PIXELS(1));
         statue->motionFlags = 0;
-        ObjectMotion_SetActionVariant(ACTOR_CENTER_STATUE, 3);
+        Actor_SetSpritePriority(ACTOR_CENTER_STATUE, 3);
         Sound_PlaySong(SE_STONE_GRIND);
-        ObjectMotion_ResetAndSetPosition(ACTOR_CENTER_STATUE, 288, 178);
+        Actor_ResetAndSetPosition(ACTOR_CENTER_STATUE, 288, 178);
         FieldScript_WaitFrames(8);
         Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, PIXELS(288), PIXELS(178));
         statue->targetX = ACTOR_NO_TARGET;
@@ -1214,7 +1214,7 @@ static void EventScript_PushCenterStatueNorth(void) {
       movingActor = Actor_GetById(ACTOR_PARTY_LEADER);
       Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_CENTER_STATUE);
+      Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       FieldScript_End();
     }
@@ -1325,16 +1325,15 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   FieldScript_Start();
   Sound_PlaySong(SE_PUSH);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
-  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 5,
-                                  PIXELS(1) / 10);
+  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  ObjectMotion_ResetAndSetPosition(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
-                                   (leaderRow << 4) + 8);
+  Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
+                            (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
   statueZ = statueRow << 4;
-  ObjectMotion_ResetAndSetPosition(statueId, statueX + 8, statueZ + 8);
-  ObjectMotion_CommitCurrentPositionAndActivate(statueId);
+  Actor_ResetAndSetPosition(statueId, statueX + 8, statueZ + 8);
+  Actor_WaitForMoveById(statueId);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldScript_End();
 }
@@ -1613,15 +1612,14 @@ static void SolSanctumStatue_OpenSeal(void) {
         Actor_GetById(ACTOR_PARTY_LEADER)->facing = seal->facing;
         Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
         Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 0);
-        ObjectMotion_ResetAndSetPosition(ACTOR_PARTY_LEADER, seal->destinationX,
-                                         seal->destinationZ);
+        Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
+        Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, seal->destinationX,
+                                  seal->destinationZ);
         COPY_CELLS(seal->stairs[0]);
         COPY_CELLS(seal->stairs[1]);
         COPY_CELLS(seal->stairs[2]);
         Actor_GetById(seal->actorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        ObjectMotion_SetPositionAndCommit(seal->actorId, seal->actorX,
-                                          seal->actorZ);
+        Actor_SetPositionAndCommit(seal->actorId, seal->actorX, seal->actorZ);
         Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
         GameFlag_Clear(seal->flag);
       }

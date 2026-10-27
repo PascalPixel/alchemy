@@ -7,15 +7,15 @@
 /// Gives every live object of the 64 whose first sprite layer shows sprite 200
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
-void Object_SetRevealSpriteColor(s32 value) {
-  struct Actor *object = gObjects;
+void Actor_SetRevealSpriteColor(s32 value) {
+  struct Actor *object = gActors;
   s32 remainingActors = 63;
 
   do {
     if (object->script != NULL) {
       u8 kind = object->spriteStorageKind;
 
-      if (kind == OBJECT_SPRITE_ONE) {
+      if (kind == ACTOR_SPRITE_ONE) {
         struct Sprite *animation = object->sprite;
         struct SpriteAnim *entry = animation->entries[0];
 
@@ -44,7 +44,7 @@ void FieldEffect_WatchLeaderDistance(void) {
   s32 distanceZ;
 
   work = gFieldWork;
-  actor = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -87,10 +87,10 @@ void FieldEffect_RunReveal(void) {
   s32 frame;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  Object_SetRevealSpriteColor(6);
+  Actor_SetRevealSpriteColor(6);
   ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-  target = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  target = Actor_Lookup(gSaveBlock.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
@@ -157,7 +157,7 @@ void FieldEffect_EndReveal(void) {
     zero = 0;
     state->revealActive = zero;
     state->revealFrames = zero;
-    Object_SetRevealSpriteColor(0);
+    Actor_SetRevealSpriteColor(0);
 
     PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
     PaletteFade_StartInterpolation(1);

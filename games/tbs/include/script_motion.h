@@ -3,7 +3,7 @@
 
 /// @file
 /// The words of an object's script as the motion loops index them, and
-/// ObjectArmView, struct Actor as update.c reads it.
+/// ActorArmView, struct Actor as update.c reads it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -14,27 +14,27 @@ union ActorOrEffect;
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
 // Thumb load's base/index order; a pointer to an unbounded array does too.
 #ifdef UBFIX
-typedef s32 ObjectScriptWords;
+typedef s32 ActorScriptWords;
 #else
 /// The words of an object's script, as its script pointer reads them.
-struct ObjectScriptWords {
+struct ActorScriptWords {
   s32 word[1];
 };
-typedef struct ObjectScriptWords ObjectScriptWords;
+typedef struct ActorScriptWords ActorScriptWords;
 #endif
 
-/// struct Actor, field for field, as Object_UpdateAll (update.c) reads it.
+/// struct Actor, field for field, as Actor_UpdateAll (update.c) reads it.
 /// update.c is ARM code built with GCC 2.95.2, which cannot read struct
 /// Object's anonymous unions, so it keeps this copy of the layout with the
 /// script as words and the bounce as a union (MATCHING.md).
-struct ObjectArmView {
-  const ObjectScriptWords *script; ///< null when the object is free
-  u16 scriptCursor;                ///< in words; read signed
-  u16 facing;                      ///< 1/65536 turns
-  s32 x;                           ///< 16.16 fixed-point pixels
-  s32 y;                           ///< 16.16 fixed-point pixels
-  s32 z;                           ///< 16.16 fixed-point pixels
-  s32 groundHeight;                ///< 16.16 fixed-point pixels
+struct ActorArmView {
+  const ActorScriptWords *script; ///< null when the object is free
+  u16 scriptCursor;               ///< in words; read signed
+  u16 facing;                     ///< 1/65536 turns
+  s32 x;                          ///< 16.16 fixed-point pixels
+  s32 y;                          ///< 16.16 fixed-point pixels
+  s32 z;                          ///< 16.16 fixed-point pixels
+  s32 groundHeight;               ///< 16.16 fixed-point pixels
   /// Actor's scales and radius; not named here.
   ///@{
   s32 scaleX;
@@ -56,7 +56,7 @@ struct ObjectArmView {
   union {
     /// The share of the falling speed kept on landing, 16.16 fixed point.
     s32 bounce;
-    /// A floating object's step along gScriptObject_CycleTable, low six bits.
+    /// A floating object's step along gActorScript_CycleTable, low six bits.
     s32 phase;
   } vertical;
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
@@ -93,20 +93,20 @@ struct ObjectArmView {
   u8 riseEnabled;
   s16 timer;
   s16 userValue;
-  struct ObjectArmView *linkedActor;
+  struct ActorArmView *linkedActor;
   ///@}
   /// Called each frame before its script.
   void (*update)(union ActorOrEffect *fieldObject);
 };
 
-STATIC_ASSERT(sizeof(struct ObjectArmView) == 0x70);
-STATIC_ASSERT(offsetof(struct ObjectArmView, script) == 0x00);
-STATIC_ASSERT(offsetof(struct ObjectArmView, scriptCursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ObjectArmView, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct ObjectArmView, vertical) == 0x44);
-STATIC_ASSERT(offsetof(struct ObjectArmView, arrivalAxis) == 0x56);
-STATIC_ASSERT(offsetof(struct ObjectArmView, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ObjectArmView, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct ObjectArmView, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct ActorArmView) == 0x70);
+STATIC_ASSERT(offsetof(struct ActorArmView, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ActorArmView, scriptCursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ActorArmView, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct ActorArmView, vertical) == 0x44);
+STATIC_ASSERT(offsetof(struct ActorArmView, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct ActorArmView, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct ActorArmView, frozen) == 0x61);
+STATIC_ASSERT(offsetof(struct ActorArmView, update) == 0x6c);
 
 #endif

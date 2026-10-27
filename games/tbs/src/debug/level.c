@@ -509,7 +509,7 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
   FieldScript_Start();
   Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
-  ObjectMotion_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
+  Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   FieldScript_End();
 }

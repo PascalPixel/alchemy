@@ -310,10 +310,10 @@ static inline void BattleAnim_RunVolleyWithAction(struct BattleAnimArgs *effect,
   struct Actor *user;
 
   user = GetBattleObjectSlotFar(effect->user)->object;
-  Object_SelectAnimationFar(user, POSE_LEAP);
-  Object_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
+  Actor_SelectAnimationFar(user, POSE_LEAP);
+  Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleAnim_RunProjectileVolley(effect, mode);
-  Object_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, one large comet in ice colours flies at each
@@ -997,9 +997,9 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   object->bounce = 0;
   object->steeringFlags = 0;
   object->snapToTarget = 1;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
-  Object_SelectAnimationFar(object, POSE_STANDING);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Moves a battler 80% of the way to another one over a number of frames,
@@ -1036,9 +1036,9 @@ void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->velocityY = 0;
   object->bounce = 0;
   object->steeringFlags = 1;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, x, 0, z);
-  Object_SelectAnimationFar(object, POSE_LEAP);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, x, 0, z);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST

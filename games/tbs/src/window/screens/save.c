@@ -674,8 +674,7 @@ void FileMenu_PlacePartySprites(void) {
       position.height = 500 << 16;
       position.y = (menu->partyMemberY[index] << 16) + (500 << 16);
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(sprite, &position, &scale,
-                                        FACING_SOUTH);
+      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {
@@ -747,8 +746,7 @@ void FileMenu_PlaceDjinnSprites(void) {
       position.height = height;
       position.y = (menu->positionsY[index] << 16) + height;
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(sprite, &position, &scale,
-                                        FACING_SOUTH);
+      Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
     index++;
   } while (index <= 3);

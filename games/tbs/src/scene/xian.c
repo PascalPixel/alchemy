@@ -234,7 +234,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 
   // This route uses paused/timer as its tracking latch and mode.
   if (actor->paused == 1 && actor->timer == 0) {
-    Object_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, 1);
     return 1;
   }
 
@@ -252,17 +252,17 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     if (targetHeading == currentHeading || nextHeading == currentHeading ||
         previousHeading == currentHeading || forceTracking != 0) {
       actor->paused = 1;
-      Object_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, 1);
       isTracking = 1;
       actor->timer = isTracking;
     } else {
       actor->paused = 0;
-      Object_SelectAnimation(actor, 2);
+      Actor_SelectAnimation(actor, 2);
       actor->timer = 0;
     }
   } else {
     actor->paused = 0;
-    Object_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, 2);
     actor->timer = 0;
   }
 
@@ -392,8 +392,7 @@ static void Xian_TalkToWaterCarrier(void) {
       (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER,
-                                0);
+    Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     FieldScript_WaitFrames(5);
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -409,7 +408,7 @@ static void Xian_TalkToWaterCarrier(void) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, ((carrier->x.fixed >> 20) << 4) + 24,
                    232);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   }
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetX = ACTOR_NO_TARGET;
@@ -417,9 +416,9 @@ static void Xian_TalkToWaterCarrier(void) {
   carrier->targetY = ACTOR_NO_TARGET;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
-  Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   Import_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WOMAN_CARRYING_WATER, 2);
+  Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
@@ -436,7 +435,7 @@ static void Xian_TalkToWaterCarrier(void) {
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
   MapGrid_CopyCellAttributes(16, 16, 1, 1, carrierColumnX >> 20,
                              carrier->z.fixed >> 20);
-  ObjectMotion_SetActionVariant(ACTOR_SPILLED_WATER, 2);
+  Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   do {
     WaitFrames(3);
@@ -452,7 +451,7 @@ static void Xian_TalkToWaterCarrier(void) {
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
-  ObjectMotion_SetVariantCallback(ACTOR_WOMAN_CARRYING_WATER, 2);
+  Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   FieldScript_WaitFrames(70);
   FieldScript_SetMessageId(MsgXianDoingMadeMeSpillMy);
   Script_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
@@ -468,7 +467,7 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
@@ -488,7 +487,7 @@ static void Xian_TalkToWaterCarrier(void) {
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) <= 13)
-    ObjectMotion_SetActionVariant(ACTOR_SPILLED_WATER, 1);
+    Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
 /// Frost freezes the spilled water in Xian: the puddle turns to ice the leader
@@ -510,7 +509,7 @@ static void Xian_FreezeSpilledWater(void) {
                              (puddle->z.fixed >> 20));
   Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   GameFlag_Set(FLAG_XIAN_SPILLED_WATER_FROZEN);
-  ObjectMotion_SetActionVariant(ACTOR_SPILLED_WATER, 2);
+  Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   FieldScript_End();
 }
 
@@ -528,17 +527,17 @@ static void Xian_TalkToKungFuStudent(void) {
   FieldScript_Start();
   demonstrationSeen = GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN);
   if (demonstrationSeen != 0) {
-    ObjectMotion_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
+    Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(MsgXianKungFuStrong);
     FieldScript_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
-    ObjectMotion_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
+    Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
     FieldScript_End();
   } else {
     // Step back, then watch the student jump and strike the tree.
     FieldScript_SetMessageId(MsgXianHooWhaaaHachaaa);
     FieldScript_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
                demonstrationSeen);
@@ -546,13 +545,13 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldVector_AddPolarOffset(-PIXELS(8), leader->facing,
                                (struct FieldPosition *)stepBackOffset);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER,
-                                              stepBackOffset[0] / 0x10000,
-                                              stepBackOffset[2] / 0x10000);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER,
+                                       stepBackOffset[0] / 0x10000,
+                                       stepBackOffset[2] / 0x10000);
+    Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_KUNG_FU_STUDENT, 2);
+    Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
@@ -566,9 +565,9 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
     Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 0x30000, 0x18000);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KUNG_FU_STUDENT);
+    Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     Sound_PlaySong(SE_HEAVY_IMPACT);
-    Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
+    Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
     effectParams.type = 0x11b;
     effectParams.script = gXian_TreeImpactScript;
@@ -578,7 +577,7 @@ static void Xian_TalkToKungFuStudent(void) {
                           EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
                       &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KUNG_FU_STUDENT);
+    Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Task_Remove((void (*)(void))particleCallback);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
@@ -601,8 +600,8 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
     FieldScript_WaitFrames(30);
-    ObjectMotion_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_KUNG_FU_STUDENT, 2);
+    Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
+    Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageThenWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     GameFlag_Set(FLAG_XIAN_STRIKE_SHOWN);
@@ -640,20 +639,20 @@ static void Xian_JumpOverSpilledWater(void) {
     landing->z = (leader->z.fixed & -0x100000) + PIXELS(8);
     FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
                                landing);
-    if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
+    if (FieldActor_CheckMovementCollision(leader, landing) == 0) {
       FieldScript_Start();
-      Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
-      Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
+      Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER, landing->x >> 16,
-                                        landing->z >> 16);
-      Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
+      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, landing->x >> 16,
+                                 landing->z >> 16);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
       FieldScript_End();
@@ -729,7 +728,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   TaskFunc rotationCallback;
 
   FieldScript_Start();
-  Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
+  Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationCallback = Xian_RotateTrainingTree;
   Task_AddFrame(rotationCallback, TASK_PASS_FRAME);
   Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
@@ -744,8 +743,8 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Import_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KUNG_FU_STUDENT, 2);
+  Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
+  Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
   FieldScript_WaitFrames(10);
   FieldScript_SetMessageId(MsgXianWhaWhaHappened);
   if (Script_GetFlag(FLAG_XIAN_TREE_JUMPED)) {
@@ -764,7 +763,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   struct Actor *carrier;
 
   FieldScript_Start();
-  Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -781,16 +780,16 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   carrier->acceleration = 0;
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
-  ObjectMotion_SetVariantCallback(ACTOR_WOMAN_CARRYING_WATER, 2);
+  Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   FieldScript_WaitFrames(60);
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_WOMAN_CARRYING_WATER);
+  Actor_WaitForMoveById(ACTOR_WOMAN_CARRYING_WATER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_SetActionScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
+  Actor_SetScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;
   FieldScript_End();
@@ -820,7 +819,7 @@ s32 Xian_Initialize(void) {
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
     Actor_FaceDirection(ACTOR_BOY_ON_SILK_CLOTHES, FACING_WEST, 0);
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
-    ObjectMotion_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
       Import_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
     }
@@ -830,7 +829,7 @@ s32 Xian_Initialize(void) {
   if (GameFlag_Get(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Import_ActorSetPosition(ACTOR_FEIZHI, 0, 0);
   }
-  // Set the three crates up as Actor_CreateConfiguredObject sets up
+  // Set the three crates up as Actor_CreateConfigured sets up
   // its objects: still, not solid, never a target and hidden.
   // XXX (no evidence): what the crates are for; nothing reads them again.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
@@ -846,7 +845,7 @@ s32 Xian_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN)) {
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
-    ObjectMotion_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
   if (GameFlag_Get(FLAG_XIAN_SPILLED_WATER_FROZEN)) {
@@ -879,17 +878,17 @@ s32 Xian_Initialize(void) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -947,13 +946,13 @@ s32 gXian_TrainingTreeJump[] = {
 
 /// The effect at the tree's foot when the student strikes it: 18 frames.
 s32 gXian_TreeImpactScript[] = {
-    SC_WAIT(18), SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE,
+    SC_WAIT(18), SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_RELEASE,
 };
 
 /// Each particle beside the leaping student, facing west: 16 frames.
 s32 gXian_TrainingParticleScript[] = {
     SC_SET(SW_FACING, FACING_WEST), SC_WAIT(16), SC_WAIT(1),
-    SC_POSITION(0, 0, 0),           SC_WAIT(1),  SC_FREE,
+    SC_POSITION(0, 0, 0),           SC_WAIT(1),  SC_RELEASE,
 };
 
 /// The doors' opening frames, copied from map cells.

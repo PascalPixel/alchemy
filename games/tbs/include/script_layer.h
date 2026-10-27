@@ -4,13 +4,13 @@
 /// @file
 /// The script layer: the constants and small inlines a map's scripts share,
 /// over the main-image routines they call by those routines' own names
-/// (FieldScript_Start, ObjectMotion_Launch, FieldScript_SetMessageId and the
+/// (FieldScript_Start, Actor_Jump, FieldScript_SetMessageId and the
 /// rest), whose declarations it includes.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device. The script.h commands
 /// and field_service.h are written over it. A map's script reads
-/// `SCRIPT_START(); Actor_Stop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER,
+/// `SCRIPT_START(); Actor_Stop(9); ACTOR_FACE(9, ACTOR_PARTY_LEADER,
 /// 0); SCRIPT_END();`.
 
 #include "unit/overworld/overworld.h"
@@ -123,7 +123,7 @@ enum ActorAnimation {
 };
 
 // Speaker bits, above the actor id in the low 12 bits of a message command's
-// speaker, as FieldMessage_ShowAtObject reads them.
+// speaker, as FieldMessage_ShowAtActor reads them.
 #define SPEAKER_PORTRAIT_LEFT 0x1000  ///< the portrait left of the speaker
 #define SPEAKER_PORTRAIT_RIGHT 0x2000 ///< the portrait right of the speaker
 #define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
@@ -163,7 +163,7 @@ struct MapGridCellAnimation {
 void Import_ScriptRequestExit();
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
-/// (ObjectMotion_SetHorizontalPositionWithTerrain).
+/// (Actor_SetHorizontalPositionWithTerrain).
 void Import_ActorSetPosition();
 /// Switches an actor's sprite to an ActorAnimation
 /// (Actor_SetModeById).
@@ -183,20 +183,13 @@ s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void FreeHeapSlot(s32 slot);
 /// The engine encodes either a built-in action or an action-script address.
-static inline void Actor_SetActionScript(s32 actorId, const s32 *script) {
-  ObjectMotion_EnableActionAndSetCallback(actorId, (s32)script);
+static inline void Actor_SetScript(s32 actorId, const s32 *script) {
+  Actor_SetMovementTypeById(actorId, (s32)script);
 }
 
 /// Runs a script, waiting at most 300 frames for its final command.
-static inline void Actor_RunActionScriptAndWait(s32 actorId,
-                                                const s32 *script) {
-  Actor_SetActionCallbackAndRefreshById(actorId, (s32)script);
-}
-
-/// Starts one of the engine's own actions on an actor, an enum
-/// MovementType, where Actor_SetActionScript gives it a map's script.
-static inline void Actor_SetBuiltinAction(s32 actorId, s32 action) {
-  ObjectMotion_EnableActionAndSetCallback(actorId, action);
+static inline void Actor_RunScriptAndWait(s32 actorId, const s32 *script) {
+  Actor_SetMovementTypeAndWaitById(actorId, (s32)script);
 }
 
 /// Two actors speak at once, each message and portrait at its own tile
@@ -232,7 +225,7 @@ static inline void Script_ShowMessage(s32 speaker, s32 flags) {
 /// Opens the script's next line and returns its window once the text is typed
 /// out, so the script can act while it is still on screen.
 static inline s32 Script_OpenMessage(s32 speaker, s32 flags) {
-  return (s32)FieldMessage_ShowAtObject(speaker, flags);
+  return (s32)FieldMessage_ShowAtActor(speaker, flags);
 }
 
 /// Puts the current line to the player as a question and shows the line that
@@ -255,54 +248,54 @@ static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z) {
 /// Sets how fast an actor moves, and how quickly it gets up to speed,
 /// for the script's next moves.
 static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
-  ObjectMotion_SetSpeedParameters(actorId, speed, acceleration);
+  Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
 
 /// Moves an actor to a point in the pose it has, without walking; the
 /// script carries on meanwhile.
 static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
-  ObjectMotion_ResetAndSetPosition(actorId, x, z);
+  Actor_ResetAndSetPosition(actorId, x, z);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Moves an actor some distance from where it stands, without waiting
 /// for it.
 static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
-  ObjectMotion_OffsetPositionAndResetMotion(actorId, dx, dz);
+  Actor_OffsetPositionAndResetMotion(actorId, dx, dz);
 }
 #endif
 
 /// Walks an actor to a point; the script goes on while it walks.
 static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
-  ObjectMotion_ResetAndSetPositionInMode2(actorId, x, z);
+  Actor_ResetAndSetPositionInMode2(actorId, x, z);
 }
 
 /// Walks an actor some distance from where it stands, without waiting
 /// for it to get there.
 static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
-  ObjectMotion_OffsetPositionAndReset(actorId, dx, dz);
+  Actor_OffsetPositionAndReset(actorId, dx, dz);
 }
 
 /// Turns an actor to a direction and holds the script for a few frames.
 static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
-  ObjectMotion_ArmCallback(actorId, facing, frames);
+  Actor_ArmCallback(actorId, facing, frames);
 }
 
 /// Has one actor look at another at once, then pauses the script.
 static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
-  ObjectMotion_SetAngleToward(actorId, target, frames);
+  Actor_SetAngleToward(actorId, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
 /// the script goes on.
 static inline void Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  FieldEffect_SpawnLinked(actorId, emote, frames);
+  FieldEffect_SpawnAttached(actorId, emote, frames);
 }
 
-/// Attaches an effect object to an actor, takes it off, or plays one
+/// Attaches a field effect to an actor, takes it off, or plays one
 /// over it once.
 static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
-  FieldEffect_ConfigureLinkedObject(actorId, effect);
+  FieldEffect_SetAttached(actorId, effect);
 }
 
 /// Sets how fast the camera pans for the script's next camera moves.
@@ -369,52 +362,28 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-// The main image reads an object through struct Actor, where the maps read the
-// same object through struct Actor; these inlines pass a map's
-// actor to it.
-
-/// Turns a one-sprite actor's shadow on or off, bit 0 of its sprite's
-/// flags.
-static inline void Actor_SetSpriteFlags(struct Actor *actor, s32 flags) {
-  Object_SetSpriteFlags(actor, flags);
+/// Sends an actor toward a point, where it coasts to a stop.
+static inline void FieldActor_SetMoveTarget(struct Actor *actor, s32 fixed_x,
+                                            s32 fixed_y, s32 fixed_z) {
+  Actor_SetMoveTarget(actor, fixed_x, fixed_y, fixed_z);
 }
 
-/// Sends an object toward a point, where it coasts to a stop.
-static inline void Object_SetPosition(struct Actor *actor, s32 fixed_x,
-                                      s32 fixed_y, s32 fixed_z) {
-  Object_SetMoveTarget(actor, fixed_x, fixed_y, fixed_z);
-}
-
-/// Releases an object and its sprites, and empties its place in the object
-/// table.
-static inline void Actor_Release(struct Actor *actor) { Object_Release(actor); }
-
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's layers,
 /// except those drawn hidden.
 static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
   Anim_ApplyChildValues(actor, mode);
 }
 
-/// Creates a free object in the room, outside the actor table, or
-/// returns NULL when every object is taken.
-static inline struct Actor *Actor_Create(s32 type, s32 fixed_x, s32 fixed_y,
-                                         s32 fixed_z) {
-  return Object_CreateField(type, fixed_x, fixed_y, fixed_z);
+/// Creates an actor in a free slot of gActors, outside the actor ids, or
+/// returns NULL when every slot is taken.
+static inline struct Actor *FieldActor_Create(s32 type, s32 fixed_x,
+                                              s32 fixed_y, s32 fixed_z) {
+  return Actor_Create(type, fixed_x, fixed_y, fixed_z);
 }
 
-/// Starts an object on a sprite script from its first command.
-static inline void Actor_SetScript(struct Actor *actor, const s32 *script) {
-  Object_Initialize(actor, script);
-}
-
-/// OAM blend modes for Object_SetSpriteBlendMode:
-/// OBJECT_BLEND_TRANSLUCENT alpha-blends the sprite with what lies behind it.
-enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
-
-/// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode.
-static inline void Actor_SetBlendMode(struct Actor *actor, s32 mode) {
-  Object_SetSpriteBlendMode(actor, mode);
-}
+/// OAM blend modes for Actor_SetBlendMode:
+/// ACTOR_BLEND_TRANSLUCENT alpha-blends the sprite with what lies behind it.
+enum ActorBlendMode { ACTOR_BLEND_NORMAL = 0, ACTOR_BLEND_TRANSLUCENT = 1 };
 
 /// Plays a cell animation, such as a door opening, and holds the script until
 /// its last step.
@@ -432,12 +401,12 @@ static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
 /// Lines an actor up with the middle of its column, then walks it
 /// straight along z.
 static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
-  ObjectMotion_CenterOnColumn(actorId, priority, dz);
+  Actor_CenterOnColumn(actorId, priority, dz);
 }
 
 /// Walks an actor some distance and waits until it is there.
 static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
-  ObjectMotion_CommitPositionAndActivate(actorId, dx, dz);
+  Actor_CommitPositionAndActivate(actorId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the script goes on.
@@ -485,12 +454,12 @@ static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
 
 /// Moves an actor to a point in the pose it has and waits for it.
 static inline void Actor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
-  ObjectMotion_SetPositionAndCommit(actorId, x, z);
+  Actor_SetPositionAndCommit(actorId, x, z);
 }
 
 /// Walks an actor to a point and waits for it, then stands it still.
 static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
-  ObjectMotion_SetPositionAndReset(actorId, x, z);
+  Actor_SetPositionAndReset(actorId, x, z);
 }
 
 /// Has two actors speak at once, each window placed by the script.

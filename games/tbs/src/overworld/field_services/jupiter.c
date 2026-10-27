@@ -27,11 +27,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlaySongFar(SE_NOTE_LOW);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_MID);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
-  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
@@ -39,14 +39,14 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   djinni->update = FieldEffect_AdvanceSpinAngle;
   WaitFrames(40);
   Sound_PlaySongFar(SE_HIGH_JUMP);
-  ObjectMotion_Launch(djinniId, 12, 22);
+  Actor_Jump(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
-  Object_ReleaseFar(djinni);
+  Actor_ReleaseFar(djinni);
   Sound_PlaySongFar(SE_SCATTER);
   effect = effectWork->sprites;
   remainingParticles = 23;
@@ -55,7 +55,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
                                  position.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
-    FieldEffectSprite_SetObjectMode(effect, 7);
+    FieldEffectSprite_SetActorMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
@@ -66,10 +66,10 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
-                            ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
   Sound_PlaySongFar(SE_SCATTER);
   WaitFrames(100);
@@ -80,7 +80,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// Per-frame update: makes an object pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void FieldEffect_SetObjectAlternatingWords(union ActorOrEffect *fieldObject) {
+void FieldEffect_SetActorAlternatingWords(union ActorOrEffect *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
@@ -107,7 +107,7 @@ void FieldEffect_AdvanceAngleWithRamp(union ActorOrEffect *fieldObject) {
 
 /// Spins and shrinks an object by 0x1c0 a frame, then releases it: 119 frames
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, 0xFFFFFE40)
 
 /// Field effect sprite callback of a Mars Djinni's sparks (enum
 /// MarsSparkState): the spark flies 120 pixels up the screen (give or take 3/32

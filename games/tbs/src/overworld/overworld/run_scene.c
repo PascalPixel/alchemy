@@ -4,13 +4,13 @@
 
 #include "../overworld_internal.h"
 
-/// The object system's work (struct ObjectSystemWork, gObjectSystemWork in
-/// HEAP_SLOT_OBJECT_SYSTEM), seen as the flag that suspends sprite projection
+/// The object system's work (struct ActorSystemWork, gActorSystemWork in
+/// HEAP_SLOT_ACTOR_SYSTEM), seen as the flag that suspends sprite projection
 /// while the menu opens.
-struct ObjectSystemSuspendView {
-  u16 used;     ///< ObjectSystemWork's; not named here
-  u8 unused[2]; ///< ObjectSystemWork's; no code names it
-  /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
+struct ActorSystemSuspendView {
+  u16 used;     ///< ActorSystemWork's; not named here
+  u8 unused[2]; ///< ActorSystemWork's; no code names it
+  /// ActorSystemWork's suspended: while nonzero, sprites not held are not
   /// drawn and give up their VRAM (object_camera.c, sprite_draw.c).
   u16 wait;
 };
@@ -52,25 +52,25 @@ s32 SceneManager_Run(s32 entrance) {
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
     WorldMap_InitializePerspectiveFar();
     gSaveBlock.perspectiveMap = 1;
-    mode = OBJECT_SYSTEM_WORLD_MAP;
+    mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
     MapGrid_LoadMapFar(gSaveBlock.mapId);
-    mode = OBJECT_SYSTEM_LAYOUT;
+    mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
   work->mode = mode;
-  ObjectSystem_InitializeFar(mode);
+  ActorSystem_InitializeFar(mode);
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
   work->triggers = gOverlayArea.triggers();
   Scene_ApplyEntrance();
-  Actor_ResetForObject((struct ActorTemplate *)gOverlayArea.actorTemplates());
+  Actor_ResetForLeader((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
   if (gSaveBlock.pendingDjinni != 0)
     Actor_PlaceMapActors();
-  if (mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gSaveBlock.x, gSaveBlock.z);
   } else {
@@ -102,7 +102,7 @@ s32 SceneManager_Run(s32 entrance) {
     gSaveBlock.hazardLimit = 16;
     gSaveBlock.hazardMode = HAZARD_COUNT_ON_CELLS;
     gSaveBlock.hazardDamage = 1;
-    gSaveBlock.pausedObject = -1;
+    gSaveBlock.haltedActor = -1;
     gSaveBlock.cloaked = 0;
   }
   FieldEffect_ResumeCloakCheck();
@@ -149,7 +149,7 @@ s32 SceneManager_Run(s32 entrance) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gSaveBlock.leaderActorId];
-      Object_StartIdleFar(actor);
+      Actor_StartIdleFar(actor);
       gSaveBlock.x = actor->x.fixed;
       gSaveBlock.y = 0;
       gSaveBlock.z = actor->z.fixed;
@@ -174,7 +174,7 @@ s32 SceneManager_Run(s32 entrance) {
             Leader_StopMoving();
             WorldMap_Freeze();
             for (i = 0; i < work->fallenCount; i++) {
-              Object_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
+              Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
               MessageArgument_PushFar(work->fallenOwners[i],
                                       MESSAGE_ARGUMENT_ACTOR);
               FieldMessage_ShowFar(MsgFieldStrengthExhausted,
@@ -186,11 +186,11 @@ s32 SceneManager_Run(s32 entrance) {
 
               if (gSaveBlock.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  Object_SelectAnimationFar(actor, 21);
+                  Actor_SelectAnimationFar(actor, 21);
                 else
-                  Object_SelectAnimationFar(actor, 37);
+                  Actor_SelectAnimationFar(actor, 37);
               } else {
-                Object_SelectAnimationFar(actor, ANIM_COLLAPSE);
+                Actor_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
@@ -336,8 +336,8 @@ s32 SceneManager_Run(s32 entrance) {
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct ObjectSystemSuspendView *ctrl =
-                  (struct ObjectSystemSuspendView *)gObjectSystemWork;
+              struct ActorSystemSuspendView *ctrl =
+                  (struct ActorSystemSuspendView *)gActorSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
@@ -370,13 +370,13 @@ s32 SceneManager_Run(s32 entrance) {
       actor = work->actors[gSaveBlock.leaderActorId];
       if (actor != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          Object_StartKeyCheckFar(actor);
+          Actor_StartKeyCheckFar(actor);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          Object_StartMoveByKeysFar(actor);
-        else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          Object_StartWorldMapControlFar(actor);
+          Actor_StartMoveByKeysFar(actor);
+        else if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
+          Actor_StartWorldMapControlFar(actor);
         else
-          Object_StartPlayerControlFar(actor);
+          Actor_StartPlayerControlFar(actor);
       }
       do {
         WaitFrames(1);
@@ -419,7 +419,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  leader = Actor_Lookup(gSaveBlock.leaderActorId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
@@ -429,7 +429,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     Vector_AddPolarOffset(0x100000, leader->facing, probePosition.coordinates);
     // World map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
-    if (((struct FieldWork *)workBytes)->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
       cell =
           Ram_Metatiles + ((((probePosition.vector.x / 0x200000) & 31) +
                             (((probePosition.vector.z / 0x200000) & 31) << 5))

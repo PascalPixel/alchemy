@@ -12,6 +12,6 @@ enum ArrivalAxis {
   ARRIVAL_AXIS_Z = 18
 };
 
-void Object_UpdateAll(void);
+void Actor_UpdateAll(void);
 
 #endif

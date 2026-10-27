@@ -1,12 +1,12 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
-	.set import.Object_SelectAnimation, 1
-	.set import.Object_SetMoveTarget, 1
-	.set import.Object_WaitForMove, 1
+	.set import.Actor_SelectAnimation, 1
+	.set import.Actor_SetMoveTarget, 1
+	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.Object_SetSpriteFlags, 1
+	.set import.Actor_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
@@ -16,8 +16,8 @@
 	.set import.Actor_GetById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
+	.set import.Actor_SetAnimationAndWait, 1
 	.set import.Actor_ConfigureSpriteColor, 1
-	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.Actor_SetSpritePriority, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

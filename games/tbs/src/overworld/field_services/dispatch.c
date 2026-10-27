@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// Called by Field_UsePsynergy when no trigger names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
-/// also moves gSaveBlock.pausedObject to the actor it stops.
+/// also moves gSaveBlock.haltedActor to the actor it stops.
 void FieldEffect_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -77,19 +77,19 @@ void FieldEffect_Run(void) {
     return;
   case FIELD_PSYNERGY_HALT:
     // Free the object stopped before, then stop the nearest one.
-    if (gSaveBlock.pausedObject != -1) {
-      FieldEffect_ResumeObject(gSaveBlock.pausedObject);
-      gSaveBlock.pausedObject = -1;
+    if (gSaveBlock.haltedActor != -1) {
+      FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+      gSaveBlock.haltedActor = -1;
     }
 
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, kind);
-    nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
+    nearestTargetId = FieldEffect_FilterActorIdByFlags(nearestTargetId);
     if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, nearestTargetId);
+      FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
-      FieldEffect_PauseObject(nearestTargetId);
-      gSaveBlock.pausedObject = nearestTargetId;
+      FieldEffect_PauseActor(nearestTargetId);
+      gSaveBlock.haltedActor = nearestTargetId;
     } else {
       FieldEffect_RunHalt();
     }
@@ -123,7 +123,7 @@ void FieldEffect_Run(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears
 /// effectWork->enabled first: that is how the runners FieldEffect_Run shares
 /// (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides what
-/// happens to the target. Halt also moves gSaveBlock.pausedObject to the
+/// happens to the target. Halt also moves gSaveBlock.haltedActor to the
 /// target.
 void FieldEffect_DispatchRequestKind(void) {
   struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
@@ -136,7 +136,7 @@ void FieldEffect_DispatchRequestKind(void) {
   case FIELD_PSYNERGY_MIND_READ:
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
-    if (gSaveBlock.pausedObject != effectWork->secondObjectId)
+    if (gSaveBlock.haltedActor != effectWork->secondObjectId)
       ((struct Actor *)effectWork->child)->paused = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
@@ -163,12 +163,12 @@ void FieldEffect_DispatchRequestKind(void) {
     FieldEffect_RunGrowthOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_HALT:
-    if (gSaveBlock.pausedObject != -1) {
-      FieldEffect_ResumeObject(gSaveBlock.pausedObject);
-      gSaveBlock.pausedObject = -1;
+    if (gSaveBlock.haltedActor != -1) {
+      FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+      gSaveBlock.haltedActor = -1;
     }
-    FieldEffect_PauseObject(targetId);
-    gSaveBlock.pausedObject = targetId;
+    FieldEffect_PauseActor(targetId);
+    gSaveBlock.haltedActor = targetId;
     FieldEffect_RunHaltOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_PLY:
@@ -205,7 +205,7 @@ void FieldEffect_FinishMindRead(void) {
 
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
-    if (gSaveBlock.pausedObject != effectWork->secondObjectId) {
+    if (gSaveBlock.haltedActor != effectWork->secondObjectId) {
       ((struct Actor *)effectWork->child)->paused = 0;
     }
   }
@@ -269,7 +269,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
-void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
+void Actor_CycleSpriteColors(union ActorOrEffect *fieldObject) {
   struct Actor *owner = (struct Actor *)fieldObject;
   s32 kind;
   struct Sprite *animation;
@@ -284,7 +284,7 @@ void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
   s32 param;
 
   kind = owner->spriteStorageKind;
-  if (kind == OBJECT_SPRITE_ONE) {
+  if (kind == ACTOR_SPRITE_ONE) {
     animation = owner->sprite;
     if (animation != 0 && animation->retainCacheEntry == 0) {
       initialCount = animation->count;
@@ -307,15 +307,14 @@ void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
 /// Sends an object toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target. Carry, Lift, Douse, Move and the
 /// Djinni's hop into battle throw things this way.
-void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
-                                                      s32 magnitude,
-                                                      s32 angle) {
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
+                                               s32 magnitude, s32 angle) {
   s32 pos[3];
 
   if (object != 0) {
     SET_VECTOR(pos, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(magnitude, angle, pos);
-    Object_SetMoveTargetFar(object, pos[0], pos[1], pos[2]);
+    Actor_SetMoveTargetFar(object, pos[0], pos[1], pos[2]);
   }
 }
 
@@ -373,14 +372,14 @@ struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
 /// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
-struct Actor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
+struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *object;
 
-  object = Object_CreateFar(kind, x, y, z);
+  object = Actor_CreateFar(kind, x, y, z);
   if (object != NULL) {
-    if (object->spriteStorageKind == OBJECT_SPRITE_NONE) {
-      Object_ReleaseFar(object);
+    if (object->spriteStorageKind == ACTOR_SPRITE_NONE) {
+      Actor_ReleaseFar(object);
       return NULL;
     }
     object->groundHeight =
@@ -388,8 +387,8 @@ struct Actor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->motionFlags = 4;
     object->priorityFlags = 4;
     object->sprite->image.priority = 0;
-    Object_SetSpriteFlagsFar(object, 0);
-    Object_SelectAnimationFar(object, 1);
+    Actor_SetSpriteFlagsFar(object, 0);
+    Actor_SelectAnimationFar(object, 1);
   }
   return object;
 }
@@ -404,13 +403,13 @@ void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
   s32 actorId;
 
   actorId = 0;
-  player = (s16 *)gPlayerObjectId;
+  player = (s16 *)gPlayerActorId;
   do {
-    object = Actor_GetByActorId(actorId);
+    object = Actor_Lookup(actorId);
     if (actorId != *player && object != NULL && object != except) {
       object->paused = state;
-      Object_SetAnimationSpeedFar(object, value);
+      Actor_SetAnimationSpeedFar(object, value);
     }
     actorId++;
-  } while (actorId <= OBJECT_LAST);
+  } while (actorId <= ACTOR_LAST);
 }

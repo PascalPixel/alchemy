@@ -131,8 +131,8 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkObjectAndDestroySlow(union ActorOrEffect *fieldObject);
-void FieldEffect_ShrinkObjectAndDestroyFast(union ActorOrEffect *fieldObject);
+void FieldEffect_ShrinkActorAndDestroySlow(union ActorOrEffect *fieldObject);
+void FieldEffect_ShrinkActorAndDestroyFast(union ActorOrEffect *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
@@ -146,7 +146,7 @@ struct TriggerView {
   s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
-#define OBJECT_LAST 66 ///< the last actor slot searched
+#define ACTOR_LAST 66 ///< the last actor slot searched
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
@@ -155,16 +155,16 @@ struct TriggerView {
 
 s32 Party_RemapCharacterIdByFlags(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
-void FieldScript_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot);
-void Actor_DestroyAtIndex(s32 actorIndex);
-void Actor_ResetForObject(struct ActorTemplate *table);
+void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot);
+void Actor_ReleaseAtIndex(s32 actorIndex);
+void Actor_ResetForLeader(struct ActorTemplate *table);
 s32 Actor_FindLastActiveId(void);
 void *Actor_GetSlotAddress(u32 actorIndex);
 void Scene_AssignViewFlags(struct ActorTemplate *entry);
 void Actor_ClearOutOfBounds(void);
 void Actor_Respawn(void);
 void Actor_ClearAll(void);
-void *Actor_GetByActorId(u32 actorIndex);
+void *Actor_Lookup(u32 actorIndex);
 void Actor_Snapshot(void);
 void Actor_Restore(void);
 
@@ -209,7 +209,7 @@ s32 Field_UsePsynergy(u32 code);
 s32 Scene_HasFieldPsynergyTrigger(s32 group);
 u32 Scene_HasPsynergyTrigger(u16 item);
 
-void ObjectMotion_SnapToTerrain(void *object);
+void Actor_SnapToTerrain(void *object);
 void Field_PlaceTreasureSpots(void);
 s32 TreasureSpot_FindSlot(s32 id);
 void TreasureSpot_ReservedNoOp(void);
@@ -224,7 +224,7 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
 void TreasureSpot_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject);
 struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
-void Object_DestroyIfPresent(void *object);
+void Actor_ReleaseIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Actor *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);

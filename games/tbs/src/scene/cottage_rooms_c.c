@@ -364,7 +364,7 @@ static void EventScript_TalkToBusyChef(void) {
     Script_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
     Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_WEST, 20);
     Script_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
-    ObjectMotion_SetVariantCallback(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
+    Actor_StartRepeatedMotion(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
     Actor_SetAttachedEffect(ACTOR_BILIBIN_KITCHEN_WORKER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
@@ -386,10 +386,9 @@ static void EventScript_TalkToKitchenWorker(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
   FieldScript_ShowMessageAndWait(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  ObjectMotion_SetAngleToward(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER,
-                              0);
+  Actor_SetAngleToward(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
   FieldScript_ShowMessageAndWait(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  ObjectMotion_ArmCallback(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
+  Actor_ArmCallback(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
   FieldScript_End();
 }
 

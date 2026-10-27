@@ -288,7 +288,7 @@ static void EventScript_OpenDoorAndEnter(void) {
   WaitFrames(10);
   MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
   WaitFrames(10);
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -334,8 +334,8 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 20);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 6, 40);
+  Actor_Jump(ACTOR_PARTY_LEADER, 4, 20);
+  Actor_Jump(ACTOR_PARTY_LEADER, 6, 40);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldScript_WaitFrames(40);
 }
@@ -614,24 +614,24 @@ static void EventScript_PushStatue(void) {
     SET_POSITION(destination, statue->x.fixed + (packedStep & -0x10000),
                  statue->y.fixed, statue->z.fixed + (packedStep << 16));
     // Move only after the statue's proposed position passes collision.
-    if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
-      Object_SelectAnimation(leader, ANIM_PUSH);
+    if (FieldActor_CheckMovementCollision(statue, destination) <= 0) {
+      Actor_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       statue->speedLimit = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
-      Object_SetPosition(statue, destination->x, destination->y,
-                         destination->z);
+      FieldActor_SetMoveTarget(statue, destination->x, destination->y,
+                               destination->z);
       leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      Object_SetPosition(leader, destination->x, destination->y,
-                         destination->z);
-      Object_WaitForMove(statue);
+      FieldActor_SetMoveTarget(leader, destination->x, destination->y,
+                               destination->z);
+      Actor_WaitForMove(statue);
       statue->x.fixed = destination->x;
       statue->z.fixed = destination->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      Object_SelectAnimation(leader, ANIM_STAND);
+      Actor_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
       switch (gSaveBlock.entrance) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
@@ -836,20 +836,20 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
   Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STILL);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectMotion_Launch(ACTOR_KRADEN, 4, 20);
+  Actor_Jump(ACTOR_KRADEN, 4, 20);
   // Kraden: "This is your first time here, right?" Yes: "Take a good look at
   // it." No: "I doubt that..."
   FieldScript_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
@@ -874,10 +874,10 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
@@ -924,7 +924,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
   Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -16);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
@@ -944,21 +944,21 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -16);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -16);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -32);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -32);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
@@ -978,7 +978,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   FieldCamera_WaitForArrival();
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldScript_WaitFrames(10);
 
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -988,13 +988,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldScript_SetMessageId(MsgSolSanctumWrongKraden);
   Script_ShowMessageAndWait(ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectMotion_SetVariantCallback(ACTOR_KRADEN, 2);
+  Actor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   // Kraden: "Those two said there was a hidden passage leading deeper into
   // the sanctum."
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_JENNA, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1002,41 +1002,41 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
   Script_ShowMessage(ACTOR_KRADEN, 0);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_LinkPair(ACTOR_PARTY_LEADER, 5, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_JENNA, 1);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_JENNA, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   // Jenna: "What do you mean?"
   Script_ShowMessageAndWait(ACTOR_JENNA, 0, 10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 1);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   FieldScript_WaitFrames(10);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(10);
   // Kraden: "If there is a hidden passage, then maybe it leads to..."
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
-  ObjectMotion_Launch(ACTOR_KRADEN, 2, 20);
+  Actor_Jump(ACTOR_KRADEN, 2, 20);
 
   // Kraden hops: "Let's see if we can find it!"
   Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
@@ -1046,7 +1046,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     // Yes: Garet says it is too dangerous to split up; they stay together.
     FieldScript_SetMessageId(MsgSolSanctumDangerousSplitStay);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     FieldScript_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   } else {
     // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
@@ -1058,13 +1058,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(10);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     FieldScript_WaitFrames(10);
     FieldScript_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
@@ -1072,37 +1072,37 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Bring Kraden back and return the followers to the party.
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, 48);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, 48);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  ObjectMotion_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
+                              leader->z.part.pixel);
   Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
+                              leader->z.part.pixel);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(ACTOR_KRADEN, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_KRADEN, leader->x.part.pixel,
+                              leader->z.part.pixel);
 
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1135,7 +1135,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
@@ -1153,13 +1153,13 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
   // Kraden: "More statues... It doesn't look like we can reach them".
   FieldScript_SetMessageId(MsgSolSanctumMoreStatuesOutOfReach);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 1);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
@@ -1169,7 +1169,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   FieldScript_End();

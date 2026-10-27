@@ -6,7 +6,7 @@
 
 /// Sets an object's y and groundHeight to the map's height at its x and z.
 /// Called by Field_PlaceTreasureSpots for each treasure spot it places.
-void ObjectMotion_SnapToTerrain(void *object) {
+void Actor_SnapToTerrain(void *object) {
   struct Actor *actor = object;
   s32 groundHeight;
 
@@ -88,24 +88,24 @@ void Field_PlaceTreasureSpots(void) {
         if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
-          markerActor = Object_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
-                                         (column << 20) + 0x80000, 0,
-                                         (row << 20) + 0x80000);
+          markerActor = Actor_CreateFar(TREASURE_SPOT_CHEST_SPRITE,
+                                        (column << 20) + 0x80000, 0,
+                                        (row << 20) + 0x80000);
           if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerActor);
-          Object_SetSpriteFlagsFar(markerActor, 0);
+          Actor_SnapToTerrain(markerActor);
+          Actor_SetSpriteFlagsFar(markerActor, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePending).
           if (GameFlag_GetFar(trigger->condition)) {
             if ((trigger->value & 0xfff00000) == 0x500000) {
-              Object_ReleaseFar(markerActor);
+              Actor_ReleaseFar(markerActor);
               continue;
             }
-            Object_SelectAnimationFar(markerActor, TREASURE_SPOT_CHEST_OPEN);
+            Actor_SelectAnimationFar(markerActor, TREASURE_SPOT_CHEST_OPEN);
           }
-          Object_StartIdleFar(markerActor);
+          Actor_StartIdleFar(markerActor);
           markerActor->homeX = markerActor->x.fixed / Q16_ONE;
           markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->priorityFlags = 1;
@@ -125,15 +125,15 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           if (GameFlag_GetFar(trigger->condition))
             continue;
-          markerActor = Object_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
-                                         (column << 20) + 0x80000, 0,
-                                         (row << 20) + 0x80000);
+          markerActor = Actor_CreateFar(TREASURE_SPOT_PSYNERGY_STONE_SPRITE,
+                                        (column << 20) + 0x80000, 0,
+                                        (row << 20) + 0x80000);
           if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerActor);
-          Object_SetSpriteFlagsFar(markerActor, 0);
-          Object_StartIdleFar(markerActor);
-          Object_SelectAnimationFar(markerActor, 1);
+          Actor_SnapToTerrain(markerActor);
+          Actor_SetSpriteFlagsFar(markerActor, 0);
+          Actor_StartIdleFar(markerActor);
+          Actor_SelectAnimationFar(markerActor, 1);
           markerActor->homeX = markerActor->x.fixed / Q16_ONE;
           markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->collisionFlags = 1;
@@ -193,7 +193,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      Object_SelectAnimationFar(object, animation);
+      Actor_SelectAnimationFar(object, animation);
     Sound_PlaySongFar(sound);
     WaitFrames(12);
   }
@@ -220,11 +220,11 @@ void TreasureSpot_LaunchMimic(s32 id) {
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
-      Object_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
+      Actor_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlaySongFar(SE_ENEMY_CRY);
     if (object != NULL) {
       object->velocityY = 8 << 16;
-      Object_SetSpriteFlagsFar(object, 1);
+      Actor_SetSpriteFlagsFar(object, 1);
     }
   }
 }
@@ -248,7 +248,7 @@ void TreasureSpot_ShowOpened(s32 id) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      Object_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
+      Actor_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
   }
 }
 
@@ -266,7 +266,7 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
 }
 
 /// Hides the object of treasure spot id by clearing its animationKind:
-/// OBJECT_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
+/// ACTOR_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
 /// by Field_ExamineCell once a Psynergy Stone is taken.
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
@@ -278,7 +278,7 @@ void TreasureSpot_Hide(s32 id) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      object->spriteStorageKind = OBJECT_SPRITE_NONE;
+      object->spriteStorageKind = ACTOR_SPRITE_NONE;
   }
 }
 

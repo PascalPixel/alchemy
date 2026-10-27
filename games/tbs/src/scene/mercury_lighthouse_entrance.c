@@ -191,7 +191,7 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union ActorOrEffect *fieldObject) {
     actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                             leader->x.fixed - actor->x.fixed);
   } else if (actor->facing != FACING_NORTH) {
-    ObjectMotion_ArmCallback(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 0);
   }
 #ifndef UBFIX
   return 0;
@@ -363,8 +363,8 @@ static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
 /// the Lizard Man stands aside: he steps back in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
   GameFlag_Clear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
-  Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                        gMercuryLighthouseEntrance_LizardManStepCentre);
+  Actor_SetScript(ACTOR_LIZARD_MAN,
+                  gMercuryLighthouseEntrance_LizardManStepCentre);
 }
 
 /// Mercury Lighthouse, the doorway: touching metatile behavior 41 while the
@@ -380,11 +380,11 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   leaderColumn = leaderX / PIXELS(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepWest);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepWest);
   } else {
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepEast);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepEast);
   }
 }
 
@@ -394,7 +394,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_LIZARD_MAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
   FieldScript_WaitFrames(20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -603,46 +603,46 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(136), -1, PIXELS(184), 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+  Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Actor_GetById(ACTOR_LIZARD_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   FieldScript_WaitFrames(20);
   // Twice she tries the east side and then the west.
   for (paceCycle = 0; paceCycle < 2; paceCycle++) {
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_MIA, 152, 168);
+    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 152, 168);
     FieldScript_WaitFrames(10);
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepEast);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepEast);
+    Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     mia = Actor_GetById(ACTOR_MIA);
     mia->steeringFlags &= ~ACTOR_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
+    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
     FieldScript_WaitFrames(10);
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepCentre);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepCentre);
+    Actor_WaitForMoveById(ACTOR_MIA);
     Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
     FieldScript_WaitFrames(30);
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_MIA, 120, 168);
+    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 120, 168);
     FieldScript_WaitFrames(5);
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepWest);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
-    ObjectMotion_ArmCallback(ACTOR_MIA, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepWest);
+    Actor_WaitForMoveById(ACTOR_MIA);
+    Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 30);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     FieldScript_WaitFrames(15);
     Actor_GetById(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
+    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
     FieldScript_WaitFrames(15);
-    Actor_SetActionScript(ACTOR_LIZARD_MAN,
-                          gMercuryLighthouseEntrance_LizardManStepCentre);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+    Actor_SetScript(ACTOR_LIZARD_MAN,
+                    gMercuryLighthouseEntrance_LizardManStepCentre);
+    Actor_WaitForMoveById(ACTOR_MIA);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldScript_WaitFrames(20);
-  FieldEffect_SpawnLinked(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  FieldEffect_SpawnAttached(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   actor = Actor_GetById(ACTOR_MIA);
 #ifdef UBFIX
   actor->update = MercuryLighthouseEntrance_MiaWatchesLeader;
@@ -684,12 +684,12 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(60);
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     FieldScript_WaitFrames(30);
     Actor_WalkTo(ACTOR_MIA, 136, 72);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 1);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Actor_WaitForMoveById(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gFieldWork->transition =
@@ -702,13 +702,13 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
 
 /// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
 static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
-  struct Actor *effect = Actor_Create(SPRITE_RIPPLE, source->x.fixed,
-                                      source->y.fixed, source->z.fixed);
+  struct Actor *effect = FieldActor_Create(SPRITE_RIPPLE, source->x.fixed,
+                                           source->y.fixed, source->z.fixed);
 
   if (effect != 0) {
     struct Sprite *sprite = (struct Sprite *)effect->sprite;
 
-    Actor_SetScript(effect, gMercuryLighthouseEntrance_RippleScript);
+    Actor_StartScript(effect, gMercuryLighthouseEntrance_RippleScript);
     effect->motionFlags = 0;
     effect->layer = 1;
     effect->priorityFlags = 2;
@@ -724,23 +724,23 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -750,11 +750,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -765,12 +765,12 @@ s32 gPushedObject_FootprintBounds[] = {
 
 s32 gMercuryLighthouseEntrance_RippleScript[] = {
     SC_WAIT(30),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gMercuryLighthouse_SparkScript[] = {
     SC_CALL(MercuryLighthouse_AdvanceAnchoredRiseFrame),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gMercuryLighthouse_RampScript[] = {
@@ -780,7 +780,7 @@ s32 gMercuryLighthouse_RampScript[] = {
 
 s32 gMercuryLighthouse_ScaleCounterScript[] = {
     SC_CALL(Actor_AdvanceScaleCounter),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gMercuryLighthouse_PillarScript[] = {
@@ -989,6 +989,6 @@ s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 // clang-format on

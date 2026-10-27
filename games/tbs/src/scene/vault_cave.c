@@ -41,7 +41,7 @@
 ///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
 ///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
 ///   map cell, and a drop falling onto it stops 32 pixels up instead of
-///   reaching the floor (VaultCave_UpdateFrostControlledFallingObjects); while
+///   reaching the floor (VaultCave_UpdateFrostControlledFallingActors); while
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
 ///   beneath him. The six frozen states are
 ///   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
@@ -175,7 +175,7 @@ enum VaultCaveVambraceActorId {
   ACTOR_SOUTHERN_PILLAR,
   /// The first of six water drops (in the sprite VaultCave_SpawnPuffs also
   /// uses for the puffs where one lands) that fall at random, one every 64
-  /// frames (VaultCave_UpdateFrostControlledFallingObjects).
+  /// frames (VaultCave_UpdateFrostControlledFallingActors).
   /// ★ Named from what the player sees: blue drops of water above the puddles
   /// (its render)
   ACTOR_FIRST_WATER_DROP,
@@ -227,7 +227,7 @@ enum VaultCaveMouthActorId {
   /// burning on top (its render)
   ACTOR_NORTHERN_PILLAR,
   /// The first of four water drops, in the same sprite, that fall on a fixed
-  /// schedule (VaultCave_UpdateTimedFallingObjects).
+  /// schedule (VaultCave_UpdateTimedFallingActors).
   /// ★ Named from what the player sees: blue drops of water on the cave floor
   /// (its render)
   ACTOR_FIRST_TIMED_WATER_DROP
@@ -377,19 +377,19 @@ static void VaultCave_PushPillarAhead(void) {
   destination.x = pillar->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
   destination.y = pillar->y.fixed;
   destination.z = pillar->z.fixed + (s32)((u32)DIRECTION_STEP(direction) << 16);
-  if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
+  if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
-  Object_SelectAnimation(leader, ANIM_PUSH);
+  Actor_SelectAnimation(leader, ANIM_PUSH);
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH_STEP);
   pillar->speedLimit = 0x3333;
   pillar->acceleration = 0x3333;
-  Object_SetPosition(pillar, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTarget(pillar, destination.x, destination.y, destination.z);
   leader->speedLimit = 0x3333;
   leader->acceleration = 0x3333;
-  Object_SetPosition(leader, destination.x, destination.y, destination.z);
-  Object_WaitForMove(pillar);
+  FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
+  Actor_WaitForMove(pillar);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
@@ -399,7 +399,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->velocityZ = 0;
   leader->targetX = ACTOR_NO_TARGET;
   leader->targetZ = ACTOR_NO_TARGET;
-  Object_SelectAnimation(leader, ANIM_STAND);
+  Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
 /// Whirlwind blows the ivy away. It is cast on ACTOR_IVY in the puddle room
@@ -769,7 +769,7 @@ static void EventScript_FlipSwitch(void) {
 }
 
 /// Resets a low water drop sharing the subject's cell and reports a hit.
-static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
+static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   struct Actor *subject = Actor_GetById(subjectActorId);
   s32 fallingIndex = 0;
 
@@ -800,7 +800,7 @@ static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
 }
 
 /// Drops four objects on a repeating schedule and handles their landings.
-static void VaultCave_UpdateTimedFallingObjects(void) {
+static void VaultCave_UpdateTimedFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
   s32 paused;
@@ -834,7 +834,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
       }
     }
     // A water drop landing on either movable pillar restarts at the top.
-    if (VaultCave_ResetFallingObjectAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
+    if (VaultCave_ResetFallingActorAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
       Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
       if (Script_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
@@ -843,7 +843,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
         Script_PlaySong(SE_DRIP);
       }
     }
-    if (VaultCave_ResetFallingObjectAtActorCell(
+    if (VaultCave_ResetFallingActorAtActorCell(
             ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
       Script_PlaySong(SE_DRIP);
     }
@@ -852,7 +852,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
 
 /// Drops a random object every 64 frames, with reset height set by its puddle
 /// (frozen or not).
-static void VaultCave_UpdateFrostControlledFallingObjects(void) {
+static void VaultCave_UpdateFrostControlledFallingActors(void) {
 
   s32 fallingIndex;
   struct Actor *fallingActor;
@@ -910,7 +910,8 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
   }
   SET_VECTOR(destination, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
-  Object_SetPosition(actor, destination[0], destination[1], destination[2]);
+  FieldActor_SetMoveTarget(actor, destination[0], destination[1],
+                           destination[2]);
 }
 
 /// Spawns up to four short-lived puffs around a landing object.
@@ -919,7 +920,8 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
   s32 puffIndex;
 
   for (puffIndex = 0; puffIndex < 4; puffIndex++) {
-    puff = Actor_Create(240, source->x.fixed, source->y.fixed, source->z.fixed);
+    puff = FieldActor_Create(240, source->x.fixed, source->y.fixed,
+                             source->z.fixed);
     if (puff == 0)
       break;
     puff->scaleY = 0x8ccc;
@@ -935,7 +937,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
 
       *timer = frames;
     }
-    Actor_SetScript(puff, gVaultCave_PuffScript);
+    Actor_StartScript(puff, gVaultCave_PuffScript);
   }
 }
 
@@ -956,7 +958,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
     actorSlot++;
   } while (remaining >= 0);
 
-  Task_AddFrame(VaultCave_UpdateFrostControlledFallingObjects, TASK_PASS_FRAME);
+  Task_AddFrame(VaultCave_UpdateFrostControlledFallingActors, TASK_PASS_FRAME);
 }
 
 /// Initializes four water drops and starts their timed updater.
@@ -972,13 +974,12 @@ static void VaultCave_StartTimedFalls(void) {
     fallingActor->bounce = 0x1999;
     fallingActor->gravity = 0;
     fallingActor->y.fixed = PIXELS(255);
-    ObjectMotion_SetActionVariant(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP,
-                                  1);
+    Actor_SetSpritePriority(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);
     fallingIndex++;
     actorSlot++;
   } while (fallingIndex <= 3);
 
-  Task_AddFrame(VaultCave_UpdateTimedFallingObjects, TASK_PASS_FRAME);
+  Task_AddFrame(VaultCave_UpdateTimedFallingActors, TASK_PASS_FRAME);
 }
 
 /// Arriving in any room of Vault Cave: restores the room's puzzles and
@@ -1133,7 +1134,7 @@ const s16 gVaultCave_DirectionSteps[] = {
 };
 
 const s32 gVaultCave_PuffScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };
 
 struct SceneEntrance gVaultCave_FallbackEntrances[] = {

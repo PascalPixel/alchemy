@@ -43,12 +43,12 @@
 	.set import.FieldScript_End, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetSpeedParameters, 1
-	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
-	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetSpeedParameters, 1
+	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_WaitForMoveById, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_SetDestination, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1

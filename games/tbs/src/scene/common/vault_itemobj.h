@@ -18,7 +18,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   s32 mask;
 
   zero = 0;
-  object = (u8 *)Object_CreateField(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
+  object = (u8 *)Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
   if (object != 0) {
     sprite = (u8 *)((struct Actor *)object)->sprite;
     field = sprite + 38; // flags, then count

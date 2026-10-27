@@ -72,8 +72,8 @@ the point its script aims it at, following the ground up and down, floating,
 and refusing to let solid objects overlap. In a battle a simpler update
 replaces it, which moves the first 14 objects and runs no scripts.
 
-The objects are `gObjects`, read as `struct Actor`, and
-`Object_UpdateAllThumb` gives each its turn; `Object_UpdateAllMotion` is the
+The objects are `gActors`, read as `struct Actor`, and
+`Actor_UpdateAllThumb` gives each its turn; `Actor_UpdateAllMotion` is the
 battle's update.
 
 ### How a script runs
@@ -105,13 +105,13 @@ s32 gVault_BoyRoundTheWellRoute[] = {
 A loop jumps back to a numbered label rather than to a place in the list, so
 a script never needs to know where its own steps are; the engine searches the
 script for the label each time. `SC_END` leaves the object standing idle,
-and only `SC_FREE` gives its place back. A scene can also give one object a
+and only `SC_RELEASE` gives its place back. A scene can also give one object a
 function of its own, a hook, that runs every frame before its script, even
 while the object is paused.
 
 The commands are the `SC_` macros of
 [`objcmd.h`](../../include/objcmd.h), each a row of
-`gObjectScript_CommandTable`, and `ObjectScript_FindLabel` finds a jump's
+`gActorScript_CommandTable`, and `ActorScript_FindLabel` finds a jump's
 label. The reference pages give every command; these are the ones above.
 
 | Name | Meaning |
@@ -123,7 +123,7 @@ label. The reference pages give every command; these are the ones above.
 | `SC_LABEL(n)`, `SC_TO(n)` | a label, and a jump's target naming it |
 | `SC_FOREVER` | an `SC_LOOP` count that never runs out |
 | `SC_END` | stand idle for good |
-| `SC_FREE` | give the object's place back |
+| `SC_RELEASE` | give the object's place back |
 
 ## Sprites and their animation
 
@@ -171,16 +171,16 @@ a frame, and the camera is one of two kinds: on a town or dungeon map it
 scrolls with the map, and on the world map and in a battle it projects each
 object's place in 3D onto the screen.
 
-`ObjectSystem_Initialize` adds both tasks, with the object
+`ActorSystem_Initialize` adds both tasks, with the object
 update at a higher priority so that it runs first;
-`ObjectSystem_PlaceSprites` is the scrolling camera and
-`ObjectSystem_ProjectSprites` the projecting one.
+`ActorSystem_PlaceSprites` is the scrolling camera and
+`ActorSystem_ProjectSprites` the projecting one.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `OBJECT_SYSTEM_LAYOUT` (2) | the scene manager, the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_PlaceSprites` |
-| `OBJECT_SYSTEM_WORLD_MAP` (3) | the scene manager | `Object_UpdateAllThumb` | `ObjectSystem_ProjectSprites` |
-| `OBJECT_SYSTEM_BATTLE` (4) | the battle | `Object_UpdateAllMotion` | `ObjectSystem_ProjectSprites` |
+| `ACTOR_SYSTEM_MAP` (2) | the scene manager, the debug sprite viewer | `Actor_UpdateAllThumb` | `ActorSystem_PlaceSprites` |
+| `ACTOR_SYSTEM_WORLD_MAP` (3) | the scene manager | `Actor_UpdateAllThumb` | `ActorSystem_ProjectSprites` |
+| `ACTOR_SYSTEM_BATTLE` (4) | the battle | `Actor_UpdateAllMotion` | `ActorSystem_ProjectSprites` |
 
 ## Walking and running
 
@@ -203,8 +203,8 @@ editions](../../glossary.md#editions) differ on the world map:
 | how far ahead the ground is tested | 8 pixels, the step and 30 degrees either side, then up to 67.5 degrees off | 7 pixels, the step and 22.5 and 45 degrees either side, then up to 90 degrees off |
 | R and L on the world map | act again and again while held | act once a press |
 
-`Object_UpdateLeaderControl` steers the leader on a town or
-dungeon map and `Object_MoveOnWorldMap` on the world map; the edition's
+`Actor_UpdatePlayerControl` steers the leader on a town or
+dungeon map and `Actor_MoveOnWorldMap` on the world map; the edition's
 values are chosen in a block of `#if`s at the top of `field/player_control.c`.
 Speeds are in pixels a frame with a fraction: `0x10000` is one pixel.
 
@@ -326,8 +326,8 @@ field-for-field copy that differs only where its reader does, as
 | View | Reader | What differs |
 | --- | --- | --- |
 | `ScriptOperands` | `SC_SET`, `SC_ADD`, `SC_CMP` | every field at the width its operand handler reads, unsigned |
-| `ObjectArmView` | `Object_UpdateAll` | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
-| `BattleSpriteObject` | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
+| `ActorArmView` | `Actor_UpdateAll` | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
+| `BattleActor` | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
 
 ### Scripts without addresses
 
@@ -343,7 +343,7 @@ it runs, in the processor's faster 32-bit instructions: the world map's line
 values, drawing rows of the map, decoding sprite pictures and putting a
 map's cells together. The cartridge's bus is 16 bits wide, so 32-bit
 instructions run slowly from it, and the rest of the game uses the 16-bit
-ones. There is also a 32-bit copy of the object update, `Object_UpdateAll`,
+ones. There is also a 32-bit copy of the object update, `Actor_UpdateAll`,
 for the first eight objects, but nothing runs it: it lacks the field's extras
 (aiming at a point, following the ground, floating, solid objects), so it
 could not stand in for the usual update.
@@ -368,13 +368,13 @@ differences from this one.
 
 - 64 objects; 64 sprites, sharing 64 sprite anims, up to four each.
 - 8 sprite picture caches, 16 tileset animations and 4 palette cycles.
-- `gObjectScript_CommandTable` has 47 entries: 36 commands, then 11 that act
+- `gActorScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
 - A step can climb 8 pixels and drop 12.
 
 ## Words used here
 
-- An **object** is one of the 64 places of `gObjects`, 112 bytes each, as the
+- An **object** is one of the 64 places of `gActors`, 112 bytes each, as the
   [glossary](../../glossary.md#object) defines it; a scene knows its
   actors among them by [actor id](../../glossary.md#actor-id). A place with no
   script is free.

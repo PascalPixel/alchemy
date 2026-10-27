@@ -220,7 +220,7 @@ static void EventScript_TalkToEastGuard(void) {
         FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
         Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
         FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
-        ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 2);
+        Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
         GameFlag_Set(FLAG_GUARD_SCOLDED);
       }
       FieldScript_SetMessageId(MsgBilibinMasterQuiteCranky);
@@ -233,7 +233,7 @@ static void EventScript_TalkToEastGuard(void) {
   } else {
     // On the first visit, the guards confer before opening the gate.
     FieldScript_SetMessageId(MsgBilibinLordOnlyMeet);
-    FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
     if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
       FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
@@ -246,19 +246,19 @@ static void EventScript_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 20);
       Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-      ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 1);
+      Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
       Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-      ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 1);
+      Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 1);
       FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
       Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+      Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
-      ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 1);
+      Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHEAST + FACING_STEP, 0);
-      ObjectMotion_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+      Actor_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
       Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
       FieldScript_WaitFrames(1);
@@ -279,9 +279,9 @@ static void EventScript_TalkToEastGuard(void) {
         GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
-      Object_SetTargetAndCallback(ACTOR_EAST_GUARD,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gGuardWatchesParty);
+      FieldActor_SetTargetAndCallback(
+          ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+          gGuardWatchesParty);
     } else {
       FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -341,9 +341,9 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
-        Object_SetTargetAndCallback(ACTOR_EAST_GUARD,
-                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                    gGuardWatchesParty);
+        FieldActor_SetTargetAndCallback(
+            ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            gGuardWatchesParty);
       }
     }
   }
@@ -351,7 +351,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Actor_SetPosition(ACTOR_LADY_MCCOY, PIXELS(224), PIXELS(292));
     Actor_FaceDirection(ACTOR_LADY_MCCOY, FACING_SOUTH, 0);
-    ObjectMotion_ArmCallback(ACTOR_WEST_WORKER, FACING_EAST, 0);
+    Actor_ArmCallback(ACTOR_WEST_WORKER, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
       EventScript_GuardsArrestParty();
     }
@@ -376,39 +376,39 @@ static void EventScript_GuardsArrestParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_WEST_GUARD, 2);
+  Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldScript_SetMessageId(MsgBilibinOhItS);
   FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
-  ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 2);
+  Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 1);
+  Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_GUARD, 1);
-  FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+  Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+  FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
   while (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    FieldEffect_SpawnLinked(ACTOR_EAST_GUARD,
-                            EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    FieldEffect_SpawnAttached(ACTOR_EAST_GUARD,
+                              EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     FieldScript_SetMessageId(MsgBilibinNotTrueWitnesses);
     FieldScript_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
-    ObjectMotion_SetVariantCallback(ACTOR_EAST_GUARD, 2);
-    FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+    Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
+    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
   }
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_GUARD, 1);
+  Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   FieldScript_SetMessageId(MsgBilibinUnderArrest);
   FieldScript_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0x10000, 0x8000);
@@ -419,9 +419,9 @@ static void EventScript_GuardsArrestParty(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
-    ObjectMotion_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+    Actor_SetSpeedParameters(ACTOR_EAST_GUARD, 0x10000, 0x8000);
     Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    ObjectMotion_SetPositionAndReset(ACTOR_EAST_GUARD, 346, 263);
+    Actor_SetPositionAndReset(ACTOR_EAST_GUARD, 346, 263);
     FieldScript_WaitFrames(1);
     {
       struct Actor *guard = Actor_GetById(ACTOR_EAST_GUARD);
@@ -440,7 +440,7 @@ static void EventScript_GuardsArrestParty(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
   Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   FieldScript_FinishScreenTransition();

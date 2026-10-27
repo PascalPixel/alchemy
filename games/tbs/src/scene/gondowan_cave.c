@@ -226,13 +226,13 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Script_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     FieldScript_Start();
     // Bring Iodem out of the party before opening his question.
-    ObjectMotion_SetSpeedParameters(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeedParameters(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
-    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_IODEM, -8, 16);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Actor_OffsetPositionAndResetMotion(ACTOR_IODEM, -8, 16);
+    Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -244,7 +244,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Script_ShowMessage(ACTOR_IODEM, 0);
       Actor_WalkTo(ACTOR_IODEM, 152, 232);
       Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+      Actor_WaitForMoveById(ACTOR_IODEM);
       Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
       gSaveBlock.restartScene = (s32)&SceneId_StuccoRoomsB;
       gSaveBlock.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
@@ -259,12 +259,12 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
         Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                              leader->z.part.pixel);
       }
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+      Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
       FieldScript_WaitFrames(30);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
-      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
+      Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
     FieldScript_End();
@@ -277,8 +277,8 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 /// Babi Lighthouse soon.`
 static void EventScript_IodemRejoins(void) {
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Actor_SetAngleToward(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(10);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -289,10 +289,10 @@ static void EventScript_IodemRejoins(void) {
     struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
     if (leader != 0)
-      ObjectMotion_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
-                                       leader->z.part.pixel);
+      Actor_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
+                                leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+  Actor_WaitForMoveById(ACTOR_IODEM);
   Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
   FieldScript_WaitFrames(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
@@ -310,7 +310,7 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(ACTOR_FIRST_SOLDIER, 0);
+  FieldMessage_ShowAtActor(ACTOR_FIRST_SOLDIER, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
@@ -388,7 +388,7 @@ static void EventScript_MoveStump(void) {
 /// Pushing the pillar in GondowanCave (step trigger 50): it moves a
 /// step, then may have reached its place.
 static void EventScript_PushPillar(void) {
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   EventScript_MovePillar();
 }
 
@@ -421,7 +421,7 @@ static void EventScript_MovePillar(void) {
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
-static void GondowanCave_RotateLeapingObject(union ActorOrEffect *fieldObject) {
+static void GondowanCave_RotateLeapingActor(union ActorOrEffect *fieldObject) {
   fieldObject->actor.sprite->rotation -= 0x400;
 }
 
@@ -456,7 +456,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
     actor->x.fixed -= Trig_Cos(actor->sprite->rotation) / 2;
     actor->targetX = ACTOR_NO_TARGET;
   }
-  actor->update = GondowanCave_RotateLeapingObject;
+  actor->update = GondowanCave_RotateLeapingActor;
   // Continue spinning through the first jump.
   Sound_PlaySong(SE_WHOOSH);
   Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
@@ -464,7 +464,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->gravity = 4 * PIXELS(1) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
-  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+  Actor_WaitForMoveById(actorId);
   GondowanCave_WaitForDescent(actor, PIXELS(32));
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -482,7 +482,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   }
   Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.
-  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+  Actor_WaitForMoveById(actorId);
   GondowanCave_WaitForDescent(actor, PIXELS(32));
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
@@ -535,24 +535,24 @@ s32 Scene_Initialize(void) {
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 /// Packs signed pixel steps with X in the upper halfword and Z in the lower.
 /// Shift the unsigned representation so westward steps remain defined C.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -562,11 +562,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,

@@ -309,10 +309,10 @@ static void EventScript_DouseIceRoomFire(void) {
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   FieldScript_WaitFrames(40);
   // Match the replacement's drawing priority to its metatile behavior.
-  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
   Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
   Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  ObjectMotion_SetActionVariant(ACTOR_FIRST_PUDDLE, 2);
+  Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   FieldScript_End();
 }
@@ -325,7 +325,7 @@ static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
-  ObjectMotion_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
+  Actor_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
   FieldScript_End();
 }
 
@@ -380,8 +380,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
-      ObjectMotion_SetAnimationAndWait(ACTOR_THIRD_PUDDLE,
-                                       PUDDLE_ANIMATION_MELT);
+      Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
       FieldScript_End();
@@ -393,8 +392,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_SHIMMER);
       destinationCellX = 36;
-      ObjectMotion_SetAnimationAndWait(ACTOR_THIRD_PUDDLE,
-                                       PUDDLE_ANIMATION_FREEZE);
+      Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
       FieldScript_End();
@@ -530,7 +528,7 @@ static void BilibinCave_RestoreIceRoom(void) {
     Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
     Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
     Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    ObjectMotion_SetActionVariant(ACTOR_FIRST_PUDDLE, 2);
+    Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
     Import_ActorSetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
@@ -604,23 +602,23 @@ static void EventScript_PushTorch(void) {
   destination.z =
       target->z.fixed + (s16)gBilibinCave_PushSteps[heading] * PIXELS(1);
 
-  if (FieldObject_CheckMovementCollision(target, &destination) > 0)
+  if (FieldActor_CheckMovementCollision(target, &destination) > 0)
     return;
 
-  Object_SelectAnimation(leader, 8);
+  Actor_SelectAnimation(leader, 8);
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
 
   target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
-  Object_SetPosition(target, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTarget(target, destination.x, destination.y, destination.z);
 
   leader->speedLimit = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
-  Object_SetPosition(leader, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
 
   // Wait for the target's movement before snapping it to the destination.
-  Object_WaitForMove(target);
+  Actor_WaitForMove(target);
 
   target->x.fixed = destination.x;
   target->z.fixed = destination.z;
@@ -629,7 +627,7 @@ static void EventScript_PushTorch(void) {
 
   // Resume the leader and refresh the mechanism affected by the moved
   // actor.
-  Object_SelectAnimation(leader, ANIM_STAND);
+  Actor_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 

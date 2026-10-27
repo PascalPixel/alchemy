@@ -114,14 +114,14 @@ const s32 gFieldEffect_ParticleScript[] = {
     SC_ADD(SW_Y, -0x4000),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
 /// runs it again each frame), and frees itself once Reveal ends.
 const s32 gFieldEffect_MarkerParticleScript[] = {
     SC_CALL(Field_IsRevealActive),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The width of the bars of WINDOW_TRANSITION_BARS, by progress.
@@ -312,7 +312,7 @@ const struct SpeakerDefinition gSpeakerDefinitions[131] = {
 /// Squashes as many times as the variant (1 to 3): variant v starts at word
 /// (3 - v) * 32 and runs to the end. field.h declares it const u8[], and
 /// field_services.c adds (3 - v) << 7 bytes and reads it through an s32 *.
-const s32 gObjectMotion_VariantScripts[97] = {
+const s32 gActor_VariantScripts[97] = {
     // variant 3
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
@@ -461,16 +461,16 @@ const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
 };
 
 /// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
-/// it (FieldEffect_SetObjectAlternatingWords, jupiter.c); nothing reads the
+/// it (FieldEffect_SetActorAlternatingWords, jupiter.c); nothing reads the
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
 
 /// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
 const s32 gFieldEffect_CommonParticleScript[] = {
-    SC_FREE,
+    SC_RELEASE,
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// Faces the linked object every frame, forever: the caster holding its
@@ -489,7 +489,7 @@ const s32 gFieldEffect_FragmentScript[] = {
     SC_SET(SW_SPEED, 0x1000),
     SC_ANIMATION(0),
     SC_WAIT(10),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// An angle for each value of the right, left, up and down bits of the
@@ -509,9 +509,9 @@ const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and frees the object. Word +4 is
 /// gFieldEffect_HeavyImpactScript.
-const s32 gFieldEffect_BurstParticleObjectScript[] = {
+const s32 gFieldEffect_BurstParticleActorScript[] = {
     SC_WAIT(60),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
@@ -522,27 +522,27 @@ const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_SYNC,
     SC_CALL(SpawnHeavyImpactEffect),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The three scripts of gFieldEffect_DurationScripts.
 const s32 gFieldEffect_ShortEffectScript[] = {
     SC_WAIT(24),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 gFieldEffect_MediumEffectScript[] = {
     SC_WAIT(46),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 gFieldEffect_LongEffectScript[] = {
     SC_WAIT(128),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The sprite params a paused object flickers through at random
-/// (FieldEffect_UpdatePausedObject, halt.c): 0 twice as often as
+/// (FieldEffect_UpdatePausedActor, halt.c): 0 twice as often as
 /// each of 1 to 6.
 const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 

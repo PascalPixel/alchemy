@@ -158,7 +158,7 @@ static void EventScript_TalkToMerchant(s32 actorId) {
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     FieldScript_SetMessageId(question);
-    FieldMessage_ShowAtObject(actorId, 0);
+    FieldMessage_ShowAtActor(actorId, 0);
     if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       FieldScript_WaitFrames(10);
       FieldScript_SetMessageId(question + 1);
@@ -213,7 +213,7 @@ static void EventScript_TalkToHealer(s32 actorId) {
 static void EventScript_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(actorId, 0);
+  FieldMessage_ShowAtActor(actorId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(question + 1);
@@ -252,8 +252,8 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    FieldMotion_LaunchFromFocusedObject(ACTOR_IODEM, 0, -16, FACING_NORTH);
-    Actor_WaitForMove(ACTOR_IODEM);
+    FieldActor_LaunchFromLeader(ACTOR_IODEM, 0, -16, FACING_NORTH);
+    Actor_WaitForMoveById(ACTOR_IODEM);
     FieldCamera_WaitForMove();
     Script_SetMessage(MsgSuhallaIodem);
     Script_Wait(10);
@@ -501,7 +501,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
-    Actor_WaitForMove(ACTOR_IODEM);
+    Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_SetPosition(ACTOR_IODEM, 0, 0);
     Script_Wait(10);
     // Back to the area's own music.

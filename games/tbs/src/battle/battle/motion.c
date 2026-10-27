@@ -33,9 +33,9 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   object->bounce = stopped;
   object->steeringFlags = stopped;
   object->snapToTarget = 1;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, battleObject->anchorX, 0,
-                          battleObject->anchorZ);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, battleObject->anchorX, 0,
+                         battleObject->anchorZ);
   // z / 8, rounded toward zero, as BattleObject_Make turns a new object.
   z = battleObject->anchorZ;
   if (z < 0)
@@ -58,10 +58,10 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   object->gravity = 0x7851;
   object->bounce = 0;
   object->steeringFlags = 0;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, battleObject->anchorX * 3, 0,
-                          battleObject->anchorZ);
-  Object_SelectAnimationFar(object, POSE_STANDING);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, battleObject->anchorX * 3, 0,
+                         battleObject->anchorZ);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Sends the unit of startSlot leaping progress percent of the way toward
@@ -91,8 +91,8 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   start->gravity = 0xab85;
   start->bounce = 0;
   start->steeringFlags = 1;
-  Object_SetMoveTargetFar(start, x, 0, startZ + zStep);
-  Object_SelectAnimationFar(start, POSE_LEAP);
+  Actor_SetMoveTargetFar(start, x, 0, startZ + zStep);
+  Actor_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
@@ -104,8 +104,8 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   object->gravity = 0xab85;
   object->bounce = 0;
   object->steeringFlags = 0;
-  Object_SetMoveTargetFar(object, battleObject->anchorX, 0,
-                          battleObject->anchorZ);
+  Actor_SetMoveTargetFar(object, battleObject->anchorX, 0,
+                         battleObject->anchorZ);
 }
 
 /// Sends unitId hopping out to one and a half times its spot's
@@ -124,11 +124,11 @@ void BattleMotion_HopBack(s32 unitId) {
   object->gravity = 0x9999;
   object->bounce = 0;
   object->steeringFlags = 0;
-  Object_StartIdleFar(object);
+  Actor_StartIdleFar(object);
   // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
-  Object_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
-                          battleObject->anchorZ);
+  Actor_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
+                         battleObject->anchorZ);
 }
 
 /// Sends unit id leaping back to 1.3 times its spot's distance from the
@@ -144,10 +144,10 @@ void BattleMotion_LeapBack(s32 unitId) {
   object->gravity = 0x9999;
   object->bounce = 0;
   object->steeringFlags = 0;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, Iwram_MulQ16(battleObject->anchorX, 0x14ccc),
-                          0, battleObject->anchorZ);
-  Object_SelectAnimationFar(object, POSE_DAMAGE);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, Iwram_MulQ16(battleObject->anchorX, 0x14ccc),
+                         0, battleObject->anchorZ);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Knocks unit id back by the speed, hop and distance of the knockback
@@ -172,12 +172,12 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     object->gravity = 0x9999;
     object->bounce = 0;
     object->steeringFlags = 0;
-    Object_StartIdleFar(object);
+    Actor_StartIdleFar(object);
     anchorX = battleObject->anchorX;
     targetX = (anchorX * gBattleKnockback_DistancePercent[variant]) / 100;
-    Object_SetMoveTargetFar(object, targetX, 0, battleObject->anchorZ);
+    Actor_SetMoveTargetFar(object, targetX, 0, battleObject->anchorZ);
   }
-  Object_SelectAnimationFar(object, POSE_DAMAGE);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
@@ -220,9 +220,9 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->velocityY = initialVelocityY;
   object->gravity = 0xab85;
   object->steeringFlags = 1;
-  Object_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, x, 0, z);
-  Object_SelectAnimationFar(object, POSE_LEAP);
+  Actor_StartIdleFar(object);
+  Actor_SetMoveTargetFar(object, x, 0, z);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
@@ -230,8 +230,8 @@ void BattleMotion_RestartLeap(s32 unitId) {
   struct Actor *object;
 
   object = BattleObject_Get(unitId)->object;
-  Object_StartIdleFar(object);
-  Object_SelectAnimationFar(object, POSE_LEAP);
+  Actor_StartIdleFar(object);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it
@@ -291,8 +291,8 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
   s32 effectHandle;
 
   object = BattleObject_Get(unitId)->object;
-  if ((object != NULL) && ((OBJECT_SPRITE_KIND_MASK &
-                            object->spriteStorageKind) == OBJECT_SPRITE_ONE)) {
+  if ((object != NULL) && ((ACTOR_SPRITE_KIND_MASK &
+                            object->spriteStorageKind) == ACTOR_SPRITE_ONE)) {
     effectHandle = Sprite_AddAnimFar(object->sprite, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
       effect = (struct SpriteAnim *)effectHandle;

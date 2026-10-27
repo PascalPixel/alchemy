@@ -31,7 +31,7 @@ struct FieldEffectWork {
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
-  u8 mode; ///< where the effect runs; OBJECT_SYSTEM_WORLD_MAP on the world map
+  u8 mode; ///< where the effect runs; ACTOR_SYSTEM_WORLD_MAP on the world map
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply's effect ends

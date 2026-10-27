@@ -7,8 +7,8 @@
 /// Script step of action 7: clears an object's sprite flags and its collision
 /// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
 /// once (gMovementType_ResetActionScript then ends).
-s32 Object_ClearChildAndCollisionFlags(void *obj) {
-  Object_SetSpriteFlagsFar(obj, 0);
+s32 Actor_ClearChildAndCollisionFlags(void *obj) {
+  Actor_SetSpriteFlagsFar(obj, 0);
   ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
@@ -18,7 +18,7 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
 /// runs it again every frame until the actor's script is replaced.
-s32 ObjectMotion_MoveTowardTarget(struct Actor *object) {
+s32 Actor_MoveTowardTarget(struct Actor *object) {
   s32 step;
   struct Actor *target;
   s32 deltaX;
@@ -48,10 +48,10 @@ s32 ObjectMotion_MoveTowardTarget(struct Actor *object) {
       // signed displacement, rather than shifting a negative.
       newX = object->x.fixed + (s32)((u32)pixelsX << 20) / step;
       newZ = object->z.fixed + (s32)((u32)pixelsZ << 20) / step;
-      Object_SetMoveTargetFar(object, newX, object->y.fixed, newZ);
-      Object_SelectAnimationFar(object, 2);
+      Actor_SetMoveTargetFar(object, newX, object->y.fixed, newZ);
+      Actor_SelectAnimationFar(object, 2);
     } else {
-      Object_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, 1);
     }
   }
   return 1;
@@ -60,7 +60,7 @@ s32 ObjectMotion_MoveTowardTarget(struct Actor *object) {
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
 /// the actor's script is replaced.
-s32 ObjectMotion_TurnTowardLinkedTarget(struct Actor *object) {
+s32 Actor_TurnTowardLinkedActor(struct Actor *object) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
@@ -118,7 +118,7 @@ void Actor_SetMovementType(struct Actor *object, s32 action) {
   default:
     break;
   }
-  Object_InitializeFar(object, (const s32 *)action);
+  Actor_StartScriptFar(object, (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of
@@ -128,7 +128,7 @@ void Actor_SetMovementType(struct Actor *object, s32 action) {
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
 /// asks it for a log, SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH, where the
 /// leader lands.
-struct Actor *Object_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
+struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
   struct Actor *entry;
   struct Actor *found;
   s32 slotIndex;
@@ -142,13 +142,13 @@ struct Actor *Object_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
 
   found = NULL;
   nearestDistance = 40;
-  entry = gObjects;
+  entry = gActors;
   for (slotIndex = 0; slotIndex < 64; slotIndex++, entry++) {
     if (entry->script == NULL)
       continue;
     if (entry == self)
       continue;
-    if (entry->spriteStorageKind != OBJECT_SPRITE_ONE)
+    if (entry->spriteStorageKind != ACTOR_SPRITE_ONE)
       continue;
     // 0x2fffff: under 48 pixels apart in height, either way.
     heightDifference = entry->y.fixed - self->y.fixed;

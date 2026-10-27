@@ -190,7 +190,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
     BattleObject_RemoveFromLists(unitId);
     BattleObject_MarkForRelease(unitId);
     slot = BattleObject_Get(unitId);
-    Object_ReleaseFar(slot->object);
+    Actor_ReleaseFar(slot->object);
     slot->object = 0;
     slot->active = 0;
   }

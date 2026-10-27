@@ -270,7 +270,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
     s32 message = MsgLaliveroTakenHostageFaran;
 
     FieldScript_SetMessageId(message);
-    FieldMessage_ShowAtObject(keeper, 0);
+    FieldMessage_ShowAtActor(keeper, 0);
     if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       FieldScript_WaitFrames(10);
       FieldScript_SetMessageId(message + 1);
@@ -354,23 +354,23 @@ static void EventScript_TalkToInnWorker(void) {
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
   Script_ShowMessage(ACTOR_INN_WORKER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_INN_WORKER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_INN_WORKER, 2);
+  Actor_RunRepeatedMotion(ACTOR_INN_WORKER, 2);
   FieldScript_WaitFrames(30);
   Script_ShowMessage(ACTOR_INN_WORKER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
-    ObjectMotion_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 16);
-    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 16);
+    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     FieldScript_WaitFrames(20);
   }
-  Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
+  Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
   FieldScript_End();
 }
 
@@ -388,9 +388,9 @@ static void EventScript_IodemCallsOut(void) {
   FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_End();
 }
@@ -450,37 +450,37 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 104, 136);
+  Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 104, 136);
   FieldScript_WaitFrames(10);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_GARET, -16, 16, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_MIA, 0, 24, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(ACTOR_IVAN, 16, 16, FACING_NORTH);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);
+  Actor_WaitForMoveById(ACTOR_GARET);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
   // Faran and Iodem tell of the search for Sheba.
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
-  ObjectMotion_ArmCallback(ACTOR_IODEM, FACING_SOUTH, 0);
+  Actor_ArmCallback(ACTOR_IODEM, FACING_SOUTH, 0);
   FieldScript_WaitFrames(30);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(20);
@@ -493,22 +493,22 @@ static void EventScript_ReportToFaran(void) {
     LaliveroInteriors_TellFaranAboutJenna();
   } else {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
     FieldScript_WaitFrames(10);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     FieldScript_WaitFrames(10);
-    ObjectMotion_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
+    Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
     FieldScript_WaitFrames(20);
@@ -516,22 +516,22 @@ static void EventScript_ReportToFaran(void) {
     Script_OpenMessage(ACTOR_IODEM, 0);
     FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+    Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(30);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(30);
     FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
     FieldScript_WaitFrames(10);
@@ -547,10 +547,10 @@ static void EventScript_ReportToFaran(void) {
     FieldScript_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-    ObjectMotion_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
     FieldScript_WaitFrames(30);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
     FieldScript_WaitFrames(30);
     FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
     (gFieldWork->message)++;
@@ -558,16 +558,16 @@ static void EventScript_ReportToFaran(void) {
     FieldScript_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-    ObjectMotion_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
     FieldScript_WaitFrames(30);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
     (gFieldWork->message)++;
     Script_ShowMessage(ACTOR_FARAN, 0);
   }
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
@@ -585,32 +585,32 @@ static void EventScript_ReportToFaran(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   FieldScript_WaitFrames(50);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
@@ -622,7 +622,7 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
-  ObjectMotion_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(20);
@@ -638,21 +638,21 @@ static void EventScript_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
@@ -662,7 +662,7 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -671,7 +671,7 @@ static void EventScript_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -680,61 +680,61 @@ static void EventScript_ReportToFaran(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_ArmCallback(ACTOR_IVAN, FACING_WEST, 0);
   FieldScript_WaitFrames(30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-  ObjectMotion_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
   // Faran sends them off.
-  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
-  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  ObjectMotion_ArmCallback(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(ACTOR_IVAN, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The others walk back into the leader.
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
@@ -743,26 +743,26 @@ static void EventScript_ReportToFaran(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_MIA, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_MIA, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+  Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, leader->x.part.pixel,
-                                     leader->z.part.pixel);
+    Actor_ResetAndSetPosition(ACTOR_IVAN, leader->x.part.pixel,
+                              leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+  Actor_WaitForMoveById(ACTOR_IVAN);
   Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
   FieldScript_WaitFrames(10);
   FieldScript_End();
@@ -775,61 +775,61 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   FieldScript_SetMessageId(MsgLaliveroTellOthers);
   FieldScript_WaitFrames(20);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_FARAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
-  FieldEffect_SpawnLinked(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                          60);
+  Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
+  FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                            60);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+  Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
   FieldScript_WaitFrames(20);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(25);
 
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(30);
 
-  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
 
-  ObjectMotion_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
-  FieldMessage_ShowAtObject(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
+  Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+  FieldMessage_ShowAtActor(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
 /// Sets both maps up as the party enters: shopkeepers and the innkeeper
@@ -876,8 +876,7 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
-      Actor_SetActionScript(ACTOR_INN_WORKER,
-                            gLaliveroInteriors_InnWorkerChores);
+      Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
     }
     if (gSaveBlock.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       EventScript_ReportToFaran();

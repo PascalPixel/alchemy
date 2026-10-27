@@ -68,7 +68,7 @@ struct SpriteFrameCache {
 
 /// The object system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite frame caches. Heap slot 6.
-struct ObjectSystemWork {
+struct ActorSystemWork {
   u16 used;      ///< sprite pixel bytes composed since the camera reset it
   u8 unused[2];  ///< no code names it
   s16 suspended; ///< nonzero while a menu has suspended sprite projection
@@ -80,10 +80,10 @@ struct ObjectSystemWork {
       frameCaches[8]; ///< found by tag (SpriteFrameCache_FindByTag)
 };
 
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, suspended) == 4);
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, count) == 0x18);
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, frameCaches) == 0x1c);
-STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, frameCaches) == 0x1c);
+STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
 
 /// The hardware sprite attributes one part of an animated sprite (its image or
 /// its shadow) is drawn with.
@@ -130,7 +130,7 @@ struct Sprite {
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
-  /// bits: 1 outlined in ObjectSystemWork's edge and fill colours |
+  /// bits: 1 outlined in ActorSystemWork's edge and fill colours |
   /// 0 shadow drawn (set when created)
   u8 flags;
   u8 count;                      ///< layers in use, up to the last one present

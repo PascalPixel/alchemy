@@ -4,10 +4,10 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetAnimationAndWait, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_SetAnimationAndWait, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_RunRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

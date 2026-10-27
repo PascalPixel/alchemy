@@ -253,7 +253,7 @@ static void EventScript_IvanStaysBehind(void) {
   FieldScript_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     FieldScript_SetMessageId(MsgVaultWaitDontWantTakeYour);
@@ -285,7 +285,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
-  FieldMessage_ShowAtObject(speaker, 0);
+  FieldMessage_ShowAtActor(speaker, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
     struct FieldWork *work = gFieldWork;
 
@@ -422,10 +422,10 @@ static void EventScript_LookForRoofer(void) {
   FieldScript_SetMessageId(MsgVaultFixingRoofCant);
   Vault_FaceActorAndWait(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, ACTOR_PARTY_LEADER,
                          2);
-  FieldEffect_SpawnLinked(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
-                          EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldEffect_SpawnAttached(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
+                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   FieldScript_WaitFrames(30);
-  FieldMessage_ShowAtObject(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
+  FieldMessage_ShowAtActor(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
   FieldScript_End();
 }
 
@@ -575,7 +575,7 @@ static void EventScript_ThankBeforeDeparture(void) {
   FieldScript_SetMessageId(MsgVaultThankForOtherDayLeaving);
   Vault_FaceActorAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ACTOR_PARTY_LEADER,
                          2);
-  ObjectMotion_SetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
   FieldScript_End();
@@ -784,12 +784,12 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
                                      s32 verticalSpeed) {
   struct Actor *actor = Actor_GetById(actorId);
   int frames;
-  ObjectMotion_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
   actor->gravity = PIXELS(1) / 2;
   actor->bounce = 0;
   actor->velocityY = verticalSpeed;
   Actor_SetSpriteFlags(actor, 0);
-  ObjectMotion_SetPositionAndCommit(actorId, x, z);
+  Actor_SetPositionAndCommit(actorId, x, z);
   Import_ActorSetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     WaitFrames(1);
@@ -811,9 +811,9 @@ static void EventScript_RingBell(void) {
   if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
+    Actor_Jump(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(12);
-    ObjectMotion_Launch(ACTOR_SAP, 4, 0);
+    Actor_Jump(ACTOR_SAP, 4, 0);
     FieldScript_WaitFrames(20);
     Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
     FieldScript_WaitFrames(20);
@@ -831,16 +831,16 @@ static void EventScript_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   FieldScript_Start();
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_VAULT_DOG, 2);
+  Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
-  ObjectMotion_Launch(ACTOR_VAULT_DOG, 6, 0);
+  Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_Launch(ACTOR_VAULT_DOG, 6, 0);
+  Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_Launch(ACTOR_VAULT_DOG, 6, 0);
+  Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
   FieldScript_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 392);
   FieldScript_WaitFrames(10);
@@ -871,7 +871,7 @@ s32 Scene_Initialize(void) {
   }
   // A still object on the well that shows nothing (vault_revisit.c's open
   // questions).
-  Actor_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
+  Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   lowBit = 1;
   zero = 0;
   actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
@@ -924,20 +924,20 @@ s32 Scene_Initialize(void) {
           FieldScript_StartScreenTransition();
           FieldScript_WaitTransitionFrames();
           FieldScript_WaitFrames(30);
-          ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+          Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
           FieldScript_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-          ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+          Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_GetById(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
-                                             actor->z.part.pixel);
+            Actor_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
+                                      actor->z.part.pixel);
           }
-          ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+          Actor_WaitForMoveById(ACTOR_IVAN);
           Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
-          FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
+          Event_PrepareActorAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
       }
@@ -957,20 +957,20 @@ s32 Scene_Initialize(void) {
           FieldScript_StartScreenTransition();
           FieldScript_WaitTransitionFrames();
           FieldScript_WaitFrames(30);
-          ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+          Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
           FieldScript_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-          ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+          Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_GetById(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
-                                             actor->z.part.pixel);
+            Actor_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
+                                      actor->z.part.pixel);
           }
-          ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+          Actor_WaitForMoveById(ACTOR_IVAN);
           Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
-          FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
+          Event_PrepareActorAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
       }
@@ -1058,19 +1058,19 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
-    effect = Object_CreateField(0xac, x, baseY, z);
+    effect = Actor_Create(0xac, x, baseY, z);
   }
   if (effect == NULL)
     return;
   sprite = effect->sprite;
   switch (Import_RandomNext() & 1) {
   case 1:
-    Object_SelectAnimation(effect, 3);
-    Actor_SetScript(effect, gVault_DriftScriptA);
+    Actor_SelectAnimation(effect, 3);
+    Actor_StartScript(effect, gVault_DriftScriptA);
     break;
   default:
-    Object_SelectAnimation(effect, 2);
-    Actor_SetScript(effect, gVault_DriftScriptB);
+    Actor_SelectAnimation(effect, 2);
+    Actor_StartScript(effect, gVault_DriftScriptB);
     break;
   }
   {
@@ -1129,17 +1129,17 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
 // 128 frames, then frees it.
 s32 gVault_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gVault_MediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gVault_LongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -1532,11 +1532,11 @@ u16 gVault_JailDoorCells[] = {
 s32 gVault_DriftScriptA[] = {
     SC_WAIT(1),
     SC_LOOP(118, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gVault_DriftScriptB[] = {
     SC_WAIT(1),
     SC_LOOP(38, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };

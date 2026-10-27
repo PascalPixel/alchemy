@@ -53,12 +53,12 @@ enum HeapSlot {
   /// The object system's sprite pool (struct Sprite).
   HEAP_SLOT_SPRITES = 4,
   /// The 64 objects (struct Actor).
-  HEAP_SLOT_OBJECTS = 5,
-  /// The object system's work (struct ObjectSystemWork, gObjectSystemWork),
-  /// taken by ObjectSystem_Initialize. The item, Psynergy, Status, Djinn and
+  HEAP_SLOT_ACTORS = 5,
+  /// The object system's work (struct ActorSystemWork, gActorSystemWork),
+  /// taken by ActorSystem_Initialize. The item, Psynergy, Status, Djinn and
   /// debug menus and the world map effect set its suspended field while they
   /// are open, so sprites that are not held are not drawn and free their VRAM.
-  HEAP_SLOT_OBJECT_SYSTEM = 6,
+  HEAP_SLOT_ACTOR_SYSTEM = 6,
   /// The world map's frame work (struct WorldMapFrameWork).
   HEAP_SLOT_WORLD_MAP_FRAME = 7,
   /// The field map's scrolling work (struct MapGridScrollWork), or on the world

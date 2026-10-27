@@ -414,10 +414,10 @@
 #define SE_UNUSED_DEFEAT_CRY 150
 /// Altmiller Cave's lights growing in, one by one, and a Venus Djinni caught.
 #define SE_LIGHT_APPEAR 151
-/// An actor jumps: ObjectMotion_Launch plays the high jump above 5
+/// An actor jumps: Actor_Jump plays the high jump above 5
 /// pixels a frame.
 #define SE_JUMP 152
-/// A high jump: ObjectMotion_Launch above 5 pixels a frame, Djinn leaping, and
+/// A high jump: Actor_Jump above 5 pixels a frame, Djinn leaping, and
 /// the leaps on Altin Peak, at the Kalay docks and in the Elemental Star room.
 #define SE_HIGH_JUMP 153
 /// The sound of a cast, in battle and on the field.
@@ -514,7 +514,7 @@
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
 /// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' pushed
-/// objects (PushedObject_AdvancePair).
+/// objects (PushedActor_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185

@@ -7,15 +7,15 @@
 	.set import.Scene_AssignViewFlags, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.ObjectMotion_SetVariantCallback, 1
-	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.Actor_StartRepeatedMotion, 1
+	.set import.Actor_SetAngleToward, 1
 	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldMessage_ShowAtActor, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.ObjectMotion_ArmCallback, 1
-	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Actor_ArmCallback, 1
+	.set import.FieldEffect_SetAttached, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
 	.include "games/tbs/src/system/overlay.inc"

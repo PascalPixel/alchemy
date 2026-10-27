@@ -98,7 +98,7 @@ void FieldEffect_WanderAroundAnchor(union ActorOrEffect *fieldObject) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    Object_InitializeFar(effect, gFieldEffect_CommonParticleScript);
+    Actor_StartScriptFar(effect, gFieldEffect_CommonParticleScript);
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
@@ -136,7 +136,7 @@ void FieldEffect_CircleAnchor(union ActorOrEffect *fieldObject) {
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
-void FieldEffect_ShrinkObjectScaleUntilHalf(union ActorOrEffect *fieldObject) {
+void FieldEffect_ShrinkActorScaleUntilHalf(union ActorOrEffect *fieldObject) {
   struct Actor *object = (struct Actor *)fieldObject;
   s32 scale;
 
@@ -144,7 +144,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union ActorOrEffect *fieldObject) {
   object->scaleY = scale;
   object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Object_SetPositionAndResetMotionFar(object, 0, 0, 0);
+    Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
 }
@@ -191,12 +191,12 @@ void FieldEffect_RunWhirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = Object_Spawn(0xda, 0, 0, 0);
+  ball = Actor_Spawn(0xda, 0, 0, 0);
   if (ball == 0) {
     return;
   }
   FieldEffect_FadeToEffectColor();
-  Object_SelectAnimationFar(ball, 2);
+  Actor_SelectAnimationFar(ball, 2);
   do {
     s32 scale;
     ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
@@ -217,7 +217,7 @@ void FieldEffect_RunWhirlwind(void) {
   // names, the target is blown away.
   if (effectWork->enabled == 0) {
     if (target != 0)
-      target->update = FieldEffect_ShrinkObjectScaleUntilHalf;
+      target->update = FieldEffect_ShrinkActorScaleUntilHalf;
 
     // Particles from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
     // pixels away.
@@ -230,7 +230,7 @@ void FieldEffect_RunWhirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Object_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = Actor_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->linkedActor = ball;
@@ -244,12 +244,12 @@ void FieldEffect_RunWhirlwind(void) {
     WaitFrames(20);
     WaitFrames(120);
   }
-  Object_SelectAnimationFar(ball, 1);
+  Actor_SelectAnimationFar(ball, 1);
   WaitFrames(30);
   Sound_PlaySongFar(SE_WHOOSH);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
-  Object_ReleaseFar(ball);
+  Actor_ReleaseFar(ball);
   FieldEffect_FadeFromEffectColor();
 }

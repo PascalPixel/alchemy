@@ -213,7 +213,7 @@
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_WEATHER_HELD 0x166
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (Object_UpdateLeaderControl). No ☀️ code sets it.
+/// (Actor_UpdatePlayerControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The areas the party has visited, one flag for each, set by
 /// Scene_Arrive as the party enters the section; the world map

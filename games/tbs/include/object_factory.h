@@ -2,11 +2,11 @@
 #define ALCHEMY_OBJECT_FACTORY_H
 
 /// @file
-/// Actor_Create, which creates an object.
+/// FieldActor_Create, which creates an object.
 
 #include "types.h"
 
-void *Actor_Create(u32 kind, u32 index, u32 resource, u32 position,
-                   u32 parameter);
+void *FieldActor_Create(u32 kind, u32 index, u32 resource, u32 position,
+                        u32 parameter);
 
 #endif

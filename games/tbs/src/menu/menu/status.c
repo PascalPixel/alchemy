@@ -100,7 +100,7 @@ s32 MemberChooser_Open(void) {
   s32 result;
   s32 index;
 
-  gObjectSystemWork->suspended = 1;
+  gActorSystemWork->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
@@ -116,7 +116,7 @@ s32 MemberChooser_Open(void) {
 
   WindowSprite_ClearListFar(menu->statusWindow);
   ItemMenu_Close();
-  gObjectSystemWork->suspended = 0;
+  gActorSystemWork->suspended = 0;
   WaitFrames(1);
   FreeHeapSlot(HEAP_SLOT_MENU);
   return result;
@@ -154,7 +154,7 @@ s32 StatusScreen_Run(void) {
   s32 result;
   s32 index;
 
-  ((struct ObjectSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM))
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -225,7 +225,7 @@ s32 StatusScreen_Run(void) {
   ItemMenu_Close();
   Window_DrawFrameFar(0, 0, 30, 20);
   FreeHeapSlot(HEAP_SLOT_MENU);
-  ((struct ObjectSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM))
+  ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;
   WaitFrames(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
@@ -326,7 +326,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   else
     result = MemberChooser_RunRearrange();
   cursor = menu->memberCursors[slot];
-  Icon_PrepareObject(cursor);
+  Icon_PrepareActor(cursor);
   WaitFrames(1);
   return result;
 }
@@ -492,8 +492,8 @@ s32 MemberChooser_RunRearrange(void) {
       if (MemberChooser_MoveEntry(memberIndex, 1)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         memberIndex++;
-        Menu_ReleaseEntryObjects();
-        PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
+        Menu_ReleaseEntryActors();
+        PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
@@ -503,8 +503,8 @@ s32 MemberChooser_RunRearrange(void) {
       if (MemberChooser_MoveEntry(memberIndex, 0)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         memberIndex--;
-        Menu_ReleaseEntryObjects();
-        PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
+        Menu_ReleaseEntryActors();
+        PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
@@ -570,7 +570,7 @@ s32 PsynergyMenu_ChooseMember(void) {
           Unit_GetFar(menu->memberTable[memberIndex]), (u16 *)menu->psynergies,
           PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
-      Menu_PlaceEntryObjectsInGrid(96, 96, 8);
+      Menu_PlaceEntryActorsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->psynergies);
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
@@ -681,7 +681,7 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
   struct StatusScreenWork *menu;
 
   menu = gMenuWork;
-  PsynergyMenu_InitializeEntryObjects(MenuCursor_Create(menu), 2, 2, 8, 0);
+  PsynergyMenu_InitializeEntryActors(MenuCursor_Create(menu), 2, 2, 8, 0);
   menu->unopenedWindow = 0;
   menu->statusWindow = 0;
   menu->helpWindow = 0;
@@ -717,7 +717,7 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
     if ((cursor->sentinel = 0xF0, menu->page) == STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
-    Menu_CreateEightEntryObjects(window);
+    Menu_CreateEightEntryActors(window);
     StatusScreen_DrawStatusAilments(window, member, 0x100);
     return;
   }
@@ -759,7 +759,7 @@ s32 StatusScreen_SelectCommand(void) {
   // emptied every frame); the four Djinn figures go up from y 128 to 104
   // until the page closes.
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryActorTransforms);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 104;
   done = 0;
@@ -876,7 +876,7 @@ s32 StatusScreen_SelectCommand(void) {
   WindowSprite_ClearListFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Window_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 128;
   ItemMenu_ResetCategory();
@@ -1538,7 +1538,7 @@ s32 PsynergyMenu_SelectAction(void) {
         icon->sentinel = priority;
     }
   }
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryActorTransforms);
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow,
                              SWITCH_HELP_X, -24);
@@ -1591,7 +1591,7 @@ s32 PsynergyMenu_SelectAction(void) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
-        Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+        Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
@@ -1821,7 +1821,7 @@ s32 ItemMenu_SelectItem(void) {
       icon->sentinel = 240;
   }
 
-  Task_Remove(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryActorTransforms);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow, 64,
                              -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, menu->statusWindow, 0,
@@ -1913,7 +1913,7 @@ s32 ItemMenu_SelectItem(void) {
   WindowSprite_ClearListFar(menu->questionWindow);
   ItemMenu_HideAllIcons();
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
   return result;
 }
 
@@ -2049,7 +2049,7 @@ void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items) {
 
 /// Places the 32 entry icons in a grid of 16x16 cells, columns wide, from
 /// (originX, originY), and shows them: the member chooser's Psynergy icons.
-void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
   struct WindowSprite *icon;
   struct WindowSprite **icons;
@@ -2059,7 +2059,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns) {
   do {
     icon = *icons++;
     if (icon != NULL) {
-      Menu_PlaceEntryObjectInGrid(icon, entryIndex, originX, originY, columns);
+      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
     entryIndex += 1;
   } while (entryIndex <= 0x1F);
@@ -2067,8 +2067,8 @@ void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns) {
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// 16x16 cells, columns wide, from (originX, originY), and shows it.
-void Menu_PlaceEntryObjectInGrid(struct WindowSprite *icon, s32 index,
-                                 s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
 
   entryIndex = index;
@@ -2077,7 +2077,7 @@ void Menu_PlaceEntryObjectInGrid(struct WindowSprite *icon, s32 index,
   }
   icon->y = (entryIndex / columns * 0x10) + originY;
   icon->x = (entryIndex % columns * 0x10) + originX;
-  Icon_PrepareObject(icon);
+  Icon_PrepareActor(icon);
 }
 
 /// Places the icon of each worn weapon, armor, shield and helm at x 216, on
@@ -2113,7 +2113,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
           icon->y = 48;
           break;
         }
-        Icon_PrepareObject(icon);
+        Icon_PrepareActor(icon);
       }
     }
   }
@@ -2134,7 +2134,7 @@ void ItemMenu_PositionCategory(void) {
     if (object != 0) {
       object->x = x;
       object->y = y;
-      Icon_PrepareObject(object);
+      Icon_PrepareActor(object);
     }
     remaining--;
   } while (remaining >= 0);
@@ -2144,7 +2144,7 @@ void ItemMenu_PositionCategory(void) {
 /// each on item graphic slot of the same number; the Status menu shows the
 /// status icons with the first five (StatusScreen_UpdateSelectionIcons).
 /// Returns 1.
-s32 Menu_CreateEightEntryObjects(struct Window *window) {
+s32 Menu_CreateEightEntryActors(struct Window *window) {
   struct WindowSprite **slot;
   struct WindowSprite *icon;
   s32 slotIndex;
@@ -2186,7 +2186,7 @@ void ItemMenu_ApplyFlags(const u8 *flags) {
       entry->x = 8;
       entry->y = shown * 16 + 88;
       entry->sentinel = 240;
-      Icon_PrepareObject(entry);
+      Icon_PrepareActor(entry);
       shown++;
     }
     index++;
@@ -2206,7 +2206,7 @@ void ItemMenu_ResetCategory(void) {
       object->x = 248;
       object->y = 168;
       object->sentinel = 240;
-      Icon_PrepareObject(object);
+      Icon_PrepareActor(object);
     }
   }
 }

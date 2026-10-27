@@ -11,8 +11,8 @@ UNUSED static void SetEffectRecordMode(struct Actor *work, s32 mode) {
 }
 
 /// A still, translucent effect in palette 14, at sprite priority 0.
-UNUSED static void *Actor_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *actor = Actor_Create(type, x, y, z);
+UNUSED static void *Actor_Prepare(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != 0) {
     actor->sprite->image.priority = 0;
@@ -20,7 +20,7 @@ UNUSED static void *Actor_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
     actor->collisionFlags = 8;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_BLACK);
-    Actor_SetBlendMode(actor, OBJECT_BLEND_TRANSLUCENT);
+    Actor_SetBlendMode(actor, ACTOR_BLEND_TRANSLUCENT);
     return actor;
   }
   return 0;
@@ -28,9 +28,8 @@ UNUSED static void *Actor_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the
 /// actors.
-UNUSED static void *Actor_CreateConfiguredObject(s32 x, s32 y, s32 z,
-                                                 s32 type) {
-  struct Actor *actor = Actor_Create(type, x, y, z);
+UNUSED static void *Actor_CreateConfigured(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != 0) {
     actor->sprite->image.priority = 1;

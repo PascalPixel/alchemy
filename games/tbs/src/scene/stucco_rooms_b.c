@@ -98,7 +98,7 @@ enum {
 /// for yes or the one after that for no.
 static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(speaker, 0);
+  FieldMessage_ShowAtActor(speaker, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(question + 1);
@@ -181,8 +181,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
                        gStuccoRoomsBDoors[doorIndex].x,
                        gStuccoRoomsBDoors[doorIndex].y);
-  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2,
-                                  PIXELS(1) / 4);
+  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Import_ScriptRequestExit(*trigger);
@@ -201,11 +200,11 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
 
   // A sparkle on the floor where she finds it.
   FieldScript_WaitFrames(40);
-  sparkle = Actor_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
+  sparkle = FieldActor_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
   Actor_SetSpriteFlags(sparkle, 0);
-  Object_SelectAnimation(sparkle, 6);
+  Actor_SelectAnimation(sparkle, 6);
   FieldScript_WaitFrames(10);
-  Object_SelectAnimation(sparkle, 1);
+  Actor_SelectAnimation(sparkle, 1);
   FieldScript_WaitFrames(40);
   Actor_Release(sparkle);
   FieldScript_WaitFrames(2);
@@ -218,7 +217,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
   Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   FieldScript_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 568, 848);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
@@ -233,14 +232,13 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                       FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
-                                   ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   FieldScript_WaitFrames(30);
@@ -254,7 +252,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 32);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
@@ -275,30 +273,28 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgTolbiHeWontSailShipEven);
   FieldScript_WaitFrames(30);
-  ObjectMotion_Launch(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
-  ObjectMotion_Launch(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
+  Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
+  Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
   FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   FieldScript_WaitFrames(10);
 
-  FieldEffect_SpawnLinked(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
-                          EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  FieldEffect_SpawnAttached(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
+                            EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
-                                   ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
-                                   ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
+                            ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
+  Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
-                                   ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_End();
 }
@@ -389,7 +385,7 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
   } else {
     FieldScript_SetMessageId(MsgTolbiLookStrongGo);
     FieldScript_ShowMessageAndWait(speaker, 0);
-    FieldEffect_SpawnLinked(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+    FieldEffect_SpawnAttached(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     FieldScript_WaitFrames(40);
     FieldScript_ShowMessageAndWait(speaker, 0);
   }
@@ -450,7 +446,7 @@ static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
       FieldScript_SetMessageId(MsgTolbiHello);
       Script_ShowMessage(speaker, 0);
       FieldScript_WaitFrames(10);
-      ObjectMotion_SetVarCbAndRefresh(speaker, 2);
+      Actor_RunRepeatedMotion(speaker, 2);
       FieldScript_WaitFrames(20);
     }
     FieldScript_SetMessageId(MsgTolbiHoHumFine);

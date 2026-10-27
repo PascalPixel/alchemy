@@ -116,17 +116,17 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// frames, then it moves away and is freed.
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),      SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),      SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -325,7 +325,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the party wants to enter Lunpa, and turns them away either way.
 static void EventScript_TalkToWestGuard(void) {
   FieldScript_Start();
-  FieldEffect_SpawnLinked(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  FieldEffect_SpawnAttached(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldScript_SetMessageId(MsgLunpaWestGuardAsksAboutEntering);
   FieldScript_AskYesNoAndShowResponse(ACTOR_WEST_GUARD, 0);
   FieldScript_End();
@@ -341,10 +341,10 @@ static void EventScript_TalkToEastGuard(void) {
     FieldScript_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
   } else {
     FieldScript_SetMessageId(MsgLunpaEastGuardAsksIfFrom);
-    FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
     if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
-      FieldMessage_ShowAtObject(ACTOR_EAST_GUARD, 0);
+      FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
       if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
         gFieldWork->message++;
       }
@@ -407,7 +407,7 @@ static void EventScript_AskAboutSeeingDonpa(void) {
 /// has become colder.
 static void EventScript_ComplainAboutCold(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
+  Actor_RunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
   FieldScript_SetMessageId(MsgLunpaVillagerBShivers);
   FieldScript_ShowMessageAndWait(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
   FieldScript_End();
@@ -432,13 +432,13 @@ static void EventScript_TalkToLeftGuard(void) {
     FieldScript_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
              GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-    FieldEffect_SpawnLinked(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                            60);
+    FieldEffect_SpawnAttached(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                              60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
     FieldScript_SetMessageId(recognitionMessageBase +
                              RECOGNITION_SEEN_THAT_MAN);
     FieldScript_ShowMessageAndWait(ACTOR_LEFT_GUARD, 0);
-    ObjectMotion_SetVariantCallback(ACTOR_LEFT_GUARD, 1);
+    Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
     FieldScript_SetMessageId(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
     GameFlag_Set(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
   } else {
@@ -482,7 +482,7 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
       FieldScript_SetMessageId(MsgLunpaLeftGuardGlimpsedMerchant);
     }
     Script_ShowMessage(ACTOR_LEFT_GUARD, 0);
-    ObjectMotion_SetVariantCallback(ACTOR_LEFT_GUARD, 1);
+    Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
     FieldScript_SetMessageId(MsgLunpaLeftGuardDismissesThought);
   } else {
     FieldScript_SetMessageId(MsgLunpaLeftGuardThoughts);
@@ -524,7 +524,7 @@ static void EventScript_GaretTurnsIsaacBack(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 100);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING);
   FieldScript_End();
@@ -542,7 +542,7 @@ static void EventScript_EnterDoor(void) {
   FieldScript_Start();
   // Freeze placed actors before opening the selected door and crossing
   // it.
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     placedActor = Actor_Get(actorId);
     if (placedActor != NULL) {
       placedActor->motionFlags = 0;
@@ -654,12 +654,12 @@ static void EventScript_GuardsBlockGate(void) {
     FieldScript_WaitFrames(30);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 168);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 168);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_LEFT_GUARD);
-    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RIGHT_GUARD);
-    ObjectMotion_EnableActionAndResetMotion(ACTOR_LEFT_GUARD);
+    Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
+    Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
+    Actor_Stop(ACTOR_LEFT_GUARD);
     Import_ActorSetAnimation(ACTOR_LEFT_GUARD, 0);
     Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-    ObjectMotion_EnableActionAndResetMotion(ACTOR_RIGHT_GUARD);
+    Actor_Stop(ACTOR_RIGHT_GUARD);
     Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, 0);
     Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
     FieldScript_SetMessageId(MsgLunpaGuardsWarnPartyAway);
@@ -692,8 +692,8 @@ static void EventScript_GuardsCatchParty(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
-  ObjectMotion_SetVariantCallback(ACTOR_LEFT_GUARD, 1);
-  ObjectMotion_SetVariantCallback(ACTOR_RIGHT_GUARD, 1);
+  Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
+  Actor_StartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Warn the party before escorting everyone down the two sections of the gate.
@@ -717,14 +717,14 @@ static void EventScript_GuardsCatchParty(void) {
   Script_ShowMessage(ACTOR_RIGHT_GUARD, 0);
   Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1,
                leader->z.part.pixel);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_LEFT_GUARD);
+  Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
   // Bring the party and both guards together at the first landing.
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 200);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_LEFT_GUARD);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RIGHT_GUARD);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
+  Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(12);
@@ -732,9 +732,9 @@ static void EventScript_GuardsCatchParty(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 272);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 256);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 256);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_LEFT_GUARD);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RIGHT_GUARD);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
+  Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   FieldScript_End();
   Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
 }
@@ -832,15 +832,15 @@ static void EventScript_GuardsThrowIsaacOut(void) {
   FieldScript_WaitFrames(1);
   Script_PlaySong(SE_SCUFFLE);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetActionVariant(ACTOR_LEFT_GUARD, 3);
-  ObjectMotion_SetActionVariant(ACTOR_RIGHT_GUARD, 3);
+  Actor_SetSpritePriority(ACTOR_LEFT_GUARD, 3);
+  Actor_SetSpritePriority(ACTOR_RIGHT_GUARD, 3);
   Script_PlaySong(SE_SCUFFLE);
   FieldScript_WaitFrames(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Script_PlaySong(SE_SCUFFLE);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
   Task_Remove(Lunpa_KickUpLeaderDust);
@@ -879,8 +879,8 @@ static void EventScript_GuardsThrowIsaacOut(void) {
   Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 144, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_LEFT_GUARD);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_RIGHT_GUARD);
+  Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
+  Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
   Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
   FieldScript_WaitFrames(30);
@@ -896,26 +896,26 @@ static void EventScript_LeaderSneaksOut(void) {
   FieldScript_Start();
   FieldScript_StartScreenTransition();
   Actor_WalkTo(ACTOR_PARTY_LEADER, 152, 168);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(20);
   // Cast Cloak before following the route around the guards.
   FieldEffect_LoadActionEffectResources(ABILITY_CLOAK, 1);
-  FieldEffect_SetupObjectPair(ACTOR_PARTY_LEADER, 0);
+  FieldEffect_SetupActorPair(ACTOR_PARTY_LEADER, 0);
   FieldEffect_StartCast();
   Field_DispatchTypeHandler(1);
   FieldEffect_StopCasterHook();
   Actor_WalkTo(ACTOR_PARTY_LEADER, 144, 184);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 184);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 200);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 72, 200);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 72, 288);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 288);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   FieldScript_End();
 }
 

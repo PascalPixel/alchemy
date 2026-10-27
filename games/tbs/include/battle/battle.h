@@ -23,7 +23,7 @@ struct AreaNameRule;
 extern const s8 gBattlePlacement_StepPairs[];
 /// Read as a halfword by Actor_SetOthersPaused: the actor id of the
 /// player's object, which it leaves alone.
-extern u8 gPlayerObjectId[];
+extern u8 gPlayerActorId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
@@ -160,7 +160,7 @@ extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an actor told to
 /// keep facing its linked object.
-extern const u8 gObjectMotion_LinkedActionScript[];
+extern const u8 gActor_LinkedScript[];
 /// Where the party returns after a defeat: {map, entrance (-1 any),
 /// return map, return entrance} rows, ended by map -1
 /// (Scene_SetDefeatReturnPoint).
@@ -192,7 +192,7 @@ void Anim_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 struct Sprite *GetBattleEffectObject(s32 kind);
-#ifndef OWN_Object_InitializeMode
+#ifndef OWN_Actor_InitializeMode
 #endif
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the

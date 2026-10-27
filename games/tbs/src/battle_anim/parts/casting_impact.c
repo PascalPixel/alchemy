@@ -457,7 +457,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  Object_SetAnimationSpeedFar(casterActor, 0);
+  Actor_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x.fixed, casterActor->y.fixed + 0x500000,
                casterActor->z.fixed);
@@ -584,7 +584,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
       mode == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
     CastingImpact_EndPrelude(work, canvas);
-    Object_SelectAnimationFar(casterActor, POSE_CAST);
+    Actor_SelectAnimationFar(casterActor, POSE_CAST);
     if (mode == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS) {
       BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_BLIZZARD);
     }
@@ -597,7 +597,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
-  Object_SetAnimationSpeedFar(casterActor, 16);
+  Actor_SetAnimationSpeedFar(casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->gravity = savedVerticalStrength;

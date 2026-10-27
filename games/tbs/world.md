@@ -91,8 +91,8 @@ script is "wait 120 frames, disappear". The player's control is itself a step
 of the leader's script, run once a frame: "move by the pad, wait a frame,
 repeat".
 
-The objects are the 64 places of `gObjects`, and the steps are
-the `SC_` commands of `objcmd.h`, run by `Object_UpdateAllThumb`.
+The objects are the 64 places of `gActors`, and the steps are
+the `SC_` commands of `objcmd.h`, run by `Actor_UpdateAllThumb`.
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
 commands, the sprites and [the views of one
 object](src/field/README.md#one-object-a-few-views).
@@ -108,7 +108,7 @@ open, so the leader slides along a wall instead of stopping dead. Ground more
 than 8 pixels higher, or more than 12 lower, blocks the way as surely as a
 wall.
 
-`Object_UpdateLeaderControl` steers the leader and
+`Actor_UpdatePlayerControl` steers the leader and
 `MapGrid_CheckCollision` judges each point it tests.
 
 | Name | Value | Meaning |
@@ -155,7 +155,7 @@ cells behind a house put whoever stands there behind its walls as well as its
 roof.
 
 The three map layers are `BG3`, `BG2` and `BG1` (`BG0` holds
-messages and menus), and `ObjectSystem_PlaceSprites` gives each sprite the
+messages and menus), and `ActorSystem_PlaceSprites` gives each sprite the
 priority of the cell under it.
 
 | Name | Value | Background | What it holds |

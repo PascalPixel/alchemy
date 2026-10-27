@@ -320,7 +320,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
       if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
         BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
     } else {
-      Object_SelectAnimationFar(object, POSE_CAST);
+      Actor_SelectAnimationFar(object, POSE_CAST);
     }
   }
   // The sound of a cast, as the caster raises its hand.
@@ -532,7 +532,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               BattleSprite_GetAttackHop(unit->id) << 16);
-  Object_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
@@ -670,7 +670,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
-  Object_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= ALLY_MAX)
@@ -731,8 +731,8 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   BattleStaging_BuildTargetList(plan, &work.effect);
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   object = BattleObject_Get(work.effect.user)->object;
-  Object_SelectAnimationFar(object, POSE_CAST);
-  Object_SetAnimationSpeedFar(object, 16);
+  Actor_SelectAnimationFar(object, POSE_CAST);
+  Actor_SetAnimationSpeedFar(object, 16);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = ANIM_SIDE_PARTY;
   else
@@ -781,7 +781,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
     WaitFrames(60);
   }
   BattlePlayback_WaitForReady();
-  Object_SelectAnimationFar(object, POSE_STANDING);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
        targetOrFadeIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetOrFadeIndex]);
@@ -927,8 +927,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.user)->object;
-  Object_SelectAnimationFar(object, POSE_CAST);
-  Object_SetAnimationSpeedFar(object, 16);
+  Actor_SelectAnimationFar(object, POSE_CAST);
+  Actor_SetAnimationSpeedFar(object, 16);
   Sound_PlaySongFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);
@@ -971,7 +971,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
       BattleBackground_RestorePalette();
     }
     BattlePlayback_WaitForReady();
-    Object_SelectAnimationFar(object, POSE_STANDING);
+    Actor_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
       BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   }
@@ -991,7 +991,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   s32 flashesRemaining;
 
   Unit_GetFar(unitId);
-  Object_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_DAMAGE);
+  Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_DAMAGE);
 
   selected = selection;
   flashesRemaining = 1;

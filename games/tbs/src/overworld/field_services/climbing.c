@@ -54,31 +54,31 @@ again:
     // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
-    if (leader->spriteStorageKind == OBJECT_SPRITE_ONE)
+    if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = leader->sprite->flags;
     FieldScript_Start();
-    Object_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, 6);
     WaitFrames(6);
     Sound_PlaySongFar(SE_JUMP);
-    Object_SelectAnimationFar(leader, 7);
+    Actor_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
-    Object_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
-    ObjectMotion_SetPositionAndCommit(
+    Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
+    Actor_SetPositionAndCommit(
         gSaveBlock.leaderActorId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
-    Object_SelectAnimationFar(leader, 6);
-    Object_SetSpriteFlagsFar(leader, spriteFlags);
+    Actor_SelectAnimationFar(leader, 6);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
     // A log underfoot dips 2 pixels with the leader and comes back up.
-    if ((platform = Object_FindNearestFacingTarget(
+    if ((platform = Actor_FindNearestFacingTarget(
              leader, SPRITE_LOG_WEST_EAST)) != NULL ||
-        (platform = Object_FindNearestFacingTarget(
+        (platform = Actor_FindNearestFacingTarget(
              leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) {
-      Object_SelectAnimationFar(platform, 7);
+      Actor_SelectAnimationFar(platform, 7);
       leader->y.fixed -= Q16_ONE;
       leader->groundHeight -= Q16_ONE;
       WaitFrames(2);
@@ -102,7 +102,7 @@ again:
     if (MapGrid_GetMetatileBehaviorAtFar(leader->layer, position->x,
                                          position->z) ==
         MB_JUMP_FORWARD_UNREACHED) {
-      Object_SelectAnimationFar(leader, 1);
+      Actor_SelectAnimationFar(leader, 1);
       WaitFrames(6);
       goto again;
     }
@@ -152,17 +152,17 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
+      Actor_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
       object->speedLimit = Q16_ONE;
-      ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_NORTH, 0);
+      Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_NORTH, 0);
       Actor_RefreshSelectorById(gSaveBlock.leaderActorId);
       object->steeringFlags = ACTOR_FACES_MOTION;
       object->motionFlags = 0;
-      Object_SetSpriteFlagsFar(object, 0);
-      Object_SelectAnimationFar(object, 13);
-      Object_SetMoveTargetFar(object, gridX << 16, object->y.fixed - 0x100000,
-                              (gridZ << 16) + 0x100000);
-      ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderActorId);
+      Actor_SetSpriteFlagsFar(object, 0);
+      Actor_SelectAnimationFar(object, 13);
+      Actor_SetMoveTargetFar(object, gridX << 16, object->y.fixed - 0x100000,
+                             (gridZ << 16) + 0x100000);
+      Actor_WaitForMoveById(gSaveBlock.leaderActorId);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
@@ -171,11 +171,11 @@ s32 Field_ClimbDown(void) {
     // Let go of the wall and fall: ground following and gravity again
     // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the ground is read, and the shadow back.
-    Object_SelectAnimationFar(object, ANIM_LEADER_CLIMB);
+    Actor_SelectAnimationFar(object, ANIM_LEADER_CLIMB);
     object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = 0x40000;
     object->groundHeight = object->y.fixed;
-    Object_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
     FieldScript_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     object->steeringFlags = ACTOR_FACES_MOTION;
@@ -211,7 +211,7 @@ s32 Field_ClimbUp(void) {
 
   FieldScript_Start();
 
-  if (object->spriteStorageKind == OBJECT_SPRITE_ONE)
+  if (object->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = object->sprite->flags;
 
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
@@ -233,18 +233,18 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       object->steeringFlags = 0;
-      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
-      Object_SelectAnimationFar(object, 6);
+      Actor_SetPositionAndCommit(gSaveBlock.leaderActorId, gridX, gridZ);
+      Actor_SelectAnimationFar(object, 6);
       WaitFrames(4);
-      Object_SelectAnimationFar(object, 7);
+      Actor_SelectAnimationFar(object, 7);
       object->velocityY = 0x40000;
       WaitFrames(4);
       object->motionFlags = 0;
       spriteFlags &= 0xfe;
-      Object_SetSpriteFlagsFar(object, spriteFlags);
+      Actor_SetSpriteFlagsFar(object, spriteFlags);
       object->speedLimit = Q16_ONE;
       object->velocityY = 0;
-      Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
+      Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
       WaitFrames(4);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
       object->steeringFlags = ACTOR_FACES_MOTION;
@@ -255,14 +255,14 @@ s32 Field_ClimbUp(void) {
   } else {
     // Climb over the top: up 8 pixels and a cell north.
     object->motionFlags = 0;
-    Object_SelectAnimationFar(object, 11);
-    Object_SetMoveTargetFar(object, gridX << 16, object->y.fixed + 0x80000,
-                            (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderActorId);
+    Actor_SelectAnimationFar(object, 11);
+    Actor_SetMoveTargetFar(object, gridX << 16, object->y.fixed + 0x80000,
+                           (gridZ << 16) - 0x100000);
+    Actor_WaitForMoveById(gSaveBlock.leaderActorId);
     object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;
     object->groundHeight = object->y.fixed;
-    Object_SetSpriteFlagsFar(object, spriteFlags);
+    Actor_SetSpriteFlagsFar(object, spriteFlags);
     FieldScript_WaitFrames(4);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     object->steeringFlags = ACTOR_FACES_MOTION;

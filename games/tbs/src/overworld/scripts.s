@@ -1,8 +1,8 @@
 	.section .rodata
 	.balign 4
 @ The camera follows its target.
-	.global Object_CameraFollowScript
-Object_CameraFollowScript:
+	.global Actor_CameraFollowScript
+Actor_CameraFollowScript:
 	.4byte 11, 0, 1, 12, 65535, 0, 16
 	.global gField_LeaderScript
 gField_LeaderScript:
@@ -251,23 +251,23 @@ ScreenTransition_ShapesTail:
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
-	.global gObjectMotion_LaunchScript
-gObjectMotion_LaunchScript:
-	.4byte 1, 0, 1, 28, 1, 34, ObjectMotion_StepAngle, 16
+	.global gActor_LaunchScript
+gActor_LaunchScript:
+	.4byte 1, 0, 1, 28, 1, 34, Actor_StepAngle, 16
 	.global gFieldEffect_BurstParticleScriptA
 gFieldEffect_BurstParticleScriptA:
 	.4byte 0, 1, 12, 38, 0, 27
 	.global gFieldEffect_BurstParticleScriptB
 gFieldEffect_BurstParticleScriptB:
 	.4byte 0, 1, 12, 18, 0, 27
-	.global gObjectMotion_StepAngleScript
-gObjectMotion_StepAngleScript:
-	.4byte 34, ObjectMotion_StepAngle, 16
+	.global gActor_StepAngleScript
+gActor_StepAngleScript:
+	.4byte 34, Actor_StepAngle, 16
 	.global gMessageSpeed_VoiceRates
 gMessageSpeed_VoiceRates:
 	.byte 1, 3, 10, 0
-	.global gFieldEffect_LinkedObjectScript
-gFieldEffect_LinkedObjectScript:
+	.global gFieldEffect_LinkedActorScript
+gFieldEffect_LinkedActorScript:
 	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
 	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
 	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
@@ -277,8 +277,8 @@ gFieldEffect_LinkedObjectScript:
 	.4byte 22, 9, 0xfffff800, 22, 10, 1024, 0, 2
 	.4byte 22, 9, 2048, 22, 10, 0xfffffc00, 0, 2
 	.4byte 0, 30, 27
-	.global gObjectMotion_WaitScript
-gObjectMotion_WaitScript:
+	.global gActor_WaitScript
+gActor_WaitScript:
 	.4byte 0, 40, 27
 	.global gMovementType_WanderScript
 gMovementType_WanderScript:
@@ -293,7 +293,7 @@ gMovementType_StandScript:
 	.4byte 16
 	.global gMovementType_ResetActionScript
 gMovementType_ResetActionScript:
-	.4byte 34, Object_ClearChildAndCollisionFlags, 16
+	.4byte 34, Actor_ClearChildAndCollisionFlags, 16
 	.global gMovementType_WanderNearScript
 gMovementType_WanderNearScript:
 	.4byte 21, 15, 32768, 21, 16, 3276, 21, 30
@@ -309,12 +309,12 @@ gMovementType_WanderCloseScript:
 	.4byte 12, 65535, 0xc0010000
 	.global gMovementType_FollowLinkedScript
 gMovementType_FollowLinkedScript:
-	.4byte 34, ObjectMotion_MoveTowardTarget, 12, 65535, 0
+	.4byte 34, Actor_MoveTowardTarget, 12, 65535, 0
 	.global gMovementType_FaceLeaderScript
 gMovementType_FaceLeaderScript:
-	.4byte 34, ObjectMotion_TurnTowardLinkedTarget, 12, 65535, 0
-	.global gObjectMotion_LinkedActionScript
-gObjectMotion_LinkedActionScript:
+	.4byte 34, Actor_TurnTowardLinkedActor, 12, 65535, 0
+	.global gActor_LinkedScript
+gActor_LinkedScript:
 	.4byte 5, 0, 1, 12, 65535, 0
 @ Ground particles, motes of light and sparkles
 	.global gFieldEffect_GroundParticleTiles
@@ -331,8 +331,8 @@ gFieldEffect_SparkleTiles:
 gFieldEffect_TargetColors:
 	.4byte 2113668, 2101764, 2101392, 2114052
 	.4byte 2113680, 2101776, 2105608, 2114064
-	.global gFieldEffect_UntargetedObjectScript
-gFieldEffect_UntargetedObjectScript:
+	.global gFieldEffect_UntargetedActorScript
+gFieldEffect_UntargetedActorScript:
 	.4byte 27
 	.global gFieldEffect_DurationScripts
 gFieldEffect_DurationScripts:

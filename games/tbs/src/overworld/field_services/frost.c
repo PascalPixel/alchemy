@@ -26,7 +26,7 @@ void FieldEffect_UpdateOrbitingParticleFade(union ActorOrEffect *fieldObject) {
     particle->scaleY -= 0x1000;
     particle->scaleX = scale;
     if (scale <= 0x1000)
-      Object_InitializeFar(particle, gFieldEffect_CommonParticleScript);
+      Actor_StartScriptFar(particle, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -126,7 +126,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = Object_Spawn(0xe8, 0, 0, 0);
+    particle = Actor_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
@@ -175,7 +175,7 @@ void FieldEffect_RunFrost(void) {
 
     if (effectWork->childOption == 0) {
       Sound_PlaySongFar(SE_SHIMMER);
-      Object_SelectAnimationFar(target, 2);
+      Actor_SelectAnimationFar(target, 2);
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;

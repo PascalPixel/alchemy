@@ -180,10 +180,10 @@ extern u16 gGraphics_ExpandNibbleTable[];
 /// HEAP_SLOT_SPRITES: the object system's sprite pool, which the
 /// field animation and the sprite viewer walk.
 extern struct Sprite *gSprites;
-#ifndef OWN_Menu_CursorObjectTiles
+#ifndef OWN_Menu_CursorActorTiles
 /// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
 /// its left-pointing twin.
-extern const u8 gMenu_CursorObjectTiles[];
+extern const u8 gMenu_CursorActorTiles[];
 #endif
 /// The Japanese name entry screen's second keyboard, which Select switches to.
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];

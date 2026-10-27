@@ -586,7 +586,7 @@ second fight, Menardi and the Fusion Dragon) set the class bit that makes a
 beam blow land with `SE_HEAVY_IMPACT` (`BattleSprite_HasHeavyImpact`).
 
 The battle camera has a second point it can follow besides `followPosition`:
-`followEye`, which `ObjectSystem_ProjectSprites` would use in place of the eye
+`followEye`, which `ActorSystem_ProjectSprites` would use in place of the eye
 when it turns the sprites to face the camera. Every camera setup (the
 battle's, the world map's and Lucky Dice's) clears it and nothing sets it, so
 the sprites always face the real eye. The last two words of

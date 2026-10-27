@@ -267,13 +267,13 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   FieldVector_AddPolarOffset(PIXELS(16), (actor->facing + 0x2000) & 0xc000,
                              &adjacentTile);
 
-  if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
-      FieldObject_CheckMovementCollision(actor, target) == 0) {
+  if (FieldActor_CheckMovementCollision(actor, &adjacentTile) != 1 &&
+      FieldActor_CheckMovementCollision(actor, target) == 0) {
     FieldScript_Start();
-    Object_SelectAnimation(actor, ANIM_LEADER_SPRING);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
 
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -281,10 +281,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     actor->motionFlags &= 0x7e;
 
     Actor_SetSpriteFlags(actor, 0);
-    ObjectMotion_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                                      TunnelRuins_GetLandingPixel(target->x),
-                                      TunnelRuins_GetLandingPixel(target->z));
-    Object_SelectAnimation(actor, ANIM_LEADER_SPRING);
+    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
+                               TunnelRuins_GetLandingPixel(target->x),
+                               TunnelRuins_GetLandingPixel(target->z));
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
     WaitFrames(6);
 
@@ -374,9 +374,9 @@ static s32 TunnelRuins_SplashDousedPillar(union ActorOrEffect *fieldObject) {
   s32 z;
 
   if (gFrameCount & 2)
-    Object_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, 1);
   else
-    Object_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, 2);
   if (gFrameCount & 3)
 #ifdef UBFIX
     return;
@@ -468,15 +468,15 @@ static void EventScript_HopDownStep(void) {
   u32 i;
 
   FieldScript_Start();
-  Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
-  ObjectMotion_WaitForAnimationChange(ACTOR_PARTY_LEADER);
-  Object_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
+  Actor_WaitForAnimationChange(ACTOR_PARTY_LEADER);
+  Actor_SelectAnimation(leader, 1);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
   Sound_PlaySong(SE_JUMP);
   leader->velocityY = PIXELS(4);
-  Object_SetPosition(leader, leader->x.fixed, leader->y.fixed,
-                     leader->z.fixed + PIXELS(12));
+  FieldActor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
+                           leader->z.fixed + PIXELS(12));
   WaitFrames(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
@@ -572,7 +572,7 @@ const struct ActorTemplate *TunnelRuins_GetActorTemplates(void) {
 static void EventScript_PushFirstPillars(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
   FieldScript_End();
 }
@@ -596,7 +596,7 @@ static void EventScript_HopWest(void) {
 static void EventScript_PushSecondPillars(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
   FieldScript_End();
 }
@@ -628,7 +628,7 @@ static void EventScript_PushSmallPillars(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   TunnelRuins_UpdateSmallPillarCells();
   FieldScript_End();
 }
@@ -744,8 +744,7 @@ static void EventScript_SinkNorthwestPillar(void) {
   actor = Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 46) {
     FieldScript_WaitFrames(30);
-    overlay =
-        Actor_PrepareObject(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
+    overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
     options = &optionsStorage;
     options->startScaleX = 3 * Q16_ONE / 5;
@@ -788,7 +787,7 @@ static void EventScript_SinkNorthwestPillar(void) {
 /// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
 static void EventScript_PushNorthwestSinkingPillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
   EventScript_SinkNorthwestPillar();
 }
@@ -830,7 +829,7 @@ static void EventScript_SinkSoutheastPillar(void) {
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       FieldScript_WaitFrames(30);
-      overlay = Actor_PrepareObject(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
+      overlay = Actor_Prepare(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
       options->startScaleY = 3 * Q16_ONE / 5;
@@ -874,7 +873,7 @@ static void EventScript_SinkSoutheastPillar(void) {
 /// has soaked it, in TunnelRuinsGreatStatue.
 static void EventScript_PushSoutheastSinkingPillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
   EventScript_SinkSoutheastPillar();
 }
@@ -883,8 +882,8 @@ static void EventScript_PushSoutheastSinkingPillar(void) {
 /// Reached by Douse's first phase on the south-east sinking pillar until it is
 /// soaked.
 static void EventScript_DouseStartsOnSoutheastPillar(void) {
-  Actor_SetActionScript(ACTOR_SOUTHEAST_SINKING_PILLAR,
-                        gTunnelRuins_DouseSplashScript);
+  Actor_SetScript(ACTOR_SOUTHEAST_SINKING_PILLAR,
+                  gTunnelRuins_DouseSplashScript);
 }
 
 /// Douse soaks the south-east sinking pillar, which sinks at once if it is in
@@ -941,7 +940,7 @@ static void EventScript_MoveDousePillar(void) {
 /// Reached by walking into metatile behavior 25 in TunnelRuinsLadyStatues.
 static void EventScript_PushDousePillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
   EventScript_MoveDousePillar();
 }
@@ -953,7 +952,7 @@ static void EventScript_PushDousePillar(void) {
 static void EventScript_DouseStartsOnPillar(void) {
   struct Actor *puddle;
 
-  Actor_SetActionScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
+  Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
   puddle = Actor_GetById(ACTOR_DOUSE_PUDDLE);
 #ifdef UBFIX
@@ -973,7 +972,7 @@ static void EventScript_FreezeDousePuddle(void) {
   s32 row;
 
   FieldScript_Start();
-  ObjectMotion_SetActionVariant(ACTOR_DOUSE_PUDDLE, 1);
+  Actor_SetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
   Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 1);
   Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_NORMAL);
   Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 2);
@@ -1030,18 +1029,18 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   if (wait != 0) {
     Sound_PlaySong(SE_SETTLE);
   }
-  Object_SetPosition(
+  FieldActor_SetMoveTarget(
       Actor_GetById(ACTOR_BALANCE_WEST),
       Actor_GetById(ACTOR_BALANCE_WEST)->x.fixed,
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_WEST)->timer],
       Actor_GetById(ACTOR_BALANCE_WEST)->z.fixed);
-  Object_SetPosition(
+  FieldActor_SetMoveTarget(
       Actor_GetById(ACTOR_BALANCE_EAST),
       Actor_GetById(ACTOR_BALANCE_EAST)->x.fixed,
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_EAST)->timer],
       Actor_GetById(ACTOR_BALANCE_EAST)->z.fixed);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BALANCE_WEST);
-  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BALANCE_EAST);
+  Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
+  Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
   Actor_GetById(ACTOR_BALANCE_WEST)->y.fixed =
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_WEST)->timer];
   Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed =
@@ -1093,10 +1092,10 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     struct Actor *sourceActor = Actor_GetById(actorId);
     s32 z = Actor_GetById(actorId)->z.fixed;
 
-    Object_SetPosition(actor, sourceActor->x.fixed, highestHeight, z);
+    FieldActor_SetMoveTarget(actor, sourceActor->x.fixed, highestHeight, z);
   }
 
-  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+  Actor_WaitForMoveById(actorId);
   Sound_PlaySong(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(actorId);
   FieldScript_WaitFrames(30);
@@ -1166,7 +1165,7 @@ static void EventScript_SetStoneOnBalance(void) {
       // The camera turns to the balance as the carved stone drops and the
       // platforms move.
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-      FieldCamera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       FieldCamera_WaitForArrival();
       TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_WEST_CARRY_STONE);
@@ -1198,9 +1197,9 @@ static void EventScript_SetStoneOnBalance(void) {
 /// Walking into a pushable object pushes it along.
 /// Reached by walking into metatile behaviors 28 and 30 in
 /// TunnelRuinsLadyStatues.
-static void EventScript_PushObject(void) {
+static void EventScript_PushActor(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   FieldScript_End();
 }
 
@@ -1231,7 +1230,7 @@ static void EventScript_MoveEastPillar(void) {
 /// Reached by walking east into metatile behavior 29 in TunnelRuinsLadyStatues.
 static void EventScript_PushEastPillar(void) {
   FieldScript_Start();
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   EventScript_MoveEastPillar();
   FieldScript_End();
 }
@@ -1382,7 +1381,7 @@ static void EventScript_PushLadyStatue(void) {
   {
     MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
-  PushedObject_AdvancePair();
+  PushedActor_AdvancePair();
   EventScript_MoveLadyStatue();
   FieldScript_End();
 }
@@ -1493,10 +1492,10 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 /// Redraws the east pillars' row and marks the cells they stand on.
 static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
-  PushedObject_FillGridAttributeRectangle(
+  PushedActor_FillGridAttributeRectangle(
       0, Actor_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20,
       Actor_GetById(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, MB_WALL);
-  PushedObject_FillGridAttributeRectangle(
+  PushedActor_FillGridAttributeRectangle(
       0, Actor_GetById(ACTOR_EAST_PILLAR_B)->x.fixed >> 20,
       Actor_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, MB_WALL);
 }
@@ -1662,10 +1661,10 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
     case TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH:
-      ObjectMotion_SetActionVariant(ACTOR_DOUSE_PILLAR, 1);
+      Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
       Actor_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PILLAR), 0);
-      ObjectMotion_SetActionVariant(ACTOR_DOUSE_PUDDLE, 1);
+      Actor_SetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
       Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_HIDDEN);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PUDDLE), 0);
       Actor_GetById(ACTOR_DOUSE_PUDDLE)->motionFlags = 0;
@@ -1694,8 +1693,8 @@ s32 TunnelRuins_Initialize(void) {
         Actor_GetById(ACTOR_BALANCE_EAST)->collisionFlags &= ~ACTOR_SOLID;
         Actor_GetById(ACTOR_BALANCE_WEST)->timer = 3;
         Actor_GetById(ACTOR_BALANCE_EAST)->timer = 3;
-        ObjectMotion_SetActionVariant(ACTOR_BALANCE_WEST, 1);
-        ObjectMotion_SetActionVariant(ACTOR_BALANCE_EAST, 1);
+        Actor_SetSpritePriority(ACTOR_BALANCE_WEST, 1);
+        Actor_SetSpritePriority(ACTOR_BALANCE_EAST, 1);
         Actor_GetById(ACTOR_WEST_CARRY_STONE)->motionFlags = 0;
         Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->motionFlags = 0;
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->motionFlags = 0;
@@ -1815,7 +1814,7 @@ s32 TunnelRuins_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1824,28 +1823,28 @@ s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8,  32, 8,  -8,  -32, 8,  32, -32, -16, 32, 0,
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
 };
 
 s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
 /// A balance platform's height by its weight (its timer): each carved stone on
@@ -2290,12 +2289,12 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
         EVENT_SCRIPT(EventScript_HopWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopDownStep)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObject)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushActor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopWest)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObject)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushActor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushEastPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopSouth)},

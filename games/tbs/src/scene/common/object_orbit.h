@@ -25,12 +25,12 @@ static s32 Scene_UpdateFloatingNut(s32 *p) {
 /// Draws actor id as the Nut's icon and starts it floating, 32 pixels up
 /// unless the party returns to where it was.
 void Scene_FloatNut(s32 id) {
-  OrbitingMapObject *actor;
-  OrbitingMapObjectSprite *sprite;
+  OrbitingMapActor *actor;
+  OrbitingMapActorSprite *sprite;
   u8 *transfer;
   s32 zero;
 
-  actor = (OrbitingMapObject *)Actor_GetById(id);
+  actor = (OrbitingMapActor *)Actor_GetById(id);
   sprite = actor->sprite;
   sprite->priority = 1;
   sprite->fullColor = 0;

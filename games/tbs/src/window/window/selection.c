@@ -407,11 +407,11 @@ void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 side) {
   arrow->x = state->records[side].x;
   arrow->y = state->records[side].y;
   if (side != 0) {
-    arrowTiles = gMenu_CursorObjectTiles;
+    arrowTiles = gMenu_CursorActorTiles;
     if (state->records[1].base != 0)
       arrow->x = arrow->x + state->records[1].base;
   } else {
-    arrowTiles = gMenu_CursorLeftObjectTiles;
+    arrowTiles = gMenu_CursorLeftActorTiles;
     if (state->records[0].base != 0)
       arrow->x = arrow->x - state->records[0].base;
   }
@@ -560,9 +560,9 @@ void SelectionScreen_SetupArrow(struct SelectionScreenWork *state, s32 side) {
   state->records[side].kind = 0;
   if (side != 0) {
     /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
-     * as gMenu_CursorObjectTiles where right is read, 35 of 136 instructions
+     * as gMenu_CursorActorTiles where right is read, 35 of 136 instructions
      * differ in tbs-en. */
-    const u8 *right = gMenu_CursorObjectTiles;
+    const u8 *right = gMenu_CursorActorTiles;
 
     count = state->count;
     if (state->top != 0)
@@ -575,7 +575,7 @@ void SelectionScreen_SetupArrow(struct SelectionScreenWork *state, s32 side) {
     // Just past the last of the at most five icons shown.
     state->records[1].x = state->baseX + 16 * (count - 1) + 17;
   } else {
-    arrowTiles = gMenu_CursorLeftObjectTiles;
+    arrowTiles = gMenu_CursorLeftActorTiles;
     state->records[0].x = state->baseX - 9;
     if (state->top != 0)
       state->records[0].kind = 1;
@@ -1315,7 +1315,7 @@ void MenuArrow_NoOpCallback4(void) {}
 /// The caller owns the cache slot and releases it through
 /// MenuArrow_Release.
 void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
-  const void *data = gMenu_CursorObjectTiles;
+  const void *data = gMenu_CursorActorTiles;
   s32 cacheSlot = VramCache_FindFreeEntry();
 
   *slot = cacheSlot;

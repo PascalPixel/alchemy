@@ -353,7 +353,7 @@ static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(speakerId, 0);
+  FieldMessage_ShowAtActor(speakerId, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(firstMessage + 1);
@@ -391,21 +391,21 @@ const struct Trigger *CottageRoomsB_GetTriggers(void) {
 /// ACTOR_MASKED_MAN before the party leaves Vale (gCottageRoomsB_Triggers).
 static void EventScript_AskIsaacHisBusiness(void) {
   FieldScript_Start();
-  ObjectMotion_SetVariantCallback(ACTOR_MASKED_MAN, 2);
+  Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 2);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(MsgValeHeyBoy);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
   Script_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectMotion_SetVariantCallback(ACTOR_MASKED_MAN, 1);
+  Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_OpenMessage(ACTOR_MASKED_MAN, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
-  ObjectMotion_SetVariantCallback(ACTOR_MASKED_MAN, 1);
+  Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 4);
   FieldScript_End();
@@ -419,9 +419,9 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
   struct FieldWork *work;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
+  Actor_SetAngleToward(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
   FieldScript_SetMessageId(MsgValeTheMaskedManWasFelix);
-  FieldMessage_ShowAtObject(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+  FieldMessage_ShowAtActor(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_ShowMessageAndWait(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
@@ -556,7 +556,7 @@ s32 CottageRoomsB_Initialize(void) {
     } else {
       CottageRoomsB_RestoreRoomPatch();
     }
-    ObjectMotion_SetActionVariant(ACTOR_INNKEEPER, 1);
+    Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       actor = Actor_GetById(ACTOR_INVISIBLE_AFTER_KALAY);
       Actor_SetSpriteFlags(actor, 0);
@@ -654,7 +654,7 @@ static void EventScript_DoraWakesIsaac(void) {
   Import_ActorSetPosition(ACTOR_TUNIC, PIXELS(576), PIXELS(650));
   TilesetAnim_Resume(7);
   Import_ActorSetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
-  ObjectSystem_SuspendProjectionAndShowSprites();
+  ActorSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
   Message_SetVoiceFromActor(ACTOR_DORA);
   firstMessage = MsgValeWake;
@@ -663,7 +663,7 @@ static void EventScript_DoraWakesIsaac(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Message_SetVoiceFromActor(ACTOR_DORA);
   FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
-  ObjectSystem_ResumeProjectionAndHideLayers();
+  ActorSystem_ResumeProjectionAndHideLayers();
   FieldScript_WaitFrames(40);
   // Widen the camera bounds and reveal the lightning outside.
   grid->minX = PIXELS(328);
@@ -688,17 +688,17 @@ static void EventScript_DoraWakesIsaac(void) {
   Weather_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(firstMessage + 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
   TilesetAnim_Pause(7);
   FieldScript_WaitFrames(20);
@@ -712,12 +712,12 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 1);
-  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 0);
+  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
-  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 3);
+  Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                      0);
@@ -725,7 +725,7 @@ static void EventScript_DoraWakesIsaac(void) {
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -733,9 +733,8 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(1);
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
-  Object_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER),
-                                SPRITE_TUNIC);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  Actor_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
@@ -751,9 +750,9 @@ static void EventScript_DoraWakesIsaac(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
-  Actor_SetActionScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
+  Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
   FieldScript_WaitFrames(20);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
   Actor_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
   Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
@@ -769,10 +768,10 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Actor_SetActionScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
+  Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   FieldScript_WaitFrames(20);
   (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
@@ -817,8 +816,7 @@ static void EventScript_HurryToThePlaza(void) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
-  Actor_SetActionScript(ACTOR_FLAME_AND_SMOKE,
-                        gCottageRoomsB_FlameShakesScript);
+  Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameShakesScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -842,21 +840,20 @@ static void EventScript_HurryToThePlaza(void) {
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                        gCottageRoomsB_IsaacRunsAheadScript);
-  Actor_SetActionScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsAheadScript);
+  Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
   FieldScript_StartScreenTransition();
   Actor_RefreshSelectorById(ACTOR_DORA);
   Sound_PlaySong(SE_DOOR_OPEN);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
   // Boulder could fall at any second!"
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   Actor_SetPosition(ACTOR_KYLE, PIXELS(414), PIXELS(530));
-  ObjectMotion_SetPositionAndReset(ACTOR_KYLE, 427, 483);
+  Actor_SetPositionAndReset(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
   FieldScript_SetMessageId(MsgValeDoraHurryBoulder);
   FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
@@ -867,17 +864,17 @@ static void EventScript_HurryToThePlaza(void) {
   // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
-  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_KYLE, 415, 589);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
+  Actor_ResetAndSetPositionInMode2(ACTOR_KYLE, 415, 589);
   FieldScript_WaitFrames(10);
-  Actor_SetActionScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
+  Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
   Sound_PlaySong(SE_RUN_BACK);
   FieldScript_WaitFrames(20);
   // ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
   // (gCottageRoomsB_FlameRisesScript) as SE_FLAME_FLARE plays.
-  Actor_SetActionScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameRisesScript);
+  Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameRisesScript);
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.
@@ -896,26 +893,25 @@ ramp:
   // Dora and Isaac look back, startled, then nod to each other.
   Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEffect_ConfigureLinkedObject(
-      ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(80);
   Import_ActorSetPosition(ACTOR_KYLE, 0, 0);
   Actor_LinkPair(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
-  Actor_SetActionScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
-  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER,
-                               gCottageRoomsB_RunToPlazaScript);
+  Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
+  Actor_RunScriptAndWait(ACTOR_PARTY_LEADER, gCottageRoomsB_RunToPlazaScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
@@ -938,7 +934,7 @@ static void EventScript_TalkToInnkeeper(void) {
   } else {
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      ObjectMotion_SetVarCbAndRefresh(ACTOR_INNKEEPER, 2);
+      Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (Script_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
         FieldScript_SetMessageId(MsgValeCameBack2);
@@ -969,12 +965,11 @@ static void EventScript_TalkToInnkeeper(void) {
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void EventScript_RemarkIsaacHasGrown(void) {
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER,
-                              10);
+  Actor_SetAngleToward(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
   FieldScript_SetMessageId(MsgValeYouveGrownSoMuch);
   FieldScript_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
-  ObjectMotion_ArmCallback(ACTOR_MAN_ISAAC_HAS_GROWN,
-                           FACING_NORTHWEST + FACING_STEP, 10);
+  Actor_ArmCallback(ACTOR_MAN_ISAAC_HAS_GROWN, FACING_NORTHWEST + FACING_STEP,
+                    10);
   GameFlag_Set(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
   FieldScript_End();
 }
@@ -1014,45 +1009,45 @@ static void EventScript_VisitSickDora(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 569, 393);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   FieldScript_SetMessageId(MsgValeCoughCoughWho);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 80);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 1);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 1);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 60);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   FieldScript_WaitFrames(80);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
-  ObjectMotion_ResetAndSetPosition(ACTOR_DORA, 584, 406);
+  Actor_ResetAndSetPosition(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   FieldScript_WaitFrames(80);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   FieldScript_WaitFrames(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
   FieldScript_WaitFrames(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   FieldScript_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
-  FieldMessage_ShowAtObject(ACTOR_DORA, 0);
+  FieldMessage_ShowAtActor(ACTOR_DORA, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
@@ -1065,7 +1060,7 @@ static void EventScript_VisitSickDora(void) {
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(ACTOR_DORA, 0);
+  FieldMessage_ShowAtActor(ACTOR_DORA, 0);
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
@@ -1074,20 +1069,20 @@ static void EventScript_VisitSickDora(void) {
   }
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
-  FieldEffect_SpawnLinked(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
+  FieldEffect_SpawnAttached(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
   FieldScript_SetMessageId(firstMessage + 3);
   FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
-  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   FieldScript_WaitFrames(20);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   FieldScript_WaitFrames(40);
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
@@ -1098,26 +1093,26 @@ static void EventScript_VisitSickDora(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
-  ObjectMotion_SetPositionAndCommit(ACTOR_DORA, 586, 400);
+  Actor_SetPositionAndCommit(ACTOR_DORA, 586, 400);
   FieldScript_WaitFrames(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  ObjectMotion_ArmCallback(ACTOR_DORA, FACING_NORTH, 8);
-  ObjectMotion_ArmCallback(ACTOR_DORA, FACING_EAST, 8);
+  Actor_ArmCallback(ACTOR_DORA, FACING_NORTH, 8);
+  Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 8);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 8);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 10);
-  ObjectMotion_Launch(ACTOR_DORA, 4, 20);
-  ObjectMotion_Launch(ACTOR_DORA, 6, 40);
-  ObjectMotion_Launch(ACTOR_DORA, 4, 20);
+  Actor_Jump(ACTOR_DORA, 4, 20);
+  Actor_Jump(ACTOR_DORA, 6, 40);
+  Actor_Jump(ACTOR_DORA, 4, 20);
   // "See? I'm fine!" "Don't worry about me. Go on."
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
   FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   GameFlag_Set(FLAG_VISITED_SICK_DORA);
   GameFlag_Set(FLAG_VALE_DORA_OUT_OF_BED);
   FieldScript_End();
@@ -1139,7 +1134,7 @@ static void EventScript_TalkToDora(void) {
     FieldScript_SetMessageId(MsgValeDontWorryBest);
     FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
   } else {
-    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     FieldScript_WaitFrames(40);
     message = MsgValeUnnOhhKyle;
     FieldScript_SetMessageId(message);
@@ -1178,7 +1173,7 @@ static void EventScript_ShowMythrilBag(void) {
   WaitFrames(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
   clear = 0;
-  actor = Actor_Create(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
+  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;
   actor->y.fixed = PIXELS(5);
@@ -1199,13 +1194,13 @@ static void EventScript_ShowMythrilBag(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 420, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 326, 185);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
-  Actor_SetScript(actor, gCottageRoomsB_MythrilBagRisesScript);
-  Object_WaitForScriptEnd(actor);
-  Actor_SetScript(actor, gCottageRoomsB_MythrilBagWobblesScript);
-  Object_WaitForScriptEnd(actor);
+  Actor_StartScript(actor, gCottageRoomsB_MythrilBagRisesScript);
+  Actor_WaitForScriptEnd(actor);
+  Actor_StartScript(actor, gCottageRoomsB_MythrilBagWobblesScript);
+  Actor_WaitForScriptEnd(actor);
   FieldScript_WaitFrames(20);
   Actor_Release(actor);
-  ObjectMotion_Launch(ACTOR_KRADEN, 2, 20);
+  Actor_Jump(ACTOR_KRADEN, 2, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1262,8 +1257,8 @@ static void CottageRoomsB_SpawnEffectPair(union ActorOrEffect *fieldObject) {
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = Actor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed, parent->y.fixed,
-                         parent->z.fixed);
+    child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                              parent->y.fixed, parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -1323,7 +1318,7 @@ UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
 /// Called by EventScript_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void CottageRoomsB_DemonstrateCatch(void) {
   FieldEffect_LoadActionEffectResources(ABILITY_CATCH, 1);
-  FieldEffect_SetupObjectPair(ACTOR_DORA, ACTOR_TUNIC);
+  FieldEffect_SetupActorPair(ACTOR_DORA, ACTOR_TUNIC);
   FieldEffect_StartCast();
   Field_DispatchTypeHandler(1);
   FieldEffect_StopCasterHook();

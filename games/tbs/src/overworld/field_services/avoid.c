@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct SpriteAnim *entry;
   s32 phase;
 
-  caster = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  caster = Actor_Lookup(gSaveBlock.leaderActorId);
   rec = caster->sprite;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -140,9 +140,9 @@ void FieldEffect_RunAvoid(void) {
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gSaveBlock.cloaked != 0)
-    Object_SetSpriteFlagsFar(object, SPRITE_FLAG_OUTLINED);
+    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_OUTLINED);
   else
-    Object_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlagsFar(object, SPRITE_FLAG_SHADOW);
   Anim_ApplyChildValuesFar(object, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);

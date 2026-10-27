@@ -14,16 +14,16 @@ struct WorldMapScanline;
 struct ScriptOperands;
 struct WorldPosition;
 
-/// How the object system runs (ObjectSystem_Initialize): which camera follows
+/// How the object system runs (ActorSystem_Initialize): which camera follows
 /// the objects and which update moves them.
-enum ObjectSystemMode {
+enum ActorSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.
-  OBJECT_SYSTEM_LAYOUT = 2,
+  ACTOR_SYSTEM_MAP = 2,
   /// The world map: the fixed camera, which projects 3D points onto the
   /// screen.
-  OBJECT_SYSTEM_WORLD_MAP = 3,
+  ACTOR_SYSTEM_WORLD_MAP = 3,
   /// A battle: the fixed camera, and the battle's own motion update.
-  OBJECT_SYSTEM_BATTLE = 4
+  ACTOR_SYSTEM_BATTLE = 4
 };
 
 /// SpriteAnim.kind: the facing table a sprite anim's frames follow
@@ -67,26 +67,26 @@ enum SpriteFrameCodec {
 /// Sprite.flags.
 enum SpriteFlag {
   SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
-  /// Drawn as an outline, in ObjectSystemWork's edge and fill colours.
+  /// Drawn as an outline, in ActorSystemWork's edge and fill colours.
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
 /// Object.spriteStorageKind, its low four bits: what the object's sprite
 /// pointer holds.
-enum ObjectSpriteKind {
-  OBJECT_SPRITE_NONE = 0, ///< nothing drawn
-  OBJECT_SPRITE_ONE = 1,  ///< one sprite
-  OBJECT_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
+enum ActorSpriteKind {
+  ACTOR_SPRITE_NONE = 0, ///< nothing drawn
+  ACTOR_SPRITE_ONE = 1,  ///< one sprite
+  ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
-/// Object_CreateField's id / 4096: what sprites the object is made with.
-enum ObjectCreateKind {
-  OBJECT_CREATE_ONE_SPRITE = 0, ///< the id's sprite (OBJECT_SPRITE_ONE)
-  /// The sprites of the id and id + 1 (OBJECT_SPRITE_GROUP).
-  OBJECT_CREATE_GROUP = 2,
+/// Actor_Create's id / 4096: what sprites the object is made with.
+enum ActorCreateKind {
+  ACTOR_CREATE_ONE_SPRITE = 0, ///< the id's sprite (ACTOR_SPRITE_ONE)
+  /// The sprites of the id and id + 1 (ACTOR_SPRITE_GROUP).
+  ACTOR_CREATE_GROUP = 2,
   /// No sprite: any kind but the two above, and the one the camera object
   /// takes.
-  OBJECT_CREATE_NO_SPRITE = 8
+  ACTOR_CREATE_NO_SPRITE = 8
 };
 
 /// The world map's collision values (WorldMap_GetCollision), 1 to 15; each
@@ -193,7 +193,7 @@ void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation);
 s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation);
 s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames);
 void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step);
-void ObjectSystem_Configure(s32 mode);
+void ActorSystem_Configure(s32 mode);
 struct SpriteAnim *SpriteAnim_Alloc(s32 id);
 void SpriteAnim_Clear(struct SpriteAnim *record);
 struct Sprite *Sprite_Create(s32 id);
@@ -202,175 +202,174 @@ s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
-void Object_SelectAnimation(void *raw, s32 no);
-void Object_SetAnimationSpeed(struct Actor *object, s32 val);
-s32 ObjectScript_SetFlagAndTest(struct Actor *interpreter);
-s32 ObjectScript_ClearFlagAndTest(struct Actor *interpreter);
-void ObjectScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
-                                            s32 operation, s32 value);
-void ObjectScript_SetOrCompareFacing(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void ObjectScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void ObjectScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
-                                s32 value);
-void ObjectScript_SetOrCompareScaleX(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareScaleY(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareVelocityX(struct ScriptOperands *state,
-                                        s32 operation, s32 value);
-void ObjectScript_SetOrCompareVelocityY(struct ScriptOperands *state,
-                                        s32 operation, s32 value);
-void ObjectScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
-                                        s32 operation, s32 value);
-void ObjectScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
-                                         s32 operation, s32 value);
-void ObjectScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+void Actor_SelectAnimation(void *raw, s32 no);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 val);
+s32 ActorScript_SetFlagAndTest(struct Actor *interpreter);
+s32 ActorScript_ClearFlagAndTest(struct Actor *interpreter);
+void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ObjectScript_SetOrCompareTargetX(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareTargetY(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareTargetZ(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                             s32 operation, s32 value);
-void ObjectScript_SetOrCompareGravity(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
-                                            s32 operation, s32 value);
-void ObjectScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
+                               s32 value);
+void ActorScript_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareVelocityX(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareVelocityY(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ObjectScript_SetOrCompareSprite(struct ScriptOperands *state,
+void ActorScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetX(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
-                                                s32 operation, s32 value);
-void ObjectScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
-                                          s32 operation, s32 value);
-void ObjectScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
-                                          s32 operation, s32 value);
-void ObjectScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+                                            s32 operation, s32 value);
+void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
+void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
                                                s32 operation, s32 value);
-void ObjectScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
-                                           s32 operation, s32 value);
-void ObjectScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
-                                             s32 operation, s32 value);
-void ObjectScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
-                                            s32 operation, s32 value);
-void ObjectScript_SetOrComparePaused(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
-                                          s32 operation, s32 value);
-void ObjectScript_SetOrCompareActionParameter(struct ScriptOperands *work,
+void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
                                               s32 operation, s32 value);
-void ObjectScript_SetOrCompareFootprintSide(struct ScriptOperands *work,
+void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+                                          s32 operation, s32 value);
+void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
                                             s32 operation, s32 value);
-void ObjectScript_SetOrCompareLinkedObject(struct ScriptOperands *work,
+void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ObjectScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
-                                            s32 operation, s32 value);
-void ObjectScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
-                                          s32 operation, s32 value);
-void ObjectScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
-                                          s32 operation, s32 value);
+void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
+                                   s32 value);
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+                                       s32 operation, s32 value);
+void ActorScript_SetOrCompareLinkedActor(struct ScriptOperands *work,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+                                           s32 operation, s32 value);
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+                                         s32 operation, s32 value);
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
 s32 MapGrid_GetScreenRelativePosition(struct Actor *object,
                                       s32 *screenPosition);
-void ObjectSystem_Initialize(s32 controlMode);
+void ActorSystem_Initialize(s32 controlMode);
 void nullsub_0800C0C4(void);
 void nullsub_0800C0C8(void);
-void *Object_FindFree(void);
-void Object_Release(struct Actor *object);
-struct Actor *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
-void Object_Initialize(struct Actor *object, const s32 *script);
-void Object_SetAnimationAndSpeed(struct Actor *object, s32 animation, s32 step);
-void Object_SetSpriteRotation(struct Actor *object, u32 rotation);
+void *Actor_FindFree(void);
+void Actor_Release(struct Actor *object);
+struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z);
+void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_SetAnimationAndSpeed(struct Actor *object, s32 animation, s32 step);
+void Actor_SetSpriteRotation(struct Actor *object, u32 rotation);
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                        s32 animationId);
-void Object_RegisterSpriteMetadata(struct Actor *object, s32 animationId);
-void Object_StartApproachLink(struct Actor *object, s32 linkedObjectHandle);
-void Object_StartKeyCheck(struct Actor *object);
-void Object_StartMoveByKeys(struct Actor *object);
-void Object_StartPlayerControl(struct Actor *object);
-void Object_StartWorldMapControl(struct Actor *object);
-void Object_StartIdle(struct Actor *object);
-void Object_StartCamera(struct Actor *object, s32 linkedObjectHandle);
-void Object_WaitForScriptEnd(void *rawObject);
-void Object_SetSpriteFlags(struct Actor *object, u32 flags);
-void Object_SetSpriteBlendMode(struct Actor *object, u32 mode);
-void Object_SetSpriteScale(struct Actor *object, u32 fixedScale);
+void Actor_RegisterSpriteMetadata(struct Actor *object, s32 animationId);
+void Actor_StartApproachLink(struct Actor *object, s32 linkedObjectHandle);
+void Actor_StartKeyCheck(struct Actor *object);
+void Actor_StartMoveByKeys(struct Actor *object);
+void Actor_StartPlayerControl(struct Actor *object);
+void Actor_StartWorldMapControl(struct Actor *object);
+void Actor_StartIdle(struct Actor *object);
+void Actor_StartCamera(struct Actor *object, s32 linkedObjectHandle);
+void Actor_WaitForScriptEnd(void *rawObject);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+void Actor_SetBlendMode(struct Actor *object, u32 mode);
+void Actor_SetSpriteScale(struct Actor *object, u32 fixedScale);
 void Anim_ApplyChildValues(struct Actor *object, u32 param);
-void ObjectSystem_SuspendProjectionAndShowSprites(void);
-void ObjectSystem_ResumeProjectionAndHideLayers(void);
-s32 Object_ReturnTrue(void);
-void ObjectSystem_PlaceSprites(void);
-s32 ObjectCamera_ReturnTrue(void);
-void ObjectSystem_ProjectSprites(void);
+void ActorSystem_SuspendProjectionAndShowSprites(void);
+void ActorSystem_ResumeProjectionAndHideLayers(void);
+s32 Actor_ReturnTrue(void);
+void ActorSystem_PlaceSprites(void);
+s32 ActorCamera_ReturnTrue(void);
+void ActorSystem_ProjectSprites(void);
 
-s32 ObjectScript_SetBase(struct Actor *interpreter);
-s32 ObjectScript_HideSprites(struct Actor *interpreter);
-s32 ObjectScript_ShowSprite(struct Actor *interpreter);
-void Object_WaitForMove(void *fieldObject);
-s32 Object_IsTargetUnset(struct Actor *object);
-void Object_UpdateAllThumb(void);
-void Object_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y,
-                                      s32 z);
-void Object_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Object_RunUpdateAllFromHeap(void);
-void Object_UpdateAllMotion(void);
-s32 ObjectScript_Wait(struct Actor *interpreter);
-s32 ObjectScript_WaitForArrival(struct Actor *interpreter);
-s32 ObjectScript_InvokeCallback(struct Actor *interpreter);
-s32 ObjectScript_FindLabel(struct Actor *interpreter, u32 labelKey);
-s32 ObjectScript_RepeatOrJump(struct Actor *interpreter);
-s32 ObjectScript_JumpToLabel(struct Actor *interpreter);
-s32 ObjectScript_JumpIfTrue(struct Actor *interpreter);
-s32 ObjectScript_JumpIfFalse(struct Actor *interpreter);
-s32 ObjectScript_End(struct Actor *interpreter);
-s32 ObjectScript_TestFlag(struct Actor *interpreter);
-s32 ObjectScript_ToggleFlagAndTest(struct Actor *interpreter);
-s32 ObjectScript_SetAnimation(struct Actor *interpreter);
-s32 ObjectScript_FreeObject(struct Actor *interpreter);
-s32 ObjectScript_Nop(struct Actor *interpreter);
-s32 ObjectScript_PlaySound(struct Actor *interpreter);
-s32 ObjectScript_CheckOverlap(struct Actor *object, s32 *values);
-struct Actor *ObjectScript_FindOverlappingEntry(struct Actor *object,
-                                                s32 *values);
-s32 ObjectScript_SetPositionAndResetMotion(struct Actor *interpreter);
-s32 ObjectScript_ApplyAbsolutePosition(struct Actor *interpreter);
-s32 ObjectScript_ApplyRelativePosition(struct Actor *interpreter);
-s32 ObjectScript_StoreAngleToLinkedObject(struct Actor *interpreter);
-s32 ObjectScript_ApplyLinkedObjectPosition(struct Actor *interpreter);
-s32 ObjectScript_ApplyLocalOffsetPosition(struct Actor *interpreter);
+s32 ActorScript_SetBase(struct Actor *interpreter);
+s32 ActorScript_HideSprites(struct Actor *interpreter);
+s32 ActorScript_ShowSprite(struct Actor *interpreter);
+void Actor_WaitForMove(void *fieldObject);
+s32 Actor_IsTargetUnset(struct Actor *object);
+void Actor_UpdateAllThumb(void);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_RunUpdateAllFromHeap(void);
+void Actor_UpdateAllMotion(void);
+s32 ActorScript_Wait(struct Actor *interpreter);
+s32 ActorScript_WaitForArrival(struct Actor *interpreter);
+s32 ActorScript_InvokeCallback(struct Actor *interpreter);
+s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey);
+s32 ActorScript_RepeatOrJump(struct Actor *interpreter);
+s32 ActorScript_JumpToLabel(struct Actor *interpreter);
+s32 ActorScript_JumpIfTrue(struct Actor *interpreter);
+s32 ActorScript_JumpIfFalse(struct Actor *interpreter);
+s32 ActorScript_End(struct Actor *interpreter);
+s32 ActorScript_TestFlag(struct Actor *interpreter);
+s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter);
+s32 ActorScript_SetAnimation(struct Actor *interpreter);
+s32 ActorScript_Release(struct Actor *interpreter);
+s32 ActorScript_Nop(struct Actor *interpreter);
+s32 ActorScript_PlaySound(struct Actor *interpreter);
+s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
+struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
+                                               s32 *values);
+s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter);
+s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter);
+s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter);
+s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter);
+s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter);
+s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter);
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter);
-s32 Object_ApproachLinkedObject(struct Actor *interpreter);
-s32 Object_Wander(struct Actor *interpreter);
-s32 ObjectScript_WanderNearHome(struct Actor *interpreter);
+s32 Actor_ApproachLinkedActor(struct Actor *interpreter);
+s32 Actor_Wander(struct Actor *interpreter);
+s32 ActorScript_WanderNearHome(struct Actor *interpreter);
 
-void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
-                                   s32 value);
-s32 ObjectScript_ApplyOperandSet(struct Actor *interpreter);
-s32 ObjectScript_ApplyOperandAdd(struct Actor *interpreter);
-s32 ObjectScript_ApplyOperandCompare(struct Actor *interpreter);
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *operands,
+                                    s32 operation, s32 value);
+void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
+                                    s32 value);
+void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                  s32 value);
+s32 ActorScript_ApplyOperandSet(struct Actor *interpreter);
+s32 ActorScript_ApplyOperandAdd(struct Actor *interpreter);
+s32 ActorScript_ApplyOperandCompare(struct Actor *interpreter);
 
-void Object_SetUpdateValue(void *rawObject, s32 value);
+void Actor_SetUpdateValue(void *rawObject, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
                               s32 *secondPosition, s32 radiusB);
-s32 Object_UpdateLeaderControl(struct Actor *interpreter);
-s32 Object_MoveOnWorldMap(struct Actor *interpreter);
+s32 Actor_UpdatePlayerControl(struct Actor *interpreter);
+s32 Actor_MoveOnWorldMap(struct Actor *interpreter);
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter);
-s32 Object_MoveByKeys(struct Actor *interpreter);
+s32 Actor_MoveByKeys(struct Actor *interpreter);
 
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);

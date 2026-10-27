@@ -16,7 +16,7 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// work, the spark tiles' resource entry and the task started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
-/// The caster is the leader, with no target until FieldEffect_SetupObjectPair
+/// The caster is the leader, with no target until FieldEffect_SetupActorPair
 /// names one.
 void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gHeapSlots + HEAP_SLOT_FIELD);
@@ -50,7 +50,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork->lit = 1;
   if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, -1);
+  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
@@ -66,7 +66,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// quarter turn). work->angle becomes that facing, the way the effects aim.
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
-void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
+void FieldEffect_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
   s32 dir;
@@ -74,10 +74,10 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 
   effectWork = gFieldEffectWork;
   effectWork->firstObjectId = userId;
-  user = Actor_GetByActorId((s16)userId);
+  user = Actor_Lookup((s16)userId);
   effectWork->secondObjectId = targetId;
   effectWork->mainObject = user;
-  target = Actor_GetByActorId((s16)targetId);
+  target = Actor_Lookup((s16)targetId);
   dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
   effectWork->child = target;
   effectWork->angle = dir;
@@ -113,7 +113,7 @@ void FieldEffect_StopCasterHook(void) {
   WaitFrames(1);
 }
 
-#define SETUP_OBJECT_SLOTS (gObjects)
+#define SETUP_OBJECT_SLOTS (gActors)
 
 /// Ends a Psynergy effect: frees the field effect sprites still in use and,
 /// unless another effect is being resolved, waits (at most 30 frames) for the
@@ -153,9 +153,9 @@ void FieldEffect_End(void) {
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(union ActorOrEffect *) =
-        FieldEffect_UpdateScaledArcObjectB;
+        FieldEffect_UpdateScaledArcActorB;
     void (*secondActiveUpdate)(union ActorOrEffect *) =
-        FieldEffect_UpdateScaledArcObjectA;
+        FieldEffect_UpdateScaledArcActorA;
     s32 active;
 
     do {
@@ -213,14 +213,14 @@ void FieldEffect_StartCast(void) {
   caster = effectWork->mainObject;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
-  Object_SelectAnimationFar(caster, 0x14);
+  Actor_SelectAnimationFar(caster, 0x14);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
   if (effectWork->visible != 0) {
     Sound_PlaySongFar(SE_POWER_UP);
-    caster->update = FieldEffect_FlickerObjectAndTick;
+    caster->update = FieldEffect_FlickerActorAndTick;
   }
   if (effectWork->active != 0) {
     Actor_SetOthersPaused(caster, 1, 0);
@@ -236,9 +236,9 @@ void FieldEffect_StartCast(void) {
   }
   if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
     if (effectWork->visible != 0) {
-      caster->update = FieldEffect_CycleObjectValueByCounter;
+      caster->update = FieldEffect_CycleActorValueByCounter;
     }
-    Object_SelectAnimationFar(caster, 0x15);
+    Actor_SelectAnimationFar(caster, 0x15);
   } else {
     FieldEffect_StopCasterHook();
   }
@@ -319,11 +319,11 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
   struct FieldWork *event = gFieldWork;
 
-  if (event->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #else
   struct FieldWork **eventCell = (struct FieldWork **)&gFieldWork;
 
-  if ((*eventCell)->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  if ((*eventCell)->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #endif
     s32 result[3];
 

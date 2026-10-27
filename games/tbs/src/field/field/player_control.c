@@ -36,7 +36,7 @@ enum FieldShortcutKind {
 };
 
 /// Unused: stores value as a word in the object's update hook.
-UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
+UNUSED void Actor_SetUpdateValue(void *rawObject, s32 value) {
   struct Actor *object = rawObject;
 
   if (object != NULL)
@@ -62,7 +62,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 
   if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
     work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
-  } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
       work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
@@ -115,8 +115,8 @@ s32 Field_CheckConfiguredKeys(void) {
 
 /// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
 /// with radii radiusA and radiusB (pixels); -1 otherwise. Called by
-/// SC_PLAYER's push test, ObjectScript_CheckOverlap and
-/// ObjectScript_FindOverlappingEntry.
+/// SC_PLAYER's push test, ActorScript_CheckOverlap and
+/// ActorScript_FindOverlappingEntry.
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
                               s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -146,13 +146,13 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gObject_PlayerScript, which the map loop
+/// Run each frame by gActor_PlayerScript, which the map loop
 /// (run_scene.c) starts on the leader through
-/// Object_StartPlayerControl when it hands control back on the field.
+/// Actor_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gFieldWork->blockedSteps and creates the
 /// footprint objects.
-s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
+s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition position;
@@ -344,7 +344,7 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
       contact.y = object->y.fixed;
       contact.z = object->z.fixed;
       Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
-      pushedObject = gObjects;
+      pushedObject = gActors;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, pushedObject++) {
         s32 radius;
 
@@ -370,7 +370,7 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
           testPosition.z = pushedObject->z.fixed;
           heading = direction;
           Vector_AddPolarOffset(0x4000, direction, &testPosition);
-          if (!ObjectScript_CheckOverlap(pushedObject, (s32 *)&testPosition)) {
+          if (!ActorScript_CheckOverlap(pushedObject, (s32 *)&testPosition)) {
             testPosition.x = pushedObject->x.fixed;
             testPosition.y = pushedObject->y.fixed;
             testPosition.z = pushedObject->z.fixed;
@@ -424,16 +424,16 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
       gFieldWork->blockedSteps = 0;
   }
   if (pushed != 0) {
-    Object_SelectAnimation(object, 8);
+    Actor_SelectAnimation(object, 8);
   } else if (collision != 0) {
     s32 action;
 
     action = 9;
     if (Unit_GetFar(gSaveBlock.leaderActorId)->hp == 0)
       action = 22;
-    Object_SelectAnimation(object, action);
+    Actor_SelectAnimation(object, action);
   } else {
-    Object_SelectAnimation(object, movementAnimation);
+    Actor_SelectAnimation(object, movementAnimation);
   }
 
   // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame.
@@ -461,7 +461,7 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
   } else {
     s32 speed;
 
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     object->velocityX = 0;
@@ -480,8 +480,8 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
       object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
-    effect = Object_CreateField(FIELD_SPRITE_FOOTPRINT, object->x.fixed,
-                                object->y.fixed, object->z.fixed);
+    effect = Actor_Create(FIELD_SPRITE_FOOTPRINT, object->x.fixed,
+                          object->y.fixed, object->z.fixed);
     if (effect != 0) {
       struct Sprite *animation;
 
@@ -492,7 +492,7 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
       // from the heading.
       effect->groundHeight = object->groundHeight;
       animation = effect->sprite;
-      Object_Initialize(effect, gWorldMap_FootprintActions);
+      Actor_StartScript(effect, gWorldMap_FootprintActions);
       effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (animation != 0) {
@@ -527,12 +527,12 @@ s32 Object_UpdateLeaderControl(struct Actor *interpreter) {
 /// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
-/// Run each frame by gObject_WorldMapScript, which the map loop
+/// Run each frame by gActor_WorldMapScript, which the map loop
 /// (run_scene.c) starts on the leader through
-/// Object_StartWorldMapControl on the world map. Sets the leader's
+/// Actor_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.
-s32 Object_MoveOnWorldMap(struct Actor *interpreter) {
+s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition position;
@@ -746,9 +746,9 @@ update_object:
       gFieldWork->blockedSteps = 0;
   }
   if (collision != 0)
-    Object_SelectAnimation(object, 9);
+    Actor_SelectAnimation(object, 9);
   else
-    Object_SelectAnimation(object, movementAnimation);
+    Actor_SelectAnimation(object, movementAnimation);
 
   if (collision != 0) {
     object->targetX = TARGET_UNSET;
@@ -768,7 +768,7 @@ update_object:
     object->timer = 0;
     object->userValue = 2;
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
     // collision is 0 here: keep the speed, along the chosen heading.
@@ -794,7 +794,7 @@ update_object:
     yawStep = targetCameraYaw - perspective->yaw;
   perspective->yaw += yawStep;
 
-  if (object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+  if (object->spriteStorageKind == ACTOR_SPRITE_ONE) {
     playerSprite = object->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
@@ -813,11 +813,11 @@ update_object:
     // with no shadow, is drawn semi-transparent at priority 2.
     if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
         object->timer == 0 && collision == 0) {
-      ripple = Object_CreateField(FIELD_SPRITE_RIPPLE, object->x.fixed,
-                                  object->y.fixed, object->z.fixed);
+      ripple = Actor_Create(FIELD_SPRITE_RIPPLE, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
-        Object_Initialize(ripple, gWorldMap_FootprintActions + 3);
+        Actor_StartScript(ripple, gWorldMap_FootprintActions + 3);
         ripple->motionFlags = collision;
         ripple->layer = 1;
         if (rippleSprite != 0) {
@@ -836,7 +836,7 @@ update_object:
 }
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
-/// Returns 1. Run each frame by gObject_KeyCheckScript, which the
+/// Returns 1. Run each frame by gActor_KeyCheckScript, which the
 /// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
 /// does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
@@ -852,15 +852,15 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
 /// into an occupied cell, across a change of metatile behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gObject_KeysScript, which the map loop starts
+/// Run each frame by gActor_KeysScript, which the map loop starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
-s32 Object_MoveByKeys(struct Actor *interpreter) {
+s32 Actor_MoveByKeys(struct Actor *interpreter) {
   struct Actor *object = interpreter;
 
   struct FieldPosition position;
   /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
-   * instruction touches, the size of Object_MoveOnWorldMap's probe locals;
+   * instruction touches, the size of Actor_MoveOnWorldMap's probe locals;
    * without it, 4 of 213 instructions differ in tbs-en. */
   UNUSED u8 unusedProbeFrame[68];
   struct MapGridCell *sourceCell;
@@ -939,14 +939,14 @@ s32 Object_MoveByKeys(struct Actor *interpreter) {
     else
       gFieldWork->blockedSteps = 0;
   }
-  Object_SelectAnimation(object, animation);
+  Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
     SET_VELOCITY(object, 0, 0, 0);
   } else {
-    Object_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
   }
   object->scriptCursor++;
   return 1;

@@ -36,7 +36,7 @@ struct AbilityDefinition;
 struct DjinnListTable;
 struct FieldEffectSprite;
 struct PagedList;
-struct ObjectSystemWork;
+struct ActorSystemWork;
 struct PsynergyEntry;
 struct PlacementDescriptor;
 struct GlyphRect;
@@ -66,9 +66,9 @@ extern const u8 gMenu_QuantityTiles[];
 extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
-#ifndef OWN_gObjectSystemWork
-/// Heap slot 6: the object system's work (struct ObjectSystemWork).
-extern struct ObjectSystemWork *gObjectSystemWork;
+#ifndef OWN_gActorSystemWork
+/// Heap slot 6: the object system's work (struct ActorSystemWork).
+extern struct ActorSystemWork *gActorSystemWork;
 #endif
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
@@ -97,7 +97,7 @@ extern const u8 gMenu_BackdropFrameTile[];
 extern const u8 gMenu_ColonString[];
 #endif
 /// The selection screen's left arrow, 8 by 16 at 256 colours (cursor_l).
-extern u8 gMenu_CursorLeftObjectTiles[];
+extern u8 gMenu_CursorLeftActorTiles[];
 /// `0123456789ABCDEF`, drawn by a debug window.
 extern const u8 gMenu_HexDigitsString[];
 /// The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in

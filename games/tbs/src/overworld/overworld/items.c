@@ -17,8 +17,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing =
-      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+  s32 facing = ((struct Actor *)Actor_Lookup(gSaveBlock.leaderActorId))->facing;
   s32 actorAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
   s32 tileAhead;
 
@@ -214,8 +213,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing =
-      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
+  s32 facing = ((struct Actor *)Actor_Lookup(gSaveBlock.leaderActorId))->facing;
   s32 actorAhead =
       Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, group);
   s32 tileAhead;
@@ -272,13 +270,13 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   userId = ((u32)packed >> 10) & 0xF;
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  Actor_GetByActorId(gSaveBlock.leaderActorId);
+  Actor_Lookup(gSaveBlock.leaderActorId);
   beforeEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), group, &target);
   afterEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, target);
+  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

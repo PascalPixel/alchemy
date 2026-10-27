@@ -8,13 +8,13 @@ STATIC_ASSERT(offsetof(struct Actor, velocityY) == 0x28);
 STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 
-/// ObjectSystem_Initialize allocates the 64 objects in
-/// HEAP_SLOT_OBJECTS.
+/// ActorSystem_Initialize allocates the 64 objects in
+/// HEAP_SLOT_ACTORS.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
-#define EFFECT_OBJECT_POOL gObjects
+#define EFFECT_OBJECT_POOL gActors
 #else
-// UB: gObjects and gFieldWork are separate globals. The named pool load
+// UB: gActors and gFieldWork are separate globals. The named pool load
 // changes register allocation and shrinks StartRandomParticleEmitter from 0x158
 // to 0x156 bytes in tbs-en; keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct Actor **)((u8 *)&gFieldWork - 88))
@@ -26,7 +26,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 /// it stands on moves it. Called by two map overlays (Suhalla Desert, Lamakan
 /// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
-  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   struct TreasureSpot *marker = gFieldWork->treasureSpots;
   s32 markerIndex = 0;
   s32 x;
@@ -67,12 +67,12 @@ void TreasureSpot_MoveLeaderAway(void) {
 /// Starts the particle script and its first child at priority 1, if the spawn
 /// succeeded. Allocation failure leaves the effect absent. The script sinks
 /// the sparkle a quarter pixel a frame for 60 frames, then frees it.
-static inline void Object_InitializeSparkle(struct Actor *object) {
+static inline void Actor_InitializeSparkle(struct Actor *object) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
   if (object != 0) {
-    Object_InitializeFar(object, gFieldEffect_ParticleScript);
-    Object_SelectAnimationFar(object, 0);
+    Actor_StartScriptFar(object, gFieldEffect_ParticleScript);
+    Actor_SelectAnimationFar(object, 0);
     object->sprite->image.priority = 1;
   }
 }
@@ -102,9 +102,9 @@ void ItemDisplay_EmitSparkles(union ActorOrEffect *fieldObject) {
   position.vector.z = emitter->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                        position.vector.z);
-  Object_InitializeSparkle(object);
+  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                       position.vector.z);
+  Actor_InitializeSparkle(object);
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
@@ -150,10 +150,10 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
     do {
       if (effect->script != 0) {
         if (effect->update == Reveal_EmitSparkles) {
-          Object_ReleaseFar(effect);
+          Actor_ReleaseFar(effect);
         }
         if (effect->script == gFieldEffect_ParticleScript) {
-          Object_ReleaseFar(effect);
+          Actor_ReleaseFar(effect);
         }
       }
       work--;
@@ -162,11 +162,11 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   }
 
   WaitFrames(3);
-  picture = Object_CreateFar(SPRITE_BLANK, pictureX, 16 << 16, srcZ);
+  picture = Actor_CreateFar(SPRITE_BLANK, pictureX, 16 << 16, srcZ);
   if (picture == 0)
     return 0;
 
-  Object_InitializeFar(picture, gFieldEffect_ParticleEmitterScript);
+  Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
   {
     struct Sprite *sprite = picture->sprite;
     void *iconBuffer;
@@ -199,9 +199,9 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
 
 /// Releases object unless it is NULL. Called by Field_ExamineCell to drop the
 /// picture of an item nobody could carry.
-void Object_DestroyIfPresent(void *object) {
+void Actor_ReleaseIfPresent(void *object) {
   if (object != 0)
-    Object_ReleaseFar(object);
+    Actor_ReleaseFar(object);
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
@@ -214,17 +214,17 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *object) {
   if (object == 0)
     return;
 
-  leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  leader = Actor_Lookup(gSaveBlock.leaderActorId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
   object->acceleration = 1 << 16;
   object->speedLimit = 2 << 16;
   object->motionFlags = 0;
-  Object_SetMoveTargetFar(object, leader->x.fixed, leader->y.fixed + (36 << 16),
-                          leader->z.fixed);
+  Actor_SetMoveTargetFar(object, leader->x.fixed, leader->y.fixed + (36 << 16),
+                         leader->z.fixed);
   WaitFrames(3);
-  Object_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
-  Object_InitializeFar(object, gFieldEffect_RisingPulseScript);
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
+  Actor_StartScriptFar(object, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
@@ -237,10 +237,10 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+    leader = Actor_Lookup(gSaveBlock.leaderActorId);
     if (flags & 1) {
-      Object_SetSpriteFlagsFar(object, 0);
-      Object_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
+      Actor_SetSpriteFlagsFar(object, 0);
+      Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       ((struct Actor *)object)->velocityY = 0x20000;
       ((struct Actor *)object)->gravity = 0x4000;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
@@ -254,7 +254,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags == 3) {
       WaitFrames(80);
     }
-    Object_SelectAnimationFar(leader, 1);
+    Actor_SelectAnimationFar(leader, 1);
   }
 }
 
@@ -265,11 +265,11 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// free, heap block 17, taken for the icon, is not released (the map change's
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
-  struct Actor *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Actor *object =
-      Object_CreateFar(SPRITE_BLANK, leader->x.fixed,
-                       leader->y.fixed + (36 << 16), leader->z.fixed);
+      Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
+                      leader->y.fixed + (36 << 16), leader->z.fixed);
 
   if (object != 0) {
     struct Sprite *sprite = object->sprite;
@@ -290,8 +290,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader(object);
 
     WaitFrames(80);
-    Object_SelectAnimationFar(leader, 1);
-    Object_ReleaseFar(object);
+    Actor_SelectAnimationFar(leader, 1);
+    Actor_ReleaseFar(object);
   }
 }
 
@@ -319,7 +319,7 @@ void FieldEffect_ClearRandomParticles(void) {
     do {
       if (effect->script != 0) {
         if (effect->script == gFieldEffect_ParticleScript)
-          Object_ReleaseFar(effect);
+          Actor_ReleaseFar(effect);
       }
       remainingActors--;
       effect++;
@@ -350,9 +350,9 @@ void Reveal_EmitSparkles(union ActorOrEffect *fieldObject) {
   position.vector.z = source->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                        position.vector.z);
-  Object_InitializeSparkle(object);
+  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                       position.vector.z);
+  Actor_InitializeSparkle(object);
 }
 
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
@@ -390,7 +390,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   // The layout's treasure spots: (column, row, id) triples, ended by 0xff,
   // 0xff; the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
-  actor = Actor_GetByActorId(gSaveBlock.leaderActorId);
+  actor = Actor_Lookup(gSaveBlock.leaderActorId);
   leaderColumn = actor->x.fixed >> 20;
   leaderRow = actor->z.fixed >> 20;
   if (markerData != 0) {
@@ -425,14 +425,14 @@ void FieldEffect_SpawnNearbyMarkers(void) {
             if (entry->condition != -1 &&
                 GameFlag_GetFar(entry->condition) == 0) {
               /* FAKEMATCH(temporary): the spawned marker reuses actor, so
-               * the one pseudo keeps Actor_GetByActorId's result in r5;
+               * the one pseudo keeps Actor_Lookup's result in r5;
                * as a variable of its own, 9 of 163 instructions differ in
                * tbs-en. */
-              actor = Object_CreateFar(SPRITE_BLANK, (column << 20) + (8 << 16),
-                                       0, (row << 20) + (8 << 16));
+              actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + (8 << 16),
+                                      0, (row << 20) + (8 << 16));
               if (actor != 0) {
-                Object_InitializeFar(actor, gFieldEffect_MarkerParticleScript);
-                Object_SetSpriteFlagsFar(actor, 0);
+                Actor_StartScriptFar(actor, gFieldEffect_MarkerParticleScript);
+                Actor_SetSpriteFlagsFar(actor, 0);
                 (actor)->update = Reveal_EmitSparkles;
               }
             }

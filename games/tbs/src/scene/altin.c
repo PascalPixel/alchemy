@@ -357,7 +357,7 @@ static void Altin_AskAboutFirstVisit(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
 
-  FieldMessage_ShowAtObject(ACTOR_GREETING_STRONGMAN, 0);
+  FieldMessage_ShowAtActor(ACTOR_GREETING_STRONGMAN, 0);
 
   if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     FieldScript_ShowMessageAndWait(ACTOR_GREETING_STRONGMAN, 0);
@@ -398,7 +398,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = Actor_GetById(ACTOR_WATER_BEAST);
 
-      FieldCamera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_SetSpeed(0x10000, 0x2000);
       FieldCamera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as an actor id. No actor has
@@ -416,7 +416,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
       FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       FieldCamera_WaitForArrival();
     }
-    ObjectMotion_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
   }
   FieldScript_End();
 }
@@ -607,7 +607,7 @@ static void Altin_EnterDoor(void) {
 
   work = gFieldWork;
   FieldScript_Start();
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     actor = Actor_GetById(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;
@@ -656,7 +656,7 @@ static void Altin_EnterDoor(void) {
     if (doorIndex != DOOR_SANCTUM) {
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
     } else {
-      ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+      Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
     }
   }
@@ -698,7 +698,7 @@ static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
       MapGrid_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
-    Object_SelectAnimation(beast, 1);
+    Actor_SelectAnimation(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
@@ -716,7 +716,7 @@ static void Altin_BeastHop(union ActorOrEffect *fieldObject) {
   if (beast->timer == 0) {
     Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    Object_SelectAnimation(beast, 2);
+    Actor_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -736,7 +736,7 @@ static void Altin_BeastHopAway(void) {
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
   Script_PlaySong(SE_SPLASH);
-  Actor_DestroyById(ACTOR_WATER_BEAST);
+  Actor_ReleaseById(ACTOR_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
   FieldScript_WaitFrames(4);
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -798,30 +798,30 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
-    Actor_DestroyById(ACTOR_FLOODED_ARMOR_MERCHANT);
-    Actor_DestroyById(ACTOR_FLOODED_ITEM_MERCHANT);
+    Actor_ReleaseById(ACTOR_FLOODED_ARMOR_MERCHANT);
+    Actor_ReleaseById(ACTOR_FLOODED_ITEM_MERCHANT);
   } else if (Script_GetFlag(FLAG_ALTIN_WATER_DROPPED_TWICE) != 0) {
     MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
-    Actor_DestroyById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
-    Actor_DestroyById(ACTOR_FLOODED_ARMOR_MERCHANT);
-    Actor_DestroyById(ACTOR_FLOODED_ITEM_MERCHANT);
+    Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
+    Actor_ReleaseById(ACTOR_FLOODED_ARMOR_MERCHANT);
+    Actor_ReleaseById(ACTOR_FLOODED_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) != 0) {
     MapGrid_CopyCellsTo(0, 64, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    Actor_DestroyById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
-    Actor_DestroyById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
-    Actor_DestroyById(ACTOR_FLOODED_ITEM_MERCHANT);
+    Actor_ReleaseById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
+    Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
+    Actor_ReleaseById(ACTOR_FLOODED_ITEM_MERCHANT);
   } else {
     MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-    Actor_DestroyById(ACTOR_MAN_WATERS_SUBSIDED);
-    Actor_DestroyById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
-    Actor_DestroyById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
+    Actor_ReleaseById(ACTOR_MAN_WATERS_SUBSIDED);
+    Actor_ReleaseById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
+    Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
   }
   // Restore the remaining beast spitting water, with its sound
   // (SE_AMBIENT_WATER) and its spray.
   if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
-    Actor_DestroyById(ACTOR_WATER_BEAST);
+    Actor_ReleaseById(ACTOR_WATER_BEAST);
   } else {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_SetSpriteColorById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
@@ -847,9 +847,9 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_GetById(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_GetById(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_GetById(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  ObjectMotion_SetActionVariant(ACTOR_FIRST_CRATE, 1);
-  ObjectMotion_SetActionVariant(ACTOR_SECOND_CRATE, 1);
-  ObjectMotion_SetActionVariant(ACTOR_THIRD_CRATE, 1);
+  Actor_SetSpritePriority(ACTOR_FIRST_CRATE, 1);
+  Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
+  Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
   // Redraw at the leader after the map and object state are ready.
   WaitFrames(1);
   FieldScript_Start();
@@ -938,15 +938,15 @@ static void Altin_SprayDrift(union ActorOrEffect *fieldObject) {
 static void Altin_BeastSpawnSpray(void) {
   union ActorOrEffect *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union ActorOrEffect *)Actor_Create(SPRITE_DUST_PUFF, PIXELS(64),
-                                                 0, PIXELS(400)));
+    spray = ((union ActorOrEffect *)FieldActor_Create(
+        SPRITE_DUST_PUFF, PIXELS(64), 0, PIXELS(400)));
     if (spray != 0) {
       spray->actor.timer = WATER_SPRAY_LIFETIME;
       spray->actor.userValue = 0;
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
       Altin_SprayInitialize(&spray->actor);
       spray->actor.update = Altin_SprayDrift;
-      Object_SelectAnimation(&spray->actor, 1);
+      Actor_SelectAnimation(&spray->actor, 1);
     }
   }
 }
@@ -969,13 +969,13 @@ static void Altin_ScareOffBeast(void) {
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
   Script_PlaySong(SE_BEAST_CRY);
-  ObjectMotion_SetVarCbAndRefresh(ACTOR_WATER_BEAST, 2);
+  Actor_RunRepeatedMotion(ACTOR_WATER_BEAST, 2);
   FieldScript_WaitFrames(20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);
   Altin_BeastHopAway();
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
-  ObjectMotion_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
   GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
   FieldScript_End();
 }

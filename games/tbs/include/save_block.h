@@ -174,7 +174,7 @@ struct SaveBlock {
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
   s8 pausedPose;           ///< Halt: the stopped object's first animation param
-  s16 pausedObject;        ///< Halt: the stopped object; -1 for none
+  s16 haltedActor;         ///< Halt: the stopped object; -1 for none
   s16 cloaked;             ///< 1 under Cloak, which prevents battles
   u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
   u32 pausedUpdate; ///< Halt: the stopped object's update; not read by name

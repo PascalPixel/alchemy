@@ -77,9 +77,9 @@ const struct ActorTemplate *KolimaForestGlade_GetActorTemplates(void) {
 /// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
-  struct PushedObjectProbe result;
+  struct PushedActorProbe result;
   FieldScript_Start();
-  if (PushedObject_FindClearPosition(&result))
+  if (PushedActor_FindClearPosition(&result))
     Actor_MoveAndRedraw(result);
   FieldScript_End();
 }
@@ -125,7 +125,7 @@ s32 KolimaForestGlade_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gPushedObject_DirectionSteps[] = {
+s32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -135,11 +135,11 @@ s32 gPushedObject_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gPushedObject_FootprintKinds[] = {
+u32 gPushedActor_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gPushedObject_FootprintBounds[] = {
+s32 gPushedActor_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,

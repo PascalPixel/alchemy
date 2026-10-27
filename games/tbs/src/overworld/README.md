@@ -234,8 +234,8 @@ event's work serves the Djinn joining as well as Psynergy.
   moves and draws.
 - **treasure spot**: a chest or Psynergy Stone the map places at one of
   its cells; the field work holds up to ten, apart from the actors.
-- **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon scene
-  and `OBJECT_SYSTEM_WORLD_MAP` on the world map.
+- **mode**: `work->mode` is `ACTOR_SYSTEM_MAP` on a town or dungeon scene
+  and `ACTOR_SYSTEM_WORLD_MAP` on the world map.
 
 ## Evidence
 

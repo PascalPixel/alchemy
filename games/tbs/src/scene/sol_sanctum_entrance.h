@@ -2,7 +2,7 @@
 #define ALCHEMY_SOL_SANCTUM_ENTRANCE_H
 
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "flags.h"
 

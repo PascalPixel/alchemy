@@ -1,7 +1,7 @@
 #include "save_block.h"
 #include "unit/debug/level.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
 #include "unit/window/screens.h"
@@ -16,7 +16,7 @@
 #include "sound.h"
 #include "system.h"
 #include "level.h"
-#include "field_service.h"
+#include "event_inline.h"
 #include "actor.h"
 #include "party_state.h"
 #include "types.h"
@@ -533,7 +533,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 
 /// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
-/// its target where it is (overworld/field_services/force.c).
+/// its target where it is (overworld/event_commands/force.c).
 static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;

@@ -376,7 +376,7 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 /// object placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
 /// object of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
-/// Reveal's effect (field_services/reveal.c).
+/// Reveal's effect (event_commands/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct Actor *actor;

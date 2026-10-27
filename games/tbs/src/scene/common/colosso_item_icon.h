@@ -14,7 +14,7 @@
 #include "system.h"
 #include "resource.h"
 #include "actor.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "animspr.h"
 #include "mem.h"
 #include "dma.h"

@@ -3,7 +3,7 @@
 /// Lighthouse's aerie: Psynergy shown in an event. One is the villager's in
 /// Vale: "Behold, the power of Psynergy!"
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "ability_ids.h"
 
 /// Prepares the effect work and spark tiles of Move (ability 140) for the

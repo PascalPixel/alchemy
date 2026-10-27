@@ -5,7 +5,7 @@
 #include "action_script.h"
 #include "types.h"
 #include "actor.h"
-#include "script_layer.h"
+#include "event_layer.h"
 
 /// An object script call, each frame of the fall: the speck flickers between
 /// palettes 10 and 7, every second frame.

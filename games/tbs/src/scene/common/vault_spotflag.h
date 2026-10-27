@@ -4,7 +4,7 @@
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 #include "types.h"
 #include "actor.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "flags.h"
 
 /// The leader stands beside the Bone on the inn's floor, so the girl at the

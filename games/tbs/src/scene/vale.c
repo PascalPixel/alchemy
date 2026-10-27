@@ -80,7 +80,7 @@
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
 #include "unit/window/window.h"
 #include "unit/window/screens.h"
@@ -100,8 +100,8 @@
 #include "vale.h"
 #include "types.h"
 #include "call.h"
-#include "script_layer.h"
-#include "field_service.h"
+#include "event_layer.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"
@@ -343,7 +343,7 @@ enum ValeOpeningActorId {
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
-  /// Sprite 0xd7, the hand of Move (field_services/catch.c): it pushes the
+  /// Sprite 0xd7, the hand of Move (event_commands/catch.c): it pushes the
   /// pillar for Garet, shedding sparkles.
   /// ★ Named from what the player sees: a large open hand,
   /// spr_215.png (its render)

@@ -10,7 +10,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "animspr.h"

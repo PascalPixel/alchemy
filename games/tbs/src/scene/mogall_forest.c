@@ -64,13 +64,13 @@
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "actor.h"
 #include "map_grid_copy.h"
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"

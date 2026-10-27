@@ -21,7 +21,7 @@
 #include "unit/scene/kolima_forest_cliff.h"
 #include "unit/scene/common/kolima_palette.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -38,7 +38,7 @@
 #include "pushed_object.h"
 #include "actor.h"
 #include "save_block.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "songs.h"
 

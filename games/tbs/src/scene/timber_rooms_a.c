@@ -34,12 +34,12 @@
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
 #include "save_block.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "unit/import.h"
 #include "unit/scene/timber_rooms_a.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
-#include "field_service.h"
+#include "unit/overworld/event_commands.h"
+#include "event_inline.h"
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"

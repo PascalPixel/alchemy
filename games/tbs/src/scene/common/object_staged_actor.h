@@ -18,7 +18,7 @@
 #include "scene_header.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "types.h"
 #include "songs.h"
 

@@ -2,7 +2,7 @@
 #define MCCOY_PALACE_GROUNDS_H
 
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 
 #define NULL ((void *)0)

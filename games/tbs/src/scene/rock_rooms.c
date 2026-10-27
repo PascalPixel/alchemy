@@ -33,10 +33,10 @@
 /// hides the location name.
 
 #include "save_block.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "unit/scene/rock_rooms.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "rock_rooms.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

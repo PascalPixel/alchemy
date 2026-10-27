@@ -12,7 +12,7 @@
 /// Sets each of the 1344 colour channels of step to the amount to add each
 /// frame for source to reach target in frames frames; with frames 0 or less
 /// step is left as it was. Called by PaletteFade_StartInterpolation and by
-/// the weather effects (field_services/weather.c).
+/// the weather effects (event_commands/weather.c).
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 remainingChannels;
@@ -104,7 +104,7 @@ extern u16 gColorBuffer_ChannelCurveContrast[];
 /// selection: PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
 /// PALETTES_OBJECTS for the OBJ's 224. Called by the
 /// ApplyColorTo functions below, PaletteFade_Initialize and the
-/// weather effects (field_services/weather.c).
+/// weather effects (event_commands/weather.c).
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;

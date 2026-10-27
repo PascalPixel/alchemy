@@ -138,7 +138,7 @@ for that moment themselves as they act. Halt holds one person still at a
 time, so casting it again frees the one held before.
 
 `Field_UsePsynergy` runs a cast, `FieldPsynergy_Run` plays the
-effect, and each Psynergy's effect is the part of `field_services/` named for
+effect, and each Psynergy's effect is the part of `event_commands/` named for
 it, whose comment names the abilities that reach it. A trigger's moment is
 `enum PsynergyPhase`, and what an ability does on the field is
 `enum FieldPsynergy`, the `type` column of `games/tbs/src/game/abilities.tsv`.
@@ -173,7 +173,7 @@ nearest place when the d-pad is let go, and a place's name shows from closer
 by.
 
 `WorldPicture_Show` draws the picture, the screen's own work is in
-[`field_services/world_map.c`](field_services/world_map.c), and
+[`event_commands/world_map.c`](event_commands/world_map.c), and
 `gWorldPicture_AreaMarkers` lists each place's visited flag, marker and name.
 
 | Name | Value | Meaning |
@@ -224,7 +224,7 @@ event's work serves the Djinn joining as well as Psynergy.
   walk (above).
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/abilities.tsv`, named by `enum FieldPsynergy`
-  (`unit/overworld/field_services.h`). Whirlwind and Gale share
+  (`unit/overworld/event_commands.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.
 - **field effect**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldPsynergy`), its
@@ -265,4 +265,4 @@ that nothing else uses.
 `Event_ForwardShowMessageAtPosition` are unused: each is reached only
 through a bare [veneer](../../glossary.md#veneer) in
 `system/far_call/OVERWORLD.S`, which has no symbol for code to call
-([`field_services/messages.c`](field_services/messages.c)).
+([`event_commands/messages.c`](event_commands/messages.c)).

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "ability_ids.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "flags.h"
 #include "songs.h"

@@ -6,7 +6,7 @@
 /// flags.
 
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "types.h"
 
 #define NULL ((void *)0)

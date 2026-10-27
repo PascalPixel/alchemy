@@ -2,7 +2,7 @@
 /// Vale's storm and Vale's homes: going indoors through a door.
 #include "types.h"
 #include "actor.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "flags.h"
 
 /// Takes exit no in the backdrop fade over 16 frames, first stopping the

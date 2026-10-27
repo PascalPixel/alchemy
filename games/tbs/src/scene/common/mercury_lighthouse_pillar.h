@@ -11,7 +11,7 @@
 #include "types.h"
 #include "mercury.h"
 #include "iwram_call.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "engine_call.h"
 #include "field_effect.h"
 #include "ram_buffer.h"

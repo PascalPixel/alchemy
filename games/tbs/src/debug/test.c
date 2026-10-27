@@ -2,7 +2,7 @@
 #include "unit/import.h"
 #include "unit/debug/test.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
 #include "unit/window/screens.h"
@@ -238,7 +238,7 @@ static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving ACTOR_IVY: run at phase 1 of Force cast at it,
 /// this sets the effect's childMode, and Force's shot then leaves its target
-/// where it is (overworld/field_services/force.c).
+/// where it is (overworld/event_commands/force.c).
 static void MenuTest_EnableEffectChildMode(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }

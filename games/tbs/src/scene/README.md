@@ -250,8 +250,8 @@ frame), a callback (a function the scene runs once a frame) or a hook (a
 function one actor runs each frame). A request the script raises, like
 this exit, waits until the script has finished.
 
-A script is plain C written in the calls of `script_layer.h`,
-`field_service.h` and `engine_call.h`. A step that takes time runs the
+A script is plain C written in the calls of `event_layer.h`,
+`event_inline.h` and `engine_call.h`. A step that takes time runs the
 game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
 explains it). A callback is added with `Task_AddFrame`.
 

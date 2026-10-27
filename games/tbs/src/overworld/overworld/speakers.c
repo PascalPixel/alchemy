@@ -44,7 +44,7 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 /// with the Speech option off (gSaveBlock.speech). Message_OpenWindowFar
 /// takes it in the high half of its last argument and
 /// Message_SetVoiceFromActor as the window's voiceSound
-/// (field_services/messages.c); the shops ask it for their keepers.
+/// (event_commands/messages.c); the shops ask it for their keepers.
 s32 Speaker_GetVoice(u32 id) {
   u8 portraitId;
 

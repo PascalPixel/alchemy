@@ -43,10 +43,10 @@
 
 #include "save_block.h"
 #include "scene_ids.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "unit/scene/west_lunpa_cave.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 #include "fixed_math.h"

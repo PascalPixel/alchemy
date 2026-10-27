@@ -93,7 +93,7 @@ main	rom_main_03	games/tbs/src/game/element_table
 main	rom_main_03	games/tbs/src/game/djinn_table
 main	rom_main_04	games/tbs/src/system/far_call/OVERWORLD
 main	rom_main_04	games/tbs/src/overworld/overworld
-main	rom_main_04	games/tbs/src/overworld/field_services
+main	rom_main_04	games/tbs/src/overworld/event_commands
 main	rom_main_04	games/tbs/src/overworld/arcspark
 main	rom_main_04	games/tbs/src/overworld/encounter_zones
 main	rom_main_04	games/tbs/src/overworld/location_rules

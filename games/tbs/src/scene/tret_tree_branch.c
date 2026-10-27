@@ -30,7 +30,7 @@
 
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -50,7 +50,7 @@
 #include "irq.h"
 #include "save_block.h"
 #include "ability_ids.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "engine_call.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"

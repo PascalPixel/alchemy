@@ -299,7 +299,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   declaration: with the exact prototype in scope the arguments are set up in
   another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
-  unit headers under `UBFIX`, and `script_layer.h` gathers the engine routines
+  unit headers under `UBFIX`, and `event_layer.h` gathers the engine routines
   the scenes call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the

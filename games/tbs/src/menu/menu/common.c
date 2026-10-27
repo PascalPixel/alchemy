@@ -41,7 +41,7 @@ s32 Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
-  // their frame and the storm's lightning waits (field_services/weather.c).
+  // their frame and the storm's lightning waits (event_commands/weather.c).
   GameFlag_ClearFar(FLAG_WEATHER_HELD);
   // FLAG_PALETTE_BLEND_HELD stops PaletteFade_Update.
   GameFlag_ClearFar(FLAG_PALETTE_BLEND_HELD);

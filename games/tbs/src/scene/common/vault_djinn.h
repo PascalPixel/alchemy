@@ -3,7 +3,7 @@
 /// the party. "Oh, wait, I don't want to take your Djinni."
 #include "types.h"
 #include "actor.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "songs.h"
 
 /// Brings every Djinni back from recovery (twenty rounds of it), then, if Ivan

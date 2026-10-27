@@ -75,7 +75,7 @@
 #include "unit/import.h"
 #include "unit/scene/altin_peak.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -91,10 +91,10 @@
 #include "heap_slots.h"
 #include "types.h"
 #include "animspr.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
-#include "field_service.h"
+#include "event_inline.h"
 #include "call.h"
 #include "field_effect.h"
 #include "iwram_call.h"
@@ -102,7 +102,7 @@
 
 #include "types.h"
 
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 

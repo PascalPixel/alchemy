@@ -36,7 +36,7 @@
 #include "flags.h"
 #include "unit/scene/log_rooms_c.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -47,7 +47,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 
 #include "text/msg_ids.h"
 #include "ability_ids.h"

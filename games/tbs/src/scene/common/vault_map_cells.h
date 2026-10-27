@@ -12,7 +12,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "songs.h"
 

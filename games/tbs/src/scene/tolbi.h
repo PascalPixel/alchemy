@@ -3,7 +3,7 @@
 #define TOLBI_H
 
 #include "types.h"
-#include "script_layer.h"
+#include "event_layer.h"
 #include "scene_tables.h"
 #include "field_effect.h"
 #include "tbs_edition.h"

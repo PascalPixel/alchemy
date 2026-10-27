@@ -209,7 +209,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
 /// (TRIGGER_PSYNERGY_ON_ACTOR) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEndEvents, and by the
-/// Force, Frost and Reveal effects (field_services/) for their own phases.
+/// Force, Frost and Reveal effects (event_commands/) for their own phases.
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;

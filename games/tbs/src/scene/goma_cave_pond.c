@@ -18,7 +18,7 @@
 /// above once the party leaves Goma Cave's four maps.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/field_services.h"
+#include "unit/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -34,7 +34,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 
-#include "script_layer.h"
+#include "event_layer.h"
 #include "flags.h"
 
 // Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when

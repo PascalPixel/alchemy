@@ -150,8 +150,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   // The dusk clouds scroll a pixel every other frame; busy keeps the battle
   // camera off BG1's scroll meanwhile.
   view->busy = 1;
-  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PRIORITY_VBLANK);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   work->transferMode = CANVAS_COPY;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

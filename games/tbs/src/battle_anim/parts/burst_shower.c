@@ -197,7 +197,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
   } else {
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;

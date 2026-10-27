@@ -164,7 +164,7 @@ void Weather_StartRain(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(Weather_UpdateRain, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Weather_UpdateRain, TASK_PASS_FRAME);
 }
 
 /// A particle's first word, seen as a value or a link.
@@ -294,7 +294,7 @@ void FieldMotes_Start(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(FieldMotes_Update, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldMotes_Update, TASK_PASS_FRAME);
 }
 
 /// Task: the sparkles. Now and then (1 frame in 256) a sparkle
@@ -454,7 +454,7 @@ void FieldEffect_InitializeSparkles(void) {
     i++;
     sparkle++;
   } while (i < WEATHER_PARTICLE_COUNT);
-  Task_Add(FieldEffect_UpdateSparkles, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_FRAME);
 }
 
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
@@ -476,7 +476,7 @@ void Weather_StartLightning(void) {
   PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Task_Add(Weather_UpdateLightning, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
@@ -527,5 +527,5 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Task_Add(Weather_UpdateLightning, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }

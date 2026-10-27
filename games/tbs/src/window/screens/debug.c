@@ -6,13 +6,13 @@
 #include "../screens_internal.h"
 
 /// Schedules the debug map and entrance selector;
-/// TASK_PRIORITY_MAIN_LOOP is a task priority, not a number of frames to wait.
+/// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 UNUSED void DebugMapSelect_Schedule(void) {
 #ifdef UBFIX
-  Task_Add(DebugMapSelect_Run, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(DebugMapSelect_Run, TASK_PASS_FRAME);
 #else
-  Task_Add((TaskFunc)DebugMapSelect_Run, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add((TaskFunc)DebugMapSelect_Run, TASK_PASS_FRAME);
 #endif
 }
 

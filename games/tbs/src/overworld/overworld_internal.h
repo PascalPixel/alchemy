@@ -123,9 +123,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define UNIT_NONE 15
 #define ALLY_MAX 7 ///< the last party member; only users up to it pay PP
 
-/// EXIT_NONE's value: Retreat writes its destination itself.
-#define EXIT_RETREAT 999
-
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
   (MessageArgument_PushFar((who), MESSAGE_ARGUMENT_ACTOR),                     \

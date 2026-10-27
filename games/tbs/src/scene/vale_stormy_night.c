@@ -645,7 +645,7 @@ s32 ValeStormyNight_Initialize(void) {
     Actor_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
     FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
     Import_ActorSetPosition(ACTOR_JENNAS_FATHER, 0, 0);
     Import_ActorSetPosition(ACTOR_JENNAS_MOTHER, 0, 0);
     Import_ActorSetPosition(ACTOR_FELIX_CHILD, 0, 0);
@@ -1531,9 +1531,9 @@ static void EventScript_WatchBoulderFall(void) {
     updateEffects = ValeStormyNight_UpdateBoulderMapEffects;
     sShakeDone = 0;
     *shakeShift = 0;
-    FieldScheduler_AddOrUpdateCallback(updateEffects, TASK_PRIORITY_MAP);
+    FieldScheduler_AddOrUpdateCallback(updateEffects, TASK_PASS_FRAME);
     cycleBoulderPalette = ValeStormyNight_CycleBoulderPalette;
-    FieldScheduler_AddCallback(cycleBoulderPalette, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(cycleBoulderPalette, TASK_PASS_FRAME);
     FieldScript_WaitFrames(40);
     *shakeShift = 1;
     FieldScript_WaitFrames(30);
@@ -2426,7 +2426,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
   FieldScheduler_AddCallback(ValeStormyNight_UpdateBoulderShadow,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   Actor_SetActionScript(ACTOR_BOULDER, gValeStormyNight_BoulderRollsDownriver);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
@@ -2495,7 +2495,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   boulderShadow->scaleX = 2 * Q16_ONE;
   boulderShadow->scaleY = 2 * Q16_ONE;
   FieldScheduler_AddCallback(ValeStormyNight_FlickerBoulderShadow,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
@@ -2601,7 +2601,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_GetById(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(181), PIXELS(1273));
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;

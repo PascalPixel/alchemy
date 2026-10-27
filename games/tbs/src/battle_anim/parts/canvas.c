@@ -340,7 +340,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
 
   // Change BG2's settings while it is hidden (each queued DISPCNT lands two
   // frames later).
@@ -421,7 +421,7 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
                               BATTLE_BACKGROUND_FADE_RESTORE);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,

@@ -876,7 +876,7 @@ s32 StatusScreen_SelectCommand(void) {
   WindowSprite_ClearListFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Window_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 128;
   ItemMenu_ResetCategory();
@@ -1591,7 +1591,7 @@ s32 PsynergyMenu_SelectAction(void) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
-        Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
+        Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
@@ -1913,7 +1913,7 @@ s32 ItemMenu_SelectItem(void) {
   WindowSprite_ClearListFar(menu->questionWindow);
   ItemMenu_HideAllIcons();
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   return result;
 }
 

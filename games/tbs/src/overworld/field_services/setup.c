@@ -57,8 +57,8 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
-  // 0xc80 is TASK_PRIORITY_MAIN_LOOP: the slots update once a frame.
-  Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PRIORITY_MAIN_LOOP);
+  // 0xc80 is TASK_PASS_FRAME: the slots update once a frame.
+  Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
 /// Records the caster and the target of an effect. With no target, the effect

@@ -838,7 +838,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
     gAltmillerCave_LightWheel->ticks = 0;
     gAltmillerCave_LightWheel->speed = 0x200;
     gAltmillerCave_LightWheel->travel = 0x3000;
-    Task_AddCallback(AltmillerCave_SpinLights, TASK_PRIORITY_MAP);
+    Task_AddCallback(AltmillerCave_SpinLights, TASK_PASS_FRAME);
     if (rounds <= 2) {
       while (gAltmillerCave_LightWheel->phase != WHEEL_STOPPED) {
         Task_Wait(1);

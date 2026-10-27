@@ -74,7 +74,7 @@ s32 Field_UsePsynergy(u32 code) {
       returnEntrance = (u16)state->retreatEntrance;
       state->entrance = returnEntrance;
     }
-    work->exit = EXIT_RETREAT;
+    work->exit = EXIT_KEEP_DESTINATION;
     retreat = 1;
   }
   // A use that pays no PP only runs the map's ending events.

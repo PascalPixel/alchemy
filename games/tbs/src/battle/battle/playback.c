@@ -58,7 +58,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   events->timer = frames;
   events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
   gBattleWork->turn.targetCount = 0;
-  return Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
+  return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
 // BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
@@ -78,7 +78,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// Plays the turn's targets one at a time: resolves the next target with
 /// BattleAbility_ApplyToTarget, then plays the events it queued over the frames
 /// that follow, until every target is done. Runs each frame as a task
-/// (priority TASK_PRIORITY_MAIN_LOOP), added by the staging runners in
+/// (priority TASK_PASS_FRAME), added by the staging runners in
 /// staging.c and by BattlePlayback_SchedulePhase, and removed by
 /// BattlePlayback_WaitForReady. Idle until BattlePlayback_Start or the wait
 /// starts it. Advances gBattleWork->events (phase, eventIndex, timer,

@@ -147,8 +147,8 @@ are never compared, so they can run in the wrong order
 ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)).
 
 Tasks are added with `Task_Add`, removed with `Task_Remove` and run by
-`Task_RunPass`; the passes are `TASK_PRIORITY_MAIN_LOOP` and
-`TASK_PRIORITY_VBLANK`.
+`Task_RunPass`; the passes are `TASK_PASS_FRAME` and
+`TASK_PASS_VBLANK`.
 
 ## The register write queue
 
@@ -271,7 +271,7 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 The names come from what the code does: `WaitFrames` from its loop, `Task_`
 from the table it keeps, the heap's from its two pointers and its heap slots,
 the save code's from the flash records it writes. Constants such as
-`TASK_PRIORITY_MAIN_LOOP` are the values the callers pass.
+`TASK_PASS_FRAME` are the values the callers pass.
 
 `gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and
 above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups

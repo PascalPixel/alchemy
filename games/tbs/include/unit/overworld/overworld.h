@@ -23,7 +23,7 @@ union ActorOrEffect;
 /// (FieldScript_SetDestination) raise it, and SceneManager_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
 /// (map.c, run_scene.c).
-#define EXIT_NONE 999
+#define EXIT_KEEP_DESTINATION 999
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (SceneManager_Run).

@@ -48,7 +48,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   FieldEffect_GreyMindReadPalette();
-  Task_Add(FieldEffect_UpdateMindReadWave, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_UpdateMindReadWave, TASK_PASS_FRAME);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -285,8 +285,8 @@ void FieldEffect_GreyMindReadPalette(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  // 0x480 is TASK_PRIORITY_VBLANK.
-  Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PRIORITY_VBLANK);
+  // 0x480 is TASK_PASS_VBLANK.
+  Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK);
 }
 
 /// Stops the BG0 scanline scroll and restores WINDOW_PALETTE.

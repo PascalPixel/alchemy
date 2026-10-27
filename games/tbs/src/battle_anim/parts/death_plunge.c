@@ -65,7 +65,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
   // frame, and the animation waits 20 frames for it.
@@ -1190,8 +1190,8 @@ void BattleAnim_StartElementStreaks(s32 element) {
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   // 6 levels off every pixel each frame, four pixels a word.
   work->transferValue = CANVAS_FILL_WORD(6);
-  Task_Add(BattleAnim_DrawStreaks, TASK_PRIORITY_MAIN_LOOP);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_DrawStreaks, TASK_PASS_FRAME);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 }
 
 /// Ends the element streak burst that BattleAnim_StartElementStreaks

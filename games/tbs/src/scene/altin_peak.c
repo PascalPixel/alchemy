@@ -1079,7 +1079,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetPosition(ACTOR_FALLING_BOULDER, 0, 0);
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
   // Hide the rolling actors and animate the falling debris.
-  FieldScheduler_AddCallback(AltinPeak_SpawnDebris, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(AltinPeak_SpawnDebris, TASK_PASS_FRAME);
   FieldScript_WaitFrames(80);
   Task_Remove(AltinPeak_SpawnDebris);
   FieldScript_WaitFrames(60);
@@ -1798,7 +1798,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   FieldScheduler_AddCallback(AltinPeak_UpdateFrostPillarPriority,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     MapGrid_CopyCellsTo(46, 28, 29, 17, 1, 2);
@@ -1979,7 +1979,7 @@ static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   gAltinPeak_SprayDirection = facing;
 
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PASS_FRAME);
 }
 
 /// Task while the boulder crashes: every third frame a piece of rock
@@ -2140,7 +2140,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
   Script_PlaySong(SE_BOSS_ROAR);
-  FieldScheduler_AddCallback(AltinPeak_PlayHydrosRumble, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(AltinPeak_PlayHydrosRumble, TASK_PASS_FRAME);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Actor_SetSpeed(ACTOR_STATUE, PIXELS(1) / 10, PIXELS(1) / 20);
   Actor_SetSpeed(ACTOR_STATUE_SHADOW, PIXELS(1) / 10, PIXELS(1) / 20);
@@ -2257,7 +2257,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Script_PlaySong(SE_CURSE);
   // Animate the statues while the party reacts.
   update = AltinPeak_FlickerStatue;
-  Task_AddCallback(update, TASK_PRIORITY_MAP);
+  Task_AddCallback(update, TASK_PASS_FRAME);
   celebrate = gAltinPeak_StatueSinkScript;
   Actor_SetActionScript(ACTOR_STATUE_SHADOW, celebrate);
   Actor_RunActionScriptAndWait(ACTOR_STATUE, celebrate);
@@ -2604,7 +2604,7 @@ static void AltinPeak_StepPaletteAnimation(void) {
 static void AltinPeak_StartPaletteAnimation(void) {
   gAltinPeak_PaletteStep = 0;
   gAltinPeak_PaletteHold = 0;
-  FieldScheduler_AddCallback(AltinPeak_StepPaletteAnimation, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(AltinPeak_StepPaletteAnimation, TASK_PASS_FRAME);
 }
 
 // clang-format off

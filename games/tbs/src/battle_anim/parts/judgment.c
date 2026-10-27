@@ -123,7 +123,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, change the battle background behind it, wipe
   // back.
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);

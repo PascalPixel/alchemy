@@ -32,6 +32,6 @@ void ScanlineEffect_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX,
   work->ampY = ampY;
   work->stepX = stepX;
   work->stepY = stepY;
-  FieldScheduler_AddCallback(ScanlineEffect_BuildPage, TASK_PRIORITY_MAP);
-  FieldScheduler_AddCallback(ScanlineEffect_ArmDma, TASK_PRIORITY_VBLANK);
+  FieldScheduler_AddCallback(ScanlineEffect_BuildPage, TASK_PASS_FRAME);
+  FieldScheduler_AddCallback(ScanlineEffect_ArmDma, TASK_PASS_VBLANK);
 }

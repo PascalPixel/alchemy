@@ -1196,8 +1196,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Window_SetBounds(window, 13, 5, 17, 12);
   WindowSprite_RedrawSavedRectFar((void *)menu->itemWindow);
   Unit_GetFar(menu->memberIds[menu->sideIndex[0]]);
-  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators,
-           TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, TASK_PASS_FRAME);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -1774,7 +1773,7 @@ s32 ItemMenu_ChooseCommand(void) {
                                   0, menu->sideMember[0]);
         if (commandIndex == ITEM_COMMAND_GIVE) {
           Task_Add(&EquipmentMenu_UpdateCompatibilityIndicators,
-                   TASK_PRIORITY_MAIN_LOOP);
+                   TASK_PASS_FRAME);
         }
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
@@ -2120,7 +2119,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   // As PsynergyMenu_InitializeEntryObjects schedules it.
   {
-    s32 priority = TASK_PRIORITY_MAIN_LOOP;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }

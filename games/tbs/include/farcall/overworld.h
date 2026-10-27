@@ -2,8 +2,8 @@
 /// Triggers, field Psynergy, objects and effect lifecycles.
 
 /// Runs the field map the party entered by entrance until it leaves,
-/// and returns the exit kind for Scene_TakeExit, or EXIT_NONE when gSaveBlock
-/// already holds the next map.
+/// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
+/// gSaveBlock already holds the next map.
 s32 SceneManager_RunFar(s32 entrance);
 /// The sequence manager, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
@@ -205,8 +205,8 @@ void FieldScript_SetNextDestinationFar(s32 first, s32 second);
 /// Sets where the party wakes up after losing a battle, ahead of a scripted
 /// fight.
 void FieldScript_SetDefeatDestinationFar(s32 first, s32 second);
-/// Sets the destination and raises EXIT_NONE, so the map loop leaves on its
-/// next pass; only Tolbi's spring uses it.
+/// Sets the destination and raises EXIT_KEEP_DESTINATION, so the map loop
+/// leaves on its next pass; only Tolbi's spring uses it.
 void FieldScript_RequestDestinationFar(u16 first, u16 second);
 /// Writes an actor's screen position in pixels, y at the top of its
 /// sprite. Returns 0, or -1 when there is no such actor.

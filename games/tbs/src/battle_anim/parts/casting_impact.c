@@ -432,7 +432,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   } else {
     work->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   /* FAKEMATCH(temporary): the results named by pointers set inside their
    * calls; as &targetPos, &casterPos and blitters used directly, 69 of 3070
    * instructions differ in tbs-en. */
@@ -697,7 +697,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
       mode == CASTING_IMPACT_IMPACT_MURK ||
       mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG) {
-    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.

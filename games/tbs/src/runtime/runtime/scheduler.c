@@ -9,7 +9,7 @@ typedef s32 (*KeyCallbackFn)(void);
 #endif
 
 // Tasks: up to 20 routines run each frame by WaitFrames or each VBlank, kept
-// sorted by their priority (see TASK_PRIORITY_MAIN_LOOP).
+// sorted by their priority (see TASK_PASS_FRAME).
 
 /// Empties the task table: every slot gets no routine, priority
 /// TASK_PRIORITY_EMPTY and no flags. Clears gTasksInitialized while it works
@@ -98,7 +98,7 @@ UNUSED s32 Task_Find(TaskFunc callback) {
 /// task's routine, priority and flags (cleared for a new task) with interrupts
 /// disabled. Returns the task's index, or -1 when all 20 slots are taken.
 /// Called throughout the game to start per-frame and VBlank work; `order` is
-/// TASK_PRIORITY_MAIN_LOOP or TASK_PRIORITY_VBLANK's high byte with a rank in
+/// TASK_PASS_FRAME or TASK_PASS_VBLANK's high byte with a rank in
 /// the low byte. The index is the slot written before this call's own sort,
 /// which may already have moved the task; a few callers return it, but nothing
 /// in ☀️ tests it. A task stays until Task_Remove or Task_ResetAll.
@@ -294,7 +294,7 @@ s32 Task_ResumeOverlayTasks(void) {
 }
 
 /// Runs one pass of the tasks: every task whose priority's high byte matches
-/// `key`'s (TASK_PRIORITY_MAIN_LOOP or TASK_PRIORITY_VBLANK), in table order.
+/// `key`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
 /// Called once a frame by WaitFrames and once a VBlank by
 /// System_VBlankHandler. Nothing runs until Task_ResetAll has set
 /// gTasksInitialized.

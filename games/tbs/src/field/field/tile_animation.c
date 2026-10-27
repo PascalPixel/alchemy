@@ -8,7 +8,7 @@
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. TilesetAnim_StartAll
-/// adds it as a task (priority TASK_PRIORITY_MAIN_LOOP); the world map's still
+/// adds it as a task (priority TASK_PASS_FRAME); the world map's still
 /// view (WorldMap_StartStillView) suspends it. Moves each tileset animation's
 /// cursor and timer in the map work.
 void TilesetAnim_Update(void) {
@@ -144,7 +144,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   }
   // A map with no tileset animations never adds the update.
   if (channelsStarted != 0)
-    Task_Add(TilesetAnim_Update, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(TilesetAnim_Update, TASK_PASS_FRAME);
 }
 
 /// Suspends the tileset animations, unless the world map's still view is shown.
@@ -166,7 +166,7 @@ void TilesetAnim_ResumeAll(void) {
 /// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
 /// other sets BLDALPHA (or BLDY when not alpha blending) and waits the halfword
 /// after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-/// BlendScript_Start adds it as a task (priority TASK_PRIORITY_MAIN_LOOP).
+/// BlendScript_Start adds it as a task (priority TASK_PASS_FRAME).
 /// Writes REG_BLDCNT, REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in
 /// the map work's blendControl.
 void BlendScript_Run(void) {
@@ -254,7 +254,7 @@ void BlendScript_Start(u16 *script) {
     hasScript = 1;
   }
   if (hasScript)
-    Task_Add(BlendScript_Run, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(BlendScript_Run, TASK_PASS_FRAME);
 }
 
 /// Suspends the blend script. The lighthouse maps and Vale's Babi event
@@ -331,7 +331,7 @@ UNUSED void PaletteCycle_Stop(void) {
 
 /// Unused: starts running the palette cycles each frame.
 UNUSED void PaletteCycle_Start(void) {
-  Task_Add(PaletteCycle_Step, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
 }
 
 /// Each frame: advances each palette cycle whose timer has run out by one

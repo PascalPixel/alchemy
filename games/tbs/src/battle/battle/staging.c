@@ -396,7 +396,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
       work.effect.side ^= 1;
     // The animation runs to its end while playback, a task, plays
     // each target's outcome from the frame the blow lands.
-    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (plan->animation & ANIM_SUMMON)
       BattleAnim_RunSummonEffectFar(&work.effect);
     else if (plan->animation & ANIM_BY_ID_RANGE)
@@ -600,7 +600,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
       }
     }
 
-    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind != 0) {
       if (plan->animation & ANIM_BY_ID_RANGE)
         BattleAnim_DispatchByIdRangeFar(&work.effect);
@@ -754,7 +754,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   // An item with an animation dims the background over 20 frames, to about two
   // thirds of its brightness (19 steps of 0x444 in 16.16), then plays it; one
   // with none waits a second.
-  Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
     s32 fade;
 
@@ -963,7 +963,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
-    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind) {
       if (plan->animation & ANIM_BY_ID_RANGE)
         BattleAnim_DispatchByIdRangeFar(&work.effect);

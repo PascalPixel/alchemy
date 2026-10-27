@@ -8,7 +8,7 @@
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device. An overlay writes
-/// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAP)` and the inline
+/// `FieldScheduler_AddCallback(callback, TASK_PASS_FRAME)` and the inline
 /// calls Task_Add, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared scene/common/scroll_initialize_hblank_dma.h, which
@@ -30,7 +30,7 @@ struct Actor;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Adds `callback` as a task of priority `priority` (TASK_PRIORITY_MAP
+/// Adds `callback` as a task of priority `priority` (TASK_PASS_FRAME
 /// runs it every frame in the main loop pass), or gives the task already
 /// running it that priority. Returns the slot it wrote, which the sort in the
 /// same call may already have moved, or -1 when all 20 task slots are taken.

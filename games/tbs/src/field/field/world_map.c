@@ -266,8 +266,8 @@ s32 WorldMap_InitializePerspective(void) {
   // Rows 0 to 159: the whole screen shows the perspective view.
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
-  Task_Add(WorldMap_UpdateView, TASK_PRIORITY_MAIN_LOOP + 5);
-  Task_Add(WorldMap_ApplyAffineFrame, TASK_PRIORITY_VBLANK);
+  Task_Add(WorldMap_UpdateView, TASK_PASS_FRAME + 5);
+  Task_Add(WorldMap_ApplyAffineFrame, TASK_PASS_VBLANK);
   // Each of the 16 by 16 grid cells starts on the tile of its own number.
   for (tileIndex = 255; tileIndex >= 0; tileIndex--)
     perspective->tileIds[tileIndex] = tileIndex;

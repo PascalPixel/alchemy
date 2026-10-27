@@ -86,7 +86,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   } else {
     work->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlaySongFar(SE_WHOOSH);
   frame = 0;
   do {

@@ -147,7 +147,7 @@ s32 Battle_Run(s32 enemyGroup) {
     BattleParty_AssignOpponentSlots();
     battle->layout = FORMATION_LAYOUT_SHUFFLED;
   }
-  Task_Add(BattleCamera_Update, TASK_PRIORITY_MAIN_LOOP - 1);
+  Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
 
   // The battle music: the song an event set for this battle, or the usual
   // battle songs.
@@ -210,7 +210,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleTransition_Run(enemyCount, enemyGroup);
   view->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
   // The rounds.
   for (;;) {

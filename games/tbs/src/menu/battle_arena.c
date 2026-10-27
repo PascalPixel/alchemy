@@ -1015,7 +1015,7 @@ static s32 BattleArena_EnterBattle(void) {
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady,
-                                   TASK_PRIORITY_MAIN_LOOP);
+                                   TASK_PASS_FRAME);
         Task_SetFlags((TaskFunc)BattleArena_PollPeerReady, 1);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
@@ -1731,7 +1731,7 @@ s32 BattleArena_RunRoundResult(void) {
   }
   // Resume polling and restore the party unless continuing a monster run.
   callback = (TaskFunc)BattleArena_PollPeerReady;
-  FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAIN_LOOP);
+  FieldScheduler_AddCallback(callback, TASK_PASS_FRAME);
   Task_SetFlags(callback, 1);
   if (gSaveBlock.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
       !GameFlag_Get(FLAG_MONSTER_BATTLE)) {

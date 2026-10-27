@@ -123,7 +123,7 @@ void FieldEffect_RunReveal(void) {
     state->value = frame;
     frame++;
   } while (frame <= 18);
-  Task_Add(FieldEffect_WatchLeaderDistance, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_WatchLeaderDistance, TASK_PASS_FRAME);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back

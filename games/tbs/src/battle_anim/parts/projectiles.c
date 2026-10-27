@@ -524,7 +524,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                                0);
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->user)->object;

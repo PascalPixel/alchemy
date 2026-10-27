@@ -288,7 +288,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // 4 off every pixel each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
@@ -416,7 +416,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                     COMPOSITE_LIGHTEN);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Trails keep half a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),

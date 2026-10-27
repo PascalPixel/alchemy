@@ -243,7 +243,7 @@ void *IconMenu_Open(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_ICON_MENU, 152);
   Dma_Fill32(0, work, 152);
-  Task_Add(IconMenu_DrawIcons, TASK_PRIORITY_MAIN_LOOP - 10);
+  Task_Add(IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
   return work;
 }
 
@@ -756,7 +756,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Center(17, 5, 0);
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
-    Task_Add(Menu_DrawModeLabel, TASK_PRIORITY_MAIN_LOOP - 10);
+    Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
     work->previousMode = 0xffff;
     window = Window_Create(RESOURCE_MODE0_WINDOW_X, 0,
                            RESOURCE_MODE0_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
@@ -781,7 +781,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     Text_DrawMessage(message, work->lowerWindow, 0, 16);
 #endif
   } else {
-    Task_Add(Menu_DrawModeIndicator, TASK_PRIORITY_MAIN_LOOP - 10);
+    Task_Add(Menu_DrawModeIndicator, TASK_PASS_FRAME - 10);
     work->previousMode = 0xffff;
     window =
         Window_Create(TRANSFER_METHOD_WINDOW_X, 0, TRANSFER_METHOD_WINDOW_WIDTH,

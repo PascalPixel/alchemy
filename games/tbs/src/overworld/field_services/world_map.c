@@ -488,7 +488,7 @@ void WorldPicture_Show(s32 picture) {
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
   FieldEffect_SetupResourcesAndWindow();
-  Task_Add(WorldPicture_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(WorldPicture_UpdateMarkers, TASK_PASS_FRAME);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
     FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
   do {

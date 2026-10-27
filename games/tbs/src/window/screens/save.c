@@ -545,7 +545,7 @@ void FileMenu_UpdatePulse(void) {
 
 /// Starts the palette glow (FileMenu_UpdatePulse) as a task.
 void FileMenu_StartPulse(void) {
-  Task_Add(FileMenu_UpdatePulse, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FileMenu_UpdatePulse, TASK_PASS_FRAME);
 }
 
 void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }

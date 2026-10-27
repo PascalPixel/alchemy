@@ -307,8 +307,8 @@ void FieldEffect_InitializeSlots(void) {
 
   work = AllocHeapSlot(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
   Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
-  // 3200 is TASK_PRIORITY_MAIN_LOOP: the slots update once a frame.
-  Task_Add(FieldEffect_UpdateAllSlots, TASK_PRIORITY_MAIN_LOOP);
+  // 3200 is TASK_PASS_FRAME: the slots update once a frame.
+  Task_Add(FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 
 /// Stops the field effect sprites: removes their callback, frees every slot

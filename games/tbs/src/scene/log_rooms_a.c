@@ -1605,7 +1605,7 @@ static void EventScript_ApproachSuspects(void) {
   GameFlag_Set(FLAG_VAULT_SUSPECTS_APPROACHED);
   GameFlag_Set(FLAG_SUSPECTS_FLEEING);
   FieldScheduler_AddCallback(LogRoomsA_FaceSuspectsTowardLeader,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   suspectedLeader->timer = 1;
   suspectedThief->timer = 3;
   FieldScript_End();
@@ -1888,7 +1888,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
     suspect->timer = routeIndex;
   }
   FieldScheduler_AddCallback(LogRoomsA_FaceSuspectsTowardLeader,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_End();
@@ -2151,7 +2151,7 @@ s32 Scene_Initialize(void) {
       Actor_SetBuiltinAction(ACTOR_GIRL_AT_THE_INN, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
-      Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_MAP);
+      Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
     } else if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Import_ActorSetPosition(ACTOR_GIRL_AT_THE_INN, 0, 0);
     }
@@ -2164,7 +2164,7 @@ s32 Scene_Initialize(void) {
         GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
         GameFlag_Get(FLAG_SUSPECTS_FLEEING) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      Task_AddCallback(LogRoomsA_FaceSuspectsTowardLeader, TASK_PRIORITY_MAP);
+      Task_AddCallback(LogRoomsA_FaceSuspectsTowardLeader, TASK_PASS_FRAME);
       break;
     }
     if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
@@ -2182,7 +2182,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_SUSPECTED_LEADER)->timer = 5;
       Actor_GetById(ACTOR_SUSPECTED_THIEF)->timer = 4;
       FieldScheduler_AddCallback(LogRoomsA_FaceSuspectsTowardLeader,
-                                 TASK_PRIORITY_MAP);
+                                 TASK_PASS_FRAME);
     }
     break;
   case LOG_ROOMS_A_FROM_VAULT_WEST:
@@ -3469,7 +3469,7 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(3) / 2, PIXELS(3) / 2);
   gLogRoomsA_StopTimer = 0;
   FieldScheduler_AddOrUpdateCallback(LogRoomsA_UpdateActorStops,
-                                     TASK_PRIORITY_MAP + 20);
+                                     TASK_PASS_FRAME + 20);
   // Flag 0x1ff holds nothing: no table, script or function sets or reads it,
   // and render probe flag-reads sees no read of it, so clearing it changes
   // nothing.

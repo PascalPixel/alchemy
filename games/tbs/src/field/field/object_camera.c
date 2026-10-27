@@ -34,7 +34,7 @@ struct ObjectCameraFixed {
 /// Each frame, with the scrolling camera: places every object's sprite on the
 /// screen. An object on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
-/// ObjectSystem_Initialize adds it as a task (priority TASK_PRIORITY_MAIN_LOOP,
+/// ObjectSystem_Initialize adds it as a task (priority TASK_PASS_FRAME,
 /// after the objects move) for every mode but 3 and 4;
 /// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count, may change an object's layer and its sprite's
@@ -192,7 +192,7 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// Battle_GatherActions) it uses the fixed view matrix and 1.0
 /// scale. ObjectSystem_Initialize adds it as a task (priority
-/// TASK_PRIORITY_MAIN_LOOP) for OBJECT_SYSTEM_WORLD_MAP and
+/// TASK_PASS_FRAME) for OBJECT_SYSTEM_WORLD_MAP and
 /// OBJECT_SYSTEM_BATTLE; ObjectSystem_SuspendProjectionAndShowSprites suspends
 /// it. Resets the system's used count.
 void ObjectSystem_ProjectSprites(void) {

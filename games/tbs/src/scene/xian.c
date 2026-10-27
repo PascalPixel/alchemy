@@ -508,7 +508,7 @@ static void Xian_FreezeSpilledWater(void) {
   puddle = Actor_GetById(ACTOR_SPILLED_WATER);
   MapGrid_CopyCellAttributes(3, 17, 1, 1, (puddleX >> 20),
                              (puddle->z.fixed >> 20));
-  FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   GameFlag_Set(FLAG_XIAN_SPILLED_WATER_FROZEN);
   ObjectMotion_SetActionVariant(ACTOR_SPILLED_WATER, 2);
   FieldScript_End();
@@ -560,7 +560,7 @@ static void Xian_TalkToKungFuStudent(void) {
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_PlaySong(SE_WATER);
     particleCallback = Xian_SpawnTrainingParticles;
-    Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+    Task_AddCallback(particleCallback, TASK_PASS_FRAME);
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->velocityY = 0x60000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
@@ -569,7 +569,7 @@ static void Xian_TalkToKungFuStudent(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KUNG_FU_STUDENT);
     Sound_PlaySong(SE_HEAVY_IMPACT);
     Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
-    FieldScheduler_AddCallback(Xian_RotateTrainingTree, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Xian_RotateTrainingTree, TASK_PASS_FRAME);
     effectParams.type = 0x11b;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = 0x4000;
@@ -731,7 +731,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   FieldScript_Start();
   Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationCallback = Xian_RotateTrainingTree;
-  FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(rotationCallback, TASK_PASS_FRAME);
   Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Sound_PlaySong(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
@@ -858,7 +858,7 @@ s32 Xian_Initialize(void) {
           3, 17, 1, 1, puddleX >> 20,
           Actor_GetById(ACTOR_SPILLED_WATER)->z.fixed >> 20);
     }
-    FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   }
   // The water carrier's sprite is drawn with its green and blue swapped.
   Actor_ConfigureSpriteColor(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);

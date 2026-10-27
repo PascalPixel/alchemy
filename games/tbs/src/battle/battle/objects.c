@@ -10,7 +10,7 @@
 /// Runs each frame of a battle: advances every unit's status icon, gives an
 /// airborne unit's shadow (BATTLE_SHADOW_SPRITE, placement.c) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
-/// front. Runs as a task (priority TASK_PRIORITY_MAIN_LOOP)
+/// front. Runs as a task (priority TASK_PASS_FRAME)
 /// that Battle_Run adds after the entry transition and removes as
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.

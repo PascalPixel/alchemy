@@ -163,7 +163,7 @@ restart:
 
   SpriteViewer_BuildProbeRing(x, y, ring);
   // Order 3200 (0xc80), where the field camera runs.
-  Task_Add(SpriteViewer_PlaceRing, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
   WaitFrames(1);

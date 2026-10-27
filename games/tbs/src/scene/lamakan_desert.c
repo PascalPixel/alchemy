@@ -973,8 +973,7 @@ s32 LamakanDesert_Initialize(void) {
   } else {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
-    FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
-                               TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
     if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
       MapGrid_CopyCells(22, 7, 4, 2, 64, 126);
       MapGrid_CopyCells(8, 10, 4, 2, 68, 126);
@@ -1185,7 +1184,7 @@ void HeatGauge_Start(void) {
   VramCache_Load((s16)slot, 0x480, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
-  FieldScheduler_AddCallback(HeatGauge_Draw, TASK_PRIORITY_MAP - 10);
+  FieldScheduler_AddCallback(HeatGauge_Draw, TASK_PASS_FRAME - 10);
 }
 
 /// While held (1), the gauge stays on screen.

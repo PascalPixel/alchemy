@@ -83,7 +83,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
   // The formation: nine objects of SPRITE_ATALANTA, sprite priority 1.
@@ -108,7 +108,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
   view->busy = 1;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   ANIM_SHOW_WIDE_CANVAS(16);

@@ -844,7 +844,7 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
 /// Starts the moving-lift task and releases its pause flag.
 static void ColosseumSatrageMatch_StartLifts(void) {
   FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
-                             TASK_PRIORITY_MAP + 5);
+                             TASK_PASS_FRAME + 5);
   GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
@@ -1106,7 +1106,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       actor->acceleration = 0x3333;
     }
     FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
-                               TASK_PRIORITY_MAP + 5);
+                               TASK_PASS_FRAME + 5);
     Task_SetFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
@@ -1140,7 +1140,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
     Actor_DestroyById(ACTOR_PRIZE_A);
     Actor_DestroyById(ACTOR_PRIZE_B);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -1555,7 +1555,7 @@ static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
   gColosso_LetteringParameter = (tileVariant << 4);
 
   {
-    s32 priority = TASK_PRIORITY_MAP;
+    s32 priority = TASK_PASS_FRAME;
     FieldScheduler_AddCallback(Colosso_UpdateLettering, priority);
   }
 
@@ -1878,7 +1878,7 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   work->gauge.vramBlock = vramSlot;
   VramCache_Load((s16)vramSlot, 512, graphics);
 
-  FieldScheduler_AddCallback(Colosso_DrawGauge, TASK_PRIORITY_MAP - 10);
+  FieldScheduler_AddCallback(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
 
   Free(graphics);
 }
@@ -1896,7 +1896,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
     recorder->still = 0;
     recorder->pathIndex = 0;
   }
-  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, TASK_PRIORITY_MAP + 5);
+  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, TASK_PASS_FRAME + 5);
 }
 
 #include "common/colosso_map_state.h"

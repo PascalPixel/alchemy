@@ -79,7 +79,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   } while (i != 64);
 
   Projection_ScaledUnit(work->effect->targets[0], &origin);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {

@@ -826,7 +826,7 @@ static void Altin_ApplyWaterLevel(void) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_SetSpriteColorById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
     Import_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-    FieldScheduler_AddCallback(Altin_BeastSpawnSpray, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Altin_BeastSpawnSpray, TASK_PASS_FRAME);
   }
   if (gSaveBlock.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);

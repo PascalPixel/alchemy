@@ -97,7 +97,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
     }
   }
 
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Trails keep 3/4 a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ENEMY_CRY);

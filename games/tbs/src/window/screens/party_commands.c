@@ -162,7 +162,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       WaitFrames(1);
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_FRAME);
 
   while (1) {
     PartyStatus_ClearHighlights();

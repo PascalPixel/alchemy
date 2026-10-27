@@ -2426,7 +2426,7 @@ s32 ShipRooms_ApplyEntryState(void) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK) != 0) {
         gShipRooms_ShakeTimer = 0;
         FieldScheduler_AddCallback(ShipRooms_ShakeWhileKrakenAboard,
-                                   TASK_PRIORITY_MAP);
+                                   TASK_PASS_FRAME);
         Import_ActorSetAnimation(ACTOR_ROWING_DRUMMER, 5);
       }
     } else {
@@ -3994,8 +3994,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_RunActionScriptAndWait(ACTOR_MIA, action);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
   gShipRooms_ShakeTimer = 0;
-  FieldScheduler_AddCallback(ShipRooms_ShakeWhileKrakenAboard,
-                             TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(ShipRooms_ShakeWhileKrakenAboard, TASK_PASS_FRAME);
   ShipRooms_RunEventCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   Actor_DestroyById(ACTOR_ROWING_KAJA);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);

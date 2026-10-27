@@ -300,7 +300,7 @@ static void Title_RevealScreen(s32 unused) {
   FieldScript_WaitFrames(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
-  FieldScheduler_AddCallback(Title_UpdateSpriteReveal, TASK_PRIORITY_MAIN_LOOP);
+  FieldScheduler_AddCallback(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
   // Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened (BLDY
   // 16), so the logo on BG2 is black; the semi-transparent lettering is
   // blended onto the layers under it at full weight (BLEND_ALPHA(16, 16)).

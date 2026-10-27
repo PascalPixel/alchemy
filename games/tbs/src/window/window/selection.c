@@ -193,7 +193,7 @@ struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
 /// Starts drawing the selection screen each frame, in the main loop's pass
 /// (0xc80).
 void SelectionScreen_StartDrawing(void) {
-  Task_Add(SelectionScreen_Draw, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(SelectionScreen_Draw, TASK_PASS_FRAME);
 }
 
 /// Stops drawing the selection screen.

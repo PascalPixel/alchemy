@@ -69,7 +69,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
@@ -249,7 +249,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_HALF;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;

@@ -327,7 +327,7 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gSaveBlock.idleSleepEnabled;
   work->optionCount[4] = 2;
-  Task_Add(OptionMenu_AnimateCursors, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(OptionMenu_AnimateCursors, TASK_PASS_FRAME);
 }
 
 /// Stops the option menu's per-frame callback and frees its work block.
@@ -669,7 +669,7 @@ void PauseMenu_Initialize(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  Task_Add(PauseMenu_AnimateCursor, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the pause menu's per-frame callback and frees its work block.

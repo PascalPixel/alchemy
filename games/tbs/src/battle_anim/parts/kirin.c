@@ -68,7 +68,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away from left to right, swap in the forest
   // battle background and wipe back. Window 0 narrows to x 0 to 201; right of
   // it only window 1 applies, which shows no sprites, so the row rides in from

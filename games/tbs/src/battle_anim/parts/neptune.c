@@ -100,10 +100,10 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   *(u16 *)&BG_PLTT[1] = 0;
   // BG2's scale per frame: one texel a pixel until the VCount line (0 here),
   // twice the width from it down.
-  Task_Add(BattleAnim_ResetBg2Pa, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ResetBg2Pa, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
   // first 16 frames), swap in the dusk battle background and load the pictures.
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
@@ -200,7 +200,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;
-        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PRIORITY_VBLANK);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PASS_VBLANK);
       }
       *phase += windowEdgeStep;
       windowEdgeStep += 3;

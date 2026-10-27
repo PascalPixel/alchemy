@@ -441,8 +441,7 @@ s32 MainMenu_Run(void) {
 
   blendStarted = 0;
   MainMenu_LoadBackground();
-  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes,
-                             TASK_PRIORITY_MAIN_LOOP);
+  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = blendStarted;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -493,7 +492,7 @@ menu_top:;
   if (v6 == 0) {
     if (blendStarted == 0) {
       WaitFrames(30);
-      FieldScheduler_AddCallback(MainMenu_UpdateBlend, TASK_PRIORITY_MAIN_LOOP);
+      FieldScheduler_AddCallback(MainMenu_UpdateBlend, TASK_PASS_FRAME);
       WaitFrames(1);
       blendStarted = 1;
     }
@@ -933,7 +932,7 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gFieldWork->exit = 0x3e7;
+  gFieldWork->exit = EXIT_KEEP_DESTINATION;
   FieldScript_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_FinishScreenTransition();

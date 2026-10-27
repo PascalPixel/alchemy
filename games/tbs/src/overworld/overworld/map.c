@@ -22,8 +22,9 @@
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
 /// Called by SequenceManager_Run with SceneManager_Run's result; sets
-/// gSaveBlock.sceneId and .entrance, and leaves them alone for EXIT_NONE, whose
-/// destination is set already, or for a scene with no header in the table.
+/// gSaveBlock.sceneId and .entrance, and leaves them alone for
+/// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
+/// no header in the table.
 void Scene_TakeExit(s32 exitId) {
   s16 currentMap;
   const u32 *exitTable;
@@ -38,9 +39,9 @@ void Scene_TakeExit(s32 exitId) {
 
   currentMap = gSaveBlock.sceneId;
   exitTable = gOverlayArea.exits();
-  nextScene = EXIT_NONE;
+  nextScene = EXIT_KEEP_DESTINATION;
   nextEntrance = 0;
-  if (exitId == EXIT_NONE)
+  if (exitId == EXIT_KEEP_DESTINATION)
     return;
 
   for (;;) {
@@ -79,7 +80,7 @@ void Scene_TakeExit(s32 exitId) {
   }
 
   // Commit the chosen exit only after a matching scene header was found.
-  if (nextScene != EXIT_NONE) {
+  if (nextScene != EXIT_KEEP_DESTINATION) {
     gSaveBlock.sceneId = nextScene;
     gSaveBlock.entrance = nextEntrance;
   }

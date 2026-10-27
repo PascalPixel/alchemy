@@ -385,7 +385,7 @@ static void ColosseumNavampaMatch_ResetWallWedge(void) {
 /// Resumes cycling the Wall Wedge's pistons.
 static void ColosseumNavampaMatch_StartWallWedge(void) {
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
 }
 
 /// Waits, at most two seconds, for the Wall Wedge pattern its attendant's
@@ -1024,7 +1024,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   // Restore the scale ledges, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PUDDLE), 0);
@@ -1121,7 +1121,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       actor->y.fixed = PIXELS(32);
     }
     FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
   }
 
   if (GameFlag_Get(FLAG_PLANT_GROWN) != 0) {
@@ -1198,7 +1198,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
     Actor_DestroyById(ACTOR_PRIZE_A);
     Actor_DestroyById(ACTOR_PRIZE_B);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1434,24 +1434,24 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
   // Time the small reunion effects to the companions' reactions.
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   FieldScript_WaitFrames(5);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(55);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   FieldScript_WaitFrames(20);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
@@ -1462,7 +1462,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
   Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
@@ -1473,7 +1473,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_IVAN);
   Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_IVAN);
   gColossoParticleCount = 9;
-  Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
+  Task_AddCallback(particleCallback, TASK_PASS_FRAME);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1983,7 +1983,7 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
   gColosso_LetteringParameter = (parameter << 4);
 
   {
-    s32 priority = TASK_PRIORITY_MAP;
+    s32 priority = TASK_PASS_FRAME;
     TaskFunc task = Colosso_UpdateLettering;
     FieldScheduler_AddCallback(task, priority);
   }

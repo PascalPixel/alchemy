@@ -171,7 +171,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         gSaveBlock.sceneId = gSaveBlock.retreatScene;
         gSaveBlock.entrance = gSaveBlock.retreatEntrance;
-        work->exit = EXIT_RETREAT;
+        work->exit = EXIT_KEEP_DESTINATION;
       }
 
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);

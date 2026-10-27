@@ -230,7 +230,7 @@ s32 Credits_Run(void) {
   gDebugTextEnabled = 0;
   gIdleSleepEnabled = 0;
   Task_ResetAll();
-  Task_Add(Credits_ScrollBackgrounds, TASK_PRIORITY_VBLANK);
+  Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
   // Each layer owns its map, tiles and palette half. Load the invisible
   // half while the other remains on screen.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
@@ -1075,8 +1075,8 @@ void Credits_InitTextSprites(void) {
   gWaitForFlashWrite = 0;
   CREDITS_LAST_LINE_POSITION = 0;
   CREDITS_END_OF_TEXT = 0;
-  Task_Add(Credits_UpdateTextSprites, TASK_PRIORITY_VBLANK);
-  Task_Add(Credits_DrawEnteringLine, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Credits_UpdateTextSprites, TASK_PASS_VBLANK);
+  Task_Add(Credits_DrawEnteringLine, TASK_PASS_FRAME);
   for (row = 0; row < CREDITS_RING_ROWS; row++)
     Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES, 1);
 }

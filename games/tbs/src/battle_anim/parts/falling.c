@@ -131,14 +131,14 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
                                  WIN_RANGE(120, 248));
   }
 
-  Task_Add(BattleAnim_ArmWin0HBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   // Trails: Ice Horn keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == ANIM_VARIANT_STRONGER)
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0;
        frame != gFalling_IceCounts[work->effect->variant][ICE_FRAMES];
@@ -337,7 +337,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
         line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }
 
-  Task_Add(BattleAnim_ArmWin0HBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   // Douse clears the canvas every frame; Drench keeps half of each pixel and
   // Deluge three quarters, for trails.
   if (work->effect->variant == ANIM_VARIANT_BASIC) {
@@ -347,7 +347,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
   } else {
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0;
        frame != gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION];

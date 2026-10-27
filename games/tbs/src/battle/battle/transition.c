@@ -127,7 +127,7 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 /// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
 /// each frame as a task, in the VBlank pass at its highest
-/// priority (TASK_PRIORITY_VBLANK + 127), added by BattleBackground_Load and
+/// priority (TASK_PASS_VBLANK + 127), added by BattleBackground_Load and
 /// BattleBackground_SetMode; BattleCamera_SetRange builds the
 /// pages.
 void BattleBackground_ShowZoomedPage(void) {
@@ -365,8 +365,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       // and the encounter is announced.
       BattleCamera_SetView(0, 0, 0, 180);
       *timer = start;
-      Task_Add(BattleTransition_AdvanceTimer, TASK_PRIORITY_MAIN_LOOP);
-      Task_Add(BattleTransition_DrawRows, TASK_PRIORITY_VBLANK);
+      Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
+      Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);

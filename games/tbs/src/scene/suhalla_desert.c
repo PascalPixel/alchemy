@@ -331,7 +331,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     // Start the capture countdown once the approach finishes.
     Script_PlaySong(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
     selectedActor->motionFlags = captureActive;
     Object_SetPosition(selectedActor, selectedActor->x.fixed,
                        selectedActor->y.fixed + PIXELS(32),
@@ -812,10 +812,10 @@ static s32 EventScript_RevealStarts(void) {
     MapGrid_CopyCellAttributes(127, 127, 1, 1, 12, 71);
 #ifdef UBFIX
     FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
 #else
     return FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
-                                      TASK_PRIORITY_MAP);
+                                      TASK_PASS_FRAME);
 #endif
   }
 }
@@ -840,7 +840,7 @@ s32 Scene_Initialize(void) {
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertNorth ||
       gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertSouth) {

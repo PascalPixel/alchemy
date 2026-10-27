@@ -77,7 +77,7 @@ void Shop_InitializeWork(void) {
   resourceSlot = VramCache_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_SmallUpArrowTiles);
-  Task_Add(MenuCursor_Step, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(MenuCursor_Step, TASK_PASS_FRAME);
 }
 
 /// Stops the cursor task, frees the six cursor icons and the work block.

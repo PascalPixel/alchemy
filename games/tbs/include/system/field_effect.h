@@ -7,6 +7,7 @@
 #include "edition.h"
 #include "script_layer.h"
 #include "vector3.h"
+#include "objcmd.h"
 
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
@@ -91,13 +92,6 @@ union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;
 };
-
-// The object script commands field effects' scripts are written with: the
-// same commands as objcmd.h's SC_WAIT, SC_POSITION, SC_LOOP and SC_FREE.
-#define SCRIPT_WAIT(frames) 0, (frames)
-#define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
-#define SCRIPT_REPEAT(count, label) 12, (count), (label)
-#define SCRIPT_DELETE 27
 
 /// The flags of a map's effect spawner (EFFECT_SPAWN in
 /// scene/common/effect_spawn.h): a script number in the low bits and which of

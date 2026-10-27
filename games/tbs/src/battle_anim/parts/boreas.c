@@ -82,7 +82,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
@@ -143,7 +143,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;
-        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PRIORITY_VBLANK);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PASS_VBLANK);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;

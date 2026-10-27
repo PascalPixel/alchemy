@@ -1619,7 +1619,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   FieldScript_Start();
   // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
-  FieldScheduler_AddCallback(particleTask, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(particleTask, TASK_PASS_FRAME);
   ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 5,
                                   PIXELS(1) / 10);
   gFieldWork->transitionFrames = 60;

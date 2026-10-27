@@ -62,7 +62,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
   // Nine objects of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and

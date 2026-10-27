@@ -84,10 +84,9 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
 #ifdef UBFIX
-  Task_Add(FieldEffect_StepRatioTransition, TASK_PRIORITY_MAIN_LOOP + 20);
+  Task_Add(FieldEffect_StepRatioTransition, TASK_PASS_FRAME + 20);
 #else
-  Task_Add((TaskFunc)FieldEffect_StepRatioTransition,
-           TASK_PRIORITY_MAIN_LOOP + 20);
+  Task_Add((TaskFunc)FieldEffect_StepRatioTransition, TASK_PASS_FRAME + 20);
 #endif
 }
 

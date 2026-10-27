@@ -33,7 +33,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
-  Task_Add(DjinnFigures_UpdateAllPositions, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
 
 /// Releases the four objects and removes their task. It defines
@@ -178,7 +178,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
   }
-  Task_Add(DjinnFigures_UpdateBottomRow, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(DjinnFigures_UpdateBottomRow, TASK_PASS_FRAME);
 }
 
 /// Updates one object's saved position and its signed y marker: with negative

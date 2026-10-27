@@ -183,14 +183,14 @@ void ObjectSystem_Initialize(s32 controlMode) {
   // The task runner runs higher priorities first: the objects move before
   // the camera follows them.
   if (controlMode == OBJECT_SYSTEM_BATTLE)
-    Task_Add(Object_UpdateAllMotion, TASK_PRIORITY_MAIN_LOOP + 10);
+    Task_Add(Object_UpdateAllMotion, TASK_PASS_FRAME + 10);
   else
-    Task_Add(Object_UpdateAllThumb, TASK_PRIORITY_MAIN_LOOP + 10);
+    Task_Add(Object_UpdateAllThumb, TASK_PASS_FRAME + 10);
   if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
       controlMode <= OBJECT_SYSTEM_BATTLE) {
-    Task_Add(ObjectSystem_ProjectSprites, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(ObjectSystem_ProjectSprites, TASK_PASS_FRAME);
   } else {
-    Task_Add(ObjectSystem_PlaceSprites, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(ObjectSystem_PlaceSprites, TASK_PASS_FRAME);
     // XXX (no evidence): what the scrolling camera resets here; nothing in
     // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;

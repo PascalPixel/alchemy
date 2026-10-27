@@ -224,7 +224,7 @@ The staging runners in `src/battle/battle/staging.c` all follow this pattern;
 `BattleStaging_RunPsynergyCast`, simplified:
 
 ```c
-Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP); /* idle task */
+Task_Add(BattlePlayback_Run, TASK_PASS_FRAME); /* idle task */
 if (plan->animation & ANIM_BY_ID_RANGE)
   BattleAnim_DispatchByIdRangeFar(&work.effect); /* the animation's loop */
 else

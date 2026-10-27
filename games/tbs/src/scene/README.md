@@ -374,7 +374,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   `FieldScript_ShowMessageAndWait` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
 - **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
-  `TASK_PRIORITY_MAP`, run once a frame until removed.
+  `TASK_PASS_FRAME`, run once a frame until removed.
 - **update hook**: an actor's `update`, run each frame with the
   actor.
 

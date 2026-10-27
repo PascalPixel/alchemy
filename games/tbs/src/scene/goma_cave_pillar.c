@@ -372,7 +372,7 @@ static void EventScript_PushStumpOver(void) {
     FieldScript_WaitFrames(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
-    FieldScheduler_AddCallback(fragmentCallback, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(fragmentCallback, TASK_PASS_FRAME);
     Sound_PlaySong(SE_RUMBLE);
     ObjectMotion_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_STUMP);
@@ -631,7 +631,7 @@ s32 Scene_Initialize(void) {
   // Coming back from a Djinni battle: the man reacts until it is over.
   if (gSaveBlock.pendingDjinnEvent != 0) {
     gGomaCavePillar_WitnessFrames = 0;
-    Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, TASK_PRIORITY_MAP);
+    Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, TASK_PASS_FRAME);
   }
   return 0;
 }

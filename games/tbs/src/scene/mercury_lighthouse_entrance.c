@@ -341,8 +341,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     FieldScript_WaitFrames(60);
     // Persist the activated state and replace the pool's map cells.
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED);
-    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
-                               TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
     MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -439,8 +438,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gSaveBlock.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
-    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
-                               TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
   else
     MercuryLighthouse_ClearPalette();
   gFieldWork->transition =
@@ -475,8 +473,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_WEST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE:
-    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
-                               TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
       MapGrid_CenterOnFollowedPoint();

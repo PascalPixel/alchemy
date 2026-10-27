@@ -335,7 +335,7 @@ s32 Title_ShowIntro(s32 prompt) {
                           DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
                       IO_WRITE_16);
   TitlePaletteFade_Start(60);
-  Task_Add(Title_UpdateIntroSprites, TASK_PRIORITY_VBLANK);
+  Task_Add(Title_UpdateIntroSprites, TASK_PASS_VBLANK);
 
   for (;;) {
     s32 frame;
@@ -1024,7 +1024,7 @@ void TitlePaletteFade_Initialize(void) {
           REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
-  callbackPriority = TASK_PRIORITY_MAIN_LOOP;
+  callbackPriority = TASK_PASS_FRAME;
   Task_Add(TitlePaletteFade_Update, callbackPriority);
 }
 

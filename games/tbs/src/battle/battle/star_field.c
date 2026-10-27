@@ -290,8 +290,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
-  Task_Add(STAR_FIELD_UPDATE_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
-  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(STAR_FIELD_UPDATE_CALLBACK, TASK_PASS_FRAME);
+  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, TASK_PASS_FRAME);
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its

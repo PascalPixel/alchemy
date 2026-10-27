@@ -38,7 +38,7 @@ void AreaNameWindow_Show(void) {
   notice->window = nameWindow;
   Text_DrawMessage(areaMessage, nameWindow, 0, 0);
   notice->countdown = AREA_NAME_WINDOW_FRAMES;
-  Task_Add(AreaNameWindow_Update, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
 }
 
 /// Counts the area name down, and closes it at 0.

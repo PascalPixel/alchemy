@@ -286,7 +286,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  // 200 << 4 is 0xc80, TASK_PRIORITY_MAIN_LOOP: the update runs in the main
+  // 200 << 4 is 0xc80, TASK_PASS_FRAME: the update runs in the main
   // loop's pass.
   priority = 200;
   priority <<= 4;

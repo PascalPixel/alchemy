@@ -287,7 +287,7 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
   // trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gBattleCamera;

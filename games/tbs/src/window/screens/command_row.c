@@ -119,7 +119,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).
-  Task_Add(CommandRow_PutBg1Behind, TASK_PRIORITY_VBLANK);
+  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 
   for (;;) {

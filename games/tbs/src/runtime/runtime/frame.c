@@ -122,7 +122,7 @@ void WaitFrames(s32 frames) {
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
     gTasksRunning = 1;
-    Task_RunPass(TASK_PRIORITY_MAIN_LOOP);
+    Task_RunPass(TASK_PASS_FRAME);
     gTasksRunning = 0;
     Oam_BuildBuffer(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     gFrameRenderPending = 1;
@@ -411,7 +411,7 @@ void System_VBlankHandler(void) {
     gVBlankCallback = 0;
     hook();
   }
-  Task_RunPass(TASK_PRIORITY_VBLANK);
+  Task_RunPass(TASK_PASS_VBLANK);
 
   // Read the keypad (its bits are 0 while pressed). A newly held key restarts
   // the repeat at once; letting go of all keys restarts the full delay.

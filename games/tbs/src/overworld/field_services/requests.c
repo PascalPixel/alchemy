@@ -82,14 +82,14 @@ void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance) {
 }
 
 /// Makes the script leave for entrance entrance of map sceneId: sets
-/// gSaveBlock.sceneId and entrance and raises the exit request EXIT_NONE (999),
-/// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
-/// through FieldScript_RequestDestinationFar.
+/// gSaveBlock.sceneId and entrance and raises the exit request
+/// EXIT_KEEP_DESTINATION (999), so the map loop leaves on its next pass. Only
+/// Tolbi's spring reaches it, through FieldScript_RequestDestinationFar.
 void FieldScript_RequestDestination(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gSaveBlock.sceneId = sceneId;
   gSaveBlock.entrance = entrance;
-  work->exit = EXIT_NONE;
+  work->exit = EXIT_KEEP_DESTINATION;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),

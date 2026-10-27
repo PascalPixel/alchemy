@@ -1394,11 +1394,11 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
   Actor_GetById(ACTOR_FOURTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
   Actor_GetById(ACTOR_FIFTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
   FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_CheckFifthPursuerTrigger,
-                                     TASK_PRIORITY_MAP);
+                                     TASK_PASS_FRAME);
   FieldScheduler_AddOrUpdateCallback(
-      CrossboneIsleKeys_CheckSecondPursuerTrigger, TASK_PRIORITY_MAP);
+      CrossboneIsleKeys_CheckSecondPursuerTrigger, TASK_PASS_FRAME);
   FieldScheduler_AddCallback(CrossboneIsleKeys_CheckFirstPursuerTrigger,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(7, 6), &REG_BLDALPHA);
@@ -1412,9 +1412,9 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   // cells.
   Actor_GetById(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_FollowSecondPillar,
-                                     TASK_PRIORITY_MAP);
+                                     TASK_PASS_FRAME);
   FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   TreasureSpot_SetPosition(107, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
     Import_ActorSetAnimation(ACTOR_SECOND_PILLAR_CHEST, 2);

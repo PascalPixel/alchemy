@@ -87,7 +87,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   }
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_SCATTER);

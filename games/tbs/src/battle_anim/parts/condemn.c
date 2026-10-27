@@ -71,7 +71,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
   // swing is the point the panel sways about, in 16.16 pixels: the first

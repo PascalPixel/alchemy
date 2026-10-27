@@ -584,7 +584,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabObjects[i] = 0;
   }
-  // 200 << 4 is 0xc80, TASK_PRIORITY_MAIN_LOOP: once a frame in the main
+  // 200 << 4 is 0xc80, TASK_PASS_FRAME: once a frame in the main
   // loop, rank 0x80.
   {
     s32 priority = 200;
@@ -1288,8 +1288,8 @@ void Menu_CancelSoundTick(void) {
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
-  // TASK_PRIORITY_MAIN_LOOP: once a frame in the main loop.
-  Task_Add(Menu_CancelSoundTick, TASK_PRIORITY_MAIN_LOOP);
+  // TASK_PASS_FRAME: once a frame in the main loop.
+  Task_Add(Menu_CancelSoundTick, TASK_PASS_FRAME);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.

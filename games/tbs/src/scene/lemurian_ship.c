@@ -645,7 +645,7 @@ static void EventScript_RaiseTheShip(void) {
   // steps.
   gOrbGlowActive = 1;
   gOrbGlowPhase = 0;
-  FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PASS_FRAME);
   gSprayActive = 1;
   Script_Wait(20);
   Script_PlaySong(SE_RUSH);
@@ -656,7 +656,7 @@ static void EventScript_RaiseTheShip(void) {
   Script_Wait(60);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   gOrbGlowFadeFrames = 0;
-  FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PASS_FRAME);
   // The ship rises 90 pixels, 0.2 pixels a frame.
   risen = 0;
   do {
@@ -689,7 +689,7 @@ static void EventScript_RaiseTheShip(void) {
     REG_BLDY = dark;
     Script_Wait(8);
   }
-  FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PASS_FRAME);
   Script_PlaySong(MUS_PUZZLE_SOLVED);
   Sound_WaitForFanfare();
   Script_Wait(20);
@@ -918,7 +918,7 @@ static void Curtain_Start(void) {
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);
 
   sCurtainGap = 0x30;
-  FieldScheduler_AddCallback(Curtain_Close, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Curtain_Close, TASK_PASS_FRAME);
 }
 
 /// The ship's glow: ShipGlow_CyclePalette shows six of these colours at a

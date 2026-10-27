@@ -28,8 +28,12 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// A task's priority: the high byte picks the pass that runs it, the low byte
 /// ranks it within the pass (higher runs first). An odd high byte means the
 /// task is suspended, so no pass matches it.
-#define TASK_PRIORITY_VBLANK 0x480
-#define TASK_PRIORITY_MAIN_LOOP 0xc80
+///
+/// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
+/// WaitFrames runs TASK_PASS_FRAME's once a frame, the field's and every
+/// scene's own per-frame tasks among them.
+#define TASK_PASS_VBLANK 0x480
+#define TASK_PASS_FRAME 0xc80
 /// An empty slot's priority, sorted last.
 #define TASK_PRIORITY_EMPTY 0xffff
 /// A removed task's priority: its odd high byte matches no pass, and it sorts

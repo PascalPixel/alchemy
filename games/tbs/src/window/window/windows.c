@@ -96,10 +96,10 @@ void WindowSystem_InitField(void) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
   // Make the sprite and palette pools available, then start the updates. The
-  // upload's order, 0x480, is TASK_PRIORITY_VBLANK: it runs in vertical blank.
+  // upload's order, 0x480, is TASK_PASS_VBLANK: it runs in vertical blank.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
-  Task_Add(WindowSystem_UploadTilemap, TASK_PRIORITY_VBLANK);
+  Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartFieldUpdate();
 }
 
@@ -152,7 +152,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
   WindowSprite_InitializeFreeList();
-  Task_Add(WindowSystem_UploadTilemap, TASK_PRIORITY_VBLANK);
+  Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartBattleUpdate(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);

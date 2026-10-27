@@ -867,7 +867,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   return result;
 }
 

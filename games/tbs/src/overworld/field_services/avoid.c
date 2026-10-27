@@ -6,7 +6,7 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldEffect_RunAvoid adds it as a task (priority TASK_PRIORITY_MAIN_LOOP)
+/// FieldEffect_RunAvoid adds it as a task (priority TASK_PASS_FRAME)
 /// for its last 70 frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Object *caster;
@@ -132,7 +132,7 @@ void FieldEffect_RunAvoid(void) {
   }
   object->update = NULL;
   object->facing = angle;
-  Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
   WaitFrames(15);
   Sound_PlaySongFar(SE_NOTE_MID);
   WaitFrames(55);

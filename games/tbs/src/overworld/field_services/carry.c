@@ -108,7 +108,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
   // flag bit 2) with no shadow and its colours cycling.
   target->update = Object_CycleSpriteColors;
-  Task_Add(FieldEffect_SpawnFallingParticles, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_SpawnFallingParticles, TASK_PASS_FRAME);
   Sound_PlaySongFar(SE_PSYNERGY_START);
   target->motionFlags = 4;
   Object_SetSpriteFlagsFar((struct Object *)target, 0);

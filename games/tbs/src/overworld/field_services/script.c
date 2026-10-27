@@ -110,7 +110,7 @@ void FieldScript_Start(void) {
   runtime->unusedAfterMessage = 0xFFFF;
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
-  Task_Add(FieldScript_UpdateDebugSkip, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldScript_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
@@ -512,12 +512,12 @@ void FieldScript_WaitTransitionFrames(void) {
 }
 
 /// Makes the script leave for the given entrance of the given map:
-/// raises the exit request EXIT_NONE and writes gSaveBlock.sceneId and
-/// entrance. Called by the title, the main menu, the Battle Arena, the debug
-/// battle command and five map scripts (the Lemurian ship and the world map
-/// among them).
+/// raises the exit request EXIT_KEEP_DESTINATION and writes gSaveBlock.sceneId
+/// and entrance. Called by the title, the main menu, the Battle Arena, the
+/// debug battle command and five map scripts (the Lemurian ship and the world
+/// map among them).
 void FieldScript_SetDestination(s32 sceneId, s32 entrance) {
-  gFieldWork->exit = EXIT_NONE;
+  gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gSaveBlock.sceneId = sceneId;
   gSaveBlock.entrance = entrance;
 }
@@ -527,7 +527,7 @@ void FieldScript_SetDestination(s32 sceneId, s32 entrance) {
 /// far-call table; nothing in ☀️ names it.
 void FieldScript_SetSavedDestination(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
-  state->exit = EXIT_NONE;
+  state->exit = EXIT_KEEP_DESTINATION;
   gSaveBlock.restartScene = sceneId;
   gSaveBlock.restartEntrance = entrance;
 }

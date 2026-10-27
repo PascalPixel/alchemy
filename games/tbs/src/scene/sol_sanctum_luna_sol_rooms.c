@@ -987,13 +987,13 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   gSolSanctumLunaSolRooms_FlashState = 0;
   // Run the falling lights independently while the quarters keep flashing.
   Task_AddCallback(SolSanctumLunaSolRooms_UpdateFirstFallingLight,
-                   TASK_PRIORITY_MAP);
+                   TASK_PASS_FRAME);
   Task_AddCallback(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
-                   TASK_PRIORITY_MAP);
+                   TASK_PASS_FRAME);
   Task_AddCallback(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
-                   TASK_PRIORITY_MAP);
+                   TASK_PASS_FRAME);
   FieldScheduler_AddCallback(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
-                             TASK_PRIORITY_MAP);
+                             TASK_PASS_FRAME);
   for (flash = 0; flash != 6; flash++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(5);
   }

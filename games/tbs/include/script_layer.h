@@ -56,10 +56,6 @@ extern u8 *gColossoWork;
 
 #include "actor.h"
 
-/// The main loop pass's task priority, as TASK_PRIORITY_MAIN_LOOP: a map's
-/// per-frame callbacks run once a frame with the field's own.
-enum { TASK_PRIORITY_MAP = 3200 };
-
 /// Animation numbers of an actor's sprite, for
 /// Import_ActorSetAnimation.
 enum ActorAnimation {

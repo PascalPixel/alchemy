@@ -899,7 +899,7 @@ s32 WorldMap_Initialize(void) {
     FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
@@ -972,8 +972,7 @@ s32 WorldMap_Initialize(void) {
       GameFlag_Set(FLAG_WORLD_MAP_LEFT);
       if (FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT) != 0) {
         gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
-        FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
-                                   TASK_PRIORITY_MAP);
+        FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
       }
       break;
     case WORLD_MAP_FROM_SHIP_ROOMS:
@@ -1247,7 +1246,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   WaitFrames(1);
   spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Actor_SetSpriteFlags(spriteActor, 0);
-  FieldScheduler_AddCallback(WorldMap_UpdateFallingRock, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(WorldMap_UpdateFallingRock, TASK_PASS_FRAME);
   do {
     WaitFrames(1);
   } while (actor->timer == 0);
@@ -2367,7 +2366,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   WaitFrames(1);
   FieldCamera_SetSpeedParameters(PIXELS(4), PIXELS(1) / 2);
   {
-    s32 priority = TASK_PRIORITY_MAP;
+    s32 priority = TASK_PASS_FRAME;
     TaskFunc callback = WorldMap_UpdateLighthouseQuake;
     FieldScheduler_AddCallback(callback, priority);
   }
@@ -2569,7 +2568,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, PIXELS(2) / 5, PIXELS(1) / 5);
   actor->timer = 0;
   Actor_SetActionScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);
-  FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PASS_FRAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 32;
@@ -2631,7 +2630,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     }
     ObjectMotion_CommitCurrentPositionAndActivate(id);
     Script_PlaySong(SE_SANDSTORM);
-    FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
     actor->motionFlags = alreadyTraveling;
     Object_SetPosition(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
                        actor->z.fixed);
@@ -2792,7 +2791,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
                       DMA_ENABLE << 16 | 16);
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x400);
-  FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   FieldScript_Start();
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   Actor_GetById(gSaveBlock.leaderActorId)->spriteStorageKind = 0;
@@ -2829,8 +2828,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   gWorldMapBlend = BLEND_ALPHA(0, 12);
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   WorldMap_LoadAreaGraphics();
-  FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera,
-                             TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera, TASK_PASS_FRAME);
   Sound_PlaySong(SE_RUMBLE);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
   FieldScript_WaitFrames(4);

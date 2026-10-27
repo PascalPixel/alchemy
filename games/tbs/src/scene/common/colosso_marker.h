@@ -231,7 +231,7 @@ void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   gColosso_MarkerBlink = 0;
   gColosso_MarkerSteps = 0;
 
-  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PASS_FRAME);
 }
 
 /// Glides the pointer to screen pixel (x, y) over duration frames.
@@ -243,7 +243,7 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
   gColosso_MarkerSteps = duration;
   gColosso_MarkerStep = 0;
 
-  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PASS_FRAME);
 }
 
 /// Hides the pointer and frees its VRAM block.

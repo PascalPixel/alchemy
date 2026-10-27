@@ -103,8 +103,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 /// and shrinks out of sight (FieldEffect_UpdateDescendingObject) as the
 /// particles fly. It is hidden, not released, and the effect opens a script
 /// (FieldScript_Start) it does not end: the Retreat exit raised before it
-/// (EXIT_RETREAT, by Field_UsePsynergy or Field_UseItem) then leaves the map.
-/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
+/// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
+/// the map. Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainObject;

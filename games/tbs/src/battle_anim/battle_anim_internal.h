@@ -183,7 +183,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define ANIM_START_TRANSFER(work, mode, value)                                 \
   (ANIM_SET_TRANSFER(work, mode, value),                                       \
-   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK))
+   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
 /// Ends a frame of a canvas animation: marks the canvas ready for the transfer
 /// callback, then waits for the next frame. Nearly every animation loop ends

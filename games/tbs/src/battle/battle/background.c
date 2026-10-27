@@ -89,7 +89,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   struct BattleBackgroundWork *transition = gBattleBackgroundWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PRIORITY_VBLANK + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   }
   transition->mode = mode;
 
@@ -214,7 +214,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PRIORITY_VBLANK + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -600,7 +600,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// gBattleHighlight_BlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
 /// and over. Runs each frame as a task in the VBlank pass
-/// (priority TASK_PRIORITY_VBLANK), added by BattleHighlight_SetModes while
+/// (priority TASK_PASS_VBLANK), added by BattleHighlight_SetModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
 void BattleBackground_StepHighlightBlend(void) {
@@ -672,7 +672,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     }
     WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Task_Add(BattleBackground_StepHighlightBlend, TASK_PRIORITY_VBLANK);
+    Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_VBLANK);
   }
 }
 

@@ -42,7 +42,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
-/// Runs each frame as a task (priority TASK_PRIORITY_VBLANK + 0x7e) that
+/// Runs each frame as a task (priority TASK_PASS_VBLANK + 0x7e) that
 /// BattleAnim_RunParticleStreams adds for its rise and removes after it; the
 /// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
@@ -192,7 +192,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   // The rising formation: two animated objects in Outer Space, otherwise one
@@ -264,8 +264,8 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Task_Add(BattleAnim_AdvanceBg2OnInterval, TASK_PRIORITY_VBLANK + 0x7f);
-  Task_Add(BattleAnim_FlushPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 0x7f);
+  Task_Add(BattleAnim_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
   {
@@ -318,7 +318,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening animations write theirs).
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-    Task_Add(BattleAnim_ArmPaletteHBlankDma, TASK_PRIORITY_VBLANK + 0x7e);
+    Task_Add(BattleAnim_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 0x7e);
     ANIM_FREE_PARTICLES(i, work->particles, 64);
     view->busy = 1;
     work->frame = 0;

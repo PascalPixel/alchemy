@@ -117,7 +117,7 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
 
   draw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
   // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
   // fade it out (frames 89 to 95, from 14 sixteenths down to 2).

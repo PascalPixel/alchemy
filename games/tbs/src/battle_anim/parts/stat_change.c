@@ -215,7 +215,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
   // Each transfer keeps half of every level, so the flares leave trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (work->effect->side == ANIM_SIDE_PARTY)
     drawFlags = ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else

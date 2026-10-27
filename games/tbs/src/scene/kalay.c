@@ -1257,7 +1257,7 @@ static void Kalay_PrepareTown(void) {
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;
     nut->orbitCenterZ = nut->z;
-    FieldScheduler_AddCallback(Kalay_UpdateNutOrbit, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Kalay_UpdateNutOrbit, TASK_PASS_FRAME);
   }
 }
 
@@ -1423,7 +1423,7 @@ static void Kalay_PrepareTunnel(void) {
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_SECOND_STATUE);
   Actor_SetSpriteFlags(actor, 0);
-  FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     Actor_SetPosition(ACTOR_WAITING_MAN, PIXELS(426), PIXELS(730));
     actor = Actor_Get(ACTOR_WAITING_MAN);
@@ -1538,7 +1538,7 @@ static void Kalay_StartGuidesPacing(void) {
   gKalay_DanceStep = 0;
   Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
-  FieldScheduler_AddCallback(Kalay_AlternateGuidesPacing, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Kalay_AlternateGuidesPacing, TASK_PASS_FRAME);
 }
 
 /// Each guide paces in turn, starting when the other finishes.

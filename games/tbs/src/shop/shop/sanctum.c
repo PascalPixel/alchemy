@@ -492,7 +492,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Shop_SaveAndTintFieldPalette(0x00202108);
   Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  callbackPriority = TASK_PRIORITY_MAIN_LOOP;
+  callbackPriority = TASK_PASS_FRAME;
   Task_Add(Shop_ResetEffects, callbackPriority);
 
   // The burst's centre, in 16.16 pixels: 12 above the member's icon

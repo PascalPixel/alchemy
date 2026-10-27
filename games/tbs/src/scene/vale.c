@@ -1581,7 +1581,7 @@ s32 Vale_Initialize(void) {
     actor->layer = 3;
     actor->motionFlags = 0;
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
-                               TASK_PRIORITY_MAP);
+                               TASK_PASS_FRAME);
 #if TBS_PATCH_4
     if (GameFlag_Get(FLAG_KALAY_REACHED)) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -1630,7 +1630,7 @@ s32 Vale_Initialize(void) {
         if (gSaveBlock.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
-                                     TASK_PRIORITY_MAP);
+                                     TASK_PASS_FRAME);
         }
       }
       if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
@@ -2153,8 +2153,8 @@ static void EventScript_MendingTheRoof(void) {
     WaitFrames(1);
   }
   ObjectMotion_SetActionVariant(ACTOR_GARET, 1);
-  Task_AddCallback(Vale_UpdateGaretPaletteAndEffects, TASK_PRIORITY_MAP);
-  Task_AddCallback(Vale_CycleOpeningPillarPalette, TASK_PRIORITY_MAP);
+  Task_AddCallback(Vale_UpdateGaretPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddCallback(Vale_CycleOpeningPillarPalette, TASK_PASS_FRAME);
   actor = Actor_GetById(ACTOR_OPENING_MOVE_HAND);
   Actor_SetSpriteFlags(actor, 0);
   stoppedMotionFlags = 0;
@@ -2414,7 +2414,7 @@ static void EventScript_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
   Scene_StartEventPsynergy();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     WaitFrames(1);
@@ -2422,9 +2422,9 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 1);
 
   callbackA = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddCallback(callbackA, TASK_PRIORITY_MAP);
+  Task_AddCallback(callbackA, TASK_PASS_FRAME);
   callbackB = Vale_CycleFirstBoardPalette;
-  Task_AddCallback(callbackB, TASK_PRIORITY_MAP);
+  Task_AddCallback(callbackB, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_FIRST_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2458,16 +2458,16 @@ static void EventScript_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
+  Task_AddCallback(Vale_PlayStepSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     WaitFrames(1);
   }
   ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 1);
   callbackC = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddCallback(callbackC, TASK_PRIORITY_MAP);
+  Task_AddCallback(callbackC, TASK_PASS_FRAME);
   callbackD = Vale_CycleSecondBoardPalette;
-  Task_AddCallback(callbackD, TASK_PRIORITY_MAP);
+  Task_AddCallback(callbackD, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_SECOND_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2502,16 +2502,16 @@ static void EventScript_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
+  Task_AddCallback(Vale_PlayStepSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     WaitFrames(1);
   }
   ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 1);
   callbackE = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddCallback(callbackE, TASK_PRIORITY_MAP);
+  Task_AddCallback(callbackE, TASK_PASS_FRAME);
   callbackF = Vale_CycleThirdBoardPalette;
-  FieldScheduler_AddCallback(callbackF, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(callbackF, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_THIRD_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

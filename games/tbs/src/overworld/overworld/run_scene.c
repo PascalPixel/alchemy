@@ -16,10 +16,10 @@ struct ObjectSystemSuspendView {
 };
 
 /// Runs the current scene, which the party entered by entrance, until it
-/// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
-/// when the next scene is already in gSaveBlock: a random battle, a
-/// party that fell outside battle, Retreat or a script's destination. Sets the
-/// scene up (map, actors, encounters, return points), runs its
+/// leaves; returns the exit kind it left by, for Scene_TakeExit, or
+/// EXIT_KEEP_DESTINATION when the next scene is already in gSaveBlock: a random
+/// battle, a party that fell outside battle, Retreat or a script's destination.
+/// Sets the scene up (map, actors, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
@@ -201,7 +201,7 @@ s32 SceneManager_Run(s32 entrance) {
               gSaveBlock.sceneId = gSaveBlock.restartScene;
               gSaveBlock.entrance = gSaveBlock.restartEntrance;
               WorldMap_EndScript();
-              result = EXIT_NONE;
+              result = EXIT_KEEP_DESTINATION;
               goto done;
             }
             WorldMap_EndScript();
@@ -225,7 +225,7 @@ s32 SceneManager_Run(s32 entrance) {
           gSaveBlock.returnMusic = -1;
           gSaveBlock.sceneId = SEQUENCE_BATTLE;
           gSaveBlock.entrance = work->battle;
-          work->exit = EXIT_NONE;
+          work->exit = EXIT_KEEP_DESTINATION;
           Field_StartEncounterTransition(work->battle);
           work->encounterBias = 0;
           work->battle = 0;

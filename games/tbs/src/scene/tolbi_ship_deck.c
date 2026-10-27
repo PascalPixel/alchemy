@@ -1282,15 +1282,15 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   } else if ((flag = GameFlag_Get(FLAG_TOLBI_SHIP_ROWING)) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_SetUpOars();
-    Task_AddCallback(TolbiShipDeck_RowOars, TASK_PRIORITY_MAP);
+    Task_AddCallback(TolbiShipDeck_RowOars, TASK_PASS_FRAME);
     sSeaScroll[1] = 0x200000;
     sSeaSpeed[1] = 0x13333;
-    FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PASS_FRAME);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     sSeaScroll[1] = flag;
     sSeaSpeed[1] = flag;
-    FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();

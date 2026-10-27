@@ -15,7 +15,7 @@ Four parts take the game from switching on to a moment such as Isaac standing
 in Xian at the foot of the stairs: start-up, the sequence manager, the scene
 sequence that loads a place, and the scene manager that runs it. Each section
 below has a chart of the part in general and, where it helps, a second chart
-of the same part in Xian. A box keeps its name and colour from chart to chart, and a place is red.
+of the same part in Xian. A box keeps its name and colour from chart to chart, and Xian, the example, is red.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -137,7 +137,8 @@ flowchart TD
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class xian,world,again place
+  class xian place
+  class world,again step
   class ask1,ask2,ask3 request
   class battle battle
   style s1 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16

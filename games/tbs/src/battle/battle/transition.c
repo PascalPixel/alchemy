@@ -259,12 +259,6 @@ void BattleTransition_ClearBg0Vofs(void) {
   REG_BG0VOFS = zero;
 }
 
-/// The display control and green swap registers, REG_DISPCNT onward.
-struct DisplayRegisters {
-  u16 control;   ///< REG_DISPCNT
-  u16 greenSwap; ///< the undocumented green swap register after it
-};
-
 /// Opens a battle: the curtain opening, or for the Fusion Dragon the storm
 /// on the Venus Lighthouse aerie; then announces the enemies and leaves the
 /// battle's display set.
@@ -295,37 +289,28 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   timer = AllocHeapSlot(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if (encounterId != TRANSITION_STORM_FORMATION) {
-    // The curtain: its seven edge tiles, and the display off while BG1 is
-    // set up.
-    {
-      volatile u32 *dma;
-
-      Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 32, CURTAIN_TILE(2),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 64, CURTAIN_TILE(3),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 96, CURTAIN_TILE(4),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 128, CURTAIN_TILE(5),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 160, CURTAIN_TILE(6),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattleTransition_CurtainTiles + 192, CURTAIN_TILE(7),
-              DMA_COPY_WORDS(8), REG_DMA3);
-      dma = REG_DMA3;
-      /* FAKEMATCH(barrier): REG_DISPCNT reached from DMA3's address through an
-       * empty asm, as the ROM's subs r3, #212; without the barrier, 12 of 414
-       * instructions differ in tbs-en. */
-      asm volatile("" : "+l"(dma));
-      ((struct DisplayRegisters *)((u8 *)dma - 212))->control = DISPCNT_MODE_1;
-    }
-    // Tile 128 solid colour 3 and tile 136 clear; BG1 shows the curtain
-    // from screen block 12 behind BG0, whose priority is raised by 2.
+    // The curtain's seven edge tiles.
+    Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
+            REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 32, CURTAIN_TILE(2),
+            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 64, CURTAIN_TILE(3),
+            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 96, CURTAIN_TILE(4),
+            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 128, CURTAIN_TILE(5),
+            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 160, CURTAIN_TILE(6),
+            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 192, CURTAIN_TILE(7),
+            DMA_COPY_WORDS(8), REG_DMA3);
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->mode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
+    // The display off while BG1 is set up: tile 128 solid colour 3 and tile
+    // 136 clear; BG1 shows the curtain from screen block 12 behind BG0, whose
+    // priority is raised by 2.
+    REG_DISPCNT = DISPCNT_MODE_1;
     Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), 0x20);
     Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), 0x20);
     REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);

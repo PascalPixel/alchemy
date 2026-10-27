@@ -5,10 +5,43 @@ everywhere else simply as Golden Sun. To keep [the two
 games](glossary.md#the-two-games) apart, these pages call the first one The
 Broken Seal, or TBS for short.
 
+The whole game is one loop, the [sequence manager](#the-sequence-manager).
+Each time round it runs one [sequence](glossary.md#sequence): a
+[scene](glossary.md#scene) (a place, or a screen such as the Title or the File
+Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
+from there each exit leads to the next scene. Four steps take the game from
+switching on to a moment such as Isaac standing in Xian at the foot of the
+stairs: start-up, the sequence manager, loading the scene, and the scene
+manager that runs it.
+
+## Start-up
+
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
 flowchart LR
-  start(["The game starts"]) --> loop(["The sequence manager"])
+  power(["Power on"]) --> memory["Clear memory"] --> irq["Install the fast code"]
+  irq --> services["Start the sound and the tasks"] --> seq(["The sequence manager"])
+  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
+  class power,seq flow
+  class memory,irq,services field
+```
+
+Switching on runs `System_Initialize` once. It clears the console's fast
+memory, copies in the routines that must run fastest and the interrupt
+handlers, loads the graphics windows are drawn with, starts the sound and
+empties the list of [tasks](glossary.md#task). Then it hands over to the
+sequence manager, which never returns. [Engine](engine.md#start-up) has the
+details.
+
+## The sequence manager
+
+![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
+flowchart LR
+  start(["Start-up"]) --> loop(["The sequence manager"])
   loop --> scene["Scene"]
   loop --> battle["Battle"]
   loop --> dice["Lucky Dice"]
@@ -30,21 +63,10 @@ flowchart LR
   class wheels wheels
 ```
 
-The whole game is one loop, the [sequence manager](#the-sequence-manager).
-Each time round it runs one [sequence](glossary.md#sequence): a
-[scene](glossary.md#scene) (a place, or a screen such as the Title or the File
-Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
-from there each exit leads to the next scene.
-
-## The sequence manager
-
-![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
-
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
-throws away everything Vale set up (its [tasks](glossary.md#task), its screen
-effects, every block of memory it borrowed), loads the Sanctum's code and runs
-it until the party leaves. Unless a flag asks to keep the music playing, each
-scene starts its own.
+throws away everything Vale set up (its tasks, its screen effects, every
+block of memory it borrowed), loads the Sanctum and runs it until the party
+leaves.
 
 A battle takes a scene's place in the loop. Its code is always loaded, so
 there is nothing to unpack, and when it ends the party stands where it stood.
@@ -61,40 +83,79 @@ when time must pass; while it waits, tasks keep everything else moving
 bottom in the order things happen, and whatever moves alongside it has to be
 a task of its own.
 
-At power-on `System_Initialize` clears the fast memory, installs the code that
-always stays loaded and the interrupt handlers, loads the window graphics,
-starts the sound and calls `SequenceManager_Run`, which never returns. Each
-time round, a scene's turn is `Scene_Arrive`, `Scene_ChooseMusic`,
-`Scene_LoadOverlay`, then `SceneManager_Run` below, whose result goes to
-`Scene_TakeExit`. A battle or a minigame reports a result rather than an exit,
-and `Scene_ReturnFromSequence` turns it into the scene to go back to.
+The loop is `SequenceManager_Run`. A battle or a minigame reports a result
+rather than an exit, and `Scene_ReturnFromSequence` turns it into the scene
+to go back to.
+
+## Loading a scene
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
+flowchart TD
+  pick(["Xian is next"]) --> arrive["Clear the last scene's flags"] --> music["Start Xian's music"] --> code["Unpack Xian's code"]
+  code --> map["Load its map, with its animated water"] --> place["Place the party and the villagers"]
+  place --> own["Xian's own set-up, by the flags"] --> fade["Fade in"] --> run(["The scene manager"])
+  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
+  class pick,run flow
+  class arrive,music,code,map,place,own,fade field
+```
+
+When an exit leads to Xian, the sequence manager clears the flags the last
+scene kept for itself and, since Xian is a new [area](glossary.md#area),
+the area's flags too, and starts Xian's music. It unpacks Xian's code, its
+[overlay](glossary.md#overlay), over the last scene's.
+
+The scene manager then builds the place. It loads Xian's
+[map](glossary.md#map): the picture, the ground the party walks on and the
+list of tiles that animate, such as the water. It puts the party at the
+[entrance](glossary.md#entrance) it came in by and creates every villager
+from Xian's list of [actors](glossary.md#actor). Then Xian's own code sets
+the village up as the story has left it, reading the
+[game flags](glossary.md#game-flag): once Xian has heard that Hsu is trapped,
+the kung fu student stands where her strike left her and Feizhi is gone from
+the south exit; the water carrier is given the routine that walks her round.
+Last, the screen fades in and the area name appears.
+
+The steps are `Scene_Arrive`, `Scene_ChooseMusic` and `Scene_LoadOverlay` in
+the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
+`Xian_Initialize` in [xian.c](src/scene/xian.c).
 
 ## The scene manager
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
-flowchart LR
-  scene(["Scene"]) --> setup["Set up"] --> walk["Walk"]
-  walk -->|"something happens"| handle["Handle it"]
-  handle -->|"done"| walk
+flowchart TD
+  frame(["A frame in Xian"]) --> tasks["Every task runs once"]
+  tasks --> check{"A request?"}
+  check -->|"no"| frame
+  check -->|"yes"| handle["Handle it to the end"]
+  handle --> frame
   handle -->|"an exit or a battle"| next(["Request another sequence"])
   classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class scene,next flow
-  class setup,walk,handle field
+  class frame,next flow
+  class tasks,check,handle field
 ```
 
-A scene has two states, and the scene manager switches between them. While
-the player walks, the game runs one [frame](glossary.md#frame) at a time and
-only watches: the buttons, and the ground the party steps onto. When it sees
-something that should happen it notes a
-[field request](glossary.md#field-request) and stops watching. Then it
-handles the requests, each from start to finish, while the walking waits;
-when none is left, the player walks again. Everything that happens in a
-scene, every conversation, cutscene, menu and battle, starts as one of these
-requests.
+Isaac stands at the foot of Xian's stairs and the player presses nothing,
+yet the village is alive. Each frame the scene manager
+waits for the screen, and while it waits every task runs once:
 
-What raises each request:
+- every actor runs its [actor script](glossary.md#actor-script): the water
+  carrier takes her next step on her round;
+- Isaac's script has handed him to player control, which reads the buttons,
+  finds none pressed and keeps him standing;
+- the tile animation swaps the next frame of the moving water into place;
+- the camera follows Isaac, and the sprites are placed on the screen.
+
+Then the scene manager asks whether anything should happen. Usually nothing
+has, and the next frame begins. When something has, it is a
+[field request](glossary.md#field-request), and the scene manager runs it
+from start to finish before the next frame of standing or walking. Talking
+to the water carrier is a request: her conversation is an event, and while
+it waits for A the tasks still run, so the water keeps moving. When none is
+left, the player has Isaac again.
 
 | Request        | What raises it                                                                     |
 | -------------- | ---------------------------------------------------------------------------------- |
@@ -109,23 +170,19 @@ What raises each request:
 | Pause menu     | Start                                                                              |
 
 The table is in order of urgency: when several are waiting, the scene manager
-takes the highest first. An exit ends the scene. A random battle names the
-battle as the next [sequence](glossary.md#sequence) and ends the scene too,
+takes the highest first. Xian's water carrier raises a trigger of her own
+when Isaac stands in her way for two seconds. An exit ends the scene. A
+random battle names the battle as the next sequence and ends the scene too,
 which is why the party comes back from a battle to the same spot: the scene
-starts again, keeping where everyone stood. Every other request runs, and
-may raise another (talking to someone can start an event, which can take an
-exit).
+is loaded again, keeping where everyone stood.
 
-Before the first frame of walking, the scene's own set-up runs. It can play a
-whole event before the player gets control, as Vale erupting does, and if it
-takes an exit the scene ends without fading in.
-
-The scene manager is `SceneManager_Run` in
-[scene_manager.c](src/overworld/overworld/scene_manager.c); the walking frame
-is `Field_UpdateWalking`, and the buttons are read by
-`Field_CheckConfiguredKeys`. [Running a
-scene](src/overworld/README.md#the-scene-manager-serves-requests) follows each
-request in full.
+The loop is the rest of `SceneManager_Run` in
+[scene_manager.c](src/overworld/overworld/scene_manager.c). The actors are
+moved by `Actor_UpdateAllMotion`, the water by `TilesetAnim_Update` and the
+camera by `MapGrid_UpdateLayerScroll`, all tasks; Isaac's buttons are read by
+`Field_CheckConfiguredKeys` and the ground under him by `Field_UpdateWalking`.
+[Running a scene](src/overworld/README.md#the-scene-manager-serves-requests)
+follows each request in full.
 
 ## Scenes and overlays
 

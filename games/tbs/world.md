@@ -30,7 +30,7 @@ loads the scene again with everyone put back where they were.
 
 `FieldLoop_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
-scene](src/overworld/README.md#the-scene-manager-serves-requests) lists
+scene](src/overworld/README.md#the-field-loop-serves-requests) lists
 all twelve requests in the order they are handled.
 
 ## Scene entries

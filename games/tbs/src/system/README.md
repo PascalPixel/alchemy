@@ -32,7 +32,7 @@ moves:
 
 | EWRAM, from | Size | What |
 | --- | --- | --- |
-| 0 KB | 32 KB | the game's variables: the save block, the [game flags](../../glossary.md#game-flag), the sound driver's work |
+| 0 KB | 32 KB | the game's variables: the persistent state, the [game flags](../../glossary.md#game-flag), the sound driver's work |
 | 32 KB | 32 KB | the current scene's code, `gOverlayArea` |
 | 64 KB | 96 KB | the map grid's [cells](../../glossary.md#cell), the battle figures' pictures, unpacking space, the map's [metatiles](../../glossary.md#metatile) and its animated tiles |
 | 176 KB | 16 KB | the shapes of the ground |

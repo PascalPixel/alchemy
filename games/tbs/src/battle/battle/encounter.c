@@ -25,7 +25,7 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each round.
 ///
-/// Reached through its far stub from Monitor_Run's sequence switch
+/// Reached through its far stub from Monitor_Run's switch on the program
 /// (PROGRAM_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message

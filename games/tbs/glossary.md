@@ -250,11 +250,22 @@ menus, its debug names), else a word of the game's time, else a plain
 description of the thing. A reader coming from pret's decompilations, such as
 pokeemerald, finds each entry saying what pret calls the nearest thing.
 
-### Sequence
+### Program
 
-What the sequence manager, the loop the whole game runs in, runs next: a
-scene, a battle, Lucky Dice or Lucky Wheels, each running until it ends and
-names the next ([The front page](README.md#the-sequence-manager)).
+What the monitor runs: the scene program, the battle program, the dice program
+(Lucky Dice) or the slots program (Lucky Wheels). One runs at a time, until it ends and
+names the next program in the persistent state. The monitor (`Monitor_Run`) is
+the loop around them, which tears down what the last program set up and runs
+the next; operating systems of the 1960s called such a loop a resident monitor.
+pret's DS decompilations call the nearest thing an application
+([The front page](README.md#the-monitor)).
+
+### Persistent state
+
+The one struct that outlives every program, `gPersistentState`: the party,
+the flags, where the party stands, the next program and what the last one
+reported. Save Game writes it to the cartridge
+([The front page](README.md#how-a-program-finds-its-way-back)).
 
 ### Scene
 
@@ -363,7 +374,7 @@ pret calls it a warp destination.
 
 What the field loop answers once the leader stops walking: one of twelve
 `FieldWork` members asks for an exit, an encounter, a talk, an examine, an
-item, a field Psynergy, a menu or a raised trigger, and the scene manager
+item, a field Psynergy, a menu or a raised trigger, and the field loop
 serves them most urgent first ([World](world.md#the-field-loop-and-its-requests)).
 
 ### Event
@@ -383,7 +394,7 @@ them through one inline each in `event_inline.h`
 
 ### Destination
 
-The scene and entrance the sequence manager runs next (`gPersistentState.sceneId`
+The scene and entrance the monitor runs next (`gPersistentState.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

@@ -20,7 +20,7 @@ in each scene comes from its own code in [Scenes](../scene/README.md).
 [World](../../world.md) gives the whole layer in brief. The folder takes pret's
 name for the same loop, overworld.
 
-## The scene manager serves requests
+## The field loop serves requests
 
 ![Isaac walks down a passage of Goma Cave until a battle opens with "Ghost appeared!"; after a cut to the battle's last blows and its rewards, the cave comes back with Isaac standing where he was, and he walks on](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
@@ -189,8 +189,8 @@ matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-`Monitor_Run` is the game's sequence manager; [the front
-page](../../README.md#the-sequence-manager) describes it. For a scene it clears the
+`Monitor_Run` is the game's monitor; [the front
+page](../../README.md#the-monitor) describes it. For a scene it clears the
 scene's flags, loads the overlay and runs `FieldLoop_Run`; for a battle or minigame it
 runs that and then loads the scene again. The overlay supplies the scene's tables
 and setup, and calls back into this folder through its
@@ -215,7 +215,7 @@ effect work serves the Djinn joining as well as field Psynergy.
 ## Words used here
 
 - **field work**: `struct FieldWork`, the running scene's state
-  ([above](#the-scene-manager-serves-requests)). Local name `work`.
+  ([above](#the-field-loop-serves-requests)). Local name `work`.
 - **actor**: one of the 64 [actors](../../glossary.md#actor) the field work's
   `actors` array, 66 long, points at by
   [actor id](../../glossary.md#actor-id). Local names `actor`,

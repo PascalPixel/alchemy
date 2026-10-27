@@ -38,7 +38,7 @@ enum LeaderMovementMode {
 
 /// Monitor_Run's mode: where the game starts.
 enum GameStart {
-  GAME_START_TITLE = 0,            ///< the Title, with a fresh save block
+  GAME_START_TITLE = 0,            ///< the Title, with a fresh persistent state
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
   GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
 };
@@ -103,7 +103,7 @@ enum EncounterZoneId {
 };
 
 void Scene_TakeExit(s32 exitId);
-void Scene_ReturnFromSequence(s32 result);
+void Scene_ReturnFromProgram(s32 result);
 s32 Scene_GetArea(s32 sceneId);
 void Monitor_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);

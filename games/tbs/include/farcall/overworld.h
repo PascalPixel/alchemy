@@ -5,7 +5,7 @@
 /// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
 /// gPersistentState already holds the next scene.
 s32 FieldLoop_RunFar(s32 entrance);
-/// The sequence manager, which never returns; mode, an enum GameStart,
+/// The monitor, which never returns; mode, an enum GameStart,
 /// picks the first scene. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
 void Monitor_RunFar(s32 mode);

@@ -164,7 +164,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// their memory too; InitHeap clears the slots at the next
 /// scene change.
 ///
-/// Called through ActorSystem_InitializeFar by the scene manager
+/// Called through ActorSystem_InitializeFar by the field loop
 /// (overworld/overworld/field_loop.c) and the battle's encounter, and
 /// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
 /// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
@@ -460,27 +460,27 @@ void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
-/// The scene manager (overworld/overworld/field_loop.c) gives it to the
+/// The field loop (overworld/overworld/field_loop.c) gives it to the
 /// leader when gPersistentState.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
 
 /// Starts an actor on the script that moves it by the keys (SC_KEYS).
-/// The scene manager gives it to the leader when gPersistentState.movementMode
+/// The field loop gives it to the leader when gPersistentState.movementMode
 /// is 1.
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);
 }
 
 /// Starts an actor on the player control script (SC_PLAYER).
-/// The scene manager's usual choice for the leader on a layered map.
+/// The field loop's usual choice for the leader on a layered map.
 void Actor_StartPlayerControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_PlayerScript);
 }
 
 /// Starts an actor on the world map control script (SC_WORLD).
-/// The scene manager gives it to the leader on the world map.
+/// The field loop gives it to the leader on the world map.
 void Actor_StartWorldMapControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_WorldMapScript);
 }

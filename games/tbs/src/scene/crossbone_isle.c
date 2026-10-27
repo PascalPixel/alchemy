@@ -500,7 +500,7 @@ static void CrossboneIsle_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  // Through state, the map's address is built as the save block's plus an
+  // Through state, the map's address is built as the persistent state's plus an
   // offset, as the bytes have it; &gPersistentState.sceneId folds into one
   // literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
   state = &gPersistentState;

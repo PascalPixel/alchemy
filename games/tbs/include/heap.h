@@ -7,7 +7,7 @@
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
 /// runtime README's "The heap" gives the allocators and
 /// the lifetime rule. Every scene change resets both pools and clears every
-/// slot (InitHeap, from the sequence loop in overworld/monitor.c), so
+/// slot (InitHeap, from the monitor in overworld/monitor.c), so
 /// no block outlives the scene, battle or minigame that took it.
 
 #include "types.h"

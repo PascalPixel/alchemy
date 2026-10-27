@@ -29,7 +29,7 @@ struct StatWork {
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// Starts a new game: clears the save block and restarts at the opening.
+/// Starts a new game: clears the persistent state and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_RestartQuest(void) {
   PersistentState_InitializeDefaults();
@@ -70,7 +70,7 @@ u32 Party_GetAverageLevel(void) {
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the save block, 0x80 to 0x85 the enemies of the current
+/// characters in the persistent state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {

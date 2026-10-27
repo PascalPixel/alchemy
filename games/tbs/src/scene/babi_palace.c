@@ -2529,8 +2529,9 @@ s32 BabiPalace_ApplyEntryState(void) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       // Only this entrance chooses the waking, so rewriting it makes a
-      // later load of the scene from the save block, as when a game saved here
-      // is continued, an arrival from the statue room, not a second waking.
+      // later load of the scene from the persistent state, as when a game saved
+      // here is continued, an arrival from the statue room, not a second
+      // waking.
       gPersistentState.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
     if (gPersistentState.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {

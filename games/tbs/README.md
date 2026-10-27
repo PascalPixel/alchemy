@@ -10,16 +10,16 @@ Most games of its time, the Pokémon games among them, are built around a main
 loop that calls every part of the game once a tick. The Broken Seal is built
 the other way round:
 
-- **No main loop of ticks.** A [sequence manager](#the-sequence-manager)
-  runs one sequence (a scene, a battle, a minigame) from start to finish.
-- **Sequences hand over by themselves.** A scene that meets a random battle
-  writes the battle down as the next sequence and ends; the battle ends by
+- **No main loop of ticks.** A [monitor](#the-monitor)
+  runs one program (a scene, a battle, a minigame) from start to finish.
+- **Programs hand over by themselves.** A scene that meets a random battle
+  writes the battle down as the next program and ends; the battle ends by
   reporting a result, and the game works out where to go back to.
 - **Code waits in place.** An event or a menu is an ordinary function that
   runs top to bottom and pauses when time must pass. While it pauses, a short
   list of [tasks](glossary.md#task) keeps the world moving
   ([Waiting in place](#waiting-in-place)).
-- **The scene's loop only listens.** The scene manager goes round once a tick
+- **The scene's loop only listens.** The field loop goes round once a tick
   while the player walks, and acts on what the tasks noted down.
 - **A battle's rules and animations run together.** Damage appears while the
   attack is still on screen ([Battles](#battles)).
@@ -34,13 +34,13 @@ The game runs in four layers, each inside the one above it.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "fontSize": "14px"}, "flowchart": {"padding": 10}}}%%
 flowchart TB
-  subgraph seqm ["Sequence manager"]
+  subgraph seqm ["Monitor"]
     direction TB
-    c1["One sequence at a time, for as long as the console is on"]
-    subgraph scene ["Scene sequence"]
+    c1["One program at a time, for as long as the console is on"]
+    subgraph scene ["Scene program"]
       direction TB
       c2["Loads one scene: its code, its map, its people"]
-      subgraph mgr ["Scene manager"]
+      subgraph mgr ["Field loop"]
         direction TB
         c3["Runs the scene a tick at a time until the party leaves"]
         subgraph tick ["Tick"]
@@ -65,16 +65,16 @@ flowchart TB
   style tick fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
 ```
 
-- **[Sequence manager](#the-sequence-manager).** The game's main loop. It runs
-  one [sequence](glossary.md#sequence) at a time, for as long as the console
-  is on.
-- **[Scene sequence](#the-scene-sequence).** Loads one
+- **[Monitor](#the-monitor).** Runs one [program](glossary.md#program) at a
+  time, for as long as the console is on: a scene, a battle, Lucky Dice or
+  Lucky Wheels.
+- **[Scene program](#the-scene-program).** Loads one
   [scene](glossary.md#scene): a place such as Xian, or a screen such as the
   Title.
-- **[Scene manager](#the-scene-manager).** Runs that scene, one
+- **[Field loop](#the-field-loop).** Runs that scene, one
   [tick](glossary.md#tick) at a time, until the party leaves.
-- **Tick.** Every queued [task](glossary.md#task) runs once, then the scene
-  manager handles what the player or the scene asked for.
+- **Tick.** Every queued [task](glossary.md#task) runs once, then the field
+  loop handles what the player or the scene asked for.
 
 A box keeps its name and colour in every chart below. Xian, the example
 throughout, is red.
@@ -85,70 +85,70 @@ throughout, is red.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
-  irq --> services["Start the sound and the task queue"] --> seq(["Sequence manager"])
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  irq --> services["Start the sound and the task queue"] --> seq(["Monitor"])
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class seq sequenceManager
+  class seq monitor
   class power,memory,irq,services step
 ```
 
 Power-on runs once. It clears the fast memory, installs the code that stays
 resident and the interrupt handlers, loads the window graphics, starts the
-sound and empties the task queue. Then it hands control to the sequence
-manager, which never returns.
+sound and empties the task queue. Then it hands control to the monitor, which
+never returns.
 
 **Reference:** `System_Initialize` · [Engine: Start-up](engine.md#start-up)
 
-## The sequence manager
+## The monitor
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Sequence manager"]) --> scene(["Scene sequence"]) & battle(["Battle"]) & dice["Lucky Dice"] & wheels["Lucky Wheels"]
-  scene & battle & dice & wheels --> back(["Request another sequence, naming it"])
+  loop(["Monitor"]) --> scene(["Scene program"]) & battle(["Battle"]) & dice["Lucky Dice"] & wheels["Lucky Wheels"]
+  scene & battle & dice & wheels --> back(["Next program"])
   back --> loop
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class loop sequenceManager
-  class scene sceneSequence
+  class loop monitor
+  class scene sceneProgram
   class back request
   class battle battle
   class dice,wheels step
 ```
 
-Each turn runs one sequence to its end. The sequence then names the next one,
-and the sequence manager clears everything the last one left behind (its
+Each turn runs one program to its end. The program then names the next one,
+and the monitor clears everything the last one left behind (its
 tasks, its screen effects, the memory it borrowed) before starting it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph s1 ["Scene sequence"]
+  subgraph s1 ["Scene program"]
     xian(["Xian"])
   end
-  s1 --> ask1(["Request another sequence: the World Map"])
+  s1 --> ask1(["Next program: the World Map"])
   ask1 --> s2
-  subgraph s2 ["Scene sequence"]
+  subgraph s2 ["Scene program"]
     world(["World Map"])
   end
-  s2 --> ask2(["Request another sequence: a random battle"])
-  ask2 --> battle(["Battle"]) --> ask3(["Request another sequence: back to the World Map, where the party stood"])
+  s2 --> ask2(["Next program: a random battle"])
+  ask2 --> battle(["Battle"]) --> ask3(["Next program: back to the World Map, where the party stood"])
   ask3 --> s3
-  subgraph s3 ["Scene sequence"]
+  subgraph s3 ["Scene program"]
     again(["World Map"])
   end
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -168,10 +168,10 @@ nothing to unpack, and afterwards the party stands where it stood. After a
 defeat the game goes where an [event](glossary.md#event) chose for losing that
 battle, or else to the last Sanctum.
 
-### How a sequence finds its way back
+### How a program finds its way back
 
-Sequences pass nothing to each other directly. Everything goes through the
-save block, `gPersistentState`:
+Programs pass nothing to each other directly. Everything goes through the
+persistent state, `gPersistentState`:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -180,20 +180,20 @@ save block, `gPersistentState`:
 | a random battle starts     | the battle as the next scene, its enemy group as the entrance, every actor's position        |
 | the battle ends            | its result: won, fled or lost                                                                |
 
-`Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
+`Scene_ReturnFromProgram` reads them back. A win or a flight goes to the
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
 result stays in `gPersistentState.programResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
-**Reference:** `Monitor_Run` · `Scene_ReturnFromSequence`
+**Reference:** `Monitor_Run` · `Scene_ReturnFromProgram`
 
 ## Waiting in place
 
 The screen shows 60 [frames](glossary.md#frame) a second. The game moves in
 ticks, and every tick happens inside one function, `WaitTicks`. Whatever
-code is in charge (the scene manager, an event, a menu, a battle animation)
+code is in charge (the field loop, an event, a menu, a battle animation)
 calls it when time must pass:
 
 ```c
@@ -225,11 +225,11 @@ window once the player presses A.
 
 | Tick  | Code in charge         | Tasks during its wait                         | After the wait                                |
 | ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| 1     | scene manager          | the carrier steps, the water moves            | nothing asked for: next tick                  |
-| 2     | scene manager          | player control sees A and notes a request     | a talk request: run her event                 |
+| 1     | field loop          | the carrier steps, the water moves            | nothing asked for: next tick                  |
+| 2     | field loop          | player control sees A and notes a request     | a talk request: run her event                 |
 | 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
 | …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
-| next  | scene manager          | the carrier walks on                          | nothing asked for: next tick                  |
+| next  | field loop          | the carrier walks on                          | nothing asked for: next tick                  |
 
 In a Pokémon game the main loop calls the current screen once a tick, and the
 screen must return within that tick. A conversation is then a numbered list
@@ -253,23 +253,23 @@ frames a tick overran are counted in `gLagFrameCount`.
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
 `Event_WaitTicks`
 
-## The scene sequence
+## The scene program
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
+  pick(["Scene program"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
   arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
   code --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
-  own --> fade["Fade in"] --> run(["Scene manager"])
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  own --> fade["Fade in"] --> run(["Field loop"])
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class pick sceneSequence
+  class pick sceneProgram
   class run sceneManager
   class arrive,music,code,map,place,actors,own,fade step
 ```
@@ -277,7 +277,7 @@ flowchart TD
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph seq ["Scene sequence"]
+  subgraph seq ["Scene program"]
     direction TB
     pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
     arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
@@ -287,11 +287,11 @@ flowchart TD
     own --> fade["Fade in, Xian's name at the top"]
   end
   fade --> mgr
-  subgraph mgr ["Scene manager"]
+  subgraph mgr ["Field loop"]
     run(["Xian"])
   end
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -303,10 +303,10 @@ flowchart TD
   style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
 ```
 
-The sequence manager clears the [game flags](glossary.md#game-flag) the last
+The monitor clears the [game flags](glossary.md#game-flag) the last
 scene kept for itself, and the [area](glossary.md#area)'s flags on entering a
 new area. It starts the area's music and unpacks the scene's code, its
-[overlay](glossary.md#overlay). The scene manager then loads the
+[overlay](glossary.md#overlay). The field loop then loads the
 [map](glossary.md#map), places the party at its
 [entrance](glossary.md#entrance) and creates every
 [actor](glossary.md#actor) on the scene's list. Last, the scene's own set-up
@@ -315,12 +315,12 @@ arranges the place as the story has left it, and the screen fades in.
 **Reference:** `Scene_Arrive` · `Scene_ChooseMusic` · `Scene_LoadOverlay` ·
 `FieldLoop_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
 
-## The scene manager
+## The field loop
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  tick(["Scene manager"]) --> queue
+  tick(["Field loop"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
     t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script; player control notes a pressed button as a request"]
@@ -332,9 +332,9 @@ flowchart TD
   check -->|"no: next tick"| tick
   check -->|"yes"| handle["Handle it to the end"]
   handle -->|"next tick"| tick
-  handle -->|"an exit or a battle"| next(["Request another sequence, naming it"])
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  handle -->|"an exit or a battle"| next(["Next program"])
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -346,8 +346,8 @@ flowchart TD
 ```
 
 Every tick, each queued task runs once, highest priority first. The camera
-ranks below the actors so that it follows where they are now. The scene
-manager then checks the ground under the leader and handles any
+ranks below the actors so that it follows where they are now. The field
+loop then checks the ground under the leader and handles any
 [field request](glossary.md#field-request) to the end before the next tick.
 
 ### A tick in Xian
@@ -355,7 +355,7 @@ manager then checks the ground under the leader and handles any
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph mgr ["Scene manager"]
+  subgraph mgr ["Field loop"]
     direction TB
     xian(["Xian"]) --> queue
     subgraph queue ["Queued tasks, this tick"]
@@ -368,8 +368,8 @@ flowchart TD
     ground --> check{"A request?"}
     check -->|"no: next tick"| queue
   end
-  classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -391,7 +391,7 @@ water carrier walks her round and the water flows.
 sequenceDiagram
   participant P as Player
   participant C as Player control
-  participant M as Scene manager
+  participant M as Field loop
   participant E as Her event
   participant T as Other tasks
   P->>C: presses A
@@ -425,7 +425,7 @@ ordinary function, and the tasks keep the village moving around the window.
 | Pause menu     | Start                                                                              |
 
 Requests are handled in this order. An exit ends the scene. A random battle
-names the battle as the next sequence and ends the scene too, which is why the
+names the battle as the next program and ends the scene too, which is why the
 party returns from a battle to the same spot.
 
 **Reference:** `FieldLoop_Run` in
@@ -433,13 +433,13 @@ party returns from a battle to the same spot.
 `PaletteFade_Update` · `Actor_UpdateAllThumb` · `MapGrid_UpdateLayerScroll` ·
 `ActorSystem_PlaceSprites` · `TilesetAnim_Update` · `WindowSystem_Update` ·
 `Field_CheckConfiguredKeys` · `Field_UpdateWalking` ·
-[Running a scene](src/overworld/README.md#the-scene-manager-serves-requests)
+[Running a scene](src/overworld/README.md#the-field-loop-serves-requests)
 
 ## Battles
 
 ![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next round's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
 
-A battle is a sequence of its own with an ordinary loop, in `Battle_Run`:
+A battle is a program of its own with an ordinary loop, in `Battle_Run`:
 
 ```c
 for (;;) {                                  /* one round */
@@ -608,7 +608,7 @@ between places, chosen by where the last scene sent the party.
 
 ## How the code is organised
 
-The main program runs straight from the cartridge in fourteen
+The main image runs straight from the cartridge in fourteen
 [banks](glossary.md#bank), about 1 MB of the English cartridge, followed by
 the sound code, the music and the packed pictures and maps.
 
@@ -624,7 +624,7 @@ actors.
 Each bank starts at a fixed place, and code in one bank reaches another only
 through a short list of entrances at that bank's start, so a bank can grow
 without moving the others. An entrance is the function's name with `Far`
-added: the sequence manager starts a battle with `Battle_RunFar`, which leads
+added: the monitor starts a battle with `Battle_RunFar`, which leads
 to `Battle_Run` in the battle bank.
 
 **Reference:** [far calls](glossary.md#far-call) ·

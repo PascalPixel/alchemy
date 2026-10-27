@@ -7,19 +7,19 @@
 ///   and Lucky Wheels; STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
 ///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into SceneId_Tolbi. The
 ///   Lucky Dice attendant asks ten coins for each level of the party's average
-///   level: the coin total is saved in the save block and the party goes to the
-///   Lucky Dice game, which returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE,
-///   where the setup has the attendant announce the coins won or lost, with a
-///   fanfare by the size of the win. The Lucky Wheels attendant takes Game
-///   Tickets and warns when the bag has six free slots or fewer; the game
-///   returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize
-///   categories won, and the setup has the attendant hand over an item for
-///   each, a different one of the category's three than last time (Moons choose
-///   any category), or offers another game when nothing was won. Signs give
-///   both games' rules and the Lucky Wheels prizes. A soldier talks of Lucky
-///   Dice until Babi is saved (FLAG_BABI_SAVED, the finals day), then of the
-///   scalpers at the Colosso finals, and is gone once they have been fought
-///   (FLAG_COLOSSO_OVER).
+///   level: the coin total is saved in the persistent state and the party goes
+///   to the Lucky Dice game, which returns to
+///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
+///   announce the coins won or lost, with a fanfare by the size of the win. The
+///   Lucky Wheels attendant takes Game Tickets and warns when the bag has six
+///   free slots or fewer; the game returns to
+///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize categories won, and
+///   the setup has the attendant hand over an item for each, a different one of
+///   the category's three than last time (Moons choose any category), or offers
+///   another game when nothing was won. Signs give both games' rules and the
+///   Lucky Wheels prizes. A soldier talks of Lucky Dice until Babi is saved
+///   (FLAG_BABI_SAVED, the finals day), then of the scalpers at the Colosso
+///   finals, and is gone once they have been fought (FLAG_COLOSSO_OVER).
 /// - Tolbi Spring (SceneId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads back into
 ///   Tolbi (TOLBI_FROM_TOLBI_SPRING). Searching the spring raises it and blends
 ///   it into view the first time in each visit (FLAG_TOLBI_SPRING_RISEN),
@@ -610,7 +610,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   }
   Event_SetMessageId(MsgTolbiStepRightEnjoy);
   Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  Event_LeaveFor(PROGRAM_LUCKY_WHEELS, 0);
+  Event_LeaveFor(PROGRAM_SLOTS, 0);
   Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
@@ -641,7 +641,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 152);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_WaitTicks(20);
-    Event_LeaveFor(PROGRAM_LUCKY_DICE, 0);
+    Event_LeaveFor(PROGRAM_DICE, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {

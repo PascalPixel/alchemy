@@ -226,7 +226,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 }
 
 /// Creates a scene's actors on entering it: the party leader where the
-/// save block puts it, then the scene's actor template table from
+/// persistent state puts it, then the scene's actor template table from
 /// actor slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32

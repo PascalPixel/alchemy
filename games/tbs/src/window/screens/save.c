@@ -152,8 +152,8 @@ s32 Save_ScanRecordFlags(void) {
   return fileCount;
 }
 
-/// Prepares the save buffer for writing: stamps the save block with the time
-/// and options, then fills the file summary shown on the file menus (the
+/// Prepares the save buffer for writing: stamps the persistent state with the
+/// time and options, then fills the file summary shown on the file menus (the
 /// leader's name, level and class, the play time, area, coins, Djinn of each
 /// element, the party, the send flag and how many of game flags 48-127 are
 /// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.

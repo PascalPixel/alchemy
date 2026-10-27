@@ -18,7 +18,7 @@ draws them.
 
 ![A battle in Goma Cave ends: Ivan's Magic Rod puts a Skeleton to sleep, Isaac and Garet strike it down, the spoils are announced, and the screen fades back to the cave with Isaac standing where the battle found him.](https://alchemy.pascalpixel.com/guides/battle/won.gif)
 
-To the rest of the game a battle is one more [sequence](glossary.md#sequence). The
+To the rest of the game a battle is one more [sequence](glossary.md#program). The
 field leaves for it as it would leave through a doorway, and when the battle
 is won it comes back to the same spot. After a defeat it goes to the place the
 game sends a beaten party instead.

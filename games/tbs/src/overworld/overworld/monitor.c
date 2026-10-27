@@ -1,5 +1,5 @@
 /// @file
-/// Scene changes: exits, returns from battle, the sequence manager, entering.
+/// Scene changes: exits, returns from battle, the monitor, entering.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -100,7 +100,7 @@ void Scene_TakeExit(s32 exitId) {
 /// Monitor_Run after each scene from PROGRAM_NONE on; stores result in
 /// gPersistentState.programResult and sets gPersistentState.sceneId and
 /// .entrance.
-void Scene_ReturnFromSequence(s32 result) {
+void Scene_ReturnFromProgram(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 sceneId;
@@ -173,8 +173,8 @@ enum {
 
 /// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
 /// Alloc copy freed afterwards. Returns the minigame's result, 0, for
-/// Scene_ReturnFromSequence.
-static __inline__ s32 Monitor_RunLuckyDice(s32 entrance) {
+/// Scene_ReturnFromProgram.
+static __inline__ s32 Monitor_RunDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -191,8 +191,8 @@ static __inline__ s32 Monitor_RunLuckyDice(s32 entrance) {
 }
 
 /// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
-/// Monitor_RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 Monitor_RunLuckyWheels(s32 entrance) {
+/// Monitor_RunDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 Monitor_RunSlots(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -208,7 +208,7 @@ static __inline__ s32 Monitor_RunLuckyWheels(s32 entrance) {
   return result;
 }
 
-/// The game's sequence manager, which never returns. mode, an enum GameStart,
+/// The game's monitor, which never returns. mode, an enum GameStart,
 /// chooses the first scene. Each pass resets the
 /// runtime, then either runs a battle or minigame and picks the scene to return
 /// to, or loads a scene's code, starts its music and runs it until the
@@ -266,23 +266,23 @@ void Monitor_Run(s32 mode) {
     DebugText_Clear();
     VramCache_Reset();
     // A battle or minigame returns a result, not an exit: the return scene is
-    // chosen from the save block, and no overlay is loaded.
+    // chosen from the persistent state, and no overlay is loaded.
     if (gPersistentState.sceneId >= PROGRAM_NONE) {
       switch (gPersistentState.sceneId) {
       case PROGRAM_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
-      case PROGRAM_LUCKY_DICE:
-        entrance = Monitor_RunLuckyDice(entrance);
+      case PROGRAM_DICE:
+        entrance = Monitor_RunDice(entrance);
         break;
-      case PROGRAM_LUCKY_WHEELS:
-        entrance = Monitor_RunLuckyWheels(entrance);
+      case PROGRAM_SLOTS:
+        entrance = Monitor_RunSlots(entrance);
         break;
       case PROGRAM_NONE:
         entrance = 0;
         break;
       }
-      Scene_ReturnFromSequence(entrance);
+      Scene_ReturnFromProgram(entrance);
       continue;
     }
 

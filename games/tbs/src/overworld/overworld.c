@@ -1,5 +1,5 @@
 /// @file
-/// The field object: the sequence manager and scene changes, random encounters,
+/// The field object: the monitor and scene changes, random encounters,
 /// a field scene's actors, the leader's walking and the requests they raise,
 /// the scene's triggers, using items and Psynergy on the field, the map's
 /// treasure spots, and the screen transitions and palette fade that the field

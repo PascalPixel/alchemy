@@ -97,7 +97,7 @@
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// Scene ids above the field scenes, which Monitor_Run runs without a
-/// layout; each returns a result to Scene_ReturnFromSequence instead of an
+/// layout; each returns a result to Scene_ReturnFromProgram instead of an
 /// exit. A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.

@@ -84,7 +84,7 @@ struct PersistentState {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The destination: the sequence the sequence manager runs next, a
+  /// The destination: the program the monitor runs next, a
   /// SceneId_ row of gScenes or a PROGRAM_ value above the table's rows.
   /// During a scene it is the scene running. An exit-table lookup overwrites
   /// it, and EXIT_KEEP_DESTINATION keeps it.
@@ -98,18 +98,18 @@ struct PersistentState {
   s16 restartScene;
   s16 restartEntrance; ///< the restart point's entrance
   /// The return point: the scene that was running when a battle or minigame
-  /// started, where Scene_ReturnFromSequence returns unless an after-battle
+  /// started, where Scene_ReturnFromProgram returns unless an after-battle
   /// destination is set.
   s16 returnScene;
   s16 returnEntrance; ///< the return point's entrance
   s16 area;           ///< the current scene's area; a new one resets its flags
   /// The after-battle destination, -1 for none: read by
-  /// Scene_ReturnFromSequence when the party was not defeated, before the
+  /// Scene_ReturnFromProgram when the party was not defeated, before the
   /// return point (a minigame's return reads it too), and cleared as each
   /// scene starts.
   s16 afterBattleScene;
   s16 afterBattleEntrance; ///< its entrance; -1 for none
-  /// The defeat destination, -1 for none: read by Scene_ReturnFromSequence
+  /// The defeat destination, -1 for none: read by Scene_ReturnFromProgram
   /// after a defeat, before the restart point.
   s16 defeatScene;
   s16 defeatEntrance;       ///< its entrance; -1 for none

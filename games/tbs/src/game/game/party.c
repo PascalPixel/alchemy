@@ -225,9 +225,9 @@ struct TradeFlags {
   u32 flags;
 };
 
-/// Each adds `amount` to a save block counter, kept between 0 and `max`, and
-/// returns the new value. The shops call the two: each purchase adds its
-/// price to the credit, and each Game Ticket given spends credit and counts
+/// Each adds `amount` to a counter in the persistent state, kept between 0 and
+/// `max`, and returns the new value. The shops call the two: each purchase adds
+/// its price to the credit, and each Game Ticket given spends credit and counts
 /// one more gift.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \

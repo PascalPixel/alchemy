@@ -62,7 +62,7 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
-  s16 entrance;     ///< the entrance number the save block names; -1 ends
+  s16 entrance;     ///< the entrance number the persistent state names; -1 ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels
@@ -98,15 +98,16 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 0x1ff
 
-/// Scene numbers above the field scenes: what runs instead of a scene
-/// (FieldLoop_Run). They have no row in gScenes.
+/// Program ids above the scene table's rows: the programs other than the
+/// scene program, which Monitor_Run runs in its place. They have no row in
+/// gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
   PROGRAM_NONE = 0x1fb,
-  PROGRAM_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
-                                ///< SceneId_StuccoRoomsC (lucky_wheels.c)
-  PROGRAM_LUCKY_DICE = 0x1fd,   ///< Lucky Dice in Tolbi's game room,
-                                ///< SceneId_StuccoRoomsC (lucky_dice.c)
+  PROGRAM_SLOTS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
+                         ///< SceneId_StuccoRoomsC (lucky_wheels.c)
+  PROGRAM_DICE = 0x1fd,  ///< Lucky Dice in Tolbi's game room,
+                         ///< SceneId_StuccoRoomsC (lucky_dice.c)
   /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.
   PROGRAM_BATTLE = 0x1fe

@@ -403,7 +403,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_FirePillarSheetB
 	resource , BattleEffect_RockSpireSheet
 	resource , BattleEffect_LightningBoltSheet
-	resource , BattleEffect_BeamSequenceImage
+	resource , BattleEffect_BeamImage
 	resource , BattleEffect_TwelveModeImage
 	resource , BattleEffect_WindStreakSheet
 	resource , BattleEffect_YellowPaletteB

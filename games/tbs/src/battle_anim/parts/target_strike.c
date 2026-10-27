@@ -161,8 +161,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode) {
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage,
-                               work->sheet + 0xc80, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 0xc80,
+                               0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);

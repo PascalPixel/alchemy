@@ -28,7 +28,7 @@ BattleEffect_PlayCueAndStartEmitterOnTargetFar:
 	.global Func_080c83d8
 	.thumb_func
 Func_080c83d8:
-	overlay_veneer EffectRuntime_RunRisingObjectSequence
+	overlay_veneer EffectRuntime_RunObjectRiseAndDescent
 	.global Func_080c83e0
 	.thumb_func
 Func_080c83e0:

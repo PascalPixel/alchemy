@@ -242,7 +242,7 @@ void Display_ApplyBg2Reference(void) {
 ///
 /// Runs each frame as a task added by
 /// BattleAnim_StartCanvasLayer and BattleAnim_OpenCanvasLayer, and by
-/// BattleAnim_RunRingAndSparkSequence; BattleAnim_EndCanvasLayer and
+/// BattleAnim_RunRingAndSpark; BattleAnim_EndCanvasLayer and
 /// BattleAnim_EndElementStreaks remove it. It does nothing until the animation
 /// sets work->fadeFrames, which it counts down while counting
 /// work->fadeStep up.
@@ -539,8 +539,8 @@ void BattleAnim_EndCanvasLayer(void) {
 /// Hides BG1 and the windows and starts bringing the battle background's
 /// palette back.
 ///
-/// Called by BattleAnim_RunBeamSequence and
-/// BattleAnim_RunRingAndSparkSequence (beams.c). Sets the background view's
+/// Called by BattleAnim_RunBeam and
+/// BattleAnim_RunRingAndSpark (beams.c). Sets the background view's
 /// secondMode to BATTLE_BACKGROUND_FIXED, queues DISPCNT for VBlank,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED and waits two
 /// frames.
@@ -569,8 +569,8 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
 /// full-screen Ram_MapGridCellBuffer animations use
 /// BattleAnim_FlushPendingGraphicsTransfer instead.
 ///
-/// Called by BattleAnim_RunBeamSequence and
-/// BattleAnim_RunRingAndSparkSequence (beams.c). Clears work->actorTimers,
+/// Called by BattleAnim_RunBeam and
+/// BattleAnim_RunRingAndSpark (beams.c). Clears work->actorTimers,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED, clears tile
 /// 0xff of character block 0 and writes BG1's map in screen block 31; writes
 /// DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the windows, WININ and WINOUT directly;

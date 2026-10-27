@@ -46,7 +46,7 @@ void Func_080cf350(struct ObjectRuntime *object) {
   owner->angle = 0x4000;
 }
 
-void EffectRuntime_RunRisingObjectSequence(struct ObjectRuntime *object, s32 flags) {
+void EffectRuntime_RunObjectRiseAndDescent(struct ObjectRuntime *object, s32 flags) {
   struct ObjectRuntime *owner;
 
   if (object != 0) {

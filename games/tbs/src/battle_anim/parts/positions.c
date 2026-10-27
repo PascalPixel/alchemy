@@ -23,7 +23,7 @@
 /// gravity to its vertical speed, then damps every speed by damping / 64.
 ///
 /// Called each frame for the 3D sparks, motes, shards and shells of 18 parts,
-/// from the casting impacts, the beam sequences and the burst animation to the
+/// from the casting impacts, the beams and the flurry to the
 /// lobbed shells and the stat reductions; each then projects the particle
 /// with Projection_Point. Changes only the step.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -76,7 +76,7 @@ s32 Projection_Point(const void *point, struct ScreenPoint *position) {
 /// The screen position of a unit's sprite, at its scaled height, 16
 /// pixels higher.
 ///
-/// Called by BattleAnim_RunBeamSequence (beams.c), for the first target, and
+/// Called by BattleAnim_RunBeam (beams.c), for the first target, and
 /// BattleAnim_RunBurstShower (burst_shower.c), for the user. Leaves the view
 /// set to the battle camera (BattleUnit_ProjectToScreen).
 void Projection_Sprite(s32 id, struct ScreenPoint *position) {
@@ -150,7 +150,7 @@ void BattleAnim_ProbeKeysForExtendedActor(void) {
 
 /// Runs a battle animation from the second range of kinds, split by enum
 /// BattleAnimIdRange: the casting impacts (kind - ANIM_RANGE_CASTING_IMPACT),
-/// the beam sequences and the ring and spark animations.
+/// the beams and the ring and spark animations.
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners
@@ -176,13 +176,13 @@ void BattleAnim_RunByIdRange(struct BattleAnimArgs *args) {
   kind = value;
   value = kind - ANIM_RANGE_CASTING_IMPACT;
   // Unsigned, so kinds below ANIM_RANGE_CASTING_IMPACT fall through to the
-  // beam sequences too.
-  if ((u32)value < ANIM_RANGE_BEAM_SEQUENCE - ANIM_RANGE_CASTING_IMPACT) {
+  // beams too.
+  if ((u32)value < ANIM_RANGE_BEAM - ANIM_RANGE_CASTING_IMPACT) {
     BattleAnim_RunCastingImpact(args, value);
   } else if (kind >= ANIM_RANGE_RING_AND_SPARK) {
-    BattleAnim_RunRingAndSparkSequence(args);
+    BattleAnim_RunRingAndSpark(args);
   } else {
-    BattleAnim_RunBeamSequence(args);
+    BattleAnim_RunBeam(args);
   }
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);

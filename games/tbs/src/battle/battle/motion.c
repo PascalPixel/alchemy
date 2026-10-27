@@ -185,7 +185,7 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
 /// (16.16 pixels a frame), in POSE_LEAP.
 /// Called by BattleStaging_RunAttack, BattleStaging_RunPlainAttack
 /// and AutoBattle_RunApproachAttack, and through its far stub by the
-/// Bind, burst animation, Annihilation, target motes and Thrash effects.
+/// Bind, flurry, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObject *actorSlot = BattleObject_Get(unitId);

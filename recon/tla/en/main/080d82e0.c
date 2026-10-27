@@ -58,20 +58,6 @@ void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
-struct PhasedRadialSequenceObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[68];
-  u16 timer;
-  u8 unk66[6];
-  void *callback;
-};
-
 struct OrbitPosition {
   s32 x;
   s32 y;
@@ -146,8 +132,6 @@ void BattleEffect_SpinUpAngle(void *obj);
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
-
-void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 

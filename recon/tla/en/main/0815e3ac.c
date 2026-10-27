@@ -30,7 +30,7 @@
 // by DMA, the spark sheet, the orb sheet, the transfer callback (half the
 // last frame left behind), and the sparks at the target.
 
-// Port of The Broken Seal's BattleEffect_RunBeamSequence, with The Lost
+// Port of The Broken Seal's BattleAnim_RunBeam, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
 // work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
 // its own test, the beam is drawn additive (☀️ draws it with max), the
@@ -78,7 +78,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 typedef DrawRectangle BlitterPair[2];
 
 extern char ResourceId_WaveSheet;
-extern char ResourceId_BeamSequenceImage;
+extern char ResourceId_BeamImage;
 extern char ResourceId_BlueArcSheetA;
 extern char ResourceId_BlueArcSheetB;
 extern char ResourceId_MarsDjinnSmallSheet;
@@ -205,7 +205,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   if (kind == 4) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == 3) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet,
                                0, 0);
   } else {
     switch (kind) {

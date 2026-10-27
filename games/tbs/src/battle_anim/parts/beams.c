@@ -1,10 +1,10 @@
 /// @file
-/// Beam sequences and the ring and spark animation.
+/// Beams and the ring and spark animation.
 // Part of battle_anim.c.
 
 #include "../battle_anim_internal.h"
 
-/// The beam sequence's pictures, by animation kind: the kinds below
+/// The beam's pictures, by animation kind: the kinds below
 /// ANIM_RANGE_CASTING_IMPACT that BattleAnim_RunByIdRange sends here. No
 /// ability's row selects one; the unused BattleStaging_RunPlainAttack plays an
 /// attack's kind, 0 for Attack.
@@ -12,7 +12,7 @@ enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
   BEAM_ARC_A,         ///< blue arc A
   BEAM_ARC_B,         ///< blue arc B
-  BEAM_IMAGE,         ///< the beam sequence image, growing
+  BEAM_IMAGE,         ///< the beam image, growing
   BEAM_WAVE,          ///< the wave, played backwards
   BEAM_ARC_A_INVERTED ///< blue arc A, upside down
 };
@@ -23,7 +23,7 @@ enum BeamKind {
 /// args->kind picks the picture.
 ///
 /// Reached through BattleAnim_RunByIdRange for kinds from
-/// ANIM_RANGE_BEAM_SEQUENCE to below ANIM_RANGE_RING_AND_SPARK and,
+/// ANIM_RANGE_BEAM to below ANIM_RANGE_RING_AND_SPARK and,
 /// through its unsigned test, every kind below ANIM_RANGE_CASTING_IMPACT;
 /// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
@@ -32,7 +32,7 @@ enum BeamKind {
 /// 0 to 31 fly) and both blitter slots; at the end it removes the transfer
 /// task, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
 /// again (BattleAnim_HideBg1AndRestoreBackdrop).
-void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args) {
+void BattleAnim_RunBeam(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
   struct ScreenPoint screen;
@@ -106,8 +106,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args) {
   if (kind == BEAM_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == BEAM_IMAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet, 0, 0);
   } else {
     switch (kind) {
     case BEAM_PLAIN_ATTACK:
@@ -282,7 +281,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args) {
 /// stops the user's motion, and restores both after. At the end it removes
 /// the transfer task, frees the blitters, sets gBgScroll[1].y back to 32,
 /// steps the background palette level from 6 back to 0 and hides BG1 again.
-void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args) {
+void BattleAnim_RunRingAndSpark(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
   struct ScreenPoint screen;
@@ -437,7 +436,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args) {
 
   // The strike: clear the canvas, scroll BG1 so the first target is on
   // screen, and start 64 sparks at its middle, rising and flying towards the
-  // centre of the field (unlike the beam sequence's, whose x speed is
+  // centre of the field (unlike the beam's, whose x speed is
   // turned around once more).
   Iwram_ClearWords(canvas, canvasBytes);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
@@ -488,7 +487,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args) {
     else if (frame <= 7)
       draw[0](canvas, Ram_MapGridCellBuffer + (120 * 120), 0, 0, 120, 120);
     ANIM_VIEW_FROM_CAMERA(camera);
-    // From frame 4 the sparks fly, as in the beam sequence: only the first
+    // From frame 4 the sparks fly, as in the beam: only the first
     // 32 move, each drawn and moved twice a frame.
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {

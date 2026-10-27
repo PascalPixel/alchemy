@@ -32,7 +32,7 @@ void WaitFrames(s32 frames);
 
 /// Show the Cloaked caster again: stop checking the ground under it, then
 /// flicker it back into view over twenty frames and clear the cloak (The
-/// Broken Seal's MapEvent_RunTileTriggerSequence).
+/// Broken Seal's FieldPsynergy_EndCloak).
 void Func_080debd8(void) {
   struct CloakCaster *caster =
       ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->mainObject;

@@ -233,7 +233,7 @@ Object_SetModeById:
 	.global Func_02003df4
 	.thumb_func
 Func_02003df4:
-	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunObjectRiseFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:

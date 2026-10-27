@@ -183,7 +183,7 @@ Func_020031f8:
 	.global Func_02003200
 	.thumb_func
 Func_02003200:
-	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunObjectRiseFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:

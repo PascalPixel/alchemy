@@ -175,7 +175,7 @@ extern char ResourceId_BlueFlameSheet;
 /// The particles nearly every animation loads, from Annihilation to Volcano and
 /// most summons.
 extern char ResourceId_ParticleSpritesA;
-/// A second shared particle sheet: the beam sequences, Bind, Death Plunge,
+/// A second shared particle sheet: the beams, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
 extern char ResourceId_ParticleSpritesD;
 /// Curse's flames (BattleAnim_RunCurse).
@@ -316,7 +316,7 @@ extern char ResourceId_LimePalette;
 
 /// Annihilation, Smoke Bomb, Blast and the casting impact.
 extern char ResourceId_FireStreakSheet;
-/// Gust, Flying Attack, the beam sequences, the casting impact and the
+/// Gust, Flying Attack, the beams, the casting impact and the
 /// rushing strikes.
 extern char ResourceId_YellowOrbSheet;
 extern char ResourceId_BlueBurstSheet; ///< The rushing strikes.
@@ -334,7 +334,7 @@ extern char ResourceId_FlameSheetA;    ///< The casting impact's flames.
 /// The small Venus Djinni of the casting impact, the Djinn attacks, Ground and
 /// the volleys' prelude.
 extern char ResourceId_VenusDjinnSmallSheet;
-/// The small Mars Djinni of the beam sequences, the casting impact, the Djinn
+/// The small Mars Djinni of the beams, the casting impact, the Djinn
 /// attacks, the healing motes and the volleys' prelude.
 extern char ResourceId_MarsDjinnSmallSheet;
 /// The small Jupiter Djinni of the casting impact, the Djinn attacks and the
@@ -355,8 +355,8 @@ extern char ResourceId_IntroGraphicsB;
 /// compressed tiles (Title_LoadIntroBackgrounds).
 extern char ResourceId_IntroGraphicsC;
 extern char ResourceId_CyanSparkSheet; ///< Death Plunge.
-extern char ResourceId_StarBurstSheet; ///< The beam sequences.
-extern char ResourceId_CrescentSheet;  ///< The beam sequences.
+extern char ResourceId_StarBurstSheet; ///< The beams.
+extern char ResourceId_CrescentSheet;  ///< The beams.
 extern char ResourceId_SwordSheet;     ///< Titan Blade.
 extern char ResourceId_VioletPaletteB; ///< Colours for Plasma.
 extern char ResourceId_FireSwirlSheet; ///< Helm Splitter.
@@ -365,7 +365,7 @@ extern char ResourceId_FireBurstSheet; ///< Annihilation.
 extern char ResourceId_FireballSheet;
 /// The three lights of Demon Night, Rumble and Haunting.
 extern char ResourceId_MemberBurstImage;
-/// The beam sequences' waves, and the rush bursts.
+/// The beams' waves, and the rush bursts.
 extern char ResourceId_WaveSheet;
 extern char ResourceId_PinkStarSheet; ///< Helm Splitter.
 /// Gaia, the walls, Revive and its family (djinn_beams.c) and the streaks.
@@ -388,16 +388,16 @@ extern char ResourceId_PaletteRampImage;
 extern char ResourceId_HeartSheet; ///< Heartrender, among the status motes.
 /// Revive and its family (djinn_beams.c).
 extern char ResourceId_CrescentMoonSheet;
-/// The beam sequences and the rush bursts.
+/// The beams and the rush bursts.
 extern char ResourceId_BlueArcSheetA;
-/// The beam sequences and the rush bursts, beside BlueArcSheetA.
+/// The beams and the rush bursts, beside BlueArcSheetA.
 extern char ResourceId_BlueArcSheetB;
 /// The Djinn attacks, the stat changes and the status motes.
 extern char ResourceId_GlowOrbSheet;
 /// The lobbed shells' images, whose colours are Mad Spatter's.
 extern char ResourceId_GoldShellSheet;
-/// The beam sequences' BEAM_IMAGE, and the picture of a monster's slash.
-extern char ResourceId_BeamSequenceImage;
+/// The beams' BEAM_IMAGE, and the picture of a monster's slash.
+extern char ResourceId_BeamImage;
 /// Ice and Douse, and the monster strikes.
 extern char ResourceId_BlueBeamSheet;
 /// Froth and Whirlwind, and the status motes.

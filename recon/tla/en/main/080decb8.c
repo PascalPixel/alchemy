@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 2 of 91 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 // Near miss, differ 8 of 91 (2026-10-19; was 24), The Broken Seal's
-// BattleEffect_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
+// FieldPsynergy_StartCloak: Cloak. ⚓️ takes the caster from the
 // effect scene, sets its mode directly and schedules the ground check at
 // 0x480 where ☀️ uses 0xc80.
 // The callback order through a local set before the stores after the loop

@@ -354,12 +354,12 @@ enum CameraPhase {
 
 /// Where each range of BattleAnim_RunByIdRange's animation kinds starts:
 /// the casting impacts (the kind less ANIM_RANGE_CASTING_IMPACT is an enum
-/// CastingImpact), the beam sequences, which also take every kind below the
+/// CastingImpact), the beams, which also take every kind below the
 /// casting impacts, and the ring and spark animation, which plays critical
 /// hits.
 enum BattleAnimIdRange {
   ANIM_RANGE_CASTING_IMPACT = 100,
-  ANIM_RANGE_BEAM_SEQUENCE = 136,
+  ANIM_RANGE_BEAM = 136,
   ANIM_RANGE_RING_AND_SPARK = ANIM_ID_CRITICAL_OFFSET
 };
 

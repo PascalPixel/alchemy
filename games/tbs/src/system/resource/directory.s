@@ -126,7 +126,7 @@ Resource_DirectoryTable:
 	group BattleAnim, ThornVineSheet, IceShardSheet, EmberStreakSheet, BlueArcSheetA, BlueArcSheetB
 	group BattleAnim, GlowOrbSheet, IceChipSheet, IceBlockSheet, SparkleDots, PinkBurstSheet
 	group BattleAnim, LightFanSheet, BlueBurstSheet, DustPuffSheet, GoldShellSheet, BlastSheet
-	group BattleAnim, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamSequenceImage
+	group BattleAnim, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamImage
 	group BattleAnim, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
 	group BattleAnim, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
 	group BattleAnim, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath

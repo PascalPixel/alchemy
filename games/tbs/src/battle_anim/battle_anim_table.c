@@ -524,7 +524,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_ZEPHYR - 1] = BattleAnim_RunZephyr, // stat_change.c: Zephyr
     [BATTLE_ANIM_KITE - 1] = BattleAnim_RunKite,     // torch.c: Kite
     [BATTLE_ANIM_LUFF - 1] = BattleAnim_RunBind,     // bind.c: Bind
-    [BATTLE_ANIM_GUST - 1] = BattleAnim_RunGust,     // burst_scene.c: Gust
+    [BATTLE_ANIM_GUST - 1] = BattleAnim_RunGust,     // flurry.c: Gust
     [BATTLE_ANIM_VENUS - 1] = BattleAnim_RunVenus,   // djinn_attacks.c: Venus
     [BATTLE_ANIM_MERCURY - 1] =
         BattleAnim_RunMercury,                   // djinn_attacks.c: Mercury
@@ -549,7 +549,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunRumble, // gathering_lights.c: Rumble
     [BATTLE_ANIM_BONE_CHILLER - 1] =
         BattleAnim_RunBoneChiller, // lobbed_shells.c: Bone Chiller
-    [BATTLE_ANIM_RAPID_SMASH - 1] = BattleAnim_RunGust, // burst_scene.c: Gust
+    [BATTLE_ANIM_RAPID_SMASH - 1] = BattleAnim_RunGust, // flurry.c: Gust
     [BATTLE_ANIM_BONE_CHARGE - 1] =
         BattleAnim_RunBoneCharge, // rushing_strike.c: Bone Charge
     [BATTLE_ANIM_MYSTIC_FLAME - 1] =
@@ -562,15 +562,14 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunStickyGoo, // lobbed_shells.c: Sticky Goo
     [BATTLE_ANIM_CANNIBAL_FANG - 1] =
         BattleAnim_RunCannibalFang, // target_strike.c: Cannibal Fang
-    [BATTLE_ANIM_BEAR_CLAW - 1] =
-        BattleAnim_RunBearClaw, // burst_scene.c: Bear Claw
+    [BATTLE_ANIM_BEAR_CLAW - 1] = BattleAnim_RunBearClaw, // flurry.c: Bear Claw
     [BATTLE_ANIM_POISONOUS_BITE - 1] =
         BattleAnim_RunPoisonousBite, // target_strike.c: Poisonous Bite
     [BATTLE_ANIM_FLYING_ATTACK - 1] =
-        BattleAnim_RunFlyingAttack, // burst_scene.c: Flying Attack
+        BattleAnim_RunFlyingAttack, // flurry.c: Flying Attack
     [BATTLE_ANIM_UNDEAD_SWORD - 1] =
         BattleAnim_RunUndeadSword, // undead_sword.c: Undead Sword
-    [BATTLE_ANIM_RANSACK - 1] = BattleAnim_RunRansack, // burst_scene.c: Ransack
+    [BATTLE_ANIM_RANSACK - 1] = BattleAnim_RunRansack, // flurry.c: Ransack
     [BATTLE_ANIM_STICKY_POISON - 1] =
         BattleAnim_RunStickyPoison, // lobbed_shells.c: Sticky Poison
     [BATTLE_ANIM_POISON_FANG - 1] =
@@ -584,9 +583,9 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_VAMPIRIC_FANG - 1] =
         BattleAnim_RunVampiricFang, // target_strike.c: Vampiric Fang
     [BATTLE_ANIM_BACTERIA_RUSH - 1] =
-        BattleAnim_RunBacteriaRush, // burst_scene.c: Bacteria Rush
+        BattleAnim_RunBacteriaRush, // flurry.c: Bacteria Rush
     [BATTLE_ANIM_SWIFT_STRIKE - 1] =
-        BattleAnim_RunFlyingAttack, // burst_scene.c: Flying Attack
+        BattleAnim_RunFlyingAttack, // flurry.c: Flying Attack
     [BATTLE_ANIM_ROTTEN_BLOOD - 1] =
         BattleAnim_RunRottenBlood, // lobbed_shells.c: Rotten Blood
     [BATTLE_ANIM_DOUBLE_FANG - 1] =
@@ -594,7 +593,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_MORTAL_BLOW - 1] =
         BattleAnim_RunMortalBlow, // target_strike.c: Mortal Blow
     [BATTLE_ANIM_FREEBITE_RUSH - 1] =
-        BattleAnim_RunFreebiteRush, // burst_scene.c: Freebite Rush
+        BattleAnim_RunFreebiteRush, // flurry.c: Freebite Rush
     [BATTLE_ANIM_TWIN_BEAKS - 1] =
         BattleAnim_RunTwinBeaks, // target_strike.c: Twin Beaks
     [BATTLE_ANIM_RABID_FANG - 1] =
@@ -607,9 +606,8 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_POISON_INK - 1] =
         BattleAnim_RunPoisonInk, // lobbed_shells.c: Poison Ink
     [BATTLE_ANIM_COUNTERSTRIKE - 1] =
-        BattleAnim_RunBearClaw, // burst_scene.c: Bear Claw
-    [BATTLE_ANIM_MAD_DASH - 1] =
-        BattleAnim_RunRansack, // burst_scene.c: Ransack
+        BattleAnim_RunBearClaw,                         // flurry.c: Bear Claw
+    [BATTLE_ANIM_MAD_DASH - 1] = BattleAnim_RunRansack, // flurry.c: Ransack
     [BATTLE_ANIM_SOOTHING_STAR - 1] =
         BattleAnim_RunSoothingStar, // streaks.c: Soothing Star
     [BATTLE_ANIM_SPIDER_WEB - 1] =
@@ -937,32 +935,32 @@ u8 gSpire_ShardHeights[] = {11, 6,  10, 11, 10, 7,  17, 21,
 u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
                            862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
-// gaia.c and burst_scene.c: Burst animation rows and rising wall geometry.
+// gaia.c and flurry.c: flurry rows and rising wall geometry.
 
-/// Each burst animation mode (enum BurstSequenceMode), by the BURST_SEQUENCE_
-/// columns (burst_scene.c).
+/// Each flurry mode (enum FlurryMode), by the FLURRY_
+/// columns (flurry.c).
 // clang-format off
-u8 gBurstSequence_Styles[][7] = {
-    // BURST_SEQUENCE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES,
+u8 gFlurry_Styles[][7] = {
+    // FLURRY_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES,
     // FLASH
-    [BURST_SEQUENCE_BEAR_CLAW] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_MARS_DJINNI, 5, 16, 12, 80, 0},
-    [BURST_SEQUENCE_BACTERIA_RUSH] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_LIME, 7, 16, 12, 104, 0},
-    [BURST_SEQUENCE_FREEBITE_RUSH] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_BLUE_ARC, 9, 16, 12, 128, 0},
-    [BURST_SEQUENCE_FLYING_ATTACK] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_EMBER, 1, 16, 16, 36, 0},
-    [BURST_SEQUENCE_FLYING_ATTACK_DOUBLE] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_EMBER, 2, 20, 16, 52, 0},
-    [BURST_SEQUENCE_FLYING_ATTACK_TRIPLE] =
-        {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_EMBER, 3, 24, 16, 68, 0},
-    [BURST_SEQUENCE_GUST] =
-        {BURST_SEQUENCE_ARCS_AND_WAVES, BURST_SEQUENCE_PALETTE_BLUE_ARC, 1, 32, 12, 28, 1},
-    [BURST_SEQUENCE_GUST_DOUBLE] =
-        {BURST_SEQUENCE_ARCS_AND_WAVES, BURST_SEQUENCE_PALETTE_BLUE_ARC, 2, 32, 12, 40, 1},
-    [BURST_SEQUENCE_GUST_TRIPLE] =
-        {BURST_SEQUENCE_ARCS_AND_WAVES, BURST_SEQUENCE_PALETTE_BLUE_ARC, 3, 32, 12, 52, 1},
+    [FLURRY_BEAR_CLAW] =
+        {FLURRY_ARCS, FLURRY_PALETTE_MARS_DJINNI, 5, 16, 12, 80, 0},
+    [FLURRY_BACTERIA_RUSH] =
+        {FLURRY_ARCS, FLURRY_PALETTE_LIME, 7, 16, 12, 104, 0},
+    [FLURRY_FREEBITE_RUSH] =
+        {FLURRY_ARCS, FLURRY_PALETTE_BLUE_ARC, 9, 16, 12, 128, 0},
+    [FLURRY_FLYING_ATTACK] =
+        {FLURRY_ARCS, FLURRY_PALETTE_EMBER, 1, 16, 16, 36, 0},
+    [FLURRY_FLYING_ATTACK_DOUBLE] =
+        {FLURRY_ARCS, FLURRY_PALETTE_EMBER, 2, 20, 16, 52, 0},
+    [FLURRY_FLYING_ATTACK_TRIPLE] =
+        {FLURRY_ARCS, FLURRY_PALETTE_EMBER, 3, 24, 16, 68, 0},
+    [FLURRY_GUST] =
+        {FLURRY_ARCS_AND_WAVES, FLURRY_PALETTE_BLUE_ARC, 1, 32, 12, 28, 1},
+    [FLURRY_GUST_DOUBLE] =
+        {FLURRY_ARCS_AND_WAVES, FLURRY_PALETTE_BLUE_ARC, 2, 32, 12, 40, 1},
+    [FLURRY_GUST_TRIPLE] =
+        {FLURRY_ARCS_AND_WAVES, FLURRY_PALETTE_BLUE_ARC, 3, 32, 12, 52, 1},
 };
 // clang-format on
 // Rising wall: the nine rows of the growing wall in the rebuilt sheet.
@@ -979,7 +977,7 @@ s8 gGaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 /// The columns rock particles[16] to particles[21] take.
 u8 gGaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
-// beams.c: Beam sequence picture cells and reach.
+// beams.c: Beam picture cells and reach.
 
 // The six cells of the growing beam picture, and how far each reaches short of
 // the user. The Lost Age reads the same tables.

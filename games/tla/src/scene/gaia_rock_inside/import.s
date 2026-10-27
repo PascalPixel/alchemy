@@ -241,7 +241,7 @@ ObjectMotion_SetVariantCallback:
 	.global Func_02004eec
 	.thumb_func
 Func_02004eec:
-	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunObjectRiseFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

@@ -12,14 +12,14 @@
 /// (BATTLE_ANIM_RAPID_SMASH).
 void BattleAnim_RunGust(struct BattleAnimArgs *args) {
   if (args->variant == ANIM_VARIANT_BASIC) {
-    BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_GUST);
+    BattleAnim_RunFlurry(args, FLURRY_GUST);
     return;
   }
   if (args->variant == ANIM_VARIANT_STRONGER) {
-    BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_GUST_DOUBLE);
+    BattleAnim_RunFlurry(args, FLURRY_GUST_DOUBLE);
     return;
   }
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_GUST_TRIPLE);
+  BattleAnim_RunFlurry(args, FLURRY_GUST_TRIPLE);
 }
 
 /// The user strikes the first target five times.
@@ -27,7 +27,7 @@ void BattleAnim_RunGust(struct BattleAnimArgs *args) {
 /// Abilities: Bear Claw (BATTLE_ANIM_BEAR_CLAW); Counterstrike
 /// (BATTLE_ANIM_COUNTERSTRIKE).
 void BattleAnim_RunBearClaw(struct BattleAnimArgs *args) {
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_BEAR_CLAW);
+  BattleAnim_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
 /// Ransack plays the same five strikes as Bear Claw.
@@ -35,21 +35,21 @@ void BattleAnim_RunBearClaw(struct BattleAnimArgs *args) {
 /// Abilities: Ransack (BATTLE_ANIM_RANSACK); Mad Dash
 /// (BATTLE_ANIM_MAD_DASH).
 void BattleAnim_RunRansack(struct BattleAnimArgs *args) {
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_BEAR_CLAW);
+  BattleAnim_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
 /// Seven strikes land on the first target in the lime palette.
 ///
 /// Abilities: Bacteria Rush (BATTLE_ANIM_BACTERIA_RUSH).
 void BattleAnim_RunBacteriaRush(struct BattleAnimArgs *args) {
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_BACTERIA_RUSH);
+  BattleAnim_RunFlurry(args, FLURRY_BACTERIA_RUSH);
 }
 
 /// Nine strikes land on the first target in the blue palette.
 ///
 /// Abilities: Freebite Rush (BATTLE_ANIM_FREEBITE_RUSH).
 void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *args) {
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_FREEBITE_RUSH);
+  BattleAnim_RunFlurry(args, FLURRY_FREEBITE_RUSH);
 }
 
 /// One, two or three strikes land on the first target as the variant grows
@@ -59,35 +59,35 @@ void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *args) {
 /// (BATTLE_ANIM_SWIFT_STRIKE).
 void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *args) {
   if (args->variant == ANIM_VARIANT_BASIC) {
-    BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_FLYING_ATTACK);
+    BattleAnim_RunFlurry(args, FLURRY_FLYING_ATTACK);
     return;
   }
   if (args->variant == ANIM_VARIANT_STRONGER) {
-    BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_FLYING_ATTACK_DOUBLE);
+    BattleAnim_RunFlurry(args, FLURRY_FLYING_ATTACK_DOUBLE);
     return;
   }
-  BattleAnim_RunBurstSequence(args, BURST_SEQUENCE_FLYING_ATTACK_TRIPLE);
+  BattleAnim_RunFlurry(args, FLURRY_FLYING_ATTACK_TRIPLE);
 }
 
-/// The bytes of a gBurstSequence_Styles row, one row a mode.
-enum BurstSequenceColumn {
-  BURST_SEQUENCE_ARC_SHEET, ///< the arcs (enum BurstSequenceArcs)
-  BURST_SEQUENCE_PALETTE,   ///< whose palette (enum BurstSequencePalette)
-  BURST_SEQUENCE_STRIKES,   ///< the strikes
-  BURST_SEQUENCE_MOTES,     ///< motes thrown by each strike, at most the 32 of
-                            ///< its run of PARTICLES
-  BURST_SEQUENCE_INTERVAL,  ///< frames between strikes
-  BURST_SEQUENCE_FRAMES,    ///< frames in the whole animation
-  BURST_SEQUENCE_FLASH      ///< 1 fills the canvas with level 47 on each hit
+/// The bytes of a gFlurry_Styles row, one row a mode.
+enum FlurryColumn {
+  FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)
+  FLURRY_PALETTE,   ///< whose palette (enum FlurryPalette)
+  FLURRY_STRIKES,   ///< the strikes
+  FLURRY_MOTES,     ///< motes thrown by each strike, at most the 32 of
+                    ///< its run of PARTICLES
+  FLURRY_INTERVAL,  ///< frames between strikes
+  FLURRY_FRAMES,    ///< frames in the whole animation
+  FLURRY_FLASH      ///< 1 fills the canvas with level 47 on each hit
 };
 
 /// The flash pictures, packed to half width after the arcs.
-#define BURST_SEQUENCE_FLASH_OFFSETS 0x5100
+#define FLURRY_FLASH_OFFSETS 0x5100
 /// The wave pictures, in the map grid buffer past the motes.
-#define BURST_SEQUENCE_WAVE_OFFSETS (Ram_MapGridCellBuffer + 0x5e00)
+#define FLURRY_WAVE_OFFSETS (Ram_MapGridCellBuffer + 0x5e00)
 
 /// The user closes on the first target and strikes it again and again; each
-/// strike shows an arc (or, with BURST_SEQUENCE_ARCS_AND_WAVES, a wave for the
+/// strike shows an arc (or, with FLURRY_ARCS_AND_WAVES, a wave for the
 /// third and fourth of every four), flashes and throws motes. A
 /// strike lands 2 frames after it starts: an odd one jolts the target, and
 /// the last knocks it back, shakes the screen for longer (8 frames against
@@ -104,8 +104,8 @@ enum BurstSequenceColumn {
 /// args: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance
 ///         (DJINNI_ENTRANCE_LONG).
-/// mode: the row of gBurstSequence_Styles (enum BurstSequenceMode).
-void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
+/// mode: the row of gFlurry_Styles (enum FlurryMode).
+void BattleAnim_RunFlurry(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint actorPos;
   struct ScreenPoint targetPos;
   struct ScreenPoint screen;
@@ -139,35 +139,34 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Pack the flash (40x288) to half width at BURST_SEQUENCE_FLASH_OFFSETS, as
+  // Pack the flash (40x288) to half width at FLURRY_FLASH_OFFSETS, as
   // the canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + BURST_SEQUENCE_FLASH_OFFSETS;
+      s32 dst = row * 20 + col / 2 + FLURRY_FLASH_OFFSETS;
 
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstSequence_Styles[mode][BURST_SEQUENCE_ARC_SHEET] ==
-      BURST_SEQUENCE_ARCS_AND_WAVES)
+  if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet,
-                             BURST_SEQUENCE_WAVE_OFFSETS, 1, 0);
-  switch (gBurstSequence_Styles[mode][BURST_SEQUENCE_PALETTE]) {
-  case BURST_SEQUENCE_PALETTE_MARS_DJINNI:
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_OFFSETS, 1,
+                             0);
+  switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
+  case FLURRY_PALETTE_MARS_DJINNI:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case BURST_SEQUENCE_PALETTE_LIME:
+  case FLURRY_PALETTE_LIME:
     paletteId = (s32)&ResourceId_LimePalette;
     break;
-  case BURST_SEQUENCE_PALETTE_BLUE_ARC:
+  case FLURRY_PALETTE_BLUE_ARC:
     paletteId = (s32)&ResourceId_BlueArcSheetB;
     break;
   default:
@@ -184,7 +183,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
-  // i * 32 onwards, as many as its row's BURST_SEQUENCE_MOTES.
+  // i * 32 onwards, as many as its row's FLURRY_MOTES.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 768; i++) {
     struct Particle *mote = &PARTICLES[i];
@@ -204,9 +203,8 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
   // Each frame draws the strikes in progress, then the motes. Strike i
   // starts on frame i * interval: its arc or wave plays for 6 frames, it
   // hits on its third frame, and its flash plays for the 12 after that.
-  for (frame = 0; frame != gBurstSequence_Styles[mode][BURST_SEQUENCE_FRAMES];
-       frame++) {
-    s32 bursts = gBurstSequence_Styles[mode][BURST_SEQUENCE_STRIKES];
+  for (frame = 0; frame != gFlurry_Styles[mode][FLURRY_FRAMES]; frame++) {
+    s32 bursts = gFlurry_Styles[mode][FLURRY_STRIKES];
 
     Projection_ScaledUnit(work->args->user, &actorPos);
     actorPos.x /= 2;
@@ -227,14 +225,13 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * gBurstSequence_Styles[mode][BURST_SEQUENCE_INTERVAL];
+      s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
         if ((i & 3) <= 1 ||
-            gBurstSequence_Styles[mode][BURST_SEQUENCE_ARC_SHEET] ==
-                BURST_SEQUENCE_ARCS) {
+            gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           // The arc: six 48x72 frames.
           if (work->args->side == ANIM_SIDE_ENEMIES)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
@@ -245,17 +242,17 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
         } else {
           // The wave: six 48x16 frames.
           if (work->args->side == ANIM_SIDE_ENEMIES)
-            draw[i & 1](canvas, BURST_SEQUENCE_WAVE_OFFSETS + step * (48 * 16),
+            draw[i & 1](canvas, FLURRY_WAVE_OFFSETS + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, BURST_SEQUENCE_WAVE_OFFSETS + step * (48 * 16),
+            draw[i & 1](canvas, FLURRY_WAVE_OFFSETS + step * (48 * 16),
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
         // A flash row fills the canvas with level 47.
-        if (gBurstSequence_Styles[mode][BURST_SEQUENCE_FLASH] == 1)
+        if (gFlurry_Styles[mode][FLURRY_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
@@ -271,14 +268,14 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != gBurstSequence_Styles[mode][BURST_SEQUENCE_MOTES]; j++)
+        for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The flash: six 20x48 frames, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
-                    BURST_SEQUENCE_FLASH_OFFSETS,
+                    FLURRY_FLASH_OFFSETS,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     ANIM_RELEASE_BLITTERS();
@@ -320,5 +317,5 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode) {
   BattleAnim_EndCanvasLayer();
 }
 
-#undef BURST_SEQUENCE_FLASH_OFFSETS
-#undef BURST_SEQUENCE_WAVE_OFFSETS
+#undef FLURRY_FLASH_OFFSETS
+#undef FLURRY_WAVE_OFFSETS

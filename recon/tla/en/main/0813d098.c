@@ -106,7 +106,7 @@ extern u8 gData_08199210[];
 
 extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA
 extern char ResourceId_TornadoSheet;
-extern char ResourceId_BeamSequenceImage;
+extern char ResourceId_BeamImage;
 extern char ResourceId_TwelveModeImage;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_LimePalette;
@@ -216,7 +216,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (RECORD(mode, RECORD_KIND) == 0)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage,
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage,
                                work->sheet + 0xc80, 0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,

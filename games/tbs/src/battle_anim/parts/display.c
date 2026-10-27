@@ -9,7 +9,7 @@
 /// battle view (lines 16 to 135), and the animation display mode queued.
 ///
 /// Called by the handlers that change the display themselves: at the start of
-/// the beam sequence (beams.c), the particle streams and the summon animations
+/// the beam (beams.c), the particle streams and the summon animations
 /// Ramses, Kirin, Atalanta, Neptune, Boreas, Thor and Judgment, and at both
 /// ends of Ice and Douse (falling.c). Writes BLDCNT, BLDALPHA, the window
 /// registers and WININ and WINOUT, queues DISPCNT for VBlank and

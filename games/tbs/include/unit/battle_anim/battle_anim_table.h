@@ -377,34 +377,34 @@ extern u8 gSpire_RockCounts[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
-/// The burst sequence's modes (BattleAnim_RunBurstSequence), its rows of
-/// gBurstSequence_Styles: Gust and Flying Attack take one, two or three
+/// The flurry's modes (BattleAnim_RunFlurry), its rows of
+/// gFlurry_Styles: Gust and Flying Attack take one, two or three
 /// strikes as a double or triple blow raises their variant.
-enum BurstSequenceMode {
-  BURST_SEQUENCE_BEAR_CLAW,            ///< five strikes; also Ransack
-  BURST_SEQUENCE_BACTERIA_RUSH,        ///< seven strikes, in lime
-  BURST_SEQUENCE_FREEBITE_RUSH,        ///< nine strikes, in blue
-  BURST_SEQUENCE_FLYING_ATTACK,        ///< one strike, in embers
-  BURST_SEQUENCE_FLYING_ATTACK_DOUBLE, ///< two
-  BURST_SEQUENCE_FLYING_ATTACK_TRIPLE, ///< three
-  BURST_SEQUENCE_GUST,                 ///< one strike, each filling the canvas
-  BURST_SEQUENCE_GUST_DOUBLE,          ///< two
-  BURST_SEQUENCE_GUST_TRIPLE           ///< three
+enum FlurryMode {
+  FLURRY_BEAR_CLAW,            ///< five strikes; also Ransack
+  FLURRY_BACTERIA_RUSH,        ///< seven strikes, in lime
+  FLURRY_FREEBITE_RUSH,        ///< nine strikes, in blue
+  FLURRY_FLYING_ATTACK,        ///< one strike, in embers
+  FLURRY_FLYING_ATTACK_DOUBLE, ///< two
+  FLURRY_FLYING_ATTACK_TRIPLE, ///< three
+  FLURRY_GUST,                 ///< one strike, each filling the canvas
+  FLURRY_GUST_DOUBLE,          ///< two
+  FLURRY_GUST_TRIPLE           ///< three
 };
-/// A burst sequence's arcs, its BURST_SEQUENCE_ARC_SHEET.
-enum BurstSequenceArcs {
-  BURST_SEQUENCE_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
-                                 ///< fourth of every four strikes
-  BURST_SEQUENCE_ARCS            ///< blue arc B for every strike
+/// A flurry's arcs, its FLURRY_ARC_SHEET.
+enum FlurryArcs {
+  FLURRY_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
+                         ///< fourth of every four strikes
+  FLURRY_ARCS            ///< blue arc B for every strike
 };
-/// Whose palette a burst sequence takes, its BURST_SEQUENCE_PALETTE.
-enum BurstSequencePalette {
-  BURST_SEQUENCE_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
-  BURST_SEQUENCE_PALETTE_LIME,        ///< LimePalette
-  BURST_SEQUENCE_PALETTE_BLUE_ARC,    ///< blue arc B's
-  BURST_SEQUENCE_PALETTE_EMBER        ///< the ember streak sheet's
+/// Whose palette a flurry takes, its FLURRY_PALETTE.
+enum FlurryPalette {
+  FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
+  FLURRY_PALETTE_LIME,        ///< LimePalette
+  FLURRY_PALETTE_BLUE_ARC,    ///< blue arc B's
+  FLURRY_PALETTE_EMBER        ///< the ember streak sheet's
 };
-extern u8 gBurstSequence_Styles[][7];
+extern u8 gFlurry_Styles[][7];
 extern u16 gGaia_RowCells[];
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_MoundCells[];

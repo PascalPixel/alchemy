@@ -181,7 +181,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:
-	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunObjectRiseFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

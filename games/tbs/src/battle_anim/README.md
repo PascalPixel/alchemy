@@ -227,7 +227,7 @@ chosen by its handler:
 | [`BattleAnim_RunHealingMotes`](parts/healing.c) | healing motes swirling in to each target |
 | [`BattleAnim_RunStreakVolley`](parts/streaks.c) | streaks fired from above the user at its target |
 | [`BattleAnim_RunRushingStrike`](parts/rushing_strike.c) | the user rushes at the first target and strikes |
-| [`BattleAnim_RunBurstSequence`](parts/burst_sequence.c) | a flurry of strikes on the first target |
+| [`BattleAnim_RunFlurry`](parts/flurry.c) | a flurry of strikes on the first target |
 | [`BattleAnim_RunGrowingColumns`](parts/growth.c) | vines or green pillars growing from the ground |
 | [`BattleAnim_RunSparkGroups`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
 | [`BattleAnim_RunDjinnBeams`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets, in the Djinni's [element](../../glossary.md#the-four-elements) |
@@ -537,7 +537,7 @@ here it plays a casting impact. The three animations in `orbiting.c` are
 unused too: no code calls them and nothing in the ROM holds their addresses.
 
 A plain attack's kind is 1 or 4 for the party (`BattleTurn_Build`) and 1 to 5
-for an enemy (`battle_sprites.c`), all by id range, so the beam sequences play
+for an enemy (`battle_sprites.c`), all by id range, so the beams play
 them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
 only plain attacks score critical hits, and `ANIM_ID_CRITICAL_OFFSET` reaches

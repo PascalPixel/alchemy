@@ -50,7 +50,7 @@ Those only The Lost Age's code has so far:
 | `BattleEventRuntime_` | starting and scheduling a battle phase |
 | `BattlePalette_` | stopping a palette blend and freeing its buffer |
 | `BattlePres_` | the effects' word fills and pending tile transfers, under an older spelling of `BattlePresentation_` |
-| `EffectRuntime_`, `EffectSprite_` | the rising-object sequence, and a sprite drawn at a world position |
+| `EffectRuntime_`, `EffectSprite_` | an object's rise and descent, and a sprite drawn at a world position |
 | `SummonEffect_` | the summons' canvas modes |
 | `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |
 | `Tutorial_` | the message a Djinni's gift shows |

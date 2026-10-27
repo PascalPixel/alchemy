@@ -5302,7 +5302,7 @@ main	rom_tail_02	games/tla/src/graphics/battle_fx/flame_b	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/fire_pillar_b	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/rock_spire	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/lightning_bolt	.rodata
-main	rom_tail_02	games/tla/src/graphics/battle_fx/beam_sequence	.rodata
+main	rom_tail_02	games/tla/src/graphics/battle_fx/beam_image	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/twelve_mode	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/wind_streak	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_fx/yellow_palette_b	.rodata

@@ -633,9 +633,9 @@ BattleAnim_RockSpireSheet:
 BattleAnim_LightningBoltSheet:
 	.incbin "games/tbs/src/graphics/battle_anims/lightning_bolt.gbapal"
 	.incbin "games/tbs/src/graphics/battle_anims/lightning_bolt.bitmap.lz"
-	.global BattleAnim_BeamSequenceImage
-BattleAnim_BeamSequenceImage:
-	.incbin "games/tbs/src/graphics/battle_anims/beam_sequence.bitmaps.lz"
+	.global BattleAnim_BeamImage
+BattleAnim_BeamImage:
+	.incbin "games/tbs/src/graphics/battle_anims/beam_image.bitmaps.lz"
 	.byte 0x5f	@ PACKER: left in the buffer by BattleAnim_LightningBoltSheet+0x37b
 	.global BattleAnim_TwelveModeImage
 BattleAnim_TwelveModeImage:

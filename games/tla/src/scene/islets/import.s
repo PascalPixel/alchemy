@@ -193,7 +193,7 @@ ObjectMotion_Launch:
 	.global Func_02003f0c
 	.thumb_func
 Func_02003f0c:
-	overlay_veneer BattleEffect_RunRisingObjectSequenceFar
+	overlay_veneer BattleEffect_RunObjectRiseFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

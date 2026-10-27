@@ -573,14 +573,14 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args);
 // spire.c
 void BattleAnim_RunSpire(struct BattleAnimArgs *args);
 
-// burst_sequence.c
+// flurry.c
 void BattleAnim_RunGust(struct BattleAnimArgs *args);
 void BattleAnim_RunBearClaw(struct BattleAnimArgs *args);
 void BattleAnim_RunRansack(struct BattleAnimArgs *args);
 void BattleAnim_RunBacteriaRush(struct BattleAnimArgs *args);
 void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *args);
 void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *args);
-void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode);
+void BattleAnim_RunFlurry(struct BattleAnimArgs *args, s32 mode);
 
 // gaia.c
 void BattleAnim_RunGaia(struct BattleAnimArgs *args);
@@ -599,8 +599,8 @@ void BattleAnim_ProbeKeysForExtendedActor(void);
 void BattleAnim_RunByIdRange(struct BattleAnimArgs *args);
 
 // beams.c
-void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args);
-void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args);
+void BattleAnim_RunBeam(struct BattleAnimArgs *args);
+void BattleAnim_RunRingAndSpark(struct BattleAnimArgs *args);
 
 // casting_impact.c
 void BattleAnim_StepPaletteToResource(s32 resourceId);

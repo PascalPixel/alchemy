@@ -49,7 +49,7 @@ details.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   loop(["Sequence manager"]) --> scene(["Scene sequence"]) & battle(["Battle"]) & dice["Lucky Dice"] & wheels["Lucky Wheels"]
-  scene & battle & dice & wheels --> back(["Request another sequence"])
+  scene & battle & dice & wheels --> back(["Request another sequence, naming it"])
   back --> loop
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -116,7 +116,7 @@ to go back to.
 flowchart TD
   pick(["Scene sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
   arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
-  code --> map["Load the map"] --> place["Place the party at its entrance"]
+  code --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
   own --> fade["Fade in"] --> run(["Scene manager"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -134,7 +134,7 @@ flowchart TD
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   pick(["Scene sequence: Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
-  arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay over the World Map's"]
+  arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
   code --> map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
   place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
   actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
@@ -176,7 +176,7 @@ flowchart TD
   frame(["Scene manager"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
-    t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script"]
+    t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script; player control notes a pressed button as a request"]
     t2 ~~~ t3["5 · Camera · scrolls the map after the leader"] ~~~ t4["0 · Sprites · places each actor on the screen"]
     t4 ~~~ t5["0 · Tile animation · steps the map's animated tiles"] ~~~ t6["0 · Windows · draws each open window"]
   end
@@ -185,7 +185,7 @@ flowchart TD
   check -->|"no: next frame"| frame
   check -->|"yes"| handle["Handle it to the end"]
   handle -->|"next frame"| frame
-  handle -->|"an exit or a battle"| next(["Request another sequence"])
+  handle -->|"an exit or a battle"| next(["Request another sequence, naming it"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
@@ -204,11 +204,11 @@ flowchart TD
   frame(["Scene manager: Xian"]) --> queue
   subgraph queue ["Queued tasks, this frame"]
     direction TB
-    t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac: is a button pressed? no"]
+    t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac's player control: a button pressed? no, so no request"]
     t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
     t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
   end
-  queue --> ground["Isaac stands at the foot of the stairs"]
+  queue --> ground["Check the ground under Isaac, at the foot of the stairs: nothing there"]
   ground --> check{"A request?"}
   check -->|"no: next frame"| frame
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50

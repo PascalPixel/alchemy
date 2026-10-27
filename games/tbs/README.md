@@ -113,11 +113,14 @@ the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["A frame in Xian"]) --> fade["Palette fade: move the colours toward their target"]
-  fade --> actors["Actors: each runs its script; player control reads the buttons"]
-  actors --> camera["Camera: scroll the map after Isaac"]
-  camera --> rest["Sprites, water and windows: place the actors, step the water, draw any window"]
-  rest --> ground["Check the ground under Isaac"]
+  frame(["A frame in Xian"]) --> queue
+  subgraph queue ["Queued tasks, highest priority first"]
+    direction TB
+    t1["15 · Palette fade · colours held"] ~~~ t2["10 · Actors · each takes a step; is a button pressed? no"]
+    t2 ~~~ t3["5 · Camera · follows Isaac"] ~~~ t4["0 · Sprites · actors placed on screen"]
+    t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
+  end
+  queue --> ground["Check the ground under Isaac"]
   ground --> check{"A request?"}
   check -->|"no"| frame
   check -->|"yes"| handle["Handle it to the end"]
@@ -126,25 +129,26 @@ flowchart TD
   classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class frame,next link
-  class fade,actors,camera,rest,ground,handle step
+  class t1,t2,t3,t4,t5,t6,ground,handle step
+  style queue fill:#FFFFFF,stroke:#9AA3AE
   class check step
 ```
 
 Isaac stands at the foot of Xian's stairs and the player presses nothing,
 yet the village is alive. Each frame the scene manager waits for the screen,
-and while it waits the tasks run once each, highest priority first:
+and while it waits every queued task runs once, highest priority first:
 
-- **Palette fade** moves the colours a step toward their target, which holds
-  them still once the fade-in is over.
-- **Actors**: every actor runs its [actor script](glossary.md#actor-script).
-  The water carrier takes her next step on her round; Isaac's script has
-  handed him to player control, which reads the buttons, finds none pressed
-  and keeps him standing.
-- **Camera** scrolls the map so that it follows Isaac; it runs after the
-  actors so that it follows where they are now.
-- **Sprites, water and windows**, which share the lowest priority: every
-  actor's sprite is placed on the screen, the tile animation swaps the next
-  frame of the moving water into place, and any open window draws its text.
+| Priority | Task           | This frame in Xian                                                                                       |
+| -------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| 15       | Palette fade   | the colours stay as they are, the fade-in being over                                                    |
+| 10       | Actors         | every actor takes a step of its [actor script](glossary.md#actor-script): the water carrier walks her round; Isaac's player control asks whether a button is pressed, and none is |
+| 5        | Camera         | the camera stays on Isaac, who has not moved                                                             |
+| 0        | Sprites        | every actor's sprite is placed on the screen                                                             |
+| 0        | Tile animation | the next frame of the moving water is swapped in                                                         |
+| 0        | Windows        | no window is open, so nothing is drawn                                                                   |
+
+The camera ranks below the actors so that it follows where they are now; the
+three at 0 share a rank.
 
 Then the scene manager checks the ground under Isaac and asks whether
 anything should happen. Usually nothing

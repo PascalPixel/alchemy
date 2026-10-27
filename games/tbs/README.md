@@ -13,7 +13,7 @@ flowchart LR
   loop --> battle["Battle"]
   loop --> dice["Lucky Dice"]
   loop --> wheels["Lucky Wheels"]
-  scene --- back(( ))
+  scene --- back["Request another sequence"]
   battle --- back
   dice --- back
   wheels --- back
@@ -23,14 +23,11 @@ flowchart LR
   classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef dice fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef wheels fill:#E6F3C4,stroke:#B5D46A,color:#4C6312
-  classDef join fill:transparent,stroke:transparent
-  class start,loop flow
+  class start,loop,back flow
   class scene field
   class battle fight
   class dice dice
   class wheels wheels
-  class back join
-  style back width:1px,height:1px
 ```
 
 The whole game is one loop, the [sequence manager](#the-sequence-manager).

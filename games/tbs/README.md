@@ -25,7 +25,8 @@ flowchart TD
   power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
   irq --> services["Start the sound and the task queue"] --> seq(["Sequence manager"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -47,18 +48,20 @@ details.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Sequence manager"]) --> scene(["Scene sequence"]) & battle["Battle"] & dice["Lucky Dice"] & wheels["Lucky Wheels"]
+  loop(["Sequence manager"]) --> scene(["Scene sequence"]) & battle(["Battle"]) & dice["Lucky Dice"] & wheels["Lucky Wheels"]
   scene & battle & dice & wheels --> back(["Request another sequence"])
   back --> loop
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class loop sequenceManager
   class scene sceneSequence
   class back request
-  class battle,dice,wheels step
+  class battle battle
+  class dice,wheels step
 ```
 
 Leaving Xian for the World Map and meeting a random battle there takes four
@@ -69,16 +72,17 @@ turns of the loop:
 flowchart TD
   xian(["Scene sequence: Xian"]) --> ask1(["Request another sequence: the World Map"])
   ask1 --> world(["Scene sequence: World Map"]) --> ask2(["Request another sequence: a random battle"])
-  ask2 --> battle["Battle"] --> ask3(["Request another sequence: back to the World Map"])
+  ask2 --> battle(["Battle"]) --> ask3(["Request another sequence: back to the World Map"])
   ask3 --> again(["Scene sequence: World Map, the party where it stood"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class xian,world,again sceneSequence
   class ask1,ask2,ask3 request
-  class battle step
+  class battle battle
 ```
 
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
@@ -116,7 +120,8 @@ flowchart TD
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
   own --> fade["Fade in"] --> run(["Scene manager"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -135,7 +140,8 @@ flowchart TD
   actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
   own --> fade["Fade in, Xian's name at the top"] --> run(["Scene manager: Xian"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -181,7 +187,8 @@ flowchart TD
   handle -->|"next frame"| frame
   handle -->|"an exit or a battle"| next(["Request another sequence"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -205,7 +212,8 @@ flowchart TD
   ground --> check{"A request?"}
   check -->|"no: next frame"| frame
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneSequence fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38

@@ -16,7 +16,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
   actor = Actor_GetById(gSaveBlock.leaderActorId);
   other = Actor_GetById(id);
-  FieldScript_Start();
+  Event_Start();
   {
     x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
@@ -40,5 +40,5 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
     Actor_SelectAnimation(other, 3);
   }
   Actor_WaitForMove(actor);
-  FieldScript_End();
+  Event_End();
 }

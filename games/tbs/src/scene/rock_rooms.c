@@ -41,18 +41,18 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
-static void EventScript_TalkToInnkeeper(void);
-static void EventScript_TalkToChef(void);
-static void EventScript_ReadChefsThoughts(void);
-static void EventScript_AskWhetherDonpasGuest(void);
-static void EventScript_TalkToHealer(void);
-static void EventScript_ReadItemMerchantsThoughts(void);
-static void EventScript_TalkToItemMerchant(void);
-static void EventScript_ReadWeaponMerchantsThoughts(void);
-static void EventScript_TalkToWeaponMerchant(void);
-static void EventScript_ReadArmorMerchantsThoughts(void);
-static void EventScript_TalkToArmorMerchant(void);
-static void EventScript_TalkToTravelingHealer(void);
+static void RockRooms_TalkToInnkeeper(void);
+static void RockRooms_TalkToChef(void);
+static void RockRooms_ReadChefsThoughts(void);
+static void RockRooms_AskWhetherDonpasGuest(void);
+static void RockRooms_TalkToHealer(void);
+static void RockRooms_ReadItemMerchantsThoughts(void);
+static void RockRooms_TalkToItemMerchant(void);
+static void RockRooms_ReadWeaponMerchantsThoughts(void);
+static void RockRooms_TalkToWeaponMerchant(void);
+static void RockRooms_ReadArmorMerchantsThoughts(void);
+static void RockRooms_TalkToArmorMerchant(void);
+static void RockRooms_TalkToTravelingHealer(void);
 
 // clang-format off
 const struct SceneEntrance gInteriorEntrances[] = {
@@ -143,18 +143,18 @@ const struct Trigger gInteriorSealedTriggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBSealed) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeASealed) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBSealed) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnClerkSealed) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerSealed) },
-    { TRIGGER_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToChef) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { TRIGGER_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTravelingHealer) },
+    { TRIGGER_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT(RockRooms_TalkToChef) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToTravelingHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeASealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
@@ -168,17 +168,17 @@ const struct Trigger gInteriorSealedTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+      EVENT(RockRooms_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+      EVENT(RockRooms_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+      EVENT(RockRooms_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+      EVENT(RockRooms_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+      EVENT(RockRooms_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+      EVENT(RockRooms_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
@@ -186,7 +186,7 @@ const struct Trigger gInteriorSealedTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnWorkerSealedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadChefsThoughts) },
+      EVENT(RockRooms_ReadChefsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsTemplePriestSealedThoughts) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_ROCK_ROOMS_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
@@ -212,17 +212,17 @@ const struct Trigger gInteriorReopenedTriggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBReopened) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeAReopened) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBReopened) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherDonpasGuest) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(RockRooms_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, EVENT(RockRooms_AskWhetherDonpasGuest) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerReopened) },
     { TRIGGER_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsChefReopened) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(RockRooms_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeAReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
@@ -236,17 +236,17 @@ const struct Trigger gInteriorReopenedTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+      EVENT(RockRooms_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+      EVENT(RockRooms_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+      EVENT(RockRooms_ReadWeaponMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+      EVENT(RockRooms_ReadArmorMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+      EVENT(RockRooms_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+      EVENT(RockRooms_ReadItemMerchantsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperReopenedThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
@@ -269,7 +269,7 @@ const struct Trigger gInteriorReopenedTriggers[] = {
 const struct Trigger gGateToSuhallaTriggers[] = {
     ROOM_DOOR(ROOM_GATE_TO_SUHALLA),
     {TRIGGER_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TalkToTravelingHealer)},
+     EVENT(RockRooms_TalkToTravelingHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsTravelingPriestThoughts)},
     {TRIGGERS_END},
@@ -303,7 +303,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Lunpa, the inn: across the counter after Donpa's judgment, a room at the
 /// inn; otherwise the innkeeper offers a room or, while Lunpa is sealed, a bed
 /// at home.
-static void EventScript_TalkToInnkeeper(void) {
+static void RockRooms_TalkToInnkeeper(void) {
   struct Actor *leader;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -313,117 +313,117 @@ static void EventScript_TalkToInnkeeper(void) {
       return;
     }
   }
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_SetMessageId(MsgLunpaInnkeeperOffersRoom);
-    FieldScript_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+    Event_SetMessageId(MsgLunpaInnkeeperOffersRoom);
+    Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
   } else {
-    FieldScript_SetMessageId(MsgLunpaInnkeeperOffersOwnHome);
-    FieldScript_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+    Event_SetMessageId(MsgLunpaInnkeeperOffersOwnHome);
+    Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lunpa, the inn, before Donpa's judgment: the chef offers the story of
 /// taking meals to the fortress; either way the party has heard of the
 /// prisoner.
-static void EventScript_TalkToChef(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLunpaChefOffersStory);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_CHEF, 0);
+static void RockRooms_TalkToChef(void) {
+  Event_Start();
+  Event_SetMessageId(MsgLunpaChefOffersStory);
+  Event_AskYesNoAndShowResponse(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lunpa, the inn: Mind Read on the chef, who pities the prisoner in the
 /// dungeon.
-static void EventScript_ReadChefsThoughts(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLunpaChefThinksOfPrisoner);
-  FieldScript_ShowMessageAndWait(ACTOR_CHEF, 0);
+static void RockRooms_ReadChefsThoughts(void) {
+  Event_Start();
+  Event_SetMessageId(MsgLunpaChefThinksOfPrisoner);
+  Event_ShowMessageAndWait(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lunpa, the inn, after Donpa's judgment: a woman asks whether the party is
 /// Donpa's guest.
-static void EventScript_AskWhetherDonpasGuest(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLunpaInnClerkAsksAboutGuest);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
-  FieldScript_End();
+static void RockRooms_AskWhetherDonpasGuest(void) {
+  Event_Start();
+  Event_SetMessageId(MsgLunpaInnClerkAsksAboutGuest);
+  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
+  Event_End();
 }
 
 /// Lunpa Temple: across the counter, the Sanctum's services; otherwise the
 /// Healer talks about Dodonpa.
-static void EventScript_TalkToHealer(void) {
+static void RockRooms_TalkToHealer(void) {
   struct Actor *leader;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Sanctum_Run(ACTOR_HEALER);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaTemplePriestReopened);
-    FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaTemplePriestReopened);
+    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_End();
   } else {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaTemplePriestSealed);
-    FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaTemplePriestSealed);
+    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_End();
   }
 }
 
 /// Lunpa, the item shop: Mind Read on the merchant.
-static void EventScript_ReadItemMerchantsThoughts(void) {
+static void RockRooms_ReadItemMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaIsntWeaponsVendors);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaIsntWeaponsVendors);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_End();
   } else {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaItemMerchantSealedThoughts);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaItemMerchantSealedThoughts);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_End();
   }
 }
 
 /// Lunpa, the item shop: across the counter, the shop; otherwise small talk.
-static void EventScript_TalkToItemMerchant(void) {
+static void RockRooms_TalkToItemMerchant(void) {
   struct Actor *leader;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Shop_Run(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaItemMerchantReopened);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaItemMerchantReopened);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_End();
   } else {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgLunpaItemMerchantSealed);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgLunpaItemMerchantSealed);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_End();
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the weapon merchant.
-static void EventScript_ReadWeaponMerchantsThoughts(void) {
+static void RockRooms_ReadWeaponMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
-    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
   } else {
-    FieldScript_SetMessageId(MsgLunpaWeaponMerchantSealedThoughts);
-    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaWeaponMerchantSealedThoughts);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the weapon shop; otherwise small talk.
-static void EventScript_TalkToWeaponMerchant(void) {
+static void RockRooms_TalkToWeaponMerchant(void) {
   struct Actor *leader;
   s32 facing;
 
@@ -433,31 +433,31 @@ static void EventScript_TalkToWeaponMerchant(void) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
     } else {
-      FieldScript_Start();
-      FieldScript_SetMessageId(MsgLunpaWeaponMerchantReopened);
-      FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
-      FieldScript_End();
+      Event_Start();
+      Event_SetMessageId(MsgLunpaWeaponMerchantReopened);
+      Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+      Event_End();
     }
   } else {
-    FieldScript_SetMessageId(MsgLunpaWeaponMerchantSealed);
-    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaWeaponMerchantSealed);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the armor merchant.
-static void EventScript_ReadArmorMerchantsThoughts(void) {
+static void RockRooms_ReadArmorMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    FieldScript_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
-    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   } else {
-    FieldScript_SetMessageId(MsgLunpaArmorMerchantSealedThoughts);
-    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaArmorMerchantSealedThoughts);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the armor shop; otherwise small talk.
-static void EventScript_TalkToArmorMerchant(void) {
+static void RockRooms_TalkToArmorMerchant(void) {
   struct Actor *leader;
   s32 facing;
 
@@ -467,14 +467,14 @@ static void EventScript_TalkToArmorMerchant(void) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
     } else {
-      FieldScript_Start();
-      FieldScript_SetMessageId(MsgLunpaArmorMerchantReopened);
-      FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
-      FieldScript_End();
+      Event_Start();
+      Event_SetMessageId(MsgLunpaArmorMerchantReopened);
+      Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+      Event_End();
     }
   } else {
-    FieldScript_SetMessageId(MsgLunpaArmorMerchantSealed);
-    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_SetMessageId(MsgLunpaArmorMerchantSealed);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
 
@@ -499,7 +499,7 @@ s32 Scene_Initialize(void) {
 
 /// Gate to Suhalla: the traveling Healer offers the Sanctum's services across
 /// the counter; otherwise he speaks of his good will.
-static void EventScript_TalkToTravelingHealer(void) {
+static void RockRooms_TalkToTravelingHealer(void) {
   struct Actor *leader;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -514,7 +514,7 @@ static void EventScript_TalkToTravelingHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
 #endif
   } else {
-    FieldScript_SetMessageId(MsgLunpaTravelingPriest);
-    FieldScript_ShowMessageAndWait(ACTOR_TRAVELING_HEALER, 0);
+    Event_SetMessageId(MsgLunpaTravelingPriest);
+    Event_ShowMessageAndWait(ACTOR_TRAVELING_HEALER, 0);
   }
 }

@@ -250,7 +250,7 @@ void WorldMap_StartStillView(void);
 extern u16 gFieldEffect_CyclePatternWords[];
 extern s8 gFieldEffect_RandomChildValues[];
 /// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
-/// FieldEffect_RunAvoid loads it.
+/// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 extern const s32 gFieldEffect_BurstParticleActorScript[];
 /// The emote bubble's script (FieldEffect_SpawnAttached): eight 2-frame steps
@@ -267,12 +267,12 @@ extern s16 gFieldEffect_TargetRangeByMode[];
 /// (FieldEffect_SetCallbackWhenTargetUnset).
 extern const s32 gFieldEffect_UntargetedActorScript[];
 /// The 32 by 16 spark a field Psynergy effect's particles draw (spark_a), 4
-/// bits a pixel; FieldEffect_LoadActionEffectResources loads it.
+/// bits a pixel; FieldPsynergy_LoadResources loads it.
 extern const u8 gFieldEffect_SparkTiles[];
 extern const u8 gFieldEffect_QuadrantModes[];
 /// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
 /// Psynergy effect fades the palettes toward, picked by the frame counter or
-/// by the FLAG_PSYNERGY_TINT flags (FieldEffect_FadeToEffectColor).
+/// by the FLAG_PSYNERGY_TINT flags (FieldPsynergy_FadeToCastColor).
 extern const s32 gFieldEffect_TargetColors[];
 extern s16 gFieldEffect_GroundParticleFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).

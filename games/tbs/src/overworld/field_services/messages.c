@@ -252,11 +252,12 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 /// (FieldMessage_ShowAtActor) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
-/// Select, L, R and A are all held. About 70 maps reach it (Script_ShowMessage,
+/// Select, L, R and A are all held. About 70 maps reach it (Event_ShowMessage,
 /// MESSAGE_PUT); the trigger runner (overworld/triggers.c),
-/// Field_RunEventAction (dispatch.c), Field_UseItem for an item trigger that is
-/// a message (overworld/items.c) and the debug menu's message test call it too.
-void FieldScript_ShowMessageAndWait(s32 actorId, s32 flags) {
+/// Field_RunPsynergyEvent (dispatch.c), Field_UseItem for an item trigger that
+/// is a message (overworld/items.c) and the debug menu's message test call it
+/// too.
+void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = gFieldWork;
   struct Window *window = FieldMessage_ShowAtActor(actorId, flags);
@@ -293,9 +294,9 @@ void FieldScript_ShowMessageAndWait(s32 actorId, s32 flags) {
 
 /// The script command "show message and wait": shows the message, then waits
 /// wait frames.
-void FieldScript_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
-  FieldScript_ShowMessageAndWait(actorId, flags);
-  FieldScript_WaitFrames(wait);
+void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
+  Event_ShowMessageAndWait(actorId, flags);
+  Event_WaitFrames(wait);
 }
 
 /// The script command "ask yes or no": opens the question at actorId, lets
@@ -303,36 +304,36 @@ void FieldScript_ShowMessageThenWait(s32 actorId, s32 flags, s32 wait) {
 /// for no. Returns 0 for yes, 1 for no. Either way the script's message number
 /// ends past both answers, so the script goes on with the same message
 /// whatever was chosen.
-s32 FieldScript_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
+s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
   struct SaveBlock *save;
 
   FieldMessage_ShowAtActor(actorId, flags);
   save = &gSaveBlock;
-  answer = FieldScript_AskYesNoWithActorAnimation(save->leaderActorId, 0);
+  answer = Event_AskYesNoWithActorAnimation(save->leaderActorId, 0);
   if (answer == 0) {
-    FieldScript_ShowMessageAndWait(actorId, flags);
+    Event_ShowMessageAndWait(actorId, flags);
     runtime = gFieldWork;
     runtime->message += 1;
   } else {
     runtime = gFieldWork;
     runtime->message += 1;
-    FieldScript_ShowMessageAndWait(actorId, flags);
+    Event_ShowMessageAndWait(actorId, flags);
   }
   return answer;
 }
 
-void FieldScript_EmptyCallback(void) {}
+void Event_EmptyCallback(void) {}
 
 /// Unused: reached only through a bare veneer in system/far_call/OVERWORLD.S,
 /// which has no symbol, so no code can call it. It would record the speaker,
 /// open the message near it and wait unless fast-forwarding, then advance the
-/// message index. Like FieldScript_ShowMessageAtPosition it moves the position
+/// message index. Like Event_ShowMessageAtPosition it moves the position
 /// 32 away from the middle and clamps it to 8..312 and 20..220, ranges larger
 /// than the 240 by 160 screen, before passing it to a window service that
 /// takes tiles; with no caller, the units it expected can't be told.
-void FieldScript_ShowSpeakerMessage(s32 speaker) {
+void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX
   s32 pos[3];
@@ -404,16 +405,16 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
 }
 
 /// Unused: reached only through a bare veneer in OVERWORLD.S; forwards its
-/// arguments to FieldScript_ShowMessageAtPosition.
-void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
-                                              s32 y) {
-  FieldScript_ShowMessageAtPosition(unused0, unused1, x, y);
+/// arguments to Event_ShowMessageAtPosition.
+void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
+                                        s32 y) {
+  Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
 /// Unused: reached only through a bare veneer in OVERWORLD.S. It would open the
 /// script's message at (x, y), wait for it and advance the message index; its
-/// units are as unknown as FieldScript_ShowSpeakerMessage's.
-void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
+/// units are as unknown as Event_ShowSpeakerMessage's.
+void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 py = y;
   s32 px = x;
@@ -450,11 +451,10 @@ void Actor_RunIfActive(s32 actorId) {
 /// The script command "show two messages and wait": two actors speak at
 /// once, each message at its own (x, y) with its portrait at (portraitX,
 /// portraitY), all in tiles. Waits for A, B, L or R, then closes both.
-void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
-                                        s32 firstPortraitX, s32 firstPortraitY,
-                                        s32 second, s32 secondX, s32 secondY,
-                                        s32 secondPortraitX,
-                                        s32 secondPortraitY) {
+void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                  s32 firstPortraitX, s32 firstPortraitY,
+                                  s32 second, s32 secondX, s32 secondY,
+                                  s32 secondPortraitX, s32 secondPortraitY) {
   struct FieldWork *work = gFieldWork;
   s32 firstSprite = Actor_ReadActiveValue(first);
   s32 secondSprite = Actor_ReadActiveValue(second);

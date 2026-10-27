@@ -163,19 +163,19 @@ static inline u32 LacquerRoomsB_GetLeaderFacing(void) {
 static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
-  FieldScript_Start();
+  Event_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      FieldScript_SetMessageId(MsgXianXianHasMartialArtsBut);
+      Event_SetMessageId(MsgXianXianHasMartialArtsBut);
     } else {
-      FieldScript_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
+      Event_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
     }
-    FieldScript_ShowMessageAndWait(ACTOR_XIAN_WEAPON_MERCHANT, 0);
+    Event_ShowMessageAndWait(ACTOR_XIAN_WEAPON_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to Xian's armor merchant: across the counter, the armor shop;
@@ -183,19 +183,19 @@ static void LacquerRoomsB_TalkToWeaponMerchant(void) {
 static void LacquerRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
-  FieldScript_Start();
+  Event_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      FieldScript_SetMessageId(MsgXianMartialArtistsCantUseHeavy);
+      Event_SetMessageId(MsgXianMartialArtistsCantUseHeavy);
     } else {
-      FieldScript_SetMessageId(MsgXianKungFuMakesQuickDoes);
+      Event_SetMessageId(MsgXianKungFuMakesQuickDoes);
     }
-    FieldScript_ShowMessageAndWait(ACTOR_XIAN_ARMOR_MERCHANT, 0);
+    Event_ShowMessageAndWait(ACTOR_XIAN_ARMOR_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to Xian's item merchant: across the counter, the item shop; from
@@ -205,18 +205,18 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
 
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
-  FieldScript_Start();
+  Event_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-    FieldScript_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
-    FieldScript_ShowMessageAndWait(ACTOR_XIAN_ITEM_MERCHANT, 0);
+    Event_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
+    Event_ShowMessageAndWait(ACTOR_XIAN_ITEM_MERCHANT, 0);
   } else {
-    FieldScript_SetMessageId(MsgXianDoPlanCrossDesertWarrior);
-    FieldScript_AskYesNoAndShowResponse(ACTOR_XIAN_ITEM_MERCHANT, 0);
+    Event_SetMessageId(MsgXianDoPlanCrossDesertWarrior);
+    Event_AskYesNoAndShowResponse(ACTOR_XIAN_ITEM_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to Xian's innkeeper: across the counter, the inn; from elsewhere,
@@ -225,18 +225,18 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
 
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
-  FieldScript_Start();
+  Event_Start();
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
     Inn_CheckIn(XIAN_INN, ACTOR_XIAN_INNKEEPER);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      FieldScript_SetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
+      Event_SetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
     } else {
-      FieldScript_SetMessageId(MsgXianWeHaveFewCustomersThese);
+      Event_SetMessageId(MsgXianWeHaveFewCustomersThese);
     }
-    FieldScript_ShowMessageAndWait(ACTOR_XIAN_INNKEEPER, 0);
+    Event_ShowMessageAndWait(ACTOR_XIAN_INNKEEPER, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// A young man in a house in Xian asks whether something is wrong on Silk
@@ -244,20 +244,20 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
 /// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
 /// to hear the desert is fine.
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
+  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
+  Event_End();
 }
 
 /// An old man in a house in Xian, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
 /// the news of Hsu whether the monsters in Altin spat water. A yes: how
 /// strange; a no: but why would Feizhi lie?
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgXianDidMonstersInAltinSpit);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
+  Event_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
+  Event_End();
 }
 
 /// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian. She is in
@@ -265,15 +265,15 @@ static void LacquerRoomsB_AskAboutAltinMonsters(void) {
 /// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void LacquerRoomsB_FeizhiThanksParty(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgXianWarriorWelcome);
-  FieldScript_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_Start();
+  Event_SetMessageId(MsgXianWarriorWelcome);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_HSU, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FEIZHI, 0);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0);
+  Event_End();
 }
 
 /// The room behind the school has its own triggers.
@@ -428,22 +428,22 @@ struct Trigger gLacquerRoomsB_Triggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_ON_TOLBI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSilkRoadEndsInTolbiIt) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFollowSilkRoadWhenYouSee) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_ALTIN_MINE, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsThereIsAMineInAltin) },
-    { TRIGGER_TALK, ACTOR_XIAN_WEAPON_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(LacquerRoomsB_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_ARMOR_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(LacquerRoomsB_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_ITEM_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(LacquerRoomsB_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_INNKEEPER, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(LacquerRoomsB_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_XIAN_WEAPON_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(LacquerRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_ARMOR_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(LacquerRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_ITEM_MERCHANT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(LacquerRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_INNKEEPER, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(LacquerRoomsB_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_WOMAN_AWAITING_MERCHANTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsNormallyManyMerchantsComeToThe) },
     { TRIGGER_TALK, ACTOR_COOK, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsAllThePeopleWhoCameTo) },
     { TRIGGER_TALK, ACTOR_MAN_ON_THE_MULBERRY_HARVEST, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { TRIGGER_TALK, ACTOR_FARM_WORKER, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsBringUsCoinsTheyMust) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_SILK_ROAD, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_AskAboutSilkRoad) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_SILK_ROAD, CONDITION_ALWAYS, EVENT(LacquerRoomsB_AskAboutSilkRoad) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_TOLBI, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsNoneCanPassThroughLamakanThis) },
-    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_AskAboutAltinMonsters) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, CONDITION_ALWAYS, EVENT(LacquerRoomsB_AskAboutAltinMonsters) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_ALTIN_MINE, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheMineInAltinFilledWith) },
-    { TRIGGER_TALK, ACTOR_XIAN_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_XIAN_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(LacquerRoomsB_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_XIAN_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LacquerRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LacquerRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LacquerRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_XIAN_INNKEEPER, CONDITION_ALWAYS, EVENT(LacquerRoomsB_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_WOMAN_AWAITING_MERCHANTS, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhenLamakanDesertBurnsItIs) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHotFoodIsGoodForCrossing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_MULBERRY_HARVEST, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSoonMasterHammetWillComeHe) },
@@ -487,7 +487,7 @@ struct Trigger gLacquerRoomsB_Triggers[] = {
 struct Trigger gLacquerRoomsB_SchoolRoomTriggers[] = {
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL },
     { TRIGGER_TALK, ACTOR_FEH, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
-    { TRIGGER_TALK, ACTOR_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, EVENT_SCRIPT(LacquerRoomsB_FeizhiThanksParty) },
+    { TRIGGER_TALK, ACTOR_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, EVENT(LacquerRoomsB_FeizhiThanksParty) },
     { TRIGGER_TALK, ACTOR_HSU, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEH, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsFeizhisAbilityToSenseTroubleIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerYou) },

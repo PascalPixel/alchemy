@@ -3,7 +3,7 @@
 /// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
 /// SceneId_BilibinBarricade. The getters pick each map's tables by
 /// gSaveBlock.sceneId, Bilibin_Initialize sets up the map being entered, and
-/// EventScript_PushStatueOrCrates serves all three.
+/// Bilibin_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
 /// McCoy, has closed the road to Kolima. Almost everything here turns on
@@ -19,10 +19,10 @@
 /// (ACTOR_YOUNG_MAN_WELCOME to ACTOR_VILLAGER_STRANGE_CREATURES) has two
 /// lines and two thoughts in gBilibinTriggers, the row that needs the flag
 /// clear first, so the first row that matches picks the time; a few ask a
-/// yes-or-no question (the EventScript_AskAbout functions).
+/// yes-or-no question (the Bilibin_AskAbout functions).
 ///
 /// Bilibin's doors (step triggers 3 to 9, the numbers of the exits they take)
-/// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
+/// open before the party walks in (Bilibin_OpenDoorAndLeave): six lead into
 /// Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
 /// shown again. The other exits lead to the world map, to the garden of McCoy's
@@ -46,7 +46,7 @@
 ///
 /// The Bilibin Treasury (SceneId_BilibinTreasury) is what its sign calls
 /// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
-/// joins the party when spoken to (EventScript_GustJoins). A second statue
+/// joins the party when spoken to (Bilibin_GustJoins). A second statue
 /// (ACTOR_TREASURY_STATUE) slides along one column, and
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
@@ -72,7 +72,7 @@
 /// Bilibin_RestoreRiverActors lays the middle tree on its side, with an
 /// invisible actor (ACTOR_FALLEN_TREE_STAND_IN) that answers for it,
 /// and puts Jill's tree in the water. Move on her
-/// (EventScript_PullJillFromRiver) works once she is in cell column 6, by the
+/// (Bilibin_PullJillFromRiver) works once she is in cell column 6, by the
 /// bank: the leader pulls her ashore in three tugs, and
 /// FLAG_BILIBIN_JILL_RESCUED keeps her there. While whoever the player controls
 /// wades in the river, Bilibin_UpdateWadingRipples spreads a ripple from their
@@ -82,7 +82,7 @@
 /// children again on the bank (ACTOR_GANG_MEMBER_EAST,
 /// ACTOR_GANG_MEMBER_WEST and ACTOR_JILL). If Jill was never pulled out she
 /// is missing. If she was, stepping up to them (step trigger 13) plays
-/// EventScript_JillGivesHardNut, which gives the leader a Hard Nut
+/// Bilibin_JillGivesHardNut, which gives the leader a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the three turn to watch him.
 
 #include "save_block.h"
@@ -149,7 +149,7 @@ enum BilibinActorId {
   /// ★ Named from the game: "I hear a large group crossed over Goma Range,
   /// heading toward Imil." (MsgBilibinIHearALargeGroupCrossed)
   ACTOR_VILLAGER_GROUP_TO_IMIL,
-  /// A burly grey-haired man (EventScript_AskAboutEntranceTree).
+  /// A burly grey-haired man (Bilibin_AskAboutEntranceTree).
   /// ★ Named from the game: "Did you see the tree at the entrance?"
   /// (MsgBilibinDidSeeTreeAtEntrance)
   ACTOR_VILLAGER_ASKS_ABOUT_TREE,
@@ -157,7 +157,7 @@ enum BilibinActorId {
   /// ★ Named from the game: "Lord McCoy has been quite frightened"
   /// (MsgBilibinLordMccoyHasBeenQuiteFrightened)
   ACTOR_VILLAGER_MCCOY_FRIGHTENED,
-  /// An old man with a cane (EventScript_AskAboutSoutheastRoute).
+  /// An old man with a cane (Bilibin_AskAboutSoutheastRoute).
   /// ★ Named from the game: "Have you tried heading southeast from here?"
   /// (MsgBilibinHaveTriedHeadingSoutheastFrom)
   ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
@@ -297,7 +297,7 @@ const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
 /// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
 /// party.
-static void EventScript_GustJoins(void) {
+static void Bilibin_GustJoins(void) {
   Djinn_JoinParty(ACTOR_GUST, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
 }
 
@@ -320,11 +320,11 @@ const struct ActorTemplate *Bilibin_GetActorTemplates(void) {
 
 /// Searching the well in Bilibin: the leader peers in, and its bottom cannot
 /// be seen.
-static void EventScript_InspectWell(void) {
-  FieldScript_Start();
+static void Bilibin_InspectWell(void) {
+  Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
   FieldMessage_Show(MsgBilibinBottomNotVisibleLooksVery, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 const struct Trigger *Bilibin_GetTriggers(void) {
@@ -344,92 +344,92 @@ const struct Trigger *Bilibin_GetTriggers(void) {
 
 /// The Bilibin Barricade's sign forbids passing without a permit. Searching it
 /// shows Lord McCoy's notice that no one may pass without one.
-static void EventScript_ReadRestrictedAreaSign(void) {
-  FieldScript_Start();
+static void Bilibin_ReadRestrictedAreaSign(void) {
+  Event_Start();
   FieldMessage_Show(MsgBilibinAreaOffLimitsThoseWithout, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Searching the sign in the Bilibin Treasury, which calls it McCoy's hidden
 /// warehouse. `McCoy's Hidden Warehouse / Do Not Enter!`
-static void EventScript_ReadWarehouseSign(void) {
-  FieldScript_Start();
+static void Bilibin_ReadWarehouseSign(void) {
+  Event_Start();
   FieldMessage_Show(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The Gang of Three's trees at the Bilibin Barricade look like people.
 /// Talking to one, standing or pushed down, or to the actor that answers
 /// for the fallen one, says so. `There is a tree that looks like a person.`
-static void EventScript_InspectHumanShapedTree(void) {
-  FieldScript_Start();
+static void Bilibin_InspectHumanShapedTree(void) {
+  Event_Start();
   FieldMessage_Show(MsgBilibinThereTreeLooksLikePerson, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
 /// almost looks like a man and, looked at again, like a living person.
 /// Map-section temp flag FLAG_BILIBIN_TREE_EXAMINED remembers the first look
 /// until the party leaves Bilibin's area.
-static void EventScript_ExamineTreeMan(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
-  if (Script_GetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
+static void Bilibin_ExamineTreeMan(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
+  if (Event_GetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
     gFieldWork->message++;
   }
-  Script_ShowMessage(ACTOR_TREE_MAN, 0);
+  Event_ShowMessage(ACTOR_TREE_MAN, 0);
   GameFlag_Set(FLAG_BILIBIN_TREE_EXAMINED);
-  FieldScript_End();
+  Event_End();
 }
 
 /// A burly man asks about the tree at Bilibin's entrance. He's grey-haired and
 /// there before the curse is lifted, and asks whether the party saw it; on
 /// yes, he says it was once a man who came under a curse.
-static void EventScript_AskAboutEntranceTree(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
-  FieldScript_End();
+static void Bilibin_AskAboutEntranceTree(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
+  Event_AskYesNoAndShowResponse(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
+  Event_End();
 }
 
 /// An old man asks whether the party has tried heading southeast. He's in
 /// Bilibin before the curse is lifted, and either way he says the barricade
 /// blocks the road.
-static void EventScript_AskAboutSoutheastRoute(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
-  FieldScript_End();
+static void Bilibin_AskAboutSoutheastRoute(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
+  Event_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
+  Event_End();
 }
 
 /// The man who was the tree at the entrance talks about it. He's in Bilibin
 /// once the curse is lifted, and asks whether the party can believe he was a
 /// tree.
-static void EventScript_AskAboutBeingATree(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_FORMER_TREE_MAN, 0);
-  FieldScript_End();
+static void Bilibin_AskAboutBeingATree(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
+  Event_AskYesNoAndShowResponse(ACTOR_FORMER_TREE_MAN, 0);
+  Event_End();
 }
 
 /// A small boy asks whether the party broke the curse. He's in Bilibin once the
 /// curse is lifted, and asks whether the party are the three young warriors who
 /// broke it.
-static void EventScript_AskAboutCurseBreakers(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
-  FieldScript_End();
+static void Bilibin_AskAboutCurseBreakers(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
+  Event_AskYesNoAndShowResponse(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
+  Event_End();
 }
 
 /// A strongman asks whether the party has been to Imil. He's in Bilibin once
 /// the curse is lifted, and asks whether the party has been there, up north,
 /// and seen its lighthouse.
-static void EventScript_AskAboutImil(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_STRONGMAN_IMIL_TOWER, 0);
-  FieldScript_End();
+static void Bilibin_AskAboutImil(void) {
+  Event_Start();
+  Event_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
+  Event_AskYesNoAndShowResponse(ACTOR_STRONGMAN_IMIL_TOWER, 0);
+  Event_End();
 }
 
 /// Walking into one of Bilibin's doors: everyone stops, the door opens and the
@@ -437,7 +437,7 @@ static void EventScript_AskAboutImil(void) {
 /// of the exits they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
 /// lead into Bilibin's buildings, and BILIBIN_TO_SANCTUM into the Bilibin
 /// Sanctum, whose door sounds and is stepped through differently.
-static void EventScript_OpenDoorAndLeave(void) {
+static void Bilibin_OpenDoorAndLeave(void) {
 
   u32 actorSlot;
   struct Actor *actor;
@@ -450,7 +450,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  FieldScript_Start();
+  Event_Start();
   // Freeze placed actors before the exit cells start animating.
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
        actorSlot++) {
@@ -461,7 +461,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   }
   exitIndex = (((u16)work->stepTrigger - BILIBIN_TO_INN) << 16) >> 16;
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Script_PlaySong(SE_THUMP);
+    Event_PlaySong(SE_THUMP);
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
   }
@@ -486,26 +486,26 @@ static void EventScript_OpenDoorAndLeave(void) {
   } else {
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   }
-  FieldScript_WaitFrames(16);
-  Import_ScriptRequestExit(exitIndex + BILIBIN_TO_INN);
-  FieldScript_End();
+  Event_WaitFrames(16);
+  Import_EventSetExitRequest(exitIndex + BILIBIN_TO_INN);
+  Event_End();
 }
 
 /// Move on Jill's tree in the river at the Bilibin Barricade, until she is
 /// rescued: once Move has brought her to cell column 6, by the bank, the leader
 /// pulls her ashore in three tugs, and she thanks the party for saving her from
 /// being washed downstream.
-static void EventScript_PullJillFromRiver(void) {
+static void Bilibin_PullJillFromRiver(void) {
   struct Actor *leader;
   struct Actor *jillTree;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   jillTree = Actor_GetById(ACTOR_JILL_TREE);
   if ((jillTree->x.fixed >> 20) == 6) {
-    FieldScript_Start();
+    Event_Start();
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_SetSpeed(ACTOR_JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -519,7 +519,7 @@ static void EventScript_PullJillFromRiver(void) {
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -527,7 +527,7 @@ static void EventScript_PullJillFromRiver(void) {
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -539,28 +539,28 @@ static void EventScript_PullJillFromRiver(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 2);
-    FieldEffect_StartMindReadWave(0, ACTOR_JILL_TREE);
+    FieldPsynergy_StartMindReadWave(0, ACTOR_JILL_TREE);
     WaitFrames(10);
-    FieldScript_SetMessageId(MsgBilibinThankSavedMeFromBeing);
-    Script_ShowMessage(ACTOR_JILL_TREE, 0);
-    FieldEffect_FinishWaveAndReleaseHeapBlock();
+    Event_SetMessageId(MsgBilibinThankSavedMeFromBeing);
+    Event_ShowMessage(ACTOR_JILL_TREE, 0);
+    FieldPsynergy_FinishWaveAndReleaseHeapBlock();
     WaitFrames(10);
     GameFlag_Set(FLAG_BILIBIN_JILL_RESCUED);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// Walking into the statue in the Bilibin Treasury or the crates at the
 /// Bilibin Barricade: the leader jumps forward onto them where he can
 /// (Field_TryJumpForward).
-static void EventScript_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
+static void Bilibin_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut. It happens on
 /// stepping up to them on the bank at the Bilibin Barricade, once the curse is
 /// lifted and if she was pulled from the river: they recognize the leader, and
 /// she gives him the Hard Nut in thanks.
 /// "Remember me? I was that tree!"
-static void EventScript_JillGivesHardNut(void) {
+static void Bilibin_JillGivesHardNut(void) {
   struct Actor *leader;
   struct Actor *eastMember;
 
@@ -569,7 +569,7 @@ static void EventScript_JillGivesHardNut(void) {
       GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
 
-  FieldScript_Start();
+  Event_Start();
   // The camera moves over to the three; the friend nearer the leader speaks
   // first.
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -580,8 +580,8 @@ static void EventScript_JillGivesHardNut(void) {
     Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 20);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
-    FieldScript_SetMessageId(MsgBilibinYoureGuy);
-    Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
+    Event_SetMessageId(MsgBilibinYoureGuy);
+    FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
   } else {
@@ -589,8 +589,8 @@ static void EventScript_JillGivesHardNut(void) {
                         20);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
-    FieldScript_SetMessageId(MsgBilibinYoureGuy);
-    Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
+    Event_SetMessageId(MsgBilibinYoureGuy);
+    FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
   }
@@ -602,32 +602,32 @@ static void EventScript_JillGivesHardNut(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
-  Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_JILL,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
                       10);
   Actor_RunRepeatedMotion(ACTOR_JILL, 1);
-  Script_ShowMessageAndWait(ACTOR_JILL, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_JILL, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 266, 172);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-  Script_ShowMessageAndWait(ACTOR_JILL, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
@@ -639,16 +639,16 @@ static void EventScript_JillGivesHardNut(void) {
   Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 262, 156);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   {
     struct Actor *jill = Actor_Get(ACTOR_JILL);
     u8 steeringFlags = jill->steeringFlags | ACTOR_FACES_MOTION;
 
     jill->steeringFlags = steeringFlags;
   }
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
-  Script_ShowMessageAndWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
@@ -663,7 +663,7 @@ static void EventScript_JillGivesHardNut(void) {
                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Sets up the map being entered, Bilibin, the Bilibin Barricade or the
@@ -752,7 +752,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   // The statue may have moved onto the leader while this script was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
-      FieldScript_Start();
+      Event_Start();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
@@ -764,7 +764,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 286, 218);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
       }
-      FieldScript_End();
+      Event_End();
     }
   }
 }
@@ -882,12 +882,12 @@ static void Bilibin_SetUpTreasury(void) {
       gSaveBlock.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
-      FieldScript_Start();
+      Event_Start();
       leader->y.fixed = PIXELS(16);
       FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                       leader->z.fixed, 0);
       MapGrid_CenterOnFollowedPoint();
-      FieldScript_End();
+      Event_End();
       WaitFrames(1);
     }
   }
@@ -898,7 +898,7 @@ static void Bilibin_SetUpTreasury(void) {
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
 /// Bilibin Barricade: it slides one cell ahead with the leader behind it, if
 /// the cell is free.
-static void EventScript_PushStatueOrCrates(void) {
+static void Bilibin_PushStatueOrCrates(void) {
   struct Actor *leader;
   struct Actor *pushed;
   u32 direction;
@@ -1179,33 +1179,33 @@ struct Trigger gBilibinTriggers[] = {
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TO_MCCOY_PALACE_GROUNDS },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_WEST },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_EAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
-    { TRIGGER_TALK, ACTOR_TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExamineTreeMan) },
-    { TRIGGER_TALK, ACTOR_FORMER_TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutBeingATree) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { TRIGGER_TALK, ACTOR_TREE_MAN, CONDITION_ALWAYS, EVENT(Bilibin_ExamineTreeMan) },
+    { TRIGGER_TALK, ACTOR_FORMER_TREE_MAN, CONDITION_ALWAYS, EVENT(Bilibin_AskAboutBeingATree) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOME, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
     { TRIGGER_TALK, ACTOR_VILLAGER_GROUP_TO_IMIL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
     { TRIGGER_TALK, ACTOR_VILLAGER_GROUP_TO_IMIL, CONDITION_ALWAYS, MSGNO(MsgBilibinIfYoureTalkingAboutTheTravelers) },
-    { TRIGGER_TALK, ACTOR_VILLAGER_ASKS_ABOUT_TREE, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_AskAboutEntranceTree) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_ASKS_ABOUT_TREE, FLAG_KOLIMA_CURSE_LIFTED, EVENT(Bilibin_AskAboutEntranceTree) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ASKS_ABOUT_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinYoureWonderingAboutTheTreeNear) },
     { TRIGGER_TALK, ACTOR_VILLAGER_MCCOY_FRIGHTENED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
     { TRIGGER_TALK, ACTOR_VILLAGER_MCCOY_FRIGHTENED, CONDITION_ALWAYS, MSGNO(MsgBilibinISawLordMccoyTheChief) },
-    { TRIGGER_TALK, ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_AskAboutSoutheastRoute) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, EVENT(Bilibin_AskAboutSoutheastRoute) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ROAD_BLOCKED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ROAD_BLOCKED, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
     { TRIGGER_TALK, ACTOR_BOY_SCARED_OF_ENTRANCE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
-    { TRIGGER_TALK, ACTOR_BOY_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutCurseBreakers) },
+    { TRIGGER_TALK, ACTOR_BOY_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, EVENT(Bilibin_AskAboutCurseBreakers) },
     { TRIGGER_TALK, ACTOR_GIRL_RED_SKY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIsItTrueThatAMountain) },
     { TRIGGER_TALK, ACTOR_GIRL_RED_SKY, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
     { TRIGGER_TALK, ACTOR_STRONGMAN_IMIL_TOWER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheresATowerAtTheTip) },
-    { TRIGGER_TALK, ACTOR_STRONGMAN_IMIL_TOWER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutImil) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_IMIL_TOWER, CONDITION_ALWAYS, EVENT(Bilibin_AskAboutImil) },
     { TRIGGER_TALK, ACTOR_VILLAGER_STRANGE_CREATURES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
     { TRIGGER_TALK, ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinTheEruptionOnTheOtherSide) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TREE_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
@@ -1230,22 +1230,22 @@ struct Trigger gBilibinTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_IMIL_TOWER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VILLAGE_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageStatueCells) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VILLAGE_STATUE, CONDITION_ALWAYS, EVENT(Bilibin_UpdateVillageStatueCells) },
+    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS, 0 },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, 0xf50, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, 0xf51, FIND_COINS(5) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(Bilibin_InspectWell) },
     { TRIGGERS_END },
 };
 
 struct Trigger gBilibinBarricadeTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_EAST },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_WEST },
-    { TRIGGER_TALK, ACTOR_BOTTOM_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
-    { TRIGGER_TALK, ACTOR_MIDDLE_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
-    { TRIGGER_TALK, ACTOR_JILL_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
-    { TRIGGER_TALK, ACTOR_FALLEN_TREE_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
+    { TRIGGER_TALK, ACTOR_BOTTOM_TREE, CONDITION_ALWAYS, EVENT(Bilibin_InspectHumanShapedTree) },
+    { TRIGGER_TALK, ACTOR_MIDDLE_TREE, CONDITION_ALWAYS, EVENT(Bilibin_InspectHumanShapedTree) },
+    { TRIGGER_TALK, ACTOR_JILL_TREE, CONDITION_ALWAYS, EVENT(Bilibin_InspectHumanShapedTree) },
+    { TRIGGER_TALK, ACTOR_FALLEN_TREE_STAND_IN, CONDITION_ALWAYS, EVENT(Bilibin_InspectHumanShapedTree) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOTTOM_TREE, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgBilibinTheyCrossedTheRiverAfterPushing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOTTOM_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyreSoHeavy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_TREE_STAND_IN, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinShellBeSweptDownstreamIfShe) },
@@ -1264,30 +1264,30 @@ struct Trigger gBilibinBarricadeTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GANG_MEMBER_WEST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GANG_MEMBER_WEST, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JILL, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRestrictedAreaSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 11, CONDITION_ALWAYS, EVENT(Bilibin_ReadRestrictedAreaSign) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
-    { TRIGGER_STEP, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT_SCRIPT(EventScript_JillGivesHardNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(EventScript_PullJillFromRiver) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateCratesCells) },
+    { TRIGGER_STEP, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT(Bilibin_JillGivesHardNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT(Bilibin_PullJillFromRiver) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING, 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_UpdateCratesCells) },
     { TRIGGERS_END },
 };
 
 struct Trigger gBilibinTreasuryTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadWarehouseSign) },
-    { TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GustJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TREASURY_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryStatueCells) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS, EVENT(Bilibin_ReadWarehouseSign) },
+    { TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT(Bilibin_GustJoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TREASURY_STATUE, CONDITION_ALWAYS, EVENT(Bilibin_UpdateTreasuryStatueCells) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
     { TRIGGERS_END },
 };
 

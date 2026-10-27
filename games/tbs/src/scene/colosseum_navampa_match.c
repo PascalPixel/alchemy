@@ -34,9 +34,10 @@
 ///   sixth group, the Navampa with or without the Claymore.
 ///
 /// Stepping onto the Scales of Justice's western ledge (step trigger 15,
-/// EventScript_StepOnScales) sends it, with the rider, down towards 4 pixels
-/// high and the eastern ledge up towards 32, and stepping off (step trigger 16)
-/// swings them back; the weight Move sets on the western ledge does the same.
+/// ColosseumNavampaMatch_StepOnScales) sends it, with the rider, down towards 4
+/// pixels high and the eastern ledge up towards 32, and stepping off (step
+/// trigger 16) swings them back; the weight Move sets on the western ledge does
+/// the same.
 ///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
@@ -166,12 +167,13 @@ enum {
   /// Stepping-Stone Stage that Move shifts along its row (its render)
   ACTOR_STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator; Move on it needs
-  /// nothing more (EventScript_IgnoreMove).
+  /// nothing more (ColosseumNavampaMatch_IgnoreMove).
   /// ★ Named from what the player sees: a stone pillar east of the Wall
   /// Wedge's pistons (its render)
   ACTOR_ROCK = 14,
   /// The log-rolling area's three stones; each settles where Move drops it
-  /// (EventScript_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two
+  /// (ColosseumNavampaMatch_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and
+  /// the two
   /// after it).
   /// ★ Named from the game: "You can get through quickly by moving the logs
   /// and stones." (MsgColossoAnotherLogRollingArea)
@@ -263,7 +265,7 @@ enum {
   /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_AREA_TEMP_63,
   /// Someone stands on the western ledge, which has sunk
-  /// (EventScript_StepOnScales).
+  /// (ColosseumNavampaMatch_StepOnScales).
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
   FLAG_ON_SCALES = FLAG_AREA_TEMP_67,
@@ -274,7 +276,8 @@ enum {
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
-      FLAG_AREA_TEMP_69, ///< at the east end (EventScript_RollLongLog)
+      FLAG_AREA_TEMP_69, ///< at the east end
+                         ///< (ColosseumNavampaMatch_RollLongLog)
   /// The byte of flags that keeps ACTOR_STONE's column.
   /// ★ Named from the game: "You can get through quickly by moving the logs and
   /// stones." (MsgColossoAnotherLogRollingArea)
@@ -407,7 +410,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 /// The Moving Sidewalk Stage's belt carries the party west. It's step trigger
 /// 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the belt carries the
 /// controlled actor and the camera west.
-static void EventScript_RideMovingSidewalk(void) {
+static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
   struct SaveBlock *state = &gSaveBlock;
   s32 id = state->leaderActorId;
@@ -423,7 +426,7 @@ static void EventScript_RideMovingSidewalk(void) {
 
 /// Growth on the plant on Colosseum Final 3's stages: it grows and opens a
 /// shortcut (FLAG_PLANT_GROWN).
-static void EventScript_GrowPlant(void) {
+static void ColosseumNavampaMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
   {
 
@@ -442,7 +445,7 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
 /// Frost on the target on the Scales of Justice's eastern ledge: it freezes and
 /// the scales tip, the western ledge down and the eastern ledge up
 /// (FLAG_SCALES_FROZEN).
-static void EventScript_FreezeOnScales(void) {
+static void ColosseumNavampaMatch_FreezeOnScales(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(ACTOR_PUDDLE);
@@ -463,7 +466,7 @@ static void EventScript_FreezeOnScales(void) {
 /// Stepping onto the Scales of Justice's western ledge, unless the scales are
 /// frozen: it sinks with the rider as the eastern ledge rises
 /// (FLAG_ON_SCALES).
-static void EventScript_StepOnScales(void) {
+static void ColosseumNavampaMatch_StepOnScales(void) {
   s32 actorId;
   s32 lowered;
   struct Actor *log;
@@ -500,7 +503,7 @@ static void EventScript_StepOnScales(void) {
 }
 
 /// Stepping off the Scales of Justice's western ledge: the scales swing back.
-static void EventScript_StepOffScales(void) {
+static void ColosseumNavampaMatch_StepOffScales(void) {
   struct Actor *actor;
 
   Import_ActorSetAnimation(gSaveBlock.leaderActorId, 1);
@@ -524,7 +527,7 @@ static void EventScript_StepOffScales(void) {
 /// Move on the weight by the Scales of Justice: when it reaches the western
 /// ledge, it sinks the ledge and the eastern ledge rises
 /// (FLAG_WEIGHT_ON_SCALES).
-static void EventScript_SetWeightOnScales(void) {
+static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   struct Actor *probe;
   struct Actor *log;
   struct Actor *upper;
@@ -556,15 +559,15 @@ static void EventScript_SetWeightOnScales(void) {
 
 /// Walking into the weight by the Scales of Justice pushes it, perhaps onto the
 /// scales.
-static void EventScript_PushWeight(void) {
+static void ColosseumNavampaMatch_PushWeight(void) {
   ColosseumNavampaMatch_PushActorAhead();
-  EventScript_SetWeightOnScales();
+  ColosseumNavampaMatch_SetWeightOnScales();
 }
 
 /// Move on the stone on Colosseum Final 3's stages, and after each push: its
 /// column is kept (the byte of flags from FLAG_STONE_COLUMN) and its cell
 /// rebuilt.
-static void EventScript_MoveStone(void) {
+static void ColosseumNavampaMatch_MoveStone(void) {
   struct Actor *actor;
   s32 x;
 
@@ -576,18 +579,18 @@ static void EventScript_MoveStone(void) {
 }
 
 /// Move on ACTOR_ROCK in Colosseum Final 3 needs nothing more.
-static void EventScript_IgnoreMove(void) {}
+static void ColosseumNavampaMatch_IgnoreMove(void) {}
 
 /// Walking into a rock on Colosseum Final 3's stages (step trigger 22) pushes
 /// it.
-static void EventScript_PushRock(void) {
+static void ColosseumNavampaMatch_PushRock(void) {
   ColosseumNavampaMatch_PushActorAhead();
 }
 
 /// Move on one of the log-rolling area's three stones, and each push there: a
 /// stone resting on the floor becomes a step (FLAG_FIRST_LOG_AREA_STONE_SETTLED
 /// and the two after it).
-static void EventScript_SettleStones(void) {
+static void ColosseumNavampaMatch_SettleStones(void) {
   struct Actor *actor;
   s32 slot;
   s32 x;
@@ -673,7 +676,7 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 /// way the pad is held; at the east end it drops into place and the path is
 /// made (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
 /// instead.
-static void EventScript_RollLongLog(void) {
+static void ColosseumNavampaMatch_RollLongLog(void) {
   struct Actor *rider;
   struct Actor *log;
   struct FieldWork *work;
@@ -739,20 +742,20 @@ static void EventScript_RollLongLog(void) {
   // Clear the old footprint, then move the log and rider together.
   MapGrid_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(actorId, 8);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   log->speedLimit = PIXELS(1) / 2;
   acceleration = PIXELS(1) / 5;
   log->acceleration = acceleration;
   Actor_SelectAnimation(log, mode);
   FieldActor_SetMoveTarget(log, x, 0, z);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(actorId, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Actor_StartCamera(work->camera, (s32)log);
   Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
-  Script_PlaySong(SE_HEAVY_MOVE);
+  Event_PlaySong(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, 2);
   FieldActor_SetMoveTarget(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
@@ -764,29 +767,29 @@ static void EventScript_RollLongLog(void) {
     GameFlag_Set(FLAG_LONG_LOG_IN_PLACE);
     Import_ActorSetAnimation(ACTOR_LONG_LOG, ANIM_NOD);
     Actor_SetDestinationOffset(ACTOR_LONG_LOG, 18, 6);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_SelectAnimation(log, 8);
     Actor_WaitForMove(log);
     log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     column = 84;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, column, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Script_PlaySong(SE_STOP_ACTION_SE);
-    Script_PlaySong(SE_LOG_FALL);
+    Event_PlaySong(SE_STOP_ACTION_SE);
+    Event_PlaySong(SE_LOG_FALL);
   } else {
     Actor_SelectAnimation(log, 1);
-    Script_PlaySong(SE_STOP_ACTION_SE);
-    Script_PlaySong(SE_HEAVY_STOP);
+    Event_PlaySong(SE_STOP_ACTION_SE);
+    Event_PlaySong(SE_HEAVY_STOP);
     column = x >> 20;
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 9);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 61);
   }
-  FieldScript_WaitFrames(15);
-  FieldScript_End();
+  Event_WaitFrames(15);
+  Event_End();
   return;
 far:
   ColosseumNavampaMatch_PushActorAhead();
-  EventScript_SettleStones();
+  ColosseumNavampaMatch_SettleStones();
 }
 
 /// Displays the activated moving sidewalk and plays its arrival sounds.
@@ -801,7 +804,7 @@ ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Actor *interpreter) {
 
 /// Force on the Moving Sidewalk Stage's log: it slides away and the belt
 /// carries no one any more (FLAG_SIDEWALK_LOG_KNOCKED_OFF).
-static void EventScript_ForceSidewalkLog(void) {
+static void ColosseumNavampaMatch_ForceSidewalkLog(void) {
   struct Actor *effect;
   s32 moveRate;
 
@@ -817,8 +820,8 @@ static void EventScript_ForceSidewalkLog(void) {
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
 /// pattern (FLAG_WALL_WEDGE_HALTED).
-static void EventScript_HaltWall(void) {
-  FieldEffect_PauseActor(ACTOR_WALL_OPERATOR);
+static void ColosseumNavampaMatch_HaltWall(void) {
+  FieldPsynergy_HaltActor(ACTOR_WALL_OPERATOR);
   GameFlag_Set(FLAG_WALL_WEDGE_HALTED);
   WaitFrames(10);
   while (gColosseumNavampaMatch_WallWedgePatternIndex != 1 &&
@@ -830,7 +833,7 @@ static void EventScript_HaltWall(void) {
 
 /// Raised by the Wall Wedge (4): the rider passes through the pistons'
 /// northern opening.
-static void EventScript_PassNorthWallOpening(void) {
+static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   struct Actor *actor;
 #ifndef UBFIX
   s16 *gameWords;
@@ -860,7 +863,7 @@ static void EventScript_PassNorthWallOpening(void) {
 
 /// Raised by the Wall Wedge (5): the rider passes through the pistons'
 /// southern opening.
-static void EventScript_PassSouthWallOpening(void) {
+static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   struct Actor *actor;
 #ifndef UBFIX
   s16 *gameWords;
@@ -914,26 +917,26 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   actorId = gSaveBlock.leaderActorId;
   entrance = gSaveBlock.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
-    FieldScript_Start();
+    Event_Start();
     messageOffset = warriorId * 3;
-    FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles);
+    Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles);
     FieldMessage_ShowAtActor(warriorId, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(actorId, 0) == 0) {
-      FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
-      FieldScript_ShowMessageAndWait(warriorId, 0);
+    if (Event_AskYesNoWithActorAnimation(actorId, 0) == 0) {
+      Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
+      Event_ShowMessageAndWait(warriorId, 0);
       work->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
-      FieldScript_FinishScreenTransition();
-      FieldScript_WaitTransitionFrames();
+      Event_FinishScreenTransition();
+      Event_WaitTransitionFrames();
       Colosso_ControlCharacterAlone(warriorId);
-      FieldScript_StartScreenTransition();
-      FieldScript_WaitTransitionFrames();
+      Event_StartScreenTransition();
+      Event_WaitTransitionFrames();
     } else {
-      FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 2);
-      FieldScript_ShowMessageAndWait(warriorId, 0);
+      Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 2);
+      Event_ShowMessageAndWait(warriorId, 0);
     }
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -941,15 +944,16 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
 /// fight; the battle's group follows who took the Claymore. The arena's
 /// step trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which
-/// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
-static void EventScript_ReachArena(void) {
+/// nothing in the game sets (colosseum_azart_match.c's
+/// ColosseumNavampaMatch_ReachArena).
+static void ColosseumNavampaMatch_ReachArena(void) {
   s32 place;
   s32 i;
   s32 last;
 
   last = 4;
   ColosseumNavampaMatch_EmptyHook();
-  FieldScript_Start();
+  Event_Start();
   place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
                                                        ITEM_HUNTERS_SWORD);
   ColosseumNavampaMatch_WaitForOpponentToFinish();
@@ -962,33 +966,33 @@ static void EventScript_ReachArena(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 1520, 192);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch,
-                                 COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
-  FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
-                                   COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
+  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumNavampaMatch,
+                                  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch,
+                             COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
 /// Walking into something on Colosseum Final 3's stages (step trigger 90):
 /// unless it is an actor, the leader jumps forward where he can
 /// (Field_TryJumpForward).
-static void EventScript_JumpAtLogAreaEnd(void) {
+static void ColosseumNavampaMatch_JumpAtLogAreaEnd(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   }
@@ -996,11 +1000,11 @@ static void EventScript_JumpAtLogAreaEnd(void) {
 
 /// Walking into something by the Scales of Justice (step trigger 91): the
 /// weight is pushed, anything else is checked.
-static void EventScript_PushWeightOrCheckAhead(void) {
+static void ColosseumNavampaMatch_PushWeightOrCheckAhead(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
-    EventScript_PushWeight();
+    ColosseumNavampaMatch_PushWeight();
   }
 }
 
@@ -1109,7 +1113,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       MapGrid_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
     Import_ActorSetAnimation(ACTOR_WALL_OPERATOR, 10);
-    FieldEffect_PauseActor(ACTOR_WALL_OPERATOR);
+    FieldPsynergy_HaltActor(ACTOR_WALL_OPERATOR);
   } else {
     for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
       actor = Actor_GetById(i);
@@ -1216,14 +1220,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON:
     ColosseumNavampaMatch_PlayPostBattleReunion(1);
-    Import_ScriptRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
+    Import_EventSetExitRequest(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
     GameFlag_Set(FLAG_COLOSSO_OVER);
     GameFlag_Set(FLAG_WON_COLOSSO);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST:
     ColosseumNavampaMatch_PlayPostBattleReunion(-1);
-    Import_ScriptRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
+    Import_EventSetExitRequest(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
     GameFlag_Set(FLAG_COLOSSO_OVER);
     break;
   }
@@ -1309,7 +1313,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
-  FieldScript_Start();
+  Event_Start();
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
     Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
@@ -1354,10 +1358,10 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_SetMessageId(MsgColossoIsaac);
-  FieldScript_WaitFrames(60);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_SetMessageId(MsgColossoIsaac);
+  Event_WaitFrames(60);
   leaderScaleScript = gColosseumNavampaMatch_LeaderScaleScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1367,21 +1371,21 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 36);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->x.fixed += PIXELS(3);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_GARET, 1504, 176);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
   FieldEffect_SpawnAttached(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                             20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_IVAN);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_IVAN, 1488, 176);
   Actor_WalkTo(ACTOR_GARET, 1520, 184);
   Actor_WalkToAndWait(ACTOR_IVAN, 1504, 176);
@@ -1389,12 +1393,12 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_GARET);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_MIA);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_MIA);
   Actor_WalkToAndWait(ACTOR_MIA, 1488, 184);
@@ -1403,63 +1407,63 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_GARET);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_IVAN);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_MIA);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_MIA);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionC);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
   // Time the small reunion effects to the companions' reactions.
   gColossoParticleCount = 9;
   Task_AddFrame(particleCallback, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(5);
+  Event_WaitFrames(5);
   Task_Remove(particleCallback);
-  FieldScript_WaitFrames(55);
+  Event_WaitFrames(55);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Task_AddFrame(particleCallback, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Task_Remove(particleCallback);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
   Task_AddFrame(particleCallback, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(35);
+  Event_WaitFrames(35);
   Task_Remove(particleCallback);
-  FieldScript_WaitFrames(25);
+  Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
   Task_AddFrame(particleCallback, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(35);
+  Event_WaitFrames(35);
   Task_Remove(particleCallback);
-  FieldScript_WaitFrames(25);
+  Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_IVAN);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_MIA);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   gColossoParticleCount = 9;
   Task_AddFrame(particleCallback, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(35);
+  Event_WaitFrames(35);
   Task_Remove(particleCallback);
-  FieldScript_WaitFrames(25);
+  Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 3);
@@ -1471,35 +1475,35 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   // The companions begin to leave, then discuss the sleeping leader off-screen.
   Actor_WalkTo(ACTOR_MIA, 1464, 200);
-  FieldScript_WaitFrames(5);
+  Event_WaitFrames(5);
   Actor_WalkTo(ACTOR_IVAN, 1368, 184);
-  FieldScript_WaitFrames(3);
+  Event_WaitFrames(3);
   Actor_WalkToAndWait(ACTOR_GARET, 1512, 184);
   Actor_WalkTo(ACTOR_GARET, 1368, 184);
   Actor_WaitForMoveById(ACTOR_MIA);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_WalkToAndWait(ACTOR_MIA, 1432, 200);
   Actor_WalkTo(ACTOR_MIA, 1368, 184);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(30);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(30);
   Actor_SetPosition(ACTOR_GARET, PIXELS(1512), PIXELS(176));
   Actor_SetPosition(ACTOR_IVAN, PIXELS(1464), PIXELS(192));
   Actor_SetPosition(ACTOR_MIA, PIXELS(1560), PIXELS(200));
   ActorSystem_SuspendProjectionAndShowSprites();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
-  FieldScript_SetMessageId(MsgColossoIsaacFellAsleep);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(60);
-  FieldScript_End();
+  Event_SetMessageId(MsgColossoIsaacFellAsleep);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(60);
+  Event_End();
 }
 
 /// The tour of Colosseum Final 3
@@ -1514,7 +1518,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   actor = Actor_GetById(guideId);
   guideX = actor->x.part.pixel;
   guideZ = actor->z.part.pixel;
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1533,22 +1537,22 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_SetMessageId(MsgColossoSiteThirdFinals);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_SetMessageId(MsgColossoSiteThirdFinals);
   Actor_SetAnimationAndWait(guideId, ANIM_NOD);
-  FieldScript_ShowMessageAndWait(guideId, 0);
+  Event_ShowMessageAndWait(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
-  FieldScript_ShowMessageAndWait(guideId, 0);
+  Event_ShowMessageAndWait(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
-  FieldScript_ShowMessageAndWait(guideId, 0);
+  Event_ShowMessageAndWait(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
-  FieldScript_ShowMessageAndWait(guideId, 0);
+  Event_ShowMessageAndWait(guideId, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -1574,7 +1578,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Actor_SetPositionAndReset(guideId, (guideX - 16), (guideZ - 16));
   Actor_SetPositionAndReset(guideId, guideX, guideZ);
   Actor_ArmCallback(guideId, FACING_NORTH, 10);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The Scales of Justice's attendant, stage 1 of Colosseum Final 3: the first
@@ -1582,7 +1586,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
 /// then the objective, and a place for a friend to cheer. With a friend alone
 /// on the stages (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) he asks whether
 /// they are done cheering instead.
-static void EventScript_TalkToScalesAttendant(s32 guideId) {
+static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   struct Actor *westPan;
   struct Actor *eastPan;
   struct Actor *westPanAgain;
@@ -1593,21 +1597,21 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
-  FieldScript_Start();
+  Event_Start();
   promptResult = Colosso_GreetAtStage(guideId, 1);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     // Point out the ledges, demonstrate both heights, then restore the stage.
-    FieldScript_SetMessageId(MsgColossoStageCalledScales);
+    Event_SetMessageId(MsgColossoStageCalledScales);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveWithinMapBounds(PIXELS(152), -1, PIXELS(200), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(guideId, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(guideId, 0);
     Colosso_ShowPointer(104, 68, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Colosso_MovePointer(168, 96, 10);
-    FieldScript_WaitFrames(70);
-    FieldScript_ShowMessageAndWait(guideId, 0);
+    Event_WaitFrames(70);
+    Event_ShowMessageAndWait(guideId, 0);
     Colosso_HidePointer();
     WaitFrames(2);
     westPan = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
@@ -1617,7 +1621,7 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     eastPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
     Actor_WaitForMove(eastPan);
-    FieldScript_WaitFrames(45);
+    Event_WaitFrames(45);
     westPanAgain = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
     westPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
@@ -1625,31 +1629,31 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     eastPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
     Actor_WaitForMove(eastPanAgain);
-    FieldScript_WaitFrames(15);
-    FieldScript_ShowMessageAndWait(guideId, 0);
+    Event_WaitFrames(15);
+    Event_ShowMessageAndWait(guideId, 0);
     Colosso_ShowPointer(104, 68, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Colosso_MovePointer(168, 96, 10);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     Colosso_MovePointer(104, 68, 10);
-    FieldScript_WaitFrames(70);
-    FieldScript_ShowMessageAndWait(guideId, 0);
+    Event_WaitFrames(70);
+    Event_ShowMessageAndWait(guideId, 0);
     Colosso_HidePointer();
     WaitFrames(2);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 1);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
-    FieldScript_SetMessageId(MsgColossoObjectiveGetAcross);
-    FieldScript_ShowMessageAndWait(guideId, 0);
+    Event_SetMessageId(MsgColossoObjectiveGetAcross);
+    Event_ShowMessageAndWait(guideId, 0);
   }
   Colosso_OfferCheeringSpot(promptResult, guideId, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The Stepping-Stone Stage's attendant, stage 2 of Colosseum Final 3: the
 /// first time, Isaac appears and finds the way; then the objective, and a
 /// place for a friend to cheer.
-static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
+static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
@@ -1657,21 +1661,21 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
-  FieldScript_Start();
+  Event_Start();
   promptResult = Colosso_GreetAtStage(guideId, 2);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
-    FieldScript_SetMessageId(MsgColossoSteppingStoneStage);
+    Event_SetMessageId(MsgColossoSteppingStoneStage);
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
     x = 280;
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
-    Script_ShowMessage(guideId, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessage(guideId, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Field_TryJumpForward();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 15);
@@ -1681,52 +1685,52 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
     Field_TryJumpForward();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
-    Script_ShowMessage(guideId, 0);
+    Event_ShowMessage(guideId, 0);
     Colosso_ShowPointer(96, 40, 0);
     Colosso_MovePointer(128, 40, 10);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Colosso_MovePointer(160, 40, 10);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Colosso_MovePointer(160, 72, 10);
-    FieldScript_WaitFrames(30);
-    Script_ShowMessage(guideId, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessage(guideId, 0);
     Colosso_HidePointer();
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
-    FieldScript_SetMessageId(MsgColossoYourGoalInStageSimple);
-    Script_ShowMessage(guideId, 0);
+    Event_SetMessageId(MsgColossoYourGoalInStageSimple);
+    Event_ShowMessage(guideId, 0);
   }
   Colosso_OfferCheeringSpot(promptResult, guideId, 2);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The Wall Wedge's attendant, stage 3 of Colosseum Final 3: the first time,
 /// Isaac appears and times his way past the pistons; then that the walls'
 /// operator will cheer for him, and a place for a friend to cheer.
-static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
+static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
 
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    FieldScript_Start();
+    Event_Start();
     promptResult = Colosso_GreetAtStage(guideId, 3);
     if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
       // Show the pattern cycle before demonstrating a timed passage.
       work = gFieldWork;
-      FieldScript_SetMessageId(MsgColossoPlaceCalledWall);
+      Event_SetMessageId(MsgColossoPlaceCalledWall);
       ColosseumNavampaMatch_ResetWallWedge();
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(184), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(30);
-      Script_ShowMessage(guideId, 0);
+      Event_WaitFrames(30);
+      Event_ShowMessage(guideId, 0);
       ColosseumNavampaMatch_StartWallWedge();
-      FieldScript_WaitFrames(60);
-      FieldScript_ShowMessageAndWait(guideId, 0);
+      Event_WaitFrames(60);
+      Event_ShowMessageAndWait(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 136 instructions
@@ -1743,28 +1747,28 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
           }
         } while (work->raisedTrigger != 5);
       }
-      EventScript_PassSouthWallOpening();
+      ColosseumNavampaMatch_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
-      FieldScript_ShowMessageAndWait(guideId, 0);
+      Event_ShowMessageAndWait(guideId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
       work->raisedTrigger = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
-      FieldScript_SetMessageId(MsgColossoOperatorWallsCheer);
-      FieldScript_ShowMessageAndWait(guideId, 0);
+      Event_SetMessageId(MsgColossoOperatorWallsCheer);
+      Event_ShowMessageAndWait(guideId, 0);
     }
     Colosso_OfferCheeringSpot(promptResult, guideId, 3);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// The Free-Climb Area's attendant, stage 4 of Colosseum Final 3: the first
 /// time, Isaac appears and climbs across; then the objective, and a place for a
 /// friend to cheer.
-static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
+static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
   s32 x;
@@ -1775,16 +1779,16 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    FieldScript_Start();
+    Event_Start();
     result = Colosso_GreetAtStage(guideId, 4);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
-      FieldScript_SetMessageId(MsgColossoPlaceNormallyCalledFreeClimb);
+      Event_SetMessageId(MsgColossoPlaceNormallyCalledFreeClimb);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(30);
-      Script_ShowMessage(guideId, 0);
-      Script_ShowMessage(guideId, 0);
+      Event_WaitFrames(30);
+      Event_ShowMessage(guideId, 0);
+      Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
@@ -1812,16 +1816,16 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
                                actor->z.fixed);
       Actor_WaitForMove(actor);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
-      Script_ShowMessage(guideId, 0);
+      Event_ShowMessage(guideId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-      FieldScript_SetMessageId(MsgColossoClearStageMustAbleChange);
-      Script_ShowMessage(guideId, 0);
+      Event_SetMessageId(MsgColossoClearStageMustAbleChange);
+      Event_ShowMessage(guideId, 0);
     }
     Colosso_OfferCheeringSpot(result, guideId, 4);
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -1856,7 +1860,7 @@ static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
 /// The Moving Sidewalk Stage's attendant, stage 5 of Colosseum Final 3: the
 /// first time, Isaac appears and walks against the belt; then the objective,
 /// and a place for a friend to cheer.
-static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
+static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 i;
   s32 result;
   struct Actor *actor;
@@ -1864,27 +1868,27 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
-    FieldScript_Start();
+    Event_Start();
     result = Colosso_GreetAtStage(guideId, 5);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       // Walk against the sidewalk, then show how its current pushes the rider.
-      FieldScript_SetMessageId(MsgColossoCalledMovingSidewalkStage);
+      Event_SetMessageId(MsgColossoCalledMovingSidewalkStage);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(30);
-      Script_ShowMessage(guideId, 0);
-      Script_ShowMessage(guideId, 0);
+      Event_WaitFrames(30);
+      Event_ShowMessage(guideId, 0);
+      Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
                                                      184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
-      FieldScript_WaitFrames(120);
+      Event_WaitFrames(120);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ATTACH);
-      FieldScript_WaitFrames(120);
+      Event_WaitFrames(120);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if !TBS_PATCH_3
@@ -1902,25 +1906,25 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
-      Script_ShowMessage(guideId, 0);
+      Event_ShowMessage(guideId, 0);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-      FieldScript_SetMessageId(MsgColossoInStageMustTryOutpace);
-      Script_ShowMessage(guideId, 0);
+      Event_SetMessageId(MsgColossoInStageMustTryOutpace);
+      Event_ShowMessage(guideId, 0);
     }
     Colosso_OfferCheeringSpot(result, guideId, 5);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// The log-rolling area's attendant, stage 6 of Colosseum Final 3: the first
 /// time, a pointer traces the log's route; then the objective, and a place for
 /// a friend to cheer.
-static void EventScript_TalkToLogRollingAttendant(s32 actorId) {
+static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
@@ -1928,36 +1932,36 @@ static void EventScript_TalkToLogRollingAttendant(s32 actorId) {
     return;
   }
 
-  FieldScript_Start();
+  Event_Start();
   state = Colosso_GreetAtStage(actorId, 6);
 
   if (state == COLOSSO_GUIDE_DESCRIBE) {
-    FieldScript_SetMessageId(MsgColossoAnotherLogRollingArea);
+    Event_SetMessageId(MsgColossoAnotherLogRollingArea);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveWithinMapBounds(PIXELS(1288), -1, PIXELS(152), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(actorId, 0);
     Colosso_ShowPointer(180, 88, 0);
-    FieldScript_WaitFrames(60);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_WaitFrames(60);
+    Event_ShowMessageAndWait(actorId, 0);
     Colosso_MovePointer(32, 84, 10);
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(actorId, 0);
     Colosso_MovePointer(96, 84, 30);
-    FieldScript_WaitFrames(60);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_WaitFrames(60);
+    Event_ShowMessageAndWait(actorId, 0);
     Colosso_HidePointer();
-    FieldScript_WaitFrames(2);
+    Event_WaitFrames(2);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(actorId, 6);
   } else if (state == COLOSSO_GUIDE_OFFER_CHEERING) {
-    FieldScript_SetMessageId(MsgColossoHereMustFigureOutHow);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgColossoHereMustFigureOutHow);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 
   Colosso_OfferCheeringSpot(state, actorId, 6);
-  FieldScript_End();
+  Event_End();
 }
 
 // This map's exits for colosso_solo.h.
@@ -2007,31 +2011,31 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
 /// (mode 0), or for the race `Match 3`, then 3, 2, 1 and `Go!`.
 static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
-    FieldScript_Start();
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
-    FieldScript_WaitFrames(30);
+    Event_Start();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-    FieldScript_WaitFrames(120);
-    FieldScript_End();
+    Event_WaitFrames(120);
+    Event_End();
     return;
   }
 
   Sound_PlaySong(SE_COLOSSO_LETTERING);
-  FieldScript_Start();
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_Start();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   {
     s16 *base = gColossoLetteringScriptTitle;
     *(s16 *)((u8 *)base + 30) = (mode * 60);
   }
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(mode + 0x5a);
   Colosso_LoadLettering(mode);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-  FieldScript_WaitFrames(120);
+  Event_WaitFrames(120);
 
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);
@@ -2041,19 +2045,19 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Sound_PlaySong(SE_COLOSSO_GO);
   Scene_PlayMusic();
-  FieldScript_End();
+  Event_End();
   GameFlag_Set(FLAG_IN_TOWN);
 }
 
@@ -2063,29 +2067,29 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   s32 actorId;
 
   Sound_PlaySong(SE_COLOSSO_LETTERING);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   gColossoLetteringScriptWon[13] = countdown * 60;
   STORE_CONST(gColossoLetteringScriptLose[13]) =
       (countdown < 0 ? -countdown : countdown) * 60;
   if (countdown < 0) {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
-    FieldScript_WaitFrames(-countdown * 60 + 60);
+    Event_WaitFrames(-countdown * 60 + 60);
     actorId = ACTOR_PARTY_LEADER;
   } else {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(countdown + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
-    FieldScript_WaitFrames(countdown * 60 + 60);
+    Event_WaitFrames(countdown * 60 + 60);
     actorId = ACTOR_OPPONENT;
   }
   FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -2093,10 +2097,10 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
     WaitFrames(1);
   }
   Sound_PlaySong(MUS_SILENCE);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
 }
 
 #include "common/colosso_marker.h"
@@ -2581,37 +2585,37 @@ s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
 s32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct Trigger gColosseumNavampaMatchTriggers[] = {
-    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAtLogAreaEnd) },
-    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
-    { TRIGGER_STEP, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetWeightOnScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveStone) },
-    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { STEP_TRIGGER_WALKING, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLongLog) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT_SCRIPT(EventScript_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT_SCRIPT(EventScript_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(EventScript_SettleStones) },
-    { TRIGGER_STEP, 15, FLAG_ON_SCALES, EVENT_SCRIPT(EventScript_StepOnScales) },
-    { TRIGGER_STEP, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(EventScript_StepOffScales) },
-    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_JumpAtLogAreaEnd) },
+    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeightOrCheckAhead) },
+    { TRIGGER_STEP, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_RideMovingSidewalk) },
+    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeight) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_SetWeightOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_MoveStone) },
+    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushRock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_IgnoreMove) },
+    { STEP_TRIGGER_WALKING, 23, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_RollLongLog) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT(ColosseumNavampaMatch_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT(ColosseumNavampaMatch_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT(ColosseumNavampaMatch_SettleStones) },
+    { TRIGGER_STEP, 15, FLAG_ON_SCALES, EVENT(ColosseumNavampaMatch_StepOnScales) },
+    { TRIGGER_STEP, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT(ColosseumNavampaMatch_StepOffScales) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumNavampaMatch_ReachArena) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkLog) },
-    { TRIGGER_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassNorthWallOpening) },
-    { TRIGGER_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassSouthWallOpening) },
-    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { TRIGGER_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToScalesAttendant) },
-    { TRIGGER_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSteppingStoneAttendant) },
-    { TRIGGER_TALK, ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallWedgeAttendant) },
-    { TRIGGER_TALK, ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFreeClimbAttendant) },
-    { TRIGGER_TALK, ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMovingSidewalkAttendant) },
-    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE, FLAG_SCALES_FROZEN, EVENT(ColosseumNavampaMatch_FreezeOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumNavampaMatch_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT(ColosseumNavampaMatch_HaltWall) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_ACTS), ACTOR_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_ForceSidewalkLog) },
+    { TRIGGER_RAISED, 4, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PassNorthWallOpening) },
+    { TRIGGER_RAISED, 5, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PassSouthWallOpening) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToScalesAttendant) },
+    { TRIGGER_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToSteppingStoneAttendant) },
+    { TRIGGER_TALK, ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToWallWedgeAttendant) },
+    { TRIGGER_TALK, ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToFreeClimbAttendant) },
+    { TRIGGER_TALK, ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToMovingSidewalkAttendant) },
+    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToLogRollingAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
@@ -2619,7 +2623,7 @@ struct Trigger gColosseumNavampaMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
-    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
     { TRIGGERS_END },
 };
 

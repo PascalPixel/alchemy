@@ -81,7 +81,7 @@ const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void) {
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {
   struct PushedActorProbe result;
-  FieldScript_Start();
+  Event_Start();
   if (PushedActor_FindClearPosition(&result)) {
     Actor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
@@ -89,7 +89,7 @@ static void KolimaForestCliff_PushLog(void) {
       struct Actor *actor;
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
       Sound_PlaySong(SE_LOG_FALL);
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -100,7 +100,7 @@ static void KolimaForestCliff_PushLog(void) {
       Actor_SetSpriteFlags(actor, 0);
     }
   }
-  FieldScript_End();
+  Event_End();
 }
 
 #include "common/kolima_jump.h"
@@ -197,9 +197,9 @@ struct Trigger gKolimaForestCliffTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestCliff_PushLog)},
+     EVENT(KolimaForestCliff_PushLog)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForest_HopEast)},
+     EVENT(KolimaForest_HopEast)},
     {TRIGGERS_END},
 };
 

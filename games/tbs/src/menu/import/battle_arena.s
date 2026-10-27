@@ -39,23 +39,23 @@
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountMembers, 1
 	.set import.Party_RestoreHpPp, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_ResetAndSetPositionInMode2, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.FieldScript_SetDestination, 1
+	.set import.Event_ShowMessageAndWait, 1
+	.set import.Event_SetDestination, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldScript_SetNextDestination, 1
-	.set import.FieldScript_SetDefeatDestination, 1
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetAfterBattleDestination, 1
+	.set import.Event_SetDefeatDestination, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1
 	.set import.DjinnRecovery_TickTwenty, 1
 	.set import.DebugParty_LoadPreset, 1

@@ -67,7 +67,7 @@ s32 FieldEffect_StepRatioTransition(void) {
 /// Starts a zoom to zoom (16.16) over frames frames, on the world map only. The
 /// perspective work keeps the inverse, which scales the view's distance
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
-/// distance. FieldScript_WaitForZoomTransition waits for it.
+/// distance. Event_WaitForZoomTransition waits for it.
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
@@ -92,7 +92,7 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 
 /// Waits for a zoom transition to end (on the world map only, at most 300
 /// frames).
-void FieldScript_WaitForZoomTransition(void) {
+void Event_WaitForZoomTransition(void) {
   s32 frames;
   struct WorldMapView *perspective = gMapGridWork[0];
 
@@ -203,7 +203,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
         SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
-    FieldScript_WaitFrames(wait);
+    Event_WaitFrames(wait);
   }
 }
 

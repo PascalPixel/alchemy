@@ -419,5 +419,5 @@ battle, whose units are the same `struct Sprite` composed by the same
 
 Three halfwords of the map work between the next message and the camera
 object, `unusedAfterMessage` and the pair `unusedBeforeCamera`, are reset by
-`FieldScript_Start` at every script (to `0xffff`, -1 and -1) and read by
+`Event_Start` at every script (to `0xffff`, -1 and -1) and read by
 nothing.

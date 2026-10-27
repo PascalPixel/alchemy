@@ -3,9 +3,9 @@
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_ReleaseById, 1
@@ -13,12 +13,12 @@
 	.set import.Actor_CenterOnColumn, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_ConfigureSpriteColor, 1
-	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.Import_ScriptRequestExit, 1
-	.set import.FieldScript_FinishScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetMessageId, 1
+	.set import.Event_ShowMessageAndWait, 1
+	.set import.Event_AskYesNoAndShowResponse, 1
+	.set import.Import_EventSetExitRequest, 1
+	.set import.Event_FinishScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1
 	.set import.Inn_CheckIn, 1
 	.set import.Sound_PlaySong, 1

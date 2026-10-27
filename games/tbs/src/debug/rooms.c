@@ -118,13 +118,9 @@ struct ActorTemplate gTestRoom_ActorTemplates[] = {
 };
 
 struct Trigger gTestRoom_Triggers[] = {
-    {TRIGGER_TALK, ACTOR_FLINT, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TestRoom_ReceiveFlint)},
-    {TRIGGER_TALK, ACTOR_FIZZ, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TestRoom_ReceiveFizz)},
-    {TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TestRoom_ReceiveForge)},
-    {TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TestRoom_ReceiveGust)},
+    {TRIGGER_TALK, ACTOR_FLINT, CONDITION_ALWAYS, EVENT(TestRoom_ReceiveFlint)},
+    {TRIGGER_TALK, ACTOR_FIZZ, CONDITION_ALWAYS, EVENT(TestRoom_ReceiveFizz)},
+    {TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT(TestRoom_ReceiveForge)},
+    {TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT(TestRoom_ReceiveGust)},
     {TRIGGERS_END},
 };

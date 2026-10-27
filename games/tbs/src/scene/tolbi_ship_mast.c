@@ -326,11 +326,11 @@ static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
       GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
-    FieldScript_Start();
+    Event_Start();
     ItemDisplay_ShowItem(ITEM_ANCHOR_CHARM, 3);
     PartyInventory_GiveItem(ITEM_ANCHOR_CHARM, 0);
     GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND);
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -362,7 +362,7 @@ s32 TolbiShipMast_Initialize(void) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
-      FieldScript_Start();
+      Event_Start();
       Field_ClimbUp();
       leader->y.fixed = PIXELS(56);
       FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -370,7 +370,7 @@ s32 TolbiShipMast_Initialize(void) {
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       MapGrid_CenterOnFollowedPoint();
       WaitFrames(1);
-      FieldScript_End();
+      Event_End();
     }
     break;
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR:
@@ -404,7 +404,7 @@ s32 TolbiShipMast_Initialize(void) {
 
 /// Frames the lookout with the leader moved out of view, then announces course.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -413,14 +413,14 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
   WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   TolbiShipMast_AnnounceClearCourse();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Keeps the leader visible for the course announcement.
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   struct Actor *leader;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(164), PIXELS(321));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -429,7 +429,7 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
   TolbiShipMast_AnnounceClearCourse();
-  FieldScript_End();
+  Event_End();
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR: the
@@ -439,9 +439,9 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(20);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 321);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH + FACING_STEP, 40);
@@ -451,11 +451,11 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 334);
   Actor_Jump(ACTOR_LOOKOUT, 4, 40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 2);
-  FieldScript_SetMessageId(MsgTolbiShipShipsCourseClear);
-  Script_ShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF);
+  Event_SetMessageId(MsgTolbiShipShipsCourseClear);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF);
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, the first
@@ -469,7 +469,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   s32 scale;
   void (*update)(struct Actor *);
 
-  FieldScript_Start();
+  Event_Start();
   Event_CallWithLastActiveActorId(gTolbiShipMast_FirstAttackActorTemplates);
   WaitFrames(1);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -479,10 +479,10 @@ static void TolbiShipMast_RunAvastEvent(void) {
                                (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID));
   (*work)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   // Save the camera origin before the sparkle begins to turn.
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   gTolbiShipMast_CameraOrigin[0] = *placement++;
   gTolbiShipMast_CameraOrigin[1] = *placement;
   Actor_SetPosition(ACTOR_SPARKLE, PIXELS(80), PIXELS(210));
@@ -491,15 +491,15 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraCenter[0] = x;
   gTolbiShipMast_CameraCenter[1] = zero;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Sound_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Actor_Stop(ACTOR_LOOKOUT);
   WaitFrames(1);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ArmCallback(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 0);
-  FieldScript_SetMessageId(MsgTolbiShipAvast);
-  FieldScript_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
+  Event_SetMessageId(MsgTolbiShipAvast);
+  Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
   Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, x, PIXELS(210));
   Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 1, x, PIXELS(210));
@@ -535,19 +535,19 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER, 128, 345);
   Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER + 1, 136, 330);
   Actor_ResetAndSetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 2, 156, 340);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Actor_Jump(ACTOR_LOOKOUT, 4, 10);
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
-  FieldScript_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
   (*work)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS);
-  FieldScript_End();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS);
+  Event_End();
 }
 
 /// Clears the movement left by a bird's drifting script before it swoops.
@@ -594,7 +594,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   struct Actor *approachingActor;
   struct Actor *leader;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
@@ -605,14 +605,14 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(120);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(120);
   // The first bird swoops at the lookout twice while the rest keep drifting.
   approachingActor = Actor_GetById(ACTOR_FIRST_BIRD);
   Actor_Stop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
   FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
                            PIXELS(321));
@@ -630,12 +630,12 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  FieldScript_WaitFrames(120);
+  Event_WaitFrames(120);
   Actor_Stop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
   FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
                            PIXELS(321));
@@ -663,18 +663,18 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
   Actor_Jump(ACTOR_LOOKOUT, 4, 20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
-  Script_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  FieldScript_SetMessageId(MsgTolbiShipMonsters2);
-  Script_ShowMessageAndWait(ACTOR_SEAN, 0, 20);
+  Event_SetMessageId(MsgTolbiShipMonsters2);
+  FieldEvent_ShowMessageThenWait(ACTOR_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK);
-  FieldScript_End();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK);
+  Event_End();
 }
 
 /// Initializes a drifting actor, retaining the random draws' original
@@ -708,7 +708,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   u32 frame;
   struct Actor *actor;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   WaitFrames(1);
@@ -720,11 +720,11 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(300);
-  Script_PlaySong(SE_BEAST_CRY);
-  FieldScript_WaitFrames(100);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(300);
+  Event_PlaySong(SE_BEAST_CRY);
+  Event_WaitFrames(100);
   // The birds fly off before the monster lands.
   TolbiShipMast_PrepareGroupDeparture();
   Actor_SetDestination(ACTOR_FIRST_BIRD, 0, 100);
@@ -734,9 +734,9 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetDestination(ACTOR_FIRST_BIRD + 4, 240, 100);
   Actor_SetDestination(ACTOR_FIRST_BIRD + 5, 320, 100);
   Actor_SetDestination(ACTOR_FIRST_BIRD + 6, 380, 100);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetPosition(ACTOR_FIRST_BIRD, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 1, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 2, 0, 0);
@@ -744,7 +744,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetPosition(ACTOR_FIRST_BIRD + 4, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 5, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_BIRD + 6, 0, 0);
-  FieldScript_WaitFrames(100);
+  Event_WaitFrames(100);
   // ACTOR_LANDING_MONSTER_SHADOW grows where the monster will land, then
   // ACTOR_LANDING_MONSTER drops onto it.
   actor = Actor_GetById(ACTOR_LANDING_MONSTER_SHADOW);
@@ -755,7 +755,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   WaitFrames(1);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
-  Script_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
   // ACTOR_LANDING_MONSTER is placed above it.
@@ -778,42 +778,42 @@ static void TolbiShipMast_RunLandingSequence(void) {
   actor->facing = 0;
   actor->bounce = 2 * Q16_ONE / 5;
   actor->gravity = PIXELS(3);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
-  Script_PlaySong(SE_BEAST_CRY);
-  FieldScript_WaitFrames(20);
+  Event_PlaySong(SE_BEAST_CRY);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   // Let the monster bounce, then move it and its landing spot out of the
   // shot.
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
-  Script_PlaySong(SE_HIGH_JUMP);
+  Event_PlaySong(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
   Actor_SetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetPosition(ACTOR_LANDING_MONSTER, 0, 0);
   actor = Actor_GetById(ACTOR_LOOKOUT);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   actor->facing = FACING_SOUTH + FACING_STEP;
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK);
-  FieldScript_End();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK);
+  Event_End();
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO: the seven birds fly
 /// off, then the lookout announces land, and the rowing balance chooses the
 /// exit.
 static void TolbiShipMast_AnnounceLand(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorTemplates);
@@ -822,9 +822,9 @@ static void TolbiShipMast_AnnounceLand(void) {
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(400);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(400);
   // Each bird takes its own way off while shrinking out of view.
   TolbiShipMast_PrepareGroupDeparture();
   Actor_SetScript(ACTOR_FIRST_BIRD, gTolbiShipMast_BirdDeparture0);
@@ -834,33 +834,33 @@ static void TolbiShipMast_AnnounceLand(void) {
   Actor_SetScript(ACTOR_FIRST_BIRD + 4, gTolbiShipMast_BirdDeparture4);
   Actor_SetScript(ACTOR_FIRST_BIRD + 5, gTolbiShipMast_BirdDeparture5);
   Actor_SetScript(ACTOR_FIRST_BIRD + 6, gTolbiShipMast_BirdDeparture6);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   Actor_SetAttachedEffect(ACTOR_LOOKOUT,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(120);
+  Event_WaitFrames(120);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Actor_Jump(ACTOR_LOOKOUT, 4, 10);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
-  FieldScript_SetMessageId(MsgTolbiShipLandHo);
-  Script_ShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
+  Event_SetMessageId(MsgTolbiShipLandHo);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
   gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
   gSaveBlock.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
-    Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
+    Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {
-    Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED);
+    Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Adds horizontal and vertical sway to the camera origin each frame.
@@ -1099,14 +1099,14 @@ struct ActorTemplate gTolbiShipMast_LandingActorTemplates[] = {
 };
 
 struct Trigger gTolbiShipMast_Triggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT(TolbiShipMast_ClimbDownLadder) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT(TolbiShipMast_FindAnchorCharm) },
     { TRIGGERS_END },
 };
 

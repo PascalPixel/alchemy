@@ -47,12 +47,12 @@
 	.set import.Party_StartChildhood, 1
 	.set import.BuildStamp_GetTime, 1
 	.set import.InventorySnapshot_Restore, 1
-	.set import.FieldScript_WaitFrames, 1
+	.set import.Event_WaitFrames, 1
 	.set import.Actor_GetById, 1
-	.set import.FieldScript_SetDestination, 1
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_FinishScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetDestination, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_FinishScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.FieldYesNo_Ask, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

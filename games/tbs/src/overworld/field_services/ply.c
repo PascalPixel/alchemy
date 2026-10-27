@@ -19,7 +19,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
 
 /// Per-frame update: spirals in on a point 10 pixels above the effect's
 /// position, at a radius of as many pixels as frames are left; released when
-/// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
+/// timer reaches 0. The update of FieldPsynergy_Ply's eight spiralling
 /// particles; each one's work holds its starting angle.
 void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
@@ -52,7 +52,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 /// above the effect's position, and every 3 frames sheds a spark that sways
 /// as it slowly falls. With phase -1 it stays where it is. The update
-/// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
+/// FieldPsynergy_Ply gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
 void FieldEffect_RunSparkEmitter(struct Actor *actor) {
   struct Actor *emitter = (struct Actor *)actor;
@@ -92,14 +92,14 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
   }
 }
 
-/// Runs FieldEffect_RunPly, then stops the caster's hook.
+/// Runs FieldPsynergy_Ply, then stops the caster's hook.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
-/// This is Ply cast on a target, which FieldEffect_DispatchRequestKind calls.
-void FieldEffect_RunPlyOnTarget(s32 unused) {
-  FieldEffect_RunPly();
-  FieldEffect_StopCasterHook();
+/// This is Ply cast on a target, which FieldPsynergy_Dispatch calls.
+void FieldPsynergy_PlyOnTarget(s32 unused) {
+  FieldPsynergy_Ply();
+  FieldPsynergy_StopCasterUpdate();
 }
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
@@ -107,10 +107,10 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
-/// Called by FieldEffect_Run and FieldEffect_RunPlyOnTarget; frees the
+/// Called by FieldPsynergy_Run and FieldPsynergy_PlyOnTarget; frees the
 /// particles' shared VRAM cache entry at the end and runs the effect
 /// event's finishCallback.
-void FieldEffect_RunPly(void) {
+void FieldPsynergy_Ply(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->mainActor;
   struct Actor *actor;
@@ -118,7 +118,7 @@ void FieldEffect_RunPly(void) {
   u8 resourceSlot;
   s32 i;
 
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
 
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
@@ -183,7 +183,7 @@ void FieldEffect_RunPly(void) {
   if (actor != 0) {
     target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;
-    // Cast on a target (enabled cleared by FieldEffect_DispatchRequestKind),
+    // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.
     if (effectWork->enabled != 0)
       WaitFrames(128);
@@ -209,5 +209,5 @@ void FieldEffect_RunPly(void) {
     VramCache_FreeEntry(resourceSlot);
   if (effectWork->finishCallback != 0)
     effectWork->finishCallback();
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }

@@ -19,7 +19,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
-    FieldScript_Start();
+    Event_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     actor->motionFlags = 0;
     Import_ActorSetPosition(0, actor->x.part.pixel << 16,
@@ -27,8 +27,8 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpriteFlags(record, 0);
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
     actor->update = MercuryLighthouse_TrailSparks;
@@ -46,6 +46,6 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     actor->motionFlags = 3;
     actor->update = NULL;
     Scene_PlayQueuedMusic();
-    FieldScript_End();
+    Event_End();
   }
 }

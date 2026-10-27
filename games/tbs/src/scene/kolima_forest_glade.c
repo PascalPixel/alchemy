@@ -78,21 +78,21 @@ const struct ActorTemplate *KolimaForestGlade_GetActorTemplates(void) {
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct PushedActorProbe result;
-  FieldScript_Start();
+  Event_Start();
   if (PushedActor_FindClearPosition(&result))
     Actor_MoveAndRedraw(result);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetPosition(ACTOR_NUT, 0, 0);
   GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The logs, the Nut and the two ways out.
@@ -190,9 +190,9 @@ struct Trigger gKolimaForestGlade_Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestGlade_PushLog)},
+     EVENT(KolimaForestGlade_PushLog)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
-     EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
+     EVENT(KolimaForestGlade_CatchNut)},
     {TRIGGERS_END},
 };
 

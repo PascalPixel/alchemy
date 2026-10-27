@@ -339,14 +339,14 @@ const struct ActorTemplate *KalayTolbiDocks_GetActorTemplates(void) {
 /// TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears): the leader walks a few steps and
 /// a man on the docks hurries over to stand beside the party.
 static void KalayTolbiDocks_GreetArrivals(void) {
-  FieldScript_Start();
+  Event_Start();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 296);
   Actor_SetSpeed(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0x13333, 0x9999);
   Actor_WalkToAndWait(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 408, 296);
   Actor_FaceDirection(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, FACING_WEST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  Event_End();
 }
 
 /// Selects each map's events for the same three times as its people.
@@ -384,10 +384,10 @@ const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
 /// and he says that past Silk Road's end the way is across the Karagol Sea; no,
 /// and he suggests a long look around the ship.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgKalayWantGoToTolbi);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgKalayWantGoToTolbi);
+  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
+  Event_End();
 }
 
 /// Kalay Docks: a woman asks whether the party is taking the ship. If it is,
@@ -395,22 +395,22 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
 /// expensive for the daughter's mother to come (sets
 /// FLAG_KALAY_DOCKS_CARRYING_MESSAGE); afterwards she repeats the message.
 static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
-    FieldScript_SetMessageId(MsgKalayGoingTakeShip);
-    Script_OpenMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-      Script_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
+  Event_Start();
+  if (Event_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
+    Event_SetMessageId(MsgKalayGoingTakeShip);
+    Event_OpenMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
+    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
       GameFlag_Set(FLAG_KALAY_DOCKS_CARRYING_MESSAGE);
     } else {
       gFieldWork->message++;
-      Script_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
+      Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
     }
   } else {
-    FieldScript_SetMessageId(MsgKalayPassMessageDaughter);
-    Script_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
+    Event_SetMessageId(MsgKalayPassMessageDaughter);
+    Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kalay Docks: spoken to on the shore after the party has handed over its
@@ -419,18 +419,18 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
   ((void)Actor_GetById(ACTOR_PARTY_LEADER));
-  FieldScript_Start();
+  Event_Start();
 #endif
   if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (GameFlag_Get(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
 #if TBS_PATCH_3
-      FieldScript_Start();
+      Event_Start();
 #endif
-      FieldScript_SetMessageId(MsgKalayFinishedOutHereBoardShip);
-      Script_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
+      Event_SetMessageId(MsgKalayFinishedOutHereBoardShip);
+      Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
 #if TBS_PATCH_3
-      FieldScript_End();
+      Event_End();
 #endif
     }
   }
@@ -449,33 +449,33 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   cardinalFacing = ((leader->facing + 0x2000) & ~0x3fff);
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
-    if (Script_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
-      FieldScript_SetMessageId(MsgKalayFinishedOutHereBoardShip);
-      Script_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
+  Event_Start();
+  if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
+    if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
+      Event_SetMessageId(MsgKalayFinishedOutHereBoardShip);
+      Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
     } else {
-      FieldScript_SetMessageId(MsgKalayWantGoAshore);
-      Script_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
-      if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-        FieldScript_WaitFrames(10);
-        FieldScript_SetMessageId(MsgKalayWantGoAshore + 1);
-        Script_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
+      Event_SetMessageId(MsgKalayWantGoAshore);
+      Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
+      if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+        Event_WaitFrames(10);
+        Event_SetMessageId(MsgKalayWantGoAshore + 1);
+        Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
         Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
         Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
-        FieldScript_WaitFrames(20);
+        Event_WaitFrames(20);
         GameFlag_Set(FLAG_KALAY_DOCKS_WENT_ASHORE);
       } else {
-        FieldScript_SetMessageId(MsgKalayWantGoAshore + 2);
-        Script_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
+        Event_SetMessageId(MsgKalayWantGoAshore + 2);
+        Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       }
     }
   } else {
     if ((u16)cardinalFacing != FACING_WEST) {
       return;
     }
-    FieldScript_SetMessageId(MsgKalayTicketsPlease);
-    Script_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
+    Event_SetMessageId(MsgKalayTicketsPlease);
+    Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketHolder = PartyInventory_FindMember(ITEM_BOAT_TICKET);
@@ -484,7 +484,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
       gFieldWork->message++;
-      Script_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
+      Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -493,30 +493,30 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
     } else {
-      Script_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
+      Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
     }
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kalay Docks, once the tour's group has left Kalay: the dock worker explains
 /// the tickets: hand one over to board, give it to the ticket taker, or wait
 /// on board for the ship to sail.
 static void KalayTolbiDocks_TalkToDockWorker(void) {
-  FieldScript_Start();
+  Event_Start();
 
   if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
-    FieldScript_SetMessageId(MsgKalayBoardWaitSetSail);
+    Event_SetMessageId(MsgKalayBoardWaitSetSail);
     FieldMessage_ShowAtActor(ACTOR_DOCK_WORKER, 0);
   } else if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-    FieldScript_SetMessageId(MsgKalayHaveTicketsGiveHim);
-    FieldScript_ShowMessageAndWait(ACTOR_DOCK_WORKER, 0);
+    Event_SetMessageId(MsgKalayHaveTicketsGiveHim);
+    Event_ShowMessageAndWait(ACTOR_DOCK_WORKER, 0);
   } else {
-    FieldScript_SetMessageId(MsgKalayAfterHandingOverTicket);
-    FieldScript_ShowMessageAndWait(ACTOR_DOCK_WORKER, 0);
+    Event_SetMessageId(MsgKalayAfterHandingOverTicket);
+    Event_ShowMessageAndWait(ACTOR_DOCK_WORKER, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// The room at Kalay Docks, until the ship has crossed: the ticket seller
@@ -537,19 +537,19 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 #endif
 
   ticketPrice = 600;
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-    FieldScript_SetMessageId(MsgKalayHandInTicketPlank);
-    Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
+  Event_Start();
+  if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
+    Event_SetMessageId(MsgKalayHandInTicketPlank);
+    Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
   } else {
-    FieldScript_SetMessageId(MsgKalayLookingForTickets);
-    Script_OpenMessage(ACTOR_SELLING_TICKETS, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
-      Script_ShowMessageAndWait(ACTOR_SELLING_TICKETS, 0, 10);
+    Event_SetMessageId(MsgKalayLookingForTickets);
+    Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
+    if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+      FieldEvent_ShowMessageThenWait(ACTOR_SELLING_TICKETS, 0, 10);
     } else {
       gFieldWork->message++;
       MessageArgument_Push(ticketPrice, 5);
-      Script_OpenMessage(ACTOR_SELLING_TICKETS, 0);
+      Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.
       coinsWindow =
           Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
@@ -568,31 +568,31 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 48, 8);
 #endif
-      if (FieldScript_AskYesNoWithActorAnimation(-1, 0) == 1) {
+      if (Event_AskYesNoWithActorAnimation(-1, 0) == 1) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-        FieldScript_WaitFrames(10);
-        Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
+        Event_WaitFrames(10);
+        Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-        FieldScript_WaitFrames(10);
+        Event_WaitFrames(10);
         gFieldWork->message++;
-        Script_PlaySong(SE_MENU_CANCEL);
-        Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
+        Event_PlaySong(SE_MENU_CANCEL);
+        Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-        FieldScript_WaitFrames(10);
+        Event_WaitFrames(10);
         gFieldWork->message += 3;
-        Script_ShowMessage(ACTOR_SELLING_TICKETS, 0);
+        Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
         PartyInventory_GiveItem(ITEM_BOAT_TICKET, 0);
-        Script_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
+        Event_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);
       }
     }
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -601,61 +601,61 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 /// he will not believe they fought the monsters alone, for Kaja killed the
 /// Kraken.
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgKalayHearScaryTrip);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgKalayHearScaryTrip);
+  Event_AskYesNoAndShowResponse(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0);
+  Event_End();
 }
 
 /// Tolbi Docks: a young man asks whether the upset tourists got seasick.
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgKalayTouristsLookUpset);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgKalayTouristsLookUpset);
+  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, 0);
+  Event_End();
 }
 
 /// Tolbi Docks: the daughter looks for her parents among the passengers. If the
 /// party carries the message from her parents she asks for it and thanks them
 /// once it is given; otherwise she turns back to the sea.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
+  Event_Start();
+  if (Event_GetFlag(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(20);
-    FieldScript_SetMessageId(MsgKalayThanksMessageParents);
-    Script_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
-    FieldScript_End();
+    Event_WaitFrames(20);
+    Event_SetMessageId(MsgKalayThanksMessageParents);
+    Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
+    Event_End();
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     50);
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(20);
-    FieldScript_SetMessageId(MsgKalaySilkRoadBlocked);
-    Script_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
+    Event_WaitFrames(20);
+    Event_SetMessageId(MsgKalaySilkRoadBlocked);
+    Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
     if (GameFlag_Get(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) != 0) {
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-      Script_OpenMessage(ACTOR_WAITING_DAUGHTER, 0);
-      if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-        FieldScript_WaitFrames(20);
-        Script_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
+      Event_OpenMessage(ACTOR_WAITING_DAUGHTER, 0);
+      if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+        Event_WaitFrames(20);
+        Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
         GameFlag_Set(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED);
       } else {
-        FieldScript_WaitFrames(10);
+        Event_WaitFrames(10);
         gFieldWork->message++;
-        Script_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
-        FieldScript_WaitFrames(10);
+        Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
+        Event_WaitFrames(10);
         Actor_FaceDirection(ACTOR_WAITING_DAUGHTER, FACING_EAST, 0);
-        FieldScript_WaitFrames(30);
+        Event_WaitFrames(30);
       }
     } else {
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       Actor_FaceDirection(ACTOR_WAITING_DAUGHTER, FACING_EAST, 0);
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
     }
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -664,8 +664,8 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 /// TOLBI_DOCKS_TO_COTTAGE_ROOMS_E, which in Kalay Docks is
 /// KALAY_DOCKS_TO_COTTAGE_ROOMS_E by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
-  FieldScript_Start();
-  Script_PlaySong(SE_DOOR_OPEN);
+  Event_Start();
+  Event_PlaySong(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   if (gSaveBlock.sceneId == (s32)&SceneId_KalayDocks) {
@@ -677,9 +677,9 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
   }
-  FieldScript_WaitFrames(16);
-  Import_ScriptRequestExit(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E);
-  FieldScript_End();
+  Event_WaitFrames(16);
+  Import_EventSetExitRequest(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E);
+  Event_End();
 }
 
 /// An entrance no exit, table or code leads to, whose arrival sets
@@ -709,7 +709,7 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
   if (gSaveBlock.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
-    if (Script_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
+    if (Event_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
@@ -736,7 +736,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   u8 zero;
 
   KalayTolbiDocks_UpdateCrateCells();
-  if (Script_GetFlag(FLAG_COLOSSO_OVER)) {
+  if (Event_GetFlag(FLAG_COLOSSO_OVER)) {
     Actor_ConfigureSpriteColor(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
   }
   if (gSaveBlock.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
@@ -824,68 +824,68 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct Actor *actor;
 
-  FieldScript_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
   Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(328),
                     PIXELS(1424));
   Actor_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 1;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(20);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(20);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 0, FACING_WEST);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // Follow Garet to the water before the man joins him.
-  FieldScript_SetMessageId(MsgKalayIncredibleOcean);
+  Event_SetMessageId(MsgKalayIncredibleOcean);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_GARET, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_GARET, 232, 1424);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_Jump(ACTOR_GARET, 6, 15);
   Actor_Jump(ACTOR_GARET, 6, 40);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_SetSpeed(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0x13333, 0x9999);
   Actor_WalkToAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 264, 1424);
   Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                             ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-  FieldScript_WaitFrames(50);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(50);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_GARET, 264, 1464);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
@@ -895,7 +895,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
   Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
   actor = Actor_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
@@ -909,7 +909,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
     actor->userValue = pixelZ;
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Tolbi Docks after Colosso, the first time the party comes to the pier (
@@ -923,9 +923,9 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct Actor *actor;
 
   GameFlag_Set(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED);
-  FieldScript_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  FieldScript_SetMessageId(MsgKalayReturnedTicketCost);
+  Event_SetMessageId(MsgKalayReturnedTicketCost);
   actor = Actor_GetById(ACTOR_STRANDED_WOMAN);
   actor->priorityFlags = 0;
   ((u8 *)actor->sprite)[9] |= 12;
@@ -935,24 +935,24 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Script_ShowMessage(ACTOR_TOUR_GUIDE, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
-  Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_STRANDED_WOMAN, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 55);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x20000, 0x10000);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
@@ -960,105 +960,105 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
-  Script_PlaySong(SE_HIGH_JUMP);
+  Event_PlaySong(SE_HIGH_JUMP);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x26666, 0x13333);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
-  Script_PlaySong(SE_SWITCH);
-  FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_SWITCH);
-  FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_SWITCH);
-  FieldScript_WaitFrames(10);
-  FieldScript_WaitFrames(20);
+  Event_PlaySong(SE_SWITCH);
+  Event_WaitFrames(10);
+  Event_PlaySong(SE_SWITCH);
+  Event_WaitFrames(10);
+  Event_PlaySong(SE_SWITCH);
+  Event_WaitFrames(10);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x6666, 0x3333);
   Actor_Jump(ACTOR_TOUR_GUIDE, 6, 0);
-  Script_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySong(SE_DOOR_CLOSE);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(35);
+  Event_WaitFrames(35);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(55);
+  Event_WaitFrames(55);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_TOUR_GUIDE, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_NORTHWEST, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_WEST, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_TOUR_GUIDE, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x13333, 0x9999);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x20000, 0x10000);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 16);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_WEST, 0);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0xcccc, 0x6666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(10);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0xcccc, 0x6666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x1cccc, 0xe666);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
-  Script_PlaySong(SE_IMPACT);
+  Event_PlaySong(SE_IMPACT);
   Actor_Jump(ACTOR_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   Actor_SetScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);
@@ -1074,43 +1074,43 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Script_PlaySong(SE_DOOR_CLOSE);
-  FieldScript_WaitFrames(20);
+  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_STRANDED_WOMAN, 0x18000, 0xc000);
   Actor_WalkByAndWait(ACTOR_STRANDED_WOMAN, 24, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0xcccc, 0x6666);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_BODYGUARD, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BODYGUARD, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_EAST, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, 24, -24);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, 8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 0, -8);
-  FieldScript_WaitFrames(10);
-  FieldScript_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 u16 gKalayTolbiDocks_KalayDoorCells[] = {
@@ -1342,22 +1342,22 @@ struct Trigger gKalayTolbiDocks_NoTriggers[] = {
 struct Trigger gKalayTolbiDocks_KalayTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_OpenDoorAndLeave) },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_AskAboutTolbiCrossing) },
     { TRIGGER_TALK, ACTOR_WOMAN_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
     { TRIGGER_TALK, ACTOR_MAN_AT_SILK_ROADS_END, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
-    { TRIGGER_TALK, ACTOR_WOMAN_WITH_A_MESSAGE, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWomanWithAMessage) },
+    { TRIGGER_TALK, ACTOR_WOMAN_WITH_A_MESSAGE, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToWomanWithAMessage) },
     { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
     { TRIGGER_TALK, ACTOR_DOCK_WORKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
-    { TALK_TRIGGER_FACING(FACING_EAST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketTaker) },
-    { TALK_TRIGGER_FACING(FACING_WEST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketTaker) },
+    { TALK_TRIGGER_FACING(FACING_EAST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToTicketTaker) },
+    { TALK_TRIGGER_FACING(FACING_WEST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToTicketTaker) },
 #if !TBS_PATCH_3
-    { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
+    { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_RemindBoardShip) },
 #else
-    { TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_CHECKING_TICKETS, IF_FLAG_SET(FLAG_KALAY_DOCKS_WENT_ASHORE), EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
+    { TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_CHECKING_TICKETS, IF_FLAG_SET(FLAG_KALAY_DOCKS_WENT_ASHORE), EVENT(KalayTolbiDocks_RemindBoardShip) },
 #endif
-    { TRIGGER_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToDockWorker) },
+    { TRIGGER_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToDockWorker) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_AT_SILK_ROADS_END, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
@@ -1366,43 +1366,43 @@ struct Trigger gKalayTolbiDocks_KalayTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMoodThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
-    { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_GroundJoins) },
+    { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_GroundJoins) },
     { TRIGGERS_END },
 };
 
 struct Trigger gKalayTolbiDocks_KalayTriggersShipGone[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_OpenDoorAndLeave) },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
     { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
     { TRIGGER_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
-    { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_GroundJoins) },
+    { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_GroundJoins) },
     { TRIGGERS_END },
 };
 
 struct Trigger gKalayTolbiDocks_TolbiTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { TRIGGER_STEP, 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, EVENT_SCRIPT(KalayTolbiDocks_GreetArrivals) },
-    { TRIGGER_TALK, ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutRoughCrossing) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_OpenDoorAndLeave) },
+    { TRIGGER_STEP, 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, EVENT(KalayTolbiDocks_GreetArrivals) },
+    { TRIGGER_TALK, ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_AskAboutRoughCrossing) },
     { TRIGGER_TALK, ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
-    { TRIGGER_TALK, ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_AskAboutSeasickTourists) },
+    { TRIGGER_TALK, ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToWaitingDaughter) },
     { TRIGGER_TALK, ACTOR_WOMAN_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
     { TRIGGER_TALK, ACTOR_MAN_ON_THE_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_DAUGHTER, IF_FLAG_SET(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED), MSGNO(MsgKalayTolbiDocksItWasAHardCrossingVery) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_SCRIPT_PLAYS_EFFECT | ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToWaitingDaughter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGetTheFeelingThatIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
     { TRIGGERS_END },
@@ -1411,8 +1411,8 @@ struct Trigger gKalayTolbiDocks_TolbiTriggers[] = {
 struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { TRIGGER_STEP, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT_SCRIPT(KalayTolbiDocks_PassengersConfrontTourGuide) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_OpenDoorAndLeave) },
+    { TRIGGER_STEP, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT(KalayTolbiDocks_PassengersConfrontTourGuide) },
     { TRIGGER_TALK, ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
     { TRIGGER_TALK, ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
@@ -1429,8 +1429,8 @@ struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BODYGUARD, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SIGHING_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
     { TRIGGERS_END },
@@ -1439,7 +1439,7 @@ struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
 struct Trigger gKalayTolbiDocks_InteriorTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
-    { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketSeller) },
+    { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToTicketSeller) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_AWAITING_THE_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SELLING_TICKETS, FLAG_KALAY_DOCKS_TICKET_BOUGHT, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },

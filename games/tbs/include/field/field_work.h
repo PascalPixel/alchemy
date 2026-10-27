@@ -106,9 +106,9 @@ struct FieldWork {
   s32 fastForward;      ///< debug: skip timed script waits and actor messages
   u8 unusedAfterFastForward[8]; ///< no code names it
   s16 message; ///< the next message, advanced as each window opens
-  /// Set to 0xffff by FieldScript_Start at each script; nothing reads it.
+  /// Set to 0xffff by Event_Start at each script; nothing reads it.
   u16 unusedAfterMessage;
-  /// Both set to -1 by FieldScript_Start at each script; nothing reads them.
+  /// Both set to -1 by Event_Start at each script; nothing reads them.
   s16 unusedBeforeCamera[2];
   struct Actor
       *camera; ///< the object the map view follows, which has no actor id
@@ -120,7 +120,7 @@ struct FieldWork {
   /// row), which Actor_ResetForLeader builds through its offset.
   u8 leaderTemplates[0x30];
   u8 unusedAfterTemplates[0xa86]; ///< no code names it
-  /// Set while a raised or step trigger runs; FieldScript_Start then resets the
+  /// Set while a raised or step trigger runs; Event_Start then resets the
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active

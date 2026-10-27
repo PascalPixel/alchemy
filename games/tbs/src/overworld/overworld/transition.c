@@ -601,7 +601,7 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// for it, as SceneManager_Run does, waits itself.
 ///
 /// Called by SceneManager_Run to fade a map in with work->transition and
-/// work->transitionFrames, and by FieldScript_StartScreenTransition for map
+/// work->transitionFrames, and by Event_StartScreenTransition for map
 /// scripts. Every style but the fades adds a task (and the centre
 /// line the HBlank handler, IRQ 1) that runs the transition; every kind
 /// ORs the map's display bits into DISPCNT through the I/O write queue.
@@ -699,7 +699,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// Called by SceneManager_Run as a map ends, by Field_StartEncounterTransition
 /// before a battle (the flickering centre line, and the
 /// WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// FieldScript_FinishScreenTransition for map scripts. The window and
+/// Event_FinishScreenTransition for map scripts. The window and
 /// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
 /// ScreenTransition_Start it does not wait for the fade: SceneManager_Run waits
 /// transitionFrames after it.

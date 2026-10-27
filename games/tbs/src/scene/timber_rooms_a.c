@@ -21,7 +21,7 @@
 /// off the map until the audience.
 ///
 /// Stepping into the wounded soldiers' house (the step trigger on metatile
-/// behavior 50) plays EventScript_IodemQuestionsWoundedSoldiers once, while
+/// behavior 50) plays TimberRoomsA_IodemQuestionsWoundedSoldiers once, while
 /// Iodem travels with the party and has not yet reached Babi Lighthouse. It
 /// sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
 /// Suhalla Desert and at Suhalla Gate read. The merchant, the innkeeper and
@@ -87,7 +87,7 @@ enum TimberRoomsAActorId {
   /// (MsgSuhallaOursOnlyStore)
   ACTOR_MERCHANT,
   /// A man with dark hair (SPRITE_MAN_WITH_DARK_HAIR), who opens the inn across
-  /// its counter (EventScript_TalkToInnkeeper).
+  /// its counter (TimberRoomsA_TalkToInnkeeper).
   /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   ACTOR_INNKEEPER,
   /// A woman at the inn, with red-brown hair in a white apron
@@ -112,7 +112,7 @@ enum TimberRoomsAActorId {
   /// there, but then I was blown back here again!" (MsgSuhallaSupposeFolkBlown)
   ACTOR_STRANDED_TRAVELER,
   /// A bearded man in a long robe (SPRITE_BEARDED_MAN_IN_LONG_ROBE), who keeps
-  /// Suhalla Sanctum (EventScript_TalkToHealer).
+  /// Suhalla Sanctum (TimberRoomsA_TalkToHealer).
   /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
   /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
@@ -151,40 +151,40 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// merchant opens the shop; otherwise says Suhalla's is the only store, or,
 /// after Babi's audience, asks whether the party is surprised to find so few
 /// shops.
-static void EventScript_TalkToMerchant(s32 actorId) {
+static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
-    FieldScript_SetMessageId(question);
+    Event_SetMessageId(question);
     FieldMessage_ShowAtActor(actorId, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-      FieldScript_WaitFrames(10);
-      FieldScript_SetMessageId(question + 1);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_WaitFrames(10);
+      Event_SetMessageId(question + 1);
     } else {
-      FieldScript_SetMessageId(question + 2);
+      Event_SetMessageId(question + 2);
     }
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessageAndWait(actorId, 0);
   } else {
-    FieldScript_SetMessageId(MsgSuhallaOursOnlyStore);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgSuhallaOursOnlyStore);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 }
 
 /// Suhalla's innkeeper. Spoken to facing north, across the counter, the
 /// innkeeper offers a room; otherwise has nothing to do until Tolbi's festival
 /// ends, or, after Babi's audience, has been busy since the sandstorms began.
-static void EventScript_TalkToInnkeeper(s32 actorId) {
+static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
   u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Inn_CheckIn(INN_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
-    FieldScript_SetMessageId(MsgSuhallaBusyEverSince);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgSuhallaBusyEverSince);
+    Event_ShowMessageAndWait(actorId, 0);
   } else {
-    FieldScript_SetMessageId(MsgSuhallaSighNothinMaybe);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgSuhallaSighNothinMaybe);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 }
 
@@ -192,16 +192,16 @@ static void EventScript_TalkToInnkeeper(s32 actorId) {
 /// Healer offers the sanctum's services; otherwise talks of Lalivero under
 /// Tolbi's rule, or, after Babi's audience, wonders why there are so many
 /// sandstorms.
-static void EventScript_TalkToHealer(s32 actorId) {
+static void TimberRoomsA_TalkToHealer(s32 actorId) {
   u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Sanctum_Run(actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
-    FieldScript_SetMessageId(MsgSuhallaWonderWhySandstorms);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgSuhallaWonderWhySandstorms);
+    Event_ShowMessageAndWait(actorId, 0);
   } else {
-    FieldScript_SetMessageId(MsgSuhallaGetSickThinkingAboutLalivero);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgSuhallaGetSickThinkingAboutLalivero);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 }
 
@@ -210,26 +210,26 @@ static void EventScript_TalkToHealer(s32 actorId) {
 /// party was on the way to Babi Lighthouse: yes, and the traveler means to give
 /// up and follow the northern mountain back to Tolbi; no, and tells of setting
 /// out to open a business at the lighthouse.
-static void EventScript_AskIfBlownHere(s32 actorId) {
+static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(question + 1);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(question + 1);
   } else {
-    FieldScript_SetMessageId(question + 2);
+    Event_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
 /// its guest rooms: the party leaves by the touched exit.
-static void EventScript_LeaveByExit(void) {
+static void TimberRoomsA_LeaveByExit(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->stepTrigger;
 
-  Import_ScriptRequestExit(*touchedTrigger);
+  Import_EventSetExitRequest(*touchedTrigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -242,12 +242,12 @@ static void EventScript_LeaveByExit(void) {
 /// and pursue them, and rejoins the party. Sets
 /// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
 /// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the event does not play.
-static void EventScript_IodemQuestionsWoundedSoldiers(void) {
+static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Script_PlaySong(MUS_BABI);
-    Script_Start();
+    Event_PlaySong(MUS_BABI);
+    Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
@@ -255,244 +255,244 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     FieldActor_LaunchFromLeader(ACTOR_IODEM, 0, -16, FACING_NORTH);
     Actor_WaitForMoveById(ACTOR_IODEM);
     FieldCamera_WaitForMove();
-    Script_SetMessage(MsgSuhallaIodem);
-    Script_Wait(10);
+    Event_SetMessageId(MsgSuhallaIodem);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHEAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
     Actor_WalkByAndWait(ACTOR_IODEM, 48, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(20);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_SOLDIER_SOUTH, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 104);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Script_Wait(20);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(40);
-    Script_Wait(10);
+    Event_WaitFrames(40);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(40);
-    Script_Wait(10);
+    Event_WaitFrames(40);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(30);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_NOD);
-    Script_Wait(30);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(20);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_WaitFrames(10);
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Actor_ShowEmote(ACTOR_SOLDIER_NORTH, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 3);
-    Script_Wait(20);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
-    Script_Wait(30);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 20);
     Actor_WalkByAndWait(ACTOR_IODEM, -12, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     // Both answers converge on the following line after different waits.
-    Script_OpenMessage(ACTOR_IODEM, 0);
-    if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-      Script_Wait(20);
-      Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_OpenMessage(ACTOR_IODEM, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_WaitFrames(20);
+      Event_ShowMessage(ACTOR_IODEM, 0);
       gFieldWork->message++;
     } else {
-      Script_Wait(10);
+      Event_WaitFrames(10);
       gFieldWork->message++;
-      Script_ShowMessage(ACTOR_IODEM, 0);
+      Event_ShowMessage(ACTOR_IODEM, 0);
     }
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
-    Script_PlaySong(MUS_BABI);
+    Event_WaitFrames(30);
+    Event_PlaySong(MUS_BABI);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
@@ -503,10 +503,10 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     }
     Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_SetPosition(ACTOR_IODEM, 0, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     // Back to the area's own music.
     Scene_PlayMusic();
-    Script_End();
+    Event_End();
   }
 }
 
@@ -660,15 +660,15 @@ struct ActorTemplate gTimberRoomsAActorTemplatesAfterAudience[] = {
 };
 
 struct Trigger gTimberRoomsATriggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
     { TRIGGER_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
@@ -677,13 +677,13 @@ struct Trigger gTimberRoomsATriggers[] = {
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIfYouHeadEastAcrossSuhalla) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSuhallaIsADesertVillageI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsGoodThingItsNotEasyTo) },
-    { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMerchant) },
+    { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAVillageThisSmallCantSupport) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIWonderIfAnyCustomersCan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceTheFestivalEndsTheTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 100, FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the maps README).
@@ -693,16 +693,16 @@ struct Trigger gTimberRoomsATriggers[] = {
 };
 
 struct Trigger gTimberRoomsATriggersAfterAudience[] = {
-    { TRIGGER_STEP, 50, FLAG_IODEM_MET_WOUNDED_SOLDIERS, EVENT_SCRIPT(EventScript_IodemQuestionsWoundedSoldiers) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
-    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { TRIGGER_STEP, 50, FLAG_IODEM_MET_WOUNDED_SOLDIERS, EVENT(TimberRoomsA_IodemQuestionsWoundedSoldiers) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
     { TRIGGER_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
     { TRIGGER_TALK, ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhyWereTheyHeadedTowardEastern) },
@@ -715,19 +715,19 @@ struct Trigger gTimberRoomsATriggersAfterAudience[] = {
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDeathStormsHuhThereWasA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceYouGetSweptUpIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsYeWhoSeekSomethingAboutEyes) },
-    { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMerchant) },
+    { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeveHadMoreCustomersLatelyBecause) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsItWillTakeTimeForThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheSandstormsAreSendingCustomersOur) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsPleaseGreatSandstormsSendUsMore) },
     { TRIGGER_TALK, ACTOR_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeWentIntoTheSuhallaTo) },
     { TRIGGER_TALK, ACTOR_SECOND_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheSandstormsAreSoBadWeve) },
-    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfBlownHere) },
+    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT(TimberRoomsA_AskIfBlownHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsEvenIfWeCantGoIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSoShallWeGiveUpOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenThatCycloneThrewUsInto) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(TimberRoomsA_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 100, FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the maps README).

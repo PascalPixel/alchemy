@@ -51,7 +51,7 @@ FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 ///
 /// Where the way is blocked a buzzer sounds.
-void FieldEffect_SteerLiftedTarget(s32 targetId) {
+void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct FieldEffectWork *effectWork;
   struct Actor *src;
   struct Actor *target;
@@ -70,7 +70,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target = effectWork->child;
   if (target == NULL)
     return;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   src->linkedActor = target;
   Actor_StartScriptFar(src, gFieldEffect_SourceHoldScript);
 
@@ -86,7 +86,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   right = FieldEffect_SpawnItemBreakMode1(p->x - (32 << 16), p->y, p->z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
     return;
   }
   WaitFrames(15);
@@ -264,10 +264,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       WaitFrames(1);
     FieldEffect_SpawnRadialParticleRing(target);
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
     WaitFrames(30);
   } else {
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
   }
 }
 
@@ -276,7 +276,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
 /// scatter into shards.
 ///
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
-DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunCarry, FieldEffect_SpawnItemBreakMode1)
+DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnItemBreakMode1)
 
 /// Spawns a hand (object 215) with the item break sound, in animation 1, and
 /// grows it, spinning 1/8 turn a frame, from a quarter to full size over 24

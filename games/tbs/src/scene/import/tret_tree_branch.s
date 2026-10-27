@@ -3,10 +3,10 @@
 	.set import.Irq_SetHandler, 1
 	.set import.Serial_PollAndTransfer, 1
 	.set import.MapGrid_GetTerrainHeight, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Actor_GetById, 1
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.Sound_PlaySong, 1

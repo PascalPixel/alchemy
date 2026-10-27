@@ -349,7 +349,7 @@ draws no line between them, so each is an event, and its code an event script.
 
 ### Script
 
-A function a trigger names (`EventScript_EnterIsaacsHouse`), written one step
+A function a trigger names (`Vale_EnterIsaacsHouse`), written one step
 to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
 an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).

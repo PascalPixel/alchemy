@@ -14,7 +14,7 @@
 ///
 /// Five doors, whose metatile behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
-/// into them (EventScript_EnterDoor, EventScript_EnterWideDoor) and lead into
+/// into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor) and lead into
 /// the village's buildings. Three ways lead out onto the world map, and the
 /// desert's sandstorms drop a caught party at WORLD_MAP_FROM_SUHALLA. A chest
 /// and two jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a
@@ -67,7 +67,7 @@ enum SuhallaActorId {
   /// (MsgSuhallaThisIsSuhallaDontTryCrossing)
   ACTOR_MAN_THIS_IS_SUHALLA = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), who asks whether
-  /// the party is trying to get to Lalivero (EventScript_AskIfGoingToLalivero);
+  /// the party is trying to get to Lalivero (Suhalla_AskIfGoingToLalivero);
   /// later "The desert is enveloped in sandstorms! It's frightening!"
   /// ★ Named from the game: "Are you trying to get to Lalivero?"
   /// (MsgSuhallaTryingGetLalivero)
@@ -91,7 +91,7 @@ enum SuhallaActorId {
   ACTOR_OLD_MAN_ON_DESERT_SPIRITS,
   /// An old woman with white hair (SPRITE_OLD_WOMAN), who doubts there is a
   /// way to southern Gondowan, then asks whether a sandstorm brought the party
-  /// (EventScript_AskIfBroughtBySandstorm).
+  /// (Suhalla_AskIfBroughtBySandstorm).
   /// ★ Named from the game: "You can't get to southern Gondowan from here"
   /// (MsgSuhallaYouCantGetToSouthernGondowan)
   ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN,
@@ -106,7 +106,7 @@ enum SuhallaActorId {
   /// ★ Named from the game: "The sandstorms suddenly increased..."
   /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
   ACTOR_GIRL_SANDSTORMS_INCREASED,
-  /// At 72, 144; Growth grows it (EventScript_GrowSprout).
+  /// At 72, 144; Growth grows it (Suhalla_GrowSprout).
   /// ★ Named from what the player sees: a small green sprout in the sand by the
   /// inn (its render)
   ACTOR_SPROUT
@@ -133,39 +133,39 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// you trying to get to Lalivero?" Yes, and the sandstorms make it impossible;
 /// no, and the woman doubts it, for Angarans who come to Suhalla are always
 /// going to Lalivero.
-static void EventScript_AskIfGoingToLalivero(s32 actorId) {
+static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
-  FieldScript_SetMessageId(firstMessage);
+  Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(firstMessage + 1);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(firstMessage + 1);
   } else {
-    FieldScript_SetMessageId(firstMessage + 2);
+    Event_SetMessageId(firstMessage + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// An old woman asks whether the sandstorm brought the party to Suhalla. She's
 /// ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience. Yes,
 /// and everyone the storms catch winds up here; no, and the old woman wonders
 /// why there are so many storms.
-static void EventScript_AskIfBroughtBySandstorm(s32 actorId) {
+static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
-  FieldScript_SetMessageId(firstMessage);
+  Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(firstMessage + 1);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(firstMessage + 1);
   } else {
-    FieldScript_SetMessageId(firstMessage + 2);
+    Event_SetMessageId(firstMessage + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// Growth on Suhalla's sprout: the plant grows, and its cell takes the metatile
 /// behavior of the grown plant's cell. Sets FLAG_SUHALLA_SPROUT_GROWN.
-static void EventScript_GrowSprout(void) {
+static void Suhalla_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
 }
@@ -175,32 +175,32 @@ static void EventScript_GrowSprout(void) {
 /// whose metatile behaviors are their exits' numbers): the door opens, the
 /// leader steps through and the party leaves by that exit into the village's
 /// buildings.
-static void EventScript_EnterDoor(void) {
+static void Suhalla_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Script_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestExit(exitTrigger);
+  Import_EventSetExitRequest(exitTrigger);
 }
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
-static void EventScript_EnterWideDoor(void) {
+static void Suhalla_EnterWideDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Script_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestExit(exitTrigger);
+  Import_EventSetExitRequest(exitTrigger);
 }
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
@@ -228,7 +228,7 @@ s32 Scene_Initialize(void) {
   work->transitionFrames = 24;
 
   if (GameFlag_Get(FLAG_SUHALLA_SPROUT_GROWN) != 0) {
-    EventScript_GrowSprout();
+    Suhalla_GrowSprout();
     Import_ActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
   }
   return 0;
@@ -329,16 +329,16 @@ u16 gSuhallaWideDoorOpenSteps[] = {
 };
 
 struct Trigger gSuhallaTriggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { TRIGGER_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfGoingToLalivero) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT(Suhalla_AskIfGoingToLalivero) },
     { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
@@ -354,16 +354,16 @@ struct Trigger gSuhallaTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT(Suhalla_GrowSprout) },
     { TRIGGERS_END },
 };
 
 struct Trigger gSuhallaTriggersLater[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
@@ -372,7 +372,7 @@ struct Trigger gSuhallaTriggersLater[] = {
     { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
     { TRIGGER_TALK, ACTOR_WOMAN_BROUGHT_BY_SANDSTORMS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
-    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfBroughtBySandstorm) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, EVENT(Suhalla_AskIfBroughtBySandstorm) },
     { TRIGGER_TALK, ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
     { TRIGGER_TALK, ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
@@ -386,7 +386,7 @@ struct Trigger gSuhallaTriggersLater[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT(Suhalla_GrowSprout) },
     { TRIGGERS_END },
 };
 // clang-format on

@@ -189,14 +189,14 @@ const struct ActorTemplate *LogRoomsC_GetActorTemplates(void) {
 static void LogRoomsC_TalkToWeaponMerchant(void) {
   u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  FieldScript_Start();
+  Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgKolimaFuchinTempleOnOtherSide);
-    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_SetMessageId(MsgKolimaFuchinTempleOnOtherSide);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima's armor shop, once the curse is lifted: across the counter the shop
@@ -205,14 +205,14 @@ static void LogRoomsC_TalkToWeaponMerchant(void) {
 static void LogRoomsC_TalkToArmorMerchant(void) {
   u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  FieldScript_Start();
+  Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
-    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_SetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima's item shop, once the curse is lifted: across the counter the shop
@@ -220,14 +220,14 @@ static void LogRoomsC_TalkToArmorMerchant(void) {
 static void LogRoomsC_TalkToItemMerchant(void) {
   u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  FieldScript_Start();
+  Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_SetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima's inn, once the curse is lifted: across the counter the inn opens;
@@ -236,16 +236,16 @@ static void LogRoomsC_TalkToItemMerchant(void) {
 static void LogRoomsC_TalkToInnkeeper(void) {
   u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
 
-  FieldScript_Start();
+  Event_Start();
 
   if (FACING_IS_NORTH(facing)) {
     Inn_CheckIn(KOLIMA_INN, ACTOR_INNKEEPER);
   } else {
-    FieldScript_SetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
-    FieldScript_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+    Event_SetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
+    Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// The exits, the residents' words and thoughts, the shops, the bookcases, the
@@ -436,10 +436,10 @@ struct Trigger gLogRoomsC_Triggers[] = {
     { TRIGGER_TALK, ACTOR_LUMBERJACK_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
     { TRIGGER_TALK, ACTOR_LUMBERJACKS_DAUGHTER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
     { TRIGGER_TALK, ACTOR_LUMBERJACKS_HUNGRY_SON, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(LogRoomsC_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(LogRoomsC_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(LogRoomsC_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(LogRoomsC_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT(LogRoomsC_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT(LogRoomsC_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT(LogRoomsC_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT(LogRoomsC_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_VILLAGER_QUIET_VILLAGE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
     { TRIGGER_TALK, ACTOR_LUMBERJACK_FROM_IMIL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
     { TRIGGER_TALK, ACTOR_MERCHANT_GUEST, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },

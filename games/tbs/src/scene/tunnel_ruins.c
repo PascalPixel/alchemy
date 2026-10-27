@@ -116,7 +116,7 @@ enum {
   ACTOR_SECOND_PILLAR_B,
   /// Three small stone pillars with white tops (SPRITE_SMALL_PILLAR, the size
   /// of the sinking pillars), which the leader pushes by walking into them
-  /// (EventScript_PushSmallPillars) or shifts with Move. This one stands south
+  /// (TunnelRuins_PushSmallPillars) or shifts with Move. This one stands south
   /// of
   /// the ivy's ledge.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
@@ -269,7 +269,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 
   if (FieldActor_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldActor_CheckMovementCollision(actor, target) == 0) {
-    FieldScript_Start();
+    Event_Start();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
@@ -289,7 +289,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     WaitFrames(6);
 
     actor->motionFlags = savedMotionFlags;
-    FieldScript_End();
+    Event_End();
     return 0;
   }
   return 1;
@@ -298,7 +298,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 /// Walking south into a gap: the leader hops 32 pixels across it.
 /// Reached by walking south into metatile behaviors 29, 30 and 50 in
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
-static void EventScript_HopSouth(void) {
+static void TunnelRuins_HopSouth(void) {
   struct FieldPosition target;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
@@ -311,7 +311,7 @@ static void EventScript_HopSouth(void) {
 /// Walking north into a gap: the leader hops 32 pixels across it.
 /// Reached by walking north into metatile behaviors 29 and 30 in
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
-static void EventScript_HopNorth(void) {
+static void TunnelRuins_HopNorth(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
@@ -462,12 +462,12 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
 /// pixels down, kicking up dust behind.
 /// Reached by walking south into metatile behavior 25 in TunnelRuinsGreatStatue
 /// and 27 in TunnelRuinsLadyStatues.
-static void EventScript_HopDownStep(void) {
+static void TunnelRuins_HopDownStep(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
   u32 i;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   Actor_WaitForAnimationChange(ACTOR_PARTY_LEADER);
   Actor_SelectAnimation(leader, 1);
@@ -499,7 +499,7 @@ static void EventScript_HopDownStep(void) {
   }
   Actor_SetSpriteFlags(leader, 1);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  FieldScript_End();
+  Event_End();
 }
 
 // The update functions the stones take, cast to the update slot's type
@@ -569,19 +569,19 @@ const struct ActorTemplate *TunnelRuins_GetActorTemplates(void) {
 
 /// Walking into the first pair of pillars pushes them along.
 /// Reached by walking into metatile behavior 24 in TunnelRuinsGreatStatue.
-static void EventScript_PushFirstPillars(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushFirstPillars(void) {
+  Event_Start();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   PushedActor_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
 /// Reached by walking west into the gaps' cells: metatile behaviors 23, 31 and
 /// 32 in TunnelRuinsGreatStatue (31 until the north-west pillar's puddle is
 /// frozen), 26 and 30 in TunnelRuinsLadyStatues.
-static void EventScript_HopWest(void) {
+static void TunnelRuins_HopWest(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
@@ -593,18 +593,18 @@ static void EventScript_HopWest(void) {
 
 /// Walking into the second pair of pillars pushes them along.
 /// Reached by walking into metatile behavior 26 in TunnelRuinsGreatStatue.
-static void EventScript_PushSecondPillars(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushSecondPillars(void) {
+  Event_Start();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   PushedActor_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking south off a ledge: the leader jumps down.
 /// Reached by walking south into metatile behaviors 23 and 27
 /// (TunnelRuinsGreatStatue) and 26 (TunnelRuinsLadyStatues).
-static void EventScript_JumpDownLedge(void) {
+static void TunnelRuins_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
 }
 
@@ -612,7 +612,7 @@ static void EventScript_JumpDownLedge(void) {
 /// Reached by walking east into the gaps' cells: metatile behaviors 27, 29, 31,
 /// 32 and 50 in TunnelRuinsGreatStatue, some only until the puddle beside them
 /// is frozen, and 30 in TunnelRuinsLadyStatues.
-static void EventScript_HopEast(void) {
+static void TunnelRuins_HopEast(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
@@ -624,19 +624,19 @@ static void EventScript_HopEast(void) {
 
 /// Walking into the small pillars pushes the one in front along.
 /// Reached by walking into metatile behavior 28 in TunnelRuinsGreatStatue.
-static void EventScript_PushSmallPillars(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushSmallPillars(void) {
+  Event_Start();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   PushedActor_AdvancePair();
   TunnelRuins_UpdateSmallPillarCells();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking south at the small pillars: the leader hops a gap if there is one,
 /// and pushes the small pillar in front otherwise. Reached by walking south
 /// into metatile behavior 28 in TunnelRuinsGreatStatue.
-static void EventScript_HopSouthOrPushSmallPillars(void) {
+static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
 
@@ -644,7 +644,7 @@ static void EventScript_HopSouthOrPushSmallPillars(void) {
   target.y = actor->y.fixed;
   target.z = actor->z.fixed + PIXELS(32);
   if (TunnelRuins_HopLeaderTo(&target) != 0) {
-    EventScript_PushSmallPillars();
+    TunnelRuins_PushSmallPillars();
   }
 }
 
@@ -652,7 +652,7 @@ static void EventScript_HopSouthOrPushSmallPillars(void) {
 /// ivy: with one of ivy A and B gone its rise counter is 1 and its
 /// collision bit 3 is set; with both gone, 0 and clear. Reached by Whirlwind on
 /// ivy A until FLAG_SCENE_TEMP_00 is set; sets it.
-static void EventScript_BlowAwayIvyA(void) {
+static void TunnelRuins_BlowAwayIvyA(void) {
   u8 *flags;
   u8 value;
 
@@ -671,7 +671,7 @@ static void EventScript_BlowAwayIvyA(void) {
 
 /// Whirlwind on ivy B blows it away, as for ivy A.
 /// Reached by Whirlwind on ivy B until FLAG_SCENE_TEMP_01 is set; sets it.
-static void EventScript_BlowAwayIvyB(void) {
+static void TunnelRuins_BlowAwayIvyB(void) {
   u8 *flags;
   u8 value;
 
@@ -691,28 +691,28 @@ static void EventScript_BlowAwayIvyB(void) {
 /// Whirlwind on ivy C blows it away for good.
 /// Reached by Whirlwind on ivy C until it is gone; sets
 /// FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY.
-static void EventScript_BlowAwayIvyC(void) {
+static void TunnelRuins_BlowAwayIvyC(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY);
 }
 
-/// Hops west as EventScript_HopWest, except from cell (32, 50).
+/// Hops west as TunnelRuins_HopWest, except from cell (32, 50).
 /// Reached by walking west into metatile behavior 50 in TunnelRuinsGreatStatue.
-static void EventScript_HopWestBySmallPillars(void) {
+static void TunnelRuins_HopWestBySmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
-    EventScript_HopWest();
+    TunnelRuins_HopWest();
   }
 }
 
-/// Hops north as EventScript_HopNorth, except from cell (30, 52).
+/// Hops north as TunnelRuins_HopNorth, except from cell (30, 52).
 /// Reached by walking north into metatile behavior 50 in
 /// TunnelRuinsGreatStatue.
-static void EventScript_HopNorthBySmallPillars(void) {
+static void TunnelRuins_HopNorthBySmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
-    EventScript_HopNorth();
+    TunnelRuins_HopNorth();
   }
 }
 
@@ -729,9 +729,9 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 /// the floor in a cloud of dust, its puddle appears on it, and the floor beside
 /// it changes in two jolts that shake the screen.
 /// Reached by Move on the north-west sinking pillar until it has sunk, and
-/// called by EventScript_PushNorthwestSinkingPillar; sets
+/// called by TunnelRuins_PushNorthwestSinkingPillar; sets
 /// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR when it sinks.
-static void EventScript_SinkNorthwestPillar(void) {
+static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
   s32 randomX;
@@ -740,10 +740,10 @@ static void EventScript_SinkNorthwestPillar(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
 
-  FieldScript_Start();
+  Event_Start();
   actor = Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 46) {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
     options = &optionsStorage;
@@ -765,7 +765,7 @@ static void EventScript_SinkNorthwestPillar(void) {
           0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
@@ -773,29 +773,29 @@ static void EventScript_SinkNorthwestPillar(void) {
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
     Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_PUDDLE, PIXELS(744), PIXELS(136));
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     MapGrid_WaitForShakeToSettle();
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     GameFlag_Set(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into the north-west sinking pillar pushes it, and it sinks if it
 /// reaches column 46 (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
 /// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
-static void EventScript_PushNorthwestSinkingPillar(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushNorthwestSinkingPillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  FieldScript_End();
-  EventScript_SinkNorthwestPillar();
+  Event_End();
+  TunnelRuins_SinkNorthwestPillar();
 }
 
 /// Frost on the north-west pillar's puddle freezes it into a pillar of ice.
 /// Reached by Frost on the north-west pillar's puddle until FLAG_SCENE_TEMP_00
 /// is set; sets it.
-static void EventScript_FreezeNorthwestPillarPuddle(void) {
+static void TunnelRuins_FreezeNorthwestPillarPuddle(void) {
   u8 *flags;
 
   Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_PUDDLE, 1);
@@ -810,10 +810,10 @@ static void EventScript_FreezeNorthwestPillarPuddle(void) {
 /// Moving the south-east sinking pillar into column 48 once Douse has soaked
 /// it: it sinks as the north-west pillar does, and its puddle appears on it.
 /// Reached by Move on the south-east sinking pillar until it has sunk, and
-/// called by EventScript_PushSoutheastSinkingPillar and
-/// EventScript_DouseSoutheastPillar; sets
+/// called by TunnelRuins_PushSoutheastSinkingPillar and
+/// TunnelRuins_DouseSoutheastPillar; sets
 /// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR when it sinks.
-static void EventScript_SinkSoutheastPillar(void) {
+static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
   s32 randomX;
@@ -824,11 +824,11 @@ static void EventScript_SinkSoutheastPillar(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
 
-  FieldScript_Start();
+  Event_Start();
   actor = Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
       overlay = Actor_Prepare(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
@@ -848,7 +848,7 @@ static void EventScript_SinkSoutheastPillar(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
       }
       MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
@@ -857,31 +857,31 @@ static void EventScript_SinkSoutheastPillar(void) {
       Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_PUDDLE, PIXELS(776),
                         PIXELS(232));
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       MapGrid_WaitForShakeToSettle();
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       GameFlag_Set(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
     }
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into the south-east sinking pillar pushes it, and it sinks if it is
 /// soaked and reaches column 48.
 /// Reached by walking into metatile behavior 30, or east into 32 before Douse
 /// has soaked it, in TunnelRuinsGreatStatue.
-static void EventScript_PushSoutheastSinkingPillar(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushSoutheastSinkingPillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  FieldScript_End();
-  EventScript_SinkSoutheastPillar();
+  Event_End();
+  TunnelRuins_SinkSoutheastPillar();
 }
 
 /// As Douse begins on the south-east sinking pillar, water splashes on it.
 /// Reached by Douse's first phase on the south-east sinking pillar until it is
 /// soaked.
-static void EventScript_DouseStartsOnSoutheastPillar(void) {
+static void TunnelRuins_DouseStartsOnSoutheastPillar(void) {
   Actor_SetScript(ACTOR_SOUTHEAST_SINKING_PILLAR,
                   gTunnelRuins_DouseSplashScript);
 }
@@ -890,15 +890,15 @@ static void EventScript_DouseStartsOnSoutheastPillar(void) {
 /// column 48.
 /// Reached by Douse on the south-east sinking pillar until it is soaked; sets
 /// FLAG_SCENE_TEMP_02.
-static void EventScript_DouseSoutheastPillar(void) {
+static void TunnelRuins_DouseSoutheastPillar(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_02);
-  EventScript_SinkSoutheastPillar();
+  TunnelRuins_SinkSoutheastPillar();
 }
 
 /// Frost on the south-east pillar's puddle freezes it into a pillar of ice.
 /// Reached by Frost on the south-east pillar's puddle until FLAG_SCENE_TEMP_01
 /// is set; sets it.
-static void EventScript_FreezeSoutheastPillarPuddle(void) {
+static void TunnelRuins_FreezeSoutheastPillarPuddle(void) {
   u8 *flags;
 
   Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_PUDDLE, 1);
@@ -916,8 +916,8 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
 /// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH), that the path will not
 /// open here.
 /// Reached by searching metatile behavior 40 in TunnelRuinsGreatStatue.
-static void EventScript_ReadFirstStatue(void) {
-  FieldScript_Start();
+static void TunnelRuins_ReadFirstStatue(void) {
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
@@ -925,31 +925,31 @@ static void EventScript_ReadFirstStatue(void) {
   } else {
     FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Moving the Douse pillar (until its puddle is frozen): nothing more happens.
 /// Reached by Move on the Douse pillar until
 /// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set.
-static void EventScript_MoveDousePillar(void) {
-  FieldScript_Start();
-  FieldScript_End();
+static void TunnelRuins_MoveDousePillar(void) {
+  Event_Start();
+  Event_End();
 }
 
 /// Walking into the Douse pillar pushes it along.
 /// Reached by walking into metatile behavior 25 in TunnelRuinsLadyStatues.
-static void EventScript_PushDousePillar(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushDousePillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  FieldScript_End();
-  EventScript_MoveDousePillar();
+  Event_End();
+  TunnelRuins_MoveDousePillar();
 }
 
 /// As Douse begins on the pillar, water splashes on it and it is soaked; its
 /// puddle follows it from then on. Reached by Douse's first phase on the Douse
 /// pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED and
 /// gives the puddle its update hook.
-static void EventScript_DouseStartsOnPillar(void) {
+static void TunnelRuins_DouseStartsOnPillar(void) {
   struct Actor *puddle;
 
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
@@ -965,12 +965,12 @@ static void EventScript_DouseStartsOnPillar(void) {
 /// Frost on the pillar's puddle freezes it into a pillar of ice where it
 /// stands. Reached by Frost on the Douse pillar's puddle until
 /// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set; sets it.
-static void EventScript_FreezeDousePuddle(void) {
+static void TunnelRuins_FreezeDousePuddle(void) {
   struct Actor *actor;
   s32 column;
   s32 row;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
   Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 1);
   Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_NORMAL);
@@ -993,7 +993,7 @@ static void EventScript_FreezeDousePuddle(void) {
   actor = Actor_GetById(ACTOR_DOUSE_PILLAR);
   actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
-  FieldScript_End();
+  Event_End();
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -1055,7 +1055,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
           Actor_GetById(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
     }
   }
-  FieldScript_WaitFrames(wait);
+  Event_WaitFrames(wait);
 }
 
 /// A carried stone drops onto the highest platform or carved stone in its cell
@@ -1097,7 +1097,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   Actor_WaitForMoveById(actorId);
   Sound_PlaySong(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(actorId);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
 }
 
 /// Setting down a carved stone with Carry: one dropped into a pit is gone; one
@@ -1105,17 +1105,17 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
 /// while the other rises. Reached by Carry on any of the three carved stones;
 /// sets FLAG_SCENE_TEMP_00 to _02, one for each carved stone that rests on the
 /// balance.
-static void EventScript_SetStoneOnBalance(void) {
+static void TunnelRuins_SetStoneOnBalance(void) {
   struct Actor savedPosition;
   s32 i;
   s32 j;
   s32 settledIndex;
 
-  FieldScript_Start();
+  Event_Start();
   for (i = 0; i <= 2; i++) {
     if (Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->sprite->image.priority ==
             3 &&
-        Script_GetFlag(i + FLAG_SCENE_TEMP_00) == 0) {
+        Event_GetFlag(i + FLAG_SCENE_TEMP_00) == 0) {
       TunnelRuins_WaitForActorToLand(Actor_Get(i + ACTOR_WEST_CARRY_STONE));
       Actor_SetPosition(i + ACTOR_WEST_CARRY_STONE, 0, 0);
       GameFlag_Set(i + FLAG_SCENE_TEMP_00);
@@ -1190,24 +1190,24 @@ static void EventScript_SetStoneOnBalance(void) {
       break;
     }
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into a pushable object pushes it along.
 /// Reached by walking into metatile behaviors 28 and 30 in
 /// TunnelRuinsLadyStatues.
-static void EventScript_PushActor(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushActor(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Moving either east pillar: whether each stands a cell west of its place is
 /// kept for the next visit.
 /// Reached by Move on either east pillar; sets or clears
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST.
-static void EventScript_MoveEastPillar(void) {
-  FieldScript_Start();
+static void TunnelRuins_MoveEastPillar(void) {
+  Event_Start();
 
   if ((Actor_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
@@ -1222,22 +1222,22 @@ static void EventScript_MoveEastPillar(void) {
   }
 
   TunnelRuins_MarkPushPillarCells();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
 /// Reached by walking east into metatile behavior 29 in TunnelRuinsLadyStatues.
-static void EventScript_PushEastPillar(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushEastPillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  EventScript_MoveEastPillar();
-  FieldScript_End();
+  TunnelRuins_MoveEastPillar();
+  Event_End();
 }
 
 /// The two vanishing statues stand, blocking their cells: on entering their
 /// rooms and as Reveal's light fades. Reached by Reveal as its light fades, and
 /// called by TunnelRuins_Initialize in either vanishing statue's room.
-static void EventScript_ShowFalseStatues(void) {
+static void TunnelRuins_ShowFalseStatues(void) {
   MapGrid_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   TreasureSpot_SetPosition(100, 0, 0);
@@ -1249,7 +1249,7 @@ static void EventScript_ShowFalseStatues(void) {
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
 /// two vanishing statues go and their cells can be walked through. Reached by
 /// Reveal anywhere in TunnelRuinsLadyStatues.
-static void EventScript_HideFalseStatues(void) {
+static void TunnelRuins_HideFalseStatues(void) {
   MapGrid_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(49, 107, 1, 1, 49, 43);
   TreasureSpot_SetPosition(100, -1, -1);
@@ -1262,16 +1262,16 @@ static void EventScript_HideFalseStatues(void) {
 /// five on their marks (cells (25, 49), (23, 49), (25, 47), (23, 47) and (24,
 /// 48)) the camera turns to the door as it opens; moving one off again closes
 /// it. Reached by Move on any of the five statues, and called by
-/// EventScript_PushLadyStatue; sets FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN as the
+/// TunnelRuins_PushLadyStatue; sets FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN as the
 /// door opens and clears it as it closes.
-static void EventScript_MoveLadyStatue(void) {
+static void TunnelRuins_MoveLadyStatue(void) {
   struct Actor *actor;
   s32 correctPositions;
   s32 column;
   s32 row;
 
   correctPositions = 0;
-  FieldScript_Start();
+  Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST);
   column = actor->x.fixed;
@@ -1341,66 +1341,66 @@ static void EventScript_MoveLadyStatue(void) {
   }
   // The door moves only when the arrangement is completed or broken.
   if (correctPositions == 5) {
-    if (Script_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      FieldScript_End();
+    if (Event_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+      Event_End();
       return;
     }
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gTunnelRuins_DoorOpenSteps, 32, 46);
     MapGrid_CopyCellAttributes(24, 60, 1, 1, 32, 47);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
   } else {
-    if (Script_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      FieldScript_WaitFrames(20);
+    if (Event_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+      Event_WaitFrames(20);
       FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
       FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
       Sound_PlaySong(SE_DOOR_CLOSE);
       MapGrid_AnimateCells(gTunnelRuins_DoorCloseSteps, 32, 46);
       MapGrid_CopyCellAttributes(31, 47, 1, 1, 32, 47);
-      FieldScript_WaitFrames(40);
+      Event_WaitFrames(40);
     }
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into one of the five coloured statues pushes it along, then checks
 /// the door.
 /// Reached by walking into metatile behavior 41 in TunnelRuinsLadyStatues.
-static void EventScript_PushLadyStatue(void) {
-  FieldScript_Start();
+static void TunnelRuins_PushLadyStatue(void) {
+  Event_Start();
   {
     MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
   PushedActor_AdvancePair();
-  EventScript_MoveLadyStatue();
-  FieldScript_End();
+  TunnelRuins_MoveLadyStatue();
+  Event_End();
 }
 
 /// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
 /// statues. "The statue seems to speak to your soul..." Reached by searching
 /// metatile behavior 42 in TunnelRuinsLadyStatues.
-static void EventScript_ReadSecondStatue(void) {
-  FieldScript_Start();
+static void TunnelRuins_ReadSecondStatue(void) {
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
 /// Reached by searching metatile behavior 20 in TunnelRuinsLadyStatues.
-static void EventScript_SearchLockedDoor(void) {
-  FieldScript_Start();
+static void TunnelRuins_SearchLockedDoor(void) {
+  Event_Start();
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
@@ -1415,7 +1415,7 @@ const struct Trigger *TunnelRuins_GetTriggers(void) {
 /// After the first pillars move: redraw their room's cells and mark the cells
 /// the pillars stand on.
 /// Reached by Move on either of the first pillars, and called by
-/// EventScript_PushFirstPillars.
+/// TunnelRuins_PushFirstPillars.
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
 
@@ -1439,7 +1439,7 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
 
 /// After the second pillars move: the same for their room.
 /// Reached by Move on either of the second pillars, and called by
-/// EventScript_PushSecondPillars.
+/// TunnelRuins_PushSecondPillars.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
 
@@ -1463,7 +1463,7 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
 
 /// After the small pillars move: redraw their room's cells and mark the
 /// cells they stand on. Reached by Move on any of the three, and called by
-/// EventScript_PushSmallPillars.
+/// TunnelRuins_PushSmallPillars.
 static void TunnelRuins_UpdateSmallPillarCells(void) {
   struct Actor *actor;
   s32 column;
@@ -1600,7 +1600,7 @@ s32 TunnelRuins_Initialize(void) {
                                    SPRITE_COLOR_NORMAL);
         Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_PUDDLE, 5);
       }
-      if (Script_GetFlag(FLAG_SCENE_TEMP_02))
+      if (Event_GetFlag(FLAG_SCENE_TEMP_02))
         Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 2);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 45, 14, 1, 3);
@@ -1726,7 +1726,7 @@ s32 TunnelRuins_Initialize(void) {
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        FieldScript_WaitFrames(2);
+        Event_WaitFrames(2);
         GameFlag_Set(FLAG_SCENE_TEMP_00);
         GameFlag_Set(FLAG_SCENE_TEMP_01);
         GameFlag_Set(FLAG_SCENE_TEMP_02);
@@ -1745,12 +1745,12 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
       MapGrid_CopyCellAttributes(8, 49, 1, 1, 8, 113);
-      EventScript_ShowFalseStatues();
+      TunnelRuins_ShowFalseStatues();
       Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
-      FieldScript_WaitFrames(1);
+      Event_WaitFrames(1);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
         Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, PIXELS(408),
@@ -1803,7 +1803,7 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);
-      EventScript_ShowFalseStatues();
+      TunnelRuins_ShowFalseStatues();
       break;
     }
   }
@@ -2202,68 +2202,68 @@ struct Trigger gTunnelRuinsGreatStatueTriggers[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWest)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushFirstPillars)},
+        EVENT(TunnelRuins_HopWest)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, CONDITION_ALWAYS, EVENT(TunnelRuins_PushFirstPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopDownStep)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSecondPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge)},
+        EVENT(TunnelRuins_HopDownStep)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 26, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSecondPillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopEast)},
+        EVENT(TunnelRuins_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWestBySmallPillars)},
+        EVENT(TunnelRuins_HopWestBySmallPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopEast)},
+        EVENT(TunnelRuins_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopNorthBySmallPillars)},
+        EVENT(TunnelRuins_HopNorthBySmallPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouthOrPushSmallPillars)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSmallPillars)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 29, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_PushNorthwestSinkingPillar)},
+        EVENT(TunnelRuins_HopSouth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(TunnelRuins_HopSouthOrPushSmallPillars)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSmallPillars)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 29, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushNorthwestSinkingPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, FLAG_SCENE_TEMP_00,
-        EVENT_SCRIPT(EventScript_HopEast)},
+        EVENT(TunnelRuins_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 29, FLAG_SCENE_TEMP_00,
-        EVENT_SCRIPT(EventScript_HopSouth)},
+        EVENT(TunnelRuins_HopSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29, FLAG_SCENE_TEMP_00,
-        EVENT_SCRIPT(EventScript_HopNorth)},
+        EVENT(TunnelRuins_HopNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, FLAG_SCENE_TEMP_00,
-        EVENT_SCRIPT(EventScript_HopWest)},
+        EVENT(TunnelRuins_HopWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopEast)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_PushSoutheastSinkingPillar)},
+        EVENT(TunnelRuins_HopEast)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, FLAG_SCENE_TEMP_01,
-        EVENT_SCRIPT(EventScript_HopWest)},
+        EVENT(TunnelRuins_HopWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, FLAG_SCENE_TEMP_01,
-        EVENT_SCRIPT(EventScript_HopSouth)},
+        EVENT(TunnelRuins_HopSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 30, FLAG_SCENE_TEMP_01,
-        EVENT_SCRIPT(EventScript_HopNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(EventScript_PushSoutheastSinkingPillar)},
+        EVENT(TunnelRuins_HopNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_01,
-        EVENT_SCRIPT(EventScript_HopEast)},
+        EVENT(TunnelRuins_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWest)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadFirstStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFirstPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFirstPillarCells)},
+        EVENT(TunnelRuins_HopWest)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 40, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadFirstStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_A, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateFirstPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_B, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateFirstPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_A, CONDITION_ALWAYS,
-        EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
+        EVENT(TunnelRuins_UpdateSecondPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_B, CONDITION_ALWAYS,
-        EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateSmallPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(EventScript_BlowAwayIvyA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(EventScript_BlowAwayIvyB)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayIvyC)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkNorthwestPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTHWEST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(EventScript_FreezeNorthwestPillarPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkSoutheastPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTHEAST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(EventScript_FreezeSoutheastPillarPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(EventScript_DouseStartsOnSoutheastPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(EventScript_DouseSoutheastPillar)},
+        EVENT(TunnelRuins_UpdateSecondPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_A, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateSmallPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_B, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateSmallPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SMALL_PILLAR_C, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateSmallPillarCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_SCENE_TEMP_00, EVENT(TunnelRuins_BlowAwayIvyA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_BlowAwayIvyB)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT(TunnelRuins_BlowAwayIvyC)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_SinkNorthwestPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTHWEST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(TunnelRuins_FreezeNorthwestPillarPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_SinkSoutheastPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTHEAST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_FreezeSoutheastPillarPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseStartsOnSoutheastPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseSoutheastPillar)},
     {TRIGGERS_END},
 };
 
@@ -2282,50 +2282,50 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushDousePillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 25, CONDITION_ALWAYS, EVENT(TunnelRuins_PushDousePillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWest)},
+        EVENT(TunnelRuins_HopWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopDownStep)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushActor)},
+        EVENT(TunnelRuins_HopDownStep)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopEast)},
+        EVENT(TunnelRuins_HopEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWest)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushEastPillar)},
+        EVENT(TunnelRuins_HopWest)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT(TunnelRuins_PushEastPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopSouth)},
+        EVENT(TunnelRuins_HopSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopNorth)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushLadyStatue)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSecondStatue)},
+        EVENT(TunnelRuins_HopNorth)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 41, CONDITION_ALWAYS, EVENT(TunnelRuins_PushLadyStatue)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchLockedDoor)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadSecondStatue)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_MoveDousePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT(TunnelRuins_MoveDousePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT(TunnelRuins_DouseStartsOnPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT(TunnelRuins_FreezeDousePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CARRY_STONE, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WEST_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_EAST_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HideFalseStatues)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_ShowFalseStatues)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WEST_CARRY_STONE, CONDITION_ALWAYS, EVENT(TunnelRuins_SetStoneOnBalance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, EVENT(TunnelRuins_SetStoneOnBalance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_EAST_CARRY_STONE, CONDITION_ALWAYS, EVENT(TunnelRuins_SetStoneOnBalance)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
+        EVENT(TunnelRuins_HideFalseStatues)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
+        EVENT(TunnelRuins_ShowFalseStatues)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR_A, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_MoveEastPillar)},
+        EVENT(TunnelRuins_MoveEastPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR_B, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_MoveEastPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+        EVENT(TunnelRuins_MoveEastPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LADY_STATUE_SOUTH, CONDITION_ALWAYS, EVENT(TunnelRuins_MoveLadyStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesNorthwestOfMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS,

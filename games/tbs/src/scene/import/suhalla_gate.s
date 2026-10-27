@@ -6,10 +6,10 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_ResetAndSetPosition, 1
@@ -23,15 +23,15 @@
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_ConfigureSpriteColor, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.FieldScript_ShowMessageThenWait, 1
-	.set import.FieldScript_AskYesNoAndShowResponse, 1
+	.set import.Event_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageThenWait, 1
+	.set import.Event_AskYesNoAndShowResponse, 1
 	.set import.Actor_ArmCallback, 1
 	.set import.FieldEffect_SpawnAttached, 1
 	.set import.FieldEffect_SetAttached, 1
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

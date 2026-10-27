@@ -51,28 +51,28 @@
 	.set import.PartyInventory_GiveItem, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.endif
 	.ifdef TBS_EDITION_ES
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_ES
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
 	.set import.MemberChooser_Open, 1

@@ -293,7 +293,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct Actor *leader;
 
-  FieldScript_Start();
+  Event_Start();
   Party_RestorePpOfLitElements();
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_GARET), 0);
@@ -303,15 +303,15 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   WaitFrames(1);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  Script_PlaySong(SE_RUMBLE);
+  Event_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   MapGrid_WaitForShakeToSettle();
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
@@ -319,10 +319,10 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(50);
-  FieldScript_WaitFrames(50);
+  Event_WaitFrames(50);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(504), PIXELS(168));
   Actor_SetPosition(ACTOR_GARET, PIXELS(528), PIXELS(144));
   Actor_SetPosition(ACTOR_IVAN, PIXELS(488), PIXELS(144));
@@ -331,35 +331,35 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
-  FieldScript_WaitFrames(30);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(30);
+  Event_WaitFrames(80);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_MIA), SPRITE_FLAG_SHADOW);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -383,7 +383,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 #include "common/object_distance.h"
@@ -432,7 +432,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   s32 id;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  FieldScript_Start();
+  Event_Start();
   id = Actor_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
@@ -460,7 +460,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     leader->y.fixed += PIXELS(1);
     leader->groundHeight += PIXELS(1);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 11, off the platforms. The
@@ -484,7 +484,7 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct Actor *actor;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &=
       ~(ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -516,9 +516,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  FieldScript_WaitFrames(50);
+  Event_WaitFrames(50);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -526,80 +526,80 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 328, 216);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   FieldCamera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_SetMessageId(MsgMercuryLighthouseAlreadyLit);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_SetMessageId(MsgMercuryLighthouseAlreadyLit);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(ACTOR_MIA, 328, 232);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 30);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
   Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_WalkToAndWait(ACTOR_IVAN, 336, 248);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  Event_WaitFrames(30);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 30);
   FieldMessage_ShowAtActor(ACTOR_MIA, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   }
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
   Import_ActorSetAnimation(ACTOR_MIA, 0x10);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 60);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Script_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySong(SONG_FADE_OUT_BGM);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(216), PIXELS(200));
-  Script_ShowMessageAndWait(ACTOR_JENNA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(120), PIXELS(160));
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -616,53 +616,53 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
-  FieldScript_WaitFrames(20);
-  Script_PlaySong(MUS_SATUROS_AND_MENARDI);
-  Script_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  Event_WaitFrames(20);
+  Event_PlaySong(MUS_SATUROS_AND_MENARDI);
+  FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH, 60);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetPosition(ACTOR_GARET, PIXELS(264), PIXELS(288));
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetPosition(ACTOR_GARET, PIXELS(328), PIXELS(216));
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
   Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FELIX, 104, 168);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(264), PIXELS(288));
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(296), PIXELS(120));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -678,55 +678,55 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_WalkToAndWait(ACTOR_SATUROS, 280, 168);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_MENARDI, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MENARDI, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
   FieldCamera_MoveTo(PIXELS(296), PIXELS(40), PIXELS(216), 1);
   Actor_WalkToAndWait(ACTOR_SATUROS, 304, 176);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_MENARDI, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MENARDI, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_MENARDI, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(40);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MENARDI, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(20);
   Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_GARET, 328, 224);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 344, 224);
@@ -738,57 +738,57 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(168), PIXELS(200));
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(104), PIXELS(200));
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 70);
   Actor_LinkPair(ACTOR_JENNA, ACTOR_KRADEN, 0);
-  FieldScript_WaitFrames(50);
+  Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(60);
-  Script_ShowMessageAndWait(ACTOR_JENNA, 0, 40);
+  Event_WaitFrames(60);
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 30);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 30);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_WalkTo(ACTOR_JENNA, 128, 144);
@@ -803,10 +803,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_MENARDI, 3);
   Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(3), PIXELS(2));
   Actor_Get(ACTOR_MENARDI)->velocityY = PIXELS(4);
-  Script_PlaySong(SE_JUMP);
+  Event_PlaySong(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_MENARDI), 0);
   Actor_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
@@ -815,12 +815,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 10);
-  Script_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_JENNA, 0, 20);
-  Script_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
@@ -833,86 +833,86 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(216), 1);
   FieldCamera_WaitForArrival();
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(272), PIXELS(280));
-  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(ACTOR_GARET, 312, 216);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 10);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_SATUROS, 312, 184);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
   Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 328, 224);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldMessage_ShowAtActor(ACTOR_SATUROS, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
     gFieldWork->message++;
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     gFieldWork->message++;
-    Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   }
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 328, 200);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_Get(ACTOR_SATUROS)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 208);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_SATUROS)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
-  FieldScript_SetNextDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
+  Event_SetAfterBattleDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         2);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
@@ -924,7 +924,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
-  FieldScript_Start();
+  Event_Start();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(344), PIXELS(224));
   Actor_SetPosition(ACTOR_GARET, PIXELS(328), PIXELS(224));
@@ -943,42 +943,42 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   WaitFrames(1);
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(60);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
-  FieldScript_SetMessageId(MsgMercuryGot);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_SetMessageId(MsgMercuryGot);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 30);
   Actor_SetPosition(ACTOR_ALEX, PIXELS(312), PIXELS(112));
-  Script_PlaySong(SE_STOP_ACTION_SE);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_PlaySong(SE_STOP_ACTION_SE);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 30);
-  Script_PlaySong(MUS_CONFRONTATION);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
+  Event_PlaySong(MUS_CONFRONTATION);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_ALEX, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_ALEX, 344, 136);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 20);
   FieldCamera_WaitForArrival();
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(184), 1);
   Actor_WalkToAndWait(ACTOR_ALEX, 344, 160);
   Actor_WalkToAndWait(ACTOR_ALEX, 328, 168);
@@ -986,17 +986,17 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 60);
@@ -1005,167 +1005,167 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_ALEX, 2);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_WalkToAndWait(ACTOR_ALEX, 312, 184);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   FieldMessage_ShowAtActor(ACTOR_GARET, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   }
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  FieldScript_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST + FACING_STEP, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Import_ActorSetAnimation(ACTOR_SATUROS, 8);
-  FieldScript_WaitFrames(45);
+  Event_WaitFrames(45);
   Import_ActorSetAnimation(ACTOR_SATUROS, 1);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SATUROS, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_LinkPair(ACTOR_ALEX, ACTOR_SATUROS, 0);
-  FieldScript_WaitFrames(35);
+  Event_WaitFrames(35);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_ALEX, 328, 176);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_ALEX, 5);
   Import_ActorSetAnimation(ACTOR_SATUROS, 7);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldMessage_ShowAtActor(ACTOR_ALEX, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(20);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(30);
-    Script_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(20);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_ALEX, 0);
     gFieldWork->message++;
   } else {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
 
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_ALEX, 0);
+    Event_ShowMessage(ACTOR_ALEX, 0);
   }
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_ALEX, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1200,21 +1200,21 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   {
     struct MapGridLayerScroll *lift;
@@ -1236,59 +1236,59 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
     Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 20);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
     FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(216), 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
     Import_ActorSetAnimation(ACTOR_ALEX, 5);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     FieldMessage_ShowAtActor(ACTOR_ALEX, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-      FieldScript_WaitFrames(20);
+    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      Event_WaitFrames(20);
       Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
-      FieldScript_WaitFrames(20);
-      Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+      Event_WaitFrames(20);
+      FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
       ((struct FieldWork *)cells[19])->message++;
     } else {
       ((struct FieldWork *)cells[19])->message++;
-      FieldScript_WaitFrames(20);
-      Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+      Event_WaitFrames(20);
+      FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
     }
   }
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldMessage_ShowAtActor(ACTOR_ALEX, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 1);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   }
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(128), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
   Import_ActorSetAnimation(ACTOR_SATUROS, 1);
@@ -1300,90 +1300,90 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   MercuryLighthouseAerie_SaturosAndAlexWarpIn();
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
   FieldMessage_ShowAtActor(ACTOR_ALEX, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
     Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   }
-  Script_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 20);
-  Script_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  FieldScript_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  Script_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySong(SONG_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Scene_PlayMusic();
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 22);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
   Import_ActorSetAnimation(ACTOR_MIA, 0x10);
   Actor_Get(ACTOR_MIA)->scaleX = -Q16_ONE;
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 40);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldMessage_ShowAtActor(ACTOR_IVAN, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_Get(ACTOR_MIA)->scaleX = Q16_ONE;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   }
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 30);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1399,12 +1399,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1415,33 +1415,33 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(60);
-  Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+  Event_WaitFrames(60);
+  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 30);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 312, 216);
   Actor_WalkTo(ACTOR_GARET, 312, 216);
   Actor_WalkTo(ACTOR_IVAN, 312, 216);
@@ -1464,7 +1464,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MapGrid_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 6 while the lift is down. The
@@ -1473,7 +1473,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  FieldScript_Start();
+  Event_Start();
   lift->offsetY = PIXELS(896);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
@@ -1485,16 +1485,16 @@ static void MercuryLighthouseAerie_CallLift(void) {
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(128), -1, PIXELS(184), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_RaiseLift();
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   GameFlag_Set(FLAG_LIFT_UP);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 12. The leader steps onto the
@@ -1502,7 +1502,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
@@ -1510,9 +1510,9 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Import_ScriptRequestExit(
+  Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Saturos and Alex exit out in a column of sparkles and vanish.
@@ -1539,7 +1539,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    FieldScript_WaitFrames(1);
+    Event_WaitFrames(1);
     if (i & 1) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1594,7 +1594,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    FieldScript_WaitFrames(1);
+    Event_WaitFrames(1);
     if (i & 1) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1744,12 +1744,12 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   // XXX (no evidence): what this was for; nothing calls it, so neither the
   // ROM nor a render shows it in an event.
-  FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
-  FieldEffect_SetupActorPair(ACTOR_ALEX, ACTOR_LIFT_STATUE);
-  FieldEffect_StartCast();
-  Field_DispatchTypeHandler(1);
-  FieldEffect_StopCasterHook();
-  FieldEffect_End();
+  FieldPsynergy_LoadResources(ABILITY_PLY, 1);
+  FieldPsynergy_SetupActorPair(ACTOR_ALEX, ACTOR_LIFT_STATUE);
+  FieldPsynergy_StartCast();
+  FieldPsynergy_RunHandler(1);
+  FieldPsynergy_StopCasterUpdate();
+  FieldPsynergy_End();
 }
 
 /// A beacon spark's update: it swings round the beacon it is linked to, its
@@ -1920,21 +1920,20 @@ struct ActorTemplate gMercuryLighthouseAerieActorTemplates[] = {
 
 struct Trigger gMercuryLighthouseAerieTriggers[] = {
     {TRIGGER_STEP, 5, FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
-     EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
-    {TRIGGER_STEP, 6, FLAG_LIFT_UP,
-     EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},
+     EVENT(MercuryLighthouseAerie_ConfrontSaturos)},
+    {TRIGGER_STEP, 6, FLAG_LIFT_UP, EVENT(MercuryLighthouseAerie_CallLift)},
     {STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
+     EVENT(MercuryLighthouseAerie_JumpToPlatform)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MercuryLighthouseAerie_SettlePlatforms)},
+     EVENT(MercuryLighthouseAerie_SettlePlatforms)},
     {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
+     EVENT(MercuryLighthouseAerie_JumpToPlatform)},
     {TRIGGER_STEP, 10, FLAG_ON_PLATFORM,
-     EVENT_SCRIPT(MercuryLighthouseAerie_StepOntoPlatform)},
+     EVENT(MercuryLighthouseAerie_StepOntoPlatform)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_PSYNERGY_STONE,
      FIND_PSYNERGY_STONE},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MercuryLighthouseAerie_RideLiftDown)},
+     EVENT(MercuryLighthouseAerie_RideLiftDown)},
     {TRIGGERS_END},
 };
 

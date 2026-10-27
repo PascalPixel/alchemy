@@ -381,7 +381,7 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
     Item_AdjustCounter(item, 1);
-    FieldScript_ClearInvalidPackedValuesFar();
+    Event_ClearInvalidPackedValuesFar();
   }
   return removalResult;
 }

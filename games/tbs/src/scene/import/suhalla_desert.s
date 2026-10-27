@@ -16,9 +16,9 @@
 	.set import.GameFlag_Clear, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
@@ -33,18 +33,18 @@
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.FieldScript_SetMessageId, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.FieldScript_AskYesNoAndShowResponse, 1
+	.set import.Event_SetMessageId, 1
+	.set import.Event_ShowMessageAndWait, 1
+	.set import.Event_AskYesNoAndShowResponse, 1
 	.set import.Actor_ArmCallback, 1
 	.set import.FieldEffect_SpawnAttached, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
-	.set import.FieldScript_SetDestination, 1
+	.set import.Event_SetDestination, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Field_RequestDjinnBattle, 1
-	.set import.FieldScript_FinishScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_FinishScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Scene_QueueMusic, 1

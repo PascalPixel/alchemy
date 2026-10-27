@@ -23,24 +23,24 @@
 	.set import.Party_GetAverageLevel, 1
 	.set import.PartyInventory_CountItem, 1
 	.set import.PartyInventory_CountFreeSlots, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetPositionAndReset, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_ConfigureSpriteColor, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.set import.Actor_ArmCallback, 1
-	.set import.FieldScript_SetNextDestination, 1
-	.set import.FieldScript_RequestDestination, 1
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetAfterBattleDestination, 1
+	.set import.Event_LeaveFor, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Actor_Snapshot, 1

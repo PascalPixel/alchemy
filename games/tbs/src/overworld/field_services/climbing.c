@@ -22,7 +22,7 @@
 /// Called by Field_RunPushCell when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
 /// Cave's pillar and Kolima Forest's bend, which import it. Moves the leader,
-/// and takes the field over between FieldScript_Start and FieldScript_End.
+/// and takes the field over between Event_Start and Event_End.
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
@@ -56,7 +56,7 @@ again:
     // motion and sprite flags after landing, before returning field control.
     if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = leader->sprite->flags;
-    FieldScript_Start();
+    Event_Start();
     Actor_SelectAnimationFar(leader, 6);
     WaitFrames(6);
     Sound_PlaySongFar(SE_JUMP);
@@ -94,7 +94,7 @@ again:
       WaitFrames(6);
     }
     *flags = saved;
-    FieldScript_End();
+    Event_End();
     if (work != NULL)
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
@@ -129,7 +129,7 @@ s32 Field_ClimbDown(void) {
       8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
   s32 result;
 
-  FieldScript_Start();
+  Event_Start();
 
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -176,17 +176,17 @@ s32 Field_ClimbDown(void) {
     actor->velocityY = 0x40000;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
-    FieldScript_WaitFrames(6);
+    Event_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->facing = FACING_NORTH;
   }
 
-  FieldScript_End();
+  Event_End();
   return 0;
 
 failure:
-  FieldScript_End();
+  Event_End();
   return -1;
 }
 
@@ -209,7 +209,7 @@ s32 Field_ClimbUp(void) {
       8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
   s32 result;
 
-  FieldScript_Start();
+  Event_Start();
 
   if (actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = actor->sprite->flags;
@@ -263,16 +263,16 @@ s32 Field_ClimbUp(void) {
     spriteFlags |= 1;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, spriteFlags);
-    FieldScript_WaitFrames(4);
+    Event_WaitFrames(4);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     actor->steeringFlags = ACTOR_FACES_MOTION;
   }
 
-  FieldScript_End();
+  Event_End();
   return 0;
 
 failure:
-  FieldScript_End();
+  Event_End();
   return -1;
 }
 

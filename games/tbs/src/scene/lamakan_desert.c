@@ -277,16 +277,16 @@ const struct ActorTemplate *LamakanDesert_GetActorTemplates(void) {
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_HSU_RESCUED) == 0) {
-    if (Script_GetFlag(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
+  Event_Start();
+  if (Event_GetFlag(FLAG_HSU_RESCUED) == 0) {
+    if (Event_GetFlag(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
       GameFlag_Set(FLAG_HSU_RESCUED);
     }
   }
-  Script_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestExit(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
-  FieldScript_End();
+  Event_PlaySong(SE_MAP_EXIT);
+  Import_EventSetExitRequest(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
+  Event_End();
 }
 
 /// The desert's triggers, the same on every map.
@@ -449,7 +449,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void LamakanDesert_FightManticore(void) {
   Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-  FieldScript_SetNextDestination(
+  Event_SetAfterBattleDestination(
       (s32)&SceneId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -480,15 +480,15 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
       break;
     }
   }
-  FieldScript_Start();
+  Event_Start();
   // Three lines a mark, one for each member. They come right after Alpine
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before
   // it.
-  FieldScript_SetMessageId((((quarter << 1) + quarter) + member) +
-                           MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
-  FieldScript_ShowMessageAndWait((member + 1), 0);
-  FieldScript_End();
+  Event_SetMessageId((((quarter << 1) + quarter) + member) +
+                     MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
+  Event_ShowMessageAndWait((member + 1), 0);
+  Event_End();
 }
 
 /// Every frame: raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as
@@ -501,33 +501,33 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 
   if (GameFlag_Get(FLAG_SECRETS_REVEALED) != 0)
     return;
-  if (Script_GetFlag(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
+  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
     GameFlag_Clear(FLAG_HEAT_THREE_QUARTERS);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Script_GetFlag(FLAG_HEAT_HALF) != 0 && percent <= 49) {
+  if (Event_GetFlag(FLAG_HEAT_HALF) != 0 && percent <= 49) {
     GameFlag_Clear(FLAG_HEAT_HALF);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Script_GetFlag(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
+  if (Event_GetFlag(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
     GameFlag_Clear(FLAG_HEAT_QUARTER);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Script_GetFlag(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
+  if (Event_GetFlag(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
-  if (Script_GetFlag(FLAG_HEAT_HALF) == 0 && percent > 49) {
+  if (Event_GetFlag(FLAG_HEAT_HALF) == 0 && percent > 49) {
     GameFlag_Set(FLAG_HEAT_HALF);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
-  if (Script_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
+  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
@@ -620,10 +620,10 @@ static void LamakanDesert_BatheInOasis(void) {
     FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Script_PlaySong(SE_JUMP);
+  Event_PlaySong(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-  Script_PlaySong(SE_WATER_MOVE);
+  Event_PlaySong(SE_WATER_MOVE);
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -672,11 +672,11 @@ static void LamakanDesert_BatheInOasis(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Script_PlaySong(SE_STOP_ACTION_SE);
-  Script_PlaySong(SE_JUMP);
+  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySong(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
   *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
   HeatGauge_SetHeld(0);
@@ -780,11 +780,11 @@ static void LamakanDesert_FallIntoPit(void) {
   // Face the pit, then reverse the walking direction while being pulled in.
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -804,9 +804,9 @@ static void LamakanDesert_FallIntoPit(void) {
     Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
                               record->z.part.pixel);
   }
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -906,7 +906,7 @@ static void LamakanDesert_MeetManticore(void) {
   eventBytes = (u8 *)gFieldWork;
   HeatGauge_CountStep();
   if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-    paused = Script_GetFlag(FLAG_DESERT_EVENT_RUNNING);
+    paused = Event_GetFlag(FLAG_DESERT_EVENT_RUNNING);
     if (paused == 0) {
       GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
       // Suspend heat accumulation while the leader notices the Manticore.
@@ -926,11 +926,11 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetZ = ACTOR_NO_TARGET;
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
-      FieldScript_WaitFrames(40);
+      Event_WaitFrames(40);
       Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      FieldScript_WaitFrames(40);
+      Event_WaitFrames(40);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;
       // Step backward without turning away from the emerging Manticore.
@@ -943,12 +943,12 @@ static void LamakanDesert_MeetManticore(void) {
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
                                  backwardOffset.z / 0x10000);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      FieldScript_WaitFrames(2);
+      Event_WaitFrames(2);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-      FieldScript_WaitFrames(30);
-      Script_PlaySong(SE_BOSS_ROAR);
+      Event_WaitFrames(30);
+      Event_PlaySong(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);
@@ -1339,14 +1339,14 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, 2 },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, 3 },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, 4 },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
-    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
-    { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
-    { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LamakanDesert_LeaveForTheWorldMap) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_BatheInOasis) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_FallIntoPit) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlideDownDune) },
+    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(LamakanDesert_MeetManticore) },
+    { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT(LamakanDesert_FightManticore) },
+    { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT(LamakanDesert_TalkToSmog) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
@@ -1354,19 +1354,19 @@ struct Trigger gLamakanDesertTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
-    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 101, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 102, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 103, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 104, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Reveal_ShowSecrets) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Reveal_HideSecrets) },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 101, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 102, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 103, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 104, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGERS_END },
 };
 // clang-format on

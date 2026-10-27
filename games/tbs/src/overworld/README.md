@@ -137,7 +137,7 @@ The effects that act on a target, Force, Frost and Reveal, run the scene's event
 for that moment themselves as they act. Halt holds one person still at a
 time, so casting it again frees the one held before.
 
-`Field_UsePsynergy` runs a cast, `FieldEffect_Run` plays the
+`Field_UsePsynergy` runs a cast, `FieldPsynergy_Run` plays the
 effect, and each Psynergy's effect is the part of `field_services/` named for
 it, whose comment names the abilities that reach it. A trigger's moment is
 `enum PsynergyPhase`, and what an ability does on the field is
@@ -149,8 +149,8 @@ it, whose comment names the abilities that reach it. A trigger's moment is
 | `PSYNERGY_PHASE_BEFORE_CAST` | 1 | once the PP is paid, before the effect |
 | `PSYNERGY_PHASE_AFTER_END` | 2 | after a Psynergy that runs out by itself has ended, as Cloak fades or Reveal runs out |
 | `PSYNERGY_PHASE_BEFORE_END` | 3 | as `PSYNERGY_PHASE_AFTER_END`, before it |
-| `PSYNERGY_PHASE_EFFECT_ENDS` | 4 | as Reveal's colours come back |
-| `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | as Force, Frost and Reveal act; also aims the effect at what is ahead |
+| `PSYNERGY_PHASE_FADES` | 4 | as Reveal's colours come back |
+| `PSYNERGY_PHASE_ACTS` | 5 | as Force, Frost and Reveal act; also aims the effect at what is ahead |
 | `PSYNERGY_PHASE_ANY` | 7 | every moment |
 | `FLAG_RETREAT_BLOCKED` | `0x144` | Retreat refuses |
 | `FLAG_IN_BATTLE_ARENA` | `0x17e` | all field Psynergy refuses |
@@ -261,8 +261,8 @@ to a scene, even within an area: the Djinn's hiding flags
 away out of its room until the room is entered again, and 16 more after them
 that nothing else uses.
 
-`FieldScript_ShowSpeakerMessage`, `FieldScript_ShowMessageAtPosition` and
-`FieldScript_ForwardShowMessageAtPosition` are unused: each is reached only
+`Event_ShowSpeakerMessage`, `Event_ShowMessageAtPosition` and
+`Event_ForwardShowMessageAtPosition` are unused: each is reached only
 through a bare [veneer](../../glossary.md#veneer) in
 `system/far_call/OVERWORLD.S`, which has no symbol for code to call
 ([`field_services/messages.c`](field_services/messages.c)).

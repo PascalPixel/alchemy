@@ -36,7 +36,7 @@ struct FieldEffectDouseView {
   s32 targetActor;      ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a trigger names the target
-  /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
+  /// (FieldPsynergy_Dispatch). Set, 10 particles fall; cleared, 24
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[0x13];
@@ -104,10 +104,10 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
   }
 }
 
-/// Runs Douse cast on a target, through FieldEffect_RunDouse.
+/// Runs Douse cast on a target, through FieldPsynergy_Douse.
 ///
 /// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
-void FieldEffect_RunDouseOnTarget(s32 unused) { FieldEffect_RunDouse(); }
+void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
@@ -115,10 +115,10 @@ void FieldEffect_RunDouseOnTarget(s32 unused) { FieldEffect_RunDouse(); }
 ///
 /// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 ///
-/// The destination is the target's position (FieldEffect_SetupActorPair);
+/// The destination is the target's position (FieldPsynergy_SetupActorPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.
-/// Called by FieldEffect_Run, and through FieldEffect_RunDouseOnTarget.
-void FieldEffect_RunDouse(void) {
+/// Called by FieldPsynergy_Run, and through FieldPsynergy_DouseOnTarget.
+void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
@@ -136,7 +136,7 @@ void FieldEffect_RunDouse(void) {
   lightOrb = (struct ActorDouseView *)Actor_Spawn(0xef, step = 0, 0, 0);
   if (lightOrb == 0)
     return;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->targetActor == 0) {
@@ -269,5 +269,5 @@ void FieldEffect_RunDouse(void) {
     step++;
   } while (step < steps);
   Actor_ReleaseFar((struct Actor *)lightOrb);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }

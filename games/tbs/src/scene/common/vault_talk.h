@@ -11,10 +11,10 @@ static void Vault_ShowThought(s32 actorId) {
   s32 zero = 0;
 
   *paused = 1;
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
-  FieldScript_WaitFrames(2);
-  FieldScript_ShowMessageAndWait(actorId, 0);
-  FieldScript_End();
+  Event_WaitFrames(2);
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_End();
   *paused = zero;
 }

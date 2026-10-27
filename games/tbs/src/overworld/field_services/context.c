@@ -229,7 +229,7 @@ s32 Entrance_PlayArrival(void) {
         Sound_PlaySongFar(SE_DOOR_CLOSE);
         leader->y.fixed = leader->groundHeight;
         Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
-        FieldScript_WaitFrames(15);
+        Event_WaitFrames(15);
         FieldCamera_FollowActor(leaderId, 1);
         result = 3;
       }

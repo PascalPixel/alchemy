@@ -132,10 +132,10 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     if ((s32)trigger->value < 0x10000) {
       s32 nearbyActorId = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
-      FieldScript_Start();
-      FieldScript_SetMessageId(trigger->value);
-      FieldScript_ShowMessageAndWait(nearbyActorId, 0);
-      FieldScript_End();
+      Event_Start();
+      Event_SetMessageId(trigger->value);
+      Event_ShowMessageAndWait(nearbyActorId, 0);
+      Event_End();
     } else {
       ((BattleItemCallback)trigger->value)(itemId, actorId, slot);
     }
@@ -178,17 +178,17 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
-      FieldEffect_LoadActionEffectResources(actionId, 0);
+      FieldPsynergy_LoadResources(actionId, 0);
 #else
       /* FAKEMATCH(wrapper): called through a cast to the s32 function the
        * bytes show, which loads the action id before the 0; as a call by its
        * void prototype, 2 of 253 instructions differ in tbs-en. */
-      ((s32 (*)(s32, s32))FieldEffect_LoadActionEffectResources)(actionId, 0);
+      ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(actionId, 0);
 #endif
       work->psynergyActing = 1;
-      FieldEffect_Run();
+      FieldPsynergy_Run();
       work->psynergyActing = 0;
-      FieldEffect_End();
+      FieldPsynergy_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
         GameFlag_SetFar(FLAG_ITEM_USED_UP);
@@ -208,7 +208,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// event's phase and kind (PSYNERGY_TRIGGER_ANY for any phase). The event may
 /// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
 /// (TRIGGER_PSYNERGY_ON_ACTOR) or to a metatile behavior. Called by
-/// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
+/// Field_UsePsynergy for each phase, by Field_RunPsynergyEndEvents, and by the
 /// Force, Frost and Reveal effects (field_services/) for their own phases.
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
@@ -258,7 +258,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
 /// its user (bits 10 to 13). Called by Field_UsePsynergy for a use with
 /// ACT_PACKED, and by Field_EndBusyAndReveal to end Reveal.
-s32 Field_RunPsynergyEvents(s32 packed) {
+s32 Field_RunPsynergyEndEvents(s32 packed) {
   s32 target;
   s32 abilityId;
   s32 userId;
@@ -275,12 +275,12 @@ s32 Field_RunPsynergyEvents(s32 packed) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), group, &target);
   afterEvent = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, &target);
-  FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, target);
-  Field_RunEventAction(beforeEvent, userId, target);
-  FieldScript_RunTypeHandler();
-  FieldEffect_StopCasterHook();
-  Field_RunEventAction(afterEvent, userId, target);
-  FieldEffect_End();
+  FieldPsynergy_LoadResources(abilityId, 0);
+  FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, target);
+  Field_RunPsynergyEvent(beforeEvent, userId, target);
+  Event_RunFieldPsynergy();
+  FieldPsynergy_StopCasterUpdate();
+  Field_RunPsynergyEvent(afterEvent, userId, target);
+  FieldPsynergy_End();
   return 0;
 }

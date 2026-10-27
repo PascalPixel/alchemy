@@ -148,7 +148,7 @@
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared. Each use is tagged.
 #ifdef UBFIX
-#define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE FieldScript_ShowMessageAndWait
+#define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE Event_ShowMessageAndWait
 #define COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR                                \
   ColosseumSatrageMatch_MovePusherAndLog
 #define COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK                                \
@@ -156,7 +156,7 @@
 #define COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE Scene_GiveAndEquipItem
 #else
 #define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE                                   \
-  ((s32 (*)())FieldScript_ShowMessageAndWait)
+  ((s32 (*)())Event_ShowMessageAndWait)
 #define COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR                                \
   ((s32 (*)())ColosseumSatrageMatch_MovePusherAndLog)
 #define COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK                                \
@@ -355,18 +355,18 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// Move on the Board Walk's two stone pillars does nothing.
-static void EventScript_IgnoreMove(void) {}
+static void ColosseumSatrageMatch_IgnoreMove(void) {}
 
 /// Walking into a stone pillar pushes it. In Colosseum Final 2, walking into
 /// one at step trigger 21 pushes the obstacle immediately ahead of the selected
 /// actor.
-static void EventScript_PushPillar(void) {
+static void ColosseumSatrageMatch_PushPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
 }
 
 /// Move on the stone pillar by The Wall, and after each push: its cell is
 /// updated, and FLAG_WALL_PILLAR_MOVED keeps whether it stands at column 36.
-static void EventScript_MoveWallPillar(void) {
+static void ColosseumSatrageMatch_MoveWallPillar(void) {
   struct Actor *obstacle;
   s32 column;
   s32 row;
@@ -387,15 +387,15 @@ static void EventScript_MoveWallPillar(void) {
 
 /// Walking into the stone pillar by The Wall (step triggers 20 and 26) pushes
 /// it, then updates its cell.
-static void EventScript_PushWallPillar(void) {
+static void ColosseumSatrageMatch_PushWallPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
-  EventScript_MoveWallPillar();
+  ColosseumSatrageMatch_MoveWallPillar();
 }
 
 /// Move on a stone pillar in the Mini-Maze, and after each push: the three
 /// pillars' columns are kept (FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN and the two
 /// after it) and their cells rebuilt.
-static void EventScript_MoveMiniMazePillar(void) {
+static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
 
   struct Actor *obstacle;
   s32 column;
@@ -420,7 +420,7 @@ static void EventScript_MoveMiniMazePillar(void) {
 
 /// Force on the target over the Board Walk, before its effect plays: the effect
 /// takes its child mode.
-static void EventScript_PrepareForce(void) {
+static void ColosseumSatrageMatch_PrepareForce(void) {
   u8 *effectWork = gFieldEffectWork;
 
   ((struct FieldEffectWork *)effectWork)->childMode = 1;
@@ -428,7 +428,7 @@ static void EventScript_PrepareForce(void) {
 
 /// Force on the target over the Board Walk: the obstacle spins down into place
 /// and the way past it opens (FLAG_OBSTACLE_KNOCKED_DOWN).
-static void EventScript_KnockDownObstacle(void) {
+static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   struct Actor *obstacle;
   s32 fallFrames;
   s32 rotationStep;
@@ -438,7 +438,7 @@ static void EventScript_KnockDownObstacle(void) {
 
   obstacle = Actor_GetById(ACTOR_FALLING_LOG);
   sprite = obstacle->sprite;
-  Script_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
+  Event_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
   obstacle->speedLimit = 0x13333;
   Sound_PlaySong(SE_TOPPLE);
@@ -457,7 +457,7 @@ static void EventScript_KnockDownObstacle(void) {
     settleRotationStep += 36;
   }
   Actor_WaitForMove(obstacle);
-  FieldScript_WaitFrames(2);
+  Event_WaitFrames(2);
   Sound_PlaySong(SE_LOG_FALL);
   {
     s32 rotation = 0;
@@ -477,7 +477,7 @@ static void EventScript_KnockDownObstacle(void) {
 
 /// Frost on the Log-Rolling Stage's western target: it freezes and its crossing
 /// opens (FLAG_WEST_TARGET_FROZEN).
-static void EventScript_FreezeWestTarget(void) {
+static void ColosseumSatrageMatch_FreezeWestTarget(void) {
   struct Actor *obstacle;
 
   GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
@@ -491,7 +491,7 @@ static void EventScript_FreezeWestTarget(void) {
 
 /// Frost on the Log-Rolling Stage's eastern target: it freezes and its crossing
 /// opens (FLAG_EAST_TARGET_FROZEN).
-static void EventScript_FreezeEastTarget(void) {
+static void ColosseumSatrageMatch_FreezeEastTarget(void) {
   struct Actor *obstacle;
 
   GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
@@ -505,7 +505,7 @@ static void EventScript_FreezeEastTarget(void) {
 
 /// Growth on the plant by The Wall: it grows into a strip that can be climbed
 /// (FLAG_PLANT_GROWN).
-static void EventScript_GrowPlant(void) {
+static void ColosseumSatrageMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
   {
 
@@ -517,13 +517,15 @@ static void EventScript_GrowPlant(void) {
 /// south into the obstacle at step trigger 30 in Colosseum Final 2 plays the
 /// hop the field plays at any ledge (FieldActor_JumpDownLedge) for the actor
 /// touching it.
-static void EventScript_JumpDownLedge(void) {
+static void ColosseumSatrageMatch_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(gSaveBlock.leaderActorId, 6, 0);
 }
 
 /// Walking west into the obstacle at step trigger 30 in Colosseum Final 2: the
 /// leader jumps forward where he can (Field_TryJumpForward).
-static void EventScript_JumpWestFromLedge(void) { Field_TryJumpForward(); }
+static void ColosseumSatrageMatch_JumpWestFromLedge(void) {
+  Field_TryJumpForward();
+}
 
 /// Moves a riding log and its pusher to aligned cell centers.
 static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
@@ -536,7 +538,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 
   pusher = Actor_GetById(gSaveBlock.leaderActorId);
   log = Actor_GetById(logId);
-  FieldScript_Start();
+  Event_Start();
   {
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
@@ -576,12 +578,12 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   Actor_WaitForMove(pusher);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Actor_SelectAnimation(log, 2);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Standing on one of the Log-Rolling Stage's logs (step trigger 22): it
 /// carries the rider across the water the way the player holds.
-static void EventScript_RideLog(void) {
+static void ColosseumSatrageMatch_RideLog(void) {
   struct Actor *pusher = Actor_GetById(gSaveBlock.leaderActorId);
   s32 column = pusher->x.fixed >> 20;
   s32 offsetX = 0;
@@ -631,15 +633,15 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
     offsetX = 0;
     offsetZ = (halfCellZ - log->z.fixed) / 2;
   }
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(pusher, 8);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   log->speedLimit = 0x8000;
   log->acceleration = 0x3333;
   Actor_SelectAnimation(log,
                         gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   Actor_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
@@ -657,8 +659,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   Actor_SelectAnimation(log, 1);
-  FieldScript_WaitFrames(15);
-  FieldScript_End();
+  Event_WaitFrames(15);
+  Event_End();
 }
 
 /// Rebuilds the metatile behaviors under the three rolling logs at their
@@ -682,35 +684,36 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 /// the western log from the east (step trigger 24) or the west (25), or into
 /// the eastern one from the east (28) or the west (27), rolls it the way the
 /// leader walks.
-static void EventScript_RollWestLogWest(void) {
+static void ColosseumSatrageMatch_RollWestLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking east into the Board Walk's western log (step trigger 25) rolls it
 /// east.
-static void EventScript_RollWestLogEast(void) {
+static void ColosseumSatrageMatch_RollWestLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking west into the Board Walk's eastern log (step trigger 28) rolls it
 /// west.
-static void EventScript_RollEastLogWest(void) {
+static void ColosseumSatrageMatch_RollEastLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking east into the Board Walk's eastern log (step trigger 27) rolls it
 /// east.
-static void EventScript_RollEastLogEast(void) {
+static void ColosseumSatrageMatch_RollEastLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Unused: no trigger row calls it, so the Board Walk's center log never
 /// rolls. Walking into it would have rolled it north, as the western and
-/// eastern logs roll west and east (EventScript_RollWestLogWest and the rest).
+/// eastern logs roll west and east (ColosseumSatrageMatch_RollWestLogWest and
+/// the rest).
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_CENTER, 40, 23);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
@@ -867,8 +870,8 @@ static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
 
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
 /// crossing (FLAG_LIFTS_HALTED).
-static void EventScript_HaltLifts(void) {
-  FieldEffect_PauseActor(ACTOR_LIFT_OPERATOR);
+static void ColosseumSatrageMatch_HaltLifts(void) {
+  FieldPsynergy_HaltActor(ACTOR_LIFT_OPERATOR);
   GameFlag_Set(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -888,15 +891,16 @@ static void EventScript_HaltLifts(void) {
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
 /// fight; the battle's group follows who took the mail. The arena's step
 /// trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing
-/// in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
-static void EventScript_ReachArena(void) {
+/// in the game sets (colosseum_azart_match.c's
+/// ColosseumSatrageMatch_ReachArena).
+static void ColosseumSatrageMatch_ReachArena(void) {
   s32 opponentFinishedFirst;
   s32 refreshCount;
   s32 resultBase;
 
   resultBase = 2;
   MapLocalState_EmptyHook();
-  FieldScript_Start();
+  Event_Start();
   opponentFinishedFirst = ColosseumSatrageMatch_ApproachFinishAndTakeItem(
       ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   ColosseumSatrageMatch_WaitForOpponentFinish();
@@ -912,17 +916,17 @@ static void EventScript_ReachArena(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
   Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 0x100);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - opponentFinishedFirst, which shares r5's 3 with
    * Battle_SetType(BATTLE_TYPE_SCRIPTED), 3 of 106 instructions differ in
@@ -930,10 +934,10 @@ static void EventScript_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - opponentFinishedFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch,
-                                 COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
-  FieldScript_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
-                                   COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
+  Event_SetAfterBattleDestination((s32)&SceneId_ColosseumSatrageMatch,
+                                  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch,
+                             COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
@@ -949,7 +953,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
-  FieldScript_Start();
+  Event_Start();
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
@@ -972,7 +976,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
   ColosseumSatrageMatch_ShowBattleResultLettering(result);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Sets up Colosseum Final 2: restores obstacle progress, then by the arrival:
@@ -1094,7 +1098,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Import_ActorSetAnimation(ACTOR_LIFT_OPERATOR, 10);
-    FieldEffect_PauseActor(ACTOR_LIFT_OPERATOR);
+    FieldPsynergy_HaltActor(ACTOR_LIFT_OPERATOR);
   } else {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
@@ -1154,11 +1158,11 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     break;
   case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON:
     ColosseumSatrageMatch_StageBattleResult(2);
-    Import_ScriptRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH);
+    Import_EventSetExitRequest(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH);
     break;
   case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST:
     ColosseumSatrageMatch_StageBattleResult(-2);
-    Import_ScriptRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE);
+    Import_EventSetExitRequest(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE);
     break;
   }
   return 0;
@@ -1175,7 +1179,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   actor = Actor_GetById(attendantId);
   attendantX = actor->x.part.pixel;
   attendantZ = actor->z.part.pixel;
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1194,23 +1198,23 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_SetMessageId(MsgColossoSiteSecondFinals);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_SetMessageId(MsgColossoSiteSecondFinals);
   Actor_SetAnimationAndWait(attendantId, ANIM_NOD);
-  FieldScript_ShowMessageAndWait(attendantId, 0);
+  Event_ShowMessageAndWait(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
-  FieldScript_ShowMessageAndWait(attendantId, 0);
+  Event_ShowMessageAndWait(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
-  FieldScript_ShowMessageAndWait(attendantId, 0);
+  Event_ShowMessageAndWait(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
-  FieldScript_ShowMessageAndWait(attendantId, 0);
+  Event_ShowMessageAndWait(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -1236,7 +1240,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetPositionAndReset(attendantId, (attendantX - 16), (attendantZ - 16));
   Actor_SetPositionAndReset(attendantId, attendantX, attendantZ);
   Actor_ArmCallback(attendantId, FACING_NORTH, 10);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The Mini-Maze's attendant, stage 1 of Colosseum Final 2: the first time,
@@ -1244,62 +1248,62 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
 /// friend to cheer. With a friend alone on the stages
 /// (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) he asks whether they are done
 /// cheering instead.
-static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
+static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct Actor *actor;
 
   if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    FieldScript_Start();
+    Event_Start();
     result = Colosso_GreetAtStage(attendant, 1);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
-      FieldScript_SetMessageId(MsgColossoStageDubbedMini);
+      Event_SetMessageId(MsgColossoStageDubbedMini);
       FieldCamera_SetSpeedParameters(0x30000, 0x6000);
       FieldCamera_MoveWithinMapBounds(PIXELS(1224), -1, PIXELS(184), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessageAndWait(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1272, 168);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 184);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 216);
-      FieldScript_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessageAndWait(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 248);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
-      FieldScript_WaitFrames(3);
+      Event_WaitFrames(3);
       actor = Actor_GetById(ACTOR_PARTY_LEADER);
       actor->velocityY = 0x40000;
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
       FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      FieldScript_WaitFrames(30);
-      FieldScript_ShowMessageAndWait(attendant, 0);
+      Event_WaitFrames(30);
+      Event_ShowMessageAndWait(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 1);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-      FieldScript_SetMessageId(MsgColossoMainThingStage);
-      FieldScript_ShowMessageAndWait(attendant, 0);
+      Event_SetMessageId(MsgColossoMainThingStage);
+      Event_ShowMessageAndWait(attendant, 0);
     }
     Colosso_OfferCheeringSpot(result, attendant, 1);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// The shifting floor stage's attendant, stage 2 of Colosseum Final 2: the
 /// first time, Isaac appears and rides the lifts; then, that the lifts'
 /// operator will cheer for Isaac, and a place for a friend to cheer.
-static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
+static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
   if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    FieldScript_Start();
+    Event_Start();
     result = Colosso_GreetAtStage(attendant, 2);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
-      FieldScript_SetMessageId(MsgColossoShiftingFloorStage);
+      Event_SetMessageId(MsgColossoShiftingFloorStage);
       ColosseumSatrageMatch_ResetLifts();
       FieldCamera_SetSpeed(0x30000, 0x6000);
       FieldCamera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
@@ -1309,88 +1313,88 @@ static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
        * instructions differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE(attendant, 0);
       ColosseumSatrageMatch_StartLifts();
-      Script_ShowMessage(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1080, 264);
-      FieldScript_WaitFrames(15);
+      Event_WaitFrames(15);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
       ColosseumSatrageMatch_WaitForLiftCrossingPhase();
       Field_TryJumpForward();
       FieldCamera_MoveTo(-1, -1, -1, 0);
-      Script_ShowMessage(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
     } else {
       if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-        FieldScript_SetMessageId(MsgColossoOperatorLiftsWillCheerFor);
-        Script_ShowMessage(attendant, 0);
+        Event_SetMessageId(MsgColossoOperatorLiftsWillCheerFor);
+        Event_ShowMessage(attendant, 0);
       }
     }
     Colosso_OfferCheeringSpot(result, attendant, 2);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// The Log-Rolling Stage's attendant, stage 3 of Colosseum Final 2: the first
 /// time, Isaac appears and rides a log across; then the objective, and a place
 /// for a friend to cheer.
-static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
+static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
   if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
-    FieldScript_Start();
+    Event_Start();
     result = Colosso_GreetAtStage(attendant, 3);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
-      FieldScript_SetMessageId(MsgColossoLogRollingStage);
+      Event_SetMessageId(MsgColossoLogRollingStage);
       FieldCamera_SetSpeed(0x30000, 0x6000);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(192), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(60);
+      Event_WaitFrames(60);
       FieldCamera_SetSpeed(0x10000, 0x2000);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
       FieldCamera_WaitForArrival();
-      Script_ShowMessage(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 856, 264);
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 264);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 232);
-      Script_ShowMessage(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 163 instructions
        * differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(ACTOR_RIDING_LOG_SOUTH, -64, 0);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
-      FieldScript_WaitFrames(10);
+      Event_WaitFrames(10);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
-      Script_ShowMessage(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ACTOR_RIDING_LOG_SOUTH, PIXELS(840), PIXELS(232));
       Colosso_RepeatStageNumber(attendant, 3);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-      FieldScript_SetMessageId(MsgColossoHereYourObjectiveRideLogs);
-      Script_ShowMessage(attendant, 0);
+      Event_SetMessageId(MsgColossoHereYourObjectiveRideLogs);
+      Event_ShowMessage(attendant, 0);
     }
     Colosso_OfferCheeringSpot(result, attendant, 3);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// The Wall's attendant, stage 4 of Colosseum Final 2: the first time, Isaac
 /// appears and climbs it; then the objective, and a place for a friend to
 /// cheer.
-static void EventScript_TalkToWallAttendant(s32 attendant) {
+static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   s32 z;
   struct Actor *actor;
   s32 result;
@@ -1399,19 +1403,19 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  FieldScript_Start();
+  Event_Start();
   result = Colosso_GreetAtStage(attendant, 4);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
-    FieldScript_SetMessageId(MsgColossoFansJustCallWall);
+    Event_SetMessageId(MsgColossoFansJustCallWall);
     FieldCamera_SetSpeedParameters(0x30000, 0x6000);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(240), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(45);
+    Event_WaitFrames(45);
     FieldCamera_SetSpeed(0x10000, 0x2000);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
     z = 264;
     FieldCamera_WaitForArrival();
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_ShowMessageAndWait(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
@@ -1427,22 +1431,22 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Field_ClimbUp();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    Script_ShowMessage(attendant, 0);
+    Event_ShowMessage(attendant, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
     FieldCamera_MoveWithinMapBounds(PIXELS(536), -1, PIXELS(160), 1);
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_ShowMessageAndWait(attendant, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(attendant, 4);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-    FieldScript_SetMessageId(MsgColossoScalingWallQuickly);
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_SetMessageId(MsgColossoScalingWallQuickly);
+    Event_ShowMessageAndWait(attendant, 0);
   }
   Colosso_OfferCheeringSpot(result, attendant, 4);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Moves a demonstration obstacle to pixel coordinates while its pusher
@@ -1466,13 +1470,13 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
     offsetZ = (row - obstacle->z.fixed) / 2;
   }
   Import_ActorSetAnimation(pusher, 8);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   obstacle->speedLimit = 0x8000;
   obstacle->acceleration = 0x3333;
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SelectAnimation(obstacle, 3);
   FieldActor_SetMoveTarget(obstacle, column, 0, row);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   Actor_SetSpeedParameters(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   Actor_SelectAnimation(pusherActor, 2);
@@ -1484,36 +1488,36 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Actor_SelectAnimation(obstacle, 1);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
-  FieldScript_WaitFrames(15);
+  Event_WaitFrames(15);
 }
 
 /// The Board Walk's attendant, stage 5 of Colosseum Final 2: the first time,
 /// Isaac appears and rolls a log into a path; then the objective, and a place
 /// for a friend to cheer.
-static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
+static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
   if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
-  FieldScript_Start();
+  Event_Start();
   result = Colosso_GreetAtStage(attendant, 5);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
-    FieldScript_SetMessageId(MsgColossoPlaceCalledBoard);
+    Event_SetMessageId(MsgColossoPlaceCalledBoard);
     FieldCamera_SetSpeedParameters(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(264), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     FieldCamera_SetSpeed(0x18000, 0x3000);
     FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
     FieldCamera_WaitForArrival();
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_ShowMessageAndWait(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 408, 264);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 408, 216);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_ShowMessageAndWait(attendant, 0);
     ColosseumSatrageMatch_PushObstacleToCell(ACTOR_ROLLING_LOG_EAST, 360, 208);
     FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SMILE,
                               45);
@@ -1521,17 +1525,17 @@ static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 248);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 248);
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_ShowMessageAndWait(attendant, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(ACTOR_ROLLING_LOG_EAST, PIXELS(392), PIXELS(208));
     Colosso_RepeatStageNumber(attendant, 5);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
-    FieldScript_SetMessageId(MsgColossoFocusRollingLogs);
-    FieldScript_ShowMessageAndWait(attendant, 0);
+    Event_SetMessageId(MsgColossoFocusRollingLogs);
+    Event_ShowMessageAndWait(attendant, 0);
   }
   Colosso_OfferCheeringSpot(result, attendant, 5);
-  FieldScript_End();
+  Event_End();
 }
 
 // This map's exits for colosso_solo.h.
@@ -1580,31 +1584,31 @@ static void ColosseumSatrageMatch_StartLetteringAnimation(u32 mode,
 /// (mode 0), or for the race `Match 2`, then 3, 2, 1 and `Go!`.
 static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
-    FieldScript_Start();
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
-    FieldScript_WaitFrames(30);
+    Event_Start();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-    FieldScript_WaitFrames(120);
-    FieldScript_End();
+    Event_WaitFrames(120);
+    Event_End();
     return;
   }
 
   Sound_PlaySong(SE_COLOSSO_LETTERING);
-  FieldScript_Start();
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_Start();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   {
     s16 *openingScript = gColosseumSatrageMatch_LetteringTitle;
     *(s16 *)((u8 *)openingScript + 30) = (mode * 60);
   }
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(mode + 0x5a);
   Colosso_LoadLettering(mode);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-  FieldScript_WaitFrames(120);
+  Event_WaitFrames(120);
 
   // Finish the opening fanfare before the final lettering pulses and start
   // signal.
@@ -1616,19 +1620,19 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Sound_PlaySong(SE_COLOSSO_GO);
   Scene_PlayMusic();
-  FieldScript_End();
+  Event_End();
   GameFlag_Set(FLAG_IN_TOWN);
 }
 
@@ -1638,29 +1642,29 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   s32 reactingActorId;
 
   Sound_PlaySong(SE_COLOSSO_LETTERING);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   gColosseumSatrageMatch_LetteringWon[13] = result * 60;
   STORE_CONST(gColosseumSatrageMatch_LetteringLose[13]) =
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 1);
-    FieldScript_WaitFrames(-result * 60 + 60);
+    Event_WaitFrames(-result * 60 + 60);
     reactingActorId = 0;
   } else {
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Sound_PlaySong(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 0);
-    FieldScript_WaitFrames(result * 60 + 60);
+    Event_WaitFrames(result * 60 + 60);
     reactingActorId = 8;
   }
   FieldEffect_SpawnAttached(reactingActorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
@@ -1669,10 +1673,10 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     WaitFrames(1);
   }
   Sound_PlaySong(MUS_SILENCE);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
 }
 
 #include "common/colosso_marker.h"
@@ -2187,45 +2191,45 @@ s32 gColosseumSatrageMatch_LiftPhase = 0;
 s32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct Trigger gColosseumSatrageMatchTriggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpWestFromLedge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogEast) },
-    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLog) },
-    { STEP_TRIGGER_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
-    { STEP_TRIGGER_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
-    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpDownLedge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpWestFromLedge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogEast) },
+    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RideLog) },
+    { STEP_TRIGGER_WALKING, 21, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushPillar) },
+    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
+    { STEP_TRIGGER_WALKING, 26, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumSatrageMatch_ReachArena) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_PrepareForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_KnockDownObstacle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveWallPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(EventScript_HaltLifts) },
-    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { TRIGGER_TALK, ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },
-    { TRIGGER_TALK, ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToShiftingFloorAttendant) },
-    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
-    { TRIGGER_TALK, ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallAttendant) },
-    { TRIGGER_TALK, ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoardWalkAttendant) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT(ColosseumSatrageMatch_FreezeWestTarget) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT(ColosseumSatrageMatch_FreezeEastTarget) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_PrepareForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_KnockDownObstacle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumSatrageMatch_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_MoveWallPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_MoveMiniMazePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_MoveMiniMazePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_MoveMiniMazePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT(ColosseumSatrageMatch_HaltLifts) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_TalkToMiniMazeAttendant) },
+    { TRIGGER_TALK, ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_TalkToShiftingFloorAttendant) },
+    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_TalkToLogRollingAttendant) },
+    { TRIGGER_TALK, ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_TalkToWallAttendant) },
+    { TRIGGER_TALK, ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_TalkToBoardWalkAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallICantBelieveAnybodyEverGets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallHowDoTheyMakeThatFloor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
-    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
     { TRIGGERS_END },
 };
 

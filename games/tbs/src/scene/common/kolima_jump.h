@@ -20,7 +20,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   s32 ret = FieldActor_CheckMovementCollision(actor, request);
 
   if (ret == 0) {
-    FieldScript_Start();
+    Event_Start();
     Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
@@ -49,7 +49,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     actor->y.fixed += PIXELS(1);
     actor->groundHeight += PIXELS(1);
     *flags = saved;
-    FieldScript_End();
+    Event_End();
     return 1;
   }
   return 0;

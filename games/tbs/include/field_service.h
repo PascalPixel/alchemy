@@ -44,40 +44,6 @@ static inline void PaletteFade_Interpolate(s32 frames) {
   PaletteFade_StartInterpolation(frames);
 }
 
-/// Starts an event, taking the field out of the player's hands.
-static inline void Script_Start(void) { FieldScript_Start(); }
-
-/// Lets the player answer yes or no to the line on screen; 0 means yes.
-static inline s32 Script_ChooseYesNo(s32 actorId, s32 flags) {
-  return FieldScript_AskYesNoWithActorAnimation(actorId, flags);
-}
-
-/// Ends an event and gives the field back to the player.
-static inline void Script_End(void) { FieldScript_End(); }
-
-/// Starts the script's screen transition, which Script_WaitForScreen waits out.
-static inline void Script_OpenScreen(void) {
-  FieldScript_StartScreenTransition();
-}
-
-/// Sends the party out of the room by one of its exits, as a door would.
-static inline void Script_RequestExit(s32 exit) {
-  Import_ScriptRequestExit(exit);
-}
-
-/// Picks the line of dialogue the script's next message shows.
-static inline void Script_SetMessage(s32 message) {
-  FieldScript_SetMessageId(message);
-}
-
-/// Pauses the script for frames, a pause debug fast-forward skips.
-static inline void Script_Wait(s32 frames) { FieldScript_WaitFrames(frames); }
-
-/// Holds the script until its screen transition is over.
-static inline void Script_WaitForScreen(void) {
-  FieldScript_WaitTransitionFrames();
-}
-
 /// Takes a work block for a map from its heap slot, or returns the block the
 /// slot already holds.
 static inline void *Heap_Allocate(s32 slot, s32 size) {
@@ -119,7 +85,7 @@ static inline s32 Party_GiveItem(s32 item, s32 flags) {
 
 /// Ends a script's wave effect and restores the colours it changed.
 static inline void Psynergy_Cancel(void) {
-  FieldEffect_FinishWaveAndReleaseHeapBlock();
+  FieldPsynergy_FinishWaveAndReleaseHeapBlock();
 }
 
 /// Loads a map's sprite picture into VRAM; returns its first tile number, 0

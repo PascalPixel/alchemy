@@ -4,14 +4,14 @@
 ///
 /// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
 /// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
-/// EventScript_IvanRejoins: Garet says their Psynergy can't free it, and only
-/// once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does Ivan
-/// walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's Rod
-/// equipped. The ivy is never the player's target (ACTOR_NOT_TARGETED), so
+/// GomaCaveEntrance_IvanRejoins: Garet says their Psynergy can't free it, and
+/// only once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does
+/// Ivan walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's
+/// Rod equipped. The ivy is never the player's target (ACTOR_NOT_TARGETED), so
 /// that event is the only way past it. After it, Move runs
-/// EventScript_MoveStump, which sends the stump leaping out of the way once it
-/// stands on column 11: it lands in the pool under the waterfall and sinks
-/// until only its top shows, a stepping stone beside ACTOR_SUNKEN_STUMP
+/// GomaCaveEntrance_MoveStump, which sends the stump leaping out of the way
+/// once it stands on column 11: it lands in the pool under the waterfall and
+/// sinks until only its top shows, a stepping stone beside ACTOR_SUNKEN_STUMP
 /// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED; its render,
 /// places/goma-cave-entrance_goma-cave-entrance-stump-moved/map-0.png).
 ///
@@ -115,8 +115,8 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
-  FieldScript_ShowMessageAndWait(actorId, 0);
-  FieldScript_WaitFrames(frames);
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_WaitFrames(frames);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -134,14 +134,14 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
 /// pillar stands on one of three columns, and the map grid cells and flags
 /// follow it.
-static void EventScript_MoveWestPillar(void) {
+static void GomaCaveEntrance_MoveWestPillar(void) {
   struct Actor *pillar;
   s32 column;
 
   pillar = Actor_GetById(ACTOR_WEST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
-  Script_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
-  Script_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
+  Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
+  Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
     MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
   } else if (column == 16) {
@@ -155,14 +155,14 @@ static void EventScript_MoveWestPillar(void) {
 
 /// Move on the east pillar at Goma Cave Entrance: once it reaches column 23 it
 /// settles into the floor and can be walked over.
-static void EventScript_MoveEastPillar(void) {
+static void GomaCaveEntrance_MoveEastPillar(void) {
   struct Actor *pillar;
   s32 column;
 
   pillar = Actor_GetById(ACTOR_EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_PILLAR), 0);
@@ -174,28 +174,28 @@ static void EventScript_MoveEastPillar(void) {
 /// Walking into the west pillar at Goma Cave Entrance from the west (
 /// step trigger 5) or the east (step trigger 6): the leader leans on it and
 /// pushes it one step.
-static void EventScript_PushWestPillar(void) {
+static void GomaCaveEntrance_PushWestPillar(void) {
   struct FieldWork *work;
   s32 offsetX;
 
   work = gFieldWork;
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Script_PlaySong(SE_PUSH);
+  Event_PlaySong(SE_PUSH);
   // 16 pixels east from step trigger 5, west from step trigger 6.
   offsetX = (11 - (work->stepTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WaitForMoveById(ACTOR_WEST_PILLAR);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  EventScript_MoveWestPillar();
+  GomaCaveEntrance_MoveWestPillar();
   Scene_PlayQueuedMusic();
-  FieldScript_End();
+  Event_End();
 }
 
 UNUSED static void GomaCaveEntrance_NoOpA(void) {}
@@ -205,10 +205,10 @@ UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
 /// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for
 /// good.
-static void EventScript_BlowAwayIvy(void) {
-  FieldScript_Start();
+static void GomaCaveEntrance_BlowAwayIvy(void) {
+  Event_Start();
   GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
-  FieldScript_End();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -222,7 +222,7 @@ s32 Scene_Initialize(void) {
   struct Actor *movedActor;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Import_ActorSetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   Actor_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -232,7 +232,7 @@ s32 Scene_Initialize(void) {
     record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
   }
   // The player never targets the stump's ivy; only Ivan's Whirlwind in
-  // EventScript_IvanRejoins removes it.
+  // GomaCaveEntrance_IvanRejoins removes it.
   {
     struct Actor *record = Actor_GetById(ACTOR_STUMP_IVY);
 
@@ -273,15 +273,15 @@ s32 Scene_Initialize(void) {
 /// (FLAG_VAULT_THIEVES_JAILED), Ivan turns up, blows the ivy away with
 /// Whirlwind, says he could not get into Lunpa and asks to join the party; he
 /// rejoins with the Shaman's Rod equipped (FLAG_GOMA_CAVE_IVAN_JOINED).
-static void EventScript_IvanRejoins(void) {
+static void GomaCaveEntrance_IvanRejoins(void) {
   struct Actor *leader;
 
 #if TBS_PATCH_1
   Scene_PlayQueuedMusic();
 #endif
-  FieldScript_Start();
-  FieldScript_WaitFrames(30);
-  FieldScript_SetMessageId(MsgGomaNoUsePsynergy);
+  Event_Start();
+  Event_WaitFrames(30);
+  Event_SetMessageId(MsgGomaNoUsePsynergy);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
@@ -291,12 +291,12 @@ static void EventScript_IvanRejoins(void) {
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_GARET, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -307,7 +307,7 @@ static void EventScript_IvanRejoins(void) {
     }
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
-    FieldScript_End();
+    Event_End();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
     Actor_SetPosition(ACTOR_IVAN, PIXELS(360), PIXELS(248));
@@ -316,11 +316,11 @@ static void EventScript_IvanRejoins(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 208);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -331,90 +331,90 @@ static void EventScript_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
     Actor_WalkToAndWait(ACTOR_IVAN, 232, 184);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 120);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    FieldScript_WaitFrames(30);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 30);
+    Event_WaitFrames(30);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
+    Event_WaitFrames(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
 #if TBS_PATCH_1
     Scene_PlayQueuedMusic();
 #endif
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_Jump(ACTOR_GARET, 2, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_WalkToAndWait(ACTOR_IVAN, 264, 184);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    FieldScript_WaitFrames(80);
+    Event_WaitFrames(80);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -422,52 +422,52 @@ static void EventScript_IvanRejoins(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    FieldScript_WaitFrames(80);
+    Event_WaitFrames(80);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 40);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     Event_PrepareActorAndApplyValue(IVAN, 1);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     GomaCaveEntrance_GiveShamansRod();
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 184);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    FieldScript_WaitFrames(120);
+    Event_WaitFrames(120);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(50);
+    Event_WaitFrames(50);
     Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkTo(ACTOR_GARET, 248, 168);
@@ -477,17 +477,17 @@ static void EventScript_IvanRejoins(void) {
     Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
-    FieldScript_End();
+    Event_End();
   }
 }
 
 /// Move on the freed stump at Goma Cave Entrance: from column 11 it spins,
 /// leaps away and lies where it lands (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
-static void EventScript_MoveStump(void) {
+static void GomaCaveEntrance_MoveStump(void) {
   s32 column;
   struct Actor *stump;
 
-  FieldScript_Start();
+  Event_Start();
   column = Actor_GetById(ACTOR_STUMP)->x.fixed >> 20;
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
@@ -497,7 +497,7 @@ static void EventScript_MoveStump(void) {
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Ivan casts Whirlwind on the stump's ivy, and the event waits for it. The
@@ -508,13 +508,13 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   u8 flags;
 
   effectWork = gFieldEffectWork;
-  FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  FieldEffect_SetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
+  FieldPsynergy_LoadResources(ABILITY_WHIRLWIND, 1);
+  FieldPsynergy_SetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
-  FieldEffect_StartCast();
-  Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
-  FieldEffect_StopCasterHook();
+  FieldPsynergy_StartCast();
+  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
+  FieldPsynergy_StopCasterUpdate();
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
@@ -724,13 +724,13 @@ struct ActorTemplate gGomaCaveEntranceActorTemplates[] = {
 struct Trigger gGomaCaveEntranceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(EventScript_IvanRejoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_MoveEastPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayIvy) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT(GomaCaveEntrance_MoveStump) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_MoveWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT(GomaCaveEntrance_MoveEastPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT(GomaCaveEntrance_BlowAwayIvy) },
     { TRIGGERS_END },
 };
 // clang-format on

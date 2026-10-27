@@ -23,10 +23,10 @@
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
@@ -46,9 +46,9 @@
 	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
 	.set import.Actor_ConfigureSpriteColor, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.set import.Actor_ArmCallback, 1
 	.set import.FieldEffect_SpawnAttached, 1
 	.set import.FieldEffect_SetAttached, 1
@@ -58,11 +58,11 @@
 	.set import.Actor_PlaceCurrentWithinCameraBounds, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
-	.set import.Field_DispatchTypeHandler, 1
-	.set import.FieldEffect_LoadActionEffectResources, 1
-	.set import.FieldEffect_SetupActorPair, 1
-	.set import.FieldEffect_StopCasterHook, 1
-	.set import.FieldEffect_StartCast, 1
+	.set import.FieldPsynergy_RunHandler, 1
+	.set import.FieldPsynergy_LoadResources, 1
+	.set import.FieldPsynergy_SetupActorPair, 1
+	.set import.FieldPsynergy_StopCasterUpdate, 1
+	.set import.FieldPsynergy_StartCast, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Scene_PlayMusic, 1
 	.set import.FieldParticle_HasPendingTarget, 1

@@ -96,7 +96,7 @@ s32 Title_Run(void) {
           break;
       } while (gKeysPressed == 0);
     }
-    FieldScript_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
+    Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
   if (gSaveBlock.entrance == TITLE_FROM_LEMURIAN_SHIP) {
@@ -107,9 +107,9 @@ s32 Title_Run(void) {
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
-    FieldScript_WaitFrames(240);
+    Event_WaitFrames(240);
     Sound_PlaySong(MUS_SILENCE);
-    FieldScript_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_TITLE);
+    Event_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c), the
@@ -145,19 +145,19 @@ s32 Title_Run(void) {
       }
       break;
     }
-    FieldScript_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
+    Event_SetDestination((s32)&SceneId_MainMenu, MAIN_MENU_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Sound_PlaySong(MUS_TITLE_AFTER_PROLOGUE);
     Title_ShowIntro(0);
     Party_EndChildhood();
-    FieldScript_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
+    Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
     Sound_PlaySong(SONG_FADE_OUT_BGM);
   }
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Sound_PlaySong(MUS_SILENCE);
   return 0;
 }
@@ -297,7 +297,7 @@ static void Title_RevealScreen(s32 unused) {
 
   // Load while dark, then let the sprite callback reveal the lettering.
   Title_LoadBackground();
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   Task_AddFrame(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
@@ -316,7 +316,7 @@ static void Title_RevealScreen(s32 unused) {
                       IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
-  FieldScript_WaitFrames(120);
+  Event_WaitFrames(120);
   // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_16);
@@ -326,8 +326,8 @@ static void Title_RevealScreen(s32 unused) {
   // follows.
   gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 1;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   gFieldWork->transitionFrames = 60;
 }
 

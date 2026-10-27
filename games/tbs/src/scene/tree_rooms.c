@@ -35,7 +35,7 @@
 ///
 /// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot
 /// speak his lines. Walking up to him (metatile behavior 40, while
-/// FLAG_TRET_DEFEATED is clear) runs EventScript_FightTret: he roars, the party
+/// FLAG_TRET_DEFEATED is clear) runs TreeRooms_FightTret: he roars, the party
 /// gathers in front of him, and the evil within him scorns them before the
 /// battle with Tret. The battle returns to
 /// TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays the conversation
@@ -319,20 +319,20 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
-  Script_PlaySong(SE_CURSE_FALL);
-  FieldScript_Start();
-  FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance);
+  Event_PlaySong(SE_CURSE_FALL);
+  Event_Start();
+  Event_SetDestination((s32)&SceneId_TreeRooms, entrance);
   Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
   Actor_SetSpriteFlags(Actor_GetById(leaderActorId), 0);
   Actor_SetAttachedEffect(leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
   actor->groundHeight = -PIXELS(160);
   actor->gravity = PIXELS(1) / 2;
-  Script_PlaySong(SE_DUST_PUFF);
-  FieldScript_WaitFrames(3);
+  Event_PlaySong(SE_DUST_PUFF);
+  Event_WaitFrames(3);
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
@@ -350,109 +350,109 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 // are alike, on one web, and keep their numbers 1 to 9 in the order of their
 // step triggers and landing entrances, 21 to 29.
 
-static void EventScript_StepOnSecondFloorCocoon1(void) {
+static void TreeRooms_StepOnSecondFloorCocoon1(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1);
 }
 
-static void EventScript_StepOnSecondFloorCocoon2(void) {
+static void TreeRooms_StepOnSecondFloorCocoon2(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 65, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2);
 }
 
-static void EventScript_StepOnSecondFloorCocoon3(void) {
+static void TreeRooms_StepOnSecondFloorCocoon3(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 66, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3);
 }
 
-static void EventScript_StepOnSecondFloorCocoon4(void) {
+static void TreeRooms_StepOnSecondFloorCocoon4(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 67, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4);
 }
 
-static void EventScript_StepOnSecondFloorCocoon5(void) {
+static void TreeRooms_StepOnSecondFloorCocoon5(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 68, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5);
 }
 
-static void EventScript_StepOnSecondFloorCocoon6(void) {
+static void TreeRooms_StepOnSecondFloorCocoon6(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 69, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6);
 }
 
-static void EventScript_StepOnSecondFloorCocoon7(void) {
+static void TreeRooms_StepOnSecondFloorCocoon7(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 70, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7);
 }
 
-static void EventScript_StepOnSecondFloorCocoon8(void) {
+static void TreeRooms_StepOnSecondFloorCocoon8(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 71, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8);
 }
 
-static void EventScript_StepOnSecondFloorCocoon9(void) {
+static void TreeRooms_StepOnSecondFloorCocoon9(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 72, 35,
                          TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9);
 }
 
-static void EventScript_StepOnThirdFloorWestCocoon(void) {
+static void TreeRooms_StepOnThirdFloorWestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 73, 35,
                          TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON);
 }
 
-static void EventScript_StepOnThirdFloorEastCocoon(void) {
+static void TreeRooms_StepOnThirdFloorEastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 74, 35,
                          TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorCenterCocoon(void) {
+static void TreeRooms_StepOnFifthFloorCenterCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN, 79, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorNorthwestCocoon(void) {
+static void TreeRooms_StepOnFifthFloorNorthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 75,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorNorthCocoon(void) {
+static void TreeRooms_StepOnFifthFloorNorthCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN, 76, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorNortheastCocoon(void) {
+static void TreeRooms_StepOnFifthFloorNortheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 77,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorWestCocoon(void) {
+static void TreeRooms_StepOnFifthFloorWestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN, 78, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorEastCocoon(void) {
+static void TreeRooms_StepOnFifthFloorEastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN, 80, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
 /// Cocoon 56 lands at the same spot as cocoon 54: their
 /// entrances agree.
-static void EventScript_StepOnFifthFloorSouthwestCocoon(void) {
+static void TreeRooms_StepOnFifthFloorSouthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorSouthCocoon(void) {
+static void TreeRooms_StepOnFifthFloorSouthCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN, 82, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorSoutheastCocoon(void) {
+static void TreeRooms_StepOnFifthFloorSoutheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 83,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
 }
 
-static void EventScript_StepOnFifthFloorFarSoutheastCocoon(void) {
+static void TreeRooms_StepOnFifthFloorFarSoutheastCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN,
                          84, 35,
                          TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON);
@@ -460,7 +460,7 @@ static void EventScript_StepOnFifthFloorFarSoutheastCocoon(void) {
 
 /// Jumping on from a cocoon in Tret Tree (Field_TryJumpForward) clears the
 /// latch, so the next step on a cocoon counts again.
-static void EventScript_JumpFromCocoon(void) {
+static void TreeRooms_JumpFromCocoon(void) {
   if (Field_TryJumpForward() == 0)
     *sLastCocoon = -1;
 }
@@ -473,16 +473,16 @@ const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 /// and the evil within him scorns them before the battle with Tret starts.
 /// "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The battle returns
 /// to TREE_ROOMS_AFTER_FIGHT_TRET.
-static void EventScript_FightTret(void) {
+static void TreeRooms_FightTret(void) {
   s32 hasMia;
   struct Actor *leader;
 
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
-  FieldScript_Start();
-  Script_PlaySong(SONG_FADE_OUT_BGM);
-  FieldScript_SetMessageId(MsgTretHmHrooom);
-  FieldScript_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Script_PlaySong(MUS_CONFRONTATION);
+  Event_Start();
+  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_SetMessageId(MsgTretHmHrooom);
+  Event_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_PlaySong(MUS_CONFRONTATION);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -509,17 +509,17 @@ static void EventScript_FightTret(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
   Actor_SetScript(ACTOR_GARET, gTreeRooms_GaretGathersActions);
   Actor_RunScriptAndWait(ACTOR_IVAN, gTreeRooms_IvanGathersActions);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
-  Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
@@ -529,12 +529,12 @@ static void EventScript_FightTret(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_MIA, 1);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -543,18 +543,18 @@ static void EventScript_FightTret(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  FieldScript_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  FieldScript_SetNextDestination((s32)&SceneId_TreeRooms,
-                                 TREE_ROOMS_AFTER_FIGHT_TRET);
+  Event_SetAfterBattleDestination((s32)&SceneId_TreeRooms,
+                                  TREE_ROOMS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// After the battle with Tret, in Tret Tree: a passage opens in his room, and
@@ -578,8 +578,8 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindMember(ITEM_HERMES_WATER);
-  Script_PlaySong(SONG_FADE_OUT_BGM);
-  FieldScript_Start();
+  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_SetSpeed(ACTOR_GARET, 0xcccc, 0x6666);
   Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
@@ -602,16 +602,16 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   WaitFrames(10);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 48;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(20);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(20);
   FieldCamera_SetSpeed(0x13333, 0x2666);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
-  Script_PlaySong(SE_MAP_EXIT);
+  Event_PlaySong(SE_MAP_EXIT);
   MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
   MapGrid_CopyCells(26, 38, 1, 1, openingColumn, 43);
   WaitFrames(4);
@@ -622,37 +622,37 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
   WaitFrames(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
-  FieldScript_SetMessageId(MsgTretMmmmm);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_SetMessageId(MsgTretMmmmm);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
-  FieldScript_WaitFrames(60);
-  Script_PlaySong(MUS_FOREST);
+  Event_WaitFrames(60);
+  Event_PlaySong(MUS_FOREST);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Script_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_WaitFrames(40);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_WaitFrames(40);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -661,19 +661,19 @@ static void TreeRooms_PlayPostBattleConversation(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   // Garet and Ivan will not let Tret die while they still need his help.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_GARET), 0, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  Event_WaitFrames(40);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
@@ -684,25 +684,25 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
-  Script_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-    FieldScript_SetMessageId(MsgTretDoingNowsNot);
-    Script_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+    Event_SetMessageId(MsgTretDoingNowsNot);
+    Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-    Script_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
+    Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
   }
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
-  FieldScript_SetMessageId(MsgTretTurnedPeopleKolima);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  Event_SetMessageId(MsgTretTurnedPeopleKolima);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -715,7 +715,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   sSparkFrame = 0;
   {
     struct FieldPosition *origin = &sSparkOrigin;
@@ -725,35 +725,35 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     origin->z = PIXELS(52);
   }
   Task_AddFrame(sparkTask, TASK_PASS_FRAME);
-  FieldScript_WaitFrames(220);
+  Event_WaitFrames(220);
   Task_Remove(sparkTask);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Script_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-  Script_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_GARET), 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 10);
   if (hasMia != 0) {
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    FieldScript_ShowMessageThenWait(SPEAKER(ACTOR_MIA), 0, 10);
+    Event_ShowMessageThenWait(SPEAKER(ACTOR_MIA), 0, 10);
   }
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -765,11 +765,11 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Actor_SetScript(ACTOR_MIA, actions);
   }
   Actor_RunScriptAndWait(ACTOR_IVAN, actions);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(FLAG_TRET_DEFEATED);
   Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
@@ -833,7 +833,7 @@ s32 TreeRooms_EnterRoom(void) {
     Import_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
     Import_ActorSetPosition(ACTOR_TRET, 0, 0);
   }
-  if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION))
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
   grid = HEAP_SLOT_BLOCK(8);
   // Match the first layer's parallax offset and scale to the room bounds.
@@ -861,7 +861,7 @@ s32 TreeRooms_EnterRoom(void) {
   // lands in a cloud of dust in front of Tret.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
-    FieldScript_StartScreenTransition();
+    Event_StartScreenTransition();
     Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
     Actor_SetSpriteFlags(Actor_GetById(leaderActorId), 0);
     Actor_SetAttachedEffect(leaderActorId,
@@ -871,15 +871,15 @@ s32 TreeRooms_EnterRoom(void) {
     actor->y.fixed = PIXELS(100);
     actor->groundHeight = -PIXELS(160);
     actor->gravity = PIXELS(1) / 2;
-    Script_PlaySong(SE_DUST_PUFF);
-    FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
-    FieldScript_WaitFrames(20);
+    Event_PlaySong(SE_DUST_PUFF);
+    Event_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
+    Event_WaitFrames(20);
     actor->layer = 2;
     Actor_SetSpritePriority(leaderActorId, 3);
-    FieldScript_WaitFrames(2);
+    Event_WaitFrames(2);
     FieldEffect_SetAttached(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    FieldScript_WaitFrames(8);
+    Event_WaitFrames(8);
   } else if (entrance == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       TreeRooms_RunLandingDustEvent();
@@ -1087,7 +1087,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
   case 20:
   case 30:
   case 40:
-    Script_PlaySong(SE_SHIMMER);
+    Event_PlaySong(SE_SHIMMER);
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
@@ -1112,7 +1112,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     // Each wave also plays the closing sound.
     // fall through
   case 44:
-    Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
     break;
   }
   if (++sSparkFrame > 120) {
@@ -1136,9 +1136,9 @@ static void TreeRooms_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_EFFECT_ACTS) stops the map
+/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_ACTS) stops the map
 /// tint until the map is entered again.
-static void EventScript_CastReveal(void) {
+static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
@@ -1157,7 +1157,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   s32 velocityX;
   s32 velocityZ;
 
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
@@ -1165,12 +1165,12 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Script_PlaySong(SE_DUST_PUFF);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_PlaySong(SE_DUST_PUFF);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  FieldScript_WaitFrames(24);
+  Event_WaitFrames(24);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
@@ -1193,7 +1193,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       particleOptions);
   }
-  Script_PlaySong(SE_THUMP);
+  Event_PlaySong(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -1204,7 +1204,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
-  FieldScript_End();
+  Event_End();
 }
 
 s32 gFieldEffect_ShortScript[] = {
@@ -1257,7 +1257,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The party gathers in front of Tret before the battle (EventScript_FightTret),
+/// The party gathers in front of Tret before the battle (TreeRooms_FightTret),
 /// each walking to its own place.
 s32 gTreeRooms_LeaderGathersActions[] = {
     SC_ANIMATION(2),
@@ -1492,92 +1492,92 @@ struct Trigger gTreeRoomsTriggers[] = {
      TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_JumpFromCocoon)},
+     EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon1)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon1)},
     {TRIGGER_STEP, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon2)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon2)},
     {TRIGGER_STEP, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon3)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon3)},
     {TRIGGER_STEP, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon4)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon4)},
     {TRIGGER_STEP, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon5)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon5)},
     {TRIGGER_STEP, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon6)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon6)},
     {TRIGGER_STEP, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon7)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon7)},
     {TRIGGER_STEP, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon8)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon8)},
     {TRIGGER_STEP, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnSecondFloorCocoon9)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoon9)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnThirdFloorWestCocoon)},
+     EVENT(TreeRooms_StepOnThirdFloorWestCocoon)},
     {TRIGGER_STEP, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnThirdFloorEastCocoon)},
+     EVENT(TreeRooms_StepOnThirdFloorEastCocoon)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorCenterCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorCenterCocoon)},
     {TRIGGER_STEP, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorNorthwestCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorNorthwestCocoon)},
     {TRIGGER_STEP, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorNorthCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorNorthCocoon)},
     {TRIGGER_STEP, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorNortheastCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorNortheastCocoon)},
     {TRIGGER_STEP, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorWestCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorWestCocoon)},
     {TRIGGER_STEP, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorEastCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorEastCocoon)},
     {TRIGGER_STEP, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorSouthwestCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorSouthwestCocoon)},
     {TRIGGER_STEP, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorSouthCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorSouthCocoon)},
     {TRIGGER_STEP, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorSoutheastCocoon)},
+     EVENT(TreeRooms_StepOnFifthFloorSoutheastCocoon)},
     {TRIGGER_STEP, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOnFifthFloorFarSoutheastCocoon)},
-    {TRIGGER_STEP, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(EventScript_FightTret)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
+     EVENT(TreeRooms_StepOnFifthFloorFarSoutheastCocoon)},
+    {TRIGGER_STEP, 40, FLAG_TRET_DEFEATED, EVENT(TreeRooms_FightTret)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(TreeRooms_CastReveal)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 102, 0x350, FIND_PSYNERGY_STONE},

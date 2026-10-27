@@ -91,7 +91,7 @@ enum InteriorActorId {
   /// enter the fortress." (MsgLunpaInteriorsSecondHomeBSealed)
   ACTOR_CHEF,
   /// Behind the temple's altar; across it, the Sanctum's services
-  /// (EventScript_TalkToHealer).
+  /// (RockRooms_TalkToHealer).
   /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
   /// In the Healer's sprite, a bearded man in a long robe

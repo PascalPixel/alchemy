@@ -213,17 +213,17 @@
 	import InventorySnapshot_Save, InventorySnapshot_SaveFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 @ Overworld bank (far_call/OVERWORLD.S)
-	import FieldScript_WaitFrames, FieldScript_WaitFramesFar
-	import FieldScript_Start, FieldScript_StartFar
-	import FieldScript_End, FieldScript_EndFar
+	import Event_WaitFrames, Event_WaitFramesFar
+	import Event_Start, Event_StartFar
+	import Event_End, Event_EndFar
 	import Event_CallWithLastActiveActorId, Event_CallWithLastActiveActorIdFar
 	import Scene_AssignViewFlags, Scene_AssignViewFlagsFar
-	import FieldScript_SetTriggers, FieldScript_SetTriggersFar
+	import Event_SetTriggers, Event_SetTriggersFar
 	import Event_PrepareActorAndApplyValue, Event_PrepareActorAndApplyValueFar
 	import Event_PrepareTwoActorsAndApply, Event_PrepareTwoActorsAndApplyFar
 	import Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
-	import FieldScript_AskYesNoWithActorAnimation, FieldScript_AskYesNoWithActorAnimationFar
+	import Event_AskYesNoWithActorAnimation, Event_AskYesNoWithActorAnimationFar
 	import Party_LearnAbility, Party_LearnAbilityFar
 	import Actor_GetById, Actor_GetByIdFar
 	import Actor_ReleaseById, Actor_ReleaseByIdFar
@@ -253,13 +253,13 @@
 	import Actor_ConfigureSpriteColor, Actor_ConfigureSpriteColorFar
 	import Actor_SetSpriteColor, Actor_SetSpriteColorFar
 	import Actor_SetTargetAndCallback, Actor_SetTargetAndCallbackFar
-	import FieldScript_SetMessageId, FieldScript_SetMessageIdFar
+	import Event_SetMessageId, Event_SetMessageIdFar
 	import FieldMessage_ShowAtActor, FieldMessage_ShowAtActorFar
-	import FieldScript_ShowMessageAndWait, FieldScript_ShowMessageAndWaitFar
-	import FieldScript_ShowMessageThenWait, FieldScript_ShowMessageThenWaitFar
-	import FieldScript_AskYesNoAndShowResponse, FieldScript_AskYesNoAndShowResponseFar
+	import Event_ShowMessageAndWait, Event_ShowMessageAndWaitFar
+	import Event_ShowMessageThenWait, Event_ShowMessageThenWaitFar
+	import Event_AskYesNoAndShowResponse, Event_AskYesNoAndShowResponseFar
 	import Actor_ArmCallback, Actor_ArmCallbackFar
-	import Import_ScriptShowTwoMessagesAndWait, FieldScript_ShowTwoMessagesAndWaitFar
+	import Import_EventShowTwoMessagesAndWait, Event_ShowTwoMessagesAndWaitFar
 	import Message_SetVoiceFromActor, Message_SetVoiceFromActorFar
 	import Actor_SetSpritePriority, Actor_SetSpritePriorityFar
 	import FieldEffect_SpawnAttached, FieldEffect_SpawnAttachedFar
@@ -272,13 +272,13 @@
 	import Actor_PlaceCurrentWithinCameraBounds, Actor_PlaceCurrentWithinCameraBoundsFar
 	import FieldCamera_GetActor, FieldCamera_GetActorFar
 	import MapGrid_SetCameraBounds, MapGrid_SetCameraBoundsFar
-	import FieldScript_SetDestination, FieldScript_SetDestinationFar
-	import Import_ScriptRequestExit, FieldScript_SetExitRequestFar
+	import Event_SetDestination, Event_SetDestinationFar
+	import Import_EventSetExitRequest, Event_SetExitRequestFar
 	import Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
 	import Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
-	import FieldScript_SetNextDestination, FieldScript_SetNextDestinationFar
-	import FieldScript_SetDefeatDestination, FieldScript_SetDefeatDestinationFar
-	import FieldScript_RequestDestination, FieldScript_RequestDestinationFar
+	import Event_SetAfterBattleDestination, Event_SetAfterBattleDestinationFar
+	import Event_SetDefeatDestination, Event_SetDefeatDestinationFar
+	import Event_LeaveFor, Event_LeaveForFar
 	import Field_TryJumpForward, Field_TryJumpForwardFar
 	import Field_ClimbDown, Field_ClimbDownFar
 	import Field_ClimbUp, Field_ClimbUpFar
@@ -294,9 +294,9 @@
 	import PaletteFade_SetTarget, PaletteFade_SetTargetFar
 	import PaletteFade_SetSource, PaletteFade_SetSourceFar
 	import PaletteFade_StartInterpolation, PaletteFade_StartInterpolationFar
-	import FieldScript_StartScreenTransition, FieldScript_StartScreenTransitionFar
-	import FieldScript_FinishScreenTransition, FieldScript_FinishScreenTransitionFar
-	import FieldScript_WaitTransitionFrames, FieldScript_WaitTransitionFramesFar
+	import Event_StartScreenTransition, Event_StartScreenTransitionFar
+	import Event_FinishScreenTransition, Event_FinishScreenTransitionFar
+	import Event_WaitTransitionFrames, Event_WaitTransitionFramesFar
 	import ScanlineEffect_InitWave, ScanlineEffect_InitWaveFar
 	import ScanlineEffect_Stop, ScanlineEffect_StopFar
 	import FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
@@ -308,16 +308,16 @@
 	import WorldMap_Unfreeze, WorldMap_UnfreezeFar
 	import Actor_Lookup, Actor_LookupFar
 	import FieldEffect_StartFadeOverlay, FieldEffect_StartFadeOverlayFar
-	import Field_DispatchTypeHandler, Field_DispatchTypeHandlerFar
-	import FieldEffect_LoadActionEffectResources, FieldEffect_LoadActionEffectResourcesFar
-	import FieldEffect_SetupActorPair, FieldEffect_SetupActorPairFar
-	import FieldEffect_StopCasterHook, FieldEffect_StopCasterHookFar
-	import FieldEffect_End, FieldEffect_EndFar
-	import FieldEffect_StartCast, FieldEffect_StartCastFar
+	import FieldPsynergy_RunHandler, FieldPsynergy_RunHandlerFar
+	import FieldPsynergy_LoadResources, FieldPsynergy_LoadResourcesFar
+	import FieldPsynergy_SetupActorPair, FieldPsynergy_SetupActorPairFar
+	import FieldPsynergy_StopCasterUpdate, FieldPsynergy_StopCasterUpdateFar
+	import FieldPsynergy_End, FieldPsynergy_EndFar
+	import FieldPsynergy_StartCast, FieldPsynergy_StartCastFar
 	import Field_EndBusyAndReveal, Field_EndBusyAndRevealFar
-	import FieldEffect_StartMindReadWave, FieldEffect_StartMindReadWaveFar
-	import FieldEffect_FinishWaveAndReleaseHeapBlock, FieldEffect_FinishWaveAndReleaseHeapBlockFar
-	import FieldEffect_RestoreMindReadPalette, FieldEffect_RestoreMindReadPaletteFar
+	import FieldPsynergy_StartMindReadWave, FieldPsynergy_StartMindReadWaveFar
+	import FieldPsynergy_FinishWaveAndReleaseHeapBlock, FieldPsynergy_FinishWaveAndReleaseHeapBlockFar
+	import FieldPsynergy_RestoreMindReadPalette, FieldPsynergy_RestoreMindReadPaletteFar
 	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
 	import FieldYesNo_Ask, FieldYesNo_AskFar
@@ -329,18 +329,18 @@
 	import FieldParticle_Initialize, FieldParticle_InitializeFar
 	import FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar
 	import Camera_WorldToScreen, Camera_WorldToScreenFar
-	import FieldScript_ClearInvalidPackedValues, FieldScript_ClearInvalidPackedValuesFar
+	import Event_ClearInvalidPackedValues, Event_ClearInvalidPackedValuesFar
 	import FieldEffect_InitializeSlots, FieldEffect_InitializeSlotsFar
 	import FieldEffect_ClearActiveSlotsAndScheduleUpdates, FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar
 	import Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
 	import Actor_OffsetPositionAndReset, Actor_OffsetPositionAndResetFar
 	import Actor_CommitPositionAndActivate, Actor_CommitPositionAndActivateFar
 	import Actor_LinkAndSetScript, Actor_LinkAndSetScriptFar
-	import FieldEffect_PauseActor, FieldEffect_PauseActorFar
+	import FieldPsynergy_HaltActor, FieldPsynergy_HaltActorFar
 	import Actor_Snapshot, Save_CaptureActorsFar
 	import Actor_Restore, Actor_RestoreFar
 	import FieldEffect_ScheduleRatioTransition, FieldEffect_ScheduleRatioTransitionFar
-	import FieldScript_WaitForZoomTransition, FieldScript_WaitForZoomTransitionFar
+	import Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
 	import Actor_SetMovementType, Actor_SetMovementTypeFar
 	import Scene_QueueMusic, Scene_QueueMusicFar
 	import Scene_PlayQueuedMusic, Scene_PlayQueuedMusicFar

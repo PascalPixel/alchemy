@@ -142,7 +142,7 @@ enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.
-static void EventScript_FightForge(void) {
+static void GomaCavePillar_FightForge(void) {
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_WITNESS, 2, 0);
   Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
@@ -246,7 +246,7 @@ static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
 
 /// Move on the west pillar in Goma Cave: it slides between its two places,
 /// and the map grid cells follow it.
-static void EventScript_MoveWestPillar(void) {
+static void GomaCavePillar_MoveWestPillar(void) {
   struct Actor *actor;
   s32 x;
 
@@ -255,7 +255,7 @@ static void EventScript_MoveWestPillar(void) {
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
-  FieldScript_Start();
+  Event_Start();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
     GameFlag_Clear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -263,7 +263,7 @@ static void EventScript_MoveWestPillar(void) {
     GomaCavePillar_CopyWestPillarCells(24);
     GameFlag_Set(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// While the stump teeters, dust falls from it: one fragment every eighth
@@ -338,7 +338,7 @@ s32 gGomaCavePillar_WitnessFrames;
 /// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL):
 /// once it is pushed to the edge (column 25), it teeters shedding dust, tips
 /// over and falls into the room below with a crash that shakes the screen.
-static void EventScript_PushStumpOver(void) {
+static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
   s32 zero;
   void (*fragmentCallback)(void);
@@ -356,7 +356,7 @@ static void EventScript_PushStumpOver(void) {
 
   stump = Actor_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
-  FieldScript_Start();
+  Event_Start();
   if (column == 25) {
     overlayActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
     zero = 0;
@@ -369,21 +369,21 @@ static void EventScript_PushStumpOver(void) {
     blendActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
     Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
     Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     Task_AddFrame(fragmentCallback, TASK_PASS_FRAME);
     Sound_PlaySong(SE_RUMBLE);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     bounceActor = Actor_GetById(ACTOR_STUMP);
     bounceActor->bounce = zero;
     gravityActor = Actor_GetById(ACTOR_STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
-    FieldScript_WaitFrames(3);
+    Event_WaitFrames(3);
     // It tips over the edge.
     Actor_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Sound_PlaySong(SE_STOP_ACTION_SE);
@@ -391,7 +391,7 @@ static void EventScript_PushStumpOver(void) {
     movedActor = Actor_GetById(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
     Task_Remove(fragmentCallback);
-    FieldScript_WaitFrames(12);
+    Event_WaitFrames(12);
     Sound_PlaySong(SE_STONE_GRIND);
     xSource = Actor_GetById(ACTOR_STUMP);
     randomX = Import_RandomNext();
@@ -413,7 +413,7 @@ static void EventScript_PushStumpOver(void) {
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     // It lands below; the shake dies down before the map grid cells change.
     Sound_PlaySong(SE_CAST);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -424,7 +424,7 @@ static void EventScript_PushStumpOver(void) {
     GameFlag_Set(FLAG_GOMA_CAVE_STUMP_FELL);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
@@ -470,24 +470,24 @@ static void GomaCavePillar_SettleEastPillar(void) {
 
 /// Move on the east pillar in Goma Cave, until it is in its place
 /// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
-static void EventScript_MoveEastPillar(void) {
-  FieldScript_Start();
+static void GomaCavePillar_MoveEastPillar(void) {
+  Event_Start();
   GomaCavePillar_SettleEastPillar();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into the east pillar in Goma Cave pushes it a step, until it is in
 /// its place.
-static void EventScript_PushEastPillar(void) {
-  FieldScript_Start();
+static void GomaCavePillar_PushEastPillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
   GomaCavePillar_SettleEastPillar();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking west into the gap in Goma Cave (metatile behavior 20): the leader
 /// jumps across it. Later patches use the shared forward jump.
-static void EventScript_JumpGapWest(void) {
+static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
 #else
@@ -505,7 +505,7 @@ static void EventScript_JumpGapWest(void) {
   destination->y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldActor_CheckMovementCollision(leader, destination) == 0) {
-    FieldScript_Start();
+    Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
@@ -521,7 +521,7 @@ static void EventScript_JumpGapWest(void) {
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
-    FieldScript_End();
+    Event_End();
   }
 #endif
 }
@@ -562,16 +562,16 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
 /// is amazed, `You got it? Wow, that's pretty impressive!`, then walks off for
 /// good.
-static void EventScript_WitnessCheersForgeCaught(void) {
+static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
-  FieldScript_Start();
+  Event_Start();
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_RunRepeatedMotion(ACTOR_WITNESS, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  FieldScript_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
-  Script_ShowMessage(ACTOR_WITNESS, 0);
+  Event_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
+  Event_ShowMessage(ACTOR_WITNESS, 0);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpeed(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
@@ -580,7 +580,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
   Actor_SetPosition(ACTOR_WITNESS, PIXELS(0), PIXELS(0));
   Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Sets up the room as the party enters: the pillars and the stump where the
@@ -618,14 +618,14 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gSaveBlock.entrance == ENTRANCE_STUMP_FALL) {
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     Actor_SetPosition(ACTOR_STUMP, PIXELS(384), PIXELS(192));
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     Actor_GetById(ACTOR_STUMP)->layer = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);
-    FieldScript_WaitFrames(60);
-    EventScript_PushStumpOver();
+    Event_WaitFrames(60);
+    GomaCavePillar_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.
   if (gSaveBlock.pendingDjinni != 0) {
@@ -731,18 +731,18 @@ struct Trigger gGomaCavePillar_Triggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_PushEastPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpGapWest) },
-    { TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightForge) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT(GomaCavePillar_PushEastPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(GomaCavePillar_JumpGapWest) },
+    { TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT(GomaCavePillar_FightForge) },
     { TRIGGER_TALK, ACTOR_WITNESS, FLAG_DJINNI_HIDING(DJINNI_FORGE), MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
     { TRIGGER_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, FLAG_DJINNI_HIDING(DJINNI_FORGE), MSGNO(MsgVaultItJustWhackedMeInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(EventScript_PushStumpOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_MoveEastPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCavePillar_MoveWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT(GomaCavePillar_PushStumpOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT(GomaCavePillar_MoveEastPillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGER_RAISED, RAISED_FORGE_JOINED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WitnessCheersForgeCaught) },
+    { TRIGGER_RAISED, RAISED_FORGE_JOINED, CONDITION_ALWAYS, EVENT(GomaCavePillar_WitnessCheersForgeCaught) },
     { TRIGGERS_END },
 };
 // clang-format on

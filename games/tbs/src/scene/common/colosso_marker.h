@@ -73,14 +73,14 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
   actor->scaleX = 0x11000;
   actor->scaleY = 0xf000;
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   actor->scaleX = 0x10000;
   actor->scaleY = 0x10000;
-  FieldScript_WaitFrames(13);
+  Event_WaitFrames(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
   Actor_SetAnimationAndWait(id, 3);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 }
 
 /// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
@@ -101,7 +101,7 @@ void Colosso_RestoreWarrior(s32 id) {
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);
     Import_ActorSetAnimation(id, 3);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
   }
   zero = 0;
   // Stored as bytes through a pointer, the plain-C form of system->fill and

@@ -200,7 +200,7 @@ void MercuryLighthouse_ChargeLights(void) {
                ->actors[gSaveBlock.leaderActorId];
   if ((u32)state->levels > 2)
     return;
-  FieldScript_Start();
+  Event_Start();
   pillar = state->pillar;
   if (pillar == 0) {
     actor = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
@@ -237,7 +237,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
   state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
   GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
-  FieldScript_End();
+  Event_End();
 }
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
@@ -313,7 +313,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
       to->behavior == state->poolBehavior && state->levels == 0)
     return;
 
-  FieldScript_Start();
+  Event_Start();
   if (FieldActor_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
       0)
     return;
@@ -391,7 +391,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   }
   state->rippleTimer = 0;
-  FieldScript_End();
+  Event_End();
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 

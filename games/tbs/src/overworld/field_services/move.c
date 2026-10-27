@@ -64,7 +64,7 @@ void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
 /// Where the target cannot go, an error sound plays every 16 frames. When the
 /// push would run into the caster, the caster blocks it or, when the cell
 /// beyond is free, is pushed along too.
-void FieldEffect_SteerPushedTarget(s32 targetId) {
+void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   struct Vector3 position;
   struct Vector3 beyond;
   struct FieldEffectWork *effectWork;
@@ -91,12 +91,12 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   moved = 0;
   if (target == NULL)
     return;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   user->linkedActor = target;
   Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_StartItemBreak(user);
   if (pusher == NULL) {
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
     return;
   }
 
@@ -238,10 +238,10 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   Anim_ApplyChildValuesFar(target, effectWork->savedPalette);
   Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
-  FieldEffect_StopCasterHook();
+  FieldPsynergy_StopCasterUpdate();
   if (moved == 1)
     (Actor_GetById(effectWork->firstActorId))->steeringFlags |= 1;
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(pusher);
 }
 
@@ -301,7 +301,7 @@ next_state:
 /// frames and then turns into particles.
 ///
 /// Abilities: Move (FIELD_PSYNERGY_MOVE).
-void FieldEffect_RunMove(void) {
+void FieldPsynergy_Move(void) {
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
   void *object;
@@ -313,7 +313,7 @@ void FieldEffect_RunMove(void) {
    * mainObject load below the frame's sub sp; as a plain call, 2 of 24
    * instructions differ in tbs-en. */
   do {
-    FieldEffect_FadeToEffectColor();
+    FieldPsynergy_FadeToCastColor();
   } while (0);
   object = FieldEffect_StartItemBreak(object);
   FieldEffect_SnapScaleToFull(object);
@@ -321,7 +321,7 @@ void FieldEffect_RunMove(void) {
     Actor_SelectAnimationFar(object, 4);
     WaitFrames(30);
   }
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(object);
 }
 

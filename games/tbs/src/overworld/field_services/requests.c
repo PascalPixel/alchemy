@@ -66,8 +66,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 
 /// Sets the map and entrance that the field goes to next
 /// (gSaveBlock.nextScene and nextEntrance). About 30 maps and the Battle Arena
-/// reach it through FieldScript_SetNextDestinationFar.
-void FieldScript_SetNextDestination(s32 sceneId, s32 entrance) {
+/// reach it through Event_SetAfterBattleDestinationFar.
+void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.nextScene = sceneId;
   gSaveBlock.nextEntrance = entrance;
 }
@@ -75,8 +75,8 @@ void FieldScript_SetNextDestination(s32 sceneId, s32 entrance) {
 /// Sets where the party wakes up after losing a battle
 /// (gSaveBlock.defeatScene and defeatEntrance). The maps before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
-/// through FieldScript_SetDefeatDestinationFar.
-void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance) {
+/// through Event_SetDefeatDestinationFar.
+void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.defeatScene = sceneId;
   gSaveBlock.defeatEntrance = entrance;
 }
@@ -84,8 +84,8 @@ void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance) {
 /// Makes the script leave for entrance entrance of map sceneId: sets
 /// gSaveBlock.sceneId and entrance and raises the exit request
 /// EXIT_KEEP_DESTINATION (999), so the map loop leaves on its next pass. Only
-/// Tolbi's spring reaches it, through FieldScript_RequestDestinationFar.
-void FieldScript_RequestDestination(u16 sceneId, u16 entrance) {
+/// Tolbi's spring reaches it, through Event_LeaveForFar.
+void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gSaveBlock.sceneId = sceneId;
   gSaveBlock.entrance = entrance;

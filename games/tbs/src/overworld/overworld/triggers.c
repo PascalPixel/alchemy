@@ -234,10 +234,10 @@ s32 Scene_TalkToActor(s32 id) {
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
-        FieldScript_Start();
-        FieldScript_SetMessageId(message);
-        FieldScript_ShowMessageAndWait(id, 0);
-        FieldScript_End();
+        Event_Start();
+        Event_SetMessageId(message);
+        Event_ShowMessageAndWait(id, 0);
+        Event_End();
         goto finish;
       }
     }
@@ -268,10 +268,10 @@ s32 Scene_TalkToActor(s32 id) {
     // A result below 0x10000 is a message; above, a function to call.
     if (trigger->result < 0x10000) {
       Message_SetDecodeFlagsFar(usePausedDialogue);
-      FieldScript_Start();
-      FieldScript_SetMessageId(trigger->result);
-      FieldScript_ShowMessageAndWait(id, 0);
-      FieldScript_End();
+      Event_Start();
+      Event_SetMessageId(trigger->result);
+      Event_ShowMessageAndWait(id, 0);
+      Event_End();
     } else {
       Leader_StopMoving();
       ((void (*)(s32))trigger->result)(id);
@@ -298,7 +298,7 @@ finish:
   // Both a normal event and the paused actor's fallback line release
   // the pause.
   if (actorPaused) {
-    FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+    FieldPsynergy_ResumeHaltedActor(gSaveBlock.haltedActor);
     gSaveBlock.haltedActor = -1;
   }
   return result;
@@ -319,11 +319,11 @@ s32 Scene_RunRaisedTrigger(s32 value) {
     result = trigger->result;
     if (result != 0) {
       if (result < 0x10000) {
-        FieldScript_Start();
-        FieldScript_SetMessageId(trigger->result);
-        FieldScript_ShowMessageAndWait(-1, 0);
+        Event_Start();
+        Event_SetMessageId(trigger->result);
+        Event_ShowMessageAndWait(-1, 0);
         handled = 0;
-        FieldScript_End();
+        Event_End();
       } else {
         ((void (*)(s32))result)(value);
         handled = 0;
@@ -357,11 +357,11 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
       work->blockedSteps = 0;
     }
     if (touch->result < 0x10000) {
-      FieldScript_Start();
-      FieldScript_SetMessageId(touch->result);
-      FieldScript_ShowMessageAndWait(-1, 0);
+      Event_Start();
+      Event_SetMessageId(touch->result);
+      Event_ShowMessageAndWait(-1, 0);
       handled = 0;
-      FieldScript_End();
+      Event_End();
     } else {
       ((void (*)(s32))touch->result)(value);
       handled = 0;
@@ -502,7 +502,7 @@ s32 Field_ExamineCell(s32 tile) {
         }
       } else {
         // A chest; its condition flag is set once it has been opened.
-        FieldScript_Start();
+        Event_Start();
         if (GameFlag_IsConditionActive(condition) != 0) {
           // Bit 16 of the value marks a chest the party's own characters
           // cannot open ("Can't open it").
@@ -537,7 +537,7 @@ s32 Field_ExamineCell(s32 tile) {
               PartyStatus_CloseFar();
               Actor_SelectAnimationFar(object, 2);
               Sound_PlaySongFar(SE_GLITTER);
-              FieldScript_WaitFrames(30);
+              Event_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, FIELD_MESSAGE_ZOOM);
               TreasureSpot_Hide(tile);
               if (condition != -1)
@@ -634,7 +634,7 @@ s32 Field_ExamineCell(s32 tile) {
           FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                FIELD_MESSAGE_ZOOM);
         }
-        FieldScript_End();
+        Event_End();
         Scene_PlayQueuedMusic();
       }
     } else {

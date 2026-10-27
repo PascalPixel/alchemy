@@ -283,29 +283,29 @@ const struct ActorTemplate *TolbiSpring_GetActorTemplates(void) {
 /// A visitor at Tolbi Spring asks whether the party has a Lucky Medal.
 static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(question + 1);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(question + 1);
   } else {
-    FieldScript_SetMessageId(question + 2);
+    Event_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// A Lucky Dice player in Tolbi asks whether this is the party's first game.
 static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(question + 1);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(question + 1);
   } else {
-    FieldScript_SetMessageId(question + 2);
+    Event_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// Searching Tolbi Spring: the spring rises into view the first time in the
@@ -314,31 +314,31 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gSaveBlock.leaderActorId;
 
-  if (Script_GetFlag(FLAG_TOLBI_SPRING_RISEN) == 0) {
+  if (Event_GetFlag(FLAG_TOLBI_SPRING_RISEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_SPRING_RISEN);
     TolbiSpring_RiseAndFadeIn();
   }
-  FieldScript_Start();
+  Event_Start();
   Actor_SetPositionAndReset(leader, 120, 152);
   Actor_ArmCallback(leader, FACING_SOUTH, 0);
   TolbiSpring_RunSpringGame();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Reads the Lucky Wheels rules sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsRules(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiLuckyWheelsRulesPullLever);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiLuckyWheelsRulesPullLever);
   FieldMessage_ShowAtActor(-1, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Reads the Lucky Wheels prize sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
   FieldMessage_ShowAtActor(-1, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to the Lucky Wheels attendant in Tolbi.
@@ -381,7 +381,7 @@ s32 TolbiSpring_Initialize(void) {
         ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;
-    FieldScript_StartScreenTransition();
+    Event_StartScreenTransition();
     if (gSaveBlock.entrance == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
@@ -405,16 +405,16 @@ s32 TolbiSpring_Initialize(void) {
     // Lucky Dice returns here to report the change in the party's coins.
     if (gSaveBlock.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      FieldScript_Start();
+      Event_Start();
       Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
                                  SPRITE_COLOR_GRB);
       Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
                                  SPRITE_COLOR_RBG);
-      FieldScript_StartScreenTransition();
-      FieldScript_WaitTransitionFrames();
-      FieldScript_WaitFrames(10);
+      Event_StartScreenTransition();
+      Event_WaitTransitionFrames();
+      Event_WaitFrames(10);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 112);
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       coinChange = gSaveBlock.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
@@ -424,54 +424,53 @@ s32 TolbiSpring_Initialize(void) {
         } else {
           Sound_PlaySong(MUS_FANFARE_SMALL);
         }
-        FieldScript_WaitFrames(20);
-        FieldScript_SetMessageId(MsgTolbiYaWonNumber);
+        Event_WaitFrames(20);
+        Event_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
-        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
         Sound_WaitForFanfare();
       } else if (coinChange < 0) {
-        FieldScript_SetMessageId(MsgTolbiYaLostNumber);
+        Event_SetMessageId(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, 5);
-        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
       }
-      FieldScript_End();
+      Event_End();
     }
     // Lucky Wheels returns item categories for the attendant to award.
     if (gSaveBlock.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gSaveBlock.wonPrizes;
-      FieldScript_Start();
-      FieldScript_StartScreenTransition();
-      FieldScript_WaitTransitionFrames();
-      FieldScript_WaitFrames(10);
+      Event_Start();
+      Event_StartScreenTransition();
+      Event_WaitTransitionFrames();
+      Event_WaitFrames(10);
       if (wonPrizes[0] == -1) {
         TolbiSpring_OfferLuckyWheels(1);
       } else if (wonPrizes[0] != -2) {
-        FieldScript_SetMessageId(MsgTolbiCongratulations);
-        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+        Event_SetMessageId(MsgTolbiCongratulations);
+        Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
         if (*wonPrizes != -1) {
           for (prizeIndex = 0; wonPrizes[prizeIndex] != -1; prizeIndex++) {
             if (prizeIndex == 0) {
-              FieldScript_SetMessageId(MsgTolbiWonItemGo);
+              Event_SetMessageId(MsgTolbiWonItemGo);
             } else {
-              FieldScript_SetMessageId(MsgTolbiWonItemGo2);
+              Event_SetMessageId(MsgTolbiWonItemGo2);
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, 2);
-            FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                           0);
+            Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
             ItemDisplay_ShowItem(item, 3);
             PartyInventory_GiveItem(item, 0);
-            FieldScript_WaitFrames(10);
+            Event_WaitFrames(10);
             Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-            FieldScript_WaitFrames(30);
+            Event_WaitFrames(30);
           }
         }
         gSaveBlock.wonPrizes[0] = -2;
-        FieldScript_SetMessageId(MsgTolbiComeAgain);
-        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+        Event_SetMessageId(MsgTolbiComeAgain);
+        Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       }
-      FieldScript_End();
+      Event_End();
     }
   }
   return 0;
@@ -481,20 +480,20 @@ s32 TolbiSpring_Initialize(void) {
 static inline void TolbiSpring_ShowPrizeFrame(s32 sourceColumn, s32 sourceRow) {
   MapGrid_CopyCellsTo(sourceColumn, sourceRow, 70, 0, 3, 8);
   Sound_PlaySong(SE_CAST);
-  FieldScript_WaitFrames(8);
+  Event_WaitFrames(8);
 }
 
 /// Animates the spring's prize reveal, gives the item, and closes it.
 static void TolbiSpring_RevealPrize(s32 item) {
-  FieldScript_Start();
-  FieldScript_WaitFrames(30);
+  Event_Start();
+  Event_WaitFrames(30);
   Sound_PlaySong(SE_BOSS_ROAR);
-  FieldScript_WaitFrames(100);
+  Event_WaitFrames(100);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
 
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
-  FieldScript_WaitFrames(3);
+  Event_WaitFrames(3);
   TolbiSpring_ShowPrizeFrame(85, 20);
   TolbiSpring_ShowPrizeFrame(88, 20);
   TolbiSpring_ShowPrizeFrame(91, 20);
@@ -512,11 +511,11 @@ static void TolbiSpring_RevealPrize(s32 item) {
   MapGrid_CopyCellsTo(100, 29, 70, 0, 3, 8);
   Sound_PlaySong(SE_CAST);
 
-  FieldScript_WaitFrames(70);
+  Event_WaitFrames(70);
   Sound_PlaySong(SE_RECOVERY);
   ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 
   TolbiSpring_ShowPrizeFrame(97, 29);
   TolbiSpring_ShowPrizeFrame(94, 29);
@@ -532,7 +531,7 @@ static void TolbiSpring_RevealPrize(s32 item) {
   TolbiSpring_ShowPrizeFrame(85, 20);
   TolbiSpring_ShowPrizeFrame(82, 20);
   TolbiSpring_ShowPrizeFrame(79, 20);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Raises the spring's displayed layer and blends it into view.
@@ -569,51 +568,51 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   if (spoken == 0) {
     s32 message = MsgTolbiStepRightTry;
 
-    FieldScript_SetMessageId(message);
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    Event_SetMessageId(message);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
-      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
-    FieldScript_SetMessageId(message + 2);
+    Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, 5);
     FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
-      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+      Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
-      FieldScript_SetMessageId(message + 4);
+      Event_SetMessageId(message + 4);
       FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
-      FieldScript_SetMessageId(message + 5);
+      Event_SetMessageId(message + 5);
       FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     }
-    if (room <= 6 && FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
-      FieldScript_SetMessageId(MsgTolbiGetRidItems);
-      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    if (room <= 6 && Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+      Event_SetMessageId(MsgTolbiGetRidItems);
+      Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   } else {
     if (tickets == 0) {
-      FieldScript_SetMessageId(MsgTolbiBadComeBack);
-      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      Event_SetMessageId(MsgTolbiBadComeBack);
+      Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
-    FieldScript_SetMessageId(MsgTolbiBadLikeUse);
+    Event_SetMessageId(MsgTolbiBadLikeUse);
     FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
-      FieldScript_SetMessageId(MsgTolbiComeAgain);
-      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+      Event_SetMessageId(MsgTolbiComeAgain);
+      Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   }
-  FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
-  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  FieldScript_RequestDestination(SEQUENCE_LUCKY_WHEELS, 0);
-  FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
-                                 STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
+  Event_SetMessageId(MsgTolbiStepRightEnjoy);
+  Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+  Event_LeaveFor(SEQUENCE_LUCKY_WHEELS, 0);
+  Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+                                  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
 /// Talking to the Lucky Dice attendant in Tolbi: offers a game for ten coins a
@@ -624,32 +623,32 @@ static void TolbiSpring_OfferLuckyDice(void) {
   u32 coins;
 
   cost = Party_GetAverageLevel() * 10;
-  FieldScript_Start();
+  Event_Start();
   coins = gSaveBlock.coins;
   if (coins < cost) {
-    FieldScript_SetMessageId(MsgTolbiYaDontEnough);
+    Event_SetMessageId(MsgTolbiYaDontEnough);
     FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
   *(u32 *)gSceneLocalState = coins;
   Actor_Snapshot();
-  FieldScript_SetMessageId(MsgTolbiBuddyWannaTry);
+  Event_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, 5);
   FieldMessage_ShowAtActor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 128);
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 152);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    FieldScript_WaitFrames(20);
-    FieldScript_RequestDestination(SEQUENCE_LUCKY_DICE, 0);
-    FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
-                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
+    Event_WaitFrames(20);
+    Event_LeaveFor(SEQUENCE_LUCKY_DICE, 0);
+    Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
+                                    STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Chooses a coin or medal, runs its toss, and awards the resulting prize.
@@ -667,7 +666,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 message;
   struct SaveBlock *state;
 
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
@@ -675,8 +674,8 @@ static s32 TolbiSpring_RunSpringGame(void) {
 prompt:
   coins = state->coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
-  Script_SetMessage(message);
-  Script_OpenMessage(-1, 0);
+  Event_SetMessageId(message);
+  Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
   {
     text = MsgTolbiCoins;
@@ -689,27 +688,27 @@ prompt:
   Window_Close(window, 2);
   TextPrinter_CloseFinishedWindows();
   if (choice == cancel) {
-    Script_End();
+    Event_End();
     return 0;
   }
   if (choice == SPRING_TOSS_COIN) {
     if (coins == 0) {
-      Script_SetMessage(message + 1);
-      Script_ShowMessage(-1, 0);
+      Event_SetMessageId(message + 1);
+      Event_ShowMessage(-1, 0);
       WaitFrames(1);
       goto prompt;
     }
   } else if (choice == SPRING_TOSS_MEDAL) {
     if (medals == 0) {
-      Script_SetMessage(message + 2);
-      Script_ShowMessage(-1, 0);
+      Event_SetMessageId(message + 2);
+      Event_ShowMessage(-1, 0);
       WaitFrames(1);
       goto prompt;
     }
     if (PartyInventory_CountFreeSlots() == 0) {
-      Script_SetMessage(message + 4);
-      Script_OpenMessage(-1, 0);
-      if (Script_ChooseYesNo(0, 0) != 0) {
+      Event_SetMessageId(message + 4);
+      Event_OpenMessage(-1, 0);
+      if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
         goto end;
       }
     }
@@ -722,15 +721,15 @@ prompt:
     Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   }
   WaitFrames(5);
-  Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
+  Event_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
-      Script_PlaySong(SE_MENU_CONFIRM);
+      Event_PlaySong(SE_MENU_CONFIRM);
       result = 0;
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Script_PlaySong(SE_MENU_CANCEL);
+      Event_PlaySong(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -750,8 +749,8 @@ prompt:
     state = &gSaveBlock;
     coins = state->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
-    Script_SetMessage(message);
-    Script_OpenMessage(-1, 0);
+    Event_SetMessageId(message);
+    Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
@@ -763,28 +762,28 @@ prompt:
     Window_Close(window, 2);
     TextPrinter_CloseFinishedWindows();
     if (choice == cancel) {
-      Script_End();
+      Event_End();
       return 0;
     }
     if (choice == SPRING_TOSS_COIN) {
       if (coins == 0) {
-        Script_SetMessage(message + 1);
-        Script_ShowMessage(-1, 0);
+        Event_SetMessageId(message + 1);
+        Event_ShowMessage(-1, 0);
         WaitFrames(1);
         continue;
       }
     } else if (choice == SPRING_TOSS_MEDAL) {
       if (medals == 0) {
-        Script_SetMessage(message + 2);
-        Script_ShowMessage(-1, 0);
+        Event_SetMessageId(message + 2);
+        Event_ShowMessage(-1, 0);
         WaitFrames(1);
         continue;
       }
       if (PartyInventory_CountFreeSlots() == 0) {
-        Script_SetMessage(message + 4);
-        Script_OpenMessage(-1, 0);
-        if (Script_ChooseYesNo(0, 0) != 0) {
-          Script_End();
+        Event_SetMessageId(message + 4);
+        Event_OpenMessage(-1, 0);
+        if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+          Event_End();
           return 0;
         }
       }
@@ -795,15 +794,15 @@ prompt:
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     WaitFrames(5);
-    Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
+    Event_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
-        Script_PlaySong(SE_MENU_CONFIRM);
+        Event_PlaySong(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Script_PlaySong(SE_MENU_CANCEL);
+        Event_PlaySong(SE_MENU_CANCEL);
         result = -1;
         break;
       }
@@ -831,7 +830,7 @@ prompt:
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
-        Script_PlaySong(MUS_FANFARE_SMALL);
+        Event_PlaySong(MUS_FANFARE_SMALL);
 #ifdef UBFIX
         MessageArgument_Push(gTolbiSpring_CoinPrizes[result], 5);
 #else
@@ -841,11 +840,11 @@ prompt:
                 ->coins[result],
             5);
 #endif
-        Script_SetMessage(MsgTolbiWonNumberCoin);
-        Script_ShowMessage(-1, 0);
+        Event_SetMessageId(MsgTolbiWonNumberCoin);
+        Event_ShowMessage(-1, 0);
       } else {
-        Script_PlaySong(SE_MENU_CANCEL);
-        Script_Wait(10);
+        Event_PlaySong(SE_MENU_CANCEL);
+        Event_WaitFrames(10);
       }
     } else {
       // The prize ring limits the weighted pool of medal rewards.
@@ -898,7 +897,7 @@ prompt:
 #if TBS_PATCH_1
 end:
 #endif
-  Script_End();
+  Event_End();
   return 0;
 }
 
@@ -1618,11 +1617,11 @@ const struct ActorTemplate gTolbiSpringActorTemplatesOther[] = {
 const struct Trigger gTolbiSpringTriggersOther[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_TalkToWheelsAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_OfferLuckyDice) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_OfferLuckyDice) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutFirstDiceGame) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT(TolbiSpring_AskAboutFirstDiceGame) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
@@ -1630,8 +1629,8 @@ const struct Trigger gTolbiSpringTriggersOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsPrizes) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsRules) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(TolbiSpring_ReadLuckyWheelsPrizes) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT(TolbiSpring_ReadLuckyWheelsRules) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
@@ -1647,12 +1646,12 @@ const struct Trigger gTolbiSpringTriggers[] = {
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_MEDAL_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_COIN_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTolbiSpringHasMysteriousPowersStand) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutLuckyMedal) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, EVENT(TolbiSpring_AskAboutLuckyMedal) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTooBadIOnlyHaveOne) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TossCoinOrMedal) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT(TolbiSpring_TossCoinOrMedal) },
     { TRIGGERS_END },
 };
 

@@ -10,13 +10,13 @@ s32 SceneManager_RunFar(s32 entrance);
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
 void SequenceManager_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
-void FieldScript_WaitFramesFar(s32 frames);
+void Event_WaitFramesFar(s32 frames);
 /// Opens a script: closes any area name window, stops the leader and resets the
 /// message and timing state.
-void FieldScript_StartFar(void);
+void Event_StartFar(void);
 /// Closes a script: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
-void FieldScript_EndFar(void);
+void Event_EndFar(void);
 /// Spawns the actors of an actor template table after the last
 /// actor in use, so a ship map can bring people in mid-event.
 void Event_CallWithLastActiveActorIdFar(struct ActorTemplate *table);
@@ -25,7 +25,7 @@ void Event_CallWithLastActiveActorIdFar(struct ActorTemplate *table);
 void Scene_AssignViewFlagsFar(struct ActorTemplate *entry);
 /// Replaces the map's trigger table, the one the field checks as the leader
 /// moves.
-void FieldScript_SetTriggersFar(const struct Trigger *triggers);
+void Event_SetTriggersFar(const struct Trigger *triggers);
 /// Adds a character to the party; a nonzero value also shows
 /// `<name> joined your party.`
 void Event_PrepareActorAndApplyValueFar(s32 event_id, s32 value);
@@ -41,7 +41,7 @@ void Party_RemoveMemberRestoredFar(s32 owner);
 s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 /// Asks yes or no once the message on screen is read, with the speaker
 /// nodding at yes and shaking its head at no. Returns 0 for yes, 1 for no.
-s32 FieldScript_AskYesNoWithActorAnimationFar(s32 actorId, s32 force_bottom);
+s32 Event_AskYesNoWithActorAnimationFar(s32 actorId, s32 force_bottom);
 /// Teaches a character a Psynergy ability with its fanfare and
 /// `<unit> learned <ability>.`
 void Party_LearnAbilityFar(s32 unit, s32 ability);
@@ -131,29 +131,28 @@ void Actor_SetSpriteColorFar(struct Actor *actor, s32 value);
 void Actor_SetTargetAndCallbackFar(u32 actorId, s32 targetId,
                                    const void *callback);
 /// Sets the number of the script's next message.
-void FieldScript_SetMessageIdFar(s32 value);
+void Event_SetMessageIdFar(s32 value);
 /// Opens the script's current message in a speech window beside the speaker,
 /// with its portrait, and moves on to the next message. Returns the window
 /// once its text is typed out; the caller waits for it to be read.
 struct Window *FieldMessage_ShowAtActorFar(s32 arg, s32 unused);
 /// Shows the current message at an actor and waits until it has been
 /// read and its window has closed.
-void FieldScript_ShowMessageAndWaitFar(s32 action, s32 flag);
+void Event_ShowMessageAndWaitFar(s32 action, s32 flag);
 /// Shows a message, then waits the given number of frames.
-void FieldScript_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
+void Event_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 /// Asks a question at an actor and shows the reply for yes or for no;
 /// the script carries on past both replies. Returns 0 for yes, 1 for no.
-s32 FieldScript_AskYesNoAndShowResponseFar(s32 actorId, s32 actionId);
+s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 actionId);
 /// Turns an actor toward an angle, 65536 to a full turn, then waits wait
 /// frames.
 void Actor_ArmCallbackFar(s32 actorId, s32 angle, s32 wait);
 /// Two actors speak at once, each message and portrait at its own tile
 /// position; waits for A, B, L or R, then closes both.
-void FieldScript_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
-                                           s32 first_arg, s32 first_extra,
-                                           s32 second, s32 second_x,
-                                           s32 second_y, s32 second_arg,
-                                           s32 second_extra);
+void Event_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
+                                     s32 first_arg, s32 first_extra, s32 second,
+                                     s32 second_x, s32 second_y, s32 second_arg,
+                                     s32 second_extra);
 /// Gives the messages that follow the voice of an actor's sprite, at the
 /// rate the message speed option picks; the top bit alone silences them.
 void Message_SetVoiceFromActorFar(s32 actorId);
@@ -188,10 +187,10 @@ struct Actor *FieldCamera_GetActorFar(void);
 void MapGrid_SetCameraBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Makes the script leave for an entrance of a map; the title, the
 /// Battle Arena and the debug menus use it as well as a few maps.
-void FieldScript_SetDestinationFar(s32 first, s32 second);
+void Event_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's exit request; 999 leaves for the map and entrance
 /// in gSaveBlock.
-void FieldScript_SetExitRequestFar(u16 value);
+void Event_SetExitRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the script that asked for it has returned.
 void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
@@ -199,13 +198,13 @@ void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
 /// DJINN_NO_HOP is set; on re-entering the map the Djinni joins or hides.
 void Field_RequestDjinnBattleFar(s32 flag, s32 no);
 /// Sets the map and entrance the field goes to next.
-void FieldScript_SetNextDestinationFar(s32 first, s32 second);
+void Event_SetAfterBattleDestinationFar(s32 first, s32 second);
 /// Sets where the party wakes up after losing a battle, ahead of a scripted
 /// fight.
-void FieldScript_SetDefeatDestinationFar(s32 first, s32 second);
+void Event_SetDefeatDestinationFar(s32 first, s32 second);
 /// Sets the destination and raises EXIT_KEEP_DESTINATION, so the map loop
 /// leaves on its next pass; only Tolbi's spring uses it.
-void FieldScript_RequestDestinationFar(u16 first, u16 second);
+void Event_LeaveForFar(u16 first, u16 second);
 /// Writes an actor's screen position in pixels, y at the top of its
 /// sprite. Returns 0, or -1 when there is no such actor.
 s32 Actor_GetScreenPositionFar(s32 actorId, s32 *position);
@@ -256,11 +255,11 @@ void PaletteFade_SetSourceFar(s32 mode, s32 half);
 /// frames.
 void PaletteFade_StartInterpolationFar(s32 frames);
 /// Starts the script's screen transition.
-void FieldScript_StartScreenTransitionFar(void);
+void Event_StartScreenTransitionFar(void);
 /// Finishes the script's screen transition.
-void FieldScript_FinishScreenTransitionFar(void);
+void Event_FinishScreenTransitionFar(void);
 /// Waits for as long as the screen transition runs.
-void FieldScript_WaitTransitionFramesFar(void);
+void Event_WaitTransitionFramesFar(void);
 /// Starts a wave in each axis of the background's scroll, changed line by
 /// line in the horizontal blank; Lamakan Desert starts it everywhere but its
 /// cave.
@@ -296,32 +295,32 @@ void *Actor_LookupFar(u32 index);
 /// Starts the fade overlay on an object (the leader when NULL), which lasts
 /// until the next map change.
 void FieldEffect_StartFadeOverlayFar(void *object);
-/// Runs one step of the current Psynergy effect, an enum PsynergyEffectStep;
+/// Runs one step of the current Psynergy effect, an enum FieldPsynergyHandler;
 /// Goma Cave's entrance plays Whirlwind on the stump's ivy with it.
-void Field_DispatchTypeHandlerFar(s32 kind);
+void FieldPsynergy_RunHandlerFar(s32 kind);
 /// Prepares a Psynergy effect's work and spark tiles for an ability; while an
 /// effect resolves it only switches the ability.
-void FieldEffect_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
+void FieldPsynergy_LoadResourcesFar(s32 abilityId, s32 mode);
 /// Records an effect's caster and target; with no target the effect lands 16
 /// pixels in front of the caster.
-void FieldEffect_SetupActorPairFar(s32 user_id, s32 targetId);
+void FieldPsynergy_SetupActorPairFar(s32 user_id, s32 targetId);
 /// Stops the caster's per-frame hook, restores its colours and waits a frame.
-void FieldEffect_StopCasterHookFar(void);
+void FieldPsynergy_StopCasterUpdateFar(void);
 /// Ends a Psynergy effect, releasing its sprites, tiles and work and playing
 /// the queued sound.
-void FieldEffect_EndFar(void);
+void FieldPsynergy_EndFar(void);
 /// Puts the caster in its casting pose, with the flash, sound and ability
 /// name the effect calls for.
-void FieldEffect_StartCastFar(void);
+void FieldPsynergy_StartCastFar(void);
 /// Clears the field's busy flag and, while Reveal is active, ends it.
 void Field_EndBusyAndRevealFar(void);
 /// Starts Mind Read's wave of shifting colour, with x the caster and y the
 /// target.
-void FieldEffect_StartMindReadWaveFar(s32 x, s32 y);
+void FieldPsynergy_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
-void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
+void FieldPsynergy_FinishWaveAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
-void FieldEffect_RestoreMindReadPaletteFar(void);
+void FieldPsynergy_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy trigger of this group for what the
 /// leader faces; nothing in ☀️ calls it.
 s32 Scene_HasFieldPsynergyTriggerFar(s32 group);
@@ -335,7 +334,7 @@ struct Sprite *Sprite_ShareVramCacheEntryFar(struct Sprite *sourceSprite,
                                              struct Sprite *sharedSprite);
 /// Returns the battle background chosen for the current map, which the
 /// battle setup reads.
-s16 FieldScript_GetSpecialValueFar(void);
+s16 Event_GetSpecialValueFar(void);
 /// Gives each party member PP; 999 restores it all, as a Psynergy Stone does.
 void Party_AddPpFar(s32 amount, s32 unused);
 /// Asks yes or no at the top of the screen, or the bottom when value is set.
@@ -373,7 +372,7 @@ void Camera_WorldToScreenFar(struct Vector3 *position);
 /// with the Speech option off.
 s32 Speaker_GetVoiceFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
-void FieldScript_ClearInvalidPackedValuesFar(void);
+void Event_ClearInvalidPackedValuesFar(void);
 /// Allocates and clears the field effect sprites and starts their update; the
 /// Djinn joining effects and Altmiller Cave use them.
 void FieldEffect_InitializeSlotsFar(void);
@@ -393,7 +392,7 @@ void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
 void Actor_LinkAndSetScriptFar(u32 actorId, u32 linked_object_id);
 /// Pauses an object, keeping its update and pose in gSaveBlock for later;
 /// Halt and the Colosso operators use it.
-void FieldEffect_PauseActorFar(s32 id);
+void FieldPsynergy_HaltActorFar(s32 id);
 /// Captures up to 32 actors into gActorSnapshot, for
 /// Actor_Restore (Actor_Snapshot); the save menu calls it.
 void Save_CaptureActorsFar(void);
@@ -403,7 +402,7 @@ void Actor_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the world map.
 void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
-void FieldScript_WaitForZoomTransitionFar(void);
+void Event_WaitForZoomTransitionFar(void);
 /// Returns the area name of a map and entrance, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
 s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);

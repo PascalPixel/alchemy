@@ -281,22 +281,22 @@ enum ExitStyle {
 /// When a Psynergy trigger runs around its effect, control bits 30..28.
 enum PsynergyPhase {
   /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
-  /// PSYNERGY_SCRIPT_PLAYS_EFFECT the event plays the effect itself.
+  /// PSYNERGY_EVENT_PLAYS_CAST the event plays the effect itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
   PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
   /// After a Psynergy that runs out by itself has ended:
-  /// Field_RunPsynergyEvents
+  /// Field_RunPsynergyEndEvents
   /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
   PSYNERGY_PHASE_AFTER_END = 2,
   PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
-  /// As Reveal's colours come back (FieldEffect_EndReveal): the scenes
+  /// As Reveal's colours come back (FieldPsynergy_EndReveal): the scenes
   /// hide again what Reveal showed.
-  PSYNERGY_PHASE_EFFECT_ENDS = 4,
+  PSYNERGY_PHASE_FADES = 4,
   /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as
   /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
   /// this phase also makes Field_UsePsynergy aim the effect at the actor
   /// ahead.
-  PSYNERGY_PHASE_EFFECT_ACTS = 5,
+  PSYNERGY_PHASE_ACTS = 5,
   PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyTrigger matches every phase
 };
 
@@ -313,9 +313,10 @@ enum PsynergyPhase {
 /// Bits of an after-cast Psynergy trigger's target word, beside the
 /// actor's number.
 enum PsynergyEventTarget {
-  /// Field_UsePsynergy clears FLAG_PSYNERGY_EFFECT and plays no effect of its
+  /// Field_UsePsynergy clears FLAG_PLAY_PSYNERGY_CAST and plays no effect of
+  /// its
   /// own, leaving it to the event's script.
-  PSYNERGY_SCRIPT_PLAYS_EFFECT = 0x400
+  PSYNERGY_EVENT_PLAYS_CAST = 0x400
 };
 /// A Psynergy trigger on an actor at one phase of the cast, as
 /// PSYNERGY_ANYWHERE is for any target.
@@ -396,7 +397,7 @@ enum ExamineTarget {
 
 /// A script function as a Trigger value; its address is above 0x10000, so
 /// it is never taken for a message.
-#define EVENT_SCRIPT(script) ((u32)(script))
+#define EVENT(script) ((u32)(script))
 #define TRIGGERS_END 0xffffffff ///< ends a trigger table
 
 struct SceneExitRegion;

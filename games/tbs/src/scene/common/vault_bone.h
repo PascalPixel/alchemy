@@ -11,15 +11,15 @@
 /// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both maps name
 /// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
-  FieldScript_Start();
+  Event_Start();
   if (PartyInventory_HasSpace() == 0) {
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
-    FieldScript_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
+    Event_WaitFrames(20);
+    Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
+    Event_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
     ItemDisplay_ShowItem(ITEM_BONE, 3);
     PartyInventory_GiveItem(ITEM_BONE, 0);
   }
-  FieldScript_End();
+  Event_End();
 }

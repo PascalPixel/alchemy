@@ -214,7 +214,7 @@ it. A scene can answer a Psynergy just before its effect plays and just after:
 in Vale, the event after Move notes where the pillar now stands and makes the
 ground under it solid.
 
-`Field_UsePsynergy` runs a cast and `FieldEffect_Run` plays its
+`Field_UsePsynergy` runs a cast and `FieldPsynergy_Run` plays its
 effect. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-effect)
 covers every moment a scene can answer and each Psynergy's effect.
 

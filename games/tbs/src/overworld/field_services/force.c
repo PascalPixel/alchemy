@@ -4,10 +4,10 @@
 
 #include "../field_services_internal.h"
 
-/// Runs Force cast on a target, through FieldEffect_RunForce.
+/// Runs Force cast on a target, through FieldPsynergy_Force.
 ///
 /// Abilities: Force (FIELD_PSYNERGY_FORCE).
-void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
+void FieldPsynergy_ForceOnTarget(s32 unused) { FieldPsynergy_Force(); }
 
 /// Writes the position 16 pixels above the actor.
 static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
@@ -23,8 +23,8 @@ static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
 /// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
 /// frame; where it lands it makes a heavy impact
 /// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
-/// FieldEffect_Run, and through FieldEffect_RunForceOnTarget.
-void FieldEffect_RunForce(void) {
+/// FieldPsynergy_Run, and through FieldPsynergy_ForceOnTarget.
+void FieldPsynergy_Force(void) {
   struct Actor *target;
   s32 eventTarget;
   struct Actor *copies[4];
@@ -42,7 +42,7 @@ void FieldEffect_RunForce(void) {
 
   effectWork = gFieldEffectWork;
   target = effectWork->child;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlaySongFar(SE_PSYNERGY_START);
   effect = effectWork->particles;
 
@@ -70,7 +70,7 @@ void FieldEffect_RunForce(void) {
   Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
   projectile = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
     return;
   }
   projectile->scaleY = 0x4000;
@@ -166,13 +166,12 @@ void FieldEffect_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event =
-      Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS),
-                                FIELD_PSYNERGY_FORCE, &eventTarget);
+  event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                    FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
+    Field_RunPsynergyEvent(event, gSaveBlock.leaderActorId, eventTarget);
   WaitFrames(10);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
   WaitFrames(20);
   // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)

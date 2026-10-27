@@ -15,5 +15,5 @@ static void Vale_RequestBackdropExit(s32 no) {
   p = gFieldWork;
   p->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   p->transitionFrames = 16;
-  Import_ScriptRequestExit(no);
+  Import_EventSetExitRequest(no);
 }

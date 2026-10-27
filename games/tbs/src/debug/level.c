@@ -107,9 +107,9 @@ u8 *IncreaseItemAndLevel_GetActorTemplates(void) {
 /// Sets the test message before displaying the first emote on the actor
 /// spoken to, ACTOR_FIRST_EMOTE_TESTER.
 static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
-  FieldScript_SetMessageId(MsgDebugWontStopYou);
+  Event_SetMessageId(MsgDebugWontStopYou);
   Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  FieldScript_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
+  Event_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
 }
 
 /// Displays the other test emote before setting ACTOR_FIRST_EMOTE_TESTER's
@@ -118,8 +118,8 @@ static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
 /// ACTOR_FIRST_EMOTE_TESTER's.
 static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
   Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  FieldScript_SetMessageId(MsgDebugWontStopYou);
-  FieldScript_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
+  Event_SetMessageId(MsgDebugWontStopYou);
+  Event_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
 }
 #endif
 
@@ -475,7 +475,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
-  Import_ScriptRequestExit();
+  Import_EventSetExitRequest();
 }
 
 /// Starts the window transition and edition-specific actor
@@ -506,12 +506,12 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 /// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves
 /// to (312, 416).
 static void IncreaseItemAndLevel_RunMotionTest(void) {
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
-  FieldScript_End();
+  Event_End();
 }
 #endif
 
@@ -640,30 +640,30 @@ struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[] = {
 /// stands.
 struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {TRIGGER_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},
+     EVENT(IncreaseItemAndLevel_SelectItem)},
     {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_OpenIconBrowser)},
+     EVENT(IncreaseItemAndLevel_OpenIconBrowser)},
     {TRIGGER_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_OpenPortraitBrowser)},
+     EVENT(IncreaseItemAndLevel_OpenPortraitBrowser)},
     {TRIGGER_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_RunLevelEditor)},
+     EVENT(IncreaseItemAndLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_RunMotionTest)},
+     EVENT(IncreaseItemAndLevel_RunMotionTest)},
 #else
 #if !TBS_PATCH_3
     {TRIGGER_TALK, ACTOR_ABILITY_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_SelectAbility)},
+     EVENT(IncreaseItemAndLevel_SelectAbility)},
 #endif
     {TRIGGER_TALK, ACTOR_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_ShowMessageThenEmote)},
+     EVENT(IncreaseItemAndLevel_ShowMessageThenEmote)},
     {TRIGGER_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
+     EVENT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_ShowGlyphCaptions)},
+     EVENT(IncreaseItemAndLevel_ShowGlyphCaptions)},
 #endif
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(IncreaseItemAndLevel_EnableEffectChildMode)},
+     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
     {TRIGGERS_END},
 };

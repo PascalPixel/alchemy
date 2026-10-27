@@ -6,7 +6,7 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldEffect_RunAvoid adds it as a task (priority TASK_PASS_FRAME)
+/// FieldPsynergy_Avoid adds it as a task (priority TASK_PASS_FRAME)
 /// for its last 70 frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Actor *caster;
@@ -30,8 +30,8 @@ void FieldEffect_BlinkAvoidCaster(void) {
 
 /// The caster during the effect: sheds a pair of falling arcs every 5 frames
 /// (7 on the world map), and spins in phase 1, 3/64 turn a frame.
-/// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
-/// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
+/// FieldPsynergy_Avoid makes it the caster's callback; it counts the caster's
+/// step and turns its angle. The arcs draw with the tiles FieldPsynergy_Avoid
 /// loads into effectWork->arcTileSlot.
 void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
   struct Actor *caster = (struct Actor *)actor;
@@ -56,10 +56,10 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
-/// Clears gSaveBlock.avoidDistance. Reached through FieldScript_RunTypeHandler
+/// Clears gSaveBlock.avoidDistance. Reached through Event_RunFieldPsynergy
 /// when the Psynergy request the leader's steps raise as Avoid runs out
 /// (overworld/step.c) is handled.
-void FieldScript_ShowStatusMessage(void) {
+void Event_ShowStatusMessage(void) {
   gSaveBlock.avoidDistance = 0;
   if (gSaveBlock.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
@@ -83,10 +83,10 @@ void FieldScript_ShowStatusMessage(void) {
 /// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
 /// marks it as cast from the Sacred Feather.
 ///
-/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind. Sets
+/// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
 /// gSaveBlock.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (overworld/step.c), 2,400 pixels in all.
-void FieldEffect_RunAvoid(void) {
+void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
   struct Sprite *group;

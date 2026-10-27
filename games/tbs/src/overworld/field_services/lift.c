@@ -9,10 +9,10 @@
 ///
 /// Abilities: Lift (FIELD_PSYNERGY_LIFT).
 ///
-/// This is Lift cast on a target, which FieldEffect_DispatchRequestKind calls.
+/// This is Lift cast on a target, which FieldPsynergy_Dispatch calls.
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to Actor_CycleSpriteColors.
-void FieldEffect_RunLiftOnTarget(s32 unused) {
+void FieldPsynergy_LiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
   struct Actor *caster;
   struct Actor *target;
@@ -30,7 +30,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   if (target == NULL)
     return;
 
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
   caster->linkedActor = target;
@@ -74,7 +74,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   // The hands burst into particles; the target stays up.
   UpdateRisingParticleBurst(pair[0]);
   UpdateRisingParticleBurst(pair[1]);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }
 
 /// Two hands appear 16 pixels above the spot in front of the caster, 32
@@ -82,12 +82,12 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
 ///
 /// Abilities: Lift (FIELD_PSYNERGY_LIFT).
 ///
-/// This is Lift cast with no target, which FieldEffect_Run calls.
-DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunLift, FieldEffect_SpawnItemBreakMode3)
+/// This is Lift cast with no target, which FieldPsynergy_Run calls.
+DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
 
 /// Spawns a hand (object 215) and grows it, spinning, from a quarter to full
 /// size over 24 frames; angle is the way it faces once grown. Makes Lift's
-/// two hands, for FieldEffect_RunLiftOnTarget and FieldEffect_RunLift; returns
+/// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
 /// NULL when no object could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
 /// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
@@ -120,7 +120,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
 
 /// Field effect sprite callback of a particle that scatters 25 pixels from its
 /// origin in a random direction, then gathers beside the main object and is
-/// freed. Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
+/// freed. Set on Force's 12 flashes by FieldPsynergy_Force in force.c.
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter

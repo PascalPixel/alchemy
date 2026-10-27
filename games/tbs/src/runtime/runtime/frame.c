@@ -83,13 +83,14 @@ enum {
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
 /// The game's frame loop: runs `frames` frames and returns. Each frame runs the
-/// main-loop tasks, builds the OAM list, measures CPU load for the
+/// TASK_PASS_FRAME tasks, builds the OAM list, measures CPU load for the
 /// debug display, counts idle time for sleep, steps the debug pause, waits for
 /// VBlank and then reads the keys. Holding L and R for three seconds, or three
 /// idle minutes with idle sleep on, puts the system into Stop until L and R are
 /// pressed again. A soft reset requested by the keypad interrupt happens here.
-/// Called everywhere the game waits: every map, menu and battle step that
-/// lets time pass goes through it.
+/// Called everywhere the game waits: every scene, menu and battle that lets
+/// time pass goes through it. Events wait with Event_WaitFrames instead, which
+/// debug fast-forward can skip.
 ///
 /// Code may call WaitFrames deep inside its own call chains, so a caller
 /// whose stack has grown below the frame-wait stack top has its stack copied

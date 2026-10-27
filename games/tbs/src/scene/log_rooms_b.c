@@ -171,15 +171,15 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 
 /// The actor stands still and says the selected message.
 static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
-  FieldScript_ShowMessageAndWait(actorId, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_End();
 }
 
 /// Faces the leader and shows this resident's dialogue while standing still.
 static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
-  FieldScript_SetMessageId(message);
+  Event_SetMessageId(message);
   Actor_LinkPair(actorId, ACTOR_PARTY_LEADER, 2);
   LogRoomsB_ShowStandingActorDialogue(actorId);
 }
@@ -187,20 +187,20 @@ static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
 /// The wife thought she saw the cat paw the gemstone on the table.
 /// Then the treasure was gone. She's in the house at
 /// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST.
-static void EventScript_WifeSawCatTakeGem(void) {
+static void LogRoomsB_WifeSawCatTakeGem(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE, MsgVaultThoughtSawCatGetUp);
 }
 
 /// The boy doubts the thieves were from Lunpa after all.
 /// He points out Dodonpa's henchmen never attacked. He's in the house at
 /// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH.
-static void EventScript_BoyDoubtsThievesWereFromLunpa(void) {
+static void LogRoomsB_BoyDoubtsThievesWereFromLunpa(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_BOY, MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
 /// In the item shop, the husband would like to see Colosso in Tolbi once more
 /// before he dies.
-static void EventScript_HusbandLongsForColosso(void) {
+static void LogRoomsB_HusbandLongsForColosso(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND, MsgVaultItsNearTimeForColosso);
 }
 
@@ -209,30 +209,30 @@ static void EventScript_HusbandLongsForColosso(void) {
 /// the party has run into them, a yes and a no get different warnings. Sets
 /// FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only warns of
 /// their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
-static void EventScript_WelcomeIsaacBack(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultIsaacYouveComeBackVault);
+static void LogRoomsB_WelcomeIsaacBack(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
   Actor_LinkPair(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
-  Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
-  Script_OpenMessage(ACTOR_MAYOR, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+  Event_OpenMessage(ACTOR_MAYOR, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
-  Script_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
-  FieldScript_End();
+  Event_End();
 }
 
 /// After the welcome: those thieves really wanted revenge, so take care.
-static void EventScript_WarnOfThievesRevenge(void) {
+static void LogRoomsB_WarnOfThievesRevenge(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_MAYOR, MsgVaultThoseGuysReallyWantedRevenge);
 }
 
@@ -244,7 +244,7 @@ static void EventScript_WarnOfThievesRevenge(void) {
 /// MsgVaultWeDontGetALotOf with no condition, always answers first
 /// (Scene_FindTrigger takes the first match), so the player only ever hears
 /// that travelers are few in winter.
-static void EventScript_UnusedOfferLeftoverBones(void) {
+static void LogRoomsB_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
@@ -252,29 +252,29 @@ static void EventScript_UnusedOfferLeftoverBones(void) {
 /// one was taken (FLAG_VAULT_BONE_RECEIVED); a yes gets a Bone if there is
 /// room, a no a nod. Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear,
 /// that is, the leader not standing beside the floor Bone.
-static void EventScript_OfferBones(void) {
-  FieldScript_Start();
+static void LogRoomsB_OfferBones(void) {
+  Event_Start();
   Actor_LinkPair(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    FieldScript_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
-    Script_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Event_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
+    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
-    FieldScript_SetMessageId(MsgVaultWantMoreBones);
-    Script_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Event_SetMessageId(MsgVaultWantMoreBones);
+    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
-    FieldScript_WaitFrames(20);
-    Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
       Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
-      FieldScript_WaitFrames(20);
-      FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
-      Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+      Event_WaitFrames(20);
+      Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
+      Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
       ItemDisplay_ShowItem(ITEM_BONE, 3);
       PartyInventory_GiveItem(ITEM_BONE, 0);
@@ -284,29 +284,29 @@ static void EventScript_OfferBones(void) {
     // Declining selects the following line and the actor's response
     // pose.
     gFieldWork->message++;
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on the mayor before the welcome: he notices the party and
 /// welcomes Isaac back.
-static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
+static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYOR, 1);
-  FieldScript_End();
+  Event_End();
   // Keep the actor paused through the conversation, then resume
   // action 2.
   paused = &Actor_GetById(ACTOR_MAYOR)->paused;
   *paused = 1;
-  EventScript_WelcomeIsaacBack();
+  LogRoomsB_WelcomeIsaacBack();
   paused = &Actor_GetById(ACTOR_MAYOR)->paused;
   *paused = unpaused;
   Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
@@ -317,87 +317,87 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
 
 /// Across the counter the weapon shop opens; from elsewhere the merchant talks
 /// of a river of fire on the other side of Mt. Aleph.
-static void EventScript_TalkToWeaponMerchant(void) {
+static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
-  FieldScript_Start();
+  Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_WEAPON_STOCK, ACTOR_VAULT_WEAPON_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgVaultTheresRiverFireOnOther);
-    FieldScript_ShowMessageAndWait(ACTOR_VAULT_WEAPON_MERCHANT, 0);
+    Event_SetMessageId(MsgVaultTheresRiverFireOnOther);
+    Event_ShowMessageAndWait(ACTOR_VAULT_WEAPON_MERCHANT, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// Across the counter the armor shop opens; from elsewhere the merchant says
 /// the eruption split the continent in two.
-static void EventScript_TalkToArmorMerchant(void) {
+static void LogRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
-  FieldScript_Start();
+  Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_ARMOR_STOCK, ACTOR_VAULT_ARMOR_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgVaultTheySayVolcanoOnMt);
-    FieldScript_ShowMessageAndWait(ACTOR_VAULT_ARMOR_MERCHANT, 0);
+    Event_SetMessageId(MsgVaultTheySayVolcanoOnMt);
+    Event_ShowMessageAndWait(ACTOR_VAULT_ARMOR_MERCHANT, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// Across the counter the item shop opens; from elsewhere the merchant has had
 /// few customers lately.
-static void EventScript_TalkToItemMerchant(void) {
+static void LogRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
-  FieldScript_Start();
+  Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_ITEM_STOCK, ACTOR_VAULT_ITEM_MERCHANT);
   } else {
-    FieldScript_SetMessageId(MsgVaultWeHaventBeenGettingMany);
-    FieldScript_ShowMessageAndWait(ACTOR_VAULT_ITEM_MERCHANT, 0);
+    Event_SetMessageId(MsgVaultWeHaventBeenGettingMany);
+    Event_ShowMessageAndWait(ACTOR_VAULT_ITEM_MERCHANT, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// Across the counter the inn opens; from elsewhere the innkeeper complains
 /// that no one comes, what with the volcano.
-static void EventScript_TalkToInnkeeper(void) {
+static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
-  FieldScript_Start();
+  Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Inn_CheckIn(VAULT_INN, ACTOR_VAULT_INNKEEPER);
   } else {
-    FieldScript_SetMessageId(MsgVaultMmmmNothingDoNothingDo);
-    FieldScript_ShowMessageAndWait(ACTOR_VAULT_INNKEEPER, 0);
+    Event_SetMessageId(MsgVaultMmmmNothingDoNothingDo);
+    Event_ShowMessageAndWait(ACTOR_VAULT_INNKEEPER, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on the girl at the inn: hungry while cooking, or, once a Bone was
 /// given, wondering whether "he" has a calcium deficiency.
-static void EventScript_ReadBoneGiverMind(void) {
-  FieldScript_Start();
+static void LogRoomsB_ReadBoneGiverMind(void) {
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    FieldScript_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
+    Event_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
-    FieldScript_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
+    Event_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
   }
-  FieldScript_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
+  Event_End();
 }
 
 /// Returns the talk, Psynergy, examine trigger and exit table.
@@ -530,31 +530,31 @@ struct Trigger gLogRoomsB_Triggers[] = {
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_B_INN_UPSTAIRS_TO_INN },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_B_INN_TO_INN_UPSTAIRS },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
-    { TRIGGER_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WifeSawCatTakeGem) },
+    { TRIGGER_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsB_WifeSawCatTakeGem) },
     { TRIGGER_TALK, ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
-    { TRIGGER_TALK, ACTOR_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyDoubtsThievesWereFromLunpa) },
-    { TRIGGER_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HusbandLongsForColosso) },
+    { TRIGGER_TALK, ACTOR_BOY, CONDITION_ALWAYS, EVENT(LogRoomsB_BoyDoubtsThievesWereFromLunpa) },
+    { TRIGGER_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT(LogRoomsB_HusbandLongsForColosso) },
     { TRIGGER_TALK, ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
-    { TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
-    { TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
+    { TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(LogRoomsB_WelcomeIsaacBack) },
+    { TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(LogRoomsB_WarnOfThievesRevenge) },
     { TRIGGER_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
     { TRIGGER_TALK, ACTOR_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
     { TRIGGER_TALK, ACTOR_GIRL_CURIOUS_ABOUT_THE_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
-    { TRIGGER_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LogRoomsB_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LogRoomsB_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LogRoomsB_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, EVENT(LogRoomsB_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
     // Unused: the row above always answers the cook first.
-    { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedOfferLeftoverBones) },
-    { TRIGGER_TALK, ACTOR_GIRL_AT_THE_INN, FLAG_VAULT_LEADER_BESIDE_BONE, EVENT_SCRIPT(EventScript_OfferBones) },
+    { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT(LogRoomsB_UnusedOfferLeftoverBones) },
+    { TRIGGER_TALK, ACTOR_GIRL_AT_THE_INN, FLAG_VAULT_LEADER_BESIDE_BONE, EVENT(LogRoomsB_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_ReadMindAndWelcomeIsaacBack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(LogRoomsB_ReadMindAndWelcomeIsaacBack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
@@ -564,8 +564,8 @@ struct Trigger gLogRoomsB_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadBoneGiverMind) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT(LogRoomsB_ReadBoneGiverMind) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(Vault_FindBone) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), MB_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_SECOND_BARREL, FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },

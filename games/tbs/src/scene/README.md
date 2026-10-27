@@ -121,13 +121,13 @@ the day the story begins:
 
 ```c
 { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
-  EVENT_SCRIPT(EventScript_DoraFretsAboutTheRoof) },
+  EVENT(Vale_DoraFretsAboutTheRoof) },
 { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-  EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
+  EVENT(Vale_EnterIsaacsHouse) },
 { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT,
-  EVENT_SCRIPT(EventScript_CatchNut) },
+  EVENT(Vale_CatchNut) },
 { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS,
-  EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
+  EVENT(Vale_SearchTheLockedDoor) },
 ```
 
 Talking to Dora, Isaac's mother, runs a script; walking north into the
@@ -161,7 +161,7 @@ holds either a message or a script, since scripts live at addresses above any
 message number.
 
 The row is `struct Trigger`, its kinds and the `FIND_` values
-are in `scene_tables.h`, and a script is written `EVENT_SCRIPT(function)` and a
+are in `scene_tables.h`, and a script is written `EVENT(function)` and a
 message `MSGNO(name)`.
 
 ### Which triggers a cell starts
@@ -205,8 +205,8 @@ that always holds, so the first talk welcomes Isaac and every later one warns
 of the thieves ([`log_rooms_b.c`](log_rooms_b.c)):
 
 ```c
-{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
-{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
+{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(LogRoomsB_WelcomeIsaacBack) },
+{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(LogRoomsB_WarnOfThievesRevenge) },
 ```
 
 A row behind one that always fits is never reached.
@@ -233,11 +233,11 @@ recording is one of the shortest: it plays the door's sound, opens the door,
 starts the leader walking in and asks for the exit into the house.
 
 ```c
-static void EventScript_EnterJennasGrandparentsHouse(void) {
-  Script_PlaySong(SE_DOOR_OPEN);
+static void Vale_EnterJennasGrandparentsHouse(void) {
+  Event_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_NORTH);
+  Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
 
@@ -320,9 +320,9 @@ Palace share `SceneId_CottageRoomsB`. A sheet is therefore named for the style
 its rooms are drawn in, never for a place, and its file lists its rooms and the
 places they belong to.
 
-A scene's functions take its name (`Vault_`, `VaultRevisit_`,
-`ColosseumNavampaMatch_`) and say what the player sees; most functions a
-trigger table names are `EventScript_` instead. Shared helpers take their
+A scene's functions, its [events](../../glossary.md#event) among them, take
+its name (`Vault_`, `VaultRevisit_`, `ColosseumNavampaMatch_`) and say what
+the player sees. Shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 `PushedActor_`, and `FieldEffect_` for the field effects), and some keep
 older descriptive names (`Scene_`) until the scenes that call them are humanized.
@@ -371,7 +371,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   proven meaning takes a name in the scene's own file, never in `flags.h`.
 - **messages**: linker symbols written by bare name, `MSGNO(name)` their
   number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
-  `FieldScript_ShowMessageAndWait` chooses the next message after showing one, so a line that
+  `Event_ShowMessageAndWait` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
 - **callback**: a function a scene adds with `Task_AddFrame` at
   `TASK_PASS_FRAME`, run once a frame until removed.

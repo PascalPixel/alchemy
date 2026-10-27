@@ -15,10 +15,10 @@
 /// Task of Cloak: when the cell under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map it reads
 /// the 32-pixel gMetatiles, elsewhere the 16-pixel cells. Runs once a
-/// frame from FieldEffect_StartCloak, and again from
-/// FieldEffect_ResumeCloakCheck when a map loads with the leader still
+/// frame from FieldPsynergy_StartCloak, and again from
+/// FieldPsynergy_ResumeCloakCheck when a map loads with the leader still
 /// cloaked.
-void FieldEffect_CheckCloakTile(void) {
+void FieldPsynergy_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
 #endif
@@ -88,8 +88,8 @@ void FieldEffect_CheckCloakTile(void) {
 /// first five blinks, its outline (sprite flag bit 1) on and off; the last
 /// five alternate white and its own colours (param 0). Each half is 2
 /// frames. The leader ends with its shadow back.
-/// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
-void FieldEffect_EndCloak(void) {
+/// Event_RunFieldPsynergy runs it when the CLOAK_END request is handled.
+void FieldPsynergy_EndCloak(void) {
   struct Actor *actor;
   struct Sprite *animation;
   struct SpriteAnim *entry;
@@ -100,7 +100,7 @@ void FieldEffect_EndCloak(void) {
   entry = animation->entries[0];
 
   Sound_PlaySongFar(SE_CAST);
-  Task_Remove(FieldEffect_CheckCloakTile);
+  Task_Remove(FieldPsynergy_CheckCloakTile);
   Actor_SelectAnimationFar(actor, 0);
   actor->update = 0;
 
@@ -130,9 +130,9 @@ void FieldEffect_EndCloak(void) {
 
 /// Starts the Cloak cell check if the leader is hidden. SceneManager_Run calls
 /// it as a map loads, since gSaveBlock.cloaked outlives the map.
-void FieldEffect_ResumeCloakCheck(void) {
+void FieldPsynergy_ResumeCloakCheck(void) {
   if (gSaveBlock.cloaked != 0) {
-    Task_Add(FieldEffect_CheckCloakTile, TASK_PASS_FRAME);
+    Task_Add(FieldPsynergy_CheckCloakTile, TASK_PASS_FRAME);
   }
 }
 
@@ -143,9 +143,9 @@ void FieldEffect_ResumeCloakCheck(void) {
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
 /// shadow), and while gSaveBlock.cloaked is set no random battles come
-/// (Encounter_CountStepsAndSelectFormation). Called by FieldEffect_Run and
-/// FieldEffect_DispatchRequestKind.
-void FieldEffect_StartCloak(void) {
+/// (Encounter_CountStepsAndSelectFormation). Called by FieldPsynergy_Run and
+/// FieldPsynergy_Dispatch.
+void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader = Actor_Lookup(gSaveBlock.leaderActorId);
   struct Sprite *animation = leader->sprite;
@@ -173,12 +173,12 @@ void FieldEffect_StartCloak(void) {
   animation->dirty = 1;
   // Check the cell at once: off a Cloak cell, unhide and drop the request
   // the check just raised (n is 0 here).
-  check = FieldEffect_CheckCloakTile;
+  check = FieldPsynergy_CheckCloakTile;
   Task_Add(check, TASK_PASS_FRAME);
   gSaveBlock.cloaked = 1;
   check();
   if (work->psynergy == CLOAK_END) {
-    FieldEffect_EndCloak();
+    FieldPsynergy_EndCloak();
     work->psynergy = n;
   }
 }

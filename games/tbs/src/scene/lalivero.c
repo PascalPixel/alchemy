@@ -5,14 +5,14 @@
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the world map with Iodem, and
-/// EventScript_WatchWoundedSoldiers plays once
+/// Lalivero_WatchWoundedSoldiers plays once
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN): two of Tolbi's soldiers lie beaten in
 /// the street and tell Iodem that Sheba's captors went to the ruins beneath
 /// Babi Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the
 /// guard at the wharf lets no one by.
 ///
 /// On the second visit the party comes back through Faran's house. Its first
-/// step onto step trigger 50 plays EventScript_IodemGivesBlackOrb
+/// step onto step trigger 50 plays Lalivero_IodemGivesBlackOrb
 /// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
 /// the party the Black Orb that sails Babi's ship;
 /// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
@@ -21,7 +21,7 @@
 /// and a sign and three blocked cells close the north exit.
 ///
 /// On both visits Torch, a Mars Djinni, waits until it joins;
-/// EventScript_EnterDoor opens the door or the Sanctum's gate before the leader
+/// Lalivero_EnterDoor opens the door or the Sanctum's gate before the leader
 /// leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
 /// SceneId_TimberRoomsC; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
@@ -161,7 +161,7 @@ enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
 /// party.
-static void EventScript_TalkToTorch(void) {
+static void Lalivero_TalkToTorch(void) {
   Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
 
@@ -184,7 +184,7 @@ const struct ActorTemplate *Lalivero_GetActorTemplates(void) {
 
 /// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
 /// she was taken to the ruins, faces north again and goes back to sobbing.
-static void EventScript_TalkToVillagerTheyTookSheba(s32 actorId) {
+static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   void Actor_FaceDirection();
 
   struct Actor *actor;
@@ -193,46 +193,46 @@ static void EventScript_TalkToVillagerTheyTookSheba(s32 actorId) {
   actor->scaleX = 0x10000;
   actor = Actor_Get(actorId);
   actor->scaleY = 0x10000;
-  FieldScript_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
-  Script_ShowMessage(actorId, 0);
+  Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
+  Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetScript(actorId, gLalivero_CryingScript);
 }
 
 /// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
 /// party is leaving Lalivero, and wishes it well either way.
-static void EventScript_WomanAsksIfLeaving(s32 actorId) {
+static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
-  FieldScript_SetMessageId(message);
+  Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(message + 1);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(message + 1);
   } else {
-    FieldScript_SetMessageId(message + 2);
+    Event_SetMessageId(message + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was
 /// told to let you in if you showed up...") lets the party through and steps
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
-static void EventScript_WharfGuardLetsPartyThrough(void) {
+static void Lalivero_WharfGuardLetsPartyThrough(void) {
 
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
-  FieldScript_SetMessageId(MsgLaliveroWasToldLetInIf);
-  FieldScript_ShowMessageAndWait(ACTOR_WHARF_GUARD, 0);
+  Event_SetMessageId(MsgLaliveroWasToldLetInIf);
+  Event_ShowMessageAndWait(ACTOR_WHARF_GUARD, 0);
   Actor_SetSpeed(ACTOR_WHARF_GUARD, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
   Actor_ArmCallback(ACTOR_WHARF_GUARD, FACING_EAST, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
 }
 
 /// The leader walks through one of Lalivero's doors. As the leader walks into a
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
 /// and the exit of the touched step trigger is taken.
-static void EventScript_EnterDoor(void) {
+static void Lalivero_EnterDoor(void) {
   s32 door = gFieldWork->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
@@ -246,20 +246,20 @@ static void EventScript_EnterDoor(void) {
     MapGrid_AnimateCells(gLaliveroDoorOpenSteps, (u16)x, (u16)y);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestExit(door);
+  Import_EventSetExitRequest(door);
 }
 
 /// Lalivero: a doorway with no door (step triggers 8 and 11); leave by the
 /// touched step trigger's exit.
-static void EventScript_EnterDoorway(void) {
+static void Lalivero_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->stepTrigger;
   s32 exit = *trigger;
 
   work->transitionFrames = 16;
-  Import_ScriptRequestExit(exit);
+  Import_EventSetExitRequest(exit);
 }
 
 /// Lalivero, the first visit, arriving from the world map: the party and Iodem
@@ -269,183 +269,183 @@ static void EventScript_EnterDoorway(void) {
 /// protecting her. They headed for the ruins beneath Babi Lighthouse, and
 /// Faran, the master of Lalivero, followed them in. The soldiers send the party
 /// on, and Iodem sets off for Babi Lighthouse.
-static void EventScript_WatchWoundedSoldiers(void) {
+static void Lalivero_WatchWoundedSoldiers(void) {
   struct Actor *leader;
 
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLaliveroMoreTolbisSoldiersLayDefeated);
+  Event_Start();
+  Event_SetMessageId(MsgLaliveroMoreTolbisSoldiersLayDefeated);
   // The party walks in from the south; the two soldiers lie on the ground.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(424));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Import_ActorSetAnimation(ACTOR_WEST_SOLDIER, 0);
   Import_ActorSetAnimation(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(20);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(20);
   // Iodem steps out from the party and looks them over.
   FieldActor_LaunchFromLeader(ACTOR_IODEM, 8, -16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_IODEM);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 40);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
-  Script_OpenMessage(ACTOR_IODEM, 0);
-  FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
+  Event_OpenMessage(ACTOR_IODEM, 0);
+  Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
+  Event_WaitFrames(30);
   // The soldiers know Iodem's voice: seven attackers took Sheba.
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EAST_SOLDIER, 30);
   Import_ActorSetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_WaitFrames(20);
   // Iodem paces while they tell where the attackers went.
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_IODEM, 0x1cccc, 0xe666);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 360);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_IODEM, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 384);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
   // Iodem resolves to follow; the soldiers send the party on.
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_EAST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EAST_SOLDIER, 30);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_WEST_SOLDIER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WEST_SOLDIER, 70);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   // Iodem walks back into the leader.
   Actor_SetSpeed(ACTOR_IODEM, 0x13333, 0x9999);
   Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
@@ -456,8 +456,8 @@ static void EventScript_WatchWoundedSoldiers(void) {
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
-  FieldScript_WaitFrames(10);
-  FieldScript_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 /// Lalivero, step trigger 50 after Venus Lighthouse, until Iodem has spoken
@@ -467,12 +467,12 @@ static void EventScript_WatchWoundedSoldiers(void) {
 /// life. The party promised Babi to find it, though it means first to find
 /// Jenna, whom it is searching for, and Iodem gives it the Black Orb that
 /// sails Babi's ship. Garet is glad to see the ocean at last.
-static void EventScript_IodemGivesBlackOrb(void) {
+static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 
   GameFlag_Set(FLAG_IODEM_FAREWELL_SEEN);
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLaliveroWhereGoingIsaacIodemAsked);
+  Event_Start();
+  Event_SetMessageId(MsgLaliveroWhereGoingIsaacIodemAsked);
   // Garet reminds the leader that Iodem asked them to wait; the answer
   // picks Mia's reply.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 376);
@@ -481,34 +481,34 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldActor_LaunchFromLeader(ACTOR_MIA, -16, 16, FACING_NORTHEAST);
   Actor_LaunchFromLeader(ACTOR_IVAN, 0, 16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_GARET);
-  FieldScript_WaitFrames(30);
-  Script_OpenMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  FieldScript_WaitFrames(10);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  Event_WaitFrames(10);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessage(ACTOR_MIA, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_MIA, 0);
     gFieldWork->message += 1;
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     gFieldWork->message += 1;
-    Script_ShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
   }
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   // The party lines up facing Iodem's door.
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -16, 0);
   Actor_WalkBy(ACTOR_IVAN, 0, -16);
@@ -521,21 +521,21 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   // Iodem comes out: the door opens (cells 34, 0 drawn at 4, 18) and closes
   // behind him (cells 32, 0).
   Actor_SetSpeed(ACTOR_IODEM, 0xcccc, 0x6666);
   Actor_GetById(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_DOOR_OPEN);
-  FieldScript_WaitFrames(20);
+  Event_PlaySong(SE_DOOR_OPEN);
+  Event_WaitFrames(20);
   Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
 #if TBS_PATCH_2
   Actor_GetById(ACTOR_IODEM)->targetZ = ACTOR_NO_TARGET;
   Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
 #endif
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 #if TBS_PATCH_2
   Actor_WalkToAndWait(ACTOR_IODEM, 72, 328);
 #else
@@ -543,194 +543,194 @@ static void EventScript_IodemGivesBlackOrb(void) {
 #endif
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_DOOR_CLOSE);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_WalkByAndWait(ACTOR_IODEM, 16, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_LinkPair(ACTOR_MIA, ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  FieldScript_WaitFrames(40);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(40);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(20);
-  Script_OpenMessage(ACTOR_GARET, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message += 1;
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     gFieldWork->message += 1;
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
   }
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   // Iodem takes out the Black Orb.
   Actor_SetPosition(ACTOR_BLACK_ORB, PIXELS(88), PIXELS(332));
-  Script_ShowMessage(-1, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(-1, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_Jump(ACTOR_MIA, 4, 13);
   Actor_Jump(ACTOR_MIA, 4, 30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
   // at Idejima.
   if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
     Lalivero_TalkAboutIdejimaShip();
   }
-  FieldScript_SetMessageId(MsgLaliveroBabiToldMeShipAncients);
-  FieldScript_WaitFrames(10);
+  Event_SetMessageId(MsgLaliveroBabiToldMeShipAncients);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   // He holds the orb out, the leader takes it, and he steps back.
   Actor_SetSpeed(ACTOR_BLACK_ORB, 0xcccc, 0x6666);
   Actor_SetDestinationOffset(ACTOR_BLACK_ORB, 0, 16);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetPosition(ACTOR_BLACK_ORB, 0, 0);
   gFieldWork->message += 1;
   PartyInventory_GiveItem(ITEM_BLACK_ORB, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Actor_Get(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + 0x100, 0);
-  FieldScript_WaitFrames(30);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(50);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(50);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   // Iodem goes back inside.
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_DOOR_OPEN);
-  FieldScript_WaitFrames(10);
+  Event_PlaySong(SE_DOOR_OPEN);
+  Event_WaitFrames(10);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_DOOR_CLOSE);
-  FieldScript_WaitFrames(50);
+  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_WaitFrames(50);
   // The others are eager to sail, then walk back into the leader.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
   Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
   Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
@@ -757,60 +757,60 @@ static void EventScript_IodemGivesBlackOrb(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  FieldScript_WaitFrames(10);
-  FieldScript_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 /// The ship the party saw at Idejima was not Babi's, which is here in
 /// Lalivero, but, Garet guesses, Saturos's.
 static void Lalivero_TalkAboutIdejimaShip(void) {
-  FieldScript_SetMessageId(MsgLaliveroThoughtShipWeSawAt);
-  FieldScript_WaitFrames(20);
+  Event_SetMessageId(MsgLaliveroThoughtShipWeSawAt);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 55);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
-  FieldScript_WaitFrames(65);
+  Event_WaitFrames(65);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
 /// Lalivero, step trigger 51 after Venus Lighthouse: Garet turns the leader
 /// back toward Babi's ship and the wharf the guard was keeping.
-static void EventScript_TurnBackToTheShip(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);
-  Script_ShowMessage(ACTOR_GARET, 0);
+static void Lalivero_TurnBackToTheShip(void) {
+  Event_Start();
+  Event_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  FieldScript_End();
+  Event_End();
 }
 
 /// What the party can talk to, touch and search, which changes once they are
@@ -901,7 +901,7 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
     if ((gSaveBlock.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
          gSaveBlock.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
-        !Script_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
+        !Event_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the event.
@@ -909,7 +909,7 @@ s32 Lalivero_Initialize(void) {
       actor->paused = 1;
       actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       actor->paused = 1;
-      EventScript_WatchWoundedSoldiers();
+      Lalivero_WatchWoundedSoldiers();
       actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       actor->paused = 0;
       actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
@@ -1112,20 +1112,20 @@ u16 gLaliveroGateOpenSteps[] = {
 struct Trigger gLaliveroTriggers[] = {
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
     { TRIGGER_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
     { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
-    { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVillagerTheyTookSheba) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT(Lalivero_TalkToVillagerTheyTookSheba) },
     { TRIGGER_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
     { TRIGGER_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
     { TRIGGER_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
@@ -1145,7 +1145,7 @@ struct Trigger gLaliveroTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWonderWhatBabisMostPrecious) },
-    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
+    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT(Lalivero_TalkToTorch) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     // XXX (no evidence): why this chest opens only facing west, when
@@ -1156,25 +1156,25 @@ struct Trigger gLaliveroTriggers[] = {
 };
 
 struct Trigger gLaliveroTriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(EventScript_IodemGivesBlackOrb) },
-    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackToTheShip) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { TRIGGER_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
+    { TRIGGER_STEP, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT(Lalivero_IodemGivesBlackOrb) },
+    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Lalivero_TurnBackToTheShip) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { TRIGGER_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
     { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
     { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
-    { TRIGGER_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WomanAsksIfLeaving) },
+    { TRIGGER_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT(Lalivero_WomanAsksIfLeaving) },
     { TRIGGER_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
     { TRIGGER_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
@@ -1194,7 +1194,7 @@ struct Trigger gLaliveroTriggersAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisSureSeemsLikeAStrange) },
-    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
+    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT(Lalivero_TalkToTorch) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },

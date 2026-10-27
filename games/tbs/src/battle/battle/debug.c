@@ -298,7 +298,7 @@ restart:
       }
       // A fights: Down still held makes it a link battle. The battle's
       // background comes from gSaveBlock.special
-      // (FieldScript_GetSpecialValueFar in Battle_Run).
+      // (Event_GetSpecialValueFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);

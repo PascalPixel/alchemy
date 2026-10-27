@@ -18,11 +18,11 @@
 ///   (FLAG_VAULT_SUSPECTS_MIND_READ) the young man fixing a roof is missing,
 ///   and a woman walks about looking for him.
 /// - While Ivan is helping the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
-///   leaving by either gate has him stay behind (EventScript_IvanStaysBehind),
+///   leaving by either gate has him stay behind (Vault_IvanStaysBehind),
 ///   and Scene_Initialize has him rejoin when the party comes back in by a gate
 ///   or out of the Vault Sanctum.
 /// - Once the thieves are jailed, the townspeople thank the party, and the
-///   dog, given a Bone (EventScript_GiveBoneToDog,
+///   dog, given a Bone (Vault_GiveBoneToDog,
 ///   FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and jumps there three times;
 ///   the passage it shows opens only in the later map.
 ///
@@ -220,19 +220,19 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 /// helping search for the rod and the thieves are free, he walks out to the
 /// gate, says he is still worried about the rod and will wait in Vault, leaves
 /// any Venus Djinni with Isaac and leaves the party.
-static void EventScript_IvanStaysBehind(void) {
+static void Vault_IvanStaysBehind(void) {
   struct Actor *actor;
   struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Import_ScriptRequestExit(work->stepTrigger -
-                             (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
+    Import_EventSetExitRequest(
+        work->stepTrigger - (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
   // Bring Ivan out beside the party at the exit they are using.
-  FieldScript_Start();
+  Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
@@ -247,32 +247,32 @@ static void EventScript_IvanStaysBehind(void) {
     FieldCamera_WaitForArrival();
   }
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
-  Script_ShowMessageAndWait(
+  Event_WaitFrames(20);
+  Event_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
+  FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
-    FieldScript_SetMessageId(MsgVaultWaitDontWantTakeYour);
-    Script_ShowMessage(ACTOR_IVAN, 0);
+    Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Vault_ReturnIsaacsDjinni();
     WaitFrames(20);
   }
   Party_RemoveMemberRestored(IVAN);
-  Import_ScriptRequestExit(work->stepTrigger -
-                           (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_End();
+  Import_EventSetExitRequest(work->stepTrigger -
+                             (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_End();
 }
 
 /// In Vault, Isaac peers into the well and hears water rumbling down there.
-static void EventScript_PeerIntoWell(void) {
-  FieldScript_Start();
+static void Vault_PeerIntoWell(void) {
+  Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
   FieldMessage_Show(MsgVaultCanHearWaterRumblingDown, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -284,54 +284,54 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   FieldMessage_ShowAtActor(speaker, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     struct FieldWork *work = gFieldWork;
 
     ++work->message;
   }
-  FieldScript_ShowMessageAndWait(speaker, 0);
+  Event_ShowMessageAndWait(speaker, 0);
 }
 
 /// In Vault while the rod is missing, a townsperson asks about the eruption.
 /// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
 /// for days. No: aren't you courageous!
-static void EventScript_AskAboutEruption(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
+static void Vault_AskAboutEruption(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
   Vault_FaceActorAndWait(ACTOR_ERUPTION_WITNESS, ACTOR_PARTY_LEADER, 2);
-  Script_OpenMessage(ACTOR_ERUPTION_WITNESS, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+  Event_OpenMessage(ACTOR_ERUPTION_WITNESS, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
-  Script_ShowMessage(ACTOR_ERUPTION_WITNESS, 0);
+  Event_ShowMessage(ACTOR_ERUPTION_WITNESS, 0);
   Actor_FaceDirection(ACTOR_ERUPTION_WITNESS, FACING_SOUTH + FACING_STEP, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault while the rod is missing, a townsperson says travelers left town
 /// in a big hurry: did the party see them? Yes: two women and four men, the
 /// girl and old man unhappy to be there. No: maybe they left earlier.
-static void EventScript_AskAboutFleeingTravelers(void) {
+static void Vault_AskAboutFleeingTravelers(void) {
 
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultThoseTravelersLeftInBig);
+  Event_Start();
+  Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
   Import_ActorSetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ACTOR_PARTY_LEADER,
                          2);
   Vault_AskYesNoAndShowReply(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault, one of the thieves loitering in town asks whether the party
 /// accuses them; either answer gets a denial.
 /// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
-static void EventScript_ThiefDeniesTheft(void) {
+static void Vault_ThiefDeniesTheft(void) {
 
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
+  Event_Start();
+  Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
   Vault_FaceActorAndWait(ACTOR_THIEF_IN_TOWN, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_THIEF_IN_TOWN);
-  FieldScript_End();
+  Event_End();
 }
 
 /// A stranded traveler asks whether the party is off on an adventure.
@@ -339,159 +339,159 @@ static void EventScript_ThiefDeniesTheft(void) {
 /// missing.
 /// "Off on an adventure, are you?"
 /// Yes: impressive for youngsters. No: see the Sanctum while you're here.
-static void EventScript_AskAboutAdventure(void) {
+static void Vault_AskAboutAdventure(void) {
 
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultOffOnAdventure);
+  Event_Start();
+  Event_SetMessageId(MsgVaultOffOnAdventure);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_STRANDED_TRAVELER);
-  FieldScript_End();
+  Event_End();
 }
 
 /// A townsperson says some folks got robbed in the chaos of the eruption.
 /// She says it while the rod is missing.
-static void EventScript_TalkOfEruptionThefts(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultGuessFolksGot);
+static void Vault_TalkOfEruptionThefts(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultGuessFolksGot);
   Vault_ShowStandingActorMessage(ACTOR_WOMAN_ON_STEALING);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault while the rod is missing, the strongman on watch: nobody steals on
 /// his watch, the thieves must be from out of town.
-static void EventScript_StrongmanOnWatchSuspectsOutsiders(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultNobodysStealingAnything);
+static void Vault_StrongmanOnWatchSuspectsOutsiders(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultNobodysStealingAnything);
   Vault_ShowStandingActorMessage(ACTOR_STRONGMAN_ON_WATCH);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault while the rod is missing, the dog stops and barks.
-static void EventScript_TalkToDog(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultRuffRrruff);
+static void Vault_TalkToDog(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultRuffRrruff);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
-  FieldScript_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_End();
 }
 
 /// In Vault while the rod is missing, the boy round the well stops: poor Ivan
 /// was left at the mayor's to look for the stolen rod.
-static void EventScript_PityIvan(void) {
+static void Vault_PityIvan(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultPoorGuyLeft);
+  Event_Start();
+  Event_SetMessageId(MsgVaultPoorGuyLeft);
   Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
   WaitFrames(1);
-  FieldScript_End();
+  Event_End();
   actor->timer &= 1;
 }
 
 /// In Vault while the rod is missing, the girl round the well stops: Hammet's
 /// caravan left as soon as the eruption stopped.
-static void EventScript_TalkOfHammetsCaravan(void) {
+static void Vault_TalkOfHammetsCaravan(void) {
   struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultMasterHammetsCaravan);
+  Event_Start();
+  Event_SetMessageId(MsgVaultMasterHammetsCaravan);
   Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
   WaitFrames(1);
-  FieldScript_End();
+  Event_End();
   actor->timer &= 1;
 }
 
 /// In Vault, once the suspects' minds are read, the woman wanting
 /// the roof fixed: the man who should be fixing it is probably in back
 /// slacking off.
-static void EventScript_LookForRoofer(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultFixingRoofCant);
+static void Vault_LookForRoofer(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultFixingRoofCant);
   Vault_FaceActorAndWait(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, ACTOR_PARTY_LEADER,
                          2);
   FieldEffect_SpawnAttached(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
                             EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   FieldMessage_ShowAtActor(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Stops an actor, faces the leader and shows the current message.
 static void Vault_ShowStandingActorMessage(s32 actorId) {
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
   Vault_FaceActorAndWait(actorId, ACTOR_PARTY_LEADER, 2);
-  FieldScript_ShowMessageAndWait(actorId, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_End();
 }
 
 #include "common/vault_talk.h"
 
 /// The welcoming young man asks whether the party is leaving again.
 /// He asks after the thieves are jailed. "So, you're hitting the road again?"
-static void EventScript_AskAboutLeavingAgain(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultYoureHittingRoadAgain);
+static void Vault_AskAboutLeavingAgain(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultYoureHittingRoadAgain);
   Vault_FaceActorAndWait(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_WELCOMING_YOUNG_MAN);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault after the thieves are jailed, a townsperson praises their capture.
 /// "It's great that you caught those thieves!"
-static void EventScript_PraiseThievesCapture(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultGreatCaughtThieves);
+static void Vault_PraiseThievesCapture(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultGreatCaughtThieves);
   Vault_ShowStandingActorMessage(ACTOR_WOMAN_ON_STEALING);
-  FieldScript_End();
+  Event_End();
 }
 
 /// An old man talks about Ivan, Hammet's servant.
 /// After the thieves are jailed, he says Ivan went out to Lunpa, or, with Ivan
 /// in the party, that rescuing Hammet must have been impossible.
-static void EventScript_TalkAboutIvan(void) {
+static void Vault_TalkAboutIvan(void) {
   struct FieldWork *workspace;
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
+  Event_Start();
+  Event_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
     workspace = gFieldWork;
     ++workspace->message;
   }
   Vault_ShowStandingActorMessage(ACTOR_OLD_MAN_ON_HAMMETS_SERVANT);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault after the thieves are jailed, a townsperson says the eruption
 /// devastated the roads; once the southern bridge is repaired, you can head
 /// toward Kalay.
-static void EventScript_TalkOfDamagedRoads(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultEruptionDevastatedRoads);
+static void Vault_TalkOfDamagedRoads(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultEruptionDevastatedRoads);
   Vault_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
-  FieldScript_End();
+  Event_End();
 }
 
 /// The boy round the well asks after Ivan.
 /// After the thieves are jailed, he hopes Ivan didn't go to Lunpa alone, or,
 /// with Ivan in the party, asks when he joined up with Isaac.
-static void EventScript_AskWhetherIvanWentToLunpa(void) {
+static void Vault_AskWhetherIvanWentToLunpa(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultDidntGoLunpa);
+  Event_Start();
+  Event_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
   Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
@@ -499,25 +499,25 @@ static void EventScript_AskWhetherIvanWentToLunpa(void) {
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
   WaitFrames(1);
-  FieldScript_End();
+  Event_End();
   actor->timer &= 1;
 }
 
 /// In Vault after the thieves are jailed, the girl round the well: everyone is
 /// grateful the party captured the thieves.
-static void EventScript_ThankForCapturingThieves(void) {
+static void Vault_ThankForCapturingThieves(void) {
   struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultEveryoneGratefulCaptured);
+  Event_Start();
+  Event_SetMessageId(MsgVaultEveryoneGratefulCaptured);
   Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
   WaitFrames(1);
-  FieldScript_End();
+  Event_End();
   actor->timer &= 1;
 }
 
@@ -525,34 +525,34 @@ static void EventScript_ThankForCapturingThieves(void) {
 /// prisoners. "Those men you captured... They're in jail now?" Yes: the
 /// prison hadn't been used in a long time. No: they're upset; maybe go see
 /// them.
-static void EventScript_AskAboutPrisoners(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
+static void Vault_AskAboutPrisoners(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
   Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_STRONGMAN_ON_WATCH);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault after the thieves are jailed, the traveler asks who captured the
 /// thieves; either answer is praised.
 /// "Are you the ones who captured the thieves?"
-static void EventScript_AskWhoCapturedThieves(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultOnesWhoCapturedThieves);
+static void Vault_AskWhoCapturedThieves(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultOnesWhoCapturedThieves);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_STRANDED_TRAVELER);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault after the thieves are jailed, the dog barks; carrying a Bone
 /// before it has shown the passage lets the party give it one.
-static void EventScript_TalkToDogAfterCapture(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultRuffRrruff2);
+static void Vault_TalkToDogAfterCapture(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultRuffRrruff2);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
-  FieldScript_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
@@ -561,122 +561,122 @@ static void EventScript_TalkToDogAfterCapture(void) {
 
     *menuRequest = open;
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// The young man fixing the roof thanks the party before it leaves.
 /// The party freed him, and he says so after the thieves are jailed.
 /// "Thank you for the other day.
 /// Are you leaving town already?"
-static void EventScript_ThankBeforeDeparture(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultThankForOtherDayLeaving);
+static void Vault_ThankBeforeDeparture(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultThankForOtherDayLeaving);
   Vault_FaceActorAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ACTOR_PARTY_LEADER,
                          2);
   Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
+  Event_End();
 }
 
 /// In Vault, Mind Read on a townsperson: stealing during an eruption is
 /// unforgivable, or how should the prisoners be punished?
-static void EventScript_ReadMindOnTheft(void) {
-  FieldScript_Start();
+static void Vault_ReadMindOnTheft(void) {
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
-    FieldScript_SetMessageId(MsgVaultManShouldStealFromAnother);
+    Event_SetMessageId(MsgVaultManShouldStealFromAnother);
   else
-    FieldScript_SetMessageId(MsgVaultHowPunishPrisoners);
+    Event_SetMessageId(MsgVaultHowPunishPrisoners);
   Vault_ShowThought(ACTOR_WOMAN_ON_STEALING);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault, Mind Read on a townsperson: the strange travelers headed for the
 /// northeast of the Goma Range, or the only way out is the cave in the Goma
 /// Range.
-static void EventScript_ReadMindOnTravelers(void) {
-  FieldScript_Start();
+static void Vault_ReadMindOnTravelers(void) {
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    FieldScript_SetMessageId(MsgVaultGroupTravelersWasStrangeBunch);
+    Event_SetMessageId(MsgVaultGroupTravelersWasStrangeBunch);
   } else {
-    FieldScript_SetMessageId(MsgVaultWithRoadOutOnlyWay);
+    Event_SetMessageId(MsgVaultWithRoadOutOnlyWay);
   }
   Vault_ShowThought(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault, Mind Read on the boy round the well: the three creeps at the inn
 /// stole the rod, or where did Ivan go (when did they join him, with Ivan in
 /// the party)?
-static void EventScript_ReadMindOnIvan(void) {
+static void Vault_ReadMindOnIvan(void) {
   Actor_GetById(ACTOR_BOY_ROUND_THE_WELL)->timer |= 2;
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    FieldScript_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
+    Event_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
   } else {
-    FieldScript_SetMessageId(MsgVaultWhereDidIvanGoBy);
+    Event_SetMessageId(MsgVaultWhereDidIvanGoBy);
     if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
       ++gFieldWork->message;
   }
   Vault_ShowThought(ACTOR_BOY_ROUND_THE_WELL);
-  FieldScript_End();
+  Event_End();
   Actor_GetById(ACTOR_BOY_ROUND_THE_WELL)->timer &= 1;
 }
 
 /// In Vault, Mind Read on the girl round the well: riches can't save you from a
 /// volcano, or the party must be stronger than they look.
-static void EventScript_ReadMindOnWealth(void) {
+static void Vault_ReadMindOnWealth(void) {
   Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer |= 2;
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
-    FieldScript_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
+    Event_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
   else
-    FieldScript_SetMessageId(MsgVaultMustStrongerThanLookHave);
+    Event_SetMessageId(MsgVaultMustStrongerThanLookHave);
   Vault_ShowThought(ACTOR_GIRL_ROUND_THE_WELL);
-  FieldScript_End();
+  Event_End();
   Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer &= 1;
 }
 
 /// In Vault, Mind Read on the strongman on watch: everyone knows the three at
 /// the inn stole the rod, or he feels much better with them behind bars.
-static void EventScript_ReadMindOnSuspects(void) {
-  FieldScript_Start();
+static void Vault_ReadMindOnSuspects(void) {
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
-    FieldScript_SetMessageId(MsgVaultEveryoneKnowsThoseThreeAt);
+    Event_SetMessageId(MsgVaultEveryoneKnowsThoseThreeAt);
   else
-    FieldScript_SetMessageId(MsgVaultFeelMuchBetter);
+    Event_SetMessageId(MsgVaultFeelMuchBetter);
   Vault_ShowThought(ACTOR_STRONGMAN_ON_WATCH);
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault, Mind Read on the dog: humans value money over their lives; after
 /// the thieves are jailed, bring a bone for something useful, and once fed, a
 /// careful search will reveal a passage leading underground.
-static void EventScript_ReadDogMind(void) {
+static void Vault_ReadDogMind(void) {
   struct Actor *actor = Actor_GetById(ACTOR_VAULT_DOG);
   actor->paused = 1;
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    FieldScript_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
+    Event_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
     Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
-    FieldScript_WaitFrames(2);
+    Event_WaitFrames(2);
   } else if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
-    FieldScript_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
+    Event_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
   } else {
-    FieldScript_SetMessageId(MsgVaultIfBringMeBoneIll);
+    Event_SetMessageId(MsgVaultIfBringMeBoneIll);
   }
-  FieldScript_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_End();
   actor->paused = 0;
 }
 
 /// In Vault, Mind Read on the woman wanting the roof fixed: that sneak is
 /// wasting time instead of fixing the roof.
-static void EventScript_ReadWomanWantingTheRoofFixedMind(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultSneakWastingTime);
+static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultSneakWastingTime);
   Vault_ShowThought(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
-  FieldScript_End();
+  Event_End();
 }
 
 #include "common/vault_toggle.h"
@@ -686,13 +686,13 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestExit(continuation);
+  Import_EventSetExitRequest(continuation);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
 /// It's VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, into the house where a man
 /// keeps a sparkling rock the volcano threw.
-static void EventScript_EnterGemOwnersHouse(void) {
+static void Vault_EnterGemOwnersHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST);
@@ -701,7 +701,7 @@ static void EventScript_EnterGemOwnersHouse(void) {
 /// The door of a child's home opens and the party walks in.
 /// It's VAULT_TO_LOG_ROOMS_A_SOUTHEAST, into the house east of the town's
 /// centre.
-static void EventScript_EnterChildsHouse(void) {
+static void Vault_EnterChildsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_LOG_ROOMS_A_SOUTHEAST);
@@ -710,7 +710,7 @@ static void EventScript_EnterChildsHouse(void) {
 /// The inn's door opens and the party walks in.
 /// It's VAULT_TO_LOG_ROOMS_A_SOUTHWEST, into the inn where the three
 /// suspects stay.
-static void EventScript_EnterInn(void) {
+static void Vault_EnterInn(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_TO_LOG_ROOMS_A_SOUTHWEST);
@@ -719,7 +719,7 @@ static void EventScript_EnterInn(void) {
 /// In Vault, the door VAULT_TO_LOG_ROOMS_A_EAST opens into the item shop,
 /// an old couple's home too; the leader walks in behind the doorway's
 /// foreground tiles.
-static void EventScript_EnterItemShop(void) {
+static void Vault_EnterItemShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
@@ -733,7 +733,7 @@ static void EventScript_EnterItemShop(void) {
 
 /// The weapon and armor shop's door opens and the party walks in.
 /// It's VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, entered as the item shop is.
-static void EventScript_EnterWeaponAndArmorShop(void) {
+static void Vault_EnterWeaponAndArmorShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
@@ -747,7 +747,7 @@ static void EventScript_EnterWeaponAndArmorShop(void) {
 
 /// In Vault, the door VAULT_TO_LOG_ROOMS_A_NORTHWEST opens into the
 /// mayor's house, where Ivan waits.
-static void EventScript_EnterMayorsHouse(void) {
+static void Vault_EnterMayorsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
@@ -757,7 +757,7 @@ static void EventScript_EnterMayorsHouse(void) {
 
 /// In Vault, the jail door opens and the party walks in, drawn behind the
 /// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
-static void EventScript_EnterJail(void) {
+static void Vault_EnterJail(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
@@ -771,7 +771,7 @@ static void EventScript_EnterJail(void) {
 
 /// In Vault, the party walks through a doorless entrance into the room with
 /// the crate (VAULT_TO_LOG_ROOMS_A_WEST).
-static void EventScript_EnterPassage(void) {
+static void Vault_EnterPassage(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
@@ -802,49 +802,49 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 /// gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the bell
 /// (FLAG_VAULT_SAP_CALLED_BY_BELL). No event here lets the party talk to
 /// it; it joins in the town's later map (vault_revisit.c).
-static void EventScript_RingBell(void) {
-  FieldScript_Start();
-  Script_PlaySong(SE_BELL);
-  FieldScript_WaitFrames(40);
-  if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
+static void Vault_RingBell(void) {
+  Event_Start();
+  Event_PlaySong(SE_BELL);
+  Event_WaitFrames(40);
+  if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    FieldScript_WaitFrames(12);
+    Event_WaitFrames(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Given a Bone, the dog runs to the hidden passage and jumps there.
 /// It does so after the thieves are jailed, jumping three times
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE).
-static void EventScript_GiveBoneToDog(void) {
+static void Vault_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
-  FieldScript_Start();
-  FieldScript_WaitFrames(10);
+  Event_Start();
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
   Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 392);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
   GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Arriving in Vault: restores the dog's and Sap's places, sets the two
@@ -860,7 +860,7 @@ s32 Scene_Initialize(void) {
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later map, SceneId_VaultRevisit (vault_revisit.c).
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    Import_ScriptRequestExit(VAULT_TO_VAULT_REVISIT);
+    Import_EventSetExitRequest(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
@@ -908,7 +908,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
         if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-          FieldScript_Start();
+          Event_Start();
           actor = Actor_GetById(ACTOR_PARTY_LEADER);
           if (actor != 0) {
             Import_ActorSetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
@@ -919,12 +919,12 @@ s32 Scene_Initialize(void) {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(224), PIXELS(162));
           }
           Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-          FieldScript_StartScreenTransition();
-          FieldScript_WaitTransitionFrames();
-          FieldScript_WaitFrames(30);
+          Event_StartScreenTransition();
+          Event_WaitTransitionFrames();
+          Event_WaitFrames(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-          FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
-          FieldScript_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+          Event_SetMessageId(MsgVaultWelcomeBackTwo);
+          Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
@@ -936,7 +936,7 @@ s32 Scene_Initialize(void) {
           Actor_WaitForMoveById(ACTOR_IVAN);
           Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
           Event_PrepareActorAndApplyValue(IVAN, 0);
-          FieldScript_End();
+          Event_End();
         }
       }
     }
@@ -949,15 +949,15 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
-          FieldScript_Start();
+          Event_Start();
           Actor_SetPosition(ACTOR_IVAN, PIXELS(40), PIXELS(310));
           Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-          FieldScript_StartScreenTransition();
-          FieldScript_WaitTransitionFrames();
-          FieldScript_WaitFrames(30);
+          Event_StartScreenTransition();
+          Event_WaitTransitionFrames();
+          Event_WaitFrames(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-          FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
-          FieldScript_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+          Event_SetMessageId(MsgVaultWelcomeBackTwo);
+          Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
@@ -969,7 +969,7 @@ s32 Scene_Initialize(void) {
           Actor_WaitForMoveById(ACTOR_IVAN);
           Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
           Event_PrepareActorAndApplyValue(IVAN, 0);
-          FieldScript_End();
+          Event_End();
         }
       }
     }
@@ -988,13 +988,13 @@ s32 Scene_Initialize(void) {
 #include "common/vault_range.h"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
-  FieldScript_ShowMessageAndWait(actorId, 0);
-  FieldScript_WaitFrames(delay);
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_WaitFrames(delay);
 }
 
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
   Actor_LinkPair(actorId, other, 0);
-  FieldScript_WaitFrames(delay);
+  Event_WaitFrames(delay);
 }
 
 /// Applies drift and gradually damps both rates toward zero.
@@ -1390,101 +1390,101 @@ struct ActorTemplate gVault_ActorTemplatesAfterThieves[] = {
 };
 
 struct Trigger gVault_Triggers[] = {
-    { TRIGGER_STEP, MB_VAULT_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IvanStaysBehind) },
-    { TRIGGER_STEP, MB_VAULT_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IvanStaysBehind) },
-    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
-    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGemOwnersHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterChildsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterInn) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterItemShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWeaponAndArmorShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterMayorsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJail) },
-    { TRIGGER_STEP, MB_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPassage) },
+    { TRIGGER_STEP, MB_VAULT_SOUTH_GATE, CONDITION_ALWAYS, EVENT(Vault_IvanStaysBehind) },
+    { TRIGGER_STEP, MB_VAULT_NORTH_GATE, CONDITION_ALWAYS, EVENT(Vault_IvanStaysBehind) },
+    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT(Vault_RaisePathToBridge) },
+    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT(Vault_LowerPathUnderBridge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterGemOwnersHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterChildsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterInn) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterItemShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterWeaponAndArmorShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterMayorsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(Vault_EnterJail) },
+    { TRIGGER_STEP, MB_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_EnterPassage) },
     { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
-    { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutEruption) },
+    { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, EVENT(Vault_AskAboutEruption) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetAWealthyLandownerAnd) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkOfEruptionThefts) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_TalkOfEruptionThefts) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetsServantCantReturnTo) },
-    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutFleeingTravelers) },
-    { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PityIvan) },
-    { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkOfHammetsCaravan) },
-    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StrongmanOnWatchSuspectsOutsiders) },
-    { TRIGGER_TALK, ACTOR_THIEF_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ThiefDeniesTheft) },
-    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutAdventure) },
-    { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDog) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_AskAboutFleeingTravelers) },
+    { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_PityIvan) },
+    { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_TalkOfHammetsCaravan) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(Vault_StrongmanOnWatchSuspectsOutsiders) },
+    { TRIGGER_TALK, ACTOR_THIEF_IN_TOWN, CONDITION_ALWAYS, EVENT(Vault_ThiefDeniesTheft) },
+    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT(Vault_AskAboutAdventure) },
+    { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(Vault_TalkToDog) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultAFieryRockBurntAHole) },
-    { TRIGGER_TALK, ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LookForRoofer) },
+    { TRIGGER_TALK, ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT(Vault_LookForRoofer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultISupposeTheseChildrenCantGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultMtAlephsEruptionWasBeyondDescription) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoesAWealthyManLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnTheft) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTheft) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultPoorIvanButTheRodMay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnIvan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnWealth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnSuspects) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnIvan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnWealth) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnSuspects) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgVaultHmphItLooksLikeTheyreOnto) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgVaultIWasJustAboutToLeave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadDogMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(Vault_ReadDogMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultFixTheRoofWhyPayFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadWomanWantingTheRoofFixedMind) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT(Vault_ReadWomanWantingTheRoofFixedMind) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT(Vault_RingBell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT(Vault_PeerIntoWell) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { TRIGGERS_END },
 };
 
 struct Trigger gVault_TriggersAfterThieves[] = {
-    { TRIGGER_STEP, MB_VAULT_SOUTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IvanStaysBehind) },
-    { TRIGGER_STEP, MB_VAULT_NORTH_GATE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IvanStaysBehind) },
-    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
-    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGemOwnersHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterChildsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterInn) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterItemShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWeaponAndArmorShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterMayorsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJail) },
-    { TRIGGER_STEP, MB_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPassage) },
-    { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutLeavingAgain) },
+    { TRIGGER_STEP, MB_VAULT_SOUTH_GATE, CONDITION_ALWAYS, EVENT(Vault_IvanStaysBehind) },
+    { TRIGGER_STEP, MB_VAULT_NORTH_GATE, CONDITION_ALWAYS, EVENT(Vault_IvanStaysBehind) },
+    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT(Vault_RaisePathToBridge) },
+    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT(Vault_LowerPathUnderBridge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterGemOwnersHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterChildsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterInn) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterItemShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterWeaponAndArmorShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterMayorsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(Vault_EnterJail) },
+    { TRIGGER_STEP, MB_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_EnterPassage) },
+    { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT(Vault_AskAboutLeavingAgain) },
     { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultSmokeIsStillRisingFromMt) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetTheWealthyMerchantI) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PraiseThievesCapture) },
-    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutIvan) },
-    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkOfDamagedRoads) },
-    { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherIvanWentToLunpa) },
-    { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ThankForCapturingThieves) },
-    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPrisoners) },
-    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhoCapturedThieves) },
-    { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDogAfterCapture) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ThankBeforeDeparture) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_PraiseThievesCapture) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, EVENT(Vault_TalkAboutIvan) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_TalkOfDamagedRoads) },
+    { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_AskWhetherIvanWentToLunpa) },
+    { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ThankForCapturingThieves) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(Vault_AskAboutPrisoners) },
+    { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT(Vault_AskWhoCapturedThieves) },
+    { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(Vault_TalkToDogAfterCapture) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, EVENT(Vault_ThankBeforeDeparture) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultYouveMadeOurTownPeacefulAt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultNowMtAlephHasCalmedDown) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultOfAllThePlacesWhyWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnTheft) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTheft) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultNobodyGetsIntoLunpaExceptFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnIvan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnWealth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnSuspects) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnIvan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnWealth) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnSuspects) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgVaultThereIsAlwaysAFightWhen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadDogMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(Vault_ReadDogMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultSniffAhTheSmellOfCooking) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
-    { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(EventScript_GiveBoneToDog) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT(Vault_RingBell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT(Vault_PeerIntoWell) },
+    { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT(Vault_GiveBoneToDog) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { TRIGGERS_END },
 };
 // clang-format on
 
 // Each door's opening, two frames of map cells, named for the room it opens
-// into (EventScript_EnterGemOwnersHouse and the rest).
+// into (Vault_EnterGemOwnersHouse and the rest).
 u16 gVault_GemOwnersHouseDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 4),
     MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 4),

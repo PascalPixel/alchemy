@@ -4,12 +4,12 @@
 
 #include "../field_services_internal.h"
 
-/// Runs Catch cast on a target, through FieldEffect_RunCatch.
+/// Runs Catch cast on a target, through FieldPsynergy_Catch.
 ///
 /// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
-/// Called by FieldEffect_DispatchRequestKind; the target is ignored.
-void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
+/// Called by FieldPsynergy_Dispatch; the target is ignored.
+void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// Carries object 215 from 16 pixels above the caster to the goal in 10 steps,
 /// growing from a quarter to full size, presses down 20 pixels moving child to
@@ -20,9 +20,9 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
 /// of the caster with effectWork->enabled (no trigger named the target),
 /// otherwise the effect's position, 32 pixels up in both cases. Called by
-/// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the field effect's
+/// FieldPsynergy_Run and FieldPsynergy_CatchOnTarget. Moves the field effect's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
-void FieldEffect_RunCatch(void) {
+void FieldPsynergy_Catch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
   struct Actor *child = effectWork->child;
@@ -53,7 +53,7 @@ void FieldEffect_RunCatch(void) {
   object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
   object->facing = actor->facing;
   object->speedLimit = 0x14ccc;
@@ -89,7 +89,7 @@ void FieldEffect_RunCatch(void) {
   Sound_PlaySongFar(SE_WATER);
   // As the hand presses down, the caught object vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches. The map's after event
-  // then puts it away for good, as Vale's EventScript_CatchNut moves the Nut
+  // then puts it away for good, as Vale_CatchNut moves the Nut
   // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
   if (child != 0)
     Actor_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
@@ -119,5 +119,5 @@ void FieldEffect_RunCatch(void) {
     step++;
   } while (step < steps);
   Actor_ReleaseFar(object);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }

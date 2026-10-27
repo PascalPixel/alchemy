@@ -12,13 +12,13 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// effect resolves, it only switches the ability.
 ///
 /// Field_UsePsynergy and the item uses (overworld/items.c) call it before an
-/// effect and FieldEffect_End after it, which releases the
+/// effect and FieldPsynergy_End after it, which releases the
 /// work, the spark tiles' resource entry and the task started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
-/// The caster is the leader, with no target until FieldEffect_SetupActorPair
+/// The caster is the leader, with no target until FieldPsynergy_SetupActorPair
 /// names one.
-void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
+void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gHeapSlots + HEAP_SLOT_FIELD);
   struct MapGridScrollWork *grid = *(gHeapSlots + 8);
   struct FieldEffectWork *effectWork;
@@ -50,9 +50,9 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork->lit = 1;
   if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
-  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, -1);
+  FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
-  // here) until FieldEffect_End lets it run again.
+  // here) until FieldPsynergy_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
@@ -66,7 +66,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// quarter turn). work->angle becomes that facing, the way the effects aim.
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
-void FieldEffect_SetupActorPair(s32 userId, s32 targetId) {
+void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
   s32 dir;
@@ -104,7 +104,7 @@ void FieldEffect_SetupActorPair(s32 userId, s32 targetId) {
 
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
-void FieldEffect_StopCasterHook(void) {
+void FieldPsynergy_StopCasterUpdate(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *user = effectWork->mainActor;
 
@@ -120,7 +120,7 @@ void FieldEffect_StopCasterHook(void) {
 /// swelling arcs to end, stops the slot callback, releases the effect's tiles,
 /// restores the map's shake, plays the queued sound and releases the effect's
 /// work.
-void FieldEffect_End(void) {
+void FieldPsynergy_End(void) {
 #ifndef UBFIX
   struct FieldEffectWork **effectWorkCell;
 #endif
@@ -198,10 +198,10 @@ void FieldEffect_End(void) {
 /// it is quiet, the ability's name is shown while every other object stands
 /// still. With flag 0x140 the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's hook stops. Sets the field work's
-/// castStarted, which FieldEffect_End clears. Called by
+/// castStarted, which FieldPsynergy_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
-void FieldEffect_StartCast(void) {
+void FieldPsynergy_StartCast(void) {
   s32 ability;
   s32 announcedAbility;
   struct Actor *caster;
@@ -234,13 +234,13 @@ void FieldEffect_StartCast(void) {
     }
     Actor_SetOthersPaused(caster, 0, 0x10);
   }
-  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
+  if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleActorValueByCounter;
     }
     Actor_SelectAnimationFar(caster, 0x15);
   } else {
-    FieldEffect_StopCasterHook();
+    FieldPsynergy_StopCasterUpdate();
   }
   ((struct FieldWork *)renderState)->castStarted = 1;
 }
@@ -248,8 +248,8 @@ void FieldEffect_StartCast(void) {
 /// Saves the palettes for the effect and fades them toward one of the eight
 /// effect colours (gFieldEffect_TargetColors), picked by the frame counter or
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
-/// effects open with it, and FieldEffect_FadeFromEffectColor fades back.
-void FieldEffect_FadeToEffectColor(void) {
+/// effects open with it, and FieldPsynergy_FadeFromCastColor fades back.
+void FieldPsynergy_FadeToCastColor(void) {
   u8 *field;
   struct PaletteFade *work;
   s32 no;
@@ -297,7 +297,7 @@ void FieldEffect_FadeToEffectColor(void) {
 /// Fades the palettes back from an effect's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TINT_GRAYSCALE, 0x10001).
-void FieldEffect_FadeFromEffectColor(void) {
+void FieldPsynergy_FadeFromCastColor(void) {
   s32 savedPalettes;
   u8 *field;
 

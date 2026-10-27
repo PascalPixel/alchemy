@@ -265,21 +265,20 @@ const struct Trigger *KalayInteriors_GetTriggers(void) {
 /// of the tour. `Please finish eating if you are taking the tour! We'll be
 /// leaving soon!`
 static void KalayInteriors_TalkToTourGuide(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
-  FieldScript_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
+  Event_Start();
+  Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
+  Event_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
   GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Someone asks whether the party knows the continent south of Tolbi. They're
 /// in one of Kalay's houses, and answer either way the party replies.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH,
-                                      0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
+  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
+  Event_End();
 }
 
 /// Spoken to across the counter of Kalay's inn, the leader facing west, the
@@ -292,18 +291,18 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
     Inn_CheckIn(KALAY_INN, ACTOR_INNKEEPER);
   } else {
-    FieldScript_Start();
+    Event_Start();
 
     if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      FieldScript_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
-      FieldScript_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+      Event_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
+      Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
     } else {
-      FieldScript_SetMessageId(MsgKalayGoingTolbiAlso);
-      FieldScript_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+      Event_SetMessageId(MsgKalayGoingTolbiAlso);
+      Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
       GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
     }
 
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -318,10 +317,10 @@ static void KalayInteriors_TalkToHealer(void) {
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
-    FieldScript_Start();
-    FieldScript_SetMessageId(MsgKalayCanLiveInPeaceIn);
-    FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
-    FieldScript_End();
+    Event_Start();
+    Event_SetMessageId(MsgKalayCanLiveInPeaceIn);
+    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_End();
   }
 }
 
@@ -334,7 +333,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   s32 doorIndex;
   struct Actor *leader;
 
-  FieldScript_Start();
+  Event_Start();
 
   // Prevent idle movement while the doorway cells are animated.
   for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_ID; slot++) {
@@ -378,12 +377,12 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterOnColumn(ACTOR_PARTY_LEADER, 3, -8);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
 
-  Import_ScriptRequestExit(work->stepTrigger);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_End();
+  Import_EventSetExitRequest(work->stepTrigger);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_End();
 }
 
 /// Sets the opening transition and restores room-specific actors and
@@ -628,9 +627,9 @@ struct Trigger gKalayInteriors_HouseTriggers[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
     { TRIGGER_TALK, ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
     { TRIGGER_TALK, ACTOR_MAN_ON_THE_NORTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
@@ -639,7 +638,7 @@ struct Trigger gKalayInteriors_HouseTriggers[] = {
     { TRIGGER_TALK, ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
     { TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
     { TRIGGER_TALK, ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT(KalayInteriors_AskAboutSouthernContinent) },
     { TRIGGER_TALK, ACTOR_WOMAN_BOUND_FOR_THE_TOUR, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
     { TRIGGER_TALK, ACTOR_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
     { TRIGGER_TALK, ACTOR_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
@@ -675,17 +674,17 @@ struct Trigger gKalayInteriors_InnTriggers[] = {
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_KALAY },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(KalayInteriors_OpenDoorAndExit) },
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
     { TRIGGER_EXIT, 15, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
     { TRIGGER_EXIT, 17, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INNKEEPERS_WIFE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
     { TRIGGER_TALK, ACTOR_INNKEEPERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
     { TRIGGER_TALK, ACTOR_FIRST_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
     { TRIGGER_TALK, ACTOR_SECOND_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
-    { TRIGGER_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToTourGuide) },
+    { TRIGGER_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToTourGuide) },
     { TRIGGER_TALK, ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
     { TRIGGER_TALK, ACTOR_THIRD_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
     { TRIGGER_TALK, ACTOR_FOURTH_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
@@ -723,7 +722,7 @@ struct Trigger gKalayInteriors_InnTriggers[] = {
 
 struct Trigger gKalayInteriors_SanctumTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(KalayInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { TRIGGERS_END },
 };

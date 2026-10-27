@@ -2,16 +2,15 @@
 #define ALCHEMY_SCRIPT_LAYER_H
 
 /// @file
-/// The script layer: the constants and small inlines a map's scripts share,
+/// The event layer: the constants and small inlines a scene's events share,
 /// over the main-image routines they call by those routines' own names
-/// (FieldScript_Start, Actor_Jump, FieldScript_SetMessageId and the
-/// rest), whose declarations it includes.
+/// (Event_Start, Actor_Jump, Event_SetMessageId and the rest), whose
+/// declarations it includes.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
-/// layer, not a compiler-steering device. The script.h commands
-/// and field_service.h are written over it. A map's script reads
-/// `SCRIPT_START(); Actor_Stop(9); ACTOR_FACE(9, ACTOR_PARTY_LEADER,
-/// 0); SCRIPT_END();`.
+/// layer, not a compiler-steering device. field_service.h's inlines are
+/// written over it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
+/// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -148,19 +147,19 @@ struct MapGridCellAnimation {
 
 // The imports below keep a name of their own, prefixed Import_: the maps' calls
 // of these routines were compiled against declarations that differ from the
-// routines' own, as the bytes measure. Import_ScriptRequestExit,
+// routines' own, as the bytes measure. Import_EventSetExitRequest,
 // Import_ActorSetPosition, Import_ActorSetAnimation and
 // Import_RandomNext are called with differing argument counts, so they keep
-// old-style declarations; FieldScript_SetExitRequest also takes a u16 and
+// old-style declarations; Event_SetExitRequest also takes a u16 and
 // Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other map's match through GameFlag_Set itself, and the maps pass
-// FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
-// (Import_ScriptShowTwoMessagesAndWait).
-/// Sets the field's exit request (FieldScript_SetExitRequest); 999 leaves for
+// Event_ShowTwoMessagesAndWait eleven arguments where it takes ten
+// (Import_EventShowTwoMessagesAndWait).
+/// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
 /// gSaveBlock's map and entrance.
-void Import_ScriptRequestExit();
+void Import_EventSetExitRequest();
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
 /// (Actor_SetHorizontalPositionWithTerrain).
@@ -194,23 +193,23 @@ static inline void Actor_RunScriptAndWait(s32 actorId, const s32 *script) {
 
 /// Two actors speak at once, each message and portrait at its own tile
 /// position, until A, B, L or R closes both
-/// (FieldScript_ShowTwoMessagesAndWait). The routine takes ten arguments and
+/// (Event_ShowTwoMessagesAndWait). The routine takes ten arguments and
 /// never reads flags.
-void Import_ScriptShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
-                                         s32 extra, s32 other_speaker,
-                                         s32 otherX, s32 other_y, s32 other_arg,
-                                         s32 other_extra, s32 flags);
+void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
+                                        s32 extra, s32 other_speaker,
+                                        s32 otherX, s32 other_y, s32 other_arg,
+                                        s32 other_extra, s32 flags);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
 /// Declared for the maps that define FIELD_STAGED_ACTOR_IMPORTS in place
-/// of Script_PlaySong. Nothing calls it and no import resolves it: those maps
+/// of Event_PlaySong. Nothing calls it and no import resolves it: those maps
 /// call Sound_PlaySong.
 void Audio_PlayCue(s32 cue);
 #endif
 
 /// Moves the script's message number count messages on, past lines the script
 /// doesn't show.
-static inline void Script_SkipMessages(s32 count) {
+static inline void Event_SkipMessages(s32 count) {
   u16 *message = &gFieldWork->message;
 
   *message = *message + count;
@@ -218,20 +217,20 @@ static inline void Script_SkipMessages(s32 count) {
 
 /// Shows the script's next line of dialogue and waits for the player to read
 /// it.
-static inline void Script_ShowMessage(s32 speaker, s32 flags) {
-  FieldScript_ShowMessageAndWait(speaker, flags);
+static inline void Event_ShowMessage(s32 speaker, s32 flags) {
+  Event_ShowMessageAndWait(speaker, flags);
 }
 
 /// Opens the script's next line and returns its window once the text is typed
 /// out, so the script can act while it is still on screen.
-static inline s32 Script_OpenMessage(s32 speaker, s32 flags) {
+static inline s32 Event_OpenMessage(s32 speaker, s32 flags) {
   return (s32)FieldMessage_ShowAtActor(speaker, flags);
 }
 
 /// Puts the current line to the player as a question and shows the line that
 /// answers it; returns 0 for yes.
-static inline s32 Script_AskYesNo(s32 speaker, s32 flags) {
-  return FieldScript_AskYesNoAndShowResponse(speaker, flags);
+static inline s32 Event_AskYesNo(s32 speaker, s32 flags) {
+  return Event_AskYesNoAndShowResponse(speaker, flags);
 }
 
 /// Looks up an actor for a script, NULL when it doesn't exist
@@ -336,22 +335,22 @@ static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
 
 // Most map scripts call GameFlag_Get, GameFlag_Set and GameFlag_Clear
 // directly; the scripts that match only through an inline call spell them
-// Script_GetFlag, Script_SetFlag and Script_ClearFlag. An inline call's
+// Event_GetFlag, Event_SetFlag and Event_ClearFlag. An inline call's
 // argument is a pseudo of its own, so a flag number two calls share is loaded
 // twice instead of kept in a register (MATCHING.md).
 
 /// GameFlag_Get, from a script: 1 when the FLAG_ is set.
-static inline s32 Script_GetFlag(s32 flag) { return GameFlag_Get(flag); }
+static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }
 
 /// GameFlag_Set, from a script.
-static inline void Script_SetFlag(s32 flag) { GameFlag_Set(flag); }
+static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
 
 /// GameFlag_Clear, from a script.
-static inline void Script_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
+static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Plays a sound effect or music from a script: the SE command of script.h.
-static inline void Script_PlaySong(s32 cue) { Sound_PlaySong(cue); }
+static inline void Event_PlaySong(s32 cue) { Sound_PlaySong(cue); }
 #endif
 
 /// A random number from 0 to 0xffff for a script.
@@ -410,9 +409,9 @@ static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
 }
 
 /// Shows a line of dialogue, then pauses before the script goes on.
-static inline void Script_ShowMessageAndWait(s32 speaker, s32 flags,
-                                             s32 frames) {
-  FieldScript_ShowMessageThenWait(speaker, flags, frames);
+static inline void FieldEvent_ShowMessageThenWait(s32 speaker, s32 flags,
+                                                  s32 frames) {
+  Event_ShowMessageThenWait(speaker, flags, frames);
 }
 
 /// Sets a sprite param on every part of an actor's sprite, or makes it
@@ -463,14 +462,13 @@ static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
 }
 
 /// Has two actors speak at once, each window placed by the script.
-static inline void Script_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
-                                                 s32 arg, s32 extra,
-                                                 s32 otherSpeaker, s32 otherX,
-                                                 s32 otherY, s32 otherArg,
-                                                 s32 otherExtra, s32 flags) {
-  Import_ScriptShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
-                                      otherX, otherY, otherArg, otherExtra,
-                                      flags);
+static inline void
+FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                  s32 otherSpeaker, s32 otherX, s32 otherY,
+                                  s32 otherArg, s32 otherExtra, s32 flags) {
+  Import_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
+                                     otherX, otherY, otherArg, otherExtra,
+                                     flags);
 }
 
 #endif

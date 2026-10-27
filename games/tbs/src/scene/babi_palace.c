@@ -359,13 +359,13 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 
 /// Asks a yes or no question; the answers are the two messages after it.
 static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
-    FieldScript_SetMessageId(question + 1);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
+    Event_SetMessageId(question + 1);
   else
-    FieldScript_SetMessageId(question + 2);
-  FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(question + 2);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// An old man with a cane asks whether the party ran into Babi's soldiers. He's
@@ -388,14 +388,14 @@ static void BabiPalace_ShowBeds(s32 actorId) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & 0xc000;
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  if (Script_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
+  if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
-    Script_SetMessage(MsgTolbiWeHaveJustEnoughExtra);
-    Script_ShowMessage(actorId, 0);
-    Script_Wait(10);
+    Event_SetMessageId(MsgTolbiWeHaveJustEnoughExtra);
+    Event_ShowMessage(actorId, 0);
+    Event_WaitFrames(10);
     facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
     if (facingBits == (FACING_SOUTH << 16)) {
@@ -412,27 +412,27 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     Actor_FaceDirection(actorId, FACING_SOUTH, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     facingOrMessage = MsgTolbiUseFourBeds;
-    Script_SetMessage(facingOrMessage);
-    Script_OpenMessage(actorId, 0);
-    if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-      Script_SetMessage(facingOrMessage + 1);
-      Script_ShowMessage(actorId, 0);
+    Event_SetMessageId(facingOrMessage);
+    Event_OpenMessage(actorId, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_SetMessageId(facingOrMessage + 1);
+      Event_ShowMessage(actorId, 0);
     } else {
-      Script_SetMessage(facingOrMessage + 2);
-      Script_ShowMessage(actorId, 0);
+      Event_SetMessageId(facingOrMessage + 2);
+      Event_ShowMessage(actorId, 0);
     }
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(actorId, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
 #if TBS_PATCH_3
     Actor_SetPosition(actorId, 56 << 16, 120 << 16);
 #endif
   }
-  Script_End();
+  Event_End();
 }
 
 /// Talking to the attendant during the finals: the first time, the attendant
@@ -442,36 +442,36 @@ static void BabiPalace_ShowBeds(s32 actorId) {
 static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  if (Script_GetFlag(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
+  if (Event_GetFlag(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
     Actor_FaceDirection(actorId, FACING_SOUTH, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     question = MsgTolbiCameRestBefore;
-    Script_SetMessage(question);
-    Script_OpenMessage(actorId, 0);
-    if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-      Script_Wait(10);
-      Script_SetMessage(question + 1);
+    Event_SetMessageId(question);
+    Event_OpenMessage(actorId, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_WaitFrames(10);
+      Event_SetMessageId(question + 1);
     } else {
-      Script_SetMessage(question + 2);
+      Event_SetMessageId(question + 2);
     }
-    Script_ShowMessage(actorId, 0);
-    Script_Wait(10);
+    Event_ShowMessage(actorId, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(actorId, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
   } else {
-    Script_SetMessage(MsgTolbiTiredFeelFreeRest);
-    Script_OpenMessage(actorId, 0);
+    Event_SetMessageId(MsgTolbiTiredFeelFreeRest);
+    Event_OpenMessage(actorId, 0);
   }
-  Script_End();
+  Event_End();
 }
 
 /// A warrior asks whether the party is entering Colosso. The warrior is in the
@@ -480,18 +480,18 @@ static void BabiPalace_OfferRest(s32 actorId) {
 static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(10);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(10);
     FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
-    FieldScript_SetMessageId(question + 1);
+    Event_SetMessageId(question + 1);
   } else {
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
-    FieldScript_SetMessageId(question + 2);
+    Event_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessageAndWait(actorId, 0);
 }
 
 /// A warrior with indigestion gives up on entering Colosso. The warrior is in
@@ -501,59 +501,59 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   const s32 *indigestionScript;
 
   actor = Actor_Get(actorId);
-  Script_Start();
+  Event_Start();
   indigestionScript = gBabiPalace_IndigestionScript;
   Actor_SetScript(actorId, indigestionScript);
-  Script_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
-  Script_ShowMessage(actorId, 0);
+  Event_SetMessageId(MsgTolbiCantFightBecauseLittleIndigestion);
+  Event_ShowMessage(actorId, 0);
   Actor_Stop(actorId);
   actor->scaleY = 0x10000;
   actor->scaleX = 0x10000;
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(actorId, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(actorId, 2);
-  Script_Wait(60);
-  Script_ShowMessage(actorId, 0);
-  Script_Wait(20);
+  Event_WaitFrames(60);
+  Event_ShowMessage(actorId, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(actorId, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(actorId, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(actorId, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetScript(actorId, indigestionScript);
-  Script_ShowMessage(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTHEAST, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   actor->scaleY = 0x10000;
   actor->scaleX = 0x10000;
   Actor_SetScript(actorId, indigestionScript);
-  Script_End();
+  Event_End();
 }
 
 /// Mind Read on Sheba in the palace, while Babi is missing: she cannot escape
 /// to Lalivero alone; the first time, she feels it, ends the Psynergy and
 /// asks about it. "Did you just..."
 static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
-  Script_Start();
-  Script_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
-  Script_ShowMessage(actorId, 0);
-  if (Script_GetFlag(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
+  Event_Start();
+  Event_SetMessageId(MsgTolbiEvenIfEscapedBabiPalace);
+  Event_ShowMessage(actorId, 0);
+  if (Event_GetFlag(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
     Psynergy_Cancel();
-    Script_Wait(50);
+    Event_WaitFrames(50);
     Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
     Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 40);
-    Script_ShowMessage(actorId, 0);
-    Script_Wait(30);
+    Event_ShowMessage(actorId, 0);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(actorId, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(actorId, 0);
     Actor_FaceDirection(actorId, FACING_WEST, 0);
   }
-  Script_End();
+  Event_End();
 }
 
 /// The same old man, after Colosso, asks whether the party has met with Babi.
@@ -573,28 +573,28 @@ static void BabiPalace_AskAboutEasternShores(s32 actorId) {
 static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
-  FieldScript_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
-  FieldScript_SetMessageId(msg);
-  FieldScript_ShowMessageAndWait(-1, 0);
-  FieldScript_WaitFrames(10);
+  Event_SetMessageId(msg);
+  Event_ShowMessageAndWait(-1, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
   FieldMessage_ShowAtActor(ACTOR_BABI, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    FieldScript_SetMessageId(msg + 2);
-    FieldScript_ShowMessageAndWait(ACTOR_BABI, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
+    Event_SetMessageId(msg + 2);
+    Event_ShowMessageAndWait(ACTOR_BABI, 0);
   } else {
-    FieldScript_WaitFrames(20);
-    FieldScript_SetMessageId(msg + 3);
-    FieldScript_ShowMessageAndWait(ACTOR_BABI, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_SetMessageId(msg + 3);
+    Event_ShowMessageAndWait(ACTOR_BABI, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Import_ActorSetPosition(ACTOR_CLOAK_BALL, 0, 0);
     ItemDisplay_ShowItem(ITEM_CLOAK_BALL, 3);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -608,13 +608,13 @@ static void BabiPalace_OfferCloakBall(void) {
 static void BabiPalace_WakeFromFinalsDream(void) {
   struct Actor *leader;
 
-  Script_Start();
-  Script_SetMessage(MsgTolbiGetUp);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
   WaitFrames(1);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Script_ShowMessage(-1, 0);
+  Event_ShowMessage(-1, 0);
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
@@ -628,85 +628,85 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   gFieldWork->transitionFrames = 60;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Script_Wait(20);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(20);
   gFieldWork->transitionFrames = 24;
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->z.fixed += -0x30000;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->targetZ += -0x30000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(45);
+  Event_WaitFrames(45);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Script_Wait(30);
-  Script_OpenMessage(ACTOR_GARET, 0);
-  if (Script_ChooseYesNo(-1, 0) != 0) {
-    Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  if (Event_AskYesNoWithActorAnimation(-1, 0) != 0) {
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 1;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     gFieldWork->message += 2;
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_GARET, -16, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
-  Script_Wait(35);
+  Event_WaitFrames(35);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
@@ -714,21 +714,21 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   BabiPalace_WalkIntoLeader(ACTOR_GARET);
   BabiPalace_WalkIntoLeader(ACTOR_MIA);
   BabiPalace_WalkIntoLeader(ACTOR_IVAN);
-  Script_Wait(10);
-  Script_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 /// Searching the beds: the party goes to bed, talking it over the first night.
@@ -740,18 +740,18 @@ static void BabiPalace_RestInPalaceBeds(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & -0x4000;
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  Script_SetMessage(MsgTolbiLikeSleep);
-  Script_OpenMessage(-1, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
+  Event_SetMessageId(MsgTolbiLikeSleep);
+  Event_OpenMessage(-1, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
   } else {
-    if (Script_GetFlag(FLAG_BABI_PALACE_FIRST_NIGHT) != 0) {
-      Script_Wait(20);
+    if (Event_GetFlag(FLAG_BABI_PALACE_FIRST_NIGHT) != 0) {
+      Event_WaitFrames(20);
       Inn_PlaySleep(0);
       return;
     }
-    Script_Wait(20);
+    Event_WaitFrames(20);
     facing = roundedFacing;
     if (facing == FACING_EAST) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 120);
@@ -761,70 +761,70 @@ static void BabiPalace_RestInPalaceBeds(void) {
     }
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 120);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     FieldActor_LaunchFromLeader(ACTOR_GARET, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_GARET);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_GARET, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_GARET, 40, 0);
     Actor_WalkByAndWait(ACTOR_GARET, 0, -32);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     FieldActor_LaunchFromLeader(ACTOR_IVAN, -16, 0, FACING_EAST);
     Actor_RefreshSelectorById(ACTOR_IVAN);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_IVAN, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_IVAN, -40, 0);
     Actor_WalkByAndWait(ACTOR_IVAN, 0, 40);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     FieldActor_LaunchFromLeader(ACTOR_MIA, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_MIA);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_MIA, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_MIA, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_MIA, 40, 0);
     Actor_WalkByAndWait(ACTOR_MIA, 0, 40);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -56, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -32);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_MIA, 0);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(ACTOR_GARET, 0);
+      Event_ShowMessage(ACTOR_GARET, 0);
     } else {
       gFieldWork->message++;
     }
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(ACTOR_IVAN, 0);
+      Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
       gFieldWork->message++;
     }
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
@@ -834,21 +834,21 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(ACTOR_IVAN, 0);
+      Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
       gFieldWork->message++;
     }
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(ACTOR_MIA, 0);
+      Event_ShowMessage(ACTOR_MIA, 0);
     } else {
       gFieldWork->message++;
     }
@@ -856,18 +856,18 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_WalkBy(ACTOR_GARET, -112, 0);
     Actor_WalkByAndWait(ACTOR_MIA, 0, -40);
     Actor_WalkBy(ACTOR_MIA, -112, 0);
-    Script_Wait(50);
+    Event_WaitFrames(50);
     Actor_WalkByAndWait(ACTOR_IVAN, 0, -24);
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -876,7 +876,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     BabiPalace_WalkIntoLeader(ACTOR_IVAN);
     GameFlag_Set(FLAG_BABI_PALACE_FIRST_NIGHT);
   }
-  Script_End();
+  Event_End();
 }
 
 /// Walking past Iodem while Babi is missing: his two soldiers report back
@@ -884,9 +884,9 @@ static void BabiPalace_RestInPalaceBeds(void) {
 /// into the cave before; then they leave.
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  Script_SetMessage(MsgTolbiIodemIodem);
+  Event_SetMessageId(MsgTolbiIodemIodem);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 424);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   FieldCamera_MoveTo(PIXELS(560), -1, PIXELS(368), 1);
@@ -894,8 +894,8 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 40, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(2), PIXELS(1));
@@ -904,238 +904,238 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 528, 368);
   WaitFrames(3);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_STAND);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
-  Script_Wait(10);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_FaceActor(ACTOR_FIRST_SOLDIER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_SECOND_SOLDIER, ACTOR_IODEM, 0);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAttachedEffect(ACTOR_FIRST_SOLDIER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_SECOND_SOLDIER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTH, 0);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkBy(ACTOR_FIRST_SOLDIER, 0, 120);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 0, 120);
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_SOLDIER, 0, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 120, 0);
   Actor_WalkByAndWait(ACTOR_IODEM, 60, 0);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
-  Script_End();
+  Event_End();
 }
 
 /// Waking in the palace after the finals: the leader slept long after
@@ -1147,8 +1147,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
 
-  Script_Start();
-  Script_SetMessage(MsgTolbiCallsName);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiCallsName);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, 0);
@@ -1173,15 +1173,15 @@ static void BabiPalace_WakeAfterFinals(void) {
   state->value = 0;
   state->mask = 0x1f1f;
   state->active = 1;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
     WaitFrames(3);
     state->value = step;
   }
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   for (step = 5; step <= 31; step++) {
     WaitFrames(3);
     state->value = step;
@@ -1191,167 +1191,167 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_MIA, 0, -40);
   Actor_WalkByAndWait(ACTOR_MIA, 32, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-  Script_Wait(10);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->z.fixed -= 0x30000;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->targetZ -= 0x30000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Script_OpenMessage(ACTOR_IVAN, 0);
-  if (Script_ChooseYesNo(-1, 0) == 0) {
-    Script_Wait(10);
+  Event_OpenMessage(ACTOR_IVAN, 0);
+  if (Event_AskYesNoWithActorAnimation(-1, 0) == 0) {
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(ACTOR_GARET, 4, 13);
     Actor_Jump(ACTOR_GARET, 4, 30);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(ACTOR_GARET, 4, 13);
     Actor_Jump(ACTOR_GARET, 4, 30);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-  Script_Wait(35);
+  Event_WaitFrames(35);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Script_Wait(20);
-  Script_OpenMessage(ACTOR_IVAN, 0);
-  if (Script_ChooseYesNo(-1, 0) == 0) {
-    Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_IVAN, 0);
+  if (Event_AskYesNoWithActorAnimation(-1, 0) == 0) {
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     pick = 0;
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gFieldWork->message++;
     pick = 1;
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-  Script_Wait(35);
+  Event_WaitFrames(35);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
   if (pick == 0) {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_IVAN, 0);
-    Script_Wait(10);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IVAN, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_MIA, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   // Wait for the player to leave the bed before the companions rejoin.
   while ((gKeysHeld & KEYS_DPAD) == 0) {
     WaitFrames(1);
@@ -1361,39 +1361,39 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   BabiPalace_WalkIntoLeader(ACTOR_GARET);
   BabiPalace_WalkIntoLeader(ACTOR_MIA);
   BabiPalace_WalkIntoLeader(ACTOR_IVAN);
-  Script_Wait(10);
-  Script_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 /// Arriving after Colosso: Iodem and Babi have been waiting for the party.
@@ -1403,472 +1403,472 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Script_PlaySong(MUS_BABI);
-  Script_Start();
-  Script_SetMessage(MsgTolbiWaitingCompanions);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_PlaySong(MUS_BABI);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiWaitingCompanions);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
   FieldCamera_WaitForMove();
-  Script_Wait(20);
-  Script_Wait(10);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForMove();
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 0x2f8);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
 
   // If the leader won the finals, Iodem brings the victor's prize, the Lure
   // Cap; otherwise Babi only praises how far the party came.
   if (GameFlag_Get(FLAG_WON_COLOSSO) != 0) {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_BABI, FACING_NORTHWEST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_BABI, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_BABI, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
     Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_Get(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     MessageArgument_Push(ITEM_LURE_CAP, 2);
-    Script_ShowMessage(-1, 0);
+    Event_ShowMessage(-1, 0);
     Item_ShowFound(ITEM_LURE_CAP, 3);
     Party_GiveItem(ITEM_LURE_CAP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_WalkByAndWait(ACTOR_BABI, 0, -16);
     Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-    Script_Wait(20);
-    Script_OpenMessage(ACTOR_BABI, 0);
+    Event_WaitFrames(20);
+    Event_OpenMessage(ACTOR_BABI, 0);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 5;
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_BABI, FACING_NORTHWEST, 0);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-    Script_Wait(20);
-    Script_OpenMessage(ACTOR_BABI, 0);
+    Event_WaitFrames(20);
+    Event_OpenMessage(ACTOR_BABI, 0);
   }
 
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTHWEST, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_Jump(ACTOR_GARET, 4, 13);
   Actor_Jump(ACTOR_GARET, 4, 30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   WaitFrames(2);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_Wait(10);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_GARET, 0);
-  Script_Wait(40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(40);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 30);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_OpenMessage(ACTOR_BABI, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_BABI, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-    Script_Wait(30);
-    Script_ShowMessage(ACTOR_BABI, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessage(ACTOR_BABI, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_BABI, 0);
+    Event_ShowMessage(ACTOR_BABI, 0);
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 60);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 50);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IVAN, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(50);
+  Event_WaitFrames(50);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_OpenMessage(ACTOR_GARET, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 3;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     gFieldWork->message++;
-    Script_OpenMessage(ACTOR_GARET, 0);
-    if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-      Script_Wait(20);
-      Script_ShowMessage(ACTOR_GARET, 0);
+    Event_OpenMessage(ACTOR_GARET, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_WaitFrames(20);
+      Event_ShowMessage(ACTOR_GARET, 0);
       gFieldWork->message++;
     } else {
       gFieldWork->message++;
-      Script_ShowMessage(ACTOR_GARET, 0);
+      Event_ShowMessage(ACTOR_GARET, 0);
     }
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_IVAN, 0);
-  Script_Wait(50);
-  Script_Wait(10);
+  Event_WaitFrames(50);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 24);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -1876,363 +1876,363 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(ACTOR_MIA, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_IODEM, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(30);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IODEM, 30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(20);
+  Event_WaitFrames(30);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_GARET, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_OpenMessage(ACTOR_IVAN, 0);
-  if (Script_ChooseYesNo(ACTOR_BABI, 0) == 0) {
-    Script_Wait(10);
-    Script_ShowMessage(ACTOR_IVAN, 0);
+  Event_OpenMessage(ACTOR_IVAN, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_BABI, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
-  Script_ShowMessage(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IVAN, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_IODEM, ACTOR_BABI, 60);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_OpenMessage(ACTOR_IODEM, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_IODEM, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Script_OpenMessage(ACTOR_BABI, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
+  Event_OpenMessage(ACTOR_BABI, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Script_ShowMessage(ACTOR_BABI, 0);
+    Event_ShowMessage(ACTOR_BABI, 0);
     gFieldWork->message++;
   } else {
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     gFieldWork->message++;
-    Script_ShowMessage(ACTOR_BABI, 0);
+    Event_ShowMessage(ACTOR_BABI, 0);
   }
 
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   // The party tracks each departing speaker before gathering back together.
   Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_IODEM);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_IODEM);
@@ -2242,42 +2242,42 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_IODEM, 0);
-  Script_Wait(10);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_WalkByAndWait(ACTOR_GARET, 16, 0);
   Actor_WalkBy(ACTOR_IODEM, 0, 80);
-  Script_Wait(40);
+  Event_WaitFrames(40);
   Actor_WalkByAndWait(ACTOR_GARET, -16, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_WaitForMoveById(ACTOR_IODEM);
-  Script_Wait(80);
+  Event_WaitFrames(80);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_BABI);
   Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_BABI);
   Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_BABI);
   Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_BABI);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 24);
   Actor_WalkByAndWait(ACTOR_BABI, -80, 0);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
-  Script_Wait(20);
-  Script_ShowMessage(ACTOR_BABI, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_BABI, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 48);
   Actor_WalkByAndWait(ACTOR_BABI, -64, 0);
   Actor_Stop(ACTOR_PARTY_LEADER);
@@ -2285,25 +2285,25 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_BABI, 0, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MIA, 0);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_IVAN, 0);
-  Script_Wait(30);
+  Event_WaitFrames(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Script_Wait(30);
-  Script_PlaySong(SONG_FADE_OUT_BGM);
+  Event_WaitFrames(30);
+  Event_PlaySong(SONG_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   BabiPalace_WalkIntoLeader(ACTOR_GARET);
   BabiPalace_WalkIntoLeader(ACTOR_IVAN);
   BabiPalace_WalkIntoLeader(ACTOR_MIA);
-  Script_Wait(10);
+  Event_WaitFrames(10);
   Scene_PlayMusic();
-  Script_End();
+  Event_End();
 }
 
 /// Walking north into one of the palace's doors: it opens (SE_DOOR_OPEN) and
@@ -2315,42 +2315,42 @@ static void BabiPalace_LeaveThroughDoor(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  Script_Start();
-  Script_PlaySong(SE_DOOR_OPEN);
+  Event_Start();
+  Event_PlaySong(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
     TilesetAnim_Resume(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
-    Script_Wait(10);
+    Event_WaitFrames(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
       TilesetAnim_Resume(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
-      Script_Wait(10);
+      Event_WaitFrames(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     } else {
       TilesetAnim_Resume(BABI_PALACE_OTHER_DOORS_ANIMATION);
-      Script_Wait(10);
+      Event_WaitFrames(10);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     }
   }
-  Script_Wait(16);
-  Script_RequestExit(work->stepTrigger);
+  Event_WaitFrames(16);
+  Import_EventSetExitRequest(work->stepTrigger);
   BabiPalace_CloseDoors();
-  Script_End();
+  Event_End();
 }
 
 /// Walking north into the palace's door from outside: it opens and the leader
 /// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
-  Script_Start();
+  Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Script_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-  Script_Wait(16);
-  Script_RequestExit(BABI_PALACE_ENTRANCE_TO_BABI_PALACE);
-  Script_End();
+  Event_WaitFrames(16);
+  Import_EventSetExitRequest(BABI_PALACE_ENTRANCE_TO_BABI_PALACE);
+  Event_End();
 }
 
 /// A guard outside the palace during the finals passes on Babi's word.
@@ -2359,58 +2359,58 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
-  Script_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
   Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Script_Wait(20);
+  Event_WaitFrames(20);
   question = MsgTolbiArent;
-  Script_SetMessage(question);
-  Script_OpenMessage(ACTOR_FIRST_GUARD, 0);
-  if (Script_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Script_Wait(20);
-    Script_SetMessage(question + 1);
-    Script_ShowMessage(ACTOR_FIRST_GUARD, 0);
+  Event_SetMessageId(question);
+  Event_OpenMessage(ACTOR_FIRST_GUARD, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
+    Event_SetMessageId(question + 1);
+    Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
   } else {
-    Script_Wait(20);
-    Script_SetMessage(question + 2);
-    Script_ShowMessage(ACTOR_FIRST_GUARD, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
+    Event_SetMessageId(question + 2);
+    Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
+    Event_WaitFrames(20);
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 60);
     Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-    Script_Wait(40);
+    Event_WaitFrames(40);
     Actor_RunRepeatedMotion(ACTOR_SECOND_GUARD, 2);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 30);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUARD, ANIM_NOD);
-    Script_Wait(30);
+    Event_WaitFrames(30);
     Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-    Script_Wait(20);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GUARD, ANIM_SHAKE_HEAD);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_FIRST_GUARD, 0);
-    Script_Wait(10);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_GUARD, 2);
-    Script_Wait(20);
-    Script_ShowMessage(ACTOR_FIRST_GUARD, 0);
+    Event_WaitFrames(20);
+    Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
   }
-  Script_End();
+  Event_End();
 }
 
 /// The other guard thanks the party for saving Babi once, then sends it to
 /// the colosseum.
 static void BabiPalace_ThankForSavingBabi(void) {
-  if (Script_GetFlag(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
+  if (Event_GetFlag(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_GUARD_THANKED_PARTY);
-    Script_SetMessage(MsgTolbiIsaacIdReallyLikeThank);
-    Script_ShowMessage(ACTOR_SECOND_GUARD, 0);
+    Event_SetMessageId(MsgTolbiIsaacIdReallyLikeThank);
+    Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
   } else {
-    Script_SetMessage(MsgTolbiBabiWaitingForAtColosseum);
-    Script_ShowMessage(ACTOR_SECOND_GUARD, 0);
+    Event_SetMessageId(MsgTolbiBabiWaitingForAtColosseum);
+    Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
   }
 }
 
@@ -2420,24 +2420,24 @@ static void BabiPalace_ThankForSavingBabi(void) {
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
-  FieldScript_SetMessageId(question);
+  Event_SetMessageId(question);
   FieldMessage_ShowAtActor(actorId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_SetMessageId(question + 1);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_SetMessageId(question + 1);
+    Event_ShowMessageAndWait(actorId, 0);
   } else {
-    FieldScript_SetMessageId(question + 2);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(question + 2);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 }
 
 /// Searching the well outside the palace. "It's filled with fresh, clean
 /// water."
 static void BabiPalace_ExamineWell(void) {
-  FieldScript_Start();
+  Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
   FieldMessage_Show(MsgTolbiItsFilledWithFreshClean, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Returns the triggers for the map and the story, as for the actor
@@ -2506,7 +2506,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       if (gSaveBlock.entrance == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
-          !Script_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+          !Event_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
         Actor_SetPosition(ACTOR_BABI, PIXELS(208), PIXELS(704));
         BabiPalace_MeetBabiAfterColosso();
@@ -2789,8 +2789,8 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2798,7 +2798,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { TRIGGER_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2810,9 +2810,9 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { TRIGGER_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { TRIGGER_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2821,16 +2821,16 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { TRIGGER_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { TRIGGER_STEP, MB_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
-    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutSoldiers) },
+    { TRIGGER_STEP, MB_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT(BabiPalace_HearSoldiersReport) },
+    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutSoldiers) },
     { TRIGGER_TALK, ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWarriorsAreNotAllowedToStay) },
-    { TRIGGER_TALK, ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ShowBeds) },
-    { TRIGGER_TALK, ACTOR_INJURED_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutColosso) },
-    { TRIGGER_TALK, ACTOR_WARRIOR_WITH_INDIGESTION, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_TalkToWarriorWithIndigestion) },
+    { TRIGGER_TALK, ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, EVENT(BabiPalace_ShowBeds) },
+    { TRIGGER_TALK, ACTOR_INJURED_WARRIOR, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutColosso) },
+    { TRIGGER_TALK, ACTOR_WARRIOR_WITH_INDIGESTION, CONDITION_ALWAYS, EVENT(BabiPalace_TalkToWarriorWithIndigestion) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWantToWatchTheColosso) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INJURED_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGetSoAngrySeeingAll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_WITH_INDIGESTION, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceMaybeIShouldntHaveEatenQuite) },
@@ -2849,8 +2849,8 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_TALK, ACTOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsHoldingMeHostageIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, EVENT(BabiPalace_ReadShebasMind) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2868,8 +2868,8 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2877,7 +2877,7 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { TRIGGER_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2889,9 +2889,9 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { TRIGGER_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { TRIGGER_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { TRIGGER_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2900,13 +2900,13 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { TRIGGER_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { TRIGGER_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
     { TRIGGER_TALK, ACTOR_FINALS_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatAreYouDoingHurryOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceThoseGuysLookReallyConfidentAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheFinalsAreAllThatsLeft) },
-    { TRIGGER_TALK, ACTOR_FINALS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_OfferRest) },
+    { TRIGGER_TALK, ACTOR_FINALS_ATTENDANT, CONDITION_ALWAYS, EVENT(BabiPalace_OfferRest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHopeYoullAllDoWell) },
     { TRIGGER_TALK, ACTOR_FINALS_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiHasReturnedAndTheFinals) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhenBabiReturnedHeHeadedOff) },
@@ -2916,7 +2916,7 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2934,8 +2934,8 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_WEST_STEPS },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_EAST_STEPS },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_WEST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_STATUE_ROOM_TO_BIG_BEDROOM_EAST, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_WEST },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, BABI_PALACE_BIG_BEDROOM_TO_STATUE_ROOM_EAST },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM },
@@ -2943,7 +2943,7 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, BABI_PALACE_BEDROOM_LANDING_TO_MEETING_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_STATUE_ROOM },
     { TRIGGER_EXIT, 21, CONDITION_ALWAYS, BABI_PALACE_WEST_STEPS_TO_WEST_ROUND_ROOM },
@@ -2955,9 +2955,9 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_EXIT, 27, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_TUNNEL_LANDING },
     { TRIGGER_EXIT, 28, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_NORTH_ROUND_ROOM },
     { TRIGGER_EXIT, 29, CONDITION_ALWAYS, BABI_PALACE_CARPET_ROOM_TO_SHEBAS_LANDING },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_SOLDIERS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 33, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 34, CONDITION_ALWAYS, BABI_PALACE_MEETING_ROOM_TO_BEDROOM_LANDING },
     { TRIGGER_EXIT, 35, CONDITION_ALWAYS, BABI_PALACE_OVEN_ROOM_TO_CARPET_ROOM },
@@ -2966,10 +2966,10 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_EXIT, 41, CONDITION_ALWAYS, BABI_PALACE_EAST_ROUND_ROOM_TO_EAST_STEPS },
     { TRIGGER_EXIT, 42, CONDITION_ALWAYS, BABI_PALACE_NORTH_ROUND_ROOM_TO_CARPET_ROOM },
     { TRIGGER_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutMeetingBabi) },
-    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutEasternShores) },
+    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutMeetingBabi) },
+    { TRIGGER_TALK, ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutEasternShores) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHaventSeenMuchOfBabi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItWouldBeAWasteTo) },
     { TRIGGER_TALK, ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNoOnesGoingToSleepIn) },
@@ -2986,12 +2986,12 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_TALK, ACTOR_AFTER_COLOSSO_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisFaceIsVeryPaleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABI, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWishIHadMetYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfSomethingHappensToBabiWhat) },
-    { TRIGGER_TALK, ACTOR_CLOAK_BALL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_OfferCloakBall) },
+    { TRIGGER_TALK, ACTOR_CLOAK_BALL, CONDITION_ALWAYS, EVENT(BabiPalace_OfferCloakBall) },
     { TRIGGER_TALK, ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheGirlFromLaliveroIsNo) },
     { TRIGGER_TALK, ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -3005,38 +3005,38 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
 
 struct Trigger gBabiPalace_OutsideTriggersBabiMissing[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughAnimatedDoor) },
     { TRIGGER_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
     { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 
 struct Trigger gBabiPalace_OutsideTriggersFinals[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
-    { TRIGGER_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
-    { TRIGGER_TALK, ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { TRIGGER_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT(BabiPalace_PassOnBabisWord) },
+    { TRIGGER_TALK, ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT(BabiPalace_PassOnBabisWord) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT(BabiPalace_PassOnBabisWord) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT(BabiPalace_PassOnBabisWord) },
     { TRIGGER_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiWantsYouToGoStraight) },
-    { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ThankForSavingBabi) },
+    { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT(BabiPalace_ThankForSavingBabi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 
 struct Trigger gBabiPalace_OutsideTriggersAfterColosso[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughAnimatedDoor) },
     { TRIGGER_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },
-    { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutRemainingWarriors) },
+    { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutRemainingWarriors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 // clang-format on

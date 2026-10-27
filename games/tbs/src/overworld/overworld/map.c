@@ -91,7 +91,7 @@ void Scene_TakeExit(s32 exitId) {
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the story battle's defeat point
-/// (FieldScript_SetDefeatDestination) or, when none is set, to the restart
+/// (Event_SetDefeatDestination) or, when none is set, to the restart
 /// point, usually the last Sanctum (Scene_SetDefeatReturnPoint). Any other
 /// result goes to the next scene the script set, or to the default scene (the
 /// scene the battle or minigame was started from) with the party keeping its

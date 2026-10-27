@@ -24,10 +24,10 @@
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA
-	.set import.FieldScript_Start, 1
+	.set import.Event_Start, 1
 	.endif
 	.ifdef TBS_EDITION_JA
-	.set import.FieldScript_End, 1
+	.set import.Event_End, 1
 	.endif
 	.set import.Actor_GetById, 1
 	.ifdef TBS_EDITION_JA
@@ -38,15 +38,15 @@
 	.set import.Actor_WaitForAnimationChange, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifndef TBS_EDITION_JA
 	.set import.FieldEffect_SpawnAttached, 1
 	.endif
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.ItemMenu_DrawItemDetails, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

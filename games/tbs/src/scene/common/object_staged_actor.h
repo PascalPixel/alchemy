@@ -459,7 +459,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                                          MB_NORMAL);
   Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  FieldScript_WaitFrames(15);
+  Event_WaitFrames(15);
 
   {
     s32 horizontalDelta = probe.position.x - originalPosition.x;
@@ -482,7 +482,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
 #endif
-  FieldScript_WaitFrames(4);
+  Event_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(actor, 3);
   else

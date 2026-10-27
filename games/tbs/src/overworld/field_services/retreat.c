@@ -40,7 +40,7 @@ void FieldEffect_UpdateDescendingActor(struct Actor *updated) {
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main object and aimed
   RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
-  /// Set by FieldEffect_RunRetreat: freed on arrival.
+  /// Set by FieldPsynergy_Retreat: freed on arrival.
   RETREAT_PARTICLE_LAST_FLIGHT = 2
 };
 
@@ -102,10 +102,10 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
 /// and shrinks out of sight (FieldEffect_UpdateDescendingActor) as the
 /// particles fly. It is hidden, not released, and the effect opens a script
-/// (FieldScript_Start) it does not end: the Retreat exit raised before it
+/// (Event_Start) it does not end: the Retreat exit raised before it
 /// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
-/// the map. Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
-void FieldEffect_RunRetreat(void) {
+/// the map. Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
+void FieldPsynergy_Retreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
   struct Vector3 pos;
@@ -113,9 +113,9 @@ void FieldEffect_RunRetreat(void) {
   u8 last;
   u32 i;
 
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   WaitFrames(10);
   Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
   WaitFrames(30);
@@ -167,7 +167,7 @@ void FieldEffect_RunRetreat(void) {
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
   WaitFrames(10);
 }
 

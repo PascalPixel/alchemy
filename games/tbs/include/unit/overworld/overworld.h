@@ -20,7 +20,7 @@ struct Actor;
 /// The exit request whose destination is already in gSaveBlock.sceneId and
 /// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
-/// (FieldScript_SetDestination) raise it, and SceneManager_Run returns it when
+/// (Event_SetDestination) raise it, and SceneManager_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
 /// (map.c, run_scene.c).
 #define EXIT_KEEP_DESTINATION 999
@@ -119,7 +119,7 @@ s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance);
 void Scene_SetDefeatReturnPoint(void);
-s16 FieldScript_GetSpecialValue(void);
+s16 Event_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);
 // Matching builds call Encounter_SelectBattleMusic without a prototype, as in
@@ -133,8 +133,8 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
 void FieldEffect_ShrinkActorAndDestroySlow(struct Actor *actor);
 void FieldEffect_ShrinkActorAndDestroyFast(struct Actor *actor);
-void FieldEffect_RunLift(void);
-void FieldEffect_RunCarry(void);
+void FieldPsynergy_Lift(void);
+void FieldPsynergy_Carry(void);
 
 /// One of the map's events (the same 12 bytes as struct Trigger).
 struct TriggerView {
@@ -204,7 +204,7 @@ void Field_EndBusyAndReveal(void);
 s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target);
-s32 Field_RunPsynergyEvents(s32 packed);
+s32 Field_RunPsynergyEndEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
 s32 Scene_HasFieldPsynergyTrigger(s32 group);
 u32 Scene_HasPsynergyTrigger(u16 item);

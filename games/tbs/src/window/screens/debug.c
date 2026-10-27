@@ -35,12 +35,12 @@ void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
 
 // The debug map selector: a map and an entrance number, starting from
 // the map being run (DebugMapSelect_HandleRowInput has the keys). An exits
-// there (FieldScript_SetDestinationFar), B closes it. The field opens it in
+// there (Event_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (overworld/overworld/run_scene.c).
 // The task runner and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
-// reorders FieldScript_SetDestinationFar's argument setup.
+// reorders Event_SetDestinationFar's argument setup.
 #ifdef UBFIX
 void DebugMapSelect_Run(void) {
 #else
@@ -72,7 +72,7 @@ s16 DebugMapSelect_Run(void) {
     if (result == -1) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
-      FieldScript_SetDestinationFar(sceneId, entrance);
+      Event_SetDestinationFar(sceneId, entrance);
 #ifdef UBFIX
       return;
 #else

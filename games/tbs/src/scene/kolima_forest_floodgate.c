@@ -249,7 +249,7 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(448), 1);
   FieldCamera_WaitForArrival();
@@ -340,25 +340,25 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   *(u16 *)gKolimaForestFloodgateMap ^= 1;
   KolimaForestFloodgate_DrawWaterLevel();
   MapGrid_CenterOnFollowedPoint();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the short
 /// log: the leader shoves it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 72, 176);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, -8, 0);
-  FieldScript_WaitFrames(24);
+  Event_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
@@ -367,25 +367,25 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   *gKolimaForestFloodgateReturned = 1;
-  FieldScript_End();
+  Event_End();
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the short
 /// log: the leader shoves it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Sound_PlaySong(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_ResetAndSetPosition(ACTOR_SHORT_LOG, 104, 176);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
-  FieldScript_WaitFrames(24);
+  Event_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
   Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
@@ -394,7 +394,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
   *gKolimaForestFloodgateReturned = 0;
-  FieldScript_End();
+  Event_End();
 }
 
 /// Sets up the logs and the river's level on entry. The logs come back
@@ -586,15 +586,15 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Vector_AddPolarOffset(0x80000, facing, point);
   actor = run->actor;
   quarter = facing / 0x4000;
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
-  Script_PlaySong(SE_HEAVY_MOVE);
+  Event_PlaySong(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   FieldActor_SetMoveTarget(actor, x, 0, z);
-  FieldScript_WaitFrames(6);
+  Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   Actor_StartCamera(work->camera, (s32)actor);
@@ -602,14 +602,14 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
-  FieldScript_WaitFrames(24);
+  Event_WaitFrames(24);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMove(actor);
   Actor_SelectAnimation(actor, 1);
-  Script_PlaySong(SE_STOP_ACTION_SE);
-  Script_PlaySong(SE_HEAVY_STOP);
-  FieldScript_WaitFrames(15);
-  FieldScript_End();
+  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySong(SE_HEAVY_STOP);
+  Event_WaitFrames(15);
+  Event_End();
 }
 
 #include "common/kolima_palette.h"
@@ -663,17 +663,17 @@ struct Trigger gKolimaForestFloodgateTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestFloodgate_JumpSouth)},
+     EVENT(KolimaForestFloodgate_JumpSouth)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestFloodgate_PushLog)},
+     EVENT(KolimaForestFloodgate_PushLog)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogWest)},
+     EVENT(KolimaForestFloodgate_PushShortLogWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogEast)},
+     EVENT(KolimaForestFloodgate_PushShortLogEast)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_KOLIMA_FOREST_FLOODGATE_SWITCH,
-     CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
+     CONDITION_ALWAYS, EVENT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {TRIGGERS_END},
 };

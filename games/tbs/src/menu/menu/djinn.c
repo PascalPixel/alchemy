@@ -138,7 +138,7 @@ s32 DjinnMenu_Run(void) {
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Free(menu->backdrop);
   FreeHeapSlot(HEAP_SLOT_MENU);
-  FieldScript_ClearInvalidPackedValuesFar();
+  Event_ClearInvalidPackedValuesFar();
   gSaveBlock.messageSpeed = savedMessageSpeed;
   return 1;
 }

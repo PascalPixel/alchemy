@@ -290,7 +290,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
         Sound_PlaySongFar(SE_DJINNI_SET);
-      FieldScript_ClearInvalidPackedValues();
+      Event_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
     }
 

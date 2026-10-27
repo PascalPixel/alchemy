@@ -360,7 +360,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
 /// The script command "set actor animation" (1 stands, 2 walks, 3 nods,
 /// 4 shakes the head and so on). Map scripts reach it as
 /// Import_ActorSetAnimation (ACTOR_ANIMATION, Actor_SetAnimation);
-/// FieldScript_AskYesNoWithActorAnimation and
+/// Event_AskYesNoWithActorAnimation and
 /// Actor_SetAnimationAndWait call it too.
 void Actor_SetModeById(u32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -441,7 +441,7 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
     } else {
       Sound_PlaySongFar(SE_JUMP);
     }
-    FieldScript_WaitFrames(frames);
+    Event_WaitFrames(frames);
   }
 }
 
@@ -619,8 +619,8 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
 /// The script command "actor face actor": turns the first
 /// actor at once to face the second, then waits wait frames. Writes the first
-/// actor's angle. Map scripts reach it (ACTOR_FACE,
-/// Actor_FaceActor); the Battle Arena calls it too.
+/// actor's angle. Events reach it (Actor_FaceActor); the Battle Arena calls it
+/// too.
 void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct Actor *first;
   struct Actor *second;
@@ -630,7 +630,7 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   if (first != 0 && second != 0) {
     first->facing = ArcTan2(second->z.fixed - first->z.fixed,
                             second->x.fixed - first->x.fixed);
-    FieldScript_WaitFrames(wait);
+    Event_WaitFrames(wait);
   }
 }
 
@@ -644,7 +644,7 @@ void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 
   if (first != NULL && second != NULL) {
     Actor_TurnPairToFaceEachOther(first, second);
-    FieldScript_WaitFrames(wait);
+    Event_WaitFrames(wait);
   }
 }
 
@@ -869,7 +869,7 @@ void Actor_ArmCallback(s32 actorId, s32 angle, s32 wait) {
   if (actor != NULL) {
     actor->timer = angle;
     Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
-    FieldScript_WaitFrames(wait);
+    Event_WaitFrames(wait);
   }
 }
 
@@ -914,7 +914,7 @@ UNUSED void Actor_ReservedNoOp(void) {}
 /// The script command "set message": the number of the script's next message,
 /// written to work->message. Map scripts reach it (MESSAGE_SET); the field's
 /// talk, step trigger, item and Psynergy scripts call it too.
-void FieldScript_SetMessageId(s32 message) { gFieldWork->message = message; }
+void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low
 /// 12 bits of actorId, or -1 if there is no such animated actor. The

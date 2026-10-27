@@ -97,7 +97,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED): from column 24 it spins, leaps away
 /// and lies where it lands.
-static void EventScript_MoveStump(void) {
+static void GomaCaveStream_MoveStump(void) {
   struct Actor *stump;
   struct Actor *landed;
   s32 column;
@@ -310,7 +310,7 @@ struct Trigger gGomaCaveStreamTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
-     FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump)},
+     FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT(GomaCaveStream_MoveStump)},
     {TRIGGERS_END},
 };
 

@@ -7,7 +7,7 @@
 /// The script command "camera follow actor": the camera (the script's
 /// view centre) follows actorId. Unless keepPosition is set it jumps there
 /// at once and, off the world map, the map is redrawn around it.
-/// FieldScript_End calls it with the leader and keepPosition 1, so after a
+/// Event_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Actor *subject;
@@ -134,7 +134,7 @@ void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(((struct FieldWork *)AllocHeapSlotEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                            ->camera);
-  FieldScript_WaitFrames(2);
+  Event_WaitFrames(2);
 }
 
 /// The script command "get view centre": returns the camera object.

@@ -25,7 +25,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
 /// scripts that check whether a member knows a Psynergy
-/// (FieldScript_ValidatePackedId).
+/// (Event_ValidatePackedId).
 s32 Unit_KnowsPsynergy(s32 unitId, s32 actionId) {
   struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;

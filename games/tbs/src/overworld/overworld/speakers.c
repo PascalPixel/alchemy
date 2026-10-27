@@ -58,7 +58,7 @@ s32 Speaker_GetVoice(u32 id) {
 /// Returns the definition flags of actor id's sprite, which choose its
 /// line when it has nothing to say: Scene_TalkToActor picks a Halted
 /// actor's pair of lines with them, and Halt cast with no trigger
-/// (FieldEffect_Run) stops nothing when the nearest actor's flags are
+/// (FieldPsynergy_Run) stops nothing when the nearest actor's flags are
 /// 0xff (FieldEffect_FilterActorIdByFlags).
 s32 Speaker_GetIdleFlags(s32 id) {
   return Speaker_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;

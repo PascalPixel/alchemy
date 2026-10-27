@@ -208,9 +208,9 @@ static void MenuTest_BrowseWarriorItemShopMessages(void) {
 /// to ACTOR_SECOND_FELIX while facing south, in German, Spanish, French and
 /// Italian.
 static void MenuTest_RunMessageTest(void) {
-  FieldScript_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
-  FieldScript_SetMessageId(MSGNO(MsgValeComeOnHurry));
-  FieldScript_ShowMessageAndWait(-1, 0);
+  Event_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
+  Event_SetMessageId(MSGNO(MsgValeComeOnHurry));
+  Event_ShowMessageAndWait(-1, 0);
 }
 #endif
 
@@ -921,70 +921,69 @@ struct ActorTemplate gMenuTest_ActorTemplates[] = {
 /// browser for each way the leader faces (TALK_TRIGGER_FACING); in Japanese
 /// they open the character selector and the item browser.
 struct Trigger gMenuTest_Triggers[] = {
-    {TRIGGER_TALK, GARET, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_RaisePartyLevels)},
+    {TRIGGER_TALK, GARET, CONDITION_ALWAYS, EVENT(MenuTest_RaisePartyLevels)},
     {TRIGGER_TALK, JENNA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_GiveEquipmentTestStock)},
+     EVENT(MenuTest_GiveEquipmentTestStock)},
     {TRIGGER_TALK, IVAN, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_GiveConsumableTestStock)},
-    {TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT_SCRIPT(MenuTest_EditIsaacName)},
+     EVENT(MenuTest_GiveConsumableTestStock)},
+    {TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT(MenuTest_EditIsaacName)},
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_TestItemSelection)},
+     EVENT(MenuTest_TestItemSelection)},
     {TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_GivePartyDjinn)},
+     EVENT(MenuTest_GivePartyDjinn)},
     {TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_DamageAndAfflictParty)},
+     EVENT(MenuTest_DamageAndAfflictParty)},
     {TRIGGER_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_GiveTreasureTestStock)},
+     EVENT(MenuTest_GiveTreasureTestStock)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_RunPresetShop)},
+     EVENT(DebugMenu_RunPresetShop)},
 #if TBS_PATCH_3 && !TBS_PATCH_4
     {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_GiveItemToParty)},
+     EVENT(MenuTest_GiveItemToParty)},
 #elif TBS_PATCH_4
     {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
     {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_ConfirmShopAction)},
+     EVENT(MenuTest_ConfirmShopAction)},
 #endif
     {TRIGGER_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS,
      MSGNO(MsgValeKyleAbleStop)},
     {TRIGGER_TALK, ACTOR_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_OpenIconBrowser)},
+     EVENT(MenuTest_OpenIconBrowser)},
 #if !TBS_PATCH_1
     {TRIGGER_TALK, ACTOR_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_SelectCharacter)},
+     EVENT(MenuTest_SelectCharacter)},
     {TRIGGER_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_OpenItemBrowser)},
+     EVENT(MenuTest_OpenItemBrowser)},
 #else
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
+     EVENT(MenuTest_BrowseWeaponShopMessages)},
     {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseArmorShopMessages)},
+     EVENT(MenuTest_BrowseArmorShopMessages)},
     {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseItemShopMessages)},
+     EVENT(MenuTest_BrowseItemShopMessages)},
     {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseSanctumMessages)},
+     EVENT(MenuTest_BrowseSanctumMessages)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseWarriorShopMessages)},
+     EVENT(MenuTest_BrowseWarriorShopMessages)},
     {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseWarriorArmorShopMessages)},
+     EVENT(MenuTest_BrowseWarriorArmorShopMessages)},
     {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_BrowseWarriorItemShopMessages)},
+     EVENT(MenuTest_BrowseWarriorItemShopMessages)},
 #if TBS_PATCH_2
     {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_RunMessageTest)},
+     EVENT(MenuTest_RunMessageTest)},
 #endif
 #endif
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
+     EVENT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
+     EVENT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
+     EVENT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(MenuTest_EnableEffectChildMode)},
+     ACTOR_IVY, CONDITION_ALWAYS, EVENT(MenuTest_EnableEffectChildMode)},
     {TRIGGERS_END},
 };
 

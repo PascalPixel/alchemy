@@ -162,7 +162,7 @@ s32 ItemMenu_Run(void) {
   WaitFrames(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)*process)->holdTilemapUpload = 0;
-  FieldScript_ClearInvalidPackedValuesFar();
+  Event_ClearInvalidPackedValuesFar();
   return result;
 }
 
@@ -495,7 +495,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       Unit_CalculateFar(menu->sideMember[0]);
       menu->selectedItemIcon->motion = ICON_HIDDEN;
-      FieldScript_ClearInvalidPackedValuesFar();
+      Event_ClearInvalidPackedValuesFar();
       break;
 
     // Give the item, or some of a stack, to the chosen member. A full
@@ -607,7 +607,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      FieldScript_ClearInvalidPackedValuesFar();
+      Event_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_MEMBER;
       break;
 
@@ -751,7 +751,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       Free(targetCopy);
       Free(sourceCopy);
-      FieldScript_ClearInvalidPackedValuesFar();
+      Event_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_MEMBER;
       break;
 
@@ -811,7 +811,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->descriptionWindow);
       ItemMenu_ShowMessage(MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
-      FieldScript_ClearInvalidPackedValuesFar();
+      Event_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_ITEM;
       break;
 

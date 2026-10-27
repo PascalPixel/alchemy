@@ -1425,7 +1425,7 @@ enum {
   TREE_ROOMS_ENTRANCE_FROM_TRET =
       16, ///< ★ Named from what the player sees: the room entered from Kolima
           ///< Forest through the door at Tret's foot (its render)
-  TREE_ROOMS_AFTER_FIGHT_TRET = 19, ///< EventScript_FightTret
+  TREE_ROOMS_AFTER_FIGHT_TRET = 19, ///< TreeRooms_FightTret
   // The landings below the cocoons, each numbered as its cocoon's metatile
   // behavior (TreeRooms_StepOnCocoon).
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1 = 21,

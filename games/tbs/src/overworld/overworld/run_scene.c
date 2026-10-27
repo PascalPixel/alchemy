@@ -105,7 +105,7 @@ s32 SceneManager_Run(s32 entrance) {
     gSaveBlock.haltedActor = -1;
     gSaveBlock.cloaked = 0;
   }
-  FieldEffect_ResumeCloakCheck();
+  FieldPsynergy_ResumeCloakCheck();
   work->queuedSound = -1;
   gOverlayArea.initialize();
 

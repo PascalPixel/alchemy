@@ -8,19 +8,19 @@
 // their actor or FieldParticle contract; neither is a map-script
 // callback.
 
-/// Runs one step of the current Psynergy effect: an enum PsynergyEffectStep.
-/// Exported as Field_DispatchTypeHandlerFar; Goma Cave's entrance imports it
-/// and passes PSYNERGY_STEP_ON_TARGET to play Whirlwind on the stump's ivy from
-/// its own script.
-void Field_DispatchTypeHandler(s32 kind) {
-  if (kind == PSYNERGY_STEP_UNTARGETED)
-    FieldEffect_Run();
-  else if (kind == PSYNERGY_STEP_ON_TARGET)
-    FieldEffect_DispatchRequestKind();
-  else if (kind == PSYNERGY_STEP_FINISH)
-    FieldEffect_FinishMindRead();
-  else if (kind == PSYNERGY_STEP_EXTRA)
-    FieldScript_RunTypeHandler();
+/// Runs one step of the current Psynergy effect: an enum FieldPsynergyHandler.
+/// Exported as FieldPsynergy_RunHandlerFar; Goma Cave's entrance imports it
+/// and passes FIELD_PSYNERGY_HANDLER_ON_TARGET to play Whirlwind on the stump's
+/// ivy from its own script.
+void FieldPsynergy_RunHandler(s32 kind) {
+  if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
+    FieldPsynergy_Run();
+  else if (kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
+    FieldPsynergy_Dispatch();
+  else if (kind == FIELD_PSYNERGY_HANDLER_FINISH)
+    FieldPsynergy_FinishMindRead();
+  else if (kind == FIELD_PSYNERGY_HANDLER_EXTRA)
+    Event_RunFieldPsynergy();
 }
 
 void _call_via_r3(s32, s32);
@@ -30,9 +30,9 @@ void _call_via_r3(s32, s32);
 ///
 /// Called by Field_UsePsynergy when no trigger names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
-/// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
-/// also moves gSaveBlock.haltedActor to the actor it stops.
-void FieldEffect_Run(void) {
+/// action, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_UNTARGETED).
+/// Halt also moves gSaveBlock.haltedActor to the actor it stops.
+void FieldPsynergy_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
   s32 kind;
@@ -46,39 +46,39 @@ void FieldEffect_Run(void) {
 
   switch (kind) {
   case FIELD_PSYNERGY_MOVE:
-    FieldEffect_RunMove();
+    FieldPsynergy_Move();
     return;
   case FIELD_PSYNERGY_LIFT:
-    FieldEffect_RunLift();
+    FieldPsynergy_Lift();
     return;
   case FIELD_PSYNERGY_CARRY:
-    FieldEffect_RunCarry();
+    FieldPsynergy_Carry();
     return;
   case FIELD_PSYNERGY_FORCE:
-    FieldEffect_RunForce();
+    FieldPsynergy_Force();
     return;
   case FIELD_PSYNERGY_DOUSE:
-    FieldEffect_RunDouse();
+    FieldPsynergy_Douse();
     return;
   case FIELD_PSYNERGY_WHIRLWIND:
-    FieldEffect_RunWhirlwind();
+    FieldPsynergy_Whirlwind();
     return;
   case FIELD_PSYNERGY_FROST:
-    FieldEffect_RunFrost();
+    FieldPsynergy_Frost();
     return;
   case FIELD_PSYNERGY_PLY:
-    FieldEffect_RunPly();
+    FieldPsynergy_Ply();
     return;
   case FIELD_PSYNERGY_GROWTH:
-    FieldEffect_RunGrowth();
+    FieldPsynergy_Growth();
     return;
   case FIELD_PSYNERGY_CATCH:
-    FieldEffect_RunCatch();
+    FieldPsynergy_Catch();
     return;
   case FIELD_PSYNERGY_HALT:
     // Free the object stopped before, then stop the nearest one.
     if (gSaveBlock.haltedActor != -1) {
-      FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+      FieldPsynergy_ResumeHaltedActor(gSaveBlock.haltedActor);
       gSaveBlock.haltedActor = -1;
     }
 
@@ -86,31 +86,31 @@ void FieldEffect_Run(void) {
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, kind);
     nearestTargetId = FieldEffect_FilterActorIdByFlags(nearestTargetId);
     if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
-      FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, nearestTargetId);
-      FieldEffect_RunHaltOnTarget(nearestTargetId);
-      FieldEffect_PauseActor(nearestTargetId);
+      FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, nearestTargetId);
+      FieldPsynergy_HaltOnTarget(nearestTargetId);
+      FieldPsynergy_HaltActor(nearestTargetId);
       gSaveBlock.haltedActor = nearestTargetId;
     } else {
-      FieldEffect_RunHalt();
+      FieldPsynergy_Halt();
     }
     return;
   case FIELD_PSYNERGY_MIND_READ:
     // The wave and colour effect, stopping a running Reveal first.
     if (runtime->revealActive != 0)
-      FieldEffect_EndReveal();
-    FieldEffect_StartMindReadWave(effectWork->firstActorId, targetId);
+      FieldPsynergy_EndReveal();
+    FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
     return;
   case FIELD_PSYNERGY_REVEAL:
-    FieldEffect_RunReveal();
+    FieldPsynergy_Reveal();
     return;
   case FIELD_PSYNERGY_CLOAK:
-    FieldEffect_StartCloak();
+    FieldPsynergy_StartCloak();
     return;
   case FIELD_PSYNERGY_RETREAT:
-    FieldEffect_RunRetreat();
+    FieldPsynergy_Retreat();
     return;
   case FIELD_PSYNERGY_AVOID:
-    FieldEffect_RunAvoid();
+    FieldPsynergy_Avoid();
     return;
   }
 }
@@ -120,12 +120,12 @@ void FieldEffect_Run(void) {
 ///
 /// Called by Field_UsePsynergy when a trigger names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
-/// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears
-/// effectWork->enabled first: that is how the runners FieldEffect_Run shares
+/// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET). Clears
+/// effectWork->enabled first: that is how the runners FieldPsynergy_Run shares
 /// (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides what
 /// happens to the target. Halt also moves gSaveBlock.haltedActor to the
 /// target.
-void FieldEffect_DispatchRequestKind(void) {
+void FieldPsynergy_Dispatch(void) {
   struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
   s32 kind = effectWork->fieldPsynergy;
@@ -135,62 +135,62 @@ void FieldEffect_DispatchRequestKind(void) {
   switch (kind) {
   case FIELD_PSYNERGY_MIND_READ:
     if (runtime->revealActive != 0)
-      FieldEffect_EndReveal();
+      FieldPsynergy_EndReveal();
     if (gSaveBlock.haltedActor != effectWork->secondActorId)
       ((struct Actor *)effectWork->child)->paused = 1;
-    FieldEffect_StartMindReadWave(effectWork->firstActorId, targetId);
+    FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
     // Push the target with the direction keys.
-    FieldEffect_SteerPushedTarget(targetId);
+    FieldPsynergy_SteerPushedTarget(targetId);
     break;
   case FIELD_PSYNERGY_LIFT:
-    FieldEffect_RunLiftOnTarget(targetId);
+    FieldPsynergy_LiftOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_CARRY:
-    FieldEffect_SteerLiftedTarget(targetId);
+    FieldPsynergy_SteerLiftedTarget(targetId);
     break;
   case FIELD_PSYNERGY_FORCE:
-    FieldEffect_RunForceOnTarget(targetId);
+    FieldPsynergy_ForceOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_DOUSE:
-    FieldEffect_RunDouseOnTarget(targetId);
+    FieldPsynergy_DouseOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_FROST:
-    FieldEffect_RunFrostOnTarget(targetId);
+    FieldPsynergy_FrostOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_GROWTH:
-    FieldEffect_RunGrowthOnTarget(targetId);
+    FieldPsynergy_GrowthOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_HALT:
     if (gSaveBlock.haltedActor != -1) {
-      FieldEffect_ResumeActor(gSaveBlock.haltedActor);
+      FieldPsynergy_ResumeHaltedActor(gSaveBlock.haltedActor);
       gSaveBlock.haltedActor = -1;
     }
-    FieldEffect_PauseActor(targetId);
+    FieldPsynergy_HaltActor(targetId);
     gSaveBlock.haltedActor = targetId;
-    FieldEffect_RunHaltOnTarget(targetId);
+    FieldPsynergy_HaltOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_PLY:
-    FieldEffect_RunPlyOnTarget(targetId);
+    FieldPsynergy_PlyOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_WHIRLWIND:
-    FieldEffect_RunWhirlwindOnTarget(targetId);
+    FieldPsynergy_WhirlwindOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_CATCH:
-    FieldEffect_RunCatchOnTarget(targetId);
+    FieldPsynergy_CatchOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_REVEAL:
-    FieldEffect_RunReveal();
+    FieldPsynergy_Reveal();
     break;
   case FIELD_PSYNERGY_CLOAK:
-    FieldEffect_StartCloak();
+    FieldPsynergy_StartCloak();
     break;
   case FIELD_PSYNERGY_RETREAT:
-    FieldEffect_RunRetreat();
+    FieldPsynergy_Retreat();
     break;
   case FIELD_PSYNERGY_AVOID:
-    FieldEffect_RunAvoid();
+    FieldPsynergy_Avoid();
     break;
   }
 }
@@ -198,13 +198,14 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Finishes the current effect when it is Mind Read: ends the effect and lets
 /// its target move again, unless the target is the object kept stopped.
 /// Called by Field_UsePsynergy after the after event, and by
-/// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
-/// whose effect stays up through the after event, the conversation it reads.
-void FieldEffect_FinishMindRead(void) {
+/// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH): Mind Read is the
+/// one kind whose effect stays up through the after event, the conversation it
+/// reads.
+void FieldPsynergy_FinishMindRead(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
 
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
-    FieldEffect_FinishWaveAndReleaseHeapBlock();
+    FieldPsynergy_FinishWaveAndReleaseHeapBlock();
     if (gSaveBlock.haltedActor != effectWork->secondActorId) {
       ((struct Actor *)effectWork->child)->paused = 0;
     }
@@ -212,21 +213,21 @@ void FieldEffect_FinishMindRead(void) {
 }
 
 /// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
-/// Called by Field_RunPsynergyEvents, which ends a Psynergy that runs out by
-/// itself, and by Field_DispatchTypeHandler(PSYNERGY_STEP_EXTRA).
-void FieldScript_RunTypeHandler(void) {
+/// Called by Field_RunPsynergyEndEvents, which ends a Psynergy that runs out by
+/// itself, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_EXTRA).
+void Event_RunFieldPsynergy(void) {
   u32 kind;
 
   kind = ((struct FieldEffectWork *)gFieldEffectWork)->fieldPsynergy;
   switch (kind) {
   case FIELD_PSYNERGY_REVEAL:
-    FieldEffect_EndReveal();
+    FieldPsynergy_EndReveal();
     return;
   case FIELD_PSYNERGY_CLOAK:
-    FieldEffect_EndCloak();
+    FieldPsynergy_EndCloak();
     return;
   case FIELD_PSYNERGY_AVOID:
-    FieldScript_ShowStatusMessage();
+    Event_ShowStatusMessage();
     return;
   }
 }
@@ -237,10 +238,10 @@ void FieldScript_RunTypeHandler(void) {
 /// happens.".
 /// Returns 0.
 ///
-/// Called by Field_UsePsynergy and Field_RunPsynergyEvents for the before and
-/// after events, and by Force, Frost and Reveal for the events of their own
+/// Called by Field_UsePsynergy and Field_RunPsynergyEndEvents for the before
+/// and after events, and by Force, Frost and Reveal for the events of their own
 /// phases.
-s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
+s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {
@@ -248,18 +249,18 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     script = ((const struct TriggerView *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
-        FieldScript_Start();
-        FieldScript_SetMessageId(((const struct TriggerView *)event)->result);
-        FieldScript_ShowMessageAndWait(target, 0);
-        FieldScript_End();
+        Event_Start();
+        Event_SetMessageId(((const struct TriggerView *)event)->result);
+        Event_ShowMessageAndWait(target, 0);
+        Event_End();
       } else {
         _call_via_r3(param, target);
       }
     }
     if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0) {
-      FieldScript_Start();
+      Event_Start();
       FieldMessage_ShowFar(MsgNothingHappens, FIELD_MESSAGE_ZOOM);
-      FieldScript_End();
+      Event_End();
     }
   }
   return 0;
@@ -321,7 +322,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 // From here on objects are passed in each function's own view of them.
 
 /// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
-/// FieldEffect_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT
+/// FieldPsynergy_LoadResources subtracts this from VRAM_BLOCK_COUNT
 /// to record the blocks already occupied before the effect starts.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
@@ -393,7 +394,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 /// Sets the movement state and animation timer steps of every object but the
-/// player's and except. FieldEffect_StartCast pauses them
+/// player's and except. FieldPsynergy_StartCast pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
 void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {

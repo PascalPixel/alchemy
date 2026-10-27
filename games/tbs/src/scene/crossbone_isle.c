@@ -28,13 +28,13 @@
 ///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
 ///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
 ///   Each has two doors in its north wall into a side room of its own. The
-///   first time the party walks into the east door (EventScript_OpenEastDoor),
-///   the monsters behind it attack: ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS
-///   for the first four rooms and ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for
-///   the next five, one group per room. Back from the battle
-///   (ENTRANCE_AFTER_BATTLE) the door opens and the party walks through, and
-///   from then on it simply opens (one flag per room from
-///   FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED); the west door
+///   first time the party walks into the east door
+///   (CrossboneIsle_OpenEastDoor), the monsters behind it attack:
+///   ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS for the first four rooms and
+///   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for the next five, one group per
+///   room. Back from the battle (ENTRANCE_AFTER_BATTLE) the door opens and the
+///   party walks through, and from then on it simply opens (one flag per room
+///   from FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED); the west door
 ///   always opens. Between the doors stands a pillar that, pushed or moved with
 ///   Move to column 40, sinks into the floor and opens the corridor (one flag
 ///   per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first
@@ -48,10 +48,10 @@
 /// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the ninth
 ///   floor where a wooden pier leads out to the Pirate Ship.
 /// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on step trigger 10
-///   (EventScript_FightDeadbeard) sets off the battle with Deadbeard, the sixth
-///   group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party comes
-///   back (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is
-///   set and a chest with the Demon Mail appears. A second chest is a mimic
+///   (CrossboneIsle_FightDeadbeard) sets off the battle with Deadbeard, the
+///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party
+///   comes back (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED
+///   is set and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
 /// Scene_Initialize restores each map as its flags say: the ivy and plants on
@@ -105,24 +105,25 @@
 enum CrossboneIsleActorId {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
-  /// ★ Named from the game: "Nut" (MsgItemName), the item EventScript_CatchNut
+  /// ★ Named from the game: "Nut" (MsgItemName), the item
+  /// CrossboneIsle_CatchNut
   /// gives
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
-  /// The two logs a push rolls (EventScript_PushIsleLog).
+  /// The two logs a push rolls (CrossboneIsle_PushIsleLog).
   /// ★ Named from what the player sees: two logs lying on the island's
   /// grass (its render)
   ACTOR_FIRST_ISLE_LOG,
   /// The four plants Growth grows, crossable once grown for the rest of the
   /// visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN). The first
   /// is placed at the map's origin, off stage
-  /// (EventScript_UnusedGrowFirstPlant).
+  /// (CrossboneIsle_UnusedGrowFirstPlant).
   /// ★ Named from what the player sees: small sprouts on the cliff ledges
   /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
   /// The ivy Whirlwind blows away, one flag each from
   /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one, the
   /// second at the map's origin, off stage
-  /// (EventScript_UnusedBlowAwaySecondIvy):
+  /// (CrossboneIsle_UnusedBlowAwaySecondIvy):
   /// the fourth ivy's trigger and CrossboneIsle_RestoreIvy name
   /// ACTOR_FIRST_IVY + 3, which the table leaves unplaced.
   /// ★ Named from what the player sees: leafy ivy growing against the cliffs
@@ -211,13 +212,14 @@ enum {
 enum {
   CORRIDOR_TO_PREVIOUS_ROOM = 1,
   CORRIDOR_TO_NEXT_ROOM = 2,
-  CORRIDOR_TO_SIDE_ROOM_EAST = 3, ///< the east door (EventScript_OpenEastDoor)
-  CORRIDOR_TO_SIDE_ROOM_WEST = 4  ///< the west door (EventScript_OpenWestDoor)
+  CORRIDOR_TO_SIDE_ROOM_EAST =
+      3,                         ///< the east door (CrossboneIsle_OpenEastDoor)
+  CORRIDOR_TO_SIDE_ROOM_WEST = 4 ///< the west door (CrossboneIsle_OpenWestDoor)
 };
 
 /// The entrance a battle returns the party to: in a corridor room after
-/// the monsters behind its east door (EventScript_OpenEastDoor), and on the
-/// Pirate Ship after Deadbeard (EventScript_FightDeadbeard).
+/// the monsters behind its east door (CrossboneIsle_OpenEastDoor), and on the
+/// Pirate Ship after Deadbeard (CrossboneIsle_FightDeadbeard).
 enum { ENTRANCE_AFTER_BATTLE = 5 };
 
 static void CrossboneIsle_RestoreSunkPillar(void);
@@ -305,14 +307,14 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 /// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks (the sixth
 /// group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS), and the party comes
 /// back to the ship at ENTRANCE_AFTER_BATTLE.
-static void EventScript_FightDeadbeard(void) {
+static void CrossboneIsle_FightDeadbeard(void) {
 
-  FieldScript_Start();
-  FieldScript_SetNextDestination(gSaveBlock.sceneId, ENTRANCE_AFTER_BATTLE);
+  Event_Start();
+  Event_SetAfterBattleDestination(gSaveBlock.sceneId, ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
-  FieldScript_End();
+  Event_End();
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -338,13 +340,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
-static void EventScript_CatchNut(void) {
-  FieldScript_Start();
+static void CrossboneIsle_CatchNut(void) {
+  Event_Start();
   Import_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Restores each map's puzzles from its flags: the sliding logs'
@@ -483,7 +485,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 /// push: once it reaches column 40 it sinks into the floor in a ring of dust,
 /// and the corridor is open (a flag per room from
 /// FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
-static void EventScript_MovePillar(void) {
+static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s16 *mapNumber;
   struct SaveBlock *state;
@@ -510,10 +512,10 @@ static void EventScript_MovePillar(void) {
   // Play the moved-pillar reaction before hiding it and opening the passage.
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
-  FieldScript_WaitFrames(8);
+  Event_WaitFrames(8);
   CrossboneIsle_SpawnPillarMovedBurst(ACTOR_SINKING_PILLAR);
   Sound_PlaySong(SE_WHOOSH);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
 
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SINKING_PILLAR), 0);
   Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
@@ -534,31 +536,31 @@ static void EventScript_MovePillar(void) {
 
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (step trigger
 /// 20): push it a step.
-static void EventScript_PushPillar(void) {
-  FieldScript_Start();
+static void CrossboneIsle_PushPillar(void) {
+  Event_Start();
   PushedActor_AdvancePair();
-  FieldScript_End();
-  EventScript_MovePillar();
+  Event_End();
+  CrossboneIsle_MovePillar();
 }
 
 /// Walking north into a corridor room's west door in Crossbone Isle Cave
 /// (step trigger 4): it opens, and the party goes through to the side room.
-static void EventScript_OpenWestDoor(void) {
+static void CrossboneIsle_OpenWestDoor(void) {
   MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 37, 7);
   Sound_PlaySong(SE_STONE_RUMBLE);
-  Import_ScriptRequestExit(CORRIDOR_TO_SIDE_ROOM_WEST);
+  Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
 /// Walking north into a corridor room's east door in Crossbone Isle Cave (
 /// step trigger 3): the first time, the monsters behind it attack, and the
 /// party comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door
 /// opens onto the side room.
-static void EventScript_OpenEastDoor(void) {
+static void CrossboneIsle_OpenEastDoor(void) {
   if (GameFlag_Get(gSaveBlock.sceneId +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
-    FieldScript_Start();
-    FieldScript_SetNextDestination(gSaveBlock.sceneId, ENTRANCE_AFTER_BATTLE);
+    Event_Start();
+    Event_SetAfterBattleDestination(gSaveBlock.sceneId, ENTRANCE_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
@@ -600,36 +602,36 @@ static void EventScript_OpenEastDoor(void) {
           ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4);
       break;
     }
-    FieldScript_End();
+    Event_End();
   } else {
     MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
     Sound_PlaySong(SE_STONE_RUMBLE);
-    Import_ScriptRequestExit(CORRIDOR_TO_SIDE_ROOM_EAST);
+    Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
 
 /// Back from the battle at a corridor room's east door
 /// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   GameFlag_Set((gSaveBlock.sceneId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&SceneId_CrossboneIsleFirstFloor)));
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
-  Import_ScriptRequestExit(CORRIDOR_TO_SIDE_ROOM_EAST);
-  FieldScript_End();
+  Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_EAST);
+  Event_End();
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
 /// party climb at (304, 368), but the actor templates put that plant at
 /// the map's origin, off stage in the forest's corner, where no cast can reach
 /// it and the player never sees it (its render).
-static void EventScript_UnusedGrowFirstPlant(s32 actorId) {
+static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
   struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT);
@@ -643,7 +645,7 @@ static void EventScript_UnusedGrowFirstPlant(s32 actorId) {
 }
 
 /// Growth on Crossbone Isle's second plant.
-static void EventScript_GrowSecondPlant(s32 actorId) {
+static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
   struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT + 1);
@@ -657,7 +659,7 @@ static void EventScript_GrowSecondPlant(s32 actorId) {
 }
 
 /// Growth on Crossbone Isle's third plant.
-static void EventScript_GrowThirdPlant(s32 actorId) {
+static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
   struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT + 2);
@@ -671,7 +673,7 @@ static void EventScript_GrowThirdPlant(s32 actorId) {
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
-static void EventScript_GrowFourthPlant(s32 actorId) {
+static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
   s32 fixedX = PIXELS(144);
   s32 fixedZ = PIXELS(320);
   s32 secondFixedX = PIXELS(752);
@@ -689,7 +691,7 @@ static void EventScript_GrowFourthPlant(s32 actorId) {
 
 /// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
 /// its cell opens.
-static void EventScript_BlowAwayFirstIvy(void) {
+static void CrossboneIsle_BlowAwayFirstIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   {
 
@@ -700,19 +702,19 @@ static void EventScript_BlowAwayFirstIvy(void) {
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
 /// good, but the actor templates put that ivy at the map's origin, off
 /// stage, where no cast can reach it and the player never sees it (its render).
-static void EventScript_UnusedBlowAwaySecondIvy(void) {
+static void CrossboneIsle_UnusedBlowAwaySecondIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
 /// Whirlwind on Crossbone Isle's third ivy.
-static void EventScript_BlowAwayThirdIvy(void) {
+static void CrossboneIsle_BlowAwayThirdIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
 /// good, but the actor templates place only three, so no actor
 /// answers its trigger.
-static void EventScript_UnusedBlowAwayFourthIvy(void) {
+static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
@@ -754,14 +756,14 @@ static void CrossboneIsle_RestoreIvy(void) {
 
 /// Walking into one of Crossbone Isle's two logs: push it if the cell beyond
 /// is clear.
-static void EventScript_PushIsleLog(void) {
+static void CrossboneIsle_PushIsleLog(void) {
   struct PushedActorProbe probe;
 
-  FieldScript_Start();
+  Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Moves the selected actor and puzzle log by the same pixel offset.
@@ -774,7 +776,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
   selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
   logActor = Actor_GetById(actorId);
-  FieldScript_Start();
+  Event_Start();
   {
     fixedX = ((selectedActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -807,7 +809,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   Sound_PlaySong(SE_LOG_PUSH);
   Actor_WaitForMove(selectedActor);
   Sound_PlaySong(SE_STOP_ACTION_SE);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Draws the three-cell horizontal footprint centered on this log.
@@ -885,62 +887,62 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void) {
 // log's edge hops the leader 32 pixels if the landing is clear.
 
 /// Stepping onto the first log.
-static void EventScript_StepOnFirstLog(void) {
+static void CrossboneIsle_StepOnFirstLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_FIRST_LOG);
 }
 
 /// Stepping onto the third log.
-static void EventScript_StepOnThirdLog(void) {
+static void CrossboneIsle_StepOnThirdLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_THIRD_LOG);
 }
 
 /// Stepping onto the fourth log.
-static void EventScript_StepOnFourthLog(void) {
+static void CrossboneIsle_StepOnFourthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_FOURTH_LOG);
 }
 
 /// Stepping onto the fifth log.
-static void EventScript_StepOnFifthLog(void) {
+static void CrossboneIsle_StepOnFifthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_FIFTH_LOG);
 }
 
 /// Stepping onto the sixth log.
-static void EventScript_StepOnSixthLog(void) {
+static void CrossboneIsle_StepOnSixthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_SIXTH_LOG);
 }
 
 /// Stepping onto the eighth log.
-static void EventScript_StepOnEighthLog(void) {
+static void CrossboneIsle_StepOnEighthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_EIGHTH_LOG);
 }
 
 /// Stepping onto the tenth log.
-static void EventScript_StepOnTenthLog(void) {
+static void CrossboneIsle_StepOnTenthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_TENTH_LOG);
 }
 
 /// Stepping onto the eleventh log.
-static void EventScript_StepOnEleventhLog(void) {
+static void CrossboneIsle_StepOnEleventhLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_ELEVENTH_LOG);
 }
 
 /// Stepping onto the second log.
-static void EventScript_StepOnSecondLog(void) {
+static void CrossboneIsle_StepOnSecondLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_SECOND_LOG);
 }
 
 /// Stepping onto the twelfth log.
-static void EventScript_StepOnTwelfthLog(void) {
+static void CrossboneIsle_StepOnTwelfthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_TWELFTH_LOG);
 }
 
 /// Stepping onto the seventh log.
-static void EventScript_StepOnSeventhLog(void) {
+static void CrossboneIsle_StepOnSeventhLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_SEVENTH_LOG);
 }
 
 /// Stepping onto the ninth log.
-static void EventScript_StepOnNinthLog(void) {
+static void CrossboneIsle_StepOnNinthLog(void) {
   CrossboneIsle_AnimateTouchedLog(ACTOR_NINTH_LOG);
 }
 
@@ -967,7 +969,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 #endif
     s32 movingFlags;
 
-    FieldScript_Start();
+    Event_Start();
     Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
@@ -992,14 +994,14 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     Actor_SelectAnimation(actor, 6);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
-    FieldScript_End();
+    Event_End();
     return 1;
   }
   return 0;
 }
 
 /// Walking north against a log's edge.
-static s32 EventScript_HopNorth(void) {
+static s32 CrossboneIsle_HopNorth(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
@@ -1010,7 +1012,7 @@ static s32 EventScript_HopNorth(void) {
 }
 
 /// Walking south against a log's edge, or at the Pirate Ship's step trigger 20.
-static s32 EventScript_HopSouth(void) {
+static s32 CrossboneIsle_HopSouth(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
@@ -1021,7 +1023,7 @@ static s32 EventScript_HopSouth(void) {
 }
 
 /// Walking west against a log's edge.
-static s32 EventScript_HopWest(void) {
+static s32 CrossboneIsle_HopWest(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
@@ -1032,7 +1034,7 @@ static s32 EventScript_HopWest(void) {
 }
 
 /// Walking east against a log's edge.
-static s32 EventScript_HopEast(void) {
+static s32 CrossboneIsle_HopEast(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
@@ -1043,7 +1045,7 @@ static s32 EventScript_HopEast(void) {
 }
 
 /// Walking north on the first log drifts it north.
-static void EventScript_SlideFirstLogNorth(void) {
+static void CrossboneIsle_SlideFirstLogNorth(void) {
   s32 actorX = Actor_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
   s32 actorZ = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
   s32 fifthLogColumn = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
@@ -1074,7 +1076,7 @@ static void EventScript_SlideFirstLogNorth(void) {
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FIRST_LOG, 0, -48);
   } else {
-    EventScript_HopNorth();
+    CrossboneIsle_HopNorth();
     return;
   }
   WaitFrames(2);
@@ -1118,7 +1120,7 @@ static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 actorId, s32 column,
 }
 
 /// Walking south on the first log drifts it south.
-static void EventScript_SlideFirstLogSouth(void) {
+static void CrossboneIsle_SlideFirstLogSouth(void) {
   s32 column = Actor_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
   s32 fifthLogColumn = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
@@ -1144,7 +1146,7 @@ static void EventScript_SlideFirstLogSouth(void) {
 }
 
 /// Walking north on the third log drifts it north.
-static void EventScript_SlideThirdLogNorth(void) {
+static void CrossboneIsle_SlideThirdLogNorth(void) {
   s32 column = Actor_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
   s32 sixthLogColumn = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
@@ -1174,7 +1176,7 @@ static void EventScript_SlideThirdLogNorth(void) {
 }
 
 /// Walking south on the third log drifts it south.
-static void EventScript_SlideThirdLogSouth(void) {
+static void CrossboneIsle_SlideThirdLogSouth(void) {
   s32 column = Actor_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
 
@@ -1190,7 +1192,7 @@ static void EventScript_SlideThirdLogSouth(void) {
 }
 
 /// Walking west on the fourth log drifts it west.
-static void EventScript_SlideFourthLogWest(void) {
+static void CrossboneIsle_SlideFourthLogWest(void) {
   s32 column = Actor_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
 
@@ -1212,7 +1214,7 @@ static void EventScript_SlideFourthLogWest(void) {
 }
 
 /// Walking east on the fourth log drifts it east.
-static void EventScript_SlideFourthLogEast(void) {
+static void CrossboneIsle_SlideFourthLogEast(void) {
   s32 column = Actor_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
 
@@ -1230,7 +1232,7 @@ static void EventScript_SlideFourthLogEast(void) {
 }
 
 /// Walking west on the fifth log drifts it west.
-static void EventScript_SlideFifthLogWest(void) {
+static void CrossboneIsle_SlideFifthLogWest(void) {
   s32 column = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
 
@@ -1247,7 +1249,7 @@ static void EventScript_SlideFifthLogWest(void) {
 }
 
 /// Walking east on the fifth log drifts it east.
-static void EventScript_SlideFifthLogEast(void) {
+static void CrossboneIsle_SlideFifthLogEast(void) {
   s32 column = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
 
@@ -1263,7 +1265,7 @@ static void EventScript_SlideFifthLogEast(void) {
 }
 
 /// Walking west on the sixth log drifts it west.
-static void EventScript_SlideSixthLogWest(void) {
+static void CrossboneIsle_SlideSixthLogWest(void) {
   s32 column = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
   s32 thirdLogRow = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
@@ -1313,7 +1315,7 @@ static void EventScript_SlideSixthLogWest(void) {
 }
 
 /// Walking east on the sixth log drifts it east.
-static void EventScript_SlideSixthLogEast(void) {
+static void CrossboneIsle_SlideSixthLogEast(void) {
   s32 column = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
 
@@ -1334,7 +1336,7 @@ static void EventScript_SlideSixthLogEast(void) {
 }
 
 /// Walking west on the eighth log drifts it west.
-static void EventScript_SlideEighthLogWest(void) {
+static void CrossboneIsle_SlideEighthLogWest(void) {
   s32 column = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
   s32 firstLogRow = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
@@ -1368,7 +1370,7 @@ static void EventScript_SlideEighthLogWest(void) {
 }
 
 /// Walking east on the eighth log drifts it east.
-static void EventScript_SlideEighthLogEast(void) {
+static void CrossboneIsle_SlideEighthLogEast(void) {
   s32 column = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
   s32 thirdLogRow = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
@@ -1416,7 +1418,7 @@ static void EventScript_SlideEighthLogEast(void) {
 }
 
 /// Walking north on the tenth log drifts it north.
-static void EventScript_SlideTenthLogNorth(void) {
+static void CrossboneIsle_SlideTenthLogNorth(void) {
   s32 column = Actor_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
   s32 twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
@@ -1439,7 +1441,7 @@ static void EventScript_SlideTenthLogNorth(void) {
 }
 
 /// Walking south on the tenth log drifts it south.
-static void EventScript_SlideTenthLogSouth(void) {
+static void CrossboneIsle_SlideTenthLogSouth(void) {
   s32 column = Actor_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
   s32 row = Actor_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
 
@@ -1457,7 +1459,7 @@ static void EventScript_SlideTenthLogSouth(void) {
 #define IS_IN_LOG_CROSSING_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
 /// Walking north on the eleventh log drifts it north.
-static void EventScript_SlideEleventhLogNorth(void) {
+static void CrossboneIsle_SlideEleventhLogNorth(void) {
   s32 column;
   s32 row;
   s32 twelfthLogColumn;
@@ -1532,7 +1534,7 @@ static void EventScript_SlideEleventhLogNorth(void) {
 #undef IS_IN_LOG_CROSSING_COLUMNS
 
 /// Walking south on the eleventh log drifts it south.
-static void EventScript_SlideEleventhLogSouth(void) {
+static void CrossboneIsle_SlideEleventhLogSouth(void) {
   s32 column;
   s32 row;
   s32 twelfthLogColumn;
@@ -1592,7 +1594,7 @@ static void EventScript_SlideEleventhLogSouth(void) {
 #define IS_IN_LOG_CROSSING_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
 /// Walking north on the second log drifts it north.
-static void EventScript_SlideSecondLogNorth(void) {
+static void CrossboneIsle_SlideSecondLogNorth(void) {
   s32 column;
   s32 row;
   s32 twelfthLogColumn;
@@ -1667,7 +1669,7 @@ static void EventScript_SlideSecondLogNorth(void) {
 #undef IS_IN_LOG_CROSSING_COLUMNS
 
 /// Walking south on the second log drifts it south.
-static void EventScript_SlideSecondLogSouth(void) {
+static void CrossboneIsle_SlideSecondLogSouth(void) {
   s32 column;
   s32 row;
   s32 twelfthLogColumn;
@@ -1729,7 +1731,7 @@ static void EventScript_SlideSecondLogSouth(void) {
 }
 
 /// Walking west on the twelfth log drifts it west.
-static void EventScript_SlideTwelfthLogWest(void) {
+static void CrossboneIsle_SlideTwelfthLogWest(void) {
   s32 column;
   s32 row;
   s32 tenthLogRow;
@@ -1800,7 +1802,7 @@ static void EventScript_SlideTwelfthLogWest(void) {
 }
 
 /// Walking east on the twelfth log drifts it east.
-static void EventScript_SlideTwelfthLogEast(void) {
+static void CrossboneIsle_SlideTwelfthLogEast(void) {
   s32 column;
   s32 row;
   s32 eleventhLogRow;
@@ -1852,7 +1854,7 @@ static void EventScript_SlideTwelfthLogEast(void) {
 }
 
 /// Walking west on the seventh log drifts it west.
-static void EventScript_SlideSeventhLogWest(void) {
+static void CrossboneIsle_SlideSeventhLogWest(void) {
   s32 column;
   s32 row;
   s32 eleventhLogRow;
@@ -1905,7 +1907,7 @@ static void EventScript_SlideSeventhLogWest(void) {
 }
 
 /// Walking east on the seventh log drifts it east.
-static void EventScript_SlideSeventhLogEast(void) {
+static void CrossboneIsle_SlideSeventhLogEast(void) {
   s32 column;
   s32 row;
   s32 eleventhLogRow;
@@ -1951,7 +1953,7 @@ static void EventScript_SlideSeventhLogEast(void) {
 }
 
 /// Walking west on the ninth log drifts it west.
-static void EventScript_SlideNinthLogWest(void) {
+static void CrossboneIsle_SlideNinthLogWest(void) {
   s32 column;
   s32 row;
   s32 eleventhLogRow;
@@ -2001,7 +2003,7 @@ static void EventScript_SlideNinthLogWest(void) {
 }
 
 /// Walking east on the ninth log drifts it east.
-static void EventScript_SlideNinthLogEast(void) {
+static void CrossboneIsle_SlideNinthLogEast(void) {
   s32 column;
   s32 row;
   s32 companionRow;
@@ -2282,10 +2284,10 @@ struct ActorTemplate gCrossboneIsle_CorridorActorTemplates[] = {
 struct Trigger gCrossboneIsle_CorridorTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CORRIDOR_TO_PREVIOUS_ROOM },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CORRIDOR_TO_NEXT_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenWestDoor) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenWestDoor) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_MovePillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN, FIND_MIMIC | 4 },
     { TRIGGERS_END },
 };
@@ -2297,19 +2299,19 @@ struct Trigger gCrossboneIsle_CaveEntranceTriggers[] = {
 };
 
 struct Trigger gCrossboneIsle_IsleTriggers[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, EVENT_SCRIPT(EventScript_UnusedGrowFirstPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1, EVENT_SCRIPT(EventScript_GrowSecondPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2, EVENT_SCRIPT(EventScript_GrowThirdPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3, EVENT_SCRIPT(EventScript_GrowFourthPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(EventScript_UnusedBlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(EventScript_UnusedBlowAwayFourthIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT(CrossboneIsle_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, EVENT(CrossboneIsle_UnusedGrowFirstPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1, EVENT(CrossboneIsle_GrowSecondPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2, EVENT(CrossboneIsle_GrowThirdPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3, EVENT(CrossboneIsle_GrowFourthPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT(CrossboneIsle_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT(CrossboneIsle_UnusedBlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT(CrossboneIsle_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT(CrossboneIsle_UnusedBlowAwayFourthIvy) },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushIsleLog) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushIsleLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
     { EXAMINE_CHEST_FACING(FACING_WEST), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTH), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTHWEST), 100, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
@@ -2322,70 +2324,70 @@ struct Trigger gCrossboneIsle_IsleTriggers[] = {
 struct Trigger gCrossboneIsle_FloatingLogsTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFirstLogNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFirstLogSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideThirdLogNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideThirdLogSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFourthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFourthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFifthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideFifthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSixthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSixthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideEighthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideEighthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideTenthLogNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideTenthLogSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideEleventhLogNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideEleventhLogSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSecondLogNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSecondLogSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideTwelfthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideTwelfthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSeventhLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideSeventhLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideNinthLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SlideNinthLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopNorth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouth) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnFirstLog) },
-    { TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnThirdLog) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnFourthLog) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnFifthLog) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnSixthLog) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnEighthLog) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnTenthLog) },
-    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnEleventhLog) },
-    { TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnSecondLog) },
-    { TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnTwelfthLog) },
-    { TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnSeventhLog) },
-    { TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnNinthLog) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFirstLogNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFirstLogSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideThirdLogNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideThirdLogSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFourthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFourthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFifthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideFifthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSixthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSixthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideEighthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideEighthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideTenthLogNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideTenthLogSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideEleventhLogNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideEleventhLogSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSecondLogNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSecondLogSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideTwelfthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideTwelfthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSeventhLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideSeventhLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideNinthLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_SlideNinthLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFirstLog) },
+    { TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnThirdLog) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFourthLog) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnFifthLog) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSixthLog) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEighthLog) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTenthLog) },
+    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnEleventhLog) },
+    { TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSecondLog) },
+    { TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnTwelfthLog) },
+    { TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnSeventhLog) },
+    { TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(CrossboneIsle_StepOnNinthLog) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS, FIND_COINS(999) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA, FIND_ITEM(ITEM_MURAMASA) },
@@ -2404,9 +2406,9 @@ struct Trigger gCrossboneIsle_PierTriggers[] = {
 struct Trigger gCrossboneIsle_PirateShipTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
     {TRIGGER_STEP, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
-     EVENT_SCRIPT(EventScript_FightDeadbeard)},
+     EVENT(CrossboneIsle_FightDeadbeard)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_HopSouth)},
+     EVENT(CrossboneIsle_HopSouth)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_PIRATE_SHIP_DEMON_MAIL,
      FIND_ITEM(ITEM_DEMON_MAIL)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_PIRATE_SHIP_MIMIC_BEATEN,

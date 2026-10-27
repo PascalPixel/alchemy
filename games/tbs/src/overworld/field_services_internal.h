@@ -193,7 +193,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     s32 dist;                                                                  \
                                                                                \
     effectWork = gFieldEffectWork;                                             \
-    FieldEffect_FadeToEffectColor();                                           \
+    FieldPsynergy_FadeToCastColor();                                           \
     pos.x = effectWork->x;                                                     \
     pos.y = effectWork->y + 0x100000;                                          \
     pos.z = effectWork->z;                                                     \
@@ -227,7 +227,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
                                                                                \
     Actor_ReleaseFar(pair[0]);                                                 \
     Actor_ReleaseFar(pair[1]);                                                 \
-    FieldEffect_FadeFromEffectColor();                                         \
+    FieldPsynergy_FadeFromCastColor();                                         \
   }
 
 #define ABOVE (16 << 16) ///< 16 pixels up

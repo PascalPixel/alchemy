@@ -336,10 +336,10 @@ const struct ActorTemplate *Xian_GetActorTemplates(void) {
 /// of Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A
 /// yes earns respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgXianYoungWarriorsVeryGallantCame);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgXianYoungWarriorsVeryGallantCame);
+  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
+  Event_End();
 }
 
 /// Talking to the water carrier in Xian. While she carries her water east of
@@ -361,30 +361,30 @@ static void Xian_TalkToWaterCarrier(void) {
   s32 scaleX;
 
   puddle = Actor_GetById(ACTOR_SPILLED_WATER);
-  FieldScript_Start();
+  Event_Start();
   leaderMustStepAside = 0;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = NULL;
-  if (Script_GetFlag(FLAG_XIAN_WATER_SPILLED) != 0 ||
+  if (Event_GetFlag(FLAG_XIAN_WATER_SPILLED) != 0 ||
       (Actor_GetById(ACTOR_WOMAN_CARRYING_WATER)->x.fixed >> 20) <= 19) {
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     savedFacing = carrier->facing;
     Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(MsgXianNowMustGetWaterAgain);
+    Event_WaitFrames(10);
+    Event_SetMessageId(MsgXianNowMustGetWaterAgain);
     if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) == 0) {
       gFieldWork->message++;
-      Script_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
+      Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_GetById(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
       carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
       carrier->facing = savedFacing;
     } else {
-      Script_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
+      Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_FaceDirection(ACTOR_WOMAN_CARRYING_WATER, FACING_WEST, 20);
     }
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     carrier->update = XIAN_WATER_CARRIER_UPDATE;
-    FieldScript_End();
+    Event_End();
     return;
   }
   // Make room for the carrier before spilling the water.
@@ -393,7 +393,7 @@ static void Xian_TalkToWaterCarrier(void) {
       (Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
-    FieldScript_WaitFrames(5);
+    Event_WaitFrames(5);
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     if (leader->x.fixed < carrier->x.fixed) {
@@ -419,8 +419,8 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   Import_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_SPARKLING_PASSAGE);
+  Event_WaitFrames(10);
+  Event_PlaySong(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
@@ -448,13 +448,13 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   70);
   Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  FieldScript_WaitFrames(70);
-  FieldScript_SetMessageId(MsgXianDoingMadeMeSpillMy);
-  Script_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
+  Event_WaitFrames(70);
+  Event_SetMessageId(MsgXianDoingMadeMeSpillMy);
+  FieldEvent_ShowMessageThenWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   Scene_PlayQueuedMusic();
   if ((Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
@@ -479,7 +479,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   GameFlag_Set(FLAG_XIAN_WATER_SPILLED);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_End();
+  Event_End();
 }
 
 /// Frost on the spilled water in Xian, before it freezes: the puddle is drawn
@@ -497,7 +497,7 @@ static void Xian_FreezeSpilledWater(void) {
   s32 stationaryMotionFlags;
   s32 puddleX;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_GetById(ACTOR_SPILLED_WATER)->priorityFlags &=
       ~ACTOR_PRIORITY_UNDERFOOT;
   stationaryMotionFlags = 0;
@@ -510,7 +510,7 @@ static void Xian_FreezeSpilledWater(void) {
   Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   GameFlag_Set(FLAG_XIAN_SPILLED_WATER_FROZEN);
   Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to the kung fu student in Xian. The first time: "Hoo-whaaa...
@@ -524,19 +524,19 @@ static void Xian_TalkToKungFuStudent(void) {
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
 
-  FieldScript_Start();
+  Event_Start();
   demonstrationSeen = GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN);
   if (demonstrationSeen != 0) {
     Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(MsgXianKungFuStrong);
-    FieldScript_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
+    Event_WaitFrames(10);
+    Event_SetMessageId(MsgXianKungFuStrong);
+    Event_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
-    FieldScript_End();
+    Event_End();
   } else {
     // Step back, then watch the student jump and strike the tree.
-    FieldScript_SetMessageId(MsgXianHooWhaaaHachaaa);
-    FieldScript_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
+    Event_SetMessageId(MsgXianHooWhaaaHachaaa);
+    Event_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
@@ -550,7 +550,7 @@ static void Xian_TalkToKungFuStudent(void) {
                                        stepBackOffset[2] / 0x10000);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
@@ -599,14 +599,14 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageThenWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
+    Event_WaitFrames(20);
+    Event_ShowMessageThenWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     GameFlag_Set(FLAG_XIAN_STRIKE_SHOWN);
     Scene_PlayQueuedMusic();
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -616,10 +616,10 @@ static void Xian_TalkToKungFuStudent(void) {
 /// yes: she hopes they will go west; a no: very few warriors would call
 /// themselves weak.
 static void Xian_TalkToFeizhi(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgXianWarriorsFromSchoolStrongWarriors);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_FEIZHI, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgXianWarriorsFromSchoolStrongWarriors);
+  Event_AskYesNoAndShowResponse(ACTOR_FEIZHI, 0);
+  Event_End();
 }
 
 /// Walking into the spilled water in Xian before it is frozen: the leader jumps
@@ -640,7 +640,7 @@ static void Xian_JumpOverSpilledWater(void) {
     FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
                                landing);
     if (FieldActor_CheckMovementCollision(leader, landing) == 0) {
-      FieldScript_Start();
+      Event_Start();
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
@@ -655,7 +655,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
-      FieldScript_End();
+      Event_End();
     }
   }
 }
@@ -672,7 +672,7 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   }
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestExit(exitNumber);
+  Import_EventSetExitRequest(exitNumber);
 }
 
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
@@ -682,7 +682,7 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
 static void Xian_OpenDoorAndLeave(void) {
   struct FieldWork *work = gFieldWork;
 
-  FieldScript_Start();
+  Event_Start();
 
   switch (work->stepTrigger) {
   case XIAN_TO_HOUSE:
@@ -718,7 +718,7 @@ static void Xian_OpenDoorAndLeave(void) {
   }
 
   Xian_WalkThroughExit(work->stepTrigger);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Force on the training tree in Xian: it jumps, and the student cries out.
@@ -727,7 +727,7 @@ static void Xian_OpenDoorAndLeave(void) {
 static void Xian_StrikeTrainingTreeWithForce(void) {
   TaskFunc rotationCallback;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationCallback = Xian_RotateTrainingTree;
   Task_AddFrame(rotationCallback, TASK_PASS_FRAME);
@@ -742,18 +742,18 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Task_Remove(rotationCallback);
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Import_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-  FieldScript_WaitFrames(10);
-  FieldScript_SetMessageId(MsgXianWhaWhaHappened);
-  if (Script_GetFlag(FLAG_XIAN_TREE_JUMPED)) {
+  Event_WaitFrames(10);
+  Event_SetMessageId(MsgXianWhaWhaHappened);
+  if (Event_GetFlag(FLAG_XIAN_TREE_JUMPED)) {
     gFieldWork->message++;
   }
-  FieldScript_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
+  Event_ShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0);
   GameFlag_Set(FLAG_XIAN_TREE_JUMPED);
   Scene_PlayQueuedMusic();
-  FieldScript_End();
+  Event_End();
 }
 
 /// Raised in Xian when the leader has stood in the water carrier's way for two
@@ -762,7 +762,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 static void Xian_MoveAsideForWaterCarrier(void) {
   struct Actor *carrier;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = 0;
@@ -781,7 +781,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
@@ -792,7 +792,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_SetScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;
-  FieldScript_End();
+  Event_End();
 }
 
 const struct Trigger *Xian_GetTriggers(void) { return gXian_Triggers; }
@@ -1065,29 +1065,29 @@ struct ActorTemplate gXian_ActorTemplates[] = {
 };
 
 struct Trigger gXian_Triggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_AskAboutYoungWarriors) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(Xian_AskAboutYoungWarriors) },
     { TRIGGER_TALK, ACTOR_MAN_ON_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMartialArtsAreVeryPopularIn) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouWarriorsShouldVisitMasterFehs) },
     { TRIGGER_TALK, ACTOR_BOY_ON_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMyClothesAreNotSilkSilk) },
-    { TRIGGER_TALK, ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToKungFuStudent) },
+    { TRIGGER_TALK, ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(Xian_TalkToKungFuStudent) },
     { TRIGGER_TALK, ACTOR_MUSCULAR_MAN_ON_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
     { TRIGGER_TALK, ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
-    { TRIGGER_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToFeizhi) },
-    { TRIGGER_TALK, ACTOR_WOMAN_CARRYING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
+    { TRIGGER_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(Xian_TalkToFeizhi) },
+    { TRIGGER_TALK, ACTOR_WOMAN_CARRYING_WATER, CONDITION_ALWAYS, EVENT(Xian_TalkToWaterCarrier) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
     { TRIGGER_TALK, ACTOR_MAN_ON_KINU, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
@@ -1097,9 +1097,9 @@ struct Trigger gXian_Triggers[] = {
     { TRIGGER_TALK, ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianAltinWasFloodedWithWaterBut) },
     { TRIGGER_TALK, ACTOR_MUSCULAR_MAN_ON_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
     { TRIGGER_TALK, ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SPILLED_WATER, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_StrikeTrainingTreeWithForce) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SPILLED_WATER, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_UpdatePuddlePriority) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_FreezeSpilledWater) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT(Xian_StrikeTrainingTreeWithForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianIHopeManyPeopleComeTo) },
@@ -1122,8 +1122,8 @@ struct Trigger gXian_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGER_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MistJoins) },
-    { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MoveAsideForWaterCarrier) },
+    { TRIGGER_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT(Xian_MistJoins) },
+    { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT(Xian_MoveAsideForWaterCarrier) },
     { TRIGGERS_END },
 };
 // clang-format on

@@ -17,9 +17,9 @@
 /// TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands behind a
 /// counter and trades only with a leader facing north across it
-/// (EventScript_TalkToWeaponMerchant and the others); from any other side they
-/// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the place
-/// a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
+/// (LaliveroInteriors_TalkToWeaponMerchant and the others); from any other side
+/// they talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the
+/// place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
 /// Timber rooms C (SceneId_TimberRoomsC) holds, by the exits that lead in,
 /// Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
@@ -27,12 +27,13 @@
 /// guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the
 /// wharf where Babi's ship lies (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST,
 /// leading on by TIMBER_ROOMS_C_TO_LEMURIAN_SHIP). Before Venus Lighthouse an
-/// inn worker apologizes once for her distraction (EventScript_TalkToInnWorker,
-/// FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes back to her chores. The aerie
-/// of Venus Lighthouse leads in by TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE,
-/// which plays EventScript_ReportToFaran: the party reports to Faran and Iodem,
-/// in one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Step trigger 51
-/// afterwards plays EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
+/// inn worker apologizes once for her distraction
+/// (LaliveroInteriors_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and
+/// goes back to her chores. The aerie of Venus Lighthouse leads in by
+/// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
+/// LaliveroInteriors_ReportToFaran: the party reports to Faran and Iodem, in
+/// one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Step trigger 51 afterwards
+/// plays LaliveroInteriors_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
 /// sends the party outside, where Iodem gives it the Black Orb (lalivero.c). A
 /// barrel holds a Lucky Medal.
 
@@ -255,7 +256,7 @@ static inline u16 LaliveroInteriors_LeaderGetSide(void) {
 /// shop; from elsewhere, before Venus Lighthouse, they ask whether the party
 /// has heard that Sheba was taken hostage and Faran went after her, and after
 /// it tell of the rough sea.
-static void EventScript_TalkToWeaponMerchant(s32 keeper) {
+static void LaliveroInteriors_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // LaliveroInteriors_LeaderGetSide's rounding, written with the mask 0xc000,
   // which loads from the literal pool where the helper's builds the mask.
@@ -264,76 +265,76 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    FieldScript_SetMessageId(MsgLaliveroWentOceanLook);
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_SetMessageId(MsgLaliveroWentOceanLook);
+    Event_ShowMessageAndWait(keeper, 0);
   } else {
     s32 message = MsgLaliveroTakenHostageFaran;
 
-    FieldScript_SetMessageId(message);
+    Event_SetMessageId(message);
     FieldMessage_ShowAtActor(keeper, 0);
-    if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-      FieldScript_WaitFrames(10);
-      FieldScript_SetMessageId(message + 1);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      Event_WaitFrames(10);
+      Event_SetMessageId(message + 1);
     } else {
-      FieldScript_SetMessageId(message + 2);
+      Event_SetMessageId(message + 2);
     }
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessageAndWait(keeper, 0);
   }
 }
 
 /// Lalivero (TimberRoomsB): the armor shop across the counter; otherwise
 /// small talk.
-static void EventScript_TalkToArmorMerchant(s32 keeper) {
+static void LaliveroInteriors_TalkToArmorMerchant(s32 keeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    FieldScript_SetMessageId(MsgLaliveroWantedSendShips);
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_SetMessageId(MsgLaliveroWantedSendShips);
+    Event_ShowMessageAndWait(keeper, 0);
   } else {
-    FieldScript_SetMessageId(MsgLaliveroWarriorRightPlease);
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_SetMessageId(MsgLaliveroWarriorRightPlease);
+    Event_ShowMessageAndWait(keeper, 0);
   }
 }
 
 /// Lalivero (TimberRoomsB): the item shop across the counter; otherwise
 /// small talk.
-static void EventScript_TalkToItemMerchant(s32 keeper) {
+static void LaliveroInteriors_TalkToItemMerchant(s32 keeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    FieldScript_SetMessageId(MsgLaliveroImpossibleGoOcean);
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_SetMessageId(MsgLaliveroImpossibleGoOcean);
+    Event_ShowMessageAndWait(keeper, 0);
   } else {
-    FieldScript_SetMessageId(MsgLaliveroGuessPeopleAngara);
-    FieldScript_ShowMessageAndWait(keeper, 0);
+    Event_SetMessageId(MsgLaliveroGuessPeopleAngara);
+    Event_ShowMessageAndWait(keeper, 0);
   }
 }
 
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
-static void EventScript_TalkToHealer(s32 healer) {
+static void LaliveroInteriors_TalkToHealer(s32 healer) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    FieldScript_SetMessageId(MsgLaliveroBabiLighthouseStruck);
-    FieldScript_ShowMessageAndWait(healer, 0);
+    Event_SetMessageId(MsgLaliveroBabiLighthouseStruck);
+    Event_ShowMessageAndWait(healer, 0);
   } else {
-    FieldScript_SetMessageId(MsgLaliveroBabiIsntBuilding);
-    FieldScript_ShowMessageAndWait(healer, 0);
+    Event_SetMessageId(MsgLaliveroBabiIsntBuilding);
+    Event_ShowMessageAndWait(healer, 0);
   }
 }
 
 /// Lalivero (TimberRoomsC), the inn: a room for the night across the
 /// counter; otherwise small talk.
-static void EventScript_TalkToInnkeeper(s32 innkeeper) {
+static void LaliveroInteriors_TalkToInnkeeper(s32 innkeeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    FieldScript_SetMessageId(MsgLaliveroDidntKnowTime);
-    FieldScript_ShowMessageAndWait(innkeeper, 0);
+    Event_SetMessageId(MsgLaliveroDidntKnowTime);
+    Event_ShowMessageAndWait(innkeeper, 0);
   } else {
-    FieldScript_SetMessageId(MsgLaliveroWantStayLet);
-    FieldScript_ShowMessageAndWait(innkeeper, 0);
+    Event_SetMessageId(MsgLaliveroWantStayLet);
+    Event_ShowMessageAndWait(innkeeper, 0);
   }
 }
 
@@ -341,76 +342,76 @@ static void EventScript_TalkToInnkeeper(s32 innkeeper) {
 /// stops her chores to apologize: worry for Sheba keeps her from concentrating.
 /// A leader standing west of her steps aside to the south before she starts
 /// again.
-static void EventScript_TalkToInnWorker(void) {
+static void LaliveroInteriors_TalkToInnWorker(void) {
   s16 side;
 
   side = LaliveroInteriors_LeaderGetSide();
   GameFlag_Set(FLAG_LALIVERO_INN_WORKER_APOLOGIZED);
-  FieldScript_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  FieldScript_SetMessageId(MsgLaliveroImSorry);
-  FieldScript_WaitFrames(50);
+  Event_SetMessageId(MsgLaliveroImSorry);
+  Event_WaitFrames(50);
   Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
-  Script_ShowMessage(ACTOR_INN_WORKER, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessage(ACTOR_INN_WORKER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_INN_WORKER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_INN_WORKER, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_INN_WORKER, 2);
-  FieldScript_WaitFrames(30);
-  Script_ShowMessage(ACTOR_INN_WORKER, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessage(ACTOR_INN_WORKER, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(ACTOR_INN_WORKER, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(ACTOR_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
     Actor_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 16);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
   }
   Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Lalivero (TimberRoomsC), step trigger 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
-static void EventScript_IodemCallsOut(void) {
+static void LaliveroInteriors_IodemCallsOut(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
-  FieldScript_Start();
+  Event_Start();
   Field_EndBusyAndReveal();
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   FieldCamera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(96), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(30);
-  FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_End();
+  Event_WaitFrames(30);
+  Event_End();
 }
 
 /// Lalivero (TimberRoomsC): Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
-static void EventScript_TalkToIodem(void) {
+static void LaliveroInteriors_TalkToIodem(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
-  FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
 }
 
 /// Both maps, a doorway out: take the touched step trigger's exit with the exit
 /// sound.
-static void EventScript_LeaveBuilding(void) {
+static void LaliveroInteriors_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->stepTrigger;
 
-  Import_ScriptRequestExit(*trigger);
+  Import_EventSetExitRequest(*trigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -434,308 +435,308 @@ const struct Trigger *LaliveroInteriors_GetTriggers(void) {
 /// Lighthouse: the party reports to Faran and Iodem. No sign of Sheba, nor of
 /// Jenna and the others; Faran's faith that Sheba lived, what an Adept is, and
 /// a farewell as the party sets out to search for Jenna.
-static void EventScript_ReportToFaran(void) {
+static void LaliveroInteriors_ReportToFaran(void) {
   struct Actor *leader;
 
-  FieldScript_Start();
+  Event_Start();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(96), PIXELS(184));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  FieldScript_SetMessageId(MsgLaliveroHowDidSearchForSheba);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(10);
+  Event_SetMessageId(MsgLaliveroHowDidSearchForSheba);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 104, 136);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_GARET);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   // Faran and Iodem tell of the search for Sheba.
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Actor_ArmCallback(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
   if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
     LaliveroInteriors_TellFaranAboutJenna();
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_MIA, 0);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+    Event_WaitFrames(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    Script_OpenMessage(ACTOR_IODEM, 0);
-    FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(20);
+    Event_OpenMessage(ACTOR_IODEM, 0);
+    Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    FieldScript_WaitFrames(30);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_MIA, 0);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+    Event_WaitFrames(10);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
-    Script_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
+    Event_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
   }
   // Will the party keep searching? Faran answers either way.
-  FieldScript_SetMessageId(MsgLaliveroDoNotWorryAboutSheba);
-  FieldScript_WaitFrames(10);
+  Event_SetMessageId(MsgLaliveroDoNotWorryAboutSheba);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 20);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    FieldScript_WaitFrames(20);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
-    FieldScript_WaitFrames(30);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(ACTOR_FARAN, 0);
     (gFieldWork->message)++;
   } else {
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
-    FieldScript_WaitFrames(30);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     (gFieldWork->message)++;
-    Script_ShowMessage(ACTOR_FARAN, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
   }
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_LinkPair(ACTOR_MIA, ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(40);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(40);
+  Event_WaitFrames(10);
   // Faran believes Sheba lived; Iodem explains Adepts.
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  FieldScript_WaitFrames(50);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(50);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_WaitFrames(20);
   Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
   Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(40);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(40);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(50);
+  Event_WaitFrames(50);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(30);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_ArmCallback(ACTOR_IVAN, FACING_WEST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   // Faran sends them off.
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(30);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_ArmCallback(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   // The others walk back into the leader.
   Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
   Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
@@ -764,69 +765,69 @@ static void EventScript_ReportToFaran(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
-  FieldScript_WaitFrames(10);
-  FieldScript_End();
+  Event_WaitFrames(10);
+  Event_End();
 }
 
 /// The party tells Faran and Iodem what became of Jenna and the others, when
 /// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
 /// ship.
 static void LaliveroInteriors_TellFaranAboutJenna(void) {
-  FieldScript_SetMessageId(MsgLaliveroTellOthers);
-  FieldScript_WaitFrames(20);
+  Event_SetMessageId(MsgLaliveroTellOthers);
+  Event_WaitFrames(20);
 
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_FARAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_WaitFrames(10);
 
   Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                             60);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
 
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
 
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_WaitFrames(20);
 
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_WaitFrames(25);
+  Event_WaitFrames(20);
+  Event_WaitFrames(25);
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(30);
 
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_GARET, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_WaitFrames(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_MIA, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_WaitFrames(10);
 
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(30);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_WaitFrames(10);
 
   Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
   FieldMessage_ShowAtActor(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
@@ -879,7 +880,7 @@ s32 Scene_Initialize(void) {
       Actor_SetScript(ACTOR_INN_WORKER, gLaliveroInteriors_InnWorkerChores);
     }
     if (gSaveBlock.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
-      EventScript_ReportToFaran();
+      LaliveroInteriors_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // templates do.
       Actor_SetMovementType(Actor_GetById(ACTOR_IODEM),
@@ -1098,16 +1099,16 @@ struct ActorTemplate gTimberRoomsC_ActorTemplatesAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsB_Triggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { TRIGGER_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
@@ -1128,10 +1129,10 @@ struct Trigger gTimberRoomsB_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsBeenSoLongSinceI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheLaliveransAreATimidPeople) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
@@ -1145,16 +1146,16 @@ struct Trigger gTimberRoomsB_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
@@ -1175,10 +1176,10 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImWorriedThatWeWontGet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOneCouldPossiblySwimIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
@@ -1192,25 +1193,25 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsC_Triggers[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
     { TRIGGER_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(LaliveroInteriors_TalkToInnWorker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(LaliveroInteriors_TalkToInnWorker) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyDidThisHaveToHappen) },
@@ -1224,18 +1225,18 @@ struct Trigger gTimberRoomsC_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
-    { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT_SCRIPT(EventScript_IodemCallsOut) },
-    { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(EventScript_TalkToIodem) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(LaliveroInteriors_LeaveBuilding) },
+    { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT(LaliveroInteriors_IodemCallsOut) },
+    { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT(LaliveroInteriors_TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
@@ -1247,7 +1248,7 @@ struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoThereAreSomePeopleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsPleaseUseThatShipToFind) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(LaliveroInteriors_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIMustSayItIsNice) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWouldTheLightingMakeSuch) },

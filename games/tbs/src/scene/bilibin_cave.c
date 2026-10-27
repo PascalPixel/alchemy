@@ -10,7 +10,7 @@
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a sprout
 /// (ACTOR_SPROUT) grows it into a vine and changes the metatile behavior of
-/// its cell (EventScript_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
+/// its cell (BilibinCave_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
 /// cave beyond or out to the world map, since both are other areas. Two
 /// exits lead on into Bilibin Cave. The south one's exit cell, at the cave
@@ -18,15 +18,15 @@
 /// grid has one cell for both: step trigger 10, the ledge cells either side of
 /// it, turns the exit off so the leader can walk the ledge across it, and
 /// step trigger 11, a step further out, turns it back on
-/// (EventScript_WalkOntoLedgeOverCaveMouth,
-/// EventScript_WalkOffLedgeOverCaveMouth; its recording,
-/// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
+/// (BilibinCave_WalkOntoLedgeOverCaveMouth,
+/// BilibinCave_WalkOffLedgeOverCaveMouth; its recording,
+/// places/bilibin-cave-entrance/events/BilibinCave_WalkOntoLedgeOverCaveMouth.gif).
 ///
 /// In SceneId_BilibinCaveRapier a fire burns between two torches, the west one
 /// cold and the east one lit (ACTOR_RAPIER_ROOM_FIRE), and Douse puts it out
 /// for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
 /// a strip of tiles and the cells under them, which
-/// EventScript_HideRevealedPath takes away again when Reveal wears off. A chest
+/// BilibinCave_HideRevealedPath takes away again when Reveal wears off. A chest
 /// holds the Elven Rapier.
 ///
 /// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
@@ -53,7 +53,7 @@
 /// ACTOR_FIRST_LOW_ICE. Step trigger 20 covers the snow blown in at the cave's
 /// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
 /// the leader leave footprints; step trigger 21, rimming it, stops them
-/// (EventScript_StartFootprints, EventScript_StopFootprints; the snow is in
+/// (BilibinCave_StartFootprints, BilibinCave_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
 
@@ -245,19 +245,19 @@ const struct Trigger *BilibinCave_GetTriggers(void) {
 /// the way into Bilibin Cave: the way's cell (21, 14), the exit cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
 /// metatile behavior of source cell (1, 0), which has none.
-static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
+static void BilibinCave_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on step trigger 11 at the Bilibin Cave Entrance, a cell further
 /// out: the way's cell (21, 14) takes back the exit, from source cell (0, 0).
-static void EventScript_WalkOffLedgeOverCaveMouth(void) {
+static void BilibinCave_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
 /// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path: a
 /// strip of tiles and two rows of the cells under it.
-static void EventScript_RevealHiddenPath(void) {
+static void BilibinCave_RevealHiddenPath(void) {
   {
     s32 width = 1;
     s32 height = 3;
@@ -275,7 +275,7 @@ static void EventScript_RevealHiddenPath(void) {
 
 /// As Reveal wears off in Bilibin Cave (SceneId_BilibinCaveRapier), the path is
 /// hidden again: the strip's tiles and one row of its cells are restored.
-static void EventScript_HideRevealedPath(void) {
+static void BilibinCave_HideRevealedPath(void) {
   {
     s32 width = 1;
     s32 height = 3;
@@ -293,57 +293,57 @@ static void EventScript_HideRevealedPath(void) {
 
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveRapier), until it is
 /// out: it goes out for good.
-static void EventScript_DouseRapierRoomFire(void) {
-  FieldScript_Start();
+static void BilibinCave_DouseRapierRoomFire(void) {
+  Event_Start();
   Import_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out:
 /// it goes out, and the puddle beside it freezes into a pillar the party can
 /// walk over.
-static void EventScript_DouseIceRoomFire(void) {
-  FieldScript_Start();
+static void BilibinCave_DouseIceRoomFire(void) {
+  Event_Start();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   // Match the replacement's drawing priority to its metatile behavior.
   Actor_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
   Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
   Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
-  FieldScript_Start();
+  Event_Start();
   Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   Actor_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Frost on the first puddle in Bilibin Cave (SceneId_BilibinCaveIce), while
 /// the fire beside it burns.
-static void EventScript_FreezeFirstPuddle(void) {
+static void BilibinCave_FreezeFirstPuddle(void) {
   BilibinCave_MeltFrostBack(ACTOR_FIRST_PUDDLE);
 }
 
 /// Frost on the second puddle in Bilibin Cave (SceneId_BilibinCaveIce), beside
 /// a torch that stays put.
-static void EventScript_FreezeSecondPuddle(void) {
+static void BilibinCave_FreezeSecondPuddle(void) {
   BilibinCave_MeltFrostBack(ACTOR_SECOND_PUDDLE);
 }
 
 /// Frost on the third puddle in Bilibin Cave (SceneId_BilibinCaveIce), while a
 /// torch beside it keeps it melted (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED).
-static void EventScript_FreezeThirdPuddle(void) {
+static void BilibinCave_FreezeThirdPuddle(void) {
   BilibinCave_MeltFrostBack(ACTOR_THIRD_PUDDLE);
 }
 
@@ -375,27 +375,27 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   }
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0 ||
       GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
-    if (Script_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
-      FieldScript_Start();
-      FieldScript_WaitFrames(40);
-      Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
+    if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
+      Event_Start();
+      Event_WaitFrames(40);
+      Event_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
-      FieldScript_End();
+      Event_End();
     }
     GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
   } else {
-    if (Script_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
-      FieldScript_Start();
-      FieldScript_WaitFrames(40);
-      Script_PlaySong(SE_SHIMMER);
+    if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
+      Event_Start();
+      Event_WaitFrames(40);
+      Event_PlaySong(SE_SHIMMER);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
-      FieldScript_End();
+      Event_End();
     }
     GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
   }
@@ -404,7 +404,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
 /// grows into a vine and its cell's metatile behavior changes;
 /// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
-static void EventScript_GrowPlant(void) {
+static void BilibinCave_GrowPlant(void) {
 
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
@@ -412,14 +412,14 @@ static void EventScript_GrowPlant(void) {
 
 /// Stepping on step trigger 20 in Bilibin Cave (SceneId_BilibinCaveIce): from
 /// here on the leader leaves footprints.
-static void EventScript_StartFootprints(void) {
+static void BilibinCave_StartFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 1;
 }
 
 /// Stepping on step trigger 21 in Bilibin Cave (SceneId_BilibinCaveIce): the
 /// leader leaves no more footprints.
-static void EventScript_StopFootprints(void) {
+static void BilibinCave_StopFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 0;
 }
@@ -564,7 +564,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce): it moves only when its next cell and movement
 /// probe are clear.
-static void EventScript_PushTorch(void) {
+static void BilibinCave_PushTorch(void) {
   struct Actor *leader;
   struct Actor *target;
   struct Actor *blocker;
@@ -801,9 +801,9 @@ struct Trigger gBilibinCaveEntranceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(BilibinCave_WalkOntoLedgeOverCaveMouth) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(BilibinCave_WalkOffLedgeOverCaveMouth) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT(BilibinCave_GrowPlant) },
     { TRIGGERS_END },
 };
 
@@ -815,9 +815,9 @@ struct Trigger gBilibinCaveRapierTriggers[] = {
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseRapierRoomFire) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(BilibinCave_RevealHiddenPath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(BilibinCave_HideRevealedPath) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT(BilibinCave_DouseRapierRoomFire) },
     { TRIGGERS_END },
 };
 
@@ -827,16 +827,16 @@ struct Trigger gBilibinCaveIceTriggers[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
-    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartFootprints) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopFootprints) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_FreezeFirstPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreezeSecondPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
+    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(BilibinCave_StartFootprints) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(BilibinCave_StopFootprints) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT(BilibinCave_DouseIceRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT(BilibinCave_FreezeFirstPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT(BilibinCave_FreezeSecondPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT(BilibinCave_FreezeThirdPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT(BilibinCave_UpdateThirdPuddleFromTorches) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT(BilibinCave_UpdateThirdPuddleFromTorches) },
+    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(BilibinCave_PushTorch) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(BilibinCave_PushTorch) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xfc6, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, 0xfc7, FIND_ITEM(ITEM_WATER_OF_LIFE) },

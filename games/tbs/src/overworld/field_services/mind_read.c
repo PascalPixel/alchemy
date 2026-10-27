@@ -5,9 +5,9 @@
 #include "../field_services_internal.h"
 
 /// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 0x298 bytes. It lives
-/// from FieldEffect_StartMindReadWave to
-/// FieldEffect_FinishWaveAndReleaseHeapBlock, after the conversation Mind Read
-/// reads.
+/// from FieldPsynergy_StartMindReadWave to
+/// FieldPsynergy_FinishWaveAndReleaseHeapBlock, after the conversation Mind
+/// Read reads.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
@@ -26,18 +26,18 @@ struct MindReadWork {
 
 /// Starts the wave effect of caster x on target y (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
-/// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
+/// per-frame update (FieldPsynergy_UpdateMindReadWave) after 8 frames.
 ///
 /// Abilities: Mind Read (FIELD_PSYNERGY_MIND_READ).
 ///
-/// The effect stays up until FieldEffect_FinishMindRead ends it
+/// The effect stays up until FieldPsynergy_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
-/// (FieldEffect_GreyMindReadPalette sets the window mode).
-void FieldEffect_StartMindReadWave(s32 x, s32 y) {
+/// (FieldPsynergy_GreyMindReadPalette sets the window mode).
+void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_MIND_READ, 0x298);
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   FieldEffect_AdvanceHueCycle();
@@ -47,21 +47,21 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->sourceId = x;
   work->targetId = y;
   work->delay = 8;
-  FieldEffect_GreyMindReadPalette();
-  Task_Add(FieldEffect_UpdateMindReadWave, TASK_PASS_FRAME);
+  FieldPsynergy_GreyMindReadPalette();
+  Task_Add(FieldPsynergy_UpdateMindReadWave, TASK_PASS_FRAME);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the effect's work.
-void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
+void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
   work = *(void **)((u32)&gMindReadWork);
-  FieldEffect_RestoreMindReadPalette();
-  Task_Remove(FieldEffect_UpdateMindReadWave);
+  FieldPsynergy_RestoreMindReadPalette();
+  Task_Remove(FieldPsynergy_UpdateMindReadWave);
   Anim_ApplyChildPalette(Actor_GetById(((struct MindReadWork *)work)->sourceId),
                          1);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
 
@@ -70,7 +70,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
 /// every 60 frames sends three particles (object 281) from the target to the
 /// caster, with sound 130.
-void FieldEffect_UpdateMindReadWave(void) {
+void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
   u16 *line;
   u32 scanline;
@@ -254,11 +254,11 @@ void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
 
 /// Turns colours 1 and 3 to 12 of WINDOW_PALETTE grey and starts the BG0
 /// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
-void FieldEffect_GreyMindReadPalette(void) {
+void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   // Window mode 1: messages show as thoughts until
-  // FieldEffect_RestoreMindReadPalette clears it.
+  // FieldPsynergy_RestoreMindReadPalette clears it.
   ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
   p = &BG_PLTT_COLOR(WINDOW_PALETTE, 1);
   *p = MIND_READ_GREY;
@@ -287,7 +287,7 @@ void FieldEffect_GreyMindReadPalette(void) {
 }
 
 /// Stops the BG0 scanline scroll and restores WINDOW_PALETTE.
-void FieldEffect_RestoreMindReadPalette(void) {
+void FieldPsynergy_RestoreMindReadPalette(void) {
   void *work;
 
   work = gWindowWork[0];

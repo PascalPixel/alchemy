@@ -13,11 +13,11 @@
 	.set import.ScreenFade_Wait, 1
 	.set import.Save_ScanRecordFlags, 1
 	.set import.Party_EndChildhood, 1
-	.set import.FieldScript_WaitFrames, 1
+	.set import.Event_WaitFrames, 1
 	.set import.Actor_GetById, 1
-	.set import.FieldScript_SetDestination, 1
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetDestination, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.Import_CreditsRun, 1
 	.set import.Title_ShowIntro, 1
 	.set import.Title_ShowNintendoLogo, 1

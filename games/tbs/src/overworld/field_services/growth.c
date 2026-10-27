@@ -54,7 +54,7 @@ struct BurstParticleVisualGroup {
 /// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
 /// (ACTOR_PRIORITY_UNDERFOOT); the effect leaves it so.
-void FieldEffect_RunGrowthOnTarget(s32 unused) {
+void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct Actor *target;
 
   target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
@@ -67,7 +67,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
     WaitFrames(10);
     Sound_PlaySongFar(SE_RECOVERY);
     WaitFrames(40);
-    FieldEffect_FadeFromEffectColor();
+    FieldPsynergy_FadeFromCastColor();
   }
 }
 
@@ -79,7 +79,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
 ///
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleActorScript).
-void FieldEffect_RunGrowth(void) {
+void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
@@ -108,7 +108,7 @@ void FieldEffect_RunGrowth(void) {
     remainingActors--;
   } while (remainingActors >= 0);
   WaitFrames(30);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }
 
 /// Sends 24 particles, one every 2 frames, from in front of the caster to
@@ -124,7 +124,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
   effectWork = gFieldEffectWork;
   caster = effectWork->mainActor;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {

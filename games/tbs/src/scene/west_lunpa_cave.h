@@ -21,7 +21,7 @@ enum WestLunpaCaveMetatileBehavior {
 
 enum CaveActorId {
   /// Placed at (0, 0, 0), outside the cave's camera bounds, so the player
-  /// never sees it (EventScript_UnusedFreezePuddle).
+  /// never sees it (WestLunpaCave_UnusedFreezePuddle).
   /// ★ Named from what the player sees: SPRITE_PUDDLE, the small blue puddle
   /// the cave's other three show, map-1.png (its render)
   ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,

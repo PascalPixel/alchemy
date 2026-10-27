@@ -44,12 +44,12 @@
 /// - The stormy night, three years before the journey, when a new game begins
 ///   at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from menu/main_menu.c, or
 ///   ValePlaza's VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST). The setup sets
-///   FLAG_VALE_STORM and plays EventScript_DoraWakesIsaac: Dora, Isaac's
+///   FLAG_VALE_STORM and plays CottageRoomsB_DoraWakesIsaac: Dora, Isaac's
 ///   mother, wakes him because the Mt. Aleph Boulder is going to fall, makes
 ///   him take his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
 ///   (COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
 ///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
-///   EventScript_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
+///   CottageRoomsB_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
 ///   hurry, ACTOR_FLAME_AND_SMOKE shakes outside the house, then turns to
 ///   smoke and rises away, and they run for the plaza, where the village takes
 ///   refuge, by COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA into
@@ -142,10 +142,10 @@
 #include "fx_work.h"
 
 // The arrival events are defined after the scripts.
-static void EventScript_DoraWakesIsaac(void);
-static void EventScript_HurryToThePlaza(void);
+static void CottageRoomsB_DoraWakesIsaac(void);
+static void CottageRoomsB_HurryToThePlaza(void);
 static void CottageRoomsB_RestoreRoomPatch(void);
-static void EventScript_ShowMythrilBag(void);
+static void CottageRoomsB_ShowMythrilBag(void);
 static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
@@ -174,7 +174,7 @@ enum CottageRoomsBActorId {
   /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
   /// Sprite 0xd0, whose frames are a flame and wisps of smoke; it is placed
-  /// outside the house only for EventScript_HurryToThePlaza, where it shakes,
+  /// outside the house only for CottageRoomsB_HurryToThePlaza, where it shakes,
   /// then
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels
   /// as it shrinks away.
@@ -349,18 +349,18 @@ const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void) {
 /// Kraden. Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
 /// (COTTAGE_ROOMS_B_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
 /// speakerId is the actor spoken to.
-static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
+static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
-  FieldScript_SetMessageId(firstMessage);
+  Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(speakerId, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(firstMessage + 1);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_WaitFrames(10);
+    Event_SetMessageId(firstMessage + 1);
   } else {
-    FieldScript_SetMessageId(firstMessage + 2);
+    Event_SetMessageId(firstMessage + 2);
   }
-  FieldScript_ShowMessageAndWait(speakerId, 0);
+  Event_ShowMessageAndWait(speakerId, 0);
 }
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
@@ -389,47 +389,47 @@ const struct Trigger *CottageRoomsB_GetTriggers(void) {
 /// the masked man asks whether Isaac has business with him, and sends him off
 /// whatever he answers. "Hey... Boy..." Reached by talking to
 /// ACTOR_MASKED_MAN before the party leaves Vale (gCottageRoomsB_Triggers).
-static void EventScript_AskIsaacHisBusiness(void) {
-  FieldScript_Start();
+static void CottageRoomsB_AskIsaacHisBusiness(void) {
+  Event_Start();
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 2);
-  FieldScript_WaitFrames(30);
-  FieldScript_SetMessageId(MsgValeHeyBoy);
+  Event_WaitFrames(30);
+  Event_SetMessageId(MsgValeHeyBoy);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
-  Script_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 6);
+  FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_OpenMessage(ACTOR_MASKED_MAN, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
+  Event_WaitFrames(20);
+  Event_OpenMessage(ACTOR_MASKED_MAN, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 4);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 4);
+  Event_End();
 }
 
 /// A young man asks whether the masked man was Felix. In Vale, the young man
 /// with brown hair also wonders whether Jenna can be trusted. Reached by
 /// talking to ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale and until
 /// it reaches Kalay (gCottageRoomsB_TriggersAfterLeaving).
-static void EventScript_AskWhetherMaskedManWasFelix(void) {
+static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
   struct FieldWork *work;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetAngleToward(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
-  FieldScript_SetMessageId(MsgValeTheMaskedManWasFelix);
+  Event_SetMessageId(MsgValeTheMaskedManWasFelix);
   FieldMessage_ShowAtActor(ACTOR_YOUNG_MAN_SAW_MASK, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
-    FieldScript_ShowMessageAndWait(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gFieldWork;
     work->message = (work->message + 1);
-    FieldScript_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+    Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Stops storm lightning before fading through the requested exit.
@@ -440,9 +440,9 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   }
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(exitNumber);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(exitNumber);
 }
 
 // The exits in Vale: stepping on the metatile behavior of the same number in
@@ -452,14 +452,14 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
 
 /// Reached by metatile behavior 1; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
-static void EventScript_ExitToValePlazaNorthwest(void) {
+static void CottageRoomsB_ExitToValePlazaNorthwest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
 /// Reached by metatile behavior 2; leads to Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
-static void EventScript_ExitToValeKradensCottageNorth(void) {
+static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
@@ -467,21 +467,21 @@ static void EventScript_ExitToValeKradensCottageNorth(void) {
 
 /// Reached by metatile behavior 3; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
-static void EventScript_ExitToValePlazaNortheast(void) {
+static void CottageRoomsB_ExitToValePlazaNortheast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
 /// Reached by metatile behavior 4; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
-static void EventScript_ExitToValePlazaWest(void) {
+static void CottageRoomsB_ExitToValePlazaWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
 /// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
 /// at COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
-static void EventScript_ExitToInnUpstairs(void) {
+static void CottageRoomsB_ExitToInnUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
@@ -489,28 +489,28 @@ static void EventScript_ExitToInnUpstairs(void) {
 /// Reached by metatile behavior 6; leads to Vale
 /// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
-static void EventScript_ExitToVale(void) {
+static void CottageRoomsB_ExitToVale(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
 /// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
-static void EventScript_ExitToIsaacsHouseUpstairs(void) {
+static void CottageRoomsB_ExitToIsaacsHouseUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
 /// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
 /// back down.
-static void EventScript_ExitToInnDownstairs(void) {
+static void CottageRoomsB_ExitToInnDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
 /// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
-static void EventScript_ExitToIsaacsHouseDownstairs(void) {
+static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
@@ -518,14 +518,14 @@ static void EventScript_ExitToIsaacsHouseDownstairs(void) {
 
 /// Reached by metatile behavior 10; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST).
-static void EventScript_ExitToValeStormyNightWest(void) {
+static void CottageRoomsB_ExitToValeStormyNightWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST);
 }
 
 /// Reached by metatile behavior 11; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST).
-static void EventScript_ExitToValeStormyNightEast(void) {
+static void CottageRoomsB_ExitToValeStormyNightEast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST);
 }
@@ -536,8 +536,8 @@ static void EventScript_ExitToValeStormyNightEast(void) {
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by
 /// SceneManager_Run once the actors are placed.
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST sets FLAG_VALE_STORM before
-/// EventScript_DoraWakesIsaac; back from Kalay, Dora is put back in her sickbed
-/// unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
+/// CottageRoomsB_DoraWakesIsaac; back from Kalay, Dora is put back in her
+/// sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 CottageRoomsB_Initialize(void) {
   struct Actor *actor;
 
@@ -576,15 +576,15 @@ s32 CottageRoomsB_Initialize(void) {
     } else {
       if (gSaveBlock.entrance ==
           COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
-        EventScript_HurryToThePlaza();
+        CottageRoomsB_HurryToThePlaza();
       } else {
         if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
-          EventScript_DoraWakesIsaac();
+          CottageRoomsB_DoraWakesIsaac();
         } else {
           if (gSaveBlock.entrance ==
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
-            EventScript_ShowMythrilBag();
+            CottageRoomsB_ShowMythrilBag();
           } else {
             ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -596,8 +596,8 @@ s32 CottageRoomsB_Initialize(void) {
                   ->loud = 1;
               Weather_LastLightning();
               WaitFrames(30);
-              FieldScript_StartScreenTransition();
-              FieldScript_WaitTransitionFrames();
+              Event_StartScreenTransition();
+              Event_WaitTransitionFrames();
               Weather_ResumeLightning();
             } else {
               MapGrid_CenterOnFollowedPoint();
@@ -618,8 +618,8 @@ s32 CottageRoomsB_Initialize(void) {
 /// FLAG_ISAAC_WEARS_TUNIC and takes
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
 /// map by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
-/// EventScript_HurryToThePlaza follows.
-static void EventScript_DoraWakesIsaac(void) {
+/// CottageRoomsB_HurryToThePlaza follows.
+static void CottageRoomsB_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
@@ -638,7 +638,7 @@ static void EventScript_DoraWakesIsaac(void) {
   }
   sprite = Actor_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm event.
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Import_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Import_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
@@ -659,12 +659,12 @@ static void EventScript_DoraWakesIsaac(void) {
   Message_SetVoiceFromActor(ACTOR_DORA);
   firstMessage = MsgValeWake;
   FieldMessage_ShowCentered(firstMessage, 1, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Message_SetVoiceFromActor(ACTOR_DORA);
   FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   // Widen the camera bounds and reveal the lightning outside.
   grid->minX = PIXELS(328);
   grid->minY = PIXELS(600);
@@ -683,25 +683,25 @@ static void EventScript_DoraWakesIsaac(void) {
       ->loud = 1;
   Weather_LastLightning();
   WaitFrames(30);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   Weather_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
-  FieldScript_SetMessageId(firstMessage + 2);
-  Script_ShowMessageAndWait(
+  Event_SetMessageId(firstMessage + 2);
+  FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(
+  Event_WaitFrames(40);
+  FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
   TilesetAnim_Pause(7);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   TilesetAnim_Resume(8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
@@ -709,7 +709,7 @@ static void EventScript_DoraWakesIsaac(void) {
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 1);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
@@ -718,40 +718,40 @@ static void EventScript_DoraWakesIsaac(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
-                     0);
+  Event_WaitFrames(20);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
+                    0);
   CottageRoomsB_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
-  Script_ShowMessageAndWait(
+  FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 542, 680);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 534, 688);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
   Actor_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
@@ -761,23 +761,23 @@ static void EventScript_DoraWakesIsaac(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // "Have you got everything you need?" Yes: "Good for you, Isaac."; no: "I'm
   // sorry, but we don't have time..."
-  Script_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     (*eventSlot)->message++;
   }
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
@@ -790,11 +790,11 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 /// to hurry; ACTOR_FLAME_AND_SMOKE shakes, then turns to smoke and rises
 /// away, as they run to the plaza. Called by CottageRoomsB_Initialize on
 /// arrival by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
-/// EventScript_DoraWakesIsaac. Takes
+/// CottageRoomsB_DoraWakesIsaac. Takes
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA), where
-/// EventScript_DoraSendsIsaacToThePlaza follows.
-static void EventScript_HurryToThePlaza(void) {
+/// ValeStormyNight_DoraSendsIsaacToThePlaza follows.
+static void CottageRoomsB_HurryToThePlaza(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   u32 i;
@@ -802,7 +802,7 @@ static void EventScript_HurryToThePlaza(void) {
 
   actor = Actor_GetById(ACTOR_FLAME_AND_SMOKE);
   sprite = actor->sprite;
-  FieldScript_Start();
+  Event_Start();
   // The villagers stay out of sight; ACTOR_FLAME_AND_SMOKE starts shaking.
   Import_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Import_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -842,7 +842,7 @@ static void EventScript_HurryToThePlaza(void) {
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsAheadScript);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
-  FieldScript_StartScreenTransition();
+  Event_StartScreenTransition();
   Actor_RefreshSelectorById(ACTOR_DORA);
   Sound_PlaySong(SE_DOOR_OPEN);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -855,23 +855,23 @@ static void EventScript_HurryToThePlaza(void) {
   Actor_SetPosition(ACTOR_KYLE, PIXELS(414), PIXELS(530));
   Actor_SetPositionAndReset(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
-  FieldScript_SetMessageId(MsgValeDoraHurryBoulder);
-  FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
+  Event_SetMessageId(MsgValeDoraHurryBoulder);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
   FieldCamera_WaitForArrival();
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
   Actor_ResetAndSetPositionInMode2(ACTOR_KYLE, 415, 589);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
   Sound_PlaySong(SE_RUN_BACK);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
   // (gCottageRoomsB_FlameRisesScript) as SE_FLAME_FLARE plays.
   Actor_SetScript(ACTOR_FLAME_AND_SMOKE, gCottageRoomsB_FlameRisesScript);
@@ -895,19 +895,19 @@ ramp:
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   Import_ActorSetPosition(ACTOR_KYLE, 0, 0);
   Actor_LinkPair(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
@@ -915,9 +915,9 @@ ramp:
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -925,34 +925,34 @@ ramp:
 /// Reached by talking to ACTOR_INNKEEPER in every Vale table but the
 /// storm's, and back from Kalay by Mind Read on him until he has welcomed
 /// Isaac. Sets FLAG_VALE_INNKEEPER_WELCOMED_ISAAC on that welcome.
-static void EventScript_TalkToInnkeeper(void) {
+static void CottageRoomsB_TalkToInnkeeper(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   if ((u32)(actor->facing + -0x2000) > 0x9000) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
-    FieldScript_Start();
+    Event_Start();
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
-      if (Script_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
-        FieldScript_SetMessageId(MsgValeCameBack2);
-        Script_ShowMessage(ACTOR_INNKEEPER, 0);
+      if (Event_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
+        Event_SetMessageId(MsgValeCameBack2);
+        Event_ShowMessage(ACTOR_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);
       }
-      FieldScript_SetMessageId(MsgValeHomeJustToStay);
-      Script_AskYesNo(ACTOR_INNKEEPER, 0);
+      Event_SetMessageId(MsgValeHomeJustToStay);
+      Event_AskYesNo(ACTOR_INNKEEPER, 0);
       Actor_FaceDirection(ACTOR_INNKEEPER, FACING_WEST + FACING_STEP, 10);
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-        FieldScript_SetMessageId(MsgValeTheVisitorsCausedTheEruption);
+        Event_SetMessageId(MsgValeTheVisitorsCausedTheEruption);
       } else {
-        FieldScript_SetMessageId(MsgValeTheThreeTravelersSeemOdd);
+        Event_SetMessageId(MsgValeTheThreeTravelersSeemOdd);
       }
-      Script_ShowMessage(ACTOR_INNKEEPER, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -963,127 +963,127 @@ static void EventScript_TalkToInnkeeper(void) {
 /// The talk row tests the innkeeper's flag, not this one: after his welcome
 /// the row below plays the same line as a plain message, which leaves
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
-static void EventScript_RemarkIsaacHasGrown(void) {
-  FieldScript_Start();
+static void CottageRoomsB_RemarkIsaacHasGrown(void) {
+  Event_Start();
   Actor_SetAngleToward(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
-  FieldScript_SetMessageId(MsgValeYouveGrownSoMuch);
-  FieldScript_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
+  Event_SetMessageId(MsgValeYouveGrownSoMuch);
+  Event_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   Actor_ArmCallback(ACTOR_MAN_ISAAC_HAS_GROWN, FACING_NORTHWEST + FACING_STEP,
                     10);
   GameFlag_Set(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on Vale's innkeeper: Dora would not let Isaac stay in Vale.
 /// Reached back from Kalay once he has welcomed Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
-static void EventScript_ReadInnkeepersThoughts(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgValeDoraWouldntLetHimStay);
-  FieldScript_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+static void CottageRoomsB_ReadInnkeepersThoughts(void) {
+  Event_Start();
+  Event_SetMessageId(MsgValeDoraWouldntLetHimStay);
+  Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on ACTOR_MAN_ISAAC_HAS_GROWN at Vale's inn: Dora was struck
 /// with illness. Reached back from Kalay once he has remarked on Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
-static void EventScript_ReadThoughtsAboutDorasIllness(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgValeDoraWasStruckWithIllness);
-  FieldScript_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
+static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
+  Event_Start();
+  Event_SetMessageId(MsgValeDoraWasStruckWithIllness);
+  Event_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
 /// who told him she was ill, then gets up to show she feels well. Reached by
 /// talking to Dora, or by Mind Read on her, until FLAG_VISITED_SICK_DORA is
 /// set. Sets it and FLAG_VALE_DORA_OUT_OF_BED.
-static void EventScript_VisitSickDora(void) {
+static void CottageRoomsB_VisitSickDora(void) {
   struct Actor *leader;
   s32 firstMessage;
 
-  FieldScript_Start();
+  Event_Start();
   // Isaac steps up to the bed. "Cough, cough! Who is it? Is it the innkeeper?"
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 569, 393);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
-  FieldScript_SetMessageId(MsgValeCoughCoughWho);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 80);
+  Event_SetMessageId(MsgValeCoughCoughWho);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 80);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_StartRepeatedMotion(ACTOR_DORA, 1);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 60);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
   Actor_ResetAndSetPosition(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 20);
+  Event_WaitFrames(20);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
   FieldMessage_ShowAtActor(ACTOR_DORA, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
-  if (Script_GetFlag(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+  if (Event_GetFlag(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_DORA, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
-  FieldScript_SetMessageId(firstMessage);
+  Event_SetMessageId(firstMessage);
   FieldMessage_ShowAtActor(ACTOR_DORA, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
   if (GameFlag_Get(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
+  Event_WaitFrames(20);
+  Event_ShowMessageAndWait(ACTOR_DORA, 0);
   FieldEffect_SpawnAttached(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
-  FieldScript_SetMessageId(firstMessage + 3);
-  FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
+  Event_SetMessageId(firstMessage + 3);
+  Event_ShowMessageAndWait(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
-  FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_WaitFrames(20);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1094,7 +1094,7 @@ static void EventScript_VisitSickDora(void) {
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
   Actor_SetPositionAndCommit(ACTOR_DORA, 586, 400);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1106,42 +1106,42 @@ static void EventScript_VisitSickDora(void) {
   Actor_Jump(ACTOR_DORA, 6, 40);
   Actor_Jump(ACTOR_DORA, 4, 20);
   // "See? I'm fine!" "Don't worry about me. Go on."
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
-  FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   GameFlag_Set(FLAG_VISITED_SICK_DORA);
   GameFlag_Set(FLAG_VALE_DORA_OUT_OF_BED);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to Dora at home in Vale, back from Kalay: in her sickbed she murmurs
 /// Kyle's name; once up, she tells Isaac not to worry. Reached by talking to
 /// her back from Kalay once FLAG_VISITED_SICK_DORA is set; she is up while
 /// FLAG_VALE_DORA_OUT_OF_BED is set.
-static void EventScript_TalkToDora(void) {
+static void CottageRoomsB_TalkToDora(void) {
   s32 message;
 
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
     Actor_SetTargetAndCallback(ACTOR_DORA,
                                ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                gCottageRoomsB_DoraFacesIsaacScript);
-    FieldScript_WaitFrames(20);
-    FieldScript_SetMessageId(MsgValeDontWorryBest);
-    FieldScript_ShowMessageAndWait(ACTOR_DORA, 0);
+    Event_WaitFrames(20);
+    Event_SetMessageId(MsgValeDontWorryBest);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0);
   } else {
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     message = MsgValeUnnOhhKyle;
-    FieldScript_SetMessageId(message);
-    FieldScript_ShowMessageThenWait(ACTOR_DORA, 0, 40);
+    Event_SetMessageId(message);
+    Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
     FieldMessage_Show((message + 1), 1);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Restores the room's tiles and metatile behaviors outside the storm sequence.
@@ -1155,17 +1155,17 @@ static void CottageRoomsB_RestoreRoomPatch(void) {
 /// Called by CottageRoomsB_Initialize on arrival by
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from Kraden's
 /// cottage, while he prepares for the first Sol Sanctum visit
-/// (EventScript_TalkToKraden). Takes
+/// (ValeKradensCottage_KradenPlansSanctumVisit). Takes
 /// COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH back outside
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH), where
-/// EventScript_KradenSetsOff gathers the party.
-static void EventScript_ShowMythrilBag(void) {
+/// ValeKradensCottage_KradenSetsOff gathers the party.
+static void CottageRoomsB_ShowMythrilBag(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *glyph;
   u8 clear;
 
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1187,7 +1187,7 @@ static void EventScript_ShowMythrilBag(void) {
   VramCache_Load(sprite->slot, 128, glyph->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-  FieldScript_StartScreenTransition();
+  Event_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 480, 176);
@@ -1198,13 +1198,13 @@ static void EventScript_ShowMythrilBag(void) {
   Actor_WaitForScriptEnd(actor);
   Actor_StartScript(actor, gCottageRoomsB_MythrilBagWobblesScript);
   Actor_WaitForScriptEnd(actor);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_Release(actor);
   Actor_Jump(ACTOR_KRADEN, 2, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a
@@ -1312,14 +1312,14 @@ UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
 }
 
 /// Catch plays from Dora on the tunic, then its objects are released.
-/// Called by EventScript_DoraWakesIsaac as Dora hands Isaac his tunic.
+/// Called by CottageRoomsB_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void CottageRoomsB_DemonstrateCatch(void) {
-  FieldEffect_LoadActionEffectResources(ABILITY_CATCH, 1);
-  FieldEffect_SetupActorPair(ACTOR_DORA, ACTOR_TUNIC);
-  FieldEffect_StartCast();
-  Field_DispatchTypeHandler(1);
-  FieldEffect_StopCasterHook();
-  FieldEffect_End();
+  FieldPsynergy_LoadResources(ABILITY_CATCH, 1);
+  FieldPsynergy_SetupActorPair(ACTOR_DORA, ACTOR_TUNIC);
+  FieldPsynergy_StartCast();
+  FieldPsynergy_RunHandler(1);
+  FieldPsynergy_StopCasterUpdate();
+  FieldPsynergy_End();
 }
 
 s32 gCottageRoomsB_LeaveHouseScript[] = {
@@ -1657,17 +1657,17 @@ struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[] = {
 };
 
 struct Trigger gCottageRoomsB_StormTriggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1686,19 +1686,19 @@ struct Trigger gCottageRoomsB_Triggers[] = {
     { TRIGGER_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
-    { TRIGGER_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIsaacHisBusiness) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
+    { TRIGGER_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT(CottageRoomsB_AskIsaacHisBusiness) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsB_TalkToInnkeeper) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1715,25 +1715,25 @@ struct Trigger gCottageRoomsB_Triggers[] = {
 struct Trigger gCottageRoomsB_TriggersAfterLeaving[] = {
     { TRIGGER_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { TRIGGER_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
-    { TRIGGER_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherMaskedManWasFelix) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, EVENT(CottageRoomsB_AskWhetherMaskedManWasFelix) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsB_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1752,35 +1752,35 @@ struct Trigger gCottageRoomsB_TriggersAfterKalay[] = {
     { TRIGGER_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsB_TalkToInnkeeper) },
     // XXX (no evidence): whether this row was meant to test
     // FLAG_VALE_MAN_SAW_ISAAC_GROWN, as the Mind Read row does.
-    { TRIGGER_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(EventScript_RemarkIsaacHasGrown) },
+    { TRIGGER_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT(CottageRoomsB_RemarkIsaacHasGrown) },
     { TRIGGER_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadInnkeepersThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_MAN_SAW_ISAAC_GROWN, EVENT_SCRIPT(EventScript_RemarkIsaacHasGrown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadThoughtsAboutDorasIllness) },
-    { TRIGGER_TALK, ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
-    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDora) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT(CottageRoomsB_TalkToInnkeeper) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsB_ReadInnkeepersThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_MAN_SAW_ISAAC_GROWN, EVENT(CottageRoomsB_RemarkIsaacHasGrown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, EVENT(CottageRoomsB_ReadThoughtsAboutDorasIllness) },
+    { TRIGGER_TALK, ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT(CottageRoomsB_VisitSickDora) },
+    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(CottageRoomsB_TalkToDora) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT(CottageRoomsB_VisitSickDora) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, FLAG_VALE_DORA_OUT_OF_BED, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightWest) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeStormyNightEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1818,7 +1818,7 @@ struct Trigger gCottageRoomsB_BabiScholarsTriggers[] = {
 
 struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[] = {
     { TRIGGER_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
-    { TRIGGER_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ScholarAsksAboutKraden) },
+    { TRIGGER_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT(CottageRoomsB_ScholarAsksAboutKraden) },
     { TRIGGER_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
     { TRIGGER_TALK, ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },

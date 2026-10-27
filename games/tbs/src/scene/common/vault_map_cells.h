@@ -40,9 +40,9 @@ static void Vault_OpenDoorwayAndEnter(void) {
 
   Sound_PlaySong(SE_THUMP);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
-  FieldScript_WaitFrames(4);
+  Event_WaitFrames(4);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
-  FieldScript_WaitFrames(4);
+  Event_WaitFrames(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;

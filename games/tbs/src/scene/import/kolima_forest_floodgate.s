@@ -19,9 +19,9 @@
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_ResetAndSetPosition, 1

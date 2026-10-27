@@ -10,7 +10,7 @@
 /// where it is not blocked, after asking), pays its PP, then plays its effect
 /// between the map's Psynergy triggers for what the leader faces:
 /// PSYNERGY_PHASE_BEFORE_CAST before and PSYNERGY_PHASE_AFTER_CAST after. A
-/// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
+/// PSYNERGY_PHASE_ACTS event is not run here; it only makes
 /// the effect aim at the actor ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after trigger whose subject
 /// has TRIGGER_SUBJECT_OWN_EFFECT plays the effect itself. Called by
@@ -79,7 +79,7 @@ s32 Field_UsePsynergy(u32 code) {
   }
   // A use that pays no PP only runs the map's ending events.
   if (code & ACT_PACKED)
-    return Field_RunPsynergyEvents(code);
+    return Field_RunPsynergyEndEvents(code);
 
   // A party member pays the PP.
   if (userId <= ALLY_MAX) {
@@ -101,17 +101,17 @@ s32 Field_UsePsynergy(u32 code) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &target);
   after = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_CAST),
                                     abilityGroup, &target);
-  during = Scene_FindPsynergyTrigger(
-      PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS), abilityGroup, &target);
+  during = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                     abilityGroup, &target);
   target = -1;
-  GameFlag_SetFar(FLAG_PSYNERGY_EFFECT);
+  GameFlag_SetFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
     target =
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, abilityGroup);
     // The after event plays the effect itself.
     if (after && (after->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
-      GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
+      GameFlag_ClearFar(FLAG_PLAY_PSYNERGY_CAST);
       GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
     }
   } else
@@ -120,26 +120,26 @@ s32 Field_UsePsynergy(u32 code) {
   // Play the effect.
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_ClearOutOfBounds();
-  FieldEffect_LoadActionEffectResources(abilityId, 0);
+  FieldPsynergy_LoadResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldEffect_SetupActorPair(gSaveBlock.leaderActorId, target);
-  FieldEffect_StartCast();
+  FieldPsynergy_SetupActorPair(gSaveBlock.leaderActorId, target);
+  FieldPsynergy_StartCast();
 
-  Field_RunEventAction(before, userId, target);
-  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT)) {
+  Field_RunPsynergyEvent(before, userId, target);
+  if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST)) {
     if (GameFlag_GetFar(FLAG_PSYNERGY_TARGET))
-      FieldEffect_DispatchRequestKind();
+      FieldPsynergy_Dispatch();
     else
-      FieldEffect_Run();
+      FieldPsynergy_Run();
   }
-  FieldEffect_StopCasterHook();
-  Field_RunEventAction(after, userId, target);
-  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT))
-    FieldEffect_FinishMindRead();
-  GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
+  FieldPsynergy_StopCasterUpdate();
+  Field_RunPsynergyEvent(after, userId, target);
+  if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST))
+    FieldPsynergy_FinishMindRead();
+  GameFlag_ClearFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
   work->psynergyActing = 0;
-  FieldEffect_End();
+  FieldPsynergy_End();
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Actor_Respawn();
   return 0;

@@ -36,11 +36,11 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 }
 
 /// Debug only: while debug mode is on, R makes every script wait
-/// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
-/// task for the length of a script (FieldScript_Start). R also
+/// (Event_WaitFrames) end at once and L restores normal waits. Runs as a
+/// task for the length of a script (Event_Start). R also
 /// skips the actors' messages, which open nothing while fastForward is
 /// set (FieldMessage_ShowAtActor).
-void FieldScript_UpdateDebugSkip(void) {
+void Event_UpdateDebugSkip(void) {
   struct FieldWork *runtime = gFieldWork;
 
   if (gDebugMode != 0) {
@@ -53,11 +53,10 @@ void FieldScript_UpdateDebugSkip(void) {
   }
 }
 
-/// The script command "wait": waits the requested frames, unless debug fast
-/// forward (FieldScript_UpdateDebugSkip) is on. Map scripts reach it (the WAIT
-/// command); this object's actor, message, camera and climbing commands
-/// wait through it too.
-void FieldScript_WaitFrames(s32 frames) {
+/// Waits the requested frames through WaitFrames, unless debug fast-forward
+/// (Event_UpdateDebugSkip) is on: the wait events use. This object's actor,
+/// message, camera and climbing commands wait through it too.
+void Event_WaitFrames(s32 frames) {
   if (gFieldWork->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
   }
@@ -66,7 +65,7 @@ void FieldScript_WaitFrames(s32 frames) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// FieldScript_Start, by SceneManager_Run before it handles several requests,
+/// Event_Start, by SceneManager_Run before it handles several requests,
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
@@ -86,14 +85,13 @@ void Leader_StopMoving(void) {
   Actor_SelectAnimationFar(actor, 1);
 }
 
-/// The script command "begin script": closes any area name window, stops the
-/// leader, resets the message and timing state, and starts the debug
-/// fast-forward callback with the leader as the message speaker. Map scripts
-/// reach it (SCRIPT_START); the field's item, Psynergy,
-/// Djinni, Retreat and climbing scripts open with it too. Clears the field
+/// Begins an event: closes any area name window, stops the leader, resets the
+/// message and timing state, and starts the debug fast-forward task with the
+/// leader as the message speaker. Every event opens with it, the field's item,
+/// Psynergy, Djinni, Retreat and climbing events too. Clears the field
 /// work's name window, fastForward and messageWindow, sets transitionFrames to
 /// 16 and the speaker to the leader.
-void FieldScript_Start(void) {
+void Event_Start(void) {
   struct FieldWork *runtime = gFieldWork;
 
   AreaNameWindow_HideFar();
@@ -110,7 +108,7 @@ void FieldScript_Start(void) {
   runtime->unusedAfterMessage = 0xFFFF;
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
-  Task_Add(FieldScript_UpdateDebugSkip, TASK_PASS_FRAME);
+  Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
@@ -118,27 +116,26 @@ void FieldScript_Start(void) {
   runtime->messageWindow = 0;
 }
 
-/// Ends a script: stops the debug fast-forward callback, gives the camera back
-/// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Map
-/// scripts reach it (SCRIPT_END), and every script that
-/// opens with FieldScript_Start closes with it.
-void FieldScript_End(void) {
-  Task_Remove(FieldScript_UpdateDebugSkip);
+/// Ends an event: stops the debug fast-forward task, gives the camera back to
+/// the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Every
+/// event that opens with Event_Start closes with it.
+void Event_End(void) {
+  Task_Remove(Event_UpdateDebugSkip);
   FieldCamera_FollowActor(gSaveBlock.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
-UNUSED void FieldScript_NoOpHookA(void) {}
+UNUSED void Event_NoOpUpdateA(void) {}
 
 /// An empty hook; it does nothing in the released game. Only
 /// Event_RunActorUpdateAndWait calls it.
-void FieldScript_NoOpHook(void) {}
+void Event_NoOpUpdate(void) {}
 
 /// Respawns the map's actors from an actor template table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
 /// in the overworld bank's far-call table; nothing in ☀️ names it.
 void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
-  FieldScript_NoOpHook();
+  Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   WaitFrames(1);
   // XXX (no evidence): why the leader's object is fetched and dropped; no
@@ -155,7 +152,7 @@ void Event_CallWithLastActiveActorId(struct ActorTemplate *table) {
 
 /// Sets the map's trigger table, which the field checks as the leader moves:
 /// writes work->events. Altin Peak's map script calls it.
-void FieldScript_SetTriggers(const struct Trigger *triggers) {
+void Event_SetTriggers(const struct Trigger *triggers) {
   struct FieldWork *work = gFieldWork;
 
   work->triggers = triggers;
@@ -185,8 +182,8 @@ void Event_PrepareTwoActorsAndApply(s32 first, s32 second) {
 /// the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1 for no
 /// such party member, -2 when that member is not in the party and -3 when the
 /// member no longer knows the Psynergy. Only
-/// FieldScript_ClearInvalidPackedValues calls it.
-s32 FieldScript_ValidatePackedId(u32 shortcut) {
+/// Event_ClearInvalidPackedValues calls it.
+s32 Event_ValidatePackedId(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
   s32 ability = shortcut & 0x3ff;
 
@@ -204,10 +201,10 @@ s32 FieldScript_ValidatePackedId(u32 shortcut) {
 /// gSaveBlock.firstShortcut or secondShortcut. Called whenever the party or
 /// what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
-void FieldScript_ClearInvalidPackedValues(void) {
-  if (FieldScript_ValidatePackedId(gSaveBlock.firstShortcut) != 0)
+void Event_ClearInvalidPackedValues(void) {
+  if (Event_ValidatePackedId(gSaveBlock.firstShortcut) != 0)
     gSaveBlock.firstShortcut = 0;
-  if (FieldScript_ValidatePackedId(gSaveBlock.secondShortcut) != 0)
+  if (Event_ValidatePackedId(gSaveBlock.secondShortcut) != 0)
     gSaveBlock.secondShortcut = 0;
 }
 
@@ -222,7 +219,7 @@ void Party_RemoveMemberRestored(s32 unit) {
   s32 survivingMembers;
 
   Party_RemoveMemberFar(unit);
-  FieldScript_ClearInvalidPackedValues();
+  Event_ClearInvalidPackedValues();
   vitals = Unit_GetFar(unit);
   vitals->hp = vitals->hpMax;
   vitals->pp = vitals->ppMax;
@@ -393,7 +390,7 @@ void Inventory_ReservedNoOp(void) {}
 /// Waits, at most 90 frames, for an actor's animation to stop being
 /// animation: the actor has finished a one-off animation such as a nod.
 /// Only actors drawn as a sprite (ACTOR_SPRITE_ONE) are
-/// waited for. Called by FieldScript_AskYesNoWithActorAnimation.
+/// waited for. Called by Event_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -416,9 +413,9 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 /// Map scripts reach it (about
-/// 54 of them); the Battle Arena and FieldScript_AskYesNoAndShowResponse call
+/// 54 of them); the Battle Arena and Event_AskYesNoAndShowResponse call
 /// it too.
-s32 FieldScript_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
+s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
   s32 sprite = Scene_FindActorTemplate(work->speaker)->sprite;
   struct Window *window = (struct Window *)work->messageWindow;
@@ -488,7 +485,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The script command "open screen": starts the script's screen transition and
 /// sets work->transitionActive. Map scripts reach it; the inn, the title, the
 /// main menu, the Battle Arena and WorldPicture_Show call it too.
-void FieldScript_StartScreenTransition(void) {
+void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
   ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
@@ -498,7 +495,7 @@ void FieldScript_StartScreenTransition(void) {
 /// The script command "close screen": finishes the script's screen transition
 /// and clears work->transitionActive. Map scripts reach it; the inn, the main
 /// menu and WorldPicture_Show call it too.
-void FieldScript_FinishScreenTransition(void) {
+void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
   ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
@@ -507,7 +504,7 @@ void FieldScript_FinishScreenTransition(void) {
 
 /// The script command "wait for screen": waits as long as the transition runs
 /// (work->transitionFrames). Map scripts reach it.
-void FieldScript_WaitTransitionFrames(void) {
+void Event_WaitTransitionFrames(void) {
   WaitFrames(gFieldWork->transitionFrames);
 }
 
@@ -516,7 +513,7 @@ void FieldScript_WaitTransitionFrames(void) {
 /// and entrance. Called by the title, the main menu, the Battle Arena, the
 /// debug battle command and five map scripts (the Lemurian ship and the world
 /// map among them).
-void FieldScript_SetDestination(s32 sceneId, s32 entrance) {
+void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gSaveBlock.sceneId = sceneId;
   gSaveBlock.entrance = entrance;
@@ -525,7 +522,7 @@ void FieldScript_SetDestination(s32 sceneId, s32 entrance) {
 /// Makes the script leave and records map and entrance as the saved
 /// destination. Reached only through an unnamed veneer in the overworld bank's
 /// far-call table; nothing in ☀️ names it.
-void FieldScript_SetSavedDestination(u16 sceneId, u16 entrance) {
+void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;
   gSaveBlock.restartScene = sceneId;
@@ -534,8 +531,8 @@ void FieldScript_SetSavedDestination(u16 sceneId, u16 entrance) {
 
 /// The script command "request exit": sets the field's exit request (999 leaves
 /// for gSaveBlock's sceneId and entrance). Map scripts reach it as
-/// Import_ScriptRequestExit (about 61 of them).
-void FieldScript_SetExitRequest(u16 request) {
+/// Import_EventSetExitRequest (about 61 of them).
+void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->exit = request;
 }

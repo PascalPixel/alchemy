@@ -222,14 +222,14 @@ static void Tolbi_HideRevealedChest(void) {
 
 /// The first sign at Tolbi Spring: face away and toss a coin in.
 static void Tolbi_ReadSpringSign(void) {
-  FieldScript_SetMessageId(MsgTolbiFaceAwayTolbi);
-  FieldScript_ShowMessageAndWait(-1, 0);
+  Event_SetMessageId(MsgTolbiFaceAwayTolbi);
+  Event_ShowMessageAndWait(-1, 0);
 }
 
 /// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
 static void Tolbi_ReadLuckyMedalSign(void) {
-  FieldScript_SetMessageId(MsgTolbiTossLuckyMedal);
-  FieldScript_ShowMessageAndWait(-1, 0);
+  Event_SetMessageId(MsgTolbiTossLuckyMedal);
+  Event_ShowMessageAndWait(-1, 0);
 }
 
 /// Talking to the older brother, or reading his mind. He stops running while
@@ -242,7 +242,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 
   kid = Actor_GetById(ACTOR_TOLBI_OLDER_BROTHER);
   facing = kid->facing;
-  FieldScript_Start();
+  Event_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -261,14 +261,14 @@ static void Tolbi_TalkToOlderBrother(void) {
       msg = MsgTolbiOldestShouldntShare;
     }
   }
-  FieldScript_SetMessageId(msg);
+  Event_SetMessageId(msg);
   Import_ActorSetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
   Actor_LinkPair(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
-  FieldScript_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   WaitFrames(1);
   kid->timer &= KID_CHASES_YOUNGER;
-  FieldScript_End();
+  Event_End();
 }
 
 /// Talking to the younger sister, or reading her mind, as above.
@@ -280,7 +280,7 @@ static void Tolbi_TalkToYoungerSister(void) {
 
   kid = Actor_GetById(ACTOR_TOLBI_YOUNGER_SISTER);
   facing = kid->facing;
-  FieldScript_Start();
+  Event_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -299,14 +299,14 @@ static void Tolbi_TalkToYoungerSister(void) {
       msg = MsgTolbiMamaToldShare;
     }
   }
-  FieldScript_SetMessageId(msg);
+  Event_SetMessageId(msg);
   Import_ActorSetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
   Actor_LinkPair(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
-  FieldScript_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   WaitFrames(1);
   kid->timer &= KID_CHASES_YOUNGER;
-  FieldScript_End();
+  Event_End();
 }
 
 /// Picks the trigger table for Tolbi's current mood.
@@ -325,77 +325,77 @@ const struct Trigger *Tolbi_SelectTriggers(void) {
 /// asks whether someone can live to be more than 100 years old; either way the
 /// talk turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiSomeoneLiveMore);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgTolbiSomeoneLiveMore);
+  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
+  Event_End();
 }
 
 /// The father asks whether children really do love souvenirs, and owns up to
 /// loving them himself.
 static void Tolbi_TalkToFather(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiChildrenLoveSouvenirs);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgTolbiChildrenLoveSouvenirs);
+  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
+  Event_End();
 }
 
 /// The mother turns to her crying boy, then back to promise better sweets
 /// later on. "Be patient, little guy."
 static void Tolbi_TalkToMother(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiPatientLittleGuy);
+  Event_Start();
+  Event_SetMessageId(MsgTolbiPatientLittleGuy);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_NORTH, 0);
-  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
+  Event_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_WEST, 0);
-  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
+  Event_End();
 }
 
 /// The crying boy turns, stamps twice and wails for sweets.
 static void Tolbi_TalkToCryingBoy(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_FaceDirection(ACTOR_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(ACTOR_TOLBI_CRYING_BOY, 2);
-  FieldScript_SetMessageId(MsgTolbiWaahBuySweets);
-  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_CRYING_BOY, 0);
-  FieldScript_End();
+  Event_SetMessageId(MsgTolbiWaahBuySweets);
+  Event_ShowMessageAndWait(ACTOR_TOLBI_CRYING_BOY, 0);
+  Event_End();
 }
 
 /// During the festival the scalper sleeps under the archway: the inns are
 /// full.
 static void Tolbi_TalkToSleepingScalper(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiInnsFullStaying);
-  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SCALPER, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgTolbiInnsFullStaying);
+  Event_ShowMessageAndWait(ACTOR_TOLBI_SCALPER, 0);
+  Event_End();
 }
 
 /// After Colosso, ACTOR_TOLBI_FINALS_FAN asks whether the party was in the
 /// finals. The question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgTolbiFinalsWerent);
-  FieldScript_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MsgTolbiFinalsWerent);
+  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
+  Event_End();
 }
 
 /// After Colosso, the snack vendor gives the party his leftover corn, once.
 static void Tolbi_TalkToSnackVendor(void) {
-  FieldScript_Start();
-  if (Script_GetFlag(FLAG_TOLBI_CORN_GIVEN) == 0) {
+  Event_Start();
+  if (Event_GetFlag(FLAG_TOLBI_CORN_GIVEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
-    FieldScript_SetMessageId(MsgTolbiLeftovers);
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Event_SetMessageId(MsgTolbiLeftovers);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
     ItemDisplay_ShowItem(ITEM_CORN, 3);
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CORN, 0);
   } else {
-    FieldScript_SetMessageId(MsgTolbiFestivalLongerUsual);
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Event_SetMessageId(MsgTolbiFestivalLongerUsual);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
@@ -406,7 +406,7 @@ static void Tolbi_EnterDoor(void) {
   u32 actorId;
   s32 door;
 
-  FieldScript_Start();
+  Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= 65; actorId++) {
     struct Actor *actor = Actor_GetById(actorId);
     if (actor != NULL) {
@@ -422,12 +422,12 @@ static void Tolbi_EnterDoor(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
   }
-  Import_ScriptRequestExit(work->stepTrigger);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_End();
+  Import_EventSetExitRequest(work->stepTrigger);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_End();
 }
 
 /// The update of ACTOR_TOLBI_OLD_MAN, who during the festival says he is 65
@@ -510,40 +510,40 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 /// The visitor at the spring's gate asks whether the party wants to test its
 /// luck. On yes he steps aside for good and the way to Tolbi Spring opens.
 static void Tolbi_TalkToSpringVisitor(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
-  FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(MsgTolbiWantTestLuck);
-  Script_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  Event_WaitFrames(20);
+  Event_SetMessageId(MsgTolbiWantTestLuck);
+  Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
     Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// The gate to Tolbi Spring (MB_TOLBI_GATE_TO_SPRING), once the visitor at the
 /// gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
-  Import_ScriptRequestExit(TOLBI_TO_TOLBI_SPRING);
-  FieldScript_End();
+  Import_EventSetExitRequest(TOLBI_TO_TOLBI_SPRING);
+  Event_End();
 }
 
 /// Leaves by the exit numbered as the metatile behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
   s16 *trigger = &gFieldWork->stepTrigger;
 
-  Import_ScriptRequestExit(*trigger);
+  Import_EventSetExitRequest(*trigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his
@@ -553,12 +553,12 @@ static void Tolbi_RequestTouchedExit(void) {
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
-  FieldScript_Start();
+  Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeedParameters(ACTOR_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
-  FieldScript_SetMessageId(firstMsg);
+  Event_SetMessageId(firstMsg);
 
   // The soldiers come up to the party; the poster waits off to the side.
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
@@ -577,47 +577,47 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
   Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_A,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_B,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_TOLBI_SOLDIER_A, 2);
   Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
   // window showing Babi's portrait. The poster, placed with Babi's sprite,
   // becomes the speaker so that answering closes that portrait window.
-  Script_OpenMessage(ACTOR_TOLBI_SOLDIER_A, 0);
-  FieldScript_WaitFrames(25);
+  Event_OpenMessage(ACTOR_TOLBI_SOLDIER_A, 0);
+  Event_WaitFrames(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
   Message_OpenWindow((firstMsg + 3), 11, 12, 2);
   gFieldWork->speaker = ACTOR_TOLBI_MISSING_PERSON_POSTER;
-  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    FieldScript_WaitFrames(30);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(30);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 232, 248);
-    FieldScript_WaitFrames(2);
+    Event_WaitFrames(2);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 232, 248);
     Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
     Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 248, 248);
@@ -625,25 +625,25 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    FieldScript_WaitFrames(30);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(30);
+    Event_WaitFrames(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     gFieldWork->message += 1;
-    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
-    FieldScript_WaitFrames(20);
+    Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
+    Event_WaitFrames(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 184);
@@ -653,7 +653,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Import_ActorSetPosition(ACTOR_TOLBI_SOLDIER_B, 0, 0);
   Import_ActorSetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 0, 0);
   GameFlag_Set(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Frost on the puddle: the frozen pillar is drawn underfoot and stops
@@ -850,41 +850,41 @@ struct ActorTemplate gTolbiActorTemplates[] = {
 
 /// During the festival, before the finals.
 struct Trigger gTolbiTriggersFestival[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT(Tolbi_GrowSprout) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP, MB_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP, MB_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT(Tolbi_MeetSearchingSoldiers) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },
     { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
     { TRIGGER_TALK, ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoShouldHaveStartedTodayWhat) },
     { TRIGGER_TALK, ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiBabiWasAlreadyPrettyOldBack) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskAboutLivingPastHundred) },
-    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, EVENT(Tolbi_AskAboutLivingPastHundred) },
+    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { TRIGGER_TALK, ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourColossoSouvenirsTheyMake) },
     { TRIGGER_TALK, ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourSnacksAndDrinksBefore) },
     { TRIGGER_TALK, ACTOR_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveDecidedNotToFightAt) },
     { TRIGGER_TALK, ACTOR_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiWowTolbisFestivalIsHumongousJust) },
     { TRIGGER_TALK, ACTOR_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiRatsWeOversleptAndNowThe) },
-    { TRIGGER_TALK, ACTOR_TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
-    { TRIGGER_TALK, ACTOR_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
-    { TRIGGER_TALK, ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSleepingScalper) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { TRIGGER_TALK, ACTOR_TOLBI_FATHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToFather) },
+    { TRIGGER_TALK, ACTOR_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToMother) },
+    { TRIGGER_TALK, ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT(Tolbi_TalkToCryingBoy) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToSleepingScalper) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT(Tolbi_TalkToSpringVisitor) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTouristsArentTheOnlyOnesWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsAreStartingAtThe) },
@@ -892,8 +892,8 @@ struct Trigger gTolbiTriggersFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsNotLikeThereHaveBeen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearIGetOlderAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWhatIfBabiIsActuallyA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeHaveToSellAllOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingTheseAtTheColosseum) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiISawThePeopleWhoAre) },
@@ -904,45 +904,45 @@ struct Trigger gTolbiTriggersFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiThoseSweetsSmellGreatImNot) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
     { TOLBI_JAR_SEARCH_KIND, MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
     { TRIGGERS_END },
 };
 
 /// On finals day.
 struct Trigger gTolbiTriggersFinalsDay[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT(Tolbi_GrowSprout) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
     { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiMyFamilySavedMeASeat) },
     { TRIGGER_TALK, ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIThoughtSomethingHappenedToBabi) },
     { TRIGGER_TALK, ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheColosseumWasSoFullThat) },
     { TRIGGER_TALK, ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNobodyElseHasNoticedButThis) },
-    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { TRIGGER_TALK, ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiHowAboutSomeColossoSouvenirsThis) },
     { TRIGGER_TALK, ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsAreSoLongIts) },
     { TRIGGER_TALK, ACTOR_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
@@ -952,11 +952,11 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     // whether the four messages after MsgTolbiSpringOhThereAreAlwaysScalpersAt
     // (`The finals are about to start.` and the rest) were meant for it; no row
     // or code shows them.
-    { TRIGGER_TALK, ACTOR_TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
-    { TRIGGER_TALK, ACTOR_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
-    { TRIGGER_TALK, ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
+    { TRIGGER_TALK, ACTOR_TOLBI_FATHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToFather) },
+    { TRIGGER_TALK, ACTOR_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToMother) },
+    { TRIGGER_TALK, ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT(Tolbi_TalkToCryingBoy) },
     { TRIGGER_TALK, ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartTodayIWonder) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT(Tolbi_TalkToSpringVisitor) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIveGotToGetToThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiABattleToTheDeathWith) },
@@ -964,8 +964,8 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiSoWhyWereTheSoldiersAll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiICouldStillBuySeatsFrom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNoMatterHowIAddIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeCantSellAnythingOnceThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiThisIsTheFinalPushAnything) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiFightingInColossoRequiresALot) },
@@ -976,47 +976,47 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiMomYouSaidYouWereAll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
     { TRIGGERS_END },
 };
 
 /// After Colosso has ended.
 struct Trigger gTolbiTriggersAfterColosso[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT(Tolbi_GrowSprout) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
-    { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskWhetherPartyWasInFinals) },
+    { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT(Tolbi_AskWhetherPartyWasInFinals) },
     { TRIGGER_TALK, ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWithAllThoseRevelersGoneThe) },
     { TRIGGER_TALK, ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIHadNoLuckInThe) },
     { TRIGGER_TALK, ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSoQuietTheHustleAnd) },
-    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { TRIGGER_TALK, ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { TRIGGER_TALK, ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { TRIGGER_TALK, ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiIllBeBackToDoBusiness) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSnackVendor) },
-    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, EVENT(Tolbi_TalkToSnackVendor) },
+    { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT(Tolbi_TalkToSpringVisitor) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheSpectatorsHaveAllLeftSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiThinkHowFunItWouldBe) },
@@ -1024,20 +1024,20 @@ struct Trigger gTolbiTriggersAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiComeToThinkOfItNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiHmmSinceColossoEndedSoDramatically) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheCalmAfterTheStormIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT(Tolbi_TalkToYoungerSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearITryToSell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
-    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
     { TRIGGERS_END },
 };
 // clang-format on

@@ -232,7 +232,7 @@ conflicts with more stores than the plain word's does. `Exit_PrepareAnimation`
 puts the leader at its cell's middle that way; through `x.fixed` the store of
 the sprite's flags moves. A pointer to an actor kept in memory is likewise a
 component of `struct Actor` itself, so an array of them waits for any store to
-an actor: `FieldEffect_RunLiftOnTarget` keeps its two hands as `void *`.
+an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 
 ### Macros and their expansions
 
@@ -266,7 +266,7 @@ an actor: `FieldEffect_RunLiftOnTarget` keeps its two hands as `void *`.
   counts letters in its `s32` value rather than in `i` or `j`.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches: Crossbone Isle's
-  `EventScript_MovePillar` takes `&state->sceneId` with `state = &gSaveBlock`,
+  `CrossboneIsle_MovePillar` takes `&state->sceneId` with `state = &gSaveBlock`,
   because `&gSaveBlock.sceneId` folds into one literal.
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move constants and addresses out of the loop,
@@ -287,14 +287,14 @@ an actor: `FieldEffect_RunLiftOnTarget` keeps its two hands as `void *`.
 
 - One routine can be reached by several routes, each kept where it matches: a
   game flag by `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` or by the
-  script layer's inlines `Script_GetFlag`, `Script_SetFlag` and
-  `Script_ClearFlag`; a unit by
+  script layer's inlines `Event_GetFlag`, `Event_SetFlag` and
+  `Event_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or
   through `Item_CopyWords` (tagged). An inline call's argument is a pseudo of
   its own, so a flag number used twice is loaded twice; called directly, the
   number is kept in a callee-saved register (Bilibin's chef,
-  `EventScript_TalkToBusyChef`).
+  `CottageRoomsC_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in
   another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are

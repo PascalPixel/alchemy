@@ -165,7 +165,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     // With Jenna in the party, there are no encounters while she has more
     // than 130 experience points. She is in the party only from Vale
-    // (EventScript_RoofMended, scene/vale.c) to the Sol Sanctum's eruption,
+    // (Vale_RoofMended, scene/vale.c) to the Sol Sanctum's eruption,
     // starting at level 1 with none, so the rule acts only in the Sol
     // Sanctum, where it ends random battles once she nears level 4 (158):
     // the party cannot train there before the journey begins.
@@ -391,9 +391,9 @@ void Scene_SetDefeatReturnPoint(void) {
 }
 
 /// Returns the battle background chosen for the current map. The battle setup
-/// (battle/encounter.c) reads it through FieldScript_GetSpecialValueFar as the
+/// (battle/encounter.c) reads it through Event_GetSpecialValueFar as the
 /// battle's background.
-s16 FieldScript_GetSpecialValue(void) { return gSaveBlock.special; }
+s16 Event_GetSpecialValue(void) { return gSaveBlock.special; }
 
 /// Chooses the battle background for the current map. gBattleBackground_Maps
 /// lists each battle background (a word with bit 31 set) followed by the maps

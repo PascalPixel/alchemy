@@ -17,9 +17,9 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetPositionAndCommit, 1
@@ -37,7 +37,7 @@
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1

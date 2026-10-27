@@ -34,7 +34,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // The way the leader faces, to the nearest quarter turn.
   djinni = Actor_GetById(djinniId);
   dir = (Actor_GetById(gSaveBlock.leaderActorId)->facing + 0x2000) & 0xc000;
-  FieldScript_Start();
+  Event_Start();
   WaitFrames(10);
   Sound_PlaySongFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
@@ -120,7 +120,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetY = ACTOR_NO_TARGET;
   Actor_SelectAnimationFar(djinni, 0);
   djinni->sprite->image.priority = 2;
-  FieldScript_End();
+  Event_End();
 }
 
 /// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
@@ -146,7 +146,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 
   if (owner >= 0) {
-    FieldScript_Start();
+    Event_Start();
     WorldMap_Freeze();
     if (slot != -1) {
       // On the world map the actors far from the view are removed while
@@ -170,7 +170,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);
     WorldMap_Unfreeze();
-    FieldScript_End();
+    Event_End();
   }
 }
 

@@ -460,8 +460,8 @@ void WorldPicture_Show(s32 picture) {
   work->camera->paused = 1;
   savedStatus = work->transitionFrames;
   work->transitionFrames = 6;
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   layer = gridState->animations;
   for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     savedFlags[i] = layer->paused;
@@ -505,8 +505,8 @@ void WorldPicture_Show(s32 picture) {
     layer++;
   }
   menu->suspended = 0;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   work->transitionFrames = savedStatus;
   work->camera->paused = 0;
 }

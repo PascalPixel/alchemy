@@ -40,7 +40,7 @@ void FieldEffect_UpdateParticleMotionAndScale(struct Actor *actor) {
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x
 /// velocity 1.5 times their z velocity, so the ring is wider than deep as the
-/// field is drawn. Carry's FieldEffect_SteerLiftedTarget spawns it where it
+/// field is drawn. Carry's FieldPsynergy_SteerLiftedTarget spawns it where it
 /// sets its load down.
 void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   struct EffectOptions opt;
@@ -101,7 +101,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
-/// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
+/// starts to wander (FieldEffect_WanderAroundAnchor). FieldPsynergy_Whirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
 void FieldEffect_CircleAnchor(struct Actor *actor) {
   struct Actor *effect = (struct Actor *)actor;
@@ -153,11 +153,9 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 ///
 /// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
-/// FieldEffect_DispatchRequestKind passes an argument this adapter ignores; the
+/// FieldPsynergy_Dispatch passes an argument this adapter ignores; the
 /// shared runner reads effectWork->child instead.
-void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
-  FieldEffect_RunWhirlwind();
-}
+void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
 /// An orb is carried from the caster to 4 pixels above the effect's position
 /// over 10 frames, growing from 0.25.
@@ -167,10 +165,10 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// Without effectWork->enabled the target shrinks, and 16 particles appear
 /// round the orb, one every 6 frames, and circle it.
 ///
-/// Called by FieldEffect_Run and FieldEffect_RunWhirlwindOnTarget. Fades the
+/// Called by FieldPsynergy_Run and FieldPsynergy_WhirlwindOnTarget. Fades the
 /// palettes to an effect colour and back, and gives the target its shrinking
 /// update; the orb is released at the end, the particles finish on their own.
-void FieldEffect_RunWhirlwind(void) {
+void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *src = effectWork->mainActor;
   struct Actor *target = effectWork->child;
@@ -194,7 +192,7 @@ void FieldEffect_RunWhirlwind(void) {
   if (ball == 0) {
     return;
   }
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Actor_SelectAnimationFar(ball, 2);
   do {
     s32 scale;
@@ -212,7 +210,7 @@ void FieldEffect_RunWhirlwind(void) {
   ball->scaleY = 0x14ccc; // 1.3 high
   Sound_PlaySongFar(SE_RUSH);
   WaitFrames(20);
-  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a trigger
+  // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
   // names, the target is blown away.
   if (effectWork->enabled == 0) {
     if (target != 0)
@@ -250,5 +248,5 @@ void FieldEffect_RunWhirlwind(void) {
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
   Actor_ReleaseFar(ball);
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }

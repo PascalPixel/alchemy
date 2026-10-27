@@ -119,7 +119,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   if ((u16)t == 0 && unit->pp != 0) {
     unit->ppGauge = 1;
   }
-  FieldScript_ClearInvalidPackedValues();
+  Event_ClearInvalidPackedValues();
 }
 
 /// A map callback while a friend looks around the stages alone (the visit to
@@ -153,7 +153,7 @@ static void Colosso_TakePlaceForMatch(void) {
   s32 *transition;
   s32 flagBase;
 
-  FieldScript_Start();
+  Event_Start();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
   for (actorId = 8; actorId <= 66; actorId++) {
     struct Actor *actor = Actor_GetById(actorId);
@@ -179,14 +179,14 @@ static void Colosso_TakePlaceForMatch(void) {
       }
     }
   }
-  FieldScript_SetMessageId(MsgColossoMatchAboutBeginPleaseTake);
-  FieldScript_ShowMessageAndWait(speakerId, 0);
+  Event_SetMessageId(MsgColossoMatchAboutBeginPleaseTake);
+  Event_ShowMessageAndWait(speakerId, 0);
   transition = &work->transition;
   *transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
-  FieldScript_WaitFrames(20);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_WaitFrames(20);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   // Each supporter has one saved map cell in the group's byte flags.
   flagBase = COLOSSO_CHEER_SLOT(supporterId);
   FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_COLUMN,
@@ -198,15 +198,15 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   supporterId++;
   if (supporterId > MIA) {
-    Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
+    Import_EventSetExitRequest(COLOSSO_SOLO_TO_RACE);
     GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
     *transition = 0;
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// A stage's guide, talking to a friend who looks around alone, asks whether
@@ -227,40 +227,40 @@ void Colosso_AskDoneCheering(s32 id) {
   Actor_GetById(id);
   slot = gSaveBlock.leaderActorId;
   actor = Actor_GetById(slot);
-  FieldScript_Start();
+  Event_Start();
   msg = MsgColossoCheering;
-  FieldScript_SetMessageId(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(id, 0);
   gFieldWork->choiceMessage = MsgColossoCheeringChoices;
   gFieldWork->choiceWidth = 4;
-  res = FieldScript_AskYesNoWithActorAnimation(slot, 0);
+  res = Event_AskYesNoWithActorAnimation(slot, 0);
   if (res == 0) {
-    FieldScript_SetMessageId(msg + 1);
-    FieldScript_ShowMessageAndWait(id, 0);
+    Event_SetMessageId(msg + 1);
+    Event_ShowMessageAndWait(id, 0);
     work->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
-    FieldScript_FinishScreenTransition();
-    FieldScript_WaitTransitionFrames();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
                           actor->x.fixed >> 20);
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
                           actor->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
-      Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
+      Import_EventSetExitRequest(COLOSSO_SOLO_TO_RACE);
       GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
     } else {
       Colosso_ControlCharacterAlone(slot);
-      FieldScript_StartScreenTransition();
-      FieldScript_WaitTransitionFrames();
+      Event_StartScreenTransition();
+      Event_WaitTransitionFrames();
       work->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
-    FieldScript_SetMessageId(msg + 2);
-    FieldScript_ShowMessageAndWait(id, 0);
+    Event_SetMessageId(msg + 2);
+    Event_ShowMessageAndWait(id, 0);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// The guide where the stages start. Once the friends have all gone to cheer
@@ -276,27 +276,27 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   actor = Actor_GetById(actorId);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  FieldScript_Start();
+  Event_Start();
 
   if (Party_CountMembers() <= 1) {
-    FieldScript_SetMessageId(MsgColossoIsaacDidGetGoodLook);
-    if (FieldScript_AskYesNoAndShowResponse(actorId, 0) == 0) {
+    Event_SetMessageId(MsgColossoIsaacDidGetGoodLook);
+    if (Event_AskYesNoAndShowResponse(actorId, 0) == 0) {
       InitializeActorZero();
       InitializeSelectedActor(actorId);
       Actor_ResetAndSetPositionInMode2(actorId, x, z + 64);
-      FieldScript_WaitFrames(15);
+      Event_WaitFrames(15);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
       Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
-      FieldScript_FinishScreenTransition();
-      FieldScript_WaitTransitionFrames();
-      Import_ScriptRequestExit(COLOSSO_SOLO_TO_COLOSSEUM);
+      Event_FinishScreenTransition();
+      Event_WaitTransitionFrames();
+      Import_EventSetExitRequest(COLOSSO_SOLO_TO_COLOSSEUM);
     }
   } else {
-    FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
-    FieldScript_ShowMessageAndWait(actorId, 0);
+    Event_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
+    Event_ShowMessageAndWait(actorId, 0);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// Forgets where Garet, Ivan and Mia cheer from.
@@ -329,8 +329,8 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   } else {
     message = MsgColossoStageThirdFinalsMatch;
   }
-  FieldScript_SetMessageId(message);
-  FieldScript_ShowMessageAndWait(speaker, 0);
+  Event_SetMessageId(message);
+  Event_ShowMessageAndWait(speaker, 0);
   if (GameFlag_Get(warrior + COLOSSO_STAGE_CHEERED) != 0) {
     return COLOSSO_GUIDE_CHEER;
   }
@@ -345,9 +345,9 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     return choice;
   }
   GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
-  FieldScript_SetMessageId(MsgColossoWouldYouLikeHearDescription);
+  Event_SetMessageId(MsgColossoWouldYouLikeHearDescription);
   FieldMessage_ShowAtActor(speaker, 0);
-  return FieldScript_AskYesNoWithActorAnimation(0, 0);
+  return Event_AskYesNoWithActorAnimation(0, 0);
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
@@ -366,8 +366,8 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   } else {
     message = MsgColossoStageThirdFinalsMatch;
   }
-  FieldScript_SetMessageId(message + 1);
-  FieldScript_ShowMessageAndWait(speaker, 0);
+  Event_SetMessageId(message + 1);
+  Event_ShowMessageAndWait(speaker, 0);
 }
 
 /// The guide at a stage, with the reply
@@ -404,22 +404,22 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
       members[i] = gSaveBlock.party[i];
     }
     if (memberCount <= 1) {
-      FieldScript_SetMessageId(MsgColossoDoYourBest);
-      Script_ShowMessage(guide, 0);
+      Event_SetMessageId(MsgColossoDoYourBest);
+      Event_ShowMessage(guide, 0);
       return;
     }
     if (GameFlag_Get(stage + COLOSSO_STAGE_CHEERED) != 0) {
-      FieldScript_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
-      Script_ShowMessage(guide, 0);
+      Event_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
+      Event_ShowMessage(guide, 0);
       return;
     }
     if (mode == COLOSSO_GUIDE_CHEER) {
       answer = 0;
       WaitFrames(6);
     } else {
-      FieldScript_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
-      Script_OpenMessage(guide, 0);
-      answer = FieldScript_AskYesNoWithActorAnimation(0, 0);
+      Event_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
+      Event_OpenMessage(guide, 0);
+      answer = Event_AskYesNoWithActorAnimation(0, 0);
     }
     if (answer == 0) {
       if (answer < memberCount) {
@@ -444,13 +444,13 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
       }
     }
   }
-  FieldScript_SetMessageId(MsgColossoIfKnowWhoWantCheer);
-  Script_ShowMessage(guide, 0);
+  Event_SetMessageId(MsgColossoIfKnowWhoWantCheer);
+  Event_ShowMessage(guide, 0);
   return;
 L_main:
   MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
-  FieldScript_SetMessageId(MsgColossoIsaacWillCheerForWay);
-  Script_ShowMessage(guide, 0);
+  Event_SetMessageId(MsgColossoIsaacWillCheerForWay);
+  Event_ShowMessage(guide, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);

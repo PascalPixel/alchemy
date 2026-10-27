@@ -1,19 +1,19 @@
 	.set overlay_imports, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Scene_AssignViewFlags, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
-	.set import.FieldScript_ShowMessageThenWait, 1
-	.set import.FieldScript_AskYesNoAndShowResponse, 1
+	.set import.Event_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageThenWait, 1
+	.set import.Event_AskYesNoAndShowResponse, 1
 	.set import.Actor_ArmCallback, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.Shop_Run, 1

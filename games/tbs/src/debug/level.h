@@ -11,6 +11,6 @@
 
 void Import_ActorSetAnimation();
 void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
-void Import_ScriptRequestExit();
+void Import_EventSetExitRequest();
 
 #endif

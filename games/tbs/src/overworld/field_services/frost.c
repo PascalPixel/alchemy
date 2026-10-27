@@ -31,7 +31,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {
 }
 
 /// Both winding directions share the countdown and position update. timer
-/// starts at 60 (FieldEffect_RunFrost). The particle circles its target point
+/// starts at 60 (FieldPsynergy_Frost). The particle circles its target point
 /// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
 /// each frame left, so it closes in from 118 pixels.
 static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
@@ -80,17 +80,17 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor) {
 ///
 /// The target is the actor in effectWork->child. With childMode the
 /// target is left as it is and only the particles appear.
-void FieldEffect_RunFrostOnTarget(s32 unused) {
+void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->child;
 
   if (target != 0) {
-    // enabled set skips the target's part of FieldEffect_RunFrost.
+    // enabled set skips the target's part of FieldPsynergy_Frost.
     if (effectWork->childMode != 0) {
       effectWork->enabled = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    FieldEffect_RunFrost();
+    FieldPsynergy_Frost();
   }
 }
 
@@ -100,12 +100,12 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
 /// The target's part runs only when a trigger named the target
-/// (FieldEffect_DispatchRequestKind clears enabled) and no map script set
+/// (FieldPsynergy_Dispatch clears enabled) and no map script set
 /// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
 /// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
-/// the map's Frost event. Called by FieldEffect_Run and
-/// FieldEffect_RunFrostOnTarget.
-void FieldEffect_RunFrost(void) {
+/// the map's Frost event. Called by FieldPsynergy_Run and
+/// FieldPsynergy_FrostOnTarget.
+void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;
   struct Vector3 *p;
@@ -117,7 +117,7 @@ void FieldEffect_RunFrost(void) {
 
   effectWork = gFieldEffectWork;
   target = effectWork->child;
-  FieldEffect_FadeToEffectColor();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlaySongFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
@@ -178,14 +178,13 @@ void FieldEffect_RunFrost(void) {
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;
-    event =
-        Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS),
-                                  FIELD_PSYNERGY_FROST, &eventTarget);
+    event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                      FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
+      Field_RunPsynergyEvent(event, gSaveBlock.leaderActorId, eventTarget);
     }
     WaitFrames(20);
   }
 
-  FieldEffect_FadeFromEffectColor();
+  FieldPsynergy_FadeFromCastColor();
 }

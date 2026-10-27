@@ -88,7 +88,7 @@ struct SpriteArcOamView {
 /// down); they follow it for 32 frames, then free themselves. They draw
 /// with the effect's spark tiles, so they need the effect's work; the
 /// casting hooks below spawn them every 16 frames, and
-/// FieldEffect_End waits for the last to end (at most 30
+/// FieldPsynergy_End waits for the last to end (at most 30
 /// frames).
 void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -135,7 +135,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
+/// frames and spawns the swelling arcs on it every 16. FieldPsynergy_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
 void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
@@ -151,7 +151,7 @@ void FieldEffect_FlickerActorAndTick(struct Actor *updated) {
 
 /// Per-frame update: cycles an object through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
-/// FieldEffect_StartCast gives it to the caster in place of the flicker
+/// FieldPsynergy_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
 void FieldEffect_CycleActorValueByCounter(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;

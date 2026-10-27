@@ -134,33 +134,33 @@ const struct Trigger *Scene_GetTriggers(void) {
 ///
 /// Reached by talking to the leader (ACTOR_THIEF_LEADER) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
-static void EventScript_LeaderSilencesThieves(void) {
-  FieldScript_Start();
+static void StoneRooms_LeaderSilencesThieves(void) {
+  Event_Start();
 
   Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
 
   Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
 
   // "Shut yer yaps!"; the two thieves start.
-  FieldScript_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
-  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
+  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
   Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 
   // Turn from the two thieves to the party for the remaining dialogue.
   Actor_LinkPair(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
 
-  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// In Vault's jail, the thief on the left wishes they had escaped to the cave
@@ -168,13 +168,13 @@ static void EventScript_LeaderSilencesThieves(void) {
 ///
 /// Reached by talking to him (ACTOR_LEFT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
-static void EventScript_LeftThiefRegretsEscape(void) {
-  FieldScript_Start();
+static void StoneRooms_LeftThiefRegretsEscape(void) {
+  Event_Start();
   Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
-  FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(MsgVaultLeftThiefRegretsEscape);
-  FieldScript_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  Event_SetMessageId(MsgVaultLeftThiefRegretsEscape);
+  Event_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
+  Event_End();
 }
 
 /// In Vault's jail, the thief on the right shakes his head: he knew they
@@ -182,13 +182,13 @@ static void EventScript_LeftThiefRegretsEscape(void) {
 ///
 /// Reached by talking to him (ACTOR_RIGHT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
-static void EventScript_RightThiefRegretsStaying(void) {
-  FieldScript_Start();
+static void StoneRooms_RightThiefRegretsStaying(void) {
+  Event_Start();
   Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
-  FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(MsgVaultRightThiefRegretsStaying);
-  FieldScript_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
-  FieldScript_End();
+  Event_WaitFrames(20);
+  Event_SetMessageId(MsgVaultRightThiefRegretsStaying);
+  Event_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
+  Event_End();
 }
 
 /// Mind Read on the thieves' leader in Vault's jail: he'll be out of this jail
@@ -197,28 +197,28 @@ static void EventScript_RightThiefRegretsStaying(void) {
 /// Reached by Mind Read on ACTOR_THIEF_LEADER while FLAG_VAULT_THIEVES_JAILED
 /// is set; the two below are reached the same way on ACTOR_LEFT_THIEF and
 /// ACTOR_RIGHT_THIEF.
-static void EventScript_ReadLeaderMind(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultThiefLeaderThoughts);
-  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
-  FieldScript_End();
+static void StoneRooms_ReadLeaderMind(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultThiefLeaderThoughts);
+  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_End();
 }
 
 /// Mind Read on the thief on the left: will he ever run free again?
-static void EventScript_ReadLeftThiefMind(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultLeftThiefThoughts);
-  FieldScript_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
-  FieldScript_End();
+static void StoneRooms_ReadLeftThiefMind(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultLeftThiefThoughts);
+  Event_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
+  Event_End();
 }
 
 /// Mind Read on the thief on the right: is this because they stole Hammet's
 /// Shaman's Rod?
-static void EventScript_ReadRightThiefMind(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MsgVaultRightThiefThoughts);
-  FieldScript_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
-  FieldScript_End();
+static void StoneRooms_ReadRightThiefMind(void) {
+  Event_Start();
+  Event_SetMessageId(MsgVaultRightThiefThoughts);
+  Event_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
+  Event_End();
 }
 
 /// The party steps out of Vault's jail into Vault, with the exit sound.
@@ -227,9 +227,9 @@ static void EventScript_ReadRightThiefMind(void) {
 /// thieves' table, that is, entered from Vault or Lunpa; takes
 /// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
 /// by a plain exit instead, STONE_ROOMS_TO_VAULT_REVISIT.
-static void EventScript_LeaveForVault(void) {
+static void StoneRooms_LeaveForVault(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestExit(STONE_ROOMS_TO_VAULT);
+  Import_EventSetExitRequest(STONE_ROOMS_TO_VAULT);
 }
 
 /// Opens the map through a window transition and lets the party reach the
@@ -295,20 +295,20 @@ const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
 };
 
 const struct Trigger gStoneRooms_ThiefTriggers[] = {
-    { TRIGGER_STEP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
+    { TRIGGER_STEP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT(StoneRooms_LeaveForVault) },
     { TRIGGER_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
     { TRIGGER_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
+      EVENT(StoneRooms_LeaderSilencesThieves) },
     { TRIGGER_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EventScript_LeftThiefRegretsEscape) },
+      EVENT(StoneRooms_LeftThiefRegretsEscape) },
     { TRIGGER_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EventScript_RightThiefRegretsStaying) },
+      EVENT(StoneRooms_RightThiefRegretsStaying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_LEADER,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeaderMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT(StoneRooms_ReadLeaderMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeftThiefMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT(StoneRooms_ReadLeftThiefMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadRightThiefMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT(StoneRooms_ReadRightThiefMind) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,

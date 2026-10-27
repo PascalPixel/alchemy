@@ -14,7 +14,7 @@
 ///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
 ///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
 ///   leads there (Scene_Initialize). Searching the switch flips it
-///   (EventScript_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
+///   (VaultCave_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
 ///   turns, the cave rumbles and shakes for eight seconds, and its map changes
 ///   as it fades (VaultCave_RunRumble). The change reaches
 ///   SceneId_VaultCaveVambrace too: arriving in its northern room
@@ -34,7 +34,7 @@
 ///   ENCOUNTER_ZONE_MIMIC).
 /// - Vault Cave (SceneId_VaultCaveVambrace). In its southern room a pillar
 ///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
-///   (EventScript_PushSouthernPillar) or Move (EventScript_MoveSouthernPillar);
+///   (VaultCave_PushSouthernPillar) or Move (VaultCave_MoveSouthernPillar);
 ///   once it rests there the puzzle chime plays and the switch opens the way
 ///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
 ///   water (ACTOR_FIRST_WATER_DROP and the five after it) fall at random, one
@@ -61,7 +61,7 @@
 ///   Vault (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
 ///
 /// Each room has a door that only says it is locked
-/// (EventScript_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
+/// (VaultCave_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
 /// which moves the pillar the leader faces one cell unless another actor
 /// or the terrain is in the way, and the water drops run as map callbacks
 /// started by Scene_Initialize.
@@ -218,7 +218,7 @@ enum VaultCaveMouthActorId {
   /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// A pillar two cells south of the northern switch, which Move leaves where
-  /// it is (EventScript_IgnoreMove).
+  /// it is (VaultCave_IgnoreMove).
   /// ★ Named from what the player sees: a pink stone pillar, its flame out
   /// (its render)
   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
@@ -406,13 +406,13 @@ static void VaultCave_PushPillarAhead(void) {
 /// of SceneId_VaultCaveVambrace, and the ivy stays gone for as long as the
 /// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area
 /// flag).
-static void EventScript_UseWhirlwind(void) {
+static void VaultCave_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
 
 /// In any room of Vault Cave, searching the locked door only says so.
 /// "The door is tightly locked."
-static void EventScript_ShowLockedDoor(void) {
+static void VaultCave_ShowLockedDoor(void) {
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
@@ -460,15 +460,15 @@ static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernPillarOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
-    Script_PlaySong(MUS_PUZZLE_SOLVED);
+    Event_PlaySong(MUS_PUZZLE_SOLVED);
     VaultCave_ApplySouthernSwitchCells();
   }
 }
 
 /// In VaultCaveVambrace's southern room, pushing the southern pillar; once it
 /// rests on its switch, the puzzle chime plays and the switch opens the way.
-static void EventScript_PushSouthernPillar(void) {
-  if (Script_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+static void VaultCave_PushSouthernPillar(void) {
+  if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
     VaultCave_CompleteSouthernSwitch();
   }
@@ -483,8 +483,8 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
 
 /// In VaultCaveVambrace's southern room, Move on the southern pillar, with the
 /// same switch check.
-static void EventScript_MoveSouthernPillar(void) {
-  if (Script_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+static void VaultCave_MoveSouthernPillar(void) {
+  if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
   }
 }
@@ -526,7 +526,7 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
       if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-        Script_PlaySong(MUS_PUZZLE_SOLVED);
+        Event_PlaySong(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
       }
@@ -536,25 +536,25 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
 
 /// In VaultCaveMouth's northern room, pushing the northern pillar; it opens its
 /// switch only if no water drop has struck it.
-static void EventScript_PushNorthernPillar(void) {
+static void VaultCave_PushNorthernPillar(void) {
   VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
 /// In VaultCaveMouth's northern room, Move on
 /// ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH does nothing.
-static void EventScript_IgnoreMove(void) {}
+static void VaultCave_IgnoreMove(void) {}
 
 /// In VaultCaveMouth's northern room, Move on the northern pillar, with the
 /// same switch check.
-static void EventScript_MoveNorthernPillar(void) {
+static void VaultCave_MoveNorthernPillar(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
 /// Frost freezes the upper western puddle.
 /// The puddle is in VaultCaveVambrace's puddle room; freezing it changes its
 /// map cell, and arriving again re-freezes every puddle whose flag is set.
-static void EventScript_FreezeWestUpperPuddle(void) {
+static void VaultCave_FreezeWestUpperPuddle(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
   // of r5 alone and changes the map-copy argument registers in native English.
   struct Actor *target = Actor_GetById(ACTOR_WEST_UPPER_PUDDLE);
@@ -572,7 +572,7 @@ static void EventScript_FreezeWestUpperPuddle(void) {
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
 /// the upper one.
-static void EventScript_FreezeWestLowerPuddle(void) {
+static void VaultCave_FreezeWestLowerPuddle(void) {
   struct Actor *target = Actor_GetById(ACTOR_WEST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 34);
@@ -587,7 +587,7 @@ static void EventScript_FreezeWestLowerPuddle(void) {
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
-static void EventScript_FreezeInnerWestLowerPuddle(void) {
+static void VaultCave_FreezeInnerWestLowerPuddle(void) {
   struct Actor *target = Actor_GetById(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 24, 34);
@@ -602,7 +602,7 @@ static void EventScript_FreezeInnerWestLowerPuddle(void) {
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
-static void EventScript_FreezeEastUpperPuddle(void) {
+static void VaultCave_FreezeEastUpperPuddle(void) {
   struct Actor *target = Actor_GetById(ACTOR_EAST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 32);
@@ -618,7 +618,7 @@ static void EventScript_FreezeEastUpperPuddle(void) {
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
-static void EventScript_FreezeEastLowerPuddle(void) {
+static void VaultCave_FreezeEastLowerPuddle(void) {
   struct Actor *target = Actor_GetById(ACTOR_EAST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 34);
@@ -634,7 +634,7 @@ static void EventScript_FreezeEastLowerPuddle(void) {
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
-static void EventScript_FreezeFarEastPuddle(void) {
+static void VaultCave_FreezeFarEastPuddle(void) {
   struct Actor *target = Actor_GetById(ACTOR_FAR_EAST_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 28, 33);
@@ -697,7 +697,7 @@ static void VaultCave_RunRumble(void) {
   s32 lowFadeLevel;
   s32 upperFadeBits;
 
-  FieldScript_Start();
+  Event_Start();
   if (gFrameCount & 1) {
     layer->speedX = 1;
     layer->speedY = 1;
@@ -707,13 +707,13 @@ static void VaultCave_RunRumble(void) {
   }
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Script_PlaySong(SE_RUSH);
+  Event_PlaySong(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
-    FieldScript_WaitFrames(1);
+    Event_WaitFrames(1);
   }
   // Keep the packed native value written to BLDALPHA.
   fadeLevel = 6;
@@ -723,7 +723,7 @@ static void VaultCave_RunRumble(void) {
   do {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA,
                          upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
-    FieldScript_WaitFrames(1);
+    Event_WaitFrames(1);
     if (frame % 20 == 0) {
       lowFadeLevel--;
       fadeLevel--;
@@ -732,10 +732,10 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-  Script_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySong(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_WaitForShakeToSettle();
-  FieldScript_End();
+  Event_End();
 }
 
 /// In VaultCavePassage's pool room, searching the switch flips it.
@@ -743,27 +743,27 @@ static void VaultCave_RunRumble(void) {
 /// Vault, the switch turns, the cave rumbles and shakes for eight seconds and
 /// the map changes as it fades; FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the
 /// change until the party comes down the ladder from Vault again.
-static void EventScript_FlipSwitch(void) {
+static void VaultCave_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
 
-  if (Script_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+  if (Event_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
-    Script_PlaySong(SE_SWITCH);
+    Event_PlaySong(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
-    FieldScript_WaitFrames(39);
+    Event_WaitFrames(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
-    FieldScript_WaitFrames(50);
+    Event_WaitFrames(50);
     destinationColumn = 25;
-    Script_PlaySong(SE_SWITCH_MECHANISM);
+    Event_PlaySong(SE_SWITCH_MECHANISM);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     VaultCave_RunRumble();
   }
 }
@@ -829,23 +829,23 @@ static void VaultCave_UpdateTimedFallingActors(void) {
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
           fallingActor->paused = 0;
-          Script_PlaySong(SE_DRIP);
+          Event_PlaySong(SE_DRIP);
         }
       }
     }
     // A water drop landing on either movable pillar restarts at the top.
     if (VaultCave_ResetFallingActorAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
       Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
-      if (Script_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
+      if (Event_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
-        Script_PlaySong(SE_DUST_PUFF);
+        Event_PlaySong(SE_DUST_PUFF);
       } else {
-        Script_PlaySong(SE_DRIP);
+        Event_PlaySong(SE_DRIP);
       }
     }
     if (VaultCave_ResetFallingActorAtActorCell(
             ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
-      Script_PlaySong(SE_DRIP);
+      Event_PlaySong(SE_DRIP);
     }
   }
 }
@@ -1034,27 +1034,27 @@ s32 Scene_Initialize(void) {
       VaultCave_StartFrostControlledFalls();
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_WEST_UPPER_PUDDLE, 5);
-        EventScript_FreezeWestUpperPuddle();
+        VaultCave_FreezeWestUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_WEST_LOWER_PUDDLE, 5);
-        EventScript_FreezeWestLowerPuddle();
+        VaultCave_FreezeWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_INNER_WEST_LOWER_PUDDLE, 5);
-        EventScript_FreezeInnerWestLowerPuddle();
+        VaultCave_FreezeInnerWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_EAST_UPPER_PUDDLE, 5);
-        EventScript_FreezeEastUpperPuddle();
+        VaultCave_FreezeEastUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_EAST_LOWER_PUDDLE, 5);
-        EventScript_FreezeEastLowerPuddle();
+        VaultCave_FreezeEastLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0) {
         Import_ActorSetAnimation(ACTOR_FAR_EAST_PUDDLE, 5);
-        EventScript_FreezeFarEastPuddle();
+        VaultCave_FreezeFarEastPuddle();
       }
       Task_AddFrame(VaultCave_UpdatePuddlePriorities, TASK_PASS_FRAME);
       break;
@@ -1326,8 +1326,8 @@ struct Trigger gVaultCavePassage_Triggers[] = {
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_LADDER_TO_CHEST },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_CHEST_TO_LADDER },
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FlipSwitch) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_FlipSwitch) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VAULT_CAVE_CHEST, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
     { TRIGGERS_END },
 };
@@ -1347,16 +1347,16 @@ struct Trigger gVaultCaveVambrace_Triggers[] = {
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST },
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VAULT_CAVE_CHEST, FLAG_VAULT_CAVE_VAMBRACE_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveSouthernPillar) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VAULT_CAVE_SOUTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSouthernPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_UPPER_PUDDLE, FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestUpperPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestLowerPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_INNER_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeInnerWestLowerPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_UPPER_PUDDLE, FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastUpperPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastLowerPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeFarEastPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_UseWhirlwind) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT(VaultCave_MoveSouthernPillar) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VAULT_CAVE_SOUTHERN_PILLAR, CONDITION_ALWAYS, EVENT(VaultCave_PushSouthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_UPPER_PUDDLE, FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeWestUpperPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeWestLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_INNER_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeInnerWestLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_UPPER_PUDDLE, FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeEastUpperPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeEastLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT(VaultCave_FreezeFarEastPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT(VaultCave_UseWhirlwind) },
     { TRIGGERS_END },
 };
 
@@ -1367,10 +1367,10 @@ struct Trigger gVaultCaveMouth_Triggers[] = {
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_SOUTH_TO_NORTH },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_NORTH_TO_SOUTH },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VAULT_CAVE_NORTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushNorthernPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveNorthernPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VAULT_CAVE_NORTHERN_PILLAR, CONDITION_ALWAYS, EVENT(VaultCave_PushNorthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT(VaultCave_MoveNorthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_IgnoreMove) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
     { TRIGGERS_END },
 };
 

@@ -105,11 +105,11 @@
 /// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
 /// clears it when the after trigger has subject bit 0x400 and plays its own;
 /// the before event's script may clear it too.
-#define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the actor ahead (FieldEffect_DispatchRequestKind)
-/// rather than run the kind's untargeted body (FieldEffect_Run, where Halt
+#define FLAG_PLAY_PSYNERGY_CAST 0x140
+/// Aim the effect at the actor ahead (FieldPsynergy_Dispatch)
+/// rather than run the kind's untargeted body (FieldPsynergy_Run, where Halt
 /// still stops the nearest actor when it has a talk trigger, and Force and
-/// Reveal run their PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps
+/// Reveal run their PSYNERGY_PHASE_ACTS event). Field_UsePsynergy keeps
 /// it set only when a trigger applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
 /// Set before an action on the field; still set afterwards, nothing came of it
@@ -160,7 +160,7 @@
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
-/// (FieldEffect_FadeToEffectColor).
+/// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512
 /// resource blocks are free.
@@ -255,10 +255,10 @@
 /// The next layout keeps the palette and tiles already loaded, once.
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
 /// Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum
-/// and come out of his cottage ready to go (EventScript_KradenSetsOff). Until
-/// then Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden, Saturos
-/// and Menardi are gone from outside the cottage. ★ Named from the game: "Do
-/// you mean we should go into Sol Sanctum ourselves?"
+/// and come out of his cottage ready to go (ValeKradensCottage_KradenSetsOff).
+/// Until then Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden,
+/// Saturos and Menardi are gone from outside the cottage. ★ Named from the
+/// game: "Do you mean we should go into Sol Sanctum ourselves?"
 /// (MsgValeJennaTheyMightBeThieves)
 #define FLAG_SANCTUM_VISIT_PLANNED 0x801
 /// The party has come in through Sol Sanctum's door the first time, and
@@ -274,9 +274,9 @@
 /// deeper into the sanctum." (MsgSolSanctumWrongKraden)
 #define FLAG_SEARCHING_FOR_HIDDEN_PASSAGE 0x804
 /// Isaac, Garet and Jenna have overheard the two strangers outside Kraden's
-/// cottage and been let go (EventScript_MeetSaturosAndMenardi). Afterwards the
-/// two stand watching the leader, and Vale's barking puppies are gone. ★ Named
-/// from the game: "Saturos and Menardi were their names, right?"
+/// cottage and been let go (ValeKradensCottage_MeetSaturosAndMenardi).
+/// Afterwards the two stand watching the leader, and Vale's barking puppies are
+/// gone. ★ Named from the game: "Saturos and Menardi were their names, right?"
 /// (MsgValeKradenOhIsaac)
 #define FLAG_MET_SATUROS_AND_MENARDI 0x808
 /// The first Small Jewel is set in the empty eye of Sol Sanctum's first

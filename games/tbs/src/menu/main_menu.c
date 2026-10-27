@@ -443,8 +443,8 @@ s32 MainMenu_Run(void) {
   MainMenu_LoadBackground();
   Task_AddFrame(MainMenu_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = blendStarted;
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   // MAIN_MENU_FROM_TITLE, after the credits (Title_Run): save the cleared game,
   // then WORLD_MAP_FROM_MAIN_MENU. Cancelling the file choice asks
   // again.
@@ -464,12 +464,11 @@ s32 MainMenu_Run(void) {
         goto L_ask;
       }
     }
-    FieldScript_WaitFrames(60);
-    FieldScript_FinishScreenTransition();
+    Event_WaitFrames(60);
+    Event_FinishScreenTransition();
     Sound_PlaySong(SONG_FADE_OUT_BGM);
-    FieldScript_WaitFrames(0x12c);
-    FieldScript_SetDestination((s32)&SceneId_WorldMap,
-                               WORLD_MAP_FROM_MAIN_MENU);
+    Event_WaitFrames(0x12c);
+    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -550,7 +549,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    Script_SetFlag(FLAG_KEEP_PARTY_POSITION);
+    Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
@@ -612,7 +611,7 @@ menu_top:;
       goto menu_top;
     }
     gSaveBlock.leaderActorId = 0;
-    if (Script_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
+    if (Event_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
       Party_RemoveMember(1);
@@ -628,8 +627,8 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    FieldScript_SetDestination((s32)&SceneId_BattleArena,
-                               BATTLE_ARENA_FROM_MAIN_MENU);
+    Event_SetDestination((s32)&SceneId_BattleArena,
+                         BATTLE_ARENA_FROM_MAIN_MENU);
     goto leave;
   } else {
     if (v6 != 5) {
@@ -933,11 +932,11 @@ menu_top:;
   }
 leave:;
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  FieldScript_WaitFrames(60);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_WaitFrames(60);
   return 0;
 }
 

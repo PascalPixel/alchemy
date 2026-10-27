@@ -360,81 +360,81 @@ const struct Trigger *Imil_GetTriggers(void) {
 /// man sneezes and shivers, waiting for Mia; once she travels with the party,
 /// he says that even her healing can't help them all.
 static void Imil_TalkToFreezingYoungMan(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilEvenIfMiaHealsUs));
+    Event_SetMessageId(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
+    Event_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
   }
   {
     s32 val = 0;
     s32 speaker = ACTOR_FREEZING_YOUNG_MAN;
-    FieldScript_ShowMessageAndWait(speaker, val);
+    Event_ShowMessageAndWait(speaker, val);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on the freezing young man in Imil, until Saturos is beaten: Mia
 /// should be here by now, or, once she has joined the party, he can't
 /// understand why anyone would exercise in the cold.
 static void Imil_ReadFreezingYoungMansMind(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilCantUnderstandWhyAnyOne));
+    Event_SetMessageId(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilMiaShouldHereByNow));
+    Event_SetMessageId(MSGNO(MsgImilMiaShouldHereByNow));
   }
-  FieldScript_ShowMessageAndWait(ACTOR_FREEZING_YOUNG_MAN, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_FREEZING_YOUNG_MAN, 0);
+  Event_End();
 }
 
 /// A small boy in Imil, until Saturos is beaten, turns to the leader and asks
 /// whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_SetAngleToward(ACTOR_GREETING_BOY, ACTOR_PARTY_LEADER, 10);
-  FieldScript_SetMessageId(MSGNO(MsgImilHiNewInImil));
-  FieldScript_AskYesNoAndShowResponse(ACTOR_GREETING_BOY, 0);
-  FieldScript_End();
+  Event_SetMessageId(MSGNO(MsgImilHiNewInImil));
+  Event_AskYesNoAndShowResponse(ACTOR_GREETING_BOY, 0);
+  Event_End();
 }
 
 /// The strongman who keeps in shape pauses his exercises to talk. He stops,
 /// turns to the leader and goes back to counting; once Saturos is beaten, he
 /// wonders what he trained so hard for.
 static void Imil_TalkToStrongmanKeepingInShape(void) {
-  FieldScript_Start();
+  Event_Start();
 
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilCountingAfterDeparture));
-    Script_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
+    Event_SetMessageId(MSGNO(MsgImilCountingAfterDeparture));
+    Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
-    Script_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
+    Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                              IMIL_ANIMATION_SQUATS);
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
-    Script_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
+    Event_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
+    Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_SetAttachedEffect(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ANIM_STAND);
-    FieldScript_WaitFrames(20);
+    Event_WaitFrames(20);
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
-    Script_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
+    Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                              IMIL_ANIMATION_SQUATS);
   }
 
-  FieldScript_End();
+  Event_End();
 }
 
 /// The old man in the old couple's house moans for help, and his wife hurries
@@ -447,51 +447,51 @@ static void Imil_TalkToOldMan(void) {
   struct Actor *oldWoman;
 
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    FieldScript_Start();
+    Event_Start();
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(MsgMercuryReallySayDie);
-    Script_AskYesNo(ACTOR_OLD_MAN, 0);
-    FieldScript_End();
+    Event_WaitFrames(10);
+    Event_SetMessageId(MsgMercuryReallySayDie);
+    Event_AskYesNo(ACTOR_OLD_MAN, 0);
+    Event_End();
   } else {
     if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
-      FieldScript_Start();
+      Event_Start();
       Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
       MapGrid_PlayMetatileCopySequence(gImil_CellStepsA, 10, 69);
-      FieldScript_SetMessageId(MsgMercuryFeelMuchBetter);
-      Script_ShowMessage(ACTOR_OLD_MAN, 0);
+      Event_SetMessageId(MsgMercuryFeelMuchBetter);
+      Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
       MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
-      FieldScript_End();
+      Event_End();
     } else {
-      FieldScript_Start();
+      Event_Start();
       oldMan = Actor_GetById(ACTOR_OLD_MAN);
       oldMan->timer = 10;
       Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
-      FieldScript_SetMessageId(MsgMercuryOoohHelpMe);
-      FieldScript_ShowMessageAndWait(ACTOR_OLD_MAN, 0);
+      Event_SetMessageId(MsgMercuryOoohHelpMe);
+      Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0);
       Actor_Stop(ACTOR_OLD_WOMAN);
       Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH + FACING_STEP, 10);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
-      Script_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 20);
+      FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 20);
       Actor_SetScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
       Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
       Actor_RunScriptAndWait(ACTOR_OLD_WOMAN, gImil_OldWomanHurryScript);
-      FieldScript_WaitFrames(40);
+      Event_WaitFrames(40);
       Actor_Jump(ACTOR_OLD_WOMAN, 2, 0);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       FieldEffect_SetAttached(ACTOR_OLD_WOMAN,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      FieldScript_WaitFrames(60);
-      Script_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
+      Event_WaitFrames(60);
+      FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
-      FieldScript_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0);
+      Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0);
       oldWoman = Actor_GetById(ACTOR_OLD_WOMAN);
       oldWoman->collisionFlags ^= 0x2;
       Import_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
-      FieldScript_End();
+      Event_End();
     }
   }
 }
@@ -500,19 +500,19 @@ static void Imil_TalkToOldMan(void) {
 /// whether the party wants weapons, cannot sell them until he is cured, and
 /// blames the travellers from the south for the disease.
 static void Imil_AskAboutWeapons(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MSGNO(MsgImilDoWantWeapons));
-  FieldScript_AskYesNoAndShowResponse(ACTOR_WEAPON_MERCHANT, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MSGNO(MsgImilDoWantWeapons));
+  Event_AskYesNoAndShowResponse(ACTOR_WEAPON_MERCHANT, 0);
+  Event_End();
 }
 
 /// The restaurant owner of Imil, a young man, until Saturos is beaten, offers
 /// the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MSGNO(MsgImilDoWantSeeRestaurantMenu));
-  FieldScript_AskYesNoAndShowResponse(ACTOR_RESTAURANT_OWNER, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MSGNO(MsgImilDoWantSeeRestaurantMenu));
+  Event_AskYesNoAndShowResponse(ACTOR_RESTAURANT_OWNER, 0);
+  Event_End();
 }
 
 /// Megan asks whether the party has visited the old couple.
@@ -521,56 +521,56 @@ static void Imil_AskAboutRestaurantMenu(void) {
 /// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, she says
 /// everyone counts on her.
 static void Imil_TalkToMegan(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilEveryoneCountsOnMiaThats));
-    FieldScript_ShowMessageAndWait(ACTOR_MEGAN, 0);
+    Event_SetMessageId(MSGNO(MsgImilEveryoneCountsOnMiaThats));
+    Event_ShowMessageAndWait(ACTOR_MEGAN, 0);
   } else {
-    FieldScript_SetMessageId(MsgImilHaveVisitedOldCoupleWho);
-    FieldScript_AskYesNoAndShowResponse(ACTOR_MEGAN, 0);
+    Event_SetMessageId(MsgImilHaveVisitedOldCoupleWho);
+    Event_AskYesNoAndShowResponse(ACTOR_MEGAN, 0);
     Import_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
     Import_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
   }
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on Megan in the Imil Sanctum, until Saturos is
 /// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
 static void Imil_ReadMegansMind(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilWeHaveDoWhateverWe));
+    Event_SetMessageId(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilMiaWasSayingSheHas));
+    Event_SetMessageId(MSGNO(MsgImilMiaWasSayingSheHas));
   }
-  FieldScript_ShowMessageAndWait(ACTOR_MEGAN, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_MEGAN, 0);
+  Event_End();
 }
 
 /// The old woman of the old couple asks what happened at the lighthouse. She's
 /// in their house after Mia's healing and until Saturos is beaten.
 static void Imil_TalkToOldWoman(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
-  Script_ShowMessage(ACTOR_OLD_WOMAN, 0);
+  Event_Start();
+  Event_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
+  Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 10);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mind Read on the old woman of the old couple's house, until Saturos is
 /// beaten: about Mia's clan, her husband's exaggerating, or Mia running all
 /// over town.
 static void Imil_ReadOldWomanMind(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilMiaClanOnceLivedHere));
+    Event_SetMessageId(MSGNO(MsgImilMiaClanOnceLivedHere));
   } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
+    Event_SetMessageId(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilMiaRunningAroundTownCaring));
+    Event_SetMessageId(MSGNO(MsgImilMiaRunningAroundTownCaring));
   }
-  FieldScript_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0);
+  Event_End();
 }
 
 /// After Mia's visit, speaking across the bed in the old couple's house
@@ -580,24 +580,24 @@ static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 /// After Mia's visit, Mind Read across the bed in the old couple's house
 /// reaches the old man: he admires Mia, and wishes he had a daughter like her.
 static void Imil_ReadOldManInBedMind(void) {
-  FieldScript_Start();
-  FieldScript_SetMessageId(MSGNO(MsgImilMiaIsAGoodGirlI));
-  FieldScript_ShowMessageAndWait(ACTOR_OLD_MANS_BED, 0);
-  FieldScript_End();
+  Event_Start();
+  Event_SetMessageId(MSGNO(MsgImilMiaIsAGoodGirlI));
+  Event_ShowMessageAndWait(ACTOR_OLD_MANS_BED, 0);
+  Event_End();
 }
 
 /// Mind Read on Justin in the Imil Sanctum, until Saturos is beaten:
 /// he thinks the party are not bad people, or, once Mia has joined, he feels
 /// grown up serving as a healer.
 static void Imil_ReadJustinsMind(void) {
-  FieldScript_Start();
+  Event_Start();
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    FieldScript_SetMessageId(MSGNO(MsgImilFeelLikeGrownUpWhen));
+    Event_SetMessageId(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
-    FieldScript_SetMessageId(MSGNO(MsgImilTheseFolkOkayTheyDont));
+    Event_SetMessageId(MSGNO(MsgImilTheseFolkOkayTheyDont));
   }
-  FieldScript_ShowMessageAndWait(ACTOR_JUSTIN, 0);
-  FieldScript_End();
+  Event_ShowMessageAndWait(ACTOR_JUSTIN, 0);
+  Event_End();
 }
 
 /// Walking north into one of Imil's six doors (step triggers 51 to 56):
@@ -610,7 +610,7 @@ static void Imil_OpenDoorAndExit(void) {
   s32 exit;
 
   work = gFieldWork;
-  FieldScript_Start();
+  Event_Start();
   for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
     actor = Actor_GetById(i);
     if (actor != NULL) {
@@ -640,9 +640,9 @@ static void Imil_OpenDoorAndExit(void) {
     Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
-  FieldScript_WaitFrames(16);
-  Import_ScriptRequestExit(exit);
-  FieldScript_End();
+  Event_WaitFrames(16);
+  Import_EventSetExitRequest(exit);
+  Event_End();
 }
 
 /// Imil's weapon shop. Once Saturos is beaten, talking to the seller across
@@ -658,26 +658,26 @@ static void Imil_TalkToWeaponMerchant(void) {
       Shop_Run(SHOP_IMIL_WEAPONS, ACTOR_WEAPON_MERCHANT);
       return;
     }
-    FieldScript_Start();
+    Event_Start();
     Actor_SetAngleToward(ACTOR_WEAPON_MERCHANT, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(MsgMercuryCatchUpLostOpportunity);
-    FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_WaitFrames(10);
+    Event_SetMessageId(MsgMercuryCatchUpLostOpportunity);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_WEAPON_MERCHANT, FACING_SOUTH, 10);
-    FieldScript_End();
+    Event_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      FieldScript_Start();
+      Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       Actor_RunScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
-      FieldScript_SetMessageId(MsgMercuryStoreClosedUntilWell);
-      FieldScript_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+      Event_SetMessageId(MsgMercuryStoreClosedUntilWell);
+      Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_End();
+      Event_End();
     }
   }
 }
@@ -694,26 +694,26 @@ static void Imil_TalkToArmorMerchant(void) {
       Shop_Run(SHOP_IMIL_ARMOR, ACTOR_ARMOR_MERCHANT);
       return;
     }
-    FieldScript_Start();
+    Event_Start();
     Actor_SetAngleToward(ACTOR_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
-    FieldScript_WaitFrames(10);
-    FieldScript_SetMessageId(MsgMercuryShameStoreClosed);
-    FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_WaitFrames(10);
+    Event_SetMessageId(MsgMercuryShameStoreClosed);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ARMOR_MERCHANT, FACING_SOUTH, 10);
-    FieldScript_End();
+    Event_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      FieldScript_Start();
+      Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_WaitFrames(20);
+      Event_WaitFrames(20);
       Actor_RunScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
-      FieldScript_SetMessageId(MsgMercuryTooSickBusiness);
-      FieldScript_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+      Event_SetMessageId(MsgMercuryTooSickBusiness);
+      Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_End();
+      Event_End();
     }
   }
 }
@@ -730,27 +730,27 @@ static void Imil_TalkToItemMerchant(void) {
       Shop_Run(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANT);
       return;
     }
-    FieldScript_Start();
+    Event_Start();
     Actor_SetAngleToward(ACTOR_ITEM_MERCHANT, ACTOR_PARTY_LEADER, 0);
-    FieldScript_SetMessageId(MsgMercuryRecoveredThanksFountain);
-    FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_SetMessageId(MsgMercuryRecoveredThanksFountain);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ITEM_MERCHANT, FACING_SOUTH, 0);
-    FieldScript_End();
+    Event_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      FieldScript_Start();
-      FieldScript_SetMessageId(MsgMercuryMomsSickGetWhatever);
-      FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
+      Event_Start();
+      Event_SetMessageId(MsgMercuryMomsSickGetWhatever);
+      Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which loads r1 first; as a call by its void prototype, 1 of 70
        * instructions differ in tbs-en. */
       IMIL_OPEN_SHOP(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANTS_DAUGHTER);
-      FieldScript_End();
+      Event_End();
     } else {
       Actor_SetAngleToward(ACTOR_ITEM_MERCHANTS_DAUGHTER, ACTOR_PARTY_LEADER,
                            10);
-      FieldScript_SetMessageId(MsgMercuryDadLumberjack);
-      FieldScript_ShowMessageAndWait(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
+      Event_SetMessageId(MsgMercuryDadLumberjack);
+      Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
       Actor_FaceDirection(ACTOR_ITEM_MERCHANTS_DAUGHTER,
                           FACING_SOUTH + FACING_STEP, 10);
     }
@@ -767,17 +767,17 @@ static void Imil_TalkToInnkeeper(void) {
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
     Inn_CheckIn(IMIL_INN, ACTOR_INNKEEPER);
   } else {
-    FieldScript_Start();
+    Event_Start();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      FieldScript_SetMessageId(MSGNO(MsgImilItsAlmostTimeForLeave));
-      Script_AskYesNo(ACTOR_INNKEEPER, 0);
+      Event_SetMessageId(MSGNO(MsgImilItsAlmostTimeForLeave));
+      Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
-      FieldScript_SetMessageId(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
-      Script_ShowMessage(ACTOR_INNKEEPER, 0);
+      Event_SetMessageId(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
     Actor_FaceDirection(ACTOR_INNKEEPER, FACING_SOUTHEAST + FACING_STEP, 10);
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -789,28 +789,28 @@ static void Imil_TalkToJustin(void) {
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    FieldScript_Start();
-    if (Script_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
-      FieldScript_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
-      Script_ShowMessage(ACTOR_JUSTIN, 0);
+    Event_Start();
+    if (Event_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
+      Event_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
+      Event_ShowMessage(ACTOR_JUSTIN, 0);
       Import_GameFlagSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
     }
-    FieldScript_End();
+    Event_End();
     Sanctum_Run(ACTOR_JUSTIN);
   } else {
-    FieldScript_Start();
+    Event_Start();
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      FieldScript_SetMessageId(MSGNO(MsgImilMiaGoingOnJourneyWith));
-      Script_ShowMessage(ACTOR_JUSTIN, 0);
+      Event_SetMessageId(MSGNO(MsgImilMiaGoingOnJourneyWith));
+      Event_ShowMessage(ACTOR_JUSTIN, 0);
     } else if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-      FieldScript_SetMessageId(MSGNO(MsgImilAmHealerWhileMiaOut));
-      Script_ShowMessage(ACTOR_JUSTIN, 0);
+      Event_SetMessageId(MSGNO(MsgImilAmHealerWhileMiaOut));
+      Event_ShowMessage(ACTOR_JUSTIN, 0);
     } else {
-      FieldScript_SetMessageId(MSGNO(MsgImilLookingForMia));
-      (void)Script_AskYesNo(ACTOR_JUSTIN, 0);
+      Event_SetMessageId(MSGNO(MsgImilLookingForMia));
+      (void)Event_AskYesNo(ACTOR_JUSTIN, 0);
       Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTHEAST + FACING_STEP, 10);
     }
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -827,7 +827,7 @@ s32 Imil_Initialize(void) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Import_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                              IMIL_ANIMATION_SQUATS);
-    if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       GameFlag_Clear(FLAG_IMIL_NO_FOOTPRINTS);
       GameFlag_Clear(FLAG_IMIL_FOOTPRINTS);
     }
@@ -951,7 +951,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   const s32 *table;
   struct FieldWork *work;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_SetPosition(ACTOR_MIA, PIXELS(182), PIXELS(150));
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   WaitFrames(1);
@@ -960,7 +960,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
-  FieldScript_StartScreenTransition();
+  Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -987,57 +987,57 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldCamera_WaitForArrival();
   table = gImil_BobScript;
   Actor_SetScript(ACTOR_OLD_MAN, table);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   // Mia checks on the old man while the party enters the house.
-  FieldScript_SetMessageId(MSGNO(MsgImilHowFeeling));
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  Event_SetMessageId(MSGNO(MsgImilHowFeeling));
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetScript(ACTOR_OLD_MAN, table);
-  Script_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 40);
+  FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
   // Play the healing effect, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 40);
-  Script_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
+  FieldEvent_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
-  FieldScript_WaitFrames(10);
+  Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_OLD_MAN, 1);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
-  Script_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 10);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_MIA)->timer = 0;
   Actor_SetScript(ACTOR_MIA, gImil_MiaCheckRoomScript);
@@ -1047,38 +1047,38 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
   Actor_RefreshSelectorById(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 40);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  FieldScript_WaitFrames(10);
-  Script_ShowMessage(ACTOR_MIA, 0);
-  Script_PlaySong(SE_PSYNERGY_SPARKLE);
+  Event_WaitFrames(10);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Event_PlaySong(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(10);
   WaitFrames(1);
-  Script_PlaySong(SE_SHIMMER);
+  Event_PlaySong(SE_SHIMMER);
   WaitFrames(40);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_MIA, 202, 198);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(ACTOR_MIA, 0, 40);
+  Event_WaitFrames(40);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_IVAN);
@@ -1094,7 +1094,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4), PIXELS(2));
-  Script_PlaySong(SE_JUMP);
+  Event_PlaySong(SE_JUMP);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1102,7 +1102,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetDestination(ACTOR_GARET, 136, 221);
   Actor_SetDestination(ACTOR_IVAN, 122, 238);
   Actor_RefreshSelectorById(ACTOR_MIA);
-  FieldScript_WaitFrames(80);
+  Event_WaitFrames(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1112,13 +1112,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   table = gImil_FollowMiaOutScript;
   Actor_SetScript(ACTOR_GARET, table);
   Actor_RunScriptAndWait(ACTOR_IVAN, table);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Import_GameFlagSet(FLAG_IMIL_MET_MIA);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Unused: an update hook that moves an effect around its stored origin until
@@ -1183,20 +1183,20 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
 /// The old man bobs and speaks as Ply's effect ends (its finishCallback).
 static void Imil_OldManBobsAndSpeaks(void) {
   Actor_SetScript(ACTOR_OLD_MAN, gImil_BobScript);
-  FieldScript_ShowMessageAndWait(ACTOR_OLD_MAN, 0);
+  Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0);
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
   struct FieldEffectWork *effectWork;
 
-  FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
+  FieldPsynergy_LoadResources(ABILITY_PLY, 1);
   effectWork = gFieldEffectWork;
-  FieldEffect_SetupActorPair(ACTOR_MIA, ACTOR_OLD_MAN);
+  FieldPsynergy_SetupActorPair(ACTOR_MIA, ACTOR_OLD_MAN);
   effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
-  FieldEffect_StartCast();
-  Field_DispatchTypeHandler(1);
-  FieldEffect_StopCasterHook();
-  FieldEffect_End();
+  FieldPsynergy_StartCast();
+  FieldPsynergy_RunHandler(1);
+  FieldPsynergy_StopCasterUpdate();
+  FieldPsynergy_End();
 }
 
 /// Resets a rising effect's motion, sprite priority, and initial scale.
@@ -1358,23 +1358,23 @@ static void Imil_PlaceMovedSnowman(void) {
 static void Imil_LeaveNorth(void) {
   struct Actor *work;
 
-  FieldScript_Start();
+  Event_Start();
   work = Actor_GetById(ACTOR_PARTY_LEADER);
   work->facing = FACING_NORTH;
   Sound_PlaySong(SE_MAP_EXIT);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(IMIL_TO_IMIL_FALLS_CAVE);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(IMIL_TO_IMIL_FALLS_CAVE);
 }
 
 /// Coming back out of Imil Falls Cave (IMIL_FROM_IMIL_FALLS_CAVE), the leader
 /// walks down into the village.
 static void Imil_ArriveFromFallsCave(void) {
-  FieldScript_Start();
-  FieldScript_StartScreenTransition();
+  Event_Start();
+  Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mia's farewell, in the Imil Sanctum the first time the party comes once
@@ -1385,7 +1385,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   struct Actor *leader;
   struct FieldWork *work;
 
-  FieldScript_Start();
+  Event_Start();
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 690, 200);
@@ -1396,7 +1396,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;
-  FieldScript_StartScreenTransition();
+  Event_StartScreenTransition();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -1408,46 +1408,46 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_StartRepeatedMotion(ACTOR_JUSTIN, 2);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
-  FieldScript_WaitFrames(40);
-  FieldScript_SetMessageId(MSGNO(MsgImilMia));
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  Event_WaitFrames(40);
+  Event_SetMessageId(MSGNO(MsgImilMia));
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_MEGAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_SetAttachedEffect(ACTOR_JUSTIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(60);
+  Event_WaitFrames(60);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_JUSTIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_JUSTIN, 1);
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 80);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MEGAN, FACING_NORTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTHWEST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH + FACING_STEP, 0);
@@ -1456,69 +1456,69 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   // Let the student approach Mia before she rejoins the party.
   Actor_GetById(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 656, 166);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   Actor_GetById(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
+  Event_WaitFrames(20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_JUSTIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MEGAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_JUSTIN, 1);
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 1);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 80);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 80);
   Actor_ShowEmote(ACTOR_JUSTIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MEGAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_JUSTIN, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Import_ActorSetAnimation(ACTOR_MEGAN, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_JUSTIN, ANIM_NOD);
-  Script_ShowMessageAndWait(ACTOR_JUSTIN, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Import_ActorSetAnimation(ACTOR_JUSTIN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
-  FieldScript_WaitFrames(40);
+  Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   Actor_WalkToAndWait(ACTOR_MIA, 688, 200);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_GetById(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
-  FieldScript_WaitFrames(1);
+  Event_WaitFrames(1);
   // Restore the student's steering after the farewell walk. A byte view: as
   // the field, the next gFieldWork load moves after the constant.
   *((u8 *)Actor_GetById(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
@@ -1527,7 +1527,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Import_GameFlagSet(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
-  FieldScript_End();
+  Event_End();
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
@@ -1586,7 +1586,7 @@ static void Imil_RunIceSlide(void) {
       return;
     }
 
-    FieldScript_Start();
+    Event_Start();
 
     probe.x = (subject->x.fixed & 0xfff00000) + PIXELS(8);
     probe.y = subject->y.fixed;
@@ -1654,7 +1654,7 @@ blocked:
 
 tail:
   WaitFrames(10);
-  FieldScript_End();
+  Event_End();
 }
 
 // clang-format off
@@ -1902,21 +1902,21 @@ struct ActorTemplate gImil_InteriorActorTemplates[] = {
 struct Trigger gImil_TownTriggers[] = {
     { TRIGGER_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
     { TRIGGER_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_NO_FOOTPRINTS, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveNorth) },
-    { TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_StartIceSlide) },
-    { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToFreezingYoungMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_NO_FOOTPRINTS, EVENT(Imil_PlaceMovedSnowman) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Imil_LeaveNorth) },
+    { TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Imil_StartIceSlide) },
+    { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToFreezingYoungMan) },
     { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
-    { TRIGGER_TALK, ACTOR_GREETING_BOY, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_GreetVisitor) },
+    { TRIGGER_TALK, ACTOR_GREETING_BOY, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_GreetVisitor) },
     { TRIGGER_TALK, ACTOR_GREETING_BOY, CONDITION_ALWAYS, MSGNO(MsgImilImilWillBeFineDiseaseIs) },
-    { TRIGGER_TALK, ACTOR_STRONGMAN_KEEPING_IN_SHAPE, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToStrongmanKeepingInShape) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadFreezingYoungMansMind) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_KEEPING_IN_SHAPE, CONDITION_ALWAYS, EVENT(Imil_TalkToStrongmanKeepingInShape) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_ReadFreezingYoungMansMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREEZING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgImilMiaWasOnlyInImilTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_BOY, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWeveHadALotOfStrangers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_BOY, CONDITION_ALWAYS, MSGNO(MsgImilDontWorryAboutUsMiaWell) },
@@ -1931,37 +1931,37 @@ struct Trigger gImil_TownTriggers[] = {
 struct Trigger gImil_InteriorTriggers[] = {
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MIA_SENT_FOR, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
-    { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToOldWoman) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToOldWoman) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
-    { TRIGGER_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT(Imil_TalkToOldMan) },
     { TRIGGER_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilItHurts) },
-    { TRIGGER_TALK, ACTOR_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToOldMan) },
-    { TRIGGER_TALK, ACTOR_OLD_MANS_BED, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_TalkToOldManInBed) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN, CONDITION_ALWAYS, EVENT(Imil_TalkToOldMan) },
+    { TRIGGER_TALK, ACTOR_OLD_MANS_BED, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT(Imil_TalkToOldManInBed) },
     { TRIGGER_TALK, ACTOR_SICK_OLD_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilCoughTheEpidemicHasHitAlmost) },
     { TRIGGER_TALK, ACTOR_SICK_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgImilItsNiceThatTheFountainCan) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_AskAboutWeapons) },
-    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_AskAboutWeapons) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(Imil_TalkToWeaponMerchant) },
     { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWereClosedSorryIGetA) },
-    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(Imil_TalkToArmorMerchant) },
     { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilIfYouWantToBuyAnything) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_ITEM_MERCHANTS_DAUGHTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(Imil_TalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANTS_DAUGHTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToItemMerchant) },
     { TRIGGER_TALK, ACTOR_ITEM_MERCHANTS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgImilImSoHappyThatMommyIs) },
-    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(Imil_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_ATTENDANT, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWereTheOnlyInnThatStays) },
     { TRIGGER_TALK, ACTOR_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
-    { TRIGGER_TALK, ACTOR_RESTAURANT_OWNER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_AskAboutRestaurantMenu) },
+    { TRIGGER_TALK, ACTOR_RESTAURANT_OWNER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_AskAboutRestaurantMenu) },
     { TRIGGER_TALK, ACTOR_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
-    { TRIGGER_TALK, ACTOR_JUSTIN, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToJustin) },
-    { TRIGGER_TALK, ACTOR_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToMegan) },
+    { TRIGGER_TALK, ACTOR_JUSTIN, CONDITION_ALWAYS, EVENT(Imil_TalkToJustin) },
+    { TRIGGER_TALK, ACTOR_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToMegan) },
     { TRIGGER_TALK, ACTOR_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_ReadOldWomanMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT(Imil_TalkToOldMan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilMiaIsAGoodGirlI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MANS_BED, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadOldManInBedMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MANS_BED, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT(Imil_ReadOldManInBedMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SICK_OLD_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilHerPalmsShineWithABlue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SICK_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },
@@ -1978,12 +1978,12 @@ struct Trigger gImil_InteriorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RESTAURANT_OWNER, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWeDontGetToEatMany) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUSTIN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadJustinsMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUSTIN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_ReadJustinsMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUSTIN, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadMegansMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_ReadMegansMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
-    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
-    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
+    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToWeaponMerchant) },
+    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToArmorMerchant) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },

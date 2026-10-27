@@ -246,10 +246,10 @@ const struct ActorTemplate *MercuryLighthouseEntrance_GetActorTemplates(void) {
 /// (metatile behavior 1). "He who honors the heart of the goddess shall stand
 /// at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
-  FieldScript_Start();
+  Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMercuryWhoHonorsHeart, 1);
-  FieldScript_End();
+  Event_End();
 }
 
 #include "common/mercury_lighthouse_passage.h"
@@ -303,14 +303,14 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   leaderColumn = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
   leaderRow = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
-    FieldScript_Start();
+    Event_Start();
     // Fade the event before releasing fifteen sparks above the pool.
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
-    FieldScript_WaitFrames(120);
+    Event_WaitFrames(120);
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
     PaletteFade_StartInterpolation(60);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     sparkIndex = 0;
     effectData = &options;
     velocityZ = 0;
@@ -332,11 +332,11 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
                         effectData);
-      FieldScript_WaitFrames(4);
+      Event_WaitFrames(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
     Sound_PlaySong(SE_SHIMMER);
-    FieldScript_WaitFrames(60);
+    Event_WaitFrames(60);
     // Persist the activated state and replace the pool's map cells.
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED);
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
@@ -344,8 +344,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
-    FieldScript_WaitFrames(120);
-    FieldScript_End();
+    Event_WaitFrames(120);
+    Event_End();
   }
 }
 
@@ -353,7 +353,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 /// map again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, where
 /// Mia goes in if she has not yet.
 static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
-  Import_ScriptRequestExit(
+  Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
 
@@ -391,12 +391,12 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 /// battle begins; afterwards the party comes back at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
-  FieldScript_Start();
+  Event_Start();
   Actor_RunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  FieldScript_SetNextDestination(
+  Event_SetAfterBattleDestination(
       (s32)&SceneId_MercuryLighthouseEntrance,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -404,7 +404,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   // Lighthouse's scripted battles: the Lizard Man.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         1);
-  FieldScript_End();
+  Event_End();
 }
 
 #include "common/mercury_lighthouse_arrive.h"
@@ -446,7 +446,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man event.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
-      Import_ScriptRequestExit(
+      Import_EventSetExitRequest(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);
     // Both doorway entrances mirror the east side's statues.
     // Fall through.
@@ -481,13 +481,13 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     if (gSaveBlock.entrance !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
-    arrivalSeen = Script_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);
+    arrivalSeen = Event_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);
     if (arrivalSeen != 0)
       break;
     // The first time, the leader drops from 130 pixels up and lands in a
     // burst; until Ply has been used, the inscription's words appear.
     GameFlag_Set(FLAG_DROP_FROM_ABOVE_SEEN);
-    FieldScript_Start();
+    Event_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
@@ -495,12 +495,12 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->gravity = 0x8000;
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = arrivalSeen;
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = arrivalSeen;
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
-    FieldScript_WaitFrames(30);
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_WaitFrames(30);
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
     Sound_PlaySong(SE_DUST_PUFF);
-    FieldScript_WaitFrames(24);
+    Event_WaitFrames(24);
     // Scatter seventeen effects around the leader before the landing.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     options.palette = 7;
@@ -528,14 +528,14 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
-      FieldScript_WaitTransitionFrames();
+      Event_WaitTransitionFrames();
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-      FieldScript_WaitFrames(30);
+      Event_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(30);
     }
-    FieldScript_End();
+    Event_End();
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_EAST_WATERFALLS:
   case MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_FOUNTAINS:
@@ -549,16 +549,16 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-    FieldScript_Start();
+    Event_Start();
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
-    FieldScript_WaitFrames(120);
-    Import_ScriptRequestExit(
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_WaitFrames(120);
+    Import_EventSetExitRequest(
         MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE);
-    FieldScript_End();
+    Event_End();
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN:
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -584,7 +584,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct Actor *mia;
   struct Actor *actor;
 
-  FieldScript_Start();
+  Event_Start();
   actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE);
   actor->scaleX = -Q16_ONE;
   actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE + 1);
@@ -599,15 +599,15 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(136), -1, PIXELS(184), 0);
-  FieldScript_StartScreenTransition();
-  FieldScript_WaitTransitionFrames();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Actor_GetById(ACTOR_LIZARD_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   // Twice she tries the east side and then the west.
   for (paceCycle = 0; paceCycle < 2; paceCycle++) {
     Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 152, 168);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepEast);
     Actor_WaitForMoveById(ACTOR_MIA);
@@ -616,30 +616,30 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
     mia = Actor_GetById(ACTOR_MIA);
     mia->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
-    FieldScript_WaitFrames(10);
+    Event_WaitFrames(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepCentre);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 120, 168);
-    FieldScript_WaitFrames(5);
+    Event_WaitFrames(5);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepWest);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    FieldScript_WaitFrames(15);
+    Event_WaitFrames(15);
     Actor_GetById(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
-    FieldScript_WaitFrames(15);
+    Event_WaitFrames(15);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepCentre);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   }
-  FieldScript_WaitFrames(20);
+  Event_WaitFrames(20);
   FieldEffect_SpawnAttached(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   actor = Actor_GetById(ACTOR_MIA);
 #ifdef UBFIX
@@ -651,11 +651,11 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   // The leader walks up behind her; the cells before the doorway become
   // walkable.
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 136, 264);
   FieldCamera_WaitForArrival();
   MapGrid_CopyCellAttributes(0, 0, 3, 3, 7, 9);
-  FieldScript_End();
+  Event_End();
 }
 
 /// Mercury Lighthouse, the doorway, at
@@ -665,9 +665,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct Actor *actor;
 
-  if (Script_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
+  if (Event_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
-    FieldScript_Start();
+    Event_Start();
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
     actor->scaleX = -Q16_ONE;
     actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE + 1);
@@ -678,21 +678,21 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-    FieldScript_StartScreenTransition();
-    FieldScript_WaitTransitionFrames();
-    FieldScript_WaitFrames(60);
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_WaitFrames(60);
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    FieldScript_WaitFrames(30);
+    Event_WaitFrames(30);
     Actor_WalkTo(ACTOR_MIA, 136, 72);
-    FieldScript_WaitFrames(40);
+    Event_WaitFrames(40);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-    FieldScript_End();
+    Event_End();
   }
 }
 
@@ -926,21 +926,21 @@ struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[] = {
 };
 
 struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_LoseLights) },
-    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_RippleAroundLeader) },
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_ChargeLights) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReturnToDoorway) },
-    { TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
-    { TRIGGER_STEP, 42, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
-    { TRIGGER_STEP, 41, FLAG_LIZARD_MAN_STEPPED_ASIDE, EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManBlocksLeader) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_LeaveChestPoolByPassage) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_LeaveEastWaterfallsByPassage) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_LeaveDryPoolByPassage) },
+    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_LoseLights) },
+    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
+    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_ChargeLights) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReturnToDoorway) },
+    { TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
+    { TRIGGER_STEP, 42, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
+    { TRIGGER_STEP, 41, FLAG_LIZARD_MAN_STEPPED_ASIDE, EVENT(MercuryLighthouseEntrance_LizardManBlocksLeader) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_LeaveChestPoolByPassage) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_LeaveEastWaterfallsByPassage) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_LeaveDryPoolByPassage) },
     { TRIGGER_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR },
     { TRIGGER_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS },
     { TRIGGER_EXIT, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_SIX_STATUES },
@@ -959,11 +959,11 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGER_EXIT, 66, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_FOUNTAINS },
     { TRIGGER_TALK, ACTOR_MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryMonsterInsideTower) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
-    { TRIGGER_TALK, ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReadHeartInscription) },
-    { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED, EVENT_SCRIPT(MercuryLighthouseEntrance_ActivateWithPly) },
-    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
+    { TRIGGER_TALK, ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReadHeartInscription) },
+    { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED, EVENT(MercuryLighthouseEntrance_ActivateWithPly) },
+    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN, FIND_MIMIC },
     { TRIGGERS_END },

@@ -78,7 +78,7 @@ static u16 sHofsBeforeSplit;
 
 /// Talking to Breeze in Tret Tree: the Djinni hops and the battle with it
 /// starts.
-static void EventScript_TalkToBreeze(void) {
+static void TretTreeBranch_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
@@ -133,37 +133,37 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
 
 /// Touching metatile behavior 10 in Tret Tree: the leader and camera move 80
 /// pixels south at once.
-static void EventScript_GoDownWestVine(void) {
+static void TretTreeBranch_GoDownWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touching metatile behavior 11 in Tret Tree: the leader and camera move 80
 /// pixels north at once.
-static void EventScript_GoUpWestVine(void) {
+static void TretTreeBranch_GoUpWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touching metatile behavior 12 in Tret Tree: the same 80-pixel move south as
 /// metatile behavior 10.
-static void EventScript_GoDownNortheastVine(void) {
+static void TretTreeBranch_GoDownNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touching metatile behavior 13 in Tret Tree: the same 80-pixel move north as
 /// metatile behavior 11.
-static void EventScript_GoUpNortheastVine(void) {
+static void TretTreeBranch_GoUpNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touching metatile behavior 14 in Tret Tree: the leader and camera move 96
 /// pixels south at once.
-static void EventScript_GoDownSoutheastVine(void) {
+static void TretTreeBranch_GoDownSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
 /// Touching metatile behavior 15 in Tret Tree: the leader and camera move 96
 /// pixels north at once.
-static void EventScript_GoUpSoutheastVine(void) {
+static void TretTreeBranch_GoUpSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
@@ -171,13 +171,13 @@ static void EventScript_GoUpSoutheastVine(void) {
 /// behaviors are the exits' own numbers: the exit sound plays and the party
 /// leaves by the exit touched, into Tret Tree's other map
 /// (SceneId_TreeRooms).
-static void EventScript_EnterTretTreeRooms(void) {
+static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedExit;
 
-  Script_PlaySong(SE_MAP_EXIT);
+  Event_PlaySong(SE_MAP_EXIT);
   touchedExit = &state->stepTrigger;
-  Import_ScriptRequestExit(*touchedExit);
+  Import_EventSetExitRequest(*touchedExit);
 }
 
 /// Selects the same mask and window parameters for Reveal and map entry.
@@ -190,7 +190,7 @@ TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
 
 /// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
 /// rest of the screen are set again, as when the map opened.
-static void EventScript_CastReveal(void) {
+static void TretTreeBranch_CastReveal(void) {
   struct ScreenTransitionState *state;
 
   ScreenTransition_InitializeBattleEffectState(9);
@@ -209,8 +209,8 @@ const struct Trigger *TretTreeBranch_GetTriggers(void) {
 
 /// Unused script hook: begins and immediately ends a script.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
-  FieldScript_Start();
-  FieldScript_End();
+  Event_Start();
+  Event_End();
 }
 
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}
@@ -341,37 +341,35 @@ struct ActorTemplate gTretTreeBranch_ActorTemplates[] = {
 
 struct Trigger gTretTreeBranch_Triggers[] = {
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 4, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 5, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoDownWestVine)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoUpWestVine)},
+     EVENT(TretTreeBranch_EnterTretTreeRooms)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TretTreeBranch_GoDownWestVine)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TretTreeBranch_GoUpWestVine)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoDownNortheastVine)},
+     EVENT(TretTreeBranch_GoDownNortheastVine)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoUpNortheastVine)},
+     EVENT(TretTreeBranch_GoUpNortheastVine)},
     {TRIGGER_STEP, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoDownSoutheastVine)},
+     EVENT(TretTreeBranch_GoDownSoutheastVine)},
     {TRIGGER_STEP, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_GoUpSoutheastVine)},
+     EVENT(TretTreeBranch_GoUpSoutheastVine)},
     {TRIGGER_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TalkToBreeze)},
+     EVENT(TretTreeBranch_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
+     CONDITION_ALWAYS, EVENT(TretTreeBranch_CastReveal)},
     {TRIGGERS_END},
 };
 

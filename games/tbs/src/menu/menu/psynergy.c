@@ -104,7 +104,7 @@ s32 PsynergyMenu_Run(void) {
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
-  FieldScript_ClearInvalidPackedValuesFar();
+  Event_ClearInvalidPackedValuesFar();
   return result;
 }
 

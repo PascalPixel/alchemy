@@ -33,10 +33,10 @@ void Actor_SetRevealSpriteColor(s32 value) {
 /// Task of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
 /// to end once the leader is 60 pixels from its centre or its time has run out.
 /// The centre and the time are in the field work from 0xcb8 on
-/// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
+/// (FieldPsynergy_Reveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
-/// FieldEffect_EndReveal removes it.
-void FieldEffect_WatchLeaderDistance(void) {
+/// FieldPsynergy_EndReveal removes it.
+void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
   s16 *timer;
@@ -76,9 +76,9 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldEffect_WatchLeaderDistance), and FieldEffect_EndReveal ends it.
-/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
-void FieldEffect_RunReveal(void) {
+/// (FieldPsynergy_WatchLeaderDistance), and FieldPsynergy_EndReveal ends it.
+/// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
+void FieldPsynergy_Reveal(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
   struct Actor *target;
@@ -103,11 +103,10 @@ void FieldEffect_RunReveal(void) {
   work->revealActive = 0;
 #endif
   WaitFrames(1);
-  event =
-      Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS),
-                                FIELD_PSYNERGY_REVEAL, &eventTarget);
+  event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                    FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
+    Field_RunPsynergyEvent(event, gSaveBlock.leaderActorId, eventTarget);
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
 
   // Record the centre (in pixels) and the time in the field work, and put
@@ -124,15 +123,15 @@ void FieldEffect_RunReveal(void) {
     state->value = frame;
     frame++;
   } while (frame <= 18);
-  Task_Add(FieldEffect_WatchLeaderDistance, TASK_PASS_FRAME);
+  Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_FRAME);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs the map's PSYNERGY_PHASE_EFFECT_ENDS
+/// from black over 30 frames and runs the map's PSYNERGY_PHASE_FADES
 /// event. Unless a map script set childOption, the window transition is then
 /// reset at once (no next mode, one frame). Called as Reveal ends
-/// (FieldScript_RunTypeHandler) and before Mind Read starts its own colours.
-void FieldEffect_EndReveal(void) {
+/// (Event_RunFieldPsynergy) and before Mind Read starts its own colours.
+void FieldPsynergy_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ScreenTransitionState *transition = gScreenTransitionWork;
@@ -152,7 +151,7 @@ void FieldEffect_EndReveal(void) {
 
   if (state->revealActive != 0) {
     Sound_PlaySongFar(SE_MAP_TRANSITION);
-    Task_Remove(FieldEffect_WatchLeaderDistance);
+    Task_Remove(FieldPsynergy_WatchLeaderDistance);
 
     zero = 0;
     state->revealActive = zero;
@@ -166,11 +165,10 @@ void FieldEffect_EndReveal(void) {
     PaletteFade_StartInterpolation(30);
     WaitFrames(1);
 
-    event =
-        Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ENDS),
-                                  FIELD_PSYNERGY_REVEAL, &eventTarget);
+    event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES),
+                                      FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
+      Field_RunPsynergyEvent(event, gSaveBlock.leaderActorId, eventTarget);
 
     if (effectWork->childOption == 0) {
       transition->nextMode = 0;

@@ -28,14 +28,14 @@
 	.set import.GameFlag_Clear, 1
 	.set import.Djinn_Transfer, 1
 	.set import.PartyInventory_HasSpace, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Event_PrepareActorAndApplyValue, 1
 	.set import.Party_RemoveMemberRestored, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
@@ -55,9 +55,9 @@
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetAngleToward, 1
 	.set import.Actor_LinkPair, 1
-	.set import.FieldScript_SetMessageId, 1
+	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
-	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.Event_ShowMessageAndWait, 1
 	.set import.Actor_ArmCallback, 1
 	.set import.Actor_SetSpritePriority, 1
 	.set import.FieldEffect_SpawnAttached, 1
@@ -66,29 +66,29 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.MapGrid_SetCameraBounds, 1
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldScript_SetNextDestination, 1
-	.set import.FieldScript_SetDefeatDestination, 1
+	.set import.Event_SetAfterBattleDestination, 1
+	.set import.Event_SetDefeatDestination, 1
 	.ifndef TBS_EDITION_JA
 	.set import.Field_TryJumpForward, 1
 	.endif
 	.ifndef TBS_EDITION_JA
 	.set import.Leader_StopMoving, 1
 	.endif
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_FinishScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_FinishScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.FieldEffect_PlayCueAndStartEmitterOnTarget, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Actor_Lookup, 1
-	.set import.Field_DispatchTypeHandler, 1
-	.set import.FieldEffect_LoadActionEffectResources, 1
-	.set import.FieldEffect_SetupActorPair, 1
-	.set import.FieldEffect_StopCasterHook, 1
-	.set import.FieldEffect_End, 1
-	.set import.FieldEffect_StartCast, 1
-	.set import.FieldEffect_RestoreMindReadPalette, 1
+	.set import.FieldPsynergy_RunHandler, 1
+	.set import.FieldPsynergy_LoadResources, 1
+	.set import.FieldPsynergy_SetupActorPair, 1
+	.set import.FieldPsynergy_StopCasterUpdate, 1
+	.set import.FieldPsynergy_End, 1
+	.set import.FieldPsynergy_StartCast, 1
+	.set import.FieldPsynergy_RestoreMindReadPalette, 1
 	.set import.Scene_PlayMusic, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1

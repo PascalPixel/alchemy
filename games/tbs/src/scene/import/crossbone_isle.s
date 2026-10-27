@@ -24,9 +24,9 @@
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
-	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_Start, 1
-	.set import.FieldScript_End, 1
+	.set import.Event_WaitFrames, 1
+	.set import.Event_Start, 1
+	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
@@ -38,11 +38,11 @@
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Actor_SetSpritePriority, 1
-	.set import.Import_ScriptRequestExit, 1
+	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldScript_SetNextDestination, 1
-	.set import.FieldScript_StartScreenTransition, 1
-	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Event_SetAfterBattleDestination, 1
+	.set import.Event_StartScreenTransition, 1
+	.set import.Event_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.Scene_PlayQueuedMusic, 1

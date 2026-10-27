@@ -11,7 +11,7 @@
 /// exit.
 static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct Actor *v = Actor_GetById(ACTOR_PARTY_LEADER);
-  FieldScript_Start();
+  Event_Start();
   Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
@@ -25,11 +25,11 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   v->update = 0;
-  FieldScript_WaitFrames(30);
-  FieldScript_FinishScreenTransition();
-  FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestExit(exit);
-  FieldScript_End();
+  Event_WaitFrames(30);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(exit);
+  Event_End();
 }
 
 // XXX (no evidence): whether this is an early form of
@@ -41,14 +41,14 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct Actor *record;
 
-  FieldScript_Start();
+  Event_Start();
   Sound_PlaySong(SE_SPARKLING_PASSAGE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -8);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
-  FieldScript_WaitFrames(8);
+  Event_WaitFrames(8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, ((column << 19) + PIXELS(8)), 0);
-  FieldScript_WaitFrames(30);
+  Event_WaitFrames(30);
 }

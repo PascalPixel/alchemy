@@ -97,7 +97,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// the announcing message. The command's costs are paid here: a caster's PP, a
 /// Djinni set or put on standby (with its own animation), the standby Djinn a
 /// summon uses (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no
-/// target, may be set to guard (guardLevel).
+/// target, may be set to Defend (defendLevel).
 ///
 /// The phases: the debug defeat; what stops the unit; the announcement and
 /// the ability id, by command; the rolls of a plain attack, or an ability's

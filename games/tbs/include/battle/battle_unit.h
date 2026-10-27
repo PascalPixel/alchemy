@@ -242,7 +242,7 @@ enum AbilityUse {
 #define POISON_NORMAL 1
 #define POISON_VENOM 2
 
-/// Unit.guardLevel, 0 for no guard: Defend and Granite halve the damage,
+/// Unit.defendLevel, 0 for no Defend: Defend and Granite halve the damage,
 /// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c).
 /// It lasts the round: BattleUnit_ResetGuardLevels clears it as the next
 /// one's commands are gathered.

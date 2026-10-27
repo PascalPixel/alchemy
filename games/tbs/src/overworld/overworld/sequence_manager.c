@@ -31,16 +31,16 @@ void Scene_TakeExit(s32 exitId) {
   const u32 *firstExit;
   u32 word;
   s32 sceneId;
-  s32 nextScene;
-  s32 nextEntrance;
+  s32 destinationScene;
+  s32 destinationEntrance;
   s32 entrance;
   s32 kind;
   s32 flag;
 
   currentMap = gSaveBlock.sceneId;
   exitTable = gOverlayArea.exits();
-  nextScene = EXIT_KEEP_DESTINATION;
-  nextEntrance = 0;
+  destinationScene = EXIT_KEEP_DESTINATION;
+  destinationEntrance = 0;
   if (exitId == EXIT_KEEP_DESTINATION)
     return;
 
@@ -65,13 +65,14 @@ void Scene_TakeExit(s32 exitId) {
       if (flag)
         flag = *exitTable++;
       if (sceneId == EXIT_TABLE_END || kind == 0) {
-        nextScene = *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
+        destinationScene =
+            *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
         break;
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
         if (flag == 0 || GameFlag_GetFar(flag) == 0) {
-          nextScene = sceneId;
-          nextEntrance = entrance;
+          destinationScene = sceneId;
+          destinationEntrance = entrance;
           break;
         }
       }
@@ -80,9 +81,9 @@ void Scene_TakeExit(s32 exitId) {
   }
 
   // Commit the chosen exit only after a matching scene was found.
-  if (nextScene != EXIT_KEEP_DESTINATION) {
-    gSaveBlock.sceneId = nextScene;
-    gSaveBlock.entrance = nextEntrance;
+  if (destinationScene != EXIT_KEEP_DESTINATION) {
+    gSaveBlock.sceneId = destinationScene;
+    gSaveBlock.entrance = destinationEntrance;
   }
 }
 

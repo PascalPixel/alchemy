@@ -16,7 +16,7 @@ struct Actor;
 
 /// struct Actor, field for field, as BattleObject_SpawnObjectsForList gives a
 /// battle unit its sprites: the sprite word untyped (void *), and the cursor,
-/// wait and footprintSide unsigned. Through struct Actor, whose sprite is a
+/// wait and userValue unsigned. Through struct Actor, whose sprite is a
 /// struct Sprite pointer, the store of a two-part enemy's sprite list moves
 /// after the next store, and a view that pads the fields it does not read
 /// with bytes moves it too (MATCHING.md).

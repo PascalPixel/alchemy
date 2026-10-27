@@ -438,7 +438,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 
   // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame.
   // Otherwise move to the step, keeping the speed but along the heading.
-  // footprintSide = 2 marks a stop; the next footprint then takes animation 2.
+  // userValue, the footprint side, set to 2 marks a stop; the next footprint
+  // then takes animation 2.
   if (collision != 0) {
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;

@@ -113,7 +113,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
 /// Called by Battle_GatherActions as each round begins. Clears
-/// every unit's guardLevel.
+/// every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[14];
   s32 count;
@@ -618,7 +618,7 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
 /// commands, then the link opponent's or the enemies' actions.
 /// Returns how many actions there are; negative to abort (a link failure).
 /// Called by Battle_Run at the start of each round outside auto
-/// battle. Clears gBattleWork->actions, sets every defender's guardLevel,
+/// battle. Clears gBattleWork->actions, sets every defender's defendLevel,
 /// may set firstStrike to FIRST_STRIKE_ENEMIES after a failed
 /// attempt to flee, and holds FLAG_CHOOSING_COMMANDS while the commands are
 /// chosen.

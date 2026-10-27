@@ -248,7 +248,7 @@ button codes on the main menu add more names to enter: the first Garet, Ivan
 and Mia, the second Felix, Jenna and Sheba as well.
 
 `NameEntry_EditMemberName` (`window/screens/name_entry.c`) runs it; the main
-menu (`menu/main_menu.c`) calls it for each name.
+menu (`menu/file_screen.c`) calls it for each name.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

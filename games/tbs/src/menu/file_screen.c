@@ -4,7 +4,7 @@
 /// a save's data, by link or as a password.
 
 #include "scene_ids.h"
-#include "unit/menu/main_menu.h"
+#include "unit/menu/file_screen.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/game/game.h"

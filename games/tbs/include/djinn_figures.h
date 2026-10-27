@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FOUR_OBJECT_MOTION_H
-#define ALCHEMY_FOUR_OBJECT_MOTION_H
+#ifndef ALCHEMY_DJINN_FIGURES_H
+#define ALCHEMY_DJINN_FIGURES_H
 
 /// @file
 /// DjinnFigures, the row of four figures the Status and Djinn menus show.

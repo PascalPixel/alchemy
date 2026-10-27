@@ -335,7 +335,7 @@ static void Title_RevealScreen(s32 unused) {
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
 /// decoded through Ram_MapGridCellBuffer, and a tile map that numbers them row
 /// by row. Zeroes the four backgrounds' scroll and leaves the map work showing
-/// only BG2 and the sprites. FileScreen_LoadBackground (main_menu.c) is its
+/// only BG2 and the sprites. FileScreen_LoadBackground (file_screen.c) is its
 /// twin.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;

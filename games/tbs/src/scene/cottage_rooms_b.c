@@ -7,7 +7,7 @@
 /// flags. The rooms, in story order, by the exits that lead in:
 ///
 /// - Isaac's house in Vale: its upper floor, where a new game begins
-///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from menu/main_menu.c), and
+///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from menu/file_screen.c), and
 ///   its ground floor, entered from Vale (COTTAGE_ROOMS_B_FROM_VALE, from
 ///   Vale's VALE_TO_COTTAGE_ROOMS_B and the stormy night's
 ///   VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE), joined by the stairs
@@ -42,7 +42,7 @@
 /// What happens in them follows the story:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from menu/main_menu.c, or
+///   at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from menu/file_screen.c, or
 ///   ValePlaza's VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays CottageRoomsB_DoraWakesIsaac: Dora, Isaac's
 ///   mother, wakes him because the Mt. Aleph Boulder is going to fall, makes
@@ -309,7 +309,7 @@ enum CottageRoomsBAnimation {
 /// COTTAGE_ROOMS_B_FROM_BABI_PALACE from Babi's palace
 /// (BABI_PALACE_TO_COTTAGE_ROOMS_B),
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
-/// (menu/main_menu.c, and ValePlaza's
+/// (menu/file_screen.c, and ValePlaza's
 /// VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST),
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
 /// own COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and

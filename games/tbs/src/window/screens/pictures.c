@@ -261,7 +261,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// drawn over the window frame's top edge tile (0x11) and top-right corner
 /// tile (0x12). The battle menus call it each frame for tiles 0x334 and
 /// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
-/// and the password pages of the title's Send (menu/main_menu.c) call it for
+/// and the password pages of the title's Send (menu/file_screen.c) call it for
 /// PAGE_ARROW_VRAM.
 void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
@@ -286,7 +286,7 @@ void Link_DrawPageArrows(s32 offset) {
 /// gGraphics_ExpandNibbleTable: first with colour 1 drawn as colour 10, then
 /// unchanged. The battle menus build their page numbers this way at tile
 /// 0x300 (LIST_TILE_PAGE_NUMBER), as do the password pages of the title's
-/// Send (menu/main_menu.c) and the field Djinn menu (menu/menu/djinn.c).
+/// Send (menu/file_screen.c) and the field Djinn menu (menu/menu/djinn.c).
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
   s32 paletteOffset = 0;

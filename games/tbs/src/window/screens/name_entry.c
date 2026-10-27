@@ -234,7 +234,7 @@ void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
 /// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
 /// The new name is written over the member's unit name only on End. The
-/// title's new game (menu/main_menu.c) and the debug menu reach it.
+/// title's new game (menu/file_screen.c) and the debug menu reach it.
 ///
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and

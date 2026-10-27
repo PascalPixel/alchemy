@@ -204,7 +204,7 @@ main	rom_tail_00	games/tbs/sound/songs/mus_title_after_prologue	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_ending	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_title	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_felix_leaps_after_sheba	.rodata
-main	rom_tail_00	games/tbs/sound/songs/mus_main_menu	.rodata
+main	rom_tail_00	games/tbs/sound/songs/mus_file_screen	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_ending_logo	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_colosso_battle	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_puzzle_solved	.rodata
@@ -634,9 +634,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 36f	text	games/tbs/src/menu/title
 36f	text	games/tbs/src/menu/import/title
 36f	bss	resource_36f_overlay	.bss
-370	text	games/tbs/src/menu/entry/main_menu
-370	text	games/tbs/src/menu/main_menu
-370	text	games/tbs/src/menu/import/main_menu
+370	text	games/tbs/src/menu/entry/file_screen
+370	text	games/tbs/src/menu/file_screen
+370	text	games/tbs/src/menu/import/file_screen
 370	text	games/tbs/src/menu/keyboard
 371	text	games/tbs/src/scene/entry/world_map
 371	text	games/tbs/src/scene/world_map

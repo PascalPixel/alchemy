@@ -62,7 +62,7 @@
 #include "djinn_menu.h"
 #include "a9_motion.h"
 #include "blitter.h"
-#include "four_object_motion.h"
+#include "djinn_figures.h"
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"

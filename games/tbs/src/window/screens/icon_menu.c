@@ -551,7 +551,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Continue, Copy and Erase for one or two files (starting on Continue); no New
 /// Game or Copy with three; with every file cleared no Continue, and only Erase
 /// with three such files. Battle and Send follow when enabled.
-/// The file menu runs it (menu/main_menu.c).
+/// The file menu runs it (menu/file_screen.c).
 s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;
@@ -725,7 +725,7 @@ void Menu_DrawModeIndicator(void) {
 /// ResourceLayoutMode). Schedules the
 /// appropriate help redraw while the icon menu is active, then closes both
 /// help windows and the icon menu. Returns the place
-/// chosen, or -1 when cancelled. The Send screens run it (menu/main_menu.c).
+/// chosen, or -1 when cancelled. The Send screens run it (menu/file_screen.c).
 s32 IconMenu_ChooseSendOption(s32 mode) {
   struct IconMenuWork *work;
   struct Window *window;

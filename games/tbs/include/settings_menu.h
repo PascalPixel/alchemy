@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OPTION_MENU_H
-#define ALCHEMY_OPTION_MENU_H
+#ifndef ALCHEMY_SETTINGS_MENU_H
+#define ALCHEMY_SETTINGS_MENU_H
 
 /// @file
 /// The option menu's work and the selection work.

@@ -2,7 +2,7 @@
 // thirteen overlays (698 to 6a4): the leader drops from 130 pixels while the
 // screen transition runs, then seventeen effects burst outward and the leader
 // bounces. Overlay 671's Func_02002394 (resource_671_c_02002394.c) is the same
-// sequence with a 0xcccc start scale, FieldEvent_WaitFrames for its first wait
+// event with a 0xcccc start scale, FieldEvent_WaitFrames for its first wait
 // and a closing work store; its header lists what was tried. Left: the
 // velocity array's address (add r6, sp, #16) is built once before the loop,
 // where the native builds it after the cosine call in every pass. The 07.gcse

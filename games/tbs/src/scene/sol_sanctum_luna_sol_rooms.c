@@ -1397,13 +1397,13 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
 /// quarters, pictures, floor and open way up from the story flags, and after
 /// the eruption the rooms rumble.
 s32 SolSanctumLunaSolRooms_Initialize(void) {
-  s32 playedEntrySequence;
+  s32 playedEntranceEvent;
   s32 anyLightLit;
 
   WaitFrames(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  playedEntrySequence = 0;
+  playedEntranceEvent = 0;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) != 0 &&
       GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
       GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
@@ -1433,7 +1433,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
       GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
-      playedEntrySequence = 1;
+      playedEntranceEvent = 1;
     }
   } else if (
       gCommon.entrance ==
@@ -1445,7 +1445,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
       GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
       GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
-      playedEntrySequence = 1;
+      playedEntranceEvent = 1;
     }
   } else if (gCommon.entrance ==
              SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
@@ -1453,7 +1453,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights();
       GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT);
     }
-    playedEntrySequence = 1;
+    playedEntranceEvent = 1;
   }
   if (Event_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
@@ -1470,7 +1470,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   WaitFrames(4);
   // Restore completed puzzle tiles without replaying the
   // entrance's event.
-  if (playedEntrySequence == 0) {
+  if (playedEntranceEvent == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);
       MapGrid_CopyCellsTo(30, 44, 34, 37, 4, 1);

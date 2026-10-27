@@ -213,8 +213,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_WaitFrames(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Sound_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 96,
-                                   29);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 96, 29);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 29);
   MapGrid_CopyCellsTo(87, 42, 41, 31, 1, 2);
   Event_WaitFrames(40);
@@ -225,8 +224,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Sound_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 74,
-                                   29);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 74, 29);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 19, 29);
   MapGrid_CopyCellsTo(87, 42, 19, 31, 1, 2);
   Event_WaitFrames(40);
@@ -236,8 +234,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Sound_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 96,
-                                   10);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 96, 10);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 10);
   MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
   Event_WaitFrames(40);
@@ -319,8 +316,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 84,
-                                   4);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 84, 4);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 29, 4);
   MapGrid_CopyCellsTo(87, 42, 29, 6, 1, 2);
   Event_WaitFrames(40);
@@ -330,8 +326,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 76,
-                                   21);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 76, 21);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 21);
   MapGrid_CopyCellsTo(87, 42, 21, 23, 1, 2);
   Event_WaitFrames(40);
@@ -342,8 +337,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 76,
-                                   29);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 76, 29);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 29);
   MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
   Event_WaitFrames(40);
@@ -437,8 +431,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 65,
-                                   31);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 65, 31);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 31);
   MapGrid_CopyCellsTo(87, 42, 10, 33, 1, 2);
   Event_WaitFrames(40);
@@ -449,8 +442,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 79,
-                                   9);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 79, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 9);
   MapGrid_CopyCellsTo(87, 42, 24, 11, 1, 2);
   Event_WaitFrames(40);
@@ -461,8 +453,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CLATTER);
-  MapGrid_PlayMetatileCopySequence(gSolSanctumElementalStarRoom_StarCells, 91,
-                                   10);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 91, 10);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 36, 10);
   MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
   Event_WaitFrames(40);

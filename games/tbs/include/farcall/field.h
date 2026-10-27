@@ -114,11 +114,10 @@ void Actor_WaitForMoveFar(void *actor);
 /// Puts the world map's default cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
-/// Plays a map edit sequence, as doors and other changing scenery are drawn:
+/// Plays a map edit, as doors and other changing scenery are drawn:
 /// each entry's metatile numbers go to the destination, then it waits that
-/// entry's delay. Returns only when the sequence ends.
-void MapGrid_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
-                                         u32 destination_y);
+/// entry's delay. Returns only when the edit ends.
+void MapGrid_PlayMapEditFar(u16 *command, s32 destination_x, u32 destination_y);
 /// Copies the metatile numbers of a rectangle of cells, keeping the
 /// destination's attributes, and redraws what's on screen; the destination
 /// comes before the size.

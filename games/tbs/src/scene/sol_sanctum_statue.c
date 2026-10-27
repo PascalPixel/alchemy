@@ -687,7 +687,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
 /// ever faster, redraws a larger block of the floor, then restores the camera.
 /// Called only from the branch of SolSanctumStatue_OpenSeal that is marked
 /// DEAD.
-static void SolSanctumStatue_RunSealOpenedSequence(void) {
+static void SolSanctumStatue_UncoverStairway(void) {
   struct MapGridScrollWork *grid;
   struct Actor *leader;
   s32 *savedOrigin;
@@ -1631,7 +1631,7 @@ static void SolSanctumStatue_OpenSeal(void) {
           GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
         if (!Event_GetFlag(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
           GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
-          SolSanctumStatue_RunSealOpenedSequence();
+          SolSanctumStatue_UncoverStairway();
         }
       } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Import_EventSetExitRequest(

@@ -901,7 +901,7 @@ s32 WorldMap_Initialize(void) {
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
-    // Each special entrance resumes its travel or story sequence.
+    // Each special entrance resumes its journey or story event.
     switch (*entrance) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {

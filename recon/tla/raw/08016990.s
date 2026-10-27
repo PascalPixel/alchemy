@@ -305,7 +305,7 @@ Func_08016990:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08016bc4:
-	.4byte gSerialBlockSequence
+	.4byte gSerialBlockNumber
 .L_08016bc8:
 	.4byte gSerialReceivedSize
 .L_08016bcc:

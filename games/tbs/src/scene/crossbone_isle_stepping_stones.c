@@ -1322,7 +1322,7 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
-/// Emits growing, rotating particles during the third puddle's Frost sequence.
+/// Emits growing, rotating particles while Frost freezes the third puddle.
 static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   struct EffectOptions options;
   struct EffectOptions *settings;

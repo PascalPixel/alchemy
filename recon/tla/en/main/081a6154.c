@@ -1,4 +1,4 @@
-// Draft, differ 499 of 567: the title sequence's scrolling backdrop: fills
+// Draft, differ 499 of 567: the opening's scrolling backdrop: fills
 // the maps at 0x0600f800 and 0x0600f000 (the second with palette 1), sets
 // BG1, BG2 and blending, clears the scrolls, fades in, then runs one of three
 // scripted runs of Title_RunScrollStep steps chosen by mode (0, 1 or any

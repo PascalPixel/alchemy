@@ -6,7 +6,7 @@ Data_080eff22:
 	.global gData_080eff28
 gData_080eff28:
 	.incbin "games/tla/src/battle/effect/descent.table"
-@ Actions passed to ObjectDispatch_InitializeFar (word sequences).
+@ Actions passed to ObjectDispatch_InitializeFar (lists of words).
 	.global gData_080effd8
 gData_080effd8:
 	.4byte 22, 9, 32768, 22

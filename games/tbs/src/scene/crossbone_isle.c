@@ -547,7 +547,7 @@ static void CrossboneIsle_PushPillar(void) {
 /// Walking north into a corridor room's west door in Crossbone Isle Cave
 /// (step trigger 4): it opens, and the party goes through to the side room.
 static void CrossboneIsle_OpenWestDoor(void) {
-  MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 37, 7);
+  MapGrid_PlayMapEdit(gCrossboneIsle_EntranceCells, 37, 7);
   Sound_PlaySong(SE_STONE_RUMBLE);
   Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
@@ -605,7 +605,7 @@ static void CrossboneIsle_OpenEastDoor(void) {
     }
     Event_End();
   } else {
-    MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
+    MapGrid_PlayMapEdit(gCrossboneIsle_EntranceCells, 44, 7);
     Sound_PlaySong(SE_STONE_RUMBLE);
     Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_EAST);
   }

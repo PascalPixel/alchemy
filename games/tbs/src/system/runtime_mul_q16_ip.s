@@ -8,7 +8,7 @@
 @ this multiply did not come from mulsidi3. smulsi3_highpart can emit this
 @ same smull, but its low half is a dead scratch, and orr r0, r0, r2, lsr #16
 @ reads it.
-@ This proves a hand-written multiply sequence, not by itself a hand-written
+@ This proves a hand-written multiply, not by itself a hand-written
 @ file. The routine has no other tell: its four instructions are a frameless
 @ leaf that reuses the argument registers, as compiled code also may.
 @ Why IwramRatioMulQ14 is assembly:

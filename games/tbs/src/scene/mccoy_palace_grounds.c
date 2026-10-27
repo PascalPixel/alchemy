@@ -452,7 +452,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
 /// The gate of McCoy's Palace swings open.
 static void McCoyPalaceGrounds_OpenGate(void) {
   Sound_PlaySong(SE_THUMP);
-  MapGrid_PlayMetatileCopySequence(gPalaceGateOpenSteps, 52, 11);
+  MapGrid_PlayMapEdit(gPalaceGateOpenSteps, 52, 11);
   GameFlag_Set(FLAG_GATE_OPEN);
 }
 

@@ -217,7 +217,7 @@ Object_SetModeById:
 	.global Func_02005e84
 	.thumb_func
 Func_02005e84:
-	overlay_veneer BattleEffect_RunObjectRiseFar
+	overlay_veneer Object_JumpDownLedgeFar
 	.global Object_LinkPair
 	.thumb_func
 Object_LinkPair:

@@ -17,7 +17,7 @@
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Actor_SetMoveTarget, 1
 	.set import.Actor_WaitForMove, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.BlendScript_Resume, 1
 	.set import.BlendScript_Suspend, 1

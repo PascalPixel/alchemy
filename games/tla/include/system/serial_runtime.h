@@ -9,10 +9,10 @@
 #include "irq.h"
 #include "dma.h"
 
-/// A link cable packet: its sequence number, the consoles not yet heard from,
+/// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 sequence; ///< SerialRuntime's sequence when the packet was built
+  u8 packetNumber; ///< SerialRuntime's packet number when the packet was built
   /// The consoles heard from before but not this frame (receivedMask ^
   /// currentMask).
   u8 missingMask;
@@ -24,7 +24,7 @@ struct SerialPacket {
 };
 
 STATIC_ASSERT(sizeof(struct SerialPacket) == 32);
-STATIC_ASSERT(offsetof(struct SerialPacket, sequence) == 0);
+STATIC_ASSERT(offsetof(struct SerialPacket, packetNumber) == 0);
 STATIC_ASSERT(offsetof(struct SerialPacket, missingMask) == 1);
 STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
@@ -55,8 +55,8 @@ struct SerialRuntime {
   /// to the link status.
   u8 isParent;
   u8 reserved0a; ///< not named by TLA code
-  /// The packet sequence number, counted up each frame once connected.
-  u8 sequence;
+  /// The packet number, counted up each frame once connected.
+  u8 packetNumber;
   u8 reserved0c[8]; ///< not named by TLA code
   /// The halfword of sendBuffer[1] sent next; -1 between packets.
   s32 sendIndex;
@@ -84,7 +84,7 @@ STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
 STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
 
 /// A console's block transfer state, exchanged with the partner each VBlank:
-/// its block sequence, its status and flags, and a 20-byte block.
+/// its block number, its status and flags, and a 20-byte block.
 struct SerialTransferState {
   u8 active; ///< 1 when a send or receive starts
   u8 status; ///< 0x80 when a send starts, 0x81 when a receive starts
@@ -141,7 +141,7 @@ extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 // volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
 // runtime.c)
-extern volatile u8 gSerialBlockSequence;
+extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its

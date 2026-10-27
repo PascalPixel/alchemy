@@ -14,10 +14,10 @@
 #include "dma.h"
 #include "irqlock.h"
 
-/// A link cable packet: its sequence number, the consoles not yet heard from,
+/// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 sequence; ///< SerialWork's sequence when the packet was built
+  u8 packetNumber; ///< SerialWork's packet number when the packet was built
   /// The consoles heard from before but not this frame (receivedMask ^
   /// currentMask); a receiver complements it once the checksum is good.
   u8 missingMask;
@@ -29,7 +29,7 @@ struct SerialPacket {
 };
 
 STATIC_ASSERT(sizeof(struct SerialPacket) == 32);
-STATIC_ASSERT(offsetof(struct SerialPacket, sequence) == 0);
+STATIC_ASSERT(offsetof(struct SerialPacket, packetNumber) == 0);
 STATIC_ASSERT(offsetof(struct SerialPacket, missingMask) == 1);
 STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
@@ -86,8 +86,8 @@ struct SerialWork {
   /// meanwhile.
   u8 transferError;
   u8 reserved0a; ///< not named by TBS code
-  /// The packet sequence number, counted up each frame once connected.
-  u8 sequence;
+  /// The packet number, counted up each frame once connected.
+  u8 packetNumber;
   u8 reserved0c[8]; ///< not named by TBS code
   /// The halfword of sendBuffer[1] sent next; -1 between packets, when 0xfefe
   /// is sent and the two send buffers swap.
@@ -131,9 +131,9 @@ enum SerialSendState {
 };
 
 /// A console's block transfer state, exchanged with the partner each VBlank:
-/// its block sequence, its status and flags, and a 20-byte block.
+/// its block number, its status and flags, and a 20-byte block.
 struct SerialTransferState {
-  /// The sequence number of the block in payload; as receiver, the one it
+  /// The number of the block in payload; as receiver, the one it
   /// expects with bit 7 set to ask for a resend; 1 when a transfer starts.
   u8 active;
   /// 0x80 sending or 0x81 receiving when started; the receiver counts blocks
@@ -167,7 +167,7 @@ extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 /// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
 /// runtime.c)
-extern volatile u8 gSerialBlockSequence;
+extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH(volatile): each mask test loads the status on its own; as plain

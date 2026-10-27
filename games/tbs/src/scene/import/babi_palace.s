@@ -3,7 +3,7 @@
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
 	.set import.Actor_SetSpriteFlags, 1

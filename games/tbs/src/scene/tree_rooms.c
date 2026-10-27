@@ -966,7 +966,7 @@ static void TretPalette_UpdateMapTint(void) {
     gTreeRooms_TintIndex = 0;
 }
 
-/// Plays a Tret animation sequence with its original pauses.
+/// Plays one of Tret's gestures with its original pauses.
 static void TreeRooms_PlayGesture(s32 gesture) {
   switch (gesture) {
   case TRET_GESTURE_CLOSE_EYES:

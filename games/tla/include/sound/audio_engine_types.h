@@ -329,7 +329,7 @@ struct SoundTrack {
 
 /// A song's header: its track count, priority and mode, its voices, and where
 /// each track's commands start.
-struct SequenceHeader {
+struct SongHeader {
   u8 trackCount; ///< At most 16; 0 in the empty songs.
   u8 unk01;      ///< 0 in every song; ags-music refuses another block count.
   u8 priority;   ///< Becomes the player's priority.
@@ -343,7 +343,7 @@ struct SequenceHeader {
 /// A player, which plays one song: its header and status, its tracks, its
 /// tempo and fade.
 struct SoundPlayer {
-  const struct SequenceHeader *header; ///< The song playing or last played.
+  const struct SongHeader *header; ///< The song playing or last played.
   /// bits: 31 paused | 15..0 tracks active after the last tick. Set to
   /// SOUND_PLAYER_PAUSED alone when no track is left.
   u32 status;
@@ -442,7 +442,7 @@ struct PlayerSlot {
 /// An entry of the song table: a song's header and the player table entry
 /// that plays it.
 struct SongEntry {
-  const struct SequenceHeader *header;
+  const struct SongHeader *header;
   /// Index into gSound_PlayerSlots; AudioCommand_Play gives slot 7's songs
   /// the first player from 7 down to 4 with no active track, else 7.
   u16 slot;
@@ -471,7 +471,7 @@ void AudioCommand_InvokeSlot34(struct SoundNote *note);
 void AudioCommand_InvokeSlot35(void *block);
 
 void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header);
+                           const struct SongHeader *header);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
 void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
                                             u16 scale);

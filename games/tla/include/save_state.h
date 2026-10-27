@@ -29,11 +29,11 @@ struct SaveSummary {
 };
 
 /// The save work: which of the 15 flash sectors hold a record, their record
-/// ids and sequence numbers, a record's three sectors and the summaries.
+/// ids and counters, a record's three sectors and the summaries.
 struct SaveWorkspace {
   u8 occupied[15];  ///< 1 for a sector holding the current copy of a record
   u8 recordId[15];  ///< each sector's record
-  u16 sequence[15]; ///< each sector's sequence number
+  u16 counter[15]; ///< each sector's counter
   u8 slot[0x3000];  ///< one record's sectors, read from or written to flash
   struct SaveSummary summary[3]; ///< each file's, from records 0 to 2
   struct SaveSummary extra;      ///< record 3's summary
@@ -43,17 +43,17 @@ struct SaveWorkspace {
 };
 
 /// The header of a save sector in flash: its signature, the record it holds,
-/// its checksum and its sequence number.
+/// its checksum and its counter.
 struct SaveSlotHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
   u8 recordId;
   u16 checksum;
-  u16 sequence;
+  u16 counter;
   u8 reserved[4]; ///< not named by ⚓️ code
 };
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
-STATIC_ASSERT(offsetof(struct SaveWorkspace, sequence) == 0x1e);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 0x1e);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x303c);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 0x30fc);
 STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x3144);

@@ -25,7 +25,7 @@ extern struct SoundPlayer gMusicPlayerFanfare;
 void SongFlag_Set(s32 cue);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
 void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header);
+                           const struct SongHeader *header);
 void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
 void Audio_PlaySound(u16 cue);
 void Sound_LoadPresetParameters(s32 preset);

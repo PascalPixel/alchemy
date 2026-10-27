@@ -1,4 +1,4 @@
-// Draft, differ 503 of 496: a Magma Rock room's opening sequence: the leader is centred on its cell, sound 584, the screen shakes
+// Draft, differ 503 of 496: a Magma Rock room's opening event: the leader is centred on its cell, sound 584, the screen shakes
 // (sound 107); by room (2, 3 or 5, the last by entrance) it picks the cells to
 // open, the flag that was set (768 to 770, cleared here) and where the effects
 // play; sound 181 with the shaking, the cells are copied open; if that flag was

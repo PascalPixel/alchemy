@@ -2,7 +2,7 @@
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_Create, 1
 	.set import.Actor_Release, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1

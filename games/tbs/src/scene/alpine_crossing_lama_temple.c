@@ -217,7 +217,7 @@ static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
 // Update routine that turns the party leader toward Feizhi while she runs
 // past.
 // UB: update routines return void. Plain void removes the native zero result
-// and changes its return sequence (three instructions in tbs-en).
+// and changes its return (three instructions in tbs-en).
 #ifdef UBFIX
 static void AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
 #else
@@ -837,7 +837,7 @@ static void AlpineCrossing_HidePath(void) {
 // while the leader stands higher than its top, so the leader can climb onto
 // it, and over the leader otherwise.
 // UB: this update routine has no result. Plain void changes the native return
-// sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
+// from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
 static void Pillar_SortAgainstLeader(struct Actor *updated) {
 #else

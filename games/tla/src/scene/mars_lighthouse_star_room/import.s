@@ -313,7 +313,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_0200436c
 	.thumb_func
 Func_0200436c:
-	overlay_veneer BattleEffect_RunObjectRiseFar
+	overlay_veneer Object_JumpDownLedgeFar
 	.global Object_SetPartAttribute
 	.thumb_func
 Object_SetPartAttribute:

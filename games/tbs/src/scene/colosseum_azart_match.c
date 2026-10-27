@@ -294,7 +294,7 @@ static void ColosseumAzartMatch_ResetBrokenBridge(void) {
   task();
 }
 
-/// Starts the bridge's repeating opening sequence.
+/// Starts the broken bridge opening and closing, over and over.
 static void ColosseumAzartMatch_StartBrokenBridge(void) {
   gColosseumAzartMatch_Countdown = 66;
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);

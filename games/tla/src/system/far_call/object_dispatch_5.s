@@ -41,10 +41,10 @@ WorldMap_UpdateViewFar:
 	.thumb_func
 Map_LoadDefaultCellsAndUpdateBlockFar:
 	overlay_veneer Map_LoadDefaultCellsAndUpdateBlock
-	.global Map_PlayMetatileCopySequenceFar
+	.global Map_PlayMapEditFar
 	.thumb_func
-Map_PlayMetatileCopySequenceFar:
-	overlay_veneer Map_PlayMetatileCopySequence
+Map_PlayMapEditFar:
+	overlay_veneer Map_PlayMapEdit
 	.global Map_CopyMetatileIndicesRectFar
 	.thumb_func
 Map_CopyMetatileIndicesRectFar:

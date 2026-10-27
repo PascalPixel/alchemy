@@ -21,19 +21,19 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count) {
   return difference;
 }
 
-u32 SaveState_FindLatestSequence(s32 recordId) {
+u32 SaveState_GetLatestCounter(s32 recordId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-  u32 latestSequence;
+  u32 latestCounter;
   u32 i;
 
-  latestSequence = 0;
+  latestCounter = 0;
   for (i = 0; i <= 14; i += 3) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-      if (latestSequence < work->sequence[i])
-        latestSequence = work->sequence[i];
+      if (latestCounter < work->counter[i])
+        latestCounter = work->counter[i];
     }
   }
-  return latestSequence;
+  return latestCounter;
 }
 
 /// Reads the summary of the latest save in each of the three files, clearing

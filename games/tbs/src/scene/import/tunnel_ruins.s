@@ -13,7 +13,7 @@
 	.set import.Actor_Release, 1
 	.set import.Actor_SetMoveTarget, 1
 	.set import.Actor_WaitForMove, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1

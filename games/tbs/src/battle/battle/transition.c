@@ -18,7 +18,7 @@
 /// darken the backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT
 /// in DISPCNT_MODE_1 with every layer off; the four BGxCNT are put back as they
 /// were. It draws four random numbers a frame, which only advances the
-/// sequence. Returns 0.
+/// random numbers. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90

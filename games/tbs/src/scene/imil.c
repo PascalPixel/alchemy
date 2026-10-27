@@ -457,7 +457,7 @@ static void Imil_TalkToOldMan(void) {
     if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
       Event_Start();
       Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
-      MapGrid_PlayMetatileCopySequence(gImil_CellStepsA, 10, 69);
+      MapGrid_PlayMapEdit(gImil_CellStepsA, 10, 69);
       Event_SetMessageId(MsgMercuryFeelMuchBetter);
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Import_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
@@ -627,7 +627,7 @@ static void Imil_OpenDoorAndExit(void) {
     s32 x = gImil_DoorCellPoints[exit - 1][0];
     s32 y = gImil_DoorCellPoints[exit - 1][1];
 
-    MapGrid_PlayMetatileCopySequence(gImil_DoorCellSteps[exit - 1], x, y);
+    MapGrid_PlayMapEdit(gImil_DoorCellSteps[exit - 1], x, y);
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

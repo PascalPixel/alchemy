@@ -24,7 +24,7 @@
 // for the HP drain, where the listing keeps heal in r5 and the amount in r6
 // (ours the reverse): the amount in tmp (384), in a block-local amt (505), hp
 // read after the halving (557); heal += apwr before dmg = apwr changes nothing.
-// The weapon case halves defense with a signed shift sequence in the listing
+// The weapon case halves defense with a signed shift in the listing
 // (lsrs #31, adds, asrs) where ours shifts logically: def / 2 and scale /= 2
 // give the same logical shift, defense read through the function-level value
 // 382. With the void BattleEvent_Push, plain hp reads at the top of the heal still
@@ -104,7 +104,7 @@
 // The weapon case's halving matches as the else of the half == 2 test
 // (if (half == 2) scale = 0; else scale = def / 2;), 204 (draft 3450,
 // common 3348): the else starts at a label, so combine no longer knows
-// def is not negative and keeps the signed shift sequence, and the
+// def is not negative and keeps the signed shift, and the
 // compiler still emits the halving before the test as the listing does.
 // In the same order as before, def / 2, scale /= 2 with or without
 // def, the field divided directly, def as u16, or half == 1 and

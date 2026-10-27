@@ -10,7 +10,7 @@
 // BeginTransfer functions and Serial_StepBlockTransfer).
 
 enum {
-  /// A packet: sequence, missing mask, checksum and the 24-byte payload.
+  /// A packet: its number, missing mask, checksum and the 24-byte payload.
   SERIAL_PACKET_HALFWORDS = 14,
   SERIAL_PAYLOAD_BYTES = 24, ///< one console's payload each frame
   SERIAL_BLOCK_BYTES = 20,   ///< bulk data carried in each payload
@@ -156,7 +156,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
     break;
   }
 
-  gSerialWork.sequence++;
+  gSerialWork.packetNumber++;
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
@@ -199,7 +199,7 @@ s32 Serial_PollStatus(void) {
       }
       gSerialWork.phase = SERIAL_PHASE_CONNECTED;
     }
-    gSerialWork.sequence++;
+    gSerialWork.packetNumber++;
   }
 
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
@@ -234,7 +234,7 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
   if (gSerialWork.phase == SERIAL_PHASE_CONNECTED) {
     Serial_CollectReceivedPayloads(receive);
     Serial_PrepareSendPacket(send);
-    gSerialWork.sequence++;
+    gSerialWork.packetNumber++;
   }
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
@@ -246,7 +246,7 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
   return result;
 }
 
-/// Builds the packet to send in sendBuffer[0]: [0] the sequence number, [1]
+/// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1]
 /// the consoles not yet heard from, [2] the checksum and [4] the 24-byte
 /// payload. The checksum is the complement of the sum of the first 28 bytes
 /// as halfwords. Then restarts the send position and the timer. Called by
@@ -266,7 +266,7 @@ void Serial_PrepareSendPacket(void *payload) {
     u8 recv;
 
     pkt = (u8 *)sr->sendBuffer[0];
-    pkt[0] = sr->sequence;
+    pkt[0] = sr->packetNumber;
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;
@@ -464,7 +464,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
 }
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
-/// sets the send source, size and block sequence that
+/// sets the send source, size and block number that
 /// Serial_StepBlockTransfer works from. Called by the link battle,
 /// the Battle Arena and the file list's transfer. Returns -1 when a send is
 /// already running, 0 otherwise.
@@ -483,7 +483,7 @@ s32 Serial_StartSend(void *source, s32 size) {
   state->status = 0x80;
   gSerialSendSource = (s32)source;
   gSerialSendSize = size;
-  gSerialBlockSequence = 0;
+  gSerialBlockNumber = 0;
   state->active = 1;
   IRQ_UNLOCK(savedInterruptMaster);
   return 0;
@@ -506,7 +506,7 @@ s32 Serial_StartReceive(void *destination) {
   gSerialReceiveDestination = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
-  gSerialBlockSequence = 0;
+  gSerialBlockNumber = 0;
   IRQ_UNLOCK(savedInterruptMaster);
   return 0;
 }
@@ -565,12 +565,12 @@ struct SerialHalfword {
 
 /// Runs each VBlank after the exchange, called by System_VBlankHandler: moves
 /// the bulk transfer on by one 20-byte block each way. The receiver
-/// acknowledges each block's sequence number; when the sender sees an
+/// acknowledges each block's number; when the sender sees an
 /// acknowledgement behind its own count it rewinds and sends the missed
 /// blocks again. A finished send or receive clears gSerialSendSource or
 /// gSerialReceiveDestination.
 void Serial_StepBlockTransfer(void) {
-  /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockSequence are volatile
+  /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockNumber are volatile
    * (serial_runtime.h), so each access is its own load or store; as plain
    * globals, 99 of 257 instructions differ in tbs-en. */
   struct SerialTransferState *peer;
@@ -590,7 +590,7 @@ void Serial_StepBlockTransfer(void) {
   // Both consoles must have been heard from this frame
   if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
     return;
-  // Receiving advances only when the peer presents the expected sequence.
+  // Receiving advances only when the peer presents the expected block number.
   // peerFlags is the sender's block kind, an enum SerialSendState.
   {
     s32 *receive = &gSerialReceiveDestination;
@@ -599,7 +599,7 @@ void Serial_StepBlockTransfer(void) {
       if (own->flags == SERIAL_RECEIVE_ACTIVE &&
           (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
               SERIAL_SEND_LAST - SERIAL_SEND_MORE) {
-        if (peer->active == (gSerialBlockSequence & 0x7f)) {
+        if (peer->active == (gSerialBlockNumber & 0x7f)) {
           own->active = 0;
           switch (peer->peerFlags) {
           case SERIAL_SEND_MORE:
@@ -618,19 +618,19 @@ void Serial_StepBlockTransfer(void) {
             own->active = one.v;
             break;
           }
-          gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
-        } else if (gSerialBlockSequence & 0x80) {
+          gSerialBlockNumber = (gSerialBlockNumber + 1) & 0x7f;
+        } else if (gSerialBlockNumber & 0x80) {
           // Out of step and already asked: bit 7 of active is the request to
-          // rewind to the sequence in its low bits
+          // rewind to the block number in its low bits
           if (own->active & 0x80) {
             own->active = one.v;
           } else if (own->active == 1) {
             own->active = 0;
-            gSerialBlockSequence &= 0x7f;
+            gSerialBlockNumber &= 0x7f;
           }
         } else {
-          own->active = gSerialBlockSequence | 0x80;
-          gSerialBlockSequence |= 0x80;
+          own->active = gSerialBlockNumber | 0x80;
+          gSerialBlockNumber |= 0x80;
         }
       } else {
         own->active = 0;
@@ -640,15 +640,15 @@ void Serial_StepBlockTransfer(void) {
   {
     s32 *send = &gSerialSendSource;
     s32 src = *send;
-    // A peer behind our sequence requests a rewind before the next block.
+    // A peer behind our block number requests a rewind before the next block.
     if (src != 0) {
       if (peer->flags == SERIAL_RECEIVE_ACTIVE) {
         if (peer->active & 0x80) {
-          gap = (gSerialBlockSequence - peer->active) & 0x7f;
+          gap = (gSerialBlockNumber - peer->active) & 0x7f;
           *send = src - gap * SERIAL_BLOCK_BYTES;
           gSerialSendSize += gap * SERIAL_BLOCK_BYTES;
-          gSerialBlockSequence -= gap;
-          gSerialBlockSequence &= 0x7f;
+          gSerialBlockNumber -= gap;
+          gSerialBlockNumber &= 0x7f;
         }
         // Send the next block, marked as the last when it empties the size
         if (gSerialSendSize != 0) {
@@ -656,14 +656,14 @@ void Serial_StepBlockTransfer(void) {
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = SERIAL_SEND_MORE;
-            own->active = gSerialBlockSequence & 0x7f;
+            own->active = gSerialBlockNumber & 0x7f;
             *send += SERIAL_BLOCK_BYTES;
           } else {
             own->peerFlags = SERIAL_SEND_LAST;
-            own->active = gSerialBlockSequence & 0x7f;
+            own->active = gSerialBlockNumber & 0x7f;
             *send += SERIAL_BLOCK_BYTES;
           }
-          gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+          gSerialBlockNumber = (gSerialBlockNumber + 1) & 0x7f;
         }
       }
       // The partner has stored the last block: the send is finished

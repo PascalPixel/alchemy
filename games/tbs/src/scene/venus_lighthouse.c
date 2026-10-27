@@ -229,10 +229,10 @@ enum VenusLighthouseMetatileBehavior {
 #endif
 
 #ifdef UBFIX
-#define VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE                                  \
+#define VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE                          \
   VenusLighthouse_ArriveThroughSparkPassage
 #else
-#define VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE                                  \
+#define VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE                          \
   ((s32 (*)(void))VenusLighthouse_ArriveThroughSparkPassage)
 #endif
 
@@ -1947,7 +1947,7 @@ static void VenusLighthouse_MoveGatePillar(void) {
         Actor_RefreshSelectorById(ACTOR_GATE_SPARKLE);
         Event_WaitFrames(30);
         Sound_PlaySong(SE_DOOR_OPEN);
-        MapGrid_PlayMetatileCopySequence(gVenusSecondFloorGateCells, 110, 41);
+        MapGrid_PlayMapEdit(gVenusSecondFloorGateCells, 110, 41);
         MapGrid_CopyCellAttributes(46, 41, 1, 1, column, 42);
         GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       }
@@ -2084,7 +2084,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
           secondGateEffect->riseEnabled != 0) {
         Event_WaitFrames(30);
         Sound_PlaySong(SE_DOOR_OPEN);
-        MapGrid_PlayMetatileCopySequence(gVenusThirdFloorGateCells, 109, 37);
+        MapGrid_PlayMapEdit(gVenusThirdFloorGateCells, 109, 37);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].x &&
@@ -3014,7 +3014,7 @@ s32 VenusLighthouse_Initialize(void) {
       /* FAKEMATCH(wrapper): called through a cast to an s32 function, so it
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
-      VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
+      VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE();
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:

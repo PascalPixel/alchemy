@@ -2,7 +2,7 @@
 // hoists the picture's VRAM offset (tiles << 5) out of the frame loop and
 // keeps the effect pointer and the frame counter in other registers; the
 // rest follows from those.
-// An event sequence in the heap slot 0x5c work (0x192c bytes). The
+// An event command in the heap slot 0x5c work (0x192c bytes). The
 // other objects of the effect owner's group pause, the block cue callback
 // stops, and resource 0x1e1's 64 particles (Func_080e45a8) start with delays
 // two frames apart. The owner is raised 10 units, takes the leader's

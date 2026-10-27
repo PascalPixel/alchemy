@@ -585,7 +585,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
 static void ValeKradensCottage_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gValeKradensCottage_DoorOpens, 43, 8);
+    MapGrid_PlayMapEdit(gValeKradensCottage_DoorOpens, 43, 8);
   }
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 229, 217);
   Import_EventSetExitRequest(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);

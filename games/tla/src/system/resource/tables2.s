@@ -1,5 +1,5 @@
 	.section .rodata
-@ Second copy of the color conversion and byte remap tables, matching the sequence
+@ Second copy of the color conversion and byte remap tables, matching the run
 @ from gResourceSlot_ConversionTables through the end of Data_080209a8.
 	.global Data_080c89cc
 Data_080c89cc:

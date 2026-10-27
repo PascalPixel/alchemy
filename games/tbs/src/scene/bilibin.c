@@ -471,7 +471,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   column = *(s16 *)(originBytes + originOffset);
   rowOffset = originOffset + 2;
   row = *(s16 *)(originBytes + rowOffset);
-  MapGrid_PlayMetatileCopySequence(gBilibin_DoorSteps[exitIndex], column, row);
+  MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

@@ -51,7 +51,7 @@ s32 Func_0801596c(void) {
 
     work->occupied[index] = 0;
     work->recordId[index] = 16;
-    work->sequence[index] = 0;
+    work->counter[index] = 0;
     status = SaveState_ReadSlotAndCheckChecksum(index);
     START_DMA(work->slot, &header, 0x84000004);
     WaitDma((volatile struct DmaRegisters *)0x040000d4);
@@ -61,7 +61,7 @@ s32 Func_0801596c(void) {
       continue;
     record = slot->recordId;
     id = record;
-    work->sequence[index] = slot->sequence;
+    work->counter[index] = slot->counter;
     if (id >= 16)
       continue;
     if (status != 0)
@@ -72,7 +72,7 @@ s32 Func_0801596c(void) {
     if (status < index) {
       do {
         if (work->recordId[status] == (u8)record) {
-          if (work->sequence[status] < slot->sequence)
+          if (work->counter[status] < slot->counter)
             work->occupied[status] = 0;
           else
             work->occupied[index] = 0;

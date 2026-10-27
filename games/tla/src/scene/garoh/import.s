@@ -53,7 +53,7 @@ Func_02005174:
 	.global Func_0200517c
 	.thumb_func
 Func_0200517c:
-	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_PlayMapEditFar
 	.global Func_02005184
 	.thumb_func
 Func_02005184:

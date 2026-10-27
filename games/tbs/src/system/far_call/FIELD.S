@@ -49,7 +49,7 @@ FarCall_FieldTable:
 	overlay_veneer MapGrid_GetScreenRelativePosition
 	overlay_veneer WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
-	export MapGrid_PlayMetatileCopySequenceFar, MapGrid_PlayMetatileCopySequence
+	export MapGrid_PlayMapEditFar, MapGrid_PlayMapEdit
 	export MapGrid_CopyMetatileIndicesRectFar, MapGrid_CopyMetatileIndicesRect
 	export TilesetAnim_ResumeFar, TilesetAnim_Resume
 	export TilesetAnim_PauseFar, TilesetAnim_Pause

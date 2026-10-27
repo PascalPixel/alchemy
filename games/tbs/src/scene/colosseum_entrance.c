@@ -664,7 +664,7 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
 /// round; if he still refuses, Garet leads the way in. Before Babi is saved it
 /// does nothing.
 static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
-  // The native sequence reuses this word for actor handles and the
+  // The native code reuses this word for actor handles and the
   // reply.
   s32 actorOrAnswer;
 

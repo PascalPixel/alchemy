@@ -27,7 +27,7 @@ again from its very first instruction, so start-up runs again in full.
 
 The cartridge's first instruction leads to `System_Entry`, which calls
 `System_Initialize`. The logos are drawn by
-[the title sequence](src/graphics/README.md#the-title-sequence), and
+[the opening](src/graphics/README.md#the-opening), and
 [Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
 
 ## Waiting and tasks

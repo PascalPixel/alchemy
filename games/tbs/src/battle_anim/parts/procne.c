@@ -126,7 +126,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
   // is its distance from the whirlwind's axis; velocityY is its heading
   // round the axis and, doubled, its rise; velocityX the turn added to it.
   // The draw before the delay is discarded but still advances the random
-  // sequence.
+  // numbers.
   index = 0;
   do {
     point = &work->particles[index];

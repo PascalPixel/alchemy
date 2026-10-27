@@ -173,7 +173,7 @@ Object_SetModeById:
 	.global Func_020028e0
 	.thumb_func
 Func_020028e0:
-	overlay_veneer BattleEffect_RunObjectRiseFar
+	overlay_veneer Object_JumpDownLedgeFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

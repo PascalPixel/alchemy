@@ -1472,7 +1472,7 @@ u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 /// calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
   // A shared inline message-pair helper grows each save routine from 0x6c to
-  // 0x70 in the native build, so retain the two sequences.
+  // 0x70 in the native build, so retain the two copies.
   struct Window *window;
 
   Sound_PlaySong(MUS_SAVED);

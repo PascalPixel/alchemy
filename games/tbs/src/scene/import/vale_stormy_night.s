@@ -10,7 +10,7 @@
 	.set import.Actor_Create, 1
 	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1

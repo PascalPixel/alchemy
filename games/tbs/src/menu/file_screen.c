@@ -228,13 +228,13 @@ static void FileScreen_UpdateBlend(void) {
 /// The first hidden code, entered on the File Screen and ended by 0:
 /// Select three times. With it a new game names Garet, Ivan and Mia as well
 /// as Isaac (FileScreen_Run).
-const u16 gFileScreen_CodeSequence[] = {
+const u16 gFileScreen_ButtonCode[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
 /// The second, longer code: with it a new game also names Felix, Jenna and
 /// Sheba.
-const u16 gFileScreen_ExtraCodeSequence[] = {
+const u16 gFileScreen_ExtraButtonCode[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
@@ -244,10 +244,10 @@ const u16 gFileScreen_ExtraCodeSequence[] = {
 // view makes the second key an out-of-bounds access. Direct array reads also
 // reorder both native held-key stores (same 0xf8-byte function extent).
 #ifdef UBFIX
-#define FILE_SCREEN_SEQUENCE_KEYS(sequence) (sequence)
+#define FILE_SCREEN_BUTTON_CODE_KEYS(code) (code)
 #else
-#define FILE_SCREEN_SEQUENCE_KEYS(sequence)                                    \
-  (((struct { u16 key[1]; } *)(sequence))->key)
+#define FILE_SCREEN_BUTTON_CODE_KEYS(code)                                     \
+  (((struct { u16 key[1]; } *)(code))->key)
 #endif
 
 /// The task that follows the two hidden codes each frame while
@@ -260,13 +260,12 @@ static void FileScreen_CheckButtonCodes(void) {
       if (gKeysHeld == 0)
         gFileScreen_CodeHeld = 0;
     } else if (gKeysHeld != 0) {
-      if (gKeysHeld ==
-          FILE_SCREEN_SEQUENCE_KEYS(
-              gFileScreen_CodeSequence)[gFileScreen_CodeProgress]) {
+      if (gKeysHeld == FILE_SCREEN_BUTTON_CODE_KEYS(
+                           gFileScreen_ButtonCode)[gFileScreen_CodeProgress]) {
         gFileScreen_CodeProgress++;
         gFileScreen_CodeHeld = 1;
-        if (FILE_SCREEN_SEQUENCE_KEYS(
-                gFileScreen_CodeSequence)[gFileScreen_CodeProgress] == 0) {
+        if (FILE_SCREEN_BUTTON_CODE_KEYS(
+                gFileScreen_ButtonCode)[gFileScreen_CodeProgress] == 0) {
           gFileScreen_CodeUnlocked = 1;
           Sound_PlaySong(SE_CHIME);
         }
@@ -281,12 +280,12 @@ static void FileScreen_CheckButtonCodes(void) {
         FILE_SCREEN_EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
-          FILE_SCREEN_SEQUENCE_KEYS(
-              gFileScreen_ExtraCodeSequence)[gFileScreen_ExtraCodeProgress]) {
+          FILE_SCREEN_BUTTON_CODE_KEYS(
+              gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress]) {
         gFileScreen_ExtraCodeProgress++;
         FILE_SCREEN_EXTRA_CODE_HELD = 1;
-        if (FILE_SCREEN_SEQUENCE_KEYS(
-                gFileScreen_ExtraCodeSequence)[gFileScreen_ExtraCodeProgress] ==
+        if (FILE_SCREEN_BUTTON_CODE_KEYS(
+                gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress] ==
             0) {
           gFileScreen_ExtraCodeUnlocked = 1;
           Sound_PlaySong(SE_CHIME);
@@ -298,7 +297,7 @@ static void FileScreen_CheckButtonCodes(void) {
   }
 }
 
-#undef FILE_SCREEN_SEQUENCE_KEYS
+#undef FILE_SCREEN_BUTTON_CODE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 /// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
@@ -1369,16 +1368,16 @@ struct Trigger gFileScreen_Triggers[] = {
 /// Frames since FileScreen_UpdateBlend began; the blend level is half of it.
 s16 gFileScreen_BlendFrame = 0;
 
-/// Set once gFileScreen_CodeSequence has been entered; nothing here clears it.
+/// Set once gFileScreen_ButtonCode has been entered; nothing here clears it.
 s16 gFileScreen_CodeUnlocked = 0;
 
-/// Set once gFileScreen_ExtraCodeSequence has been entered.
+/// Set once gFileScreen_ExtraButtonCode has been entered.
 s16 gFileScreen_ExtraCodeUnlocked = 0;
 
-/// The index in gFileScreen_CodeSequence of the key to press next.
+/// The index in gFileScreen_ButtonCode of the key to press next.
 s16 gFileScreen_CodeProgress = 0;
 
-/// The index in gFileScreen_ExtraCodeSequence of the key to press next.
+/// The index in gFileScreen_ExtraButtonCode of the key to press next.
 s16 gFileScreen_ExtraCodeProgress = 0;
 
 /// Set while the first code's last correct key is still held.

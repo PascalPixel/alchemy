@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
 	.set import.ArcTan2, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1

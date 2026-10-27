@@ -85,16 +85,16 @@ s32 SaveState_ChecksumWorkspace(void) {
 
 u32 SaveState_FindLatestSlot(s32 recordId) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-  u32 latestSequence;
+  u32 latestCounter;
   u32 latestSlot;
   u32 i;
 
-  latestSequence = 0;
+  latestCounter = 0;
   latestSlot = 15;
   for (i = 0; i <= 14; i += 3) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-      if (latestSequence < work->sequence[i]) {
-        latestSequence = work->sequence[i];
+      if (latestCounter < work->counter[i]) {
+        latestCounter = work->counter[i];
         latestSlot = i;
       }
     }
@@ -113,13 +113,13 @@ s32 SaveState_InvalidateSlot(s32 index) {
   START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
   WAIT_DMA();
   header.recordId = 16;
-  header.sequence = 0;
+  header.counter = 0;
   START_DMA(&header, work->slot, 0x84000004);
   WAIT_DMA();
   if (SaveState_WriteWorkspaceSlot(index) != 0)
     return 1;
   work->occupied[index] = 0;
   work->recordId[index] = 16;
-  work->sequence[index] = 0;
+  work->counter[index] = 0;
   return 0;
 }

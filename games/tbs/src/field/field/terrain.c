@@ -346,7 +346,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   // bytes: the kind, then up to three height samples.
   cell += x / 16 + (y / 16 << 7);
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
-  // UB: sequence the kind-byte read before passing the remaining samples.
+  // UB: read the kind byte before passing the remaining samples.
 #ifdef UBFIX
   {
     u32 kind = *heightBytes++ & 15;
@@ -469,7 +469,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   if (cell->behavior == MB_WALL)
     return COLLISION_IMPASSABLE;
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
-  // UB: sequence the kind-byte read before passing the remaining samples.
+  // UB: read the kind byte before passing the remaining samples.
 #ifdef UBFIX
   {
     u32 kind = *heightBytes++ & 15;

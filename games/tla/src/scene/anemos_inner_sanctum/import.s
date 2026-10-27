@@ -113,7 +113,7 @@ Func_02003318:
 	.global Func_02003320
 	.thumb_func
 Func_02003320:
-	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_PlayMapEditFar
 	.global Func_02003328
 	.thumb_func
 Func_02003328:

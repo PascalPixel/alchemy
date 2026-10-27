@@ -382,8 +382,7 @@ void MapGrid_UpdateLayerScroll(void);
 void MapGrid_SetCameraCenter(s32 x, s32 y);
 void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                      u32 dstY, u32 width, u32 height);
-void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
-                                      u32 destinationY);
+void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY);
 void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,

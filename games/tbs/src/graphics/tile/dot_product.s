@@ -20,7 +20,7 @@
 @ high half in sp, and r0 is also an input of the smull. So these multiplies
 @ did not come from the DI patterns. smulsi3_highpart leaves its low half a
 @ dead scratch, and orr r0, r0, ip, lsr #16 reads it.
-@ This proves a hand-written multiply sequence, not by itself a hand-written
+@ This proves a hand-written multiply, not by itself a hand-written
 @ file. Nothing else here is a tell: the routine is a frameless leaf, and
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's

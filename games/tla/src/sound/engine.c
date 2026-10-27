@@ -227,7 +227,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 }
 
 void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header) {
+                           const struct SongHeader *header) {
   s32 i;
   struct SoundTrack *track;
 

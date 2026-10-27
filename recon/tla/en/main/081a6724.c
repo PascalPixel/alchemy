@@ -1,4 +1,4 @@
-// Draft, differ 131 of 160: shows a two-layer title-sequence picture, as
+// Draft, differ 131 of 160: shows a two-layer picture of the opening, as
 // Func_081a6638 does: BG3's map numbers rows 7 to 9 from tile 64 over a
 // blank of 0x3040 with rows 10 and 11 of 0x3060, BG0's map numbers rows 10
 // and 11 from tile 160; it fades in, blends BG0 in over 16 steps and fades

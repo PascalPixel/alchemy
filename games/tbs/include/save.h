@@ -14,7 +14,7 @@
 #include "flash.h"
 
 /// The header of a save sector in flash: its signature, the record it holds,
-/// its checksum and its sequence number.
+/// its checksum and its counter.
 struct SaveSectorHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
   /// File n's records are n and n + 3; SAVE_RECORD_NONE (runtime/save.c) marks
@@ -58,7 +58,7 @@ struct SaveFileSummary {
 };
 
 /// The save work: which of the 16 flash sectors hold a record, their record
-/// ids and sequence numbers, one sector's buffer and the three files'
+/// ids and counters, one sector's buffer and the three files'
 /// summaries.
 ///
 /// It lives in heap slot HEAP_SLOT_SAVE (gSaveWork) only around each
@@ -66,9 +66,9 @@ struct SaveFileSummary {
 /// (Save_ScanRecordFlags): Save_InitializeWork takes it and
 /// scans the sectors into it, and Save_ReleaseWork frees it.
 struct SaveWork {
-  u8 occupied[16];  ///< 1 for a sector holding the current copy of a record
-  u8 recordId[16];  ///< each sector's record; 16 for none
-  u16 sequence[16]; ///< each sector's sequence number
+  u8 occupied[16]; ///< 1 for a sector holding the current copy of a record
+  u8 recordId[16]; ///< each sector's record; 16 for none
+  u16 counter[16]; ///< each sector's counter
   union {
     struct {
       struct SaveSectorHeader header;
@@ -90,7 +90,7 @@ STATIC_ASSERT(offsetof(struct SaveWork, summary) == 0x1040);
 STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 0x10);
 STATIC_ASSERT(sizeof(struct SaveWork) == 0x1100);
 STATIC_ASSERT(offsetof(struct SaveWork, recordId) == 0x10);
-STATIC_ASSERT(offsetof(struct SaveWork, sequence) == 0x20);
+STATIC_ASSERT(offsetof(struct SaveWork, counter) == 0x20);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, flagCount) == 0x32);
 STATIC_ASSERT(offsetof(struct SaveFileSummary, secondRecordPlayTime) == 0x38);
 

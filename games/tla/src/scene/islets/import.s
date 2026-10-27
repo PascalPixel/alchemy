@@ -73,7 +73,7 @@ Func_02003e14:
 	.global Func_02003e1c
 	.thumb_func
 Func_02003e1c:
-	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_PlayMapEditFar
 	.global Func_02003e24
 	.thumb_func
 Func_02003e24:
@@ -193,7 +193,7 @@ ObjectMotion_Launch:
 	.global Func_02003f0c
 	.thumb_func
 Func_02003f0c:
-	overlay_veneer BattleEffect_RunObjectRiseFar
+	overlay_veneer Object_JumpDownLedgeFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

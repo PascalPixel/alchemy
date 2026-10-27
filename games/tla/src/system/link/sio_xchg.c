@@ -20,7 +20,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   if (gSerialRuntime.phase == 1) {
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
-    gSerialRuntime.sequence++;
+    gSerialRuntime.packetNumber++;
   }
   st = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
   if (gSerialRuntime.mode == 8)
@@ -44,7 +44,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     u8 recv;
 
     pkt = (u8 *)sr->sendBuffer[0];
-    pkt[0] = sr->sequence;
+    pkt[0] = sr->packetNumber;
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;

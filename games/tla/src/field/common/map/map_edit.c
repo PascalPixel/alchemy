@@ -9,7 +9,7 @@ struct MapCopyCommand {
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
 
-void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x,
+void Map_PlayMapEdit(u16 *command, s32 destination_x,
                                   u32 destination_y) {
   struct MapCopyCommand *record = (struct MapCopyCommand *)command;
   u32 source = record->source;

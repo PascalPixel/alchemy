@@ -3,7 +3,7 @@
 // UiRender_MarkRow (136); Start's cue played before result = -2, so its tail
 // joins the other cancel's (the listing's jump into it); row cleared before
 // the pair entries are read and set to 1, scaled at the call, so jump.c keeps
-// the branch rather than a store-flag sequence (90; the row = 8 device is
+// the branch rather than a store-flag form (90; the row = 8 device is
 // gone); the message window declared in each tutorial case (60) and the saved
 // tilemap's size in a variable (52), as the twin has them; the twin's tagged
 // one-pass blocks around the cursor's stores (38). Left: about nine pairs of

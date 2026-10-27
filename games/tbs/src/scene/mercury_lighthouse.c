@@ -667,7 +667,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
     statue->targetY = Actor_GetById(ACTOR_GATE_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
     Sound_PlaySong(SE_FLOOR_SWITCH);
-    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_GateCells, 9, 7);
+    MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
     {
       s32 gateColumn = 9;
       s32 gateRow = 10;
@@ -698,7 +698,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
       leader->targetY = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
       MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
       Sound_PlaySong(SE_FLOOR_SWITCH);
-      MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_GateCells, 9, 7);
+      MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
       Event_End();
     }
   }
@@ -993,8 +993,7 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
     statue->targetY = Actor_GetById(ACTOR_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
     Sound_PlaySong(SE_FLOOR_SWITCH);
-    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_FloorSwitchCells, 10,
-                                     18);
+    MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
     MapGrid_CopyCellAttributes(10, 16, 1, 1, column, 19);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
   }
@@ -1025,7 +1024,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
       Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
   Sound_PlaySong(SE_FLOOR_SWITCH);
-  MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_FloorSwitchCells, 10, 18);
+  MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
   Event_End();
 }
 
@@ -1664,7 +1663,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     MercuryLighthouse_FadePaletteToWhite();
     MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
-    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_ColumnCells, 116, 35);
+    MapGrid_PlayMapEdit(gMercuryLighthouse_ColumnCells, 116, 35);
     Task_Remove(MercuryLighthouse_CycleEntrancePalette);
     Event_WaitFrames(20);
     // She nods, jumps up and goes in.
@@ -2297,8 +2296,8 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   } while (particleIndex <= 11);
 }
 
-/// Restores each lighthouse scene's puzzle state and its entrance's
-/// sequence.
+/// Restores each lighthouse scene's puzzle state and plays its
+/// entrance's event.
 s32 MercuryLighthouse_Initialize(void) {
   u32 statueIndex;
   s32 positionFlag;

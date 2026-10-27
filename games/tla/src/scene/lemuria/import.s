@@ -37,7 +37,7 @@ Func_02001b7c:
 	.global Func_02001b84
 	.thumb_func
 Func_02001b84:
-	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_PlayMapEditFar
 	.global Func_02001b8c
 	.thumb_func
 Func_02001b8c:

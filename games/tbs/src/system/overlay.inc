@@ -90,7 +90,7 @@
 	import Actor_SetMoveTarget, Actor_SetMoveTargetFar
 	import Actor_WaitForMove, Actor_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
-	import MapGrid_PlayMetatileCopySequence, MapGrid_PlayMetatileCopySequenceFar
+	import MapGrid_PlayMapEdit, MapGrid_PlayMapEditFar
 	import MapGrid_CopyMetatileIndicesRect, MapGrid_CopyMetatileIndicesRectFar
 	import TilesetAnim_Resume, TilesetAnim_ResumeFar
 	import TilesetAnim_Pause, TilesetAnim_PauseFar

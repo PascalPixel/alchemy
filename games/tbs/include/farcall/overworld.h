@@ -111,8 +111,7 @@ void Actor_RunRepeatedMotionFar(u32 actorId, s32 variant);
 /// Makes an actor hop down off the ledge in front of it and land 16
 /// pixels south, playing the queued sound as it lands. The field runs it for
 /// the leader at a ledge, and seven scenes import it.
-void Actor_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
-                            s32 optional_action);
+void Actor_JumpDownLedgeFar(s32 actorId, s32 pose, s32 param);
 /// Turns the first actor at once to face the second, then waits wait
 /// frames.
 void Actor_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);

@@ -1,4 +1,4 @@
-// Draft, differ 640 of 724: an event sequence run on an object (targetId): 48
+// Draft, differ 640 of 724: an event command run on an object (targetId): 48
 // runes (FieldEffect_Runes) gather on it in a 16-by-3 grid while pebbles
 // (FieldEffect_Pebbles) fly up from it for 40 frames; the object takes mode
 // 2, its update becomes Func_080e9e8c and it plays Data_080f1040; it is then

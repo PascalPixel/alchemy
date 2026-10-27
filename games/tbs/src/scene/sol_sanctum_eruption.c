@@ -207,7 +207,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_PlaceHostageGroup();
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
 #ifndef UBFIX
-  // UB: these are separate work-pointer globals. The native sequence reaches
+  // UB: these are separate work-pointer globals. The native code reaches
   // the field heap slot through the particle heap slot; named globals add
   // four bytes and change this event's register allocation in tbs-en.
   fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);

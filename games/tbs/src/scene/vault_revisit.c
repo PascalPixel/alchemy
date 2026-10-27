@@ -457,8 +457,7 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
 /// the man whose precious stone a cat ate.
 static void VaultRevisit_EnterGemOwnersHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_GemOwnersHouseDoorCells, 56,
-                                   19);
+  MapGrid_PlayMapEdit(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST);
 }
 
@@ -467,7 +466,7 @@ static void VaultRevisit_EnterGemOwnersHouse(void) {
 /// child who doubts the thieves were from Lunpa.
 static void VaultRevisit_EnterChildsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
+  MapGrid_PlayMapEdit(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH);
 }
 
@@ -475,7 +474,7 @@ static void VaultRevisit_EnterChildsHouse(void) {
 /// the inn.
 static void VaultRevisit_EnterInn(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_InnDoorCells, 44, 17);
+  MapGrid_PlayMapEdit(gVaultRevisit_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST);
 }
 
@@ -490,7 +489,7 @@ static void VaultRevisit_EnterItemShop(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_ItemShopDoorCells, 54, 13);
+  MapGrid_PlayMapEdit(gVaultRevisit_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -505,8 +504,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_WeaponAndArmorShopDoorCells,
-                                   49, 10);
+  MapGrid_PlayMapEdit(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -517,7 +515,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
 /// the mayor's house.
 static void VaultRevisit_EnterMayorsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
+  MapGrid_PlayMapEdit(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
 
@@ -535,7 +533,7 @@ static void VaultRevisit_EnterJail(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gVaultRevisit_JailDoorCells, 35, 9);
+  MapGrid_PlayMapEdit(gVaultRevisit_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;

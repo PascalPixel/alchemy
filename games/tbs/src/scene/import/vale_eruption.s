@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.GameFlag_Set, 1

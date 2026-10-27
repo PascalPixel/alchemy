@@ -14,7 +14,7 @@ void EventRuntime_Wait(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
 void BattleEffect_SpinObject(void);
 
-/// An event sequence, the arrival counterpart of Func_080e3698. The actor
+/// An event command, the arrival counterpart of Func_080e3698. The actor
 /// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
 /// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
 /// (cue 136, mode 6) while the actor widens back from half size over 16 frames

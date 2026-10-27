@@ -1697,7 +1697,7 @@ static UNUSED void String_WriteU32AsHex(u8 *destination, u32 value) {
   }
 }
 
-/// Retains the empty hook called before the finish sequence.
+/// Retains the empty hook called before the finish.
 static void MapLocalState_EmptyHook(void) {}
 
 /// Unused: marks the opponent's path recorder finished

@@ -126,7 +126,7 @@ s32 SerialRuntime_StartSend(void *source, s32 size) {
   state->status = 0x80;
   gSerialSendSource = (s32)source;
   gSerialSendSize = size;
-  gSerialBlockSequence = 0;
+  gSerialBlockNumber = 0;
   state->active = 1;
   IRQ_UNLOCK(saved);
   return 0;
@@ -143,7 +143,7 @@ s32 SerialRuntime_StartReceive(void *destination) {
   gSerialReceiveDest = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
-  gSerialBlockSequence = 0;
+  gSerialBlockNumber = 0;
   IRQ_UNLOCK(saved);
   return 0;
 }

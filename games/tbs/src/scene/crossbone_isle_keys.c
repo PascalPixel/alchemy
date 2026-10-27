@@ -1174,7 +1174,7 @@ static void CrossboneIsleKeys_PushThirdPillar(void) {
 }
 
 /// Walking into CrossboneIsleBane's third pillar (step trigger 54): facing
-/// south, the rising sequence plays; otherwise the pillar is pushed.
+/// south, the leader jumps down past it; otherwise the pillar is pushed.
 static void CrossboneIsleKeys_TouchThirdPillar(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 

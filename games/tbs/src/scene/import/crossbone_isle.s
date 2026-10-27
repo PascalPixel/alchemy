@@ -15,7 +15,7 @@
 	.set import.Actor_Create, 1
 	.set import.Actor_SetMoveTarget, 1
 	.set import.Actor_WaitForMove, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
 	.set import.Actor_SetSpriteFlags, 1

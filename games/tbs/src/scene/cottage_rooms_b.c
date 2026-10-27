@@ -781,7 +781,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
-/// Selects the hardware blend targets for the storm sequence.
+/// Selects the hardware blend targets for the storm.
 static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
@@ -1144,7 +1144,7 @@ static void CottageRoomsB_TalkToDora(void) {
   Event_End();
 }
 
-/// Restores the room's tiles and metatile behaviors outside the storm sequence.
+/// Restores the room's tiles and metatile behaviors outside the storm.
 /// Called by CottageRoomsB_Initialize when FLAG_VALE_STORM is clear.
 static void CottageRoomsB_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);

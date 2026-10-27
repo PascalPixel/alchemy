@@ -369,7 +369,7 @@ static void ValeStormyNight_StepOffBridge(void) {
 /// else takes that exit.
 UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStormyNight_SanctumDoorOpens, 45, 11);
+  MapGrid_PlayMapEdit(gValeStormyNight_SanctumDoorOpens, 45, 11);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 257, 420);
   Event_WaitFrames(3);
   Vale_RequestBackdropExit(
@@ -422,7 +422,7 @@ static void ValeStormyNight_LeaveToValePlaza(void) {
 /// COTTAGE_ROOMS_A_FROM_VALE_EAST, the house where Garet's family lives.
 static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStormyNight_IsaacsDoorOpens, 54, 32);
+  MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 54, 32);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 406, 727);
   Event_WaitFrames(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST);
@@ -461,7 +461,7 @@ static void ValeStormyNight_LeaveToCottageRoomsA(void) {
 static void ValeStormyNight_LeaveToIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gValeStormyNight_IsaacsDoorOpens, 50, 44);
+    MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   }
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 340, 888);
   Event_WaitFrames(3);
@@ -473,8 +473,7 @@ static void ValeStormyNight_LeaveToIsaacsHouse(void) {
 /// Vale at COTTAGE_ROOMS_A_FROM_VALE_NORTH.
 static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStormyNight_GrandparentsDoorOpens, 49,
-                                   69);
+  MapGrid_PlayMapEdit(gValeStormyNight_GrandparentsDoorOpens, 49, 69);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 326, 1126);
   Event_WaitFrames(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH);
@@ -487,7 +486,7 @@ static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
 /// Vale's VALE_TO_COTTAGE_ROOMS_A_WEST leads by day.
 static void ValeStormyNight_LeaveToCottageRoomsAWest(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStormyNight_WestHouseDoorOpens, 52, 76);
+  MapGrid_PlayMapEdit(gValeStormyNight_WestHouseDoorOpens, 52, 76);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 374, 1238);
   Event_WaitFrames(3);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST);

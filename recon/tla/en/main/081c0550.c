@@ -9,7 +9,7 @@ void SoundMain(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count);
 void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header);
+                           const struct SongHeader *header);
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);

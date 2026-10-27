@@ -663,7 +663,7 @@ struct MapGridTilePosition {
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// MapGrid_CopyCellIndexRect does, with the destination before the size.
 ///
-/// Called by MapGrid_PlayMetatileCopySequence, and by about 40 events
+/// Called by MapGrid_PlayMapEdit, and by about 40 events
 /// through MapGrid_CopyMetatileIndicesRectFar.
 void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                      u32 dstY, u32 width, u32 height) {
@@ -756,10 +756,10 @@ void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   }
 }
 
-/// One step of a map edit sequence: the rectangle of cells to copy from and the
+/// One step of a map edit: the rectangle of cells to copy from and the
 /// wait after it.
 struct MapGridCellAnimationStep {
-  u16 source; ///< the source rectangle's x in cells; 0xffff ends the sequence
+  u16 source; ///< the source rectangle's x in cells; 0xffff ends the edit
   /// The source rectangle's y, width and height in cells, and the frames to
   /// wait after the copy.
   s16 y, width, height, delay;
@@ -767,18 +767,17 @@ struct MapGridCellAnimationStep {
 typedef char MapGridCopyCommandSize
     [(sizeof(struct MapGridCellAnimationStep) == 10) ? 1 : -1];
 
-/// Plays a map edit sequence (struct MapGridCellAnimationStep entries, ended by
+/// Plays a map edit (struct MapGridCellAnimationStep entries, ended by
 /// a source of 0xffff): copies each entry's rectangle of metatile numbers to
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///
-/// Called by about 30 events through MapGrid_PlayMetatileCopySequenceFar;
-/// it returns only when the sequence ends, so it blocks the event that calls
+/// Called by about 30 events through MapGrid_PlayMapEditFar;
+/// it returns only when the edit ends, so it blocks the event that calls
 /// it.
-void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
-                                      u32 destinationY) {
+void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *copyCommand =
-      (struct MapGridCellAnimationStep *)sequence;
+      (struct MapGridCellAnimationStep *)steps;
   u32 sourceX = copyCommand->source;
   u32 endMarker = 0xffff;
   u32 firstSourceCopy = sourceX;
@@ -792,7 +791,7 @@ void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
   }
   if (firstSourceCopy != endMarker) {
     u32 endMarkerCopy = endMarker;
-    s16 *rectangleArgs = (s16 *)(sequence + 1);
+    s16 *rectangleArgs = (s16 *)(steps + 1);
 
     while (1) {
       s32 sourceY = rectangleArgs[0];

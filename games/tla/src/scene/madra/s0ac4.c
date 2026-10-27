@@ -37,7 +37,7 @@ void Func_02002c58(s32 a);
 void Func_02002be8(s32 id, s32 a);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void Func_02002c68(s32 id, s32 a, s32 b, s32 c);
-s32 Func_02002ae8(const void *sequence, s32 a, s32 b);
+s32 Func_02002ae8(const void *edit, s32 a, s32 b);
 void Func_02002b90(s32 id, s32 x, s32 z, s32 angle);
 void Func_02002b10(s32 item, s32 a);
 s32 Func_02002b18(s32 item);
@@ -574,10 +574,10 @@ void Func_020014fc(void) {
   Func_02002b30();
 }
 
-/// A metatile copy sequence and where it applies (Func_02002ae8 forwards
-/// to Map_PlayMetatileCopySequence).
+/// A map edit and where it applies (Func_02002ae8 forwards
+/// to Map_PlayMapEdit).
 struct MetatileCopyEntry {
-  const s16 *sequence;
+  const s16 *steps;
   u16 unk04;
   u16 unk06;
 };
@@ -622,7 +622,7 @@ void Func_020019d8(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   ArmCallback(4, 0xc000, 0);
   FieldEvent_WaitFrames(20);
-  Func_02002ae8(gData_02003308[6].sequence, gData_02003308[6].unk04,
+  Func_02002ae8(gData_02003308[6].steps, gData_02003308[6].unk04,
                 gData_02003308[6].unk06);
   Func_02002b90(34, x, z, 0x4000);
   CommitPos(34, 0, 4);

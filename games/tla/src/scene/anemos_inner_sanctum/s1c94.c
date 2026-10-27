@@ -37,7 +37,7 @@ static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
 }
 
 /// The scene opening: clears the actors' motion flags, plays the entrance's
-/// metatile copy sequence and steps the leader in.
+/// map edit and steps the leader in.
 void Func_02001c94(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   s32 i;

@@ -54,7 +54,7 @@ this game uses it only once: the intro's 60-frame fade from a dark red.
 The fade is a [task](../../glossary.md#task), `TitlePaletteFade_Update`, set
 up by `TitlePaletteFade_Initialize` and started by `TitlePaletteFade_Start`.
 
-## The title sequence
+## The opening
 
 ![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the title picture](https://alchemy.pascalpixel.com/story/title.gif)
 

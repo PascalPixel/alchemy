@@ -137,10 +137,10 @@ enum ActorAnimation {
   0xffff ///< a source column that ends the steps
 
 /// A cell animation, such as a door opening: its steps and the cell they are
-/// copied to (MapGrid_PlayMetatileCopySequence, which blocks until the last).
+/// copied to (MapGrid_PlayMapEdit, which blocks until the last).
 struct MapGridCellAnimation {
   /// MAPGRID_ANIMATION_STEP entries, ended by MAPGRID_ANIMATION_STEPS_END, for
-  /// MapGrid_PlayMetatileCopySequence.
+  /// MapGrid_PlayMapEdit.
   const u16 *steps;
   u16 x; ///< destination cell column
   u16 y; ///< destination cell row
@@ -389,7 +389,7 @@ enum ActorBlendMode { ACTOR_BLEND_NORMAL = 0, ACTOR_BLEND_TRANSLUCENT = 1 };
 /// its last step.
 static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
                                         s32 destinationY) {
-  MapGrid_PlayMetatileCopySequence((u16 *)steps, destinationX, destinationY);
+  MapGrid_PlayMapEdit((u16 *)steps, destinationX, destinationY);
 }
 
 /// Moves a treasure spot's actor to a point on the ground.

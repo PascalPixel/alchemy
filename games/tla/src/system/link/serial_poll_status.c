@@ -58,7 +58,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
     break;
   }
 
-  gSerialRuntime.sequence++;
+  gSerialRuntime.packetNumber++;
   status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
   if (gSerialRuntime.mode == 8)
     status |= 0x80;
@@ -113,7 +113,7 @@ s32 SerialRuntime_PollStatus(void) {
       }
       gSerialRuntime.phase = 1;
     }
-    gSerialRuntime.sequence++;
+    gSerialRuntime.packetNumber++;
   }
 
   status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);

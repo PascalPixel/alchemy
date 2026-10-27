@@ -2,7 +2,7 @@
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CopyCellIndexRect, 1
 	.set import.Actor_SetSpriteFlags, 1

@@ -429,7 +429,7 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 }
 
 /// Sets up the beacon's statues and the six platforms.
-/// It then runs the part of the sequence the entrance selects (the
+/// It then runs the part of the event the entrance selects (the
 /// arrival only when not back from a battle), or, after a lost battle, gives
 /// back the Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle,
 /// the platform nearest the leader stands still.
@@ -3020,7 +3020,7 @@ static void VenusLighthouseAerie_StopActorMotion(struct Actor *actor) {
   actor->timer = 0;
 }
 
-/// Advances the beacon rise sequence, its flashes and orbiting particles.
+/// Advances the beacon's rise, its flashes and orbiting particles.
 static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   struct Actor *center;
   struct Actor *effect;

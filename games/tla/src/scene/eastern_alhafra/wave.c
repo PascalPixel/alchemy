@@ -17,7 +17,7 @@ void Scheduler_AddOrUpdateCallback();
 
 /// Starts DMA 0 copying the finished table into BG1's horizontal offset at
 /// each HBlank.
-// With ☀️'s DMA 0 stop sequence.
+// With ☀️'s way of stopping DMA 0.
 void Func_02000a44(void) {
   u16 *line = gData_020056e0[gData_020054f0[0] ^ 1];
   volatile u16 *channel;

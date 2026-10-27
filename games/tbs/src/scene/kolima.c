@@ -394,7 +394,7 @@ static void Kolima_EnterDoor(void) {
     Event_End();
     return;
   }
-  MapGrid_PlayMetatileCopySequence(gKolima_DoorCells, x, y);
+  MapGrid_PlayMapEdit(gKolima_DoorCells, x, y);
   Kolima_WalkThroughExit(work->stepTrigger);
   Event_End();
 }

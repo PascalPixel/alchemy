@@ -5,7 +5,7 @@
 // whose contents are the event work's 0xd34: types 128 and 129 (opening
 // messages 0xdc5), 130 to 132 (0xdc9), 132 (0xdde) and 133 (0xde4). An opened
 // container (GameFlag_IsConditionActive) gives what it holds: type 130 a trap
-// that drains the party, 132 the rune sequence (Func_080ea14c), 129 a
+// that drains the party, 132 the runes (Func_080ea14c), 129 a
 // battle with an enemy group of zone 104 or 105, a Mimic-like shape a
 // message, coins (bit 15 of the contents) or an item; an empty one shows
 // 0xdf0 and up. Any other object runs its talk script (Func_080ccd78: the

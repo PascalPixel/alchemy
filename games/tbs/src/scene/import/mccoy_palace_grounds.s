@@ -8,7 +8,7 @@
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Icon_DrawItem, 1

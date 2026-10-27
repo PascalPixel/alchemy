@@ -5,10 +5,10 @@
 #include "../runtime_internal.h"
 
 // Saving. The flash chip holds 16 sectors of 4 KB; each holds one record: a
-// 16-byte header (signature, record id, checksum of the payload, sequence
-// number) and its payload. A save file is records n and n + 3, for n below
+// 16-byte header (signature, record id, checksum of the payload,
+// counter) and its payload. A save file is records n and n + 3, for n below
 // SAVE_FILE_COUNT. Writing a record goes to a free sector before the old copy
-// is invalidated, and the highest sequence number of a record id is its current
+// is invalidated, and the highest counter of a record id is its current
 // copy.
 
 enum {
@@ -18,7 +18,7 @@ enum {
   SAVE_SECTOR_COUNT = 16,
   SAVE_RECORD_NONE = 16, ///< the record id of a free or invalidated sector
   SAVE_FILE_COUNT = 3,   ///< save files; file n is records n and n + 3
-  /// The highest sequence number a write keeps; a copy written past it is
+  /// The highest counter a write keeps; a copy written past it is
   /// rewritten as 1.
   SAVE_COUNTER_LIMIT = 65000,
   /// Payload bytes summed into the checksum: all 0xff0 but the last eight.
@@ -28,7 +28,7 @@ enum {
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
 /// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
 /// tries, a frame apart) and scans all 16 sectors into the workspace's
-/// occupied, recordId and sequence tables: a sector counts as taken when its
+/// occupied, recordId and counter tables: a sector counts as taken when its
 /// signature and checksum are good, and of two copies of a record only the
 /// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
 /// way the caller ends with Save_ReleaseWork. Called by the save
@@ -64,17 +64,17 @@ s32 Save_InitializeWork(void) {
 
     work->occupied[index] = 0;
     work->recordId[index] = SAVE_RECORD_NONE;
-    work->sequence[index] = 0;
+    work->counter[index] = 0;
     status = Save_ReadSector(index);
     START_DMA(&work->slot, &headerStorage, DMA_COPY_WORDS(4));
     WAIT_DMA();
     header = &headerStorage;
 
     // Not a save sector, or one for no record, or a damaged one: it stays
-    // free. A sector with the signature still keeps its sequence number.
+    // free. A sector with the signature still keeps its counter.
     if (Save_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
-    work->sequence[index] = header->counter;
+    work->counter[index] = header->counter;
     record = header->recordId;
     id = record;
     if (id >= SAVE_RECORD_NONE)
@@ -85,12 +85,12 @@ s32 Save_InitializeWork(void) {
     work->occupied[index] = 1;
     work->recordId[index] = record;
     // An interrupted replacement can leave both copies valid. Retain the
-    // larger sequence, preferring the earlier sector when they tie; status
+    // larger counter, preferring the earlier sector when they tie; status
     // is the successful checksum result (0), reused as the scan cursor.
     if (status < index) {
       do {
         if (work->recordId[status] == (u8)record) {
-          if (work->sequence[status] < header->counter)
+          if (work->counter[status] < header->counter)
             work->occupied[status] = 0;
           else
             work->occupied[index] = 0;
@@ -189,8 +189,8 @@ UNUSED u16 Save_EraseSector(u16 sector) {
 }
 
 /// Saves 0xff0 bytes from `source` as record `recordId`: writes the new copy
-/// with the next sequence number, then invalidates the old one, updating the
-/// workspace's sector tables. When the sequence passes 65000 it restarts at 1,
+/// with the next counter, then invalidates the old one, updating the
+/// workspace's sector tables. When the counter passes 65000 it restarts at 1,
 /// written back over the old sector. Called by the save screens. Returns 0 on
 /// success and 1 on failure.
 s32 Save_WriteRecord(s32 recordId, void *source) {
@@ -221,12 +221,12 @@ s32 Save_WriteRecord(s32 recordId, void *source) {
   if (Save_WriteSector(slot) != 0)
     return 1;
   // A power loss before invalidation leaves two valid copies; the next
-  // scan chooses the new one by its higher sequence.
+  // scan chooses the new one by its higher counter.
   if (current < SAVE_SECTOR_COUNT && Save_InvalidateSector(current) != 0)
     return 1;
 
   if (header.counter > SAVE_COUNTER_LIMIT) {
-    // Sequence order is ordinary, not modular. Keep the high-sequence copy
+    // Counter order is ordinary, not modular. Keep the high-counter copy
     // valid until the old sector has been rewritten and verified as 1, then
     // invalidate the high copy so it cannot win the next scan.
     header.counter = 1;
@@ -241,7 +241,7 @@ s32 Save_WriteRecord(s32 recordId, void *source) {
 
   work->occupied[slot] = 1;
   work->recordId[slot] = recordId;
-  work->sequence[slot] = header.counter;
+  work->counter[slot] = header.counter;
   return 0;
 }
 
@@ -310,17 +310,17 @@ s32 Save_ChecksumSector(void) {
 /// or SAVE_SECTOR_COUNT. Called by every record operation in this file.
 u32 Save_FindLatestSector(s32 recordId) {
   struct SaveWork *work;
-  u32 latestSequence;
+  u32 latestCounter;
   u32 latestSlot;
   u32 i;
 
   work = gSaveWork;
   latestSlot = SAVE_SECTOR_COUNT;
-  latestSequence = 0;
+  latestCounter = 0;
   for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-      if (latestSequence < work->sequence[i]) {
-        latestSequence = work->sequence[i];
+      if (latestCounter < work->counter[i]) {
+        latestCounter = work->counter[i];
         latestSlot = i;
       }
     }
@@ -348,7 +348,7 @@ s32 Save_InvalidateSector(s32 index) {
     return 1;
   work->occupied[index] = 0;
   work->recordId[index] = SAVE_RECORD_NONE;
-  work->sequence[index] = 0;
+  work->counter[index] = 0;
   return 0;
 }
 
@@ -368,22 +368,22 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   return difference;
 }
 
-/// Returns the highest sequence number among the copies of record `recordId`.
+/// Returns the highest counter among the copies of record `recordId`.
 /// Called by Save_WriteRecord to number the new copy.
 u32 Save_GetLatestCounter(s32 recordId) {
   struct SaveWork *work;
-  u32 latestSequence;
+  u32 latestCounter;
   u32 i;
 
   work = gSaveWork;
-  latestSequence = 0;
+  latestCounter = 0;
   for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-      if (latestSequence < work->sequence[i])
-        latestSequence = work->sequence[i];
+      if (latestCounter < work->counter[i])
+        latestCounter = work->counter[i];
     }
   }
-  return latestSequence;
+  return latestCounter;
 }
 
 /// Reads the summary at the start of each of the three save files into the

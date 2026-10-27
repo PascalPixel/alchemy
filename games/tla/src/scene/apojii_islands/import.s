@@ -181,7 +181,7 @@ Motion_SetVarCbAndRefresh:
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:
-	overlay_veneer BattleEffect_RunObjectRiseFar
+	overlay_veneer Object_JumpDownLedgeFar
 	.global ObjectMotion_SetAngleToward
 	.thumb_func
 ObjectMotion_SetAngleToward:

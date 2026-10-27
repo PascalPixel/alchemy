@@ -673,7 +673,7 @@ static void Vale_EnterIsaacsHouse(void) {
     Event_End();
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gVale_IsaacsDoorOpens, 50, 44);
+    MapGrid_PlayMapEdit(gVale_IsaacsDoorOpens, 50, 44);
     Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 340, 888);
     Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_B);
   }

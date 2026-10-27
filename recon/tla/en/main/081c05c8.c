@@ -10,7 +10,7 @@
 #include "audio_engine.h"
 
 void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header);
+                           const struct SongHeader *header);
 extern const struct PlayerSlot gSound_PlayerSlots[];
 extern const struct SongEntry gSound_SongTable[];
 

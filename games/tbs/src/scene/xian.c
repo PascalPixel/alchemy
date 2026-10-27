@@ -55,7 +55,7 @@
 #include "types.h"
 #include "event_layer.h"
 #include "scene_tables.h"
-#include "map_effect_sequence.h"
+#include "map_edit.h"
 #include "iwram_call.h"
 #include "battle.h"
 #include "debug.h"
@@ -687,31 +687,31 @@ static void Xian_OpenDoorAndLeave(void) {
   switch (work->stepTrigger) {
   case XIAN_TO_HOUSE:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_HouseDoorOpens, 81, 18);
+    MapGrid_PlayMapEdit(gXian_HouseDoorOpens, 81, 18);
     break;
   case XIAN_TO_HOUSE_NORTH:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_NorthHouseDoorOpens, 83, 11);
+    MapGrid_PlayMapEdit(gXian_NorthHouseDoorOpens, 83, 11);
     break;
   case XIAN_TO_LACQUER_ROOMS_B_EAST:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_NorthHouseDoorOpens, 86, 11);
+    MapGrid_PlayMapEdit(gXian_NorthHouseDoorOpens, 86, 11);
     break;
   case XIAN_TO_INN:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_InnDoorOpens, 84, 24);
+    MapGrid_PlayMapEdit(gXian_InnDoorOpens, 84, 24);
     break;
   case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_InnDoorOpens, 72, 7);
+    MapGrid_PlayMapEdit(gXian_InnDoorOpens, 72, 7);
     break;
   case XIAN_TO_SANCTUM:
     Sound_PlaySong(SE_THUMP);
-    MapGrid_PlayMetatileCopySequence(gXian_SanctumDoorOpens, 69, 11);
+    MapGrid_PlayMapEdit(gXian_SanctumDoorOpens, 69, 11);
     break;
   case XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL:
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gXian_SchoolDoorOpens, 83, 7);
+    MapGrid_PlayMapEdit(gXian_SchoolDoorOpens, 83, 7);
     break;
   default:
     break;

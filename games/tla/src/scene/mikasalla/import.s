@@ -13,7 +13,7 @@ GameFlag_SetBit:
 	.global Func_02000610
 	.thumb_func
 Func_02000610:
-	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_PlayMapEditFar
 	.global Func_02000618
 	.thumb_func
 Func_02000618:

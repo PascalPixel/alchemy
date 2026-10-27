@@ -79,14 +79,14 @@
 #include "heap.h"
 #include "macros.h"
 
-// Event sequences and the mast's per-frame updates.
+// Events and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);
 static void TolbiShipMast_RunAvastEvent(void);
 static void TolbiShipMast_ShowMonsters(void);
 static void TolbiShipMast_InitializeDriftingActor(s32 actorId);
-static void TolbiShipMast_RunLandingSequence(void);
+static void TolbiShipMast_RunMonsterLanding(void);
 static void TolbiShipMast_AnnounceLand(void);
 static void TolbiShipMast_UpdateSway(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
@@ -393,7 +393,7 @@ s32 TolbiShipMast_Initialize(void) {
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
     gCommon.restartScene = (s32)&SceneId_ShipRooms;
     gCommon.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
-    TolbiShipMast_RunLandingSequence();
+    TolbiShipMast_RunMonsterLanding();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
     TolbiShipMast_AnnounceLand();
@@ -705,7 +705,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, the third
 /// attack: the birds scatter, then ACTOR_LANDING_MONSTER drops in beside the
 /// lookout.
-static void TolbiShipMast_RunLandingSequence(void) {
+static void TolbiShipMast_RunMonsterLanding(void) {
   u32 frame;
   struct Actor *actor;
 

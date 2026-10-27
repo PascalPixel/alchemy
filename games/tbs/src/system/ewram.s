@@ -69,8 +69,8 @@ gSerialWork:
 	.global gLinkExchangeState
 gLinkExchangeState:
 	.space 0x00000004
-	.global gSerialBlockSequence
-gSerialBlockSequence:
+	.global gSerialBlockNumber
+gSerialBlockNumber:
 	.space 0x00000004
 	.global gBattleRandomSeed
 gBattleRandomSeed:

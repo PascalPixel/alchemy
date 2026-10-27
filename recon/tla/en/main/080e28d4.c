@@ -3,7 +3,7 @@
 // the literal 20 (42 -> 6). Left: order only, the scale constants and the arc's
 // position copies, where after a store the native issues another instruction
 // before the next load.
-// An event sequence. Creates object sprite at (x, 0, z), which grows
+// An event command. Creates object sprite at (x, 0, z), which grows
 // from 0.4 to full size while spinning, turns it and the controlled owner to
 // face each other, plays the owner's variant 3 and Func_080d489c(, 258), then
 // bounces the object twice (cue 152) and, with cue 146, carries it in a

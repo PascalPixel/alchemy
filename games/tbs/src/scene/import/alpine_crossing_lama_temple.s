@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
 	.set import.ArcTan2, 1
-	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1

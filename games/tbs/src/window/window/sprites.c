@@ -238,7 +238,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     column = 0xfffe;
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
 #ifdef UBFIX
-    // Sequence the two writes to row. Combining them in one expression has
+    // Write row twice, in order. Combining them in one expression has
     // no intervening sequence point; plain stores reorder native EN code.
     row = (u8)win->height + 254;
     row = (u8)win->y + row;

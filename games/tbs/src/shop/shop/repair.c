@@ -175,7 +175,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
     return;
   }
-  // Hide the item during the work sequence without compacting its slot.
+  // Hide the item while it is repaired, without compacting its slot.
   savedEntry = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawMemberItems(shop->itemWindow, unitId);

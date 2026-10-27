@@ -39,63 +39,6 @@ Each time round it runs one [sequence](glossary.md#sequence): a
 Screen), a battle, Lucky Dice or Lucky Wheels. The first is the Title;
 from there each exit leads to the next scene.
 
-## How the whole game runs
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  power(["Power on"]) --> init["Set up the machine"] --> loop(["The sequence manager"])
-  loop --> clear["Clear what the last sequence left"]
-  clear --> kind{"Next sequence"}
-
-  kind --> flags["Clear the scene's own flags"]
-  subgraph scene ["A scene"]
-    flags --> music["Start its music"] --> code["Unpack its code"]
-    code --> setup["Draw its map, place its actors"] --> fade["Fade in"]
-    fade --> walk["The party walks, frame by frame"]
-    walk -->|"a request"| req{"The most urgent request"}
-    req --> handle["Run it: an event, a step trigger, a push, the field menu, talking, searching, Psynergy, an item"]
-    handle --> walk
-  end
-  req -->|"an exit or a random battle"| take["Leave the scene"] --> loop
-
-  kind --> battle["Battle"]
-  kind --> dice["Lucky Dice"]
-  kind --> wheels["Lucky Wheels"]
-  battle --> ret["Back to the scene it started from"]
-  dice --> ret
-  wheels --> ret
-  ret --> loop
-
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef dice fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef wheels fill:#E6F3C4,stroke:#B5D46A,color:#4C6312
-  class power,init,loop,clear,kind,ret,take flow
-  class flags,music,code,setup,fade,walk,req,handle field
-  class battle fight
-  class dice dice
-  class wheels wheels
-  style scene fill:#F4F4F2,stroke:#CFCFCB
-```
-
-At power-on `System_Initialize` clears the fast memory, installs the code that
-always stays loaded and the interrupt handlers, loads the window graphics,
-starts the sound and calls `SequenceManager_Run`, which never returns.
-
-A scene's turn is `Scene_Arrive`, `Scene_ChooseMusic`,
-`Scene_LoadOverlay` and `SceneManager_Run`, whose result goes to
-`Scene_TakeExit`. Inside, the party walks (`Field_UpdateWalking` each frame)
-until something makes a request, and the requests are then handled until
-none is left, most urgent first: an exit, an event, a random battle, a step
-trigger, a push, the A button, the field menu, talking, searching, Psynergy,
-an item, the Pause menu. A random battle names the battle as the next
-sequence and ends the scene. A battle or a
-minigame reports a result rather than an exit, and `Scene_ReturnFromSequence`
-turns it into the scene to go back to. [Running a
-scene](src/overworld/README.md) follows the request loop in full.
-
 ## The sequence manager
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
@@ -121,23 +64,83 @@ when time must pass; while it waits, tasks keep everything else moving
 bottom in the order things happen, and whatever moves alongside it has to be
 a task of its own.
 
-## Scenes and overlays
+At power-on `System_Initialize` clears the fast memory, installs the code that
+always stays loaded and the interrupt handlers, loads the window graphics,
+starts the sound and calls `SequenceManager_Run`, which never returns. Each
+time round, a scene's turn is `Scene_Arrive`, `Scene_ChooseMusic`,
+`Scene_LoadOverlay`, then `SceneManager_Run` below, whose result goes to
+`Scene_TakeExit`. A battle or a minigame reports a result rather than an exit,
+and `Scene_ReturnFromSequence` turns it into the scene to go back to.
+
+## The scene manager
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart LR
-  game(["The rest of the game"]) --> ask["A scene's code"]
-  ask --> q1["Set yourself up"]
-  ask --> q2["Where can the party arrive?"]
-  ask --> q3["Where do your exits lead?"]
-  ask --> q4["Who stands here?"]
-  ask --> q5["What happens when the player talks, searches or steps somewhere?"]
-  ask --> q6["Which parts of you lead out?"]
+flowchart TD
+  start(["From the sequence manager"]) --> setup["Set the scene up: its map, the party at its entrance, its actors and chests"]
+  setup --> own["The scene's own set-up"]
+  own --> fade["Fade in"]
+  fade --> walk["The player walks"]
+  walk -->|"next frame"| check{"Did anything happen?"}
+  check -->|"no"| walk
+  check -->|"yes: a request"| pick{"The most urgent request"}
+  pick -->|"anything else"| run["Run it to the end: an event, talking, searching, a push, Psynergy, an item, a menu"]
+  run --> more{"More requests?"}
+  more -->|"yes"| pick
+  more -->|"no"| walk
+  pick -->|"an exit or a battle"| leave["Fade out, give back the scene's memory"]
+  own -->|"it leaves at once"| leave
+  leave --> done(["Back to the sequence manager"])
   classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class game flow
-  class ask,q1,q2,q3,q4,q5,q6 field
+  class start,done,leave flow
+  class setup,own,fade,walk,check,pick,run,more field
 ```
+
+A scene has two states, and the scene manager switches between them. While
+the player walks, the game runs one [frame](glossary.md#frame) at a time and
+only watches: the buttons, and the ground the party steps onto. When it sees
+something that should happen it notes a
+[field request](glossary.md#field-request) and stops watching. Then it
+handles the requests, each from start to finish, while the walking waits;
+when none is left, the player walks again. Everything that happens in a
+scene, every conversation, cutscene, menu and battle, starts as one of these
+requests.
+
+What raises each request:
+
+| Request        | What raises it                                                                     |
+| -------------- | ---------------------------------------------------------------------------------- |
+| exit           | stepping onto a way out, or an event that sends the party on                       |
+| raised trigger | the scene's own code, the world map's L and R, or a party member falling to poison |
+| random battle  | walking where battles happen, once enough steps have passed                        |
+| step trigger   | stepping onto a cell the scene watches                                             |
+| push           | walking into a stone pillar or anything else Move or a shove can shift             |
+| A              | the A button: talk to whoever is ahead, else search, else open the field menu      |
+| field menu     | Select                                                                             |
+| Psynergy, item | the L and R shortcuts                                                              |
+| Pause menu     | Start                                                                              |
+
+The table is in order of urgency: when several are waiting, the scene manager
+takes the highest first. An exit ends the scene. A random battle names the
+battle as the next [sequence](glossary.md#sequence) and ends the scene too,
+which is why the party comes back from a battle to the same spot: the scene
+starts again, keeping where everyone stood. Every other request runs, and
+may raise another (talking to someone can start an event, which can take an
+exit).
+
+Before the first frame of walking, the scene's own set-up runs. It can play a
+whole event before the player gets control, as Vale erupting does, and if it
+takes an exit the scene ends without fading in.
+
+The scene manager is `SceneManager_Run` in
+[scene_manager.c](src/overworld/overworld/scene_manager.c); the walking frame
+is `Field_UpdateWalking`, and the buttons are read by
+`Field_CheckConfiguredKeys`. [Running a
+scene](src/overworld/README.md#the-scene-manager-serves-requests) follows each
+request in full.
+
+## Scenes and overlays
 
 Only one scene's code is in memory at a time. Who stands in a scene, what they
 say and what happens there matter nowhere else, so each scene's code is packed
@@ -145,8 +148,11 @@ on the cartridge as an [overlay](glossary.md#overlay) and unpacked into the
 same 32 KB over the scene before it. Overlays never call each other; code
 several scenes need is copied into each.
 
-The rest of the game reaches a scene only through the six questions above,
-`struct SceneEntryPoints` at the start of every overlay. Each answer is a
+The rest of the game reaches a scene only through six questions, the six
+functions of `struct SceneEntryPoints` at the start of every overlay: set
+yourself up; where can the party arrive; where do your exits lead; who stands
+here; what happens when the player talks, searches or steps somewhere; and
+which parts of you lead out. Each answer is a
 function rather than a fixed table, so a scene can answer differently as the
 story moves on. [Engine](engine.md#overlays) describes loading an overlay and
 [Scenes](src/scene/README.md) finding a [trigger](glossary.md#trigger).
@@ -155,23 +161,12 @@ story moves on. [Engine](engine.md#overlays) describes loading an overlay and
 
 ![Isaac steps from the world map onto Vale's marker; the village's gate fades in with the name Vale in a small window at the top of the screen, and he walks up through the gate](https://alchemy.pascalpixel.com/guides/front/area-name.gif)
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart LR
-  row(["A row of the scene table"]) --> code["Its code: what happens there"]
-  row --> area["Its area: music, area name, flags kept while inside"]
-  row --> map["Its map: the picture and the ground"]
-  row --> type["Its type: a town is safer"]
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class row flow
-  class code,area,map,type field
-```
-
 Every scene is a row of `gScenes`, and code names it by its row's
-symbol, `SceneId_<Place>`. The four parts are chosen separately: the Bilibin
-Barricade runs on Bilibin's code but is an [area](glossary.md#area) of its
-own, and several scenes can share a [map](glossary.md#map). Walking between
+symbol, `SceneId_<Place>`. A row gives four things, each chosen separately:
+its code, what happens there; its area, with the music, the area name and the
+flags kept while inside; its map, the picture and the ground; and its type, a
+town being safer. The Bilibin Barricade runs on Bilibin's code but is an
+[area](glossary.md#area) of its own, and several scenes can share a [map](glossary.md#map). Walking between
 Vale's houses shows no name because the party stays in Vale's area; arriving
 from the world map shows "Vale" for 90 frames, a second and a half.
 
@@ -190,27 +185,13 @@ wear off.
 
 ![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the exit leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart LR
-  path(["The path down from Sol Sanctum"]) --> r1{"Has the Sanctum erupted?"}
-  r1 -->|"no"| vale1["Vale"]
-  r1 -->|"yes"| r2{"Has the party left Vale?"}
-  r2 -->|"no"| erupt["Vale erupting"]
-  r2 -->|"yes"| vale2["Vale"]
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  class path,r1,r2 flow
-  class vale1,vale2 field
-  class erupt fight
-```
-
 An [exit](glossary.md#exit) only names where it goes. The scene's exit table
 turns that name into a scene and an [entrance](glossary.md#entrance), the
 spot where the party appears and the way it faces. A row can count only until
 a flag is set, and the game takes the first row that counts: the path in the
-recording has three rows, which the diagram reads as questions. A scene's
+recording has three rows. Before the Sanctum erupts it leads to Vale; after,
+until the party leaves Vale, to Vale erupting; and from then on to Vale
+again. A scene's
 set-up often looks at the entrance too, to play the part of an event the last
 scene sent the party to.
 
@@ -248,24 +229,6 @@ can never run; its comment opens with [`Unused:`](glossary.md#unused), and
 ## How scenes depend on the story
 
 ![Vale's gate three times: on the stormy night, rain falling and the villagers gathered at the top of the screen; after the party has left, a guard standing by the path; and later in the journey, more villagers about](https://alchemy.pascalpixel.com/guides/front/vale-plaza-story.gif)
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart LR
-  arrive(["The party arrives at Vale's gate"]) --> k{"Reached Kalay?"}
-  k -->|"yes"| after["Later in the journey"]
-  k -->|"no"| l{"Left Vale?"}
-  l -->|"yes"| guard["A guard by the path"]
-  l -->|"no"| s{"Just out of the Sanctum?"}
-  s -->|"yes"| leave["The departure"]
-  s -->|"no"| n{"The stormy night?"}
-  n -->|"yes"| storm["The storm"]
-  n -->|"no"| day["An ordinary day"]
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class arrive,k,l,s,n flow
-  class after,guard,leave,storm,day field
-```
 
 The story is the order the flags are set in. Each time the party arrives, a
 scene asks the flags which version of itself to be and returns that version's

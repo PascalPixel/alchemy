@@ -7,10 +7,10 @@ use the Japanese subtitle, or TBS, to keep it apart from
 ## How it differs from other games
 
 Most games of its time, the Pokémon games among them, are built around a main
-loop that calls every part of the game once a frame. The Broken Seal is built
+loop that calls every part of the game once a tick. The Broken Seal is built
 the other way round:
 
-- **No main loop of frames.** A [sequence manager](#the-sequence-manager)
+- **No main loop of ticks.** A [sequence manager](#the-sequence-manager)
   runs one sequence (a scene, a battle, a minigame) from start to finish.
 - **Sequences hand over by themselves.** A scene that meets a random battle
   writes the battle down as the next sequence and ends; the battle ends by
@@ -19,11 +19,13 @@ the other way round:
   runs top to bottom and pauses when time must pass. While it pauses, a short
   list of [tasks](glossary.md#task) keeps the world moving
   ([Waiting in place](#waiting-in-place)).
-- **The scene's loop only listens.** The scene manager goes round once a frame
+- **The scene's loop only listens.** The scene manager goes round once a tick
   while the player walks, and acts on what the tasks noted down.
 - **A battle's rules and animations run together.** Damage appears while the
   attack is still on screen ([Battles](#battles)).
-- **A long frame slows the game instead of skipping work.**
+- **A tick that runs long slows the game instead of skipping work.** The
+  picture and every movement slow down; the music doesn't
+  ([When a tick runs long](#when-a-tick-runs-long)).
 
 ## Architecture
 
@@ -40,8 +42,8 @@ flowchart TB
       c2["Loads one scene: its code, its map, its people"]
       subgraph mgr ["Scene manager"]
         direction TB
-        c3["Runs the scene a frame at a time until the party leaves"]
-        subgraph frame ["Frame"]
+        c3["Runs the scene a tick at a time until the party leaves"]
+        subgraph tick ["Tick"]
           direction LR
           c4["The queued tasks run, then requests are handled"]
         end
@@ -51,7 +53,7 @@ flowchart TB
   end
   c1 ~~~ scene
   c2 ~~~ mgr
-  c3 ~~~ frame
+  c3 ~~~ tick
   scene ~~~ others
   classDef caption fill:transparent,stroke:transparent,color:#6B7280
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -60,7 +62,7 @@ flowchart TB
   style seqm fill:#EEF1F6,stroke:#8FA0B8,color:#2E3C50,rx:16,ry:16
   style scene fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
   style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
-  style frame fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
+  style tick fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
 ```
 
 - **[Sequence manager](#the-sequence-manager).** The game's main loop. It runs
@@ -70,8 +72,8 @@ flowchart TB
   [scene](glossary.md#scene): a place such as Xian, or a screen such as the
   Title.
 - **[Scene manager](#the-scene-manager).** Runs that scene, one
-  [frame](glossary.md#frame) at a time, until the party leaves.
-- **Frame.** Every queued [task](glossary.md#task) runs once, then the scene
+  [tick](glossary.md#tick) at a time, until the party leaves.
+- **Tick.** Every queued [task](glossary.md#task) runs once, then the scene
   manager handles what the player or the scene asked for.
 
 A box keeps its name and colour in every chart below. Xian, the example
@@ -189,16 +191,17 @@ The Title and the File Screen need none of this: they are ordinary scenes.
 
 ## Waiting in place
 
-Every frame of the game happens inside one function, `WaitFrames`. Whatever
+The screen shows 60 [frames](glossary.md#frame) a second. The game moves in
+ticks, and every tick happens inside one function, `WaitTicks`. Whatever
 code is in charge (the scene manager, an event, a menu, a battle animation)
 calls it when time must pass:
 
 ```c
-void WaitFrames(s32 frames) {        /* simplified */
-  while (frames--) {
+void WaitTicks(s32 ticks) {         /* simplified */
+  while (ticks--) {
     Task_RunPass(TASK_PASS_FRAME);   /* every queued task, once */
-    Oam_BuildBuffer(...);            /* this frame's sprites */
-    VBlankIntrWait();                /* sleep until the screen refreshes */
+    Oam_BuildBuffer(...);            /* this tick's picture */
+    VBlankIntrWait();                /* sleep until the next frame */
   }
 }
 ```
@@ -214,41 +217,41 @@ carrier's line, `Event_ShowMessageAndWait` simplified:
 ```c
 window = FieldMessage_ShowAtActor(actorId, flags);  /* open her window */
 while (!Window_IsClosedFar(window))
-  WaitFrames(1);                       /* the water keeps moving */
+  WaitTicks(1);                       /* the water keeps moving */
 ```
 
 The window itself is drawn by a task, which types the line out and closes the
 window once the player presses A.
 
-| Frame | Code in charge         | Tasks during its wait                         | After the wait                                |
+| Tick  | Code in charge         | Tasks during its wait                         | After the wait                                |
 | ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| 1     | scene manager          | the carrier steps, the water moves            | nothing asked for: next frame                 |
+| 1     | scene manager          | the carrier steps, the water moves            | nothing asked for: next tick                  |
 | 2     | scene manager          | player control sees A and notes a request     | a talk request: run her event                 |
 | 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
 | …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
-| next  | scene manager          | the carrier walks on                          | nothing asked for: next frame                 |
+| next  | scene manager          | the carrier walks on                          | nothing asked for: next tick                  |
 
-In a Pokémon game the main loop calls the current screen once a frame, and the
-screen must return within that frame. A conversation is then a numbered list
+In a Pokémon game the main loop calls the current screen once a tick, and the
+screen must return within that tick. A conversation is then a numbered list
 of states, and the screen's code jumps to the state it reached last time. Here
-the conversation is the function itself, paused inside `WaitFrames` and
+the conversation is the function itself, paused inside `WaitTicks` and
 resumed on the next line. To allow a wait from deep inside any function,
-`WaitFrames` copies the caller's stack aside while the frame runs
-([Runtime](src/runtime/README.md#the-stack-switch-in-waitframes)).
+`WaitTicks` copies the caller's stack aside while the tick runs
+([Runtime](src/runtime/README.md#the-stack-switch-in-waitticks)).
 
-### When a frame runs long
+### When a tick runs long
 
-The screen refreshes 60 times a second whatever the code is doing, and each
-refresh interrupts the game. The interrupt always mixes the next slice of
-sound and reads the buttons, and it shows the new frame only if `WaitFrames`
-has finished one. A frame whose tasks take longer than a refresh still runs to
-the end: the screen shows the old picture once more while the music plays on,
-and the game runs slower until the work fits again. The refreshes a frame
-overran are counted in `gLagFrameCount`.
+Each frame interrupts the game, whatever it is doing. The interrupt always
+mixes the next slice of sound and reads the buttons, and it puts up a new
+picture only if `WaitTicks` has finished one. A tick whose tasks take longer
+than a frame still runs to the end, while the screen shows the old picture for
+another frame. Every wait, walk and animation is counted in ticks, so they all
+slow down together, while the music, counted in frames, keeps its tempo. The
+frames a tick overran are counted in `gLagFrameCount`.
 
 **Reference:** [Engine: Waiting and tasks](engine.md#waiting-and-tasks) ·
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
-`Event_WaitFrames`
+`Event_WaitTicks`
 
 ## The scene sequence
 
@@ -317,7 +320,7 @@ arranges the place as the story has left it, and the screen fades in.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["Scene manager"]) --> queue
+  tick(["Scene manager"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
     t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script; player control notes a pressed button as a request"]
@@ -326,9 +329,9 @@ flowchart TD
   end
   queue --> ground["Check the ground under the leader"]
   ground --> check{"A request?"}
-  check -->|"no: next frame"| frame
+  check -->|"no: next tick"| tick
   check -->|"yes"| handle["Handle it to the end"]
-  handle -->|"next frame"| frame
+  handle -->|"next tick"| tick
   handle -->|"an exit or a battle"| next(["Request another sequence, naming it"])
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -336,18 +339,18 @@ flowchart TD
   classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class frame sceneManager
+  class tick sceneManager
   class next request
   class t1,t2,t3,t4,t5,t6,ground,handle,check step
   style queue fill:#FFFFFF,stroke:#9AA3AE
 ```
 
-Every frame, each queued task runs once, highest priority first. The camera
+Every tick, each queued task runs once, highest priority first. The camera
 ranks below the actors so that it follows where they are now. The scene
 manager then checks the ground under the leader and handles any
-[field request](glossary.md#field-request) to the end before the next frame.
+[field request](glossary.md#field-request) to the end before the next tick.
 
-### A frame in Xian
+### A tick in Xian
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -355,7 +358,7 @@ flowchart TD
   subgraph mgr ["Scene manager"]
     direction TB
     xian(["Xian"]) --> queue
-    subgraph queue ["Queued tasks, this frame"]
+    subgraph queue ["Queued tasks, this tick"]
       direction TB
       t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac's player control: a button pressed? no, so no request"]
       t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
@@ -363,7 +366,7 @@ flowchart TD
     end
     queue --> ground["Check the ground under Isaac, at the foot of the stairs: nothing there"]
     ground --> check{"A request?"}
-    check -->|"no: next frame"| queue
+    check -->|"no: next tick"| queue
   end
   classDef sequenceManager fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -396,7 +399,7 @@ sequenceDiagram
   M->>M: finds the water carrier ahead and her talk trigger
   M->>E: runs her event, and she stops and turns to Isaac
   E->>E: opens a window with her line
-  loop each frame while the window waits for A
+  loop each tick while the window waits for A
     T->>T: the water moves, the text types out
   end
   P->>E: presses A
@@ -449,7 +452,7 @@ for (;;) {                                  /* one round */
 }
 ```
 
-An attack's animation is an ordinary function that waits frame by frame.
+An attack's animation is an ordinary function that waits tick by tick.
 Its damage comes from a task, playback, which stays idle until the animation
 signals that the blow has landed and then applies it target by target. So
 Quake's damage messages appear while the rock is still rising, rather than
@@ -499,7 +502,7 @@ Every scene is a row of `gScenes`, named in code by its row's symbol,
 The Bilibin Barricade runs on Bilibin's code but is an area of its own, and
 several scenes can share a map. Walking between Vale's houses shows no name,
 since the party stays in Vale's area; arriving from the world map shows "Vale"
-for 90 frames, a second and a half.
+for 90 ticks, a second and a half.
 
 In a town the party regains no [PP](glossary.md#psynergy-and-pp) and recovers
 no [Djinn](glossary.md#djinn) as it walks, poison does no damage, Retreat
@@ -635,7 +638,7 @@ to `Battle_Run` in the battle bank.
 | [World](world.md)                                    | the field engine, the maps, the request loop and field Psynergy      |
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations   |
 | [Menus](menus.md)                                    | the field menu and its screens, shops and inns, windows              |
-| [Engine](engine.md)                                  | start-up, frame timing and tasks, banks and far calls, overlays, songs |
+| [Engine](engine.md)                                  | start-up, ticks and tasks, banks and far calls, overlays, songs       |
 | [Places](src/field/scenes.s)                         | every scene in story order, with its actor templates and triggers    |
 | [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                   |
 | [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                         |

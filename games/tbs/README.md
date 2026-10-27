@@ -17,14 +17,14 @@ manager that runs it.
 ## Start-up
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
-flowchart LR
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
   power(["Power on"]) --> memory["Clear memory"] --> irq["Install the fast code"]
   irq --> services["Start the sound and the tasks"] --> seq(["The sequence manager"])
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class power,seq flow
-  class memory,irq,services field
+  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class power,seq link
+  class memory,irq,services step
 ```
 
 Switching on runs `System_Initialize` once. It clears the console's fast
@@ -39,28 +39,15 @@ details.
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
-flowchart LR
-  start(["Start-up"]) --> loop(["The sequence manager"])
-  loop --> scene["Scene"]
-  loop --> battle["Battle"]
-  loop --> dice["Lucky Dice"]
-  loop --> wheels["Lucky Wheels"]
-  scene --- back["Request another sequence"]
-  battle --- back
-  dice --- back
-  wheels --- back
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  loop(["The sequence manager"]) --> scene["Scene"] & battle["Battle"] & dice["Lucky Dice"] & wheels["Lucky Wheels"]
+  scene & battle & dice & wheels --> back["Request another sequence"]
   back --> loop
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef dice fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef wheels fill:#E6F3C4,stroke:#B5D46A,color:#4C6312
-  class start,loop,back flow
-  class scene field
-  class battle fight
-  class dice dice
-  class wheels wheels
+  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class loop link
+  class scene,battle,dice,wheels,back step
 ```
 
 Walking through the Sanctum's door ends Vale and starts the Sanctum: the game
@@ -90,15 +77,15 @@ to go back to.
 ## Loading a scene
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   pick(["Xian is next"]) --> arrive["Clear the last scene's flags"] --> music["Start Xian's music"] --> code["Unpack Xian's code"]
   code --> map["Load its map, with its animated water"] --> place["Place the party and the villagers"]
   place --> own["Xian's own set-up, by the flags"] --> fade["Fade in"] --> run(["The scene manager"])
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class pick,run flow
-  class arrive,music,code,map,place,own,fade field
+  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class pick,run link
+  class arrive,music,code,map,place,own,fade step
 ```
 
 When an exit leads to Xian, the sequence manager clears the flags the last
@@ -124,7 +111,7 @@ the sequence manager, then the start of `SceneManager_Run`; Xian's set-up is
 ## The scene manager
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   frame(["A frame in Xian"]) --> tasks["Every task runs once"]
   tasks --> check{"A request?"}
@@ -132,10 +119,11 @@ flowchart TD
   check -->|"yes"| handle["Handle it to the end"]
   handle --> frame
   handle -->|"an exit or a battle"| next(["Request another sequence"])
-  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
-  class frame,next flow
-  class tasks,check,handle field
+  classDef link fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
+  class frame,next link
+  class tasks,handle step
+  class check step
 ```
 
 Isaac stands at the foot of Xian's stairs and the player presses nothing,

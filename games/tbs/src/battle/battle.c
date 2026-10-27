@@ -30,7 +30,7 @@
 #include "battle/round.c"
 #include "battle/staging.c"
 #include "battle/targeting.c"
-#include "battle/events.c"
+#include "battle/playback_queue.c"
 #include "battle/target_exec.c"
 #include "battle/enemy_ai.c"
 #include "battle/playback.c"

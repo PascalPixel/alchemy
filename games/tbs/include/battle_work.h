@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "battle_type.h"
-#include "battle_event.h"
+#include "playback_queue.h"
 #include "battle_session.h"
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to

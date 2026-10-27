@@ -62,7 +62,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 }
 
 // BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
-// battle_event.h names.
+// playback_queue.h names.
 #define PLAY_MESSAGE 3      ///< waits for the message, then for the player
 #define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
 #define PLAY_HIT 10         ///< flashes the unit that was hit

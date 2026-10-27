@@ -78,7 +78,7 @@
 #include "map_grid_scroll.h"
 #include "djinn_preview.h"
 #include "ui.h"
-#include "motobj.h"
+#include "battle_actor.h"
 #include "particle.h"
 #include "icon_menu.h"
 #include "battle_summon.h"

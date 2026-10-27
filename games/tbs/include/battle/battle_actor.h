@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MOTION_OBJECT_H
-#define ALCHEMY_MOTION_OBJECT_H
+#ifndef ALCHEMY_BATTLE_ACTOR_H
+#define ALCHEMY_BATTLE_ACTOR_H
 
 /// @file
 /// BattleActor, the view of struct Actor one battle function gives a

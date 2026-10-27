@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_BATTLE_EVENT_H
-#define ALCHEMY_BATTLE_EVENT_H
+#ifndef ALCHEMY_PLAYBACK_QUEUE_H
+#define ALCHEMY_PLAYBACK_QUEUE_H
 
 /// @file
 /// The playback queue: the commands BattlePlayback_Push queues and the

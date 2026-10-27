@@ -4,7 +4,7 @@
 /// @file
 /// BattleUnit_Recalculate, which recalculates a unit's stats.
 
-#include "battle_event.h"
+#include "playback_queue.h"
 #include "battle_type.h"
 #include "edition.h"
 #include "farcall.h"

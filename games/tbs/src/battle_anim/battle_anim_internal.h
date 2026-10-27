@@ -41,7 +41,7 @@
 #include "battle_display.h"
 #include "ram_buffer.h"
 #include "resource.h"
-#include "motobj.h"
+#include "battle_actor.h"
 #include "iwram_call.h"
 #include "transform.h"
 #include "battle_work.h"

@@ -63,7 +63,7 @@
 #include "objdisp.h"
 #include "actor_effect.h"
 #include "item.h"
-#include "motobj.h"
+#include "battle_actor.h"
 #include "static_assert.h"
 #include "frame.h"
 #include "io_write_queue.h"

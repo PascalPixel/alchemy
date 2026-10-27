@@ -51,8 +51,8 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and run_scene.c ignores it; as void, the epilogue
-// changes.
+// UB: no value is returned, and scene_manager.c ignores it; as void, the
+// epilogue changes.
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by SceneManager_Run when it

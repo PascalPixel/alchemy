@@ -34,7 +34,7 @@ by a [far call](glossary.md#far-call). When it returns, the field scene is
 loaded again, or after a defeat the scene the defeat rules name. The debug
 battle menu is the only other way in.
 
-`SequenceManager_Run` (`src/overworld/overworld/map.c`) sees the next scene
+`SequenceManager_Run` (`src/overworld/overworld/sequence_manager.c`) sees the next scene
 `SEQUENCE_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
 (`src/battle/battle/encounter.c`). The formations are the rows of
 `src/battle/formations.c`, chosen by the encounter zones in

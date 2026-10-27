@@ -165,8 +165,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// map change.
 ///
 /// Called through ActorSystem_InitializeFar by the field map runner
-/// (overworld/overworld/run_scene.c) and the battle's encounter, and directly
-/// by the sprite viewer, each with its enum ActorSystemMode. Allocates
+/// (overworld/overworld/scene_manager.c) and the battle's encounter, and
+/// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
 /// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
 /// for the objects, and sets the sprite outline colours.
 void ActorSystem_Initialize(s32 controlMode) {
@@ -460,7 +460,7 @@ void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
-/// The field map runner (overworld/overworld/run_scene.c) gives it to the
+/// The field map runner (overworld/overworld/scene_manager.c) gives it to the
 /// leader when gSaveBlock.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);

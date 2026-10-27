@@ -15,11 +15,11 @@
 #include "overworld_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "overworld/map.c"
+#include "overworld/sequence_manager.c"
 #include "overworld/encounter.c"
 #include "overworld/actors.c"
-#include "overworld/step.c"
-#include "overworld/run_scene.c"
+#include "overworld/walking.c"
+#include "overworld/scene_manager.c"
 #include "overworld/palette_editor.c"
 #include "overworld/triggers.c"
 #include "overworld/targets.c"

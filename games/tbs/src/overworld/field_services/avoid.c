@@ -57,7 +57,7 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 ///
 /// Clears gSaveBlock.avoidDistance. Reached through Event_RunFieldPsynergy
 /// when the Psynergy request the leader's steps raise as Avoid runs out
-/// (overworld/step.c) is handled.
+/// (overworld/walking.c) is handled.
 void Event_ShowStatusMessage(void) {
   gSaveBlock.avoidDistance = 0;
   if (gSaveBlock.avoidByItem == 0) {
@@ -84,7 +84,7 @@ void Event_ShowStatusMessage(void) {
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
 /// gSaveBlock.avoidDistance and avoidByItem; the leader's steps count the
-/// distance down by their speed (overworld/step.c), 2,400 pixels in all.
+/// distance down by their speed (overworld/walking.c), 2,400 pixels in all.
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;

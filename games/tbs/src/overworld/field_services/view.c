@@ -214,7 +214,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
 /// object is kept as the actor's linkedActor, so ATTACHED_EFFECT_ATTACH
 /// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
-/// step runs all three for hazard ground (overworld/step.c).
+/// step runs all three for hazard ground (overworld/walking.c).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Actor *effect;

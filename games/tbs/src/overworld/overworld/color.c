@@ -401,7 +401,7 @@ void PaletteFade_SetTarget(s32 mode, s32 half) {
 }
 
 /// Sets the colours the buffer shows now (see PaletteFade_Build). Called by
-/// Reveal, the leader's steps (step.c), the transitions, and map
+/// Reveal, the leader's steps (walking.c), the transitions, and map
 /// overlays.
 void PaletteFade_SetSource(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;

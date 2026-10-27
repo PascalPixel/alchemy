@@ -22,7 +22,7 @@ struct Actor;
 /// Retreat and the script commands that set a destination
 /// (Event_SetDestination) raise it, and SceneManager_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (map.c, run_scene.c).
+/// (sequence_manager.c, scene_manager.c).
 #define EXIT_KEEP_DESTINATION 999
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to

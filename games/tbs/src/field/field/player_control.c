@@ -53,7 +53,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the map loop (run_scene.c)
+/// work->item or work->event, which the map loop (scene_manager.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -147,7 +147,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// keys. Returns 1.
 ///
 /// Run each frame by gActor_PlayerScript, which the map loop
-/// (run_scene.c) starts on the leader through
+/// (scene_manager.c) starts on the leader through
 /// Actor_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gFieldWork->blockedSteps and creates the
@@ -528,7 +528,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
 /// Run each frame by gActor_WorldMapScript, which the map loop
-/// (run_scene.c) starts on the leader through
+/// (scene_manager.c) starts on the leader through
 /// Actor_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.

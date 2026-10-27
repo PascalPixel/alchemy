@@ -296,8 +296,8 @@ void SequenceManager_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gSaveBlock.returnMusic != -1) {
       // Back where the party was: resume the music saved when the pause menu
-      // last opened (run_scene.c). A random battle and every normal entry set
-      // returnMusic to -1, so the scene's own music plays instead.
+      // last opened (scene_manager.c). A random battle and every normal entry
+      // set returnMusic to -1, so the scene's own music plays instead.
       Sound_PlaySongFar(gSaveBlock.returnMusic);
     } else {
       Scene_PlayMusic();

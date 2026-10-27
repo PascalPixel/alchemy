@@ -13,13 +13,14 @@
 //   drawn chips.
 // - 0 on: embers, ten per target, from frame 302.
 #define CYBELE_FRAMES 366
-#define CYBELE_CHIP_COUNT 48      ///< chips thrown by the thorns
-#define CYBELE_VINES 10           ///< vines drawn
-#define CYBELE_BLAST_CELLS 0x1680 ///< the blast pictures, after the yellow ring
-#define CYBELE_FIRST_SPARK 16     ///< the first spark in work->particles
-#define CYBELE_FIRST_THORN 32     ///< the first thorn in work->particles
-#define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
-#define CYBELE_EMBER_CELL 6       ///< the ember picture in gCybele_EmberOffsets
+#define CYBELE_CHIP_COUNT 48 ///< chips thrown by the thorns
+#define CYBELE_VINES 10      ///< vines drawn
+#define CYBELE_BLAST_OFFSETS                                                   \
+  0x1680                      ///< the blast pictures, after the yellow ring
+#define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
+#define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
+#define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
+#define CYBELE_EMBER_CELL 6   ///< the ember picture in gCybele_EmberOffsets
 
 /// Thorns fly in from the right and vines grow out of the ground, lifting the
 /// targets while sparks flash around them; then the picture dissolves pixel by
@@ -49,7 +50,7 @@
 /// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
 /// It spawns eight formation objects and releases them, the transfer callback
 /// and the blitters before it closes the canvas layer.
-void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
+void BattleAnim_RunCybele(struct BattleAnimArgs *args) {
   void **cursor;
   struct BattleAnimWork *work;
   u8 *canvas;
@@ -67,7 +68,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
 
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_SpawnObjects(8, SPRITE_CYBELE, 1);
 
   // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
@@ -136,7 +137,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
 
   height = -(64 << 16);
   speed = 0;
@@ -158,9 +159,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlaySongFar(SE_GATE_MOVE);
-      ANIM_FOR_EACH_TARGET(i, work->effect)
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                     KNOCKBACK_BOUNCE);
+      ANIM_FOR_EACH_TARGET(i, work->args)
+      BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
       Sound_PlaySongFar(SE_WHOOSH);
@@ -345,9 +345,9 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // body. Each lasts five frames, then until frame 199 waits up to 7
     // frames and flashes somewhere else.
     if (phase >= 0 && phase <= 172) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+            GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(point, &screen);
@@ -407,10 +407,10 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // Lift the targets to a height of 128 pixels, 8 frames apart, without
     // gravity, every sprite of each in its damage pose.
     if (frame >= 161 && frame <= 223) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame > i * 8 + 160) {
           struct BattleObject *slot =
-              GetBattleObjectSlotFar(work->effect->targets[i]);
+              GetBattleObjectSlotFar(work->args->targets[i]);
           struct Actor *actor = slot->actor;
           void *record;
           s32 n;
@@ -426,10 +426,10 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     }
     // Drop the targets from 96 pixels, 5 frames apart, and hit each one 16
     // frames later.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 5 + 286) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+            GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         // 0xab85 is the battle units' usual gravity, which the lift
         // cleared (battle/motion.c sets the same).
@@ -437,7 +437,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
         actor->gravity = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
                                i, 8);
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
@@ -453,7 +453,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
-                                 work->sheet + CYBELE_BLAST_CELLS, 1, 1);
+                                 work->sheet + CYBELE_BLAST_OFFSETS, 1, 1);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
       draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
@@ -466,9 +466,9 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       REG_BG2X = 0;
       ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         struct Actor *actor =
-            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+            GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         for (j = 0; j != 10; j++) {
           struct Particle *ember = &work->particles[i * 10 + j];
@@ -488,13 +488,13 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // added each frame both point up in the projection. The canvas is now
     // shown at twice its width, so x positions are halved.
     if (frame > 301) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         s32 start = i * 4 + 302;
 
         if (frame >= start && frame < i * 4 + 314) {
           s32 cellIndex = (frame - start) / 2;
           struct Actor *actor =
-              GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+              GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
           SET_VECTOR(point, actor->x.fixed, 0, actor->z.fixed);
           Projection_Point(point, &screen);
@@ -554,4 +554,4 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
 #undef CYBELE_FIRST_THORN
 #undef CYBELE_FIRST_CHIP
 #undef CYBELE_EMBER_CELL
-#undef CYBELE_BLAST_CELLS
+#undef CYBELE_BLAST_OFFSETS

@@ -46,7 +46,7 @@ enum SlashSheetCell {
 /// sheet in Ram_MapGridCellBuffer.
 ///
 /// effect: the targets.
-void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
+void BattleAnim_RunAtalanta(struct BattleAnimArgs *args) {
   s32 point[3];
   struct ScreenPoint screen;
   struct SpritePlacement position;
@@ -75,7 +75,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_BACKGROUND];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   scrollX = gBgScroll[1].x;
-  work->effect = effect;
+  work->args = args;
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
   // the top, so the screen goes black before the formation is spawned.
   ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
@@ -85,7 +85,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   // The formation: nine objects of SPRITE_ATALANTA, sprite priority 1.
   BattleAnim_SpawnObjects(9, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
@@ -292,8 +292,8 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
     struct Particle *slash = &work->particles[i];
     s32 member = i % 6;
 
-    if (member < work->effect->targetCount) {
-      Projection_ScaledUnit(work->effect->targets[member], &target);
+    if (member < work->args->targetCount) {
+      Projection_ScaledUnit(work->args->targets[member], &target);
       slash->y = -((Random16() & 31) + 40);
       slash->x = target.x / 2 + (80 - slash->y) / 2;
     } else {
@@ -365,11 +365,11 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
             work->shakeFrames = 2;
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
             member = i % 6;
-            if (member < work->effect->targetCount) {
-              BattleAnim_TintBattler(work->effect->targets[member],
+            if (member < work->args->targetCount) {
+              BattleAnim_TintBattler(work->args->targets[member],
                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
                                      8);
-              BattleMotion_ApplyKnockbackFar(work->effect->targets[member],
+              BattleMotion_ApplyKnockbackFar(work->args->targets[member],
                                              KNOCKBACK_HOP);
             }
           }

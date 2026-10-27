@@ -143,7 +143,7 @@ void Event_ShowMessageAndWaitFar(s32 action, s32 flag);
 void Event_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 /// Asks a question at an actor and shows the reply for yes or for no;
 /// the script carries on past both replies. Returns 0 for yes, 1 for no.
-s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 actionId);
+s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 flags);
 /// Turns an actor toward an angle, 65536 to a full turn, then waits wait
 /// frames.
 void Actor_ArmCallbackFar(s32 actorId, s32 angle, s32 wait);

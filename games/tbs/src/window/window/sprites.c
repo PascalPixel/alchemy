@@ -462,7 +462,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
 /// its depth slot (WindowSprite.sentinel). The last step of
-/// WindowSystem_Update. While a window swells (WINDOW_EFFECT_SWELL) all its
+/// WindowSystem_Update. While a window swells (WINDOW_ANIMATION_SWELL) all its
 /// sprites pulse.
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
@@ -482,7 +482,7 @@ void WindowSprite_UpdateAll(void) {
     while (windowSprite != NULL) {
       struct CursorSprite *sprite = &windowSprite->attr;
 
-      if (window->effect == WINDOW_EFFECT_SWELL) {
+      if (window->animation == WINDOW_ANIMATION_SWELL) {
         windowSprite->animationStep = 2;
         windowSprite->active = WINDOW_SPRITE_MOTION_PULSE;
       }

@@ -16,7 +16,7 @@ struct WindowSprite;
 struct WindowSpriteList;
 struct SaveFileSummary;
 struct SelectionNode;
-struct SelectionScreenWork;
+struct SelectionMenuWork;
 struct BattleCommandRowWork;
 struct MessageReader;
 struct TextPrinter;
@@ -475,39 +475,38 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 void Icon_ReservedNoOp(void);
 void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
 
-void SelectionScreen_Create(void);
-void SelectionScreen_Clear(void);
-void SelectionScreen_AddEntry(u32 first, u32 second);
-void SelectionScreen_BuildEntries(u32 unused);
-void SelectionScreen_ReservedNoOp(void);
-struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind);
-void SelectionScreen_StartDrawing(void);
-void SelectionScreen_StopDrawing(void);
-void SelectionScreen_Draw(void);
-void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 index);
-void SelectionScreen_OpenNameWindow(s32 mode, u32 count);
-void SelectionScreen_Close(void);
-void SelectionScreen_SetPosition(u32 first, u32 second);
+void SelectionMenu_Create(void);
+void SelectionMenu_Clear(void);
+void SelectionMenu_AddEntry(u32 first, u32 second);
+void SelectionMenu_BuildEntries(u32 unused);
+void SelectionMenu_ReservedNoOp(void);
+struct SelectionNode *SelectionMenu_FindFreeIcon(s32 kind);
+void SelectionMenu_StartDrawing(void);
+void SelectionMenu_StopDrawing(void);
+void SelectionMenu_Draw(void);
+void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 index);
+void SelectionMenu_OpenNameWindow(s32 mode, u32 count);
+void SelectionMenu_Close(void);
+void SelectionMenu_SetPosition(u32 first, u32 second);
 void Menu_SetupSelectionBothSides(void);
-void SelectionScreen_SetupArrow(struct SelectionScreenWork *state, s32 index);
+void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 index);
 struct SelectionNode *
-SelectionScreen_GetCursorNode(struct SelectionScreenWork *screen);
-s32 SelectionScreen_Run(s32 mode);
-u32 SelectionScreen_RunWithSounds(u32 mode);
-void Menu_MoveSelectionForward(struct SelectionScreenWork *screen);
-void Menu_MoveSelectionBackward(struct SelectionScreenWork *screen);
-void SelectionScreen_StepRight(struct SelectionScreenWork *state);
-void SelectionScreen_StepLeft(struct SelectionScreenWork *state);
-void SelectionScreen_RedrawIcon(struct SelectionScreenWork *state, u32 index);
-void SelectionScreen_HighlightIcon(struct SelectionScreenWork *state,
-                                   u32 index);
-void Menu_SendNodeCountList(struct SelectionScreenWork *screen);
-void SelectionScreen_Scroll(struct SelectionScreenWork *screen, s32 forward);
+SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen);
+s32 SelectionMenu_Run(s32 mode);
+u32 SelectionMenu_RunWithSounds(u32 mode);
+void Menu_MoveSelectionForward(struct SelectionMenuWork *screen);
+void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen);
+void SelectionMenu_StepRight(struct SelectionMenuWork *state);
+void SelectionMenu_StepLeft(struct SelectionMenuWork *state);
+void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 index);
+void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state, u32 index);
+void Menu_SendNodeCountList(struct SelectionMenuWork *screen);
+void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward);
 s32 Resource_LoadByMode(s32 mode, s32 value);
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
-void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
-                               s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionScreenWork *screen);
+void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
+                             s32 reuse);
+u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
 void MenuArrow_NoOpCallback1(void);
@@ -517,7 +516,7 @@ void MenuArrow_NoOpCallback4(void);
 void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_Release(s32 value);
-void SelectionScreen_LoadLargeIcon(void);
+void SelectionMenu_LoadLargeIcon(void);
 void Resource_ResetPendingTransfer(void);
 s32 FieldMenu_Run(void);
 void PartyStatus_OpenAndWait(void);
@@ -526,7 +525,7 @@ void PartyStatus_OpenAndWait(void);
 #ifdef UBFIX
 void PartyStatus_CloseWithMenu(void);
 #endif
-void SelectionScreen_CreateEmpty(void);
+void SelectionMenu_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 
 void AreaNameWindow_Show(void);
@@ -534,7 +533,7 @@ void AreaNameWindow_Update(void);
 void AreaNameWindow_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
-void OptionMenu_StepWindowHue(s32 keys);
+void SettingsMenu_StepWindowHue(s32 keys);
 void Debug_SelectAbilityPair(void);
 s32 Party_ListPsynergy(struct AbilityListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
@@ -543,10 +542,10 @@ void Menu_RunSelectionHook(void);
 
 void Menu_AllocateSelectionWorkspace(void);
 void Menu_ReleaseSelectionWorkspace(void);
-void OptionMenu_ReservedNoOpC9BC(void);
-void OptionMenu_ReservedNoOpC9C0(void);
-void OptionMenu_ReservedNoOpC9C4(void);
-void OptionMenu_ResetEntries(struct OptionMenuWork *work);
+void SettingsMenu_ReservedNoOpC9BC(void);
+void SettingsMenu_ReservedNoOpC9C0(void);
+void SettingsMenu_ReservedNoOpC9C4(void);
+void SettingsMenu_ResetEntries(struct OptionMenuWork *work);
 void WindowColor_CalculateTint(struct OptionMenuWork *work);
 void WindowColor_WritePalette(struct OptionMenuWork *work);
 u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 scale_r, s32 scale_g,
@@ -554,16 +553,16 @@ u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 scale_r, s32 scale_g,
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
                           s32 blue_scale);
 void WindowColor_Apply(s32 phase, s32 brightness);
-void OptionMenu_PreviousRow(struct OptionMenuWork *work);
-void OptionMenu_NextRow(struct OptionMenuWork *work);
-void OptionMenu_LowerSetting(struct OptionMenuWork *work);
-void OptionMenu_RaiseSetting(struct OptionMenuWork *work);
-void OptionMenu_SelectionNoOp(void);
-void OptionMenu_AnimateCursors(void);
-void OptionMenu_InitializeWork(void);
-void OptionMenu_Release(void);
-struct Window *OptionMenu_Open(void);
-s32 OptionMenu_Run(void);
+void SettingsMenu_PreviousRow(struct OptionMenuWork *work);
+void SettingsMenu_NextRow(struct OptionMenuWork *work);
+void SettingsMenu_LowerSetting(struct OptionMenuWork *work);
+void SettingsMenu_RaiseSetting(struct OptionMenuWork *work);
+void SettingsMenu_SelectionNoOp(void);
+void SettingsMenu_AnimateCursors(void);
+void SettingsMenu_InitializeWork(void);
+void SettingsMenu_Release(void);
+struct Window *SettingsMenu_Open(void);
+s32 SettingsMenu_Run(void);
 void PauseMenu_AnimateCursor(void);
 void PauseMenu_Initialize(void);
 void PauseMenu_Release(void);

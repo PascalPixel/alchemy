@@ -67,7 +67,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   struct MenuSprite *iconSprite;
   u16 signatureHeader[2];
   s32 target;
-  s32 actorId;
+  s32 unitId;
   s32 mode;
   s32 commandKind;
   s32 parameter;
@@ -237,18 +237,18 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       command = &commands[commandIndex];
-      actorId = actors[commandIndex];
+      unitId = actors[commandIndex];
       // UB: Unit_GetFar returns a pointer, not the cast's doubleword result.
 #ifdef UBFIX
-      unit = Unit_GetFar(actorId);
+      unit = Unit_GetFar(unitId);
 #else
       /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
-       * so sched2 loads i * 2 first; as Unit_GetFar(actorId), 1 of 1727
+       * so sched2 loads i * 2 first; as Unit_GetFar(unitId), 1 of 1727
        * instructions differ in tbs-en. */
-      unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(actorId);
+      unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
 #endif
       // The member's row starts on Attack; its portrait shows at the left.
-      gBattleMenuWork->commandActor = actorId;
+      gBattleMenuWork->commandActor = unitId;
       gBattleMenuWork->commandSelection[1] = 0;
       iconSprite = &gBattleMenuWork->icons[2];
       iconSprite->oam.word.attr01 = 0x80000400;
@@ -280,7 +280,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signatureHeader[0] = 0;
       // signatureHeader is the member alone, 0xff-ended: marked in the
       // battle and highlighted in the party status window.
-      signatureHeader[0] = (u16)actorId;
+      signatureHeader[0] = (u16)unitId;
       signatureHeader[1] = 255;
       BattleHighlight_SetModesFar(signatureHeader, 1);
       PartyStatus_HighlightMembers(signatureHeader);
@@ -295,7 +295,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = BattleUnit_ListIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
-        BattleStatusScreen_Run(block, handle, actorId);
+        BattleStatusScreen_Run(block, handle, unitId);
         state->iconShown[2] = 1;
         Free(block);
         continue;
@@ -337,7 +337,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
+        mode = BattleTarget_RunSelection(unitId, 1, 1, TARGET_HINT_NONE);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto mark_visible;
@@ -390,7 +390,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         pick[cnt] = 0;
         list[cnt] = 0;
-        mode = BattlePsynergyMenu_Run(actorId, list, cnt);
+        mode = BattlePsynergyMenu_Run(unitId, list, cnt);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -437,7 +437,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = cost;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
-            actorId, ability->targetMode, cost,
+            unitId, ability->targetMode, cost,
             Battle_ClassifyEntryKind(
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
@@ -524,7 +524,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           Sound_PlaySongFar(SE_MENU_ERROR);
         }
         mode = BattleTarget_RunSelection(
-            actorId, ability->targetMode, ability->range,
+            unitId, ability->targetMode, ability->range,
             Battle_ClassifyEntryKind(
                 (const struct AbilityDefinition *)ability));
         command->range = ability->range;
@@ -564,7 +564,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       summon_menu:
         state->icons[0].oam.f.x = 144;
         gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
-        mode = BattleDjinnMenu_Run(actorId, 1);
+        mode = BattleDjinnMenu_Run(unitId, 1);
         command->range = 0;
         if (mode == -1) {
           goto mark_visible;
@@ -574,7 +574,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         gBattleMenuWork->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
-        if (Djinn_IsSetFar(actorId, element, index) != 0) {
+        if (Djinn_IsSetFar(unitId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           commandWindow = Window_Create(11, 17, 10, 3, 6);
@@ -587,7 +587,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           WaitFrames(1);
           Sound_PlaySongFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(
-              actorId, ability->targetMode, cost,
+              unitId, ability->targetMode, cost,
               Battle_ClassifyEntryKind(
                   (const struct AbilityDefinition *)ability));
           if (state->tutorialStep != 0) {
@@ -617,7 +617,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = 1;
         WaitFrames(1);
         Sound_PlaySongFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
+        mode = BattleTarget_RunSelection(unitId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto summon_menu;
@@ -655,7 +655,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (entryValue != 0) {
           do {
             Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
+            if (Item_ClassifyUseAbility(unitId, entryValue) == 0) {
               list[cnt] = entryValue;
               pick[cnt++] = k;
             }
@@ -671,7 +671,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (entryValue != 0) {
           do {
             Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
+            if (Item_ClassifyUseAbility(unitId, entryValue) != 0) {
               list[cnt] = entryValue;
               pick[cnt++] = k;
             }
@@ -683,7 +683,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           } while (entryValue != 0);
         }
         list[cnt] = 0;
-        mode = BattleItemMenu_Run(actorId, list, cnt);
+        mode = BattleItemMenu_Run(unitId, list, cnt);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -713,7 +713,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = cost;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
-            actorId, ability->targetMode, cost,
+            unitId, ability->targetMode, cost,
             Battle_ClassifyEntryKind(
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
@@ -734,7 +734,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       Sound_PlaySongFar(SE_CHIME);
-      command->unitId = (u16)actorId;
+      command->unitId = (u16)unitId;
       // Draw the priority random value once, only for a nonzero agility.
       priority = unit->agi;
       if (priority != 0) {

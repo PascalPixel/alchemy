@@ -82,10 +82,10 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// A guarding unit takes half the damage, or a tenth behind Total Defense.
 #define REDUCE_BY_GUARD(damage, unit)                                          \
   {                                                                            \
-    s32 guard = (unit)->guardLevel;                                            \
+    s32 guard = (unit)->defendLevel;                                           \
                                                                                \
     if (guard != 0) {                                                          \
-      if (guard == GUARD_DEFEND)                                               \
+      if (guard == DEFEND_NORMAL)                                              \
         (damage) /= 2;                                                         \
       else                                                                     \
         (damage) /= 10;                                                        \
@@ -136,7 +136,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   s32 distance; // steps from the aimed position, 0 to 5
   struct AbilityDefinition *ability;
   struct Unit *actor;
-  s32 actorId;
+  s32 unitId;
   s32 abilityId;
   s32 elementBonus; // elemental power less resistance
   struct BattleWork *battle;
@@ -172,7 +172,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   unitSize = sizeof(struct Unit);
   savedTarget = Alloc(unitSize);
 
-  actorId = plan->actorId;
+  unitId = plan->unitId;
   targetId = plan->targetIds[slot];
   abilityId = plan->abilityId;
   element = plan->element;
@@ -180,7 +180,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   critical = plan->targetCritical[slot];
 
   ability = Ability_Get(abilityId);
-  actor = Unit_GetFar(actorId);
+  actor = Unit_GetFar(unitId);
   target = Unit_GetFar(targetId);
   Iwram_CopyWords(savedTarget, target, unitSize);
 
@@ -254,7 +254,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
 
     plannedHit = plan->targetHit[slot];
     if (plannedHit == HIT_NOT_ROLLED)
-      hit = Battle_RollEffectSuccessFar(actorId, targetId, element,
+      hit = Battle_RollEffectSuccessFar(unitId, targetId, element,
                                         ability->effect,
                                         gRangeFalloff_EffectChance[distance]);
     else
@@ -362,7 +362,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     } else if (ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
       // The actor leaves the battle (BattleObject_DestroyTemporaryObject).
       if (actor->hp != 0)
-        BattlePlayback_Push(PLAYBACK_REMOVE_UNIT, actorId);
+        BattlePlayback_Push(PLAYBACK_REMOVE_UNIT, unitId);
     } else if (ability->effect == ABILITY_EFFECT_DRAIN_PP) {
       // Psy Drain does PP damage, and misses a target with no PP.
       if (target->pp != 0)
@@ -1143,7 +1143,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         amount = newHp - actor->hp;
       }
       BattlePlayback_Push(PLAYBACK_CLEAR_ARGUMENTS, 0);
-      BattlePlayback_Push(PLAYBACK_UNIT_NAME, actorId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       if (newHp == actor->hpMax)
         PUSH_MESSAGE(MsgHpFull);
       else {
@@ -1151,7 +1151,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         PUSH_MESSAGE(MsgHpRecover);
       }
       actor->hp = newHp;
-      Unit_RecalculateGaugesFar(actorId);
+      Unit_RecalculateGaugesFar(unitId);
       break;
     }
 
@@ -1168,7 +1168,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         drained = newPp - actor->pp;
       }
       BattlePlayback_Push(PLAYBACK_CLEAR_ARGUMENTS, 0);
-      BattlePlayback_Push(PLAYBACK_UNIT_NAME, actorId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       if (newPp == actor->ppMax)
         PUSH_MESSAGE(MsgPpFull);
       else {
@@ -1176,7 +1176,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         PUSH_MESSAGE(MsgPpRecover);
       }
       actor->pp = newPp;
-      Unit_RecalculateGaugesFar(actorId);
+      Unit_RecalculateGaugesFar(unitId);
       break;
     }
 
@@ -1192,7 +1192,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         break;
       BattlePlayback_Push(PLAYBACK_NUMBER, amount);
       PUSH_SIDE_MESSAGE(targetId, MsgLeechTake, MsgLeechGain);
-      Unit_AddPpFar(actorId, amount);
+      Unit_AddPpFar(unitId, amount);
       break;
 
     // Break returns raised Attack, Defense, Resistance and Agility stages to
@@ -1266,16 +1266,16 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     // The guards: the message shows either way, but a guard is never lowered.
     case ABILITY_EFFECT_DEFEND:
       PUSH_MESSAGE(MsgAura);
-      if (target->guardLevel > 0)
+      if (target->defendLevel > 0)
         break;
-      target->guardLevel = GUARD_DEFEND;
+      target->defendLevel = DEFEND_NORMAL;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
       PUSH_MESSAGE(MsgAura2);
-      if (target->guardLevel > GUARD_DEFEND)
+      if (target->defendLevel > DEFEND_NORMAL)
         break;
-      target->guardLevel = GUARD_TOTAL_DEFENSE;
+      target->defendLevel = DEFEND_TOTAL;
       break;
 
     // Contain, Threaten and Tremble do nothing; the player only reads their

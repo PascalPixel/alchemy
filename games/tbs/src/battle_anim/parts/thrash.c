@@ -24,15 +24,15 @@ enum FlashingStrikeMode {
 /// The leap takes the user three quarters of the way in 24 steps, starting up
 /// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
 /// effect->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
-void BattleAnim_RunThrash(struct BattleAnimArgs *effect) {
-  BattleMotion_ApproachTargetFar(effect->user, effect->targets[0], 24, 0xc3333);
+void BattleAnim_RunThrash(struct BattleAnimArgs *args) {
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
   WaitFrames(29);
-  effect->variant = SPARK_GROUPS_THRASH;
-  BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_RISING);
+  args->variant = SPARK_GROUPS_THRASH;
+  BattleAnim_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
 /// Unused: no row of gAbilityAnimations names its kind, and the handler table
-/// is reached with no other kind (BattleAnim_RunTableEffect). The user would
+/// is reached with no other kind (BattleAnim_RunFromTable). The user would
 /// leap at the first target, then a burst of 340 sparks would rise beneath it
 /// and the canvas flash. It is Severe Blow's animation in The Lost Age, whose
 /// row for Severe Blow names this kind; here Severe Blow plays a casting
@@ -43,27 +43,27 @@ void BattleAnim_RunThrash(struct BattleAnimArgs *effect) {
 /// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
 /// after 12 frames with effect->variant set to SPARK_GROUPS_SEVERE_BLOW,
 /// overriding the ability's own.
-void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *effect) {
-  BattleMotion_ApproachTargetFar(effect->user, effect->targets[0], 24, 0x73333);
+void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *args) {
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
   WaitFrames(12);
-  effect->variant = SPARK_GROUPS_SEVERE_BLOW;
-  BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_RISING);
+  args->variant = SPARK_GROUPS_SEVERE_BLOW;
+  BattleAnim_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
 /// The user leaps at the first target, four pictures flash across the animation
 /// layer, then it fills with one colour as the target is struck.
 ///
 /// Abilities: Quick Strike (BATTLE_ANIM_QUICK_STRIKE).
-void BattleAnim_RunQuickStrike(struct BattleAnimArgs *effect) {
-  BattleAnim_RunFlashingStrike(effect, FLASHING_STRIKE_QUICK_STRIKE);
+void BattleAnim_RunQuickStrike(struct BattleAnimArgs *args) {
+  BattleAnim_RunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
 }
 
 /// The user steps up to the first target, four pictures flash across the
 /// animation layer, then it fills with one colour as the target is struck.
 ///
 /// Abilities: Vorpal Slash (BATTLE_ANIM_VORPAL_SLASH).
-void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *effect) {
-  BattleAnim_RunFlashingStrike(effect, FLASHING_STRIKE_VORPAL_SLASH);
+void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *args) {
+  BattleAnim_RunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
 }
 
 /// Plays a flashing strike, the runner of BattleAnim_RunQuickStrike and
@@ -80,7 +80,7 @@ void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *effect) {
 ///
 /// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
 ///       makes the step a hop.
-void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *args, s32 mode) {
   void **slots;
   struct BattleAnimWork *work;
   void *canvas;
@@ -89,7 +89,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
 
   slots = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(slots, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDCNT = 0;
 
@@ -116,13 +116,12 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
   // The step: three quarters of the way in 16 steps, a hop of 8 pixels a
   // frame up for Quick Strike.
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
-    BattleMotion_ApproachTargetFar(effect->user, effect->targets[0], 16,
-                                   0x80000);
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0x80000);
   else
-    BattleMotion_ApproachTargetFar(effect->user, effect->targets[0], 16, 0);
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   WaitFrames(16);
 
-  if (work->effect->side == ANIM_SIDE_PARTY)
+  if (work->args->side == ANIM_SIDE_PARTY)
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_COPY);
   else
@@ -146,7 +145,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HURL);
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
     }
     BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);

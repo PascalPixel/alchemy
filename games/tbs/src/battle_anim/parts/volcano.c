@@ -36,7 +36,7 @@
 /// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
 /// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
 /// at each eruption.
-void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
+void BattleAnim_RunVolcano(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -54,16 +54,16 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   cursor = slots;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == ANIM_VARIANT_BASIC)
+  if (work->args->variant == ANIM_VARIANT_BASIC)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
-  else if (work->effect->variant == ANIM_VARIANT_STRONGEST)
+  else if (work->args->variant == ANIM_VARIANT_STRONGEST)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
@@ -77,7 +77,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     PARTICLES[i].variant = 0;
 
   // The pillars stand 72 to 87 pixels out on the first target's side.
-  actor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 4; i++) {
     struct Particle *base = &work->particles[i];
     s32 x;
@@ -85,7 +85,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     x = ((Random16() & 15) + 72) << 16;
     base->y = 0;
     base->x = x;
-    base->z = gVolcano_Depths[work->effect->variant][i] << 16;
+    base->z = gVolcano_Depths[work->args->variant][i] << 16;
     if (actor->x.fixed < 0)
       base->x = -x;
   }
@@ -95,8 +95,8 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gBattleCamera;
-    if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
-      if (work->effect->side == ANIM_SIDE_ENEMIES)
+    if (work->args->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
+      if (work->args->side == ANIM_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
@@ -106,7 +106,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
     ANIM_VIEW_FROM_CAMERA(camera);
 
     if (frame < 64) {
-      for (pillar = 0; pillar != gVolcano_Counts[work->effect->variant];
+      for (pillar = 0; pillar != gVolcano_Counts[work->args->variant];
            pillar++) {
         Projection_Point(&work->particles[pillar], &screen);
         screen.x /= 2;
@@ -169,10 +169,10 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
         }
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          ANIM_FOR_EACH_TARGET(i, work->effect) {
-            BattleAnim_TintBattler(work->effect->targets[i],
+          ANIM_FOR_EACH_TARGET(i, work->args) {
+            BattleAnim_TintBattler(work->args->targets[i],
                                    SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
-            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+            BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                            KNOCKBACK_HOP);
           }
         }

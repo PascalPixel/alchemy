@@ -30,7 +30,7 @@
 /// targets bounce. At the end the formation explodes with
 /// BattleAnim_RunImpactBurst; the battle shows the damage on frame 120.
 ///
-/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummon, whose sheet slot holds the
 /// mote sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16,
 /// a variant of -1 marking an idle one. Loads the water spray palette into the
 /// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
@@ -38,7 +38,7 @@
 /// speed and the usual battle gravity at each bounce. Before the impact burst
 /// it removes its transfer callback and frees its blitters, which the burst
 /// builds again, and it closes the canvas layer last.
-void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
+void BattleAnim_RunNereid(struct BattleAnimArgs *args) {
   BlitterPair draw;
   void **cursor;
   void *canvas;
@@ -50,7 +50,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
   canvas = cursor[0];
   work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleAnim_FetchRectangleBlitters(0, draw);
@@ -102,7 +102,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
       life += 7; // sizeof(struct Particle) / 4
     }
     sparks = PARTICLES;
-    BattleAnim_SelectLivingTargets(work->effect);
+    BattleAnim_SelectLivingTargets(work->args);
     WaitFrames(1);
     BattleAnim_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
@@ -243,22 +243,22 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
       // pixels a frame up under the gravity BattleMotion_ReturnToSpot also
       // gives a unit (0xab85, about 0.67 pixel a frame each frame).
       if (frame <= 79) {
-        ANIM_FOR_EACH_TARGET(k, work->effect) {
+        ANIM_FOR_EACH_TARGET(k, work->args) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
               struct Actor *actor =
-                  GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+                  GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
-              BattleAnim_TintBattler(work->effect->targets[k],
-                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
+              BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, -1, 0);
               actor->velocityY = 0x48000;
               actor->gravity = 0xab85;
             }
             if (phase == 6)
-              BattleAnim_TintBattler(work->effect->targets[k], 0, POSE_DAMAGE,
-                                     -1, 0);
+              BattleAnim_TintBattler(work->args->targets[k], 0, POSE_DAMAGE, -1,
+                                     0);
           }
         }
       }

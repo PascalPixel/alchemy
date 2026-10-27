@@ -5,22 +5,22 @@
 #include "../window_internal.h"
 
 /// Nothing calls them.
-UNUSED void OptionMenu_ReservedNoOpC9BC(void) {}
-UNUSED void OptionMenu_ReservedNoOpC9C0(void) {}
-UNUSED void OptionMenu_ReservedNoOpC9C4(void) {}
+UNUSED void SettingsMenu_ReservedNoOpC9BC(void) {}
+UNUSED void SettingsMenu_ReservedNoOpC9C0(void) {}
+UNUSED void SettingsMenu_ReservedNoOpC9C4(void) {}
 
 /// One of the seven entries of the option menu's work from offset 0x400;
-/// only its state is known, and only the unused OptionMenu_ResetEntries
+/// only its state is known, and only the unused SettingsMenu_ResetEntries
 /// writes it.
 struct OptionMenuEntry {
   u8 unused[10]; ///< no code names it
-  u16 state;     ///< cleared to 0 by OptionMenu_ResetEntries; nothing reads it
+  u16 state; ///< cleared to 0 by SettingsMenu_ResetEntries; nothing reads it
   u8 unusedAfterState[40]; ///< no code names it
 };
 
 /// Clears the option menu's seven entry states, its row, its tint and its
 /// cursor animation.
-UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
+UNUSED void SettingsMenu_ResetEntries(struct OptionMenuWork *work) {
   struct OptionMenuEntry *entry =
       (struct OptionMenuEntry *)((u8 *)work + 0x400);
   u16 zero = 0;
@@ -150,7 +150,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// The live palette path leaves the saved colour settings untouched. The
 /// option screen calls it as the player changes the settings, and with the
 /// saved ones when the screen is cancelled. The file menu
-/// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
+/// (FileList_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The main menu
 /// (menu/main_menu.c), the sequence manager's start (SequenceManager_Run), the
 /// end of the Mind Read wave (FieldPsynergy_RestoreMindReadPalette) and Vale
@@ -204,12 +204,12 @@ enum OptionMenuRow {
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
-// The five-row option menu OptionMenu_Run runs uses none of these four
+// The five-row option menu SettingsMenu_Run runs uses none of these four
 // functions. XXX (no evidence): what screen they were written for; nothing
 // calls them, so the game never shows one.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
-/// rows are those of OptionMenu_LowerSetting.
-UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
+/// rows are those of SettingsMenu_LowerSetting.
+UNUSED void SettingsMenu_PreviousRow(struct OptionMenuWork *work) {
   if (work->page == OPTION_ROW_MESSAGE_SPEED)
     work->page = OPTION_ROW_WINDOW_BRIGHTNESS;
   else
@@ -217,14 +217,14 @@ UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
 }
 
 /// Moves the three-row settings cursor down, wrapping to the top.
-UNUSED void OptionMenu_NextRow(struct OptionMenuWork *work) {
+UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
   if (++work->page > OPTION_ROW_WINDOW_BRIGHTNESS)
     work->page = OPTION_ROW_MESSAGE_SPEED;
 }
 
 /// Lowers the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
-UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
+UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gSaveBlock.messageSpeed != 0)
@@ -243,7 +243,7 @@ UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
 
 /// Raises the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
-UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
+UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gSaveBlock.messageSpeed <= 1)
@@ -262,7 +262,7 @@ UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
 
 /// An empty function, reached only through a bare entry of the window
 /// far-call table.
-void OptionMenu_SelectionNoOp(void) {}
+void SettingsMenu_SelectionNoOp(void) {}
 
 /// The option menu's per-frame callback: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen
@@ -270,7 +270,7 @@ void OptionMenu_SelectionNoOp(void) {}
 /// frame: the marker of the row in use steps through 8 frames of
 /// ResourceId_MenuCursorFrames, the other shows the first. Rows 2 to 4
 /// (speed, speech, sleep) pulse their chosen icon.
-void OptionMenu_AnimateCursors(void) {
+void SettingsMenu_AnimateCursors(void) {
   s32 cursorResource;
   s32 markerResource;
   s32 selectedOption;
@@ -309,13 +309,13 @@ void OptionMenu_AnimateCursors(void) {
 /// Allocates the option menu's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame callback.
 /// The copy lets cancelling discard the edits. The block is
-/// HEAP_SLOT_OPTION_MENU (gOptionMenuWork), which OptionMenu_Release frees. The
-/// rows: 0 the window hue (24 values), 1 its brightness (15), 2 the message
+/// HEAP_SLOT_SETTINGS_MENU (gOptionMenuWork), which SettingsMenu_Release frees.
+/// The rows: 0 the window hue (24 values), 1 its brightness (15), 2 the message
 /// speed (3), 3 speech (2) and 4 auto-sleep (2).
-void OptionMenu_InitializeWork(void) {
+void SettingsMenu_InitializeWork(void) {
   struct OptionMenuWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
+  work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
   work->option[0] = gSaveBlock.windowColor[0];
   work->optionCount[0] = 24;
@@ -327,14 +327,14 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gSaveBlock.idleSleepEnabled;
   work->optionCount[4] = 2;
-  Task_Add(OptionMenu_AnimateCursors, TASK_PASS_FRAME);
+  Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
 
 /// Stops the option menu's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
-void OptionMenu_Release(void) {
-  Task_Remove(OptionMenu_AnimateCursors);
-  FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
+void SettingsMenu_Release(void) {
+  Task_Remove(SettingsMenu_AnimateCursors);
+  FreeHeapSlot(HEAP_SLOT_SETTINGS_MENU);
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
@@ -347,7 +347,7 @@ void OptionMenu_Release(void) {
 /// window. Its sprites belong to the window and go when it closes. A
 /// slider's marker stands option * 60 / count pixels right of
 /// OPTION_SLIDER_X.
-struct Window *OptionMenu_Open(void) {
+struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
   struct Window *window;
   struct WindowSprite *marker;
@@ -392,10 +392,10 @@ struct Window *OptionMenu_Open(void) {
   // in 15.
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    Dma_Set(gOptionMenu_SliderPalette,
+    Dma_Set(gSettingsMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY16(32),
             REG_DMA3);
-    VramCache_Load(x, 256, gOptionMenu_SliderTiles);
+    VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
@@ -415,7 +415,7 @@ struct Window *OptionMenu_Open(void) {
   }
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
-  // OptionMenu_AnimateCursors fills each frame.
+  // SettingsMenu_AnimateCursors fills each frame.
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
@@ -441,22 +441,22 @@ struct Window *OptionMenu_Open(void) {
   }
 
   y = 28;
-  work->frame[0][0] = CommandIcon_Create(gOptionMenu_SpeedFrames[0], 0, window,
-                                         OPTION_FRAME_X, y);
-  work->frame[0][1] = CommandIcon_Create(gOptionMenu_SpeedFrames[1], 0, window,
-                                         OPTION_FRAME_X + 24, y);
-  work->frame[0][2] = CommandIcon_Create(gOptionMenu_SpeedFrames[2], 0, window,
-                                         OPTION_FRAME_X + 48, y);
+  work->frame[0][0] = CommandIcon_Create(gSettingsMenu_SpeedFrames[0], 0,
+                                         window, OPTION_FRAME_X, y);
+  work->frame[0][1] = CommandIcon_Create(gSettingsMenu_SpeedFrames[1], 0,
+                                         window, OPTION_FRAME_X + 24, y);
+  work->frame[0][2] = CommandIcon_Create(gSettingsMenu_SpeedFrames[2], 0,
+                                         window, OPTION_FRAME_X + 48, y);
   y = 52;
   work->frame[1][0] =
-      CommandIcon_Create(gOptionMenu_SpeechFrames[0], 0, window, 100, y);
+      CommandIcon_Create(gSettingsMenu_SpeechFrames[0], 0, window, 100, y);
   work->frame[1][1] =
-      CommandIcon_Create(gOptionMenu_SpeechFrames[1], 0, window, 124, y);
+      CommandIcon_Create(gSettingsMenu_SpeechFrames[1], 0, window, 124, y);
   y = 76;
   work->frame[2][0] =
-      CommandIcon_Create(gOptionMenu_SleepFrames[0], 0, window, 100, y);
+      CommandIcon_Create(gSettingsMenu_SleepFrames[0], 0, window, 100, y);
   work->frame[2][1] =
-      CommandIcon_Create(gOptionMenu_SleepFrames[1], 0, window, 124, y);
+      CommandIcon_Create(gSettingsMenu_SleepFrames[1], 0, window, 124, y);
   return window;
 }
 
@@ -468,7 +468,7 @@ struct Window *OptionMenu_Open(void) {
 /// as in the Battle Arena) auto-sleep shows as off and is saved so. The pause
 /// menu's Change settings runs it (PauseMenu_Run,
 /// screens/debug.c), and reopens the menu when it is cancelled.
-s32 OptionMenu_Run(void) {
+s32 SettingsMenu_Run(void) {
   struct OptionMenuWork *work;
   struct Window *settingsWindow;
   struct Window *helpWindow;
@@ -487,11 +487,11 @@ s32 OptionMenu_Run(void) {
 
   redraw = 1;
   selectedOption = 0;
-  OptionMenu_InitializeWork();
+  SettingsMenu_InitializeWork();
   work = gOptionMenuWork;
   helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3,
                              WINDOW_FLAG_INSTANT);
-  settingsWindow = OptionMenu_Open();
+  settingsWindow = SettingsMenu_Open();
   // Picture 7 of gMenuTitlePictures, the Setup heading.
   pair = MenuTitle_Create(7, settingsWindow, 64, -48);
   WaitFrames(1);
@@ -521,7 +521,7 @@ s32 OptionMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeedFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeedFrames[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[1][i];
@@ -531,7 +531,7 @@ s32 OptionMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeechFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeechFrames[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[2][i];
@@ -541,7 +541,7 @@ s32 OptionMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SleepFrames[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SleepFrames[i], resourceIndex, dimmed);
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
@@ -589,8 +589,8 @@ s32 OptionMenu_Run(void) {
       redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
-      *hue = gOptionMenu_HuePresets[work->preset];
-      *brightness = gOptionMenu_BrightnessPresets[work->preset];
+      *hue = gSettingsMenu_HuePresets[work->preset];
+      *brightness = gSettingsMenu_BrightnessPresets[work->preset];
       continue;
     }
     if (gKeysPressed & (KEY_A | KEY_START)) {
@@ -639,7 +639,7 @@ s32 OptionMenu_Run(void) {
   } else {
     WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   }
-  OptionMenu_Release();
+  SettingsMenu_Release();
   WaitFrames(1);
   return result;
 }
@@ -667,7 +667,7 @@ void PauseMenu_AnimateCursor(void) {
 /// main loop's pass.
 void PauseMenu_Initialize(void) {
   void *work;
-  work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
+  work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
@@ -676,7 +676,7 @@ void PauseMenu_Initialize(void) {
 /// The callback goes first, since it reads the work block.
 void PauseMenu_Release(void) {
   Task_Remove(&PauseMenu_AnimateCursor);
-  FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
+  FreeHeapSlot(HEAP_SLOT_SETTINGS_MENU);
 }
 
 /// Opens the pause menu's window with its entries (Save your quest, Sleep,

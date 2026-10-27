@@ -127,10 +127,10 @@ finish:
 /// (1); the caller sets its side.
 #ifdef UBFIX
 void BattleStaging_BuildTargetList(struct BattleTurn *plan,
-                                   struct BattleAnimArgs *effect) {
+                                   struct BattleAnimArgs *args) {
 #else
 s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
-                                  struct BattleAnimArgs *effect) {
+                                  struct BattleAnimArgs *args) {
 #endif
   s16 *outputTarget;
   u32 flags;
@@ -139,15 +139,15 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
   u8 *inputTarget;
 
   livingTargets = 0;
-  effect->prelude = 0;
+  args->prelude = 0;
   flags = plan->animation;
-  effect->kind = flags & ANIM_ID_MASK;
-  effect->variant = (flags & ANIM_VARIANT_MASK) >> ANIM_VARIANT_SHIFT;
-  effect->user = plan->actorId;
+  args->kind = flags & ANIM_ID_MASK;
+  args->variant = (flags & ANIM_VARIANT_MASK) >> ANIM_VARIANT_SHIFT;
+  args->user = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
     inputTarget = plan->targetIds;
-    outputTarget = effect->targets;
+    outputTarget = args->targets;
     do {
       if (Unit_GetFar(*inputTarget)->hp != 0 ||
           (plan->animation & ANIM_ON_DOWNED)) {
@@ -159,12 +159,12 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
     } while (targetIndex < plan->targetCount);
   }
   if (livingTargets == 0) {
-    effect->targets[0] = plan->targetIds[0];
+    args->targets[0] = plan->targetIds[0];
     livingTargets = 1;
   }
-  effect->firstTarget = plan->targetIds[0];
-  effect->targetCount = livingTargets;
-  effect->range = 1;
+  args->firstTarget = plan->targetIds[0];
+  args->targetCount = livingTargets;
+  args->range = 1;
 }
 
 /// Plays a unit's attempt to run. The flee roll was made as the round's
@@ -199,7 +199,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 
   // The party: each member that can move runs, the last listed first, eight
   // frames apart.
-  if (plan->actorId <= ALLY_MAX) {
+  if (plan->unitId <= ALLY_MAX) {
     partyMode = completed.value;
 
     if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
@@ -230,12 +230,12 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
     // An enemy: a roll of 0 to 9, 7 in 10 away.
     s16 event[2];
 
-    event[0] = plan->actorId;
+    event[0] = plan->unitId;
     event[1] = BATTLE_UNIT_LIST_END;
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
-    BattleObject_RemoveFromLists(plan->actorId);
-    BattleObject_MarkForRelease(plan->actorId);
+    BattleObject_RemoveFromLists(plan->unitId);
+    BattleObject_MarkForRelease(plan->unitId);
   } else {
     BattleMessage_ShowAndWaitFar(MsgNoEscape);
     BattleMessage_WaitForAdvance();
@@ -275,7 +275,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   // The camera: a staged animation turns to the actor's side over 60 frames (an
   // enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's usual view.
   BattleStaging_BuildTargetList(plan, &work.effect);
-  actor = plan->actorId;
+  actor = plan->unitId;
   target = plan->targetIds[0];
   if (plan->animation & ANIM_SUMMON) {
     struct BattleBackgroundWork *view;
@@ -335,7 +335,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
   if (plan->failure != TURN_FAILURE_NONE) {
     if (plan->failure == TURN_FAILURE_SEALED) {
-      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->actorId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgPsynergyBlocked);
     } else {
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgCastLacksPp);
@@ -398,11 +398,11 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     // each target's outcome from the frame the blow lands.
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (plan->animation & ANIM_SUMMON)
-      BattleAnim_RunSummonEffectFar(&work.effect);
+      BattleAnim_RunSummonFar(&work.effect);
     else if (plan->animation & ANIM_BY_ID_RANGE)
-      BattleAnim_DispatchByIdRangeFar(&work.effect);
+      BattleAnim_RunByIdRangeFar(&work.effect);
     else
-      BattleAnim_RunTableEffectFar(&work.effect);
+      BattleAnim_RunFromTableFar(&work.effect);
     BattlePlayback_WaitForReady();
   }
 
@@ -496,12 +496,12 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   // The camera turns to halfway between YAW_PARTY_TURN and the
   // attacker's bearing from the centre, an enemy's taken from the other
   // side: 5 frames if it is there already, else 10.
-  actor = BattleObject_Get(plan->actorId)->actor;
+  actor = BattleObject_Get(plan->unitId)->actor;
   z = actor->z.fixed;
   x = actor->x.fixed;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (plan->actorId > ALLY_MAX)
+  if (plan->unitId > ALLY_MAX)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -527,7 +527,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
 
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height (16.16).
-  animation = GetMotionRecord(BattleObject_Get(plan->actorId)->actor, 0);
+  animation = GetMotionRecord(BattleObject_Get(plan->unitId)->actor, 0);
   frames =
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
@@ -602,9 +602,9 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind != 0) {
       if (plan->animation & ANIM_BY_ID_RANGE)
-        BattleAnim_DispatchByIdRangeFar(&work.effect);
+        BattleAnim_RunByIdRangeFar(&work.effect);
       else
-        BattleAnim_RunTableEffectFar(&work.effect);
+        BattleAnim_RunFromTableFar(&work.effect);
     }
     BattlePlayback_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
@@ -641,12 +641,12 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 
   view = gBattleBackgroundWork;
   savedInput = input;
-  actor = BattleObject_Get(savedInput->actorId)->actor;
+  actor = BattleObject_Get(savedInput->unitId)->actor;
   z = actor->z.fixed;
   x = actor->x.fixed;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (savedInput->actorId > ALLY_MAX)
+  if (savedInput->unitId > ALLY_MAX)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -665,7 +665,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   Unit_GetFar(savedInput->targetIds[0]);
 
   missed = flags & 2;
-  animation = GetMotionRecord(BattleObject_Get(savedInput->actorId)->actor, 0);
+  animation = GetMotionRecord(BattleObject_Get(savedInput->unitId)->actor, 0);
   frames =
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
@@ -685,7 +685,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
     WaitFrames(10);
     BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   } else {
-    BattleAnim_DispatchByIdRangeFar(&work.effect);
+    BattleAnim_RunByIdRangeFar(&work.effect);
     BattlePlayback_RunAll();
     BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   }
@@ -722,7 +722,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   // (debug_presets.c) let an item turn the camera the wrong way.
   // XXX (no evidence): whether > 4 is a slip; the play the game allows
   // behaves the same either way, so only the author's intent would say.
-  if (plan->actorId > 4)
+  if (plan->unitId > 4)
     targetYaw = YAW_ENEMY_TURN;
   else
     targetYaw = YAW_PARTY_TURN;
@@ -774,9 +774,9 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
     if (plan->animation & ANIM_BY_ID_RANGE)
-      BattleAnim_DispatchByIdRangeFar(&work.effect);
+      BattleAnim_RunByIdRangeFar(&work.effect);
     else
-      BattleAnim_RunTableEffectFar(&work.effect);
+      BattleAnim_RunFromTableFar(&work.effect);
   } else {
     WaitFrames(60);
   }
@@ -890,30 +890,29 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   // then overrides it with the opposite side's view.
   if (plan->animation & ANIM_VIEW_ACROSS) {
     view->targetYaw =
-        plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
+        plan->unitId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
-    struct Actor *actor = BattleObject_Get(plan->actorId)->actor;
+    struct Actor *actor = BattleObject_Get(plan->unitId)->actor;
     s32 angle = (u16)ArcTan2(actor->x.fixed, actor->z.fixed);
     s32 targetYaw;
 
-    if (plan->actorId <= ALLY_MAX)
+    if (plan->unitId <= ALLY_MAX)
       targetYaw = angle - 0x1800;
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw +=
-        ((plan->actorId <= ALLY_MAX ? YAW_PARTY_TURN : YAW_ENEMY_TURN) -
-         targetYaw) *
-        3 / 4;
-    if (!((plan->actorId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
-      targetYaw = plan->actorId <= ALLY_MAX ? 0x2400 : -0x2400;
+    targetYaw += ((plan->unitId <= ALLY_MAX ? YAW_PARTY_TURN : YAW_ENEMY_TURN) -
+                  targetYaw) *
+                 3 / 4;
+    if (!((plan->unitId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
+      targetYaw = plan->unitId <= ALLY_MAX ? 0x2400 : -0x2400;
     if (view->targetYaw != targetYaw)
       view->targetYaw = targetYaw;
   }
   if (plan->animation & ANIM_VIEW_REVERSED) {
     view->targetYaw =
-        plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
+        plan->unitId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
     view->frames = 60;
   }
 
@@ -953,7 +952,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   // playback, and an ability with no animation only restores the palette.
   if (plan->failure != TURN_FAILURE_NONE) {
     if (plan->failure == TURN_FAILURE_SEALED) {
-      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->actorId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgPsynergyBlocked);
     } else {
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgCastLacksPp);
@@ -964,9 +963,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind) {
       if (plan->animation & ANIM_BY_ID_RANGE)
-        BattleAnim_DispatchByIdRangeFar(&work.effect);
+        BattleAnim_RunByIdRangeFar(&work.effect);
       else
-        BattleAnim_RunTableEffectFar(&work.effect);
+        BattleAnim_RunFromTableFar(&work.effect);
     } else {
       BattleBackground_RestorePalette();
     }

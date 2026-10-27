@@ -23,7 +23,7 @@
 ///
 /// effect: the targets; variant picks the number of embers
 ///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
-void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
+void BattleAnim_RunFire(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -43,8 +43,8 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
-  if (effect->side == ANIM_SIDE_PARTY)
+  work->args = args;
+  if (args->side == ANIM_SIDE_PARTY)
     BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleAnim_StartCanvasLayer(0);
@@ -60,8 +60,8 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // The embers leave the top of the user's body in a random direction,
   // outwards at 2 to 4 pixels a frame and rising at -1/4 to 1.73 pixels a
   // frame.
-  user = GetBattleObjectSlotFar(work->effect->user)->actor;
-  bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->effect->user);
+  user = GetBattleObjectSlotFar(work->args->user)->actor;
+  bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &PARTICLES[i];
     s32 angle;
@@ -85,7 +85,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
 
   // The last ember launches on frame count / 2; the animation runs 132 frames
   // past that.
-  for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
+  for (frame = 0; frame != (gFire_Counts[work->args->variant] >> 1) + 132;
        frame++) {
     // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
     // 17 to 79, about a quarter turn in all while each animation frame takes
@@ -94,14 +94,14 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
       work->cameraDelta = 0x100;
     else
       work->cameraDelta = 0;
-    if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
+    if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)
       ANIM_SHOW_DAMAGE(SE_IMPACT);
     // Re-centre the camera's focus at full zoom, then project from it.
     BattleCamera_SetViewFar(0, 0, 0, 100);
     ANIM_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight: two launch each frame, ember i after frame i / 2.
-    for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
       s32 launchFrame;
 
@@ -132,7 +132,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
         s32 vz;
 
         target = GetBattleObjectSlotFar(
-                     work->effect->targets[i % work->effect->targetCount])
+                     work->args->targets[i % work->args->targetCount])
                      ->actor;
         vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
         vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
@@ -150,8 +150,8 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
           ember->y = screen.y;
           Sound_PlaySongFar(SE_WHOOSH);
           BattleAnim_TintBattler(
-              work->effect->targets[i % work->effect->targetCount],
-              SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->effect->targetCount,
+              work->args->targets[i % work->args->targetCount],
+              SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->args->targetCount,
               4);
           work->shakeFrames = 2;
         }
@@ -160,7 +160,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
 
     // The impact flares: six pictures, 2 frames each, drawn 56 pixels
     // higher than where the ember hit.
-    for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
 
       if (ember->variant >= 0 && ember->variant < 12) {

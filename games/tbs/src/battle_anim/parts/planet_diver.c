@@ -52,7 +52,7 @@ struct ImpactChip {
 /// flash's sheet and palette are replaced by the fireball's on frame 16. The
 /// sheet slot holds the mote sprites the chips are drawn from, and the chips
 /// themselves live in Ram_MapGridCellBuffer.
-void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
+void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
@@ -69,7 +69,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       sprites);
@@ -89,8 +89,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  actor = GetBattleObjectSlotFar(work->effect->user)->actor;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  actor = GetBattleObjectSlotFar(work->args->user)->actor;
+  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // The ball falls 15 pixels a frame towards the middle of the field.
   if (actor->x.fixed > 0)
     dx = -(15 << 16);
@@ -105,7 +105,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
     // frame 18 on, and held in between, so the flash stays where the leap
     // began.
     if (frame > 17 || frame == 0) {
-      Projection_Unit(work->effect->user, &screenPosition);
+      Projection_Unit(work->args->user, &screenPosition);
       screenPosition.x /= 2;
     }
 
@@ -166,7 +166,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         // lower rather than 8 pixels across.
         // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
         // 0 moves x; only the author's intent would say.
-        if (work->effect->side == ANIM_SIDE_ENEMIES) {
+        if (work->args->side == ANIM_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet, screenPosition.x - 20,
                   screenPosition.y - 52, 40, 64);
           screenPosition.x -= 8;
@@ -199,9 +199,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         }
         work->shakeFrames = 8;
         ANIM_SHOW_DAMAGE(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
-                                       KNOCKBACK_HURL);
-        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+        BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
+        BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       }
     }
@@ -258,7 +257,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
 ///
 /// Adds BattleAnim_ArmBg2AffineHBlankDma, which feeds the ripple in
 /// work->bg2xLines to BG2X line by line, and removes it before it returns.
-void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
+void BattleAnim_RunHaunt(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   s32 point[3];
   void **slots;
@@ -273,7 +272,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   s32 k;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -299,7 +298,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   }
   Sound_PlaySongFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->effect->targetCount * 32 + 96; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 32 + 96; frame++) {
     s32 *row;
 
     camera = gBattleCamera;
@@ -313,7 +312,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     // way, about a 1.5-texel offset against the enemies. The wave is 32 lines
     // long (1/32 turn a line) and moves up a line each frame.
     row = work->bg2xLines;
-    if (work->effect->side == ANIM_SIDE_ENEMIES) {
+    if (work->args->side == ANIM_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -321,9 +320,9 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
-    ANIM_FOR_EACH_TARGET(k, work->effect) {
+    ANIM_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+          GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
       // Centre on the point 20 pixels above the target and spin the group
       // about it, a full turn every 128 frames; target k's turn starts on
@@ -335,7 +334,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 32);
 
         // Each skull steps one pixel nearer the centre a frame (its
@@ -380,7 +379,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
 #define ORBITING_SPIRALS_LIFE 60
 
 /// Unused: no row of gAbilityAnimations in either game names its kind, and the
-/// handler table is reached with no other kind (BattleAnim_RunTableEffect),
+/// handler table is reached with no other kind (BattleAnim_RunFromTable),
 /// so the player never sees it. Four spirals would circle 40 pixels above each
 /// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
 /// the centre; each target would take its damage pose 32 frames into its
@@ -391,7 +390,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
 /// The animation layer ripples throughout, through
 /// BattleAnim_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
-void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
+void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -405,7 +404,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   s32 frame;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -424,13 +423,13 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   // and each frame's first line takes the table's last value, latched at
   // VBlank, so this 104 can reach at most the top line before the DMA first
   // runs; and no row reaches this animation.
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
     offsetX = 0;
   }
-  for (frame = 0; frame != (work->effect->targetCount * 16) + 48; frame++) {
+  for (frame = 0; frame != (work->args->targetCount * 16) + 48; frame++) {
     struct BattleCamera *camera;
     s32 *row;
     s32 i;
@@ -441,7 +440,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     // a line) and moves up a line each frame.
     camera = gBattleCamera;
     row = work->bg2xLines;
-    if (work->effect->side == ANIM_SIDE_ENEMIES) {
+    if (work->args->side == ANIM_SIDE_ENEMIES) {
       s32 angle;
       s32 base;
 
@@ -459,11 +458,11 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     }
     ANIM_VIEW_FROM_CAMERA(camera);
     member = 0;
-    if (work->effect->targetCount != 0) {
-      while (member != work->effect->targetCount) {
+    if (work->args->targetCount != 0) {
+      while (member != work->args->targetCount) {
         struct Actor *actor;
 
-        actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+        actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
         // Target `member` has its turn from frame 16 * member, and takes
         // its damage pose 32 frames in.
         if (frame > member * 16 &&
@@ -471,8 +470,8 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
           s32 spin;
 
           if (frame == (member * 16) + 32) {
-            BattleAnim_TintBattler(work->effect->targets[member], 0,
-                                   POSE_DAMAGE, -1, 0);
+            BattleAnim_TintBattler(work->args->targets[member], 0, POSE_DAMAGE,
+                                   -1, 0);
           }
           SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
           Projection_Point(point, &screen);

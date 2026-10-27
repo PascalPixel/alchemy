@@ -26,7 +26,7 @@ void MenuTitle_Load(s32 picture, s32 slot) {
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
 /// Returns NULL when no VRAM slot is free. The file menu shows its
-/// mode's heading this way (FileMenu_SelectFile), and window/options.c the
+/// mode's heading this way (FileList_SelectFile), and window/options.c the
 /// option menu's Setup and the pause menu's Pause.
 struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y) {

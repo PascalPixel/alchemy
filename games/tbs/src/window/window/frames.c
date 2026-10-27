@@ -60,7 +60,7 @@ loop:
       window->x = 0;
       window->y = 0;
       window->opened = 0;
-      window->effect = 0;
+      window->animation = 0;
       window->state = 0;
       window->flags = 0;
       window->frame = 0;

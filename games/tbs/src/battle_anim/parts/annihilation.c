@@ -25,7 +25,7 @@
 ///
 /// effect: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.
-void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
+void BattleAnim_RunAnnihilation(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -49,7 +49,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   particleSheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   burstPixels = Ram_MapGridCellBuffer;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
                              1);
@@ -57,10 +57,10 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
-  BattleMotion_ApproachTargetFar(work->effect->user, work->effect->targets[0],
-                                 4, 0);
+  BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
+                                 0);
   WaitFrames(1);
-  targetActor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
   i = 0;
   do {
@@ -79,21 +79,21 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     i++;
   } while (i != 64);
 
-  Projection_ScaledUnit(work->effect->targets[0], &origin);
+  Projection_ScaledUnit(work->args->targets[0], &origin);
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (work->effect->variant != ANIM_VARIANT_BASIC && frame == 8)
+    if (work->args->variant != ANIM_VARIANT_BASIC && frame == 8)
       Sound_PlaySongFar(SE_POWER_UP);
-    Projection_ScaledUnit(work->effect->user, &position);
+    Projection_ScaledUnit(work->args->user, &position);
     // The fire streak, one picture a frame in front of the user, drawn
     // additively and mirrored for ANIM_SIDE_PARTY with a blitter made for this
     // one drawing.
     if (frame >= 6 && frame <= 11) {
-      if (work->effect->side == ANIM_SIDE_ENEMIES)
+      if (work->args->side == ANIM_SIDE_ENEMIES)
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       else
@@ -101,7 +101,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
       blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-      if (work->effect->side == ANIM_SIDE_ENEMIES)
+      if (work->args->side == ANIM_SIDE_ENEMIES)
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2 - 24, position.y - 24, 48, 72);
       else
@@ -122,7 +122,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
       if (step > 2)
         step = 2;
       // Each strip holds three 40x80 pictures.
-      if (work->effect->variant == ANIM_VARIANT_BASIC)
+      if (work->args->variant == ANIM_VARIANT_BASIC)
         strip = 0;
       else
         strip = 3 * (40 * 80);
@@ -146,7 +146,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     // brightest-wins and the additive blitter, both mirrored on
     // ANIM_SIDE_PARTY.
     if (frame > 3) {
-      BattleAnim_FetchRectangleBlitters(work->effect->side, blitters);
+      BattleAnim_FetchRectangleBlitters(work->args->side, blitters);
       for (i = 0; i != 64; i++) {
         s32 life;
 
@@ -168,16 +168,16 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     // The strike throws the target back with KNOCKBACK_HURL and shakes the
     // screen 4 frames.
     if (frame == 8) {
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HURL);
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
     // The target glows red on frames 6 and 14.
     if (frame == 6)
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
-                             -1, -1, 0);
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT, -1,
+                             -1, 0);
     if (frame == 14)
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
-                             -1, -1, 0);
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT, -1,
+                             -1, 0);
     BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }

@@ -536,8 +536,8 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
 /// BattleHighlight_SetModes and its helpers here, by the opening's
 /// storm (BattleTransition_Run), by the staging (staging.c)
 /// and by auto battle (auto_battle.c).
-void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
-  struct BattleObject *slot = BattleObject_Get(actorId);
+void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
+  struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;
   struct Sprite *record;
   struct Sprite **records;

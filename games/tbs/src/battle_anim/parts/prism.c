@@ -4,8 +4,8 @@
 
 #include "../battle_anim_internal.h"
 
-#define PRISM_GROUND_Y 0x380000     ///< y 56, where the crystals shatter
-#define PRISM_SHARD_CELLS (32 * 64) ///< the shards, after the 32x64 crystal
+#define PRISM_GROUND_Y 0x380000       ///< y 56, where the crystals shatter
+#define PRISM_SHARD_OFFSETS (32 * 64) ///< the shards, after the 32x64 crystal
 
 /// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
 /// shatter on the ground into 16 spinning shards each, flashing the targets and
@@ -24,7 +24,7 @@
 /// first 64 background colours and sets REG_BLDALPHA, the camera's yaw
 /// (Freeze Prism) and work->shakeFrames, and flashes the targets at each
 /// shatter.
-void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
+void BattleAnim_RunPrism(struct BattleAnimArgs *args) {
   BlitterPair draw;
   void **cursor;
   struct BattleAnimWork *work;
@@ -43,11 +43,11 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
   cursor = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   work = *cursor++;
   canvas = *cursor;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
   // Trails keep half of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -55,13 +55,13 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
   // the last and drifting towards the middle as it falls: each starts 18
   // frames' drift short of its random x. They start at y -64, a crystal's
   // height above the canvas, drifting up to 4 pixels a frame across.
-  for (j = 0; j != gPrism_Counts[work->effect->variant][PRISM_CRYSTAL_COUNT];
+  for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
     // This first random number is drawn and discarded.
     x = Random16() & 31;
     seed->y = -0x400000;
-    if (work->effect->side == ANIM_SIDE_PARTY) {
+    if (work->args->side == ANIM_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -74,9 +74,9 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
     seed->variant = j * 8;
   }
 
-  for (frame = 0; frame != gPrism_Counts[work->effect->variant][PRISM_FRAMES];
+  for (frame = 0; frame != gPrism_Counts[work->args->variant][PRISM_FRAMES];
        frame++) {
-    if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 103) {
+    if (work->args->variant == ANIM_VARIANT_STRONGEST && frame <= 103) {
       // Swing the camera round, slowing from frame 96: 192/65536 turn a
       // frame, 19296/65536 in all, under a third of a turn.
       struct BattleCamera *camera = gBattleCamera;
@@ -86,20 +86,19 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (work->effect->side == ANIM_SIDE_ENEMIES)
+      if (work->args->side == ANIM_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
     }
-    if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 80)
+    if (frame == gPrism_Counts[work->args->variant][PRISM_FRAMES] - 80)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
+    if (frame == gPrism_Counts[work->args->variant][PRISM_FRAMES] - 8) {
       // Darken the canvas away over the last 8 frames, 6 levels a frame.
       ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
-    if (frame <= gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
-      for (i = 0;
-           i != gPrism_Counts[work->effect->variant][PRISM_CRYSTAL_COUNT];
+    if (frame <= gPrism_Counts[work->args->variant][PRISM_FRAMES] - 8) {
+      for (i = 0; i != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
            i++) {
         crystal = &work->particles[i];
         if (crystal->z == 1) {
@@ -118,7 +117,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
             shard = &shards[i * 16 + j];
             draw[j <= 2](
                 canvas,
-                work->sheet + gPrism_ShardOffsets[cell] + PRISM_SHARD_CELLS,
+                work->sheet + gPrism_ShardOffsets[cell] + PRISM_SHARD_OFFSETS,
                 Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[cell] / 2,
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
@@ -159,8 +158,8 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
             }
             work->shakeFrames = 8;
             Sound_PlaySongFar(SE_CLATTER);
-            ANIM_FOR_EACH_TARGET(j, work->effect)
-            BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+            ANIM_FOR_EACH_TARGET(j, work->args)
+            BattleAnim_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 4);
           }
         }
@@ -169,8 +168,8 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
     // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Hail
     // Prism's are not powers of two, so BattleCamera_Shake's masks (range - 1)
     // leave gaps in its offsets.
-    BattleCamera_Shake(work->effect->variant * 2 + 4,
-                       work->effect->variant * 4 + 8);
+    BattleCamera_Shake(work->args->variant * 2 + 4,
+                       work->args->variant * 4 + 8);
     ANIM_END_FRAME(work);
   }
 
@@ -236,4 +235,4 @@ void BattleAnim_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 }
 
 #undef PRISM_GROUND_Y
-#undef PRISM_SHARD_CELLS
+#undef PRISM_SHARD_OFFSETS

@@ -23,8 +23,8 @@
 ///                   Message_Decode
 ///   Text drawing    sprites.c: Glyph_Draw; text_tiles.c:
 ///                   Text_DrawStringAsTiles, Text_DrawString
-///   Screens         selection.c: SelectionScreen_Run, FieldMenu_Run;
-///                   options.c: OptionMenu_Run,
+///   Screens         selection.c: SelectionMenu_Run, FieldMenu_Run;
+///                   options.c: SettingsMenu_Run,
 ///                   PauseMenu_Choose
 
 #include "window_internal.h"

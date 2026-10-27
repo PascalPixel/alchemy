@@ -47,26 +47,26 @@ enum RushingStrikeMode {
 /// Rushes the target and scatters sparks in the fire pillar palette.
 ///
 /// Abilities: Bone Charge (BATTLE_ANIM_BONE_CHARGE).
-void BattleAnim_RunBoneCharge(struct BattleAnimArgs *effect) {
-  BattleAnim_RunRushingStrike(effect, RUSHING_STRIKE_BONE_CHARGE);
+void BattleAnim_RunBoneCharge(struct BattleAnimArgs *args) {
+  BattleAnim_RunRushingStrike(args, RUSHING_STRIKE_BONE_CHARGE);
 }
 /// Rushes the target and scatters sparks in the ice-block palette.
 ///
 /// Abilities: Brute Force (BATTLE_ANIM_BRUTE_FORCE).
-void BattleAnim_RunBruteForce(struct BattleAnimArgs *effect) {
-  BattleAnim_RunRushingStrike(effect, RUSHING_STRIKE_BRUTE_FORCE);
+void BattleAnim_RunBruteForce(struct BattleAnimArgs *args) {
+  BattleAnim_RunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
 }
 /// Rushes the target and scatters sparks in the pink-burst palette.
 ///
 /// Abilities: Onslaught (BATTLE_ANIM_ONSLAUGHT).
-void BattleAnim_RunOnslaught(struct BattleAnimArgs *effect) {
-  BattleAnim_RunRushingStrike(effect, RUSHING_STRIKE_ONSLAUGHT);
+void BattleAnim_RunOnslaught(struct BattleAnimArgs *args) {
+  BattleAnim_RunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
 }
 /// Rushes the target and scatters sparks in the blast palette.
 ///
 /// Abilities: Headbutt (BATTLE_ANIM_HEADBUTT).
-void BattleAnim_RunHeadbutt(struct BattleAnimArgs *effect) {
-  BattleAnim_RunRushingStrike(effect, RUSHING_STRIKE_HEADBUTT);
+void BattleAnim_RunHeadbutt(struct BattleAnimArgs *args) {
+  BattleAnim_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_FRAME 10 ///< the user strikes
@@ -82,7 +82,7 @@ void BattleAnim_RunHeadbutt(struct BattleAnimArgs *effect) {
 ///
 /// effect: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).
-void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunRushingStrike(struct BattleAnimArgs *args, s32 mode) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -110,11 +110,11 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
 
   // The top half, and the bottom half flipped; mirrored on ANIM_SIDE_PARTY.
-  if (work->effect->side == ANIM_SIDE_ENEMIES) {
+  if (work->args->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_LIGHTEN);
@@ -157,9 +157,8 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   // at the target (they fly towards the middle of the field). Spark i lives
   // 16 + i / 2 frames. In 16.16 pixels a frame: 0 to 16 across, -2 to 6 up
   // and up to 4 either way in depth.
-  BattleAnim_SetApproachMotion(work->effect->user, work->effect->targets[0],
-                               10);
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  BattleAnim_SetApproachMotion(work->args->user, work->args->targets[0], 10);
+  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
     newSpark->x = target->x.fixed;
@@ -172,20 +171,20 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
       newSpark->velocityX = -newSpark->velocityX;
     newSpark->variant = i / 2 + 16;
   }
-  Projection_Unit(work->effect->targets[0], &origin);
+  Projection_Unit(work->args->targets[0], &origin);
 
   for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
     // For 15 frames, draw the burst at the user as it rushes in: the top
     // half, then the bottom half flipped below it.
     if (frame <= 14) {
-      Projection_Unit(work->effect->user, &screen);
+      Projection_Unit(work->args->user, &screen);
       draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
       draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
     if (frame == RUSHING_STRIKE_FRAME) {
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HURL);
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
     }

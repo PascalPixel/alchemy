@@ -20,7 +20,7 @@ enum {
 
 /// Where the bolt pictures start in the sheet: after the six glints that open
 /// the tornado sheet (gBattleAnim_GlintCells), over its tornado strips.
-#define BOLT_CELLS 0xc56
+#define BOLT_OFFSETS 0xc56
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
@@ -39,7 +39,7 @@ enum {
 ///
 /// effect: the targets; variant picks the row of gBolt_Counts
 ///         and the glints' blend.
-void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
+void BattleAnim_RunBolt(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -56,14 +56,14 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + BOLT_CELLS, 1, 1);
+                             work->sheet + BOLT_OFFSETS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   // A spark's variant is its life left, 0 when free. work->particles is
   // marked free too, though nothing here uses it.
@@ -72,26 +72,26 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   ANIM_FREE_PARTICLES(j, work->particles, 64);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  for (frame = 0; frame != work->effect->targetCount * 8 + 40; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 8 + 40; frame++) {
     if (frame == 24)
       ANIM_SHOW_DAMAGE(SE_IMPACT);
     // The flash at each turn's start: the whole canvas set to level 16.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 8)
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
     // Each target's turn, 8 frames after the one before.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       s32 start = i * 8;
 
-      Projection_Unit(work->effect->targets[i], &screen);
+      Projection_Unit(work->args->targets[i], &screen);
       screen.x /= 2;
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, i, 6);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                        KNOCKBACK_BOUNCE);
       }
 
@@ -104,12 +104,11 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
 
         if (height > 104)
           height = 104;
-        for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_STRIKES];
-             j++) {
+        for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_STRIKES]; j++) {
           draw[0](canvas,
                   work->sheet +
                       (((i + frame + j) / 2) & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      BOLT_CELLS,
+                      BOLT_OFFSETS,
                   screen.x - 12, 0, 24, height);
         }
 
@@ -118,7 +117,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
         // sin * speed / 32 pixels a frame across and cos * speed / 64 up (at
         // most 18 and 9), and lives 32 to 39 frames.
         if (frame == start + 2) {
-          for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_SPARKS];
+          for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_SPARKS];
                j++) {
             struct Particle *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
@@ -138,13 +137,12 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
       // or additive for Blue Bolt); the higher a glint, the narrower the band
       // it may fall in across.
       if (frame >= start + 2 && frame < start + 24) {
-        for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_GLINTS];
-             j++) {
+        for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_GLINTS]; j++) {
           s32 kind = j & 3;
-          s32 drop = Random16() %
-                     gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD];
+          s32 drop =
+              Random16() % gBolt_Counts[work->args->variant][BOLT_GLINT_SPREAD];
           s32 spread =
-              gBolt_Counts[work->effect->variant][BOLT_GLINT_SPREAD] - drop + 1;
+              gBolt_Counts[work->args->variant][BOLT_GLINT_SPREAD] - drop + 1;
           s32 y =
               screen.y - drop - (gBattleAnim_GlintCellHeights[kind] >> 1) + 8;
           u32 random = Random16();
@@ -156,7 +154,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
 
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gBolt_GlintFlips[Random16() & 3] | ANIM_CLIP_BOUNDS,
-                            gBolt_GlintModes[work->effect->variant]);
+                            gBolt_GlintModes[work->args->variant]);
           BOLT_GLINT_BLITTER(canvas, work->sheet + gBattleAnim_GlintCells[kind],
                              x, y, gBattleAnim_GlintCellWidths[kind],
                              gBattleAnim_GlintCellHeights[kind]);
@@ -191,4 +189,4 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
 }
 
 #undef BOLT_GLINT_BLITTER
-#undef BOLT_CELLS
+#undef BOLT_OFFSETS

@@ -81,12 +81,12 @@ enum HeapSlot {
   HEAP_SLOT_PARTY_STATUS = 16,
   /// The buffers an icon or portrait is decoded through (GlyphTransfer).
   HEAP_SLOT_GLYPH_TRANSFER = 17,
-  /// The selection screen's work (struct SelectionScreenWork).
-  HEAP_SLOT_SELECTION_SCREEN = 18,
+  /// The selection screen's work (struct SelectionMenuWork).
+  HEAP_SLOT_SELECTION_MENU = 18,
   /// The work of Menu_AllocateSelectionWorkspace, which nothing calls.
   HEAP_SLOT_SELECTION_WORKSPACE = 19,
   /// The option menu's work (struct OptionMenuWork, gOptionMenuWork).
-  HEAP_SLOT_OPTION_MENU = 20,
+  HEAP_SLOT_SETTINGS_MENU = 20,
   /// Mind Read's wave work (struct MindReadWork, gMindReadWork).
   HEAP_SLOT_MIND_READ = 22,
   /// A field map's struct FieldWork, which maps read as struct FieldWork

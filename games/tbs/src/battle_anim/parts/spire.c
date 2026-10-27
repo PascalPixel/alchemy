@@ -7,7 +7,7 @@
 #define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
 #define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
 /// The shard pictures in the sheet, after the boulder.
-#define SPIRE_SHARD_CELLS (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
+#define SPIRE_SHARD_OFFSETS (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
 /// Frames a boulder falls, from its drop frame (gSpire_DropFrames) until it
 /// lands, shakes the screen and strikes the targets.
@@ -24,7 +24,7 @@
 ///
 /// effect: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
-void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
+void BattleAnim_RunSpire(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -43,7 +43,7 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
   u32 height;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
@@ -52,14 +52,14 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
   blit = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // BG2 is scrolled so that canvas column 64 is the middle of the row of
   // targets.
-  Projection_ScaledUnit(work->effect->targets[0], &first);
-  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+  Projection_ScaledUnit(work->args->targets[0], &first);
+  Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   // The rocks wait 64 pixels above the canvas until they drop.
-  rockCount = gSpire_RockCounts[work->effect->variant];
+  rockCount = gSpire_RockCounts[work->args->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
     rock->y = -0x400000;
@@ -106,12 +106,12 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
           width = gSpire_ShardWidths[cell];
           height = gSpire_ShardHeights[cell];
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_CELLS,
+               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_OFFSETS,
                Q_16_16_TO_INT(shard->x) - (width >> 1),
                Q_16_16_TO_INT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_CELLS,
+               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_OFFSETS,
                Q_16_16_TO_INT(shard->x) -
                    ((width = gSpire_ShardWidths[cell]) >> 1),
                Q_16_16_TO_INT(shard->y) -
@@ -137,8 +137,8 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
           rock->y = 0x320000;
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
-        ANIM_FOR_EACH_TARGET(j, work->effect)
-        BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+        ANIM_FOR_EACH_TARGET(j, work->args)
+        BattleAnim_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, j, 8);
       }
     }
@@ -150,6 +150,6 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
 
 #undef SPIRE_ROCK_WIDTH
 #undef SPIRE_ROCK_HEIGHT
-#undef SPIRE_SHARD_CELLS
+#undef SPIRE_SHARD_OFFSETS
 #undef SPIRE_SHARDS
 #undef SPIRE_FALL_FRAMES

@@ -22,7 +22,7 @@
 /// reaction, and the fire sheet slides off behind it. The battle shows the
 /// damage at the end.
 ///
-/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummon, whose sheet slot holds the
 /// mote sheet here. The sweep projects with gProjection.centerY at 240 and
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which the
@@ -32,7 +32,7 @@
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
 /// burst motes, variant their frames left.
-void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
+void BattleAnim_RunKirin(struct BattleAnimArgs *args) {
   static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale riseScale = {{{Q16_ONE, Q16_ONE}}};
   void **cursor;
@@ -58,7 +58,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   canvas = cursor[0];
   work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   BattleAnim_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -76,7 +76,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SpawnObjects(KIRIN_OBJECTS, SPRITE_KIRIN, 1);
   gProjection.centerY = 240;
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
@@ -384,14 +384,14 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
         Sound_PlaySongFar(SE_KIRIN);
       }
 
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         // A target the row passes for the first time throws a burst of 32
         // motes from 16 pixels above its projected point (x halved for the wide
         // canvas), each already four frames along its path, and plays its hit
         // reaction. A mote flies up to 2 pixels a frame across and from 6 up
         // to 2 down, for 8 to 23 frames.
         if (hit[i] == 0) {
-          Projection_Unit(work->effect->targets[i], &unit);
+          Projection_Unit(work->args->targets[i], &unit);
           if (unit.x > rowX) {
             s32 k;
 
@@ -411,7 +411,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
               burst->variant = (Random16() & 15) + 8;
               k++;
             } while (k != 32);
-            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+            BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                            KNOCKBACK_HOP);
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
           }
@@ -461,8 +461,8 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       }
       // Frame 58: every target turns black in its damage pose.
       if (frame == 58) {
-        ANIM_FOR_EACH_TARGET(i, work->effect) {
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLACK,
+        ANIM_FOR_EACH_TARGET(i, work->args) {
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
                                  POSE_DAMAGE, -1, 0);
         }
       }

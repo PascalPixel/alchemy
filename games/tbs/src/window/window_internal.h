@@ -145,9 +145,9 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// A name the decoder writes out into a message, decoded first into a buffer
 /// of this many halfwords.
 #define MESSAGE_NAME_HALFWORDS 24
-#define MESSAGE_ARGUMENT_COUNT 8        ///< the message argument table's places
-#define SELECTION_SCREEN_ENTRY_LIMIT 16 ///< entries a selection row can list
-#define AREA_NAME_WINDOW_FRAMES 90      ///< how long the area's name shows
+#define MESSAGE_ARGUMENT_COUNT 8      ///< the message argument table's places
+#define SELECTION_MENU_ENTRY_LIMIT 16 ///< entries a selection row can list
+#define AREA_NAME_WINDOW_FRAMES 90    ///< how long the area's name shows
 
 /// The control codes of decoded message text (WindowWork.textBuffer). Codes
 /// from TEXT_SPACE up are characters.
@@ -182,7 +182,7 @@ enum {
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
 
-/// Which selection icon records SelectionScreen_FindFreeIcon looks in.
+/// Which selection icon records SelectionMenu_FindFreeIcon looks in.
 enum SelectionIconGroup {
   SELECTION_ICON_ROW = 0,   ///< the seven icons of the row
   SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
@@ -202,7 +202,7 @@ enum TextStyle {
 /// The window effect a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the printer's
 /// countdown.
-#define WINDOW_EFFECT_SWELL 4
+#define WINDOW_ANIMATION_SWELL 4
 
 /// The heap block the message decoder routine is copied into to run, for the
 /// length of one message's decoding (Message_Decode), or of one

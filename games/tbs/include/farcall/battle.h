@@ -30,7 +30,7 @@ s32 BattleSprite_HasHeavyImpactFar(s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 id);
 /// Sends a unit leaping three quarters of the way to its target, arriving in
 /// `travel_divisor` frames, as an attacker closes in before it strikes.
-void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
+void BattleMotion_ApproachTargetFar(s32 unitId, s32 targetId,
                                     s32 travel_divisor, s32 initial_velocity_y);
 /// Knocks a unit back by one enum BattleKnockback variant and puts it in
 /// POSE_DAMAGE, as an animation's blow lands.
@@ -40,7 +40,7 @@ void BattleMotion_ApplyKnockbackFar(s32 id, s32 variant);
 s32 BattleUnit_ListIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get); the animations find the sprites they move through it.
-struct BattleObject *GetBattleObjectSlotFar(s32 actorId);
+struct BattleObject *GetBattleObjectSlotFar(s32 unitId);
 /// Fights a battle against an enemy formation from its opening to its end, and
 /// returns the enemies defeated, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_RunFar(s32 enemyGroup);

@@ -545,7 +545,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
   // Take the actor's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
   // unleashed Djinni is left by BattleTurn_Build) off its set. The table
   // is the opponent's for an enemy unit id.
-  unitId = plan->actorId;
+  unitId = plan->unitId;
   battleContinues = 0;
   unit = Unit_GetFar(unitId);
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(

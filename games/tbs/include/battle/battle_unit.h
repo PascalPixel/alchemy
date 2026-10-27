@@ -246,8 +246,8 @@ enum AbilityUse {
 /// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c).
 /// It lasts the round: BattleUnit_ResetGuardLevels clears it as the next
 /// one's commands are gathered.
-#define GUARD_DEFEND 1
-#define GUARD_TOTAL_DEFENSE 2
+#define DEFEND_NORMAL 1
+#define DEFEND_TOTAL 2
 
 // The caps on a unit's level and stats.
 #define UNIT_LEVEL_MAX 99
@@ -336,8 +336,8 @@ struct Unit {
   /// enum BattleSide. The Djinn the party fights are enemies put on
   /// BATTLE_SIDE_PARTY (BattleUnit_Set).
   u8 side;
-  /// GUARD_DEFEND or GUARD_TOTAL_DEFENSE while the unit guards, else 0.
-  s8 guardLevel;
+  /// DEFEND_NORMAL or DEFEND_TOTAL while the unit guards, else 0.
+  s8 defendLevel;
   /// A summon's boost to its summoner's power in each element: at the end of
   /// the summoner's turn, the element the summon spent the most Djinn of
   /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
@@ -419,7 +419,7 @@ STATIC_ASSERT(offsetof(struct Unit, ready) == 0x144);
 STATIC_ASSERT(offsetof(struct Unit, inventory) == 0x0d8);
 STATIC_ASSERT(offsetof(struct Unit, djinnHeldCounts) == 0x118);
 STATIC_ASSERT(offsetof(struct Unit, djinnSetCounts) == 0x11c);
-STATIC_ASSERT(offsetof(struct Unit, guardLevel) == 0x12b);
+STATIC_ASSERT(offsetof(struct Unit, defendLevel) == 0x12b);
 STATIC_ASSERT(offsetof(struct Unit, charm) == 0x13a);
 STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 

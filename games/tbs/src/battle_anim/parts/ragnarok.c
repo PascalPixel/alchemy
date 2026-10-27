@@ -5,7 +5,7 @@
 #include "../battle_anim_internal.h"
 
 /// Where the flash graphics start: after the 64x128 sword image.
-#define RAGNAROK_FLASH_CELLS (64 * 128)
+#define RAGNAROK_FLASH_OFFSETS (64 * 128)
 
 #define RAGNAROK_FRAMES 80
 #define RAGNAROK_COLUMNS 2  ///< columns that strike
@@ -33,7 +33,7 @@
 ///
 /// Leaves effect->variant at ANIM_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
-void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
+void BattleAnim_RunRagnarok(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -48,15 +48,15 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
-  user = GetBattleObjectSlotFar(effect->user)->actor;
+  user = GetBattleObjectSlotFar(args->user)->actor;
   // Nothing in the animation or the battle reads the variant afterwards.
   // XXX (no evidence): why it is forced to the stronger one; the store
   // changes nothing the game shows, so only the author's intent would say.
-  effect->variant = ANIM_VARIANT_STRONGER;
-  work->effect = effect;
+  args->variant = ANIM_VARIANT_STRONGER;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, blit);
+  BattleAnim_FetchRectangleBlitters(work->args->side, blit);
   // The user takes its leap pose and animates fast until the end: an
   // animation step of 48, three times the usual 16.
   Actor_SelectAnimationFar(user, POSE_LEAP);
@@ -65,7 +65,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + RAGNAROK_FLASH_CELLS, 1, 0);
+                             work->sheet + RAGNAROK_FLASH_OFFSETS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // Prepare 16 flashes and 340 sparks a column, for three columns although
@@ -97,7 +97,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & 0xffff;
-      spark->x = RAGNAROK_COLUMN_X(work->effect->side, col) << 16;
+      spark->x = RAGNAROK_COLUMN_X(work->args->side, col) << 16;
       spark->y = 88 << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -136,7 +136,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
       s32 top;
 
       height = 128;
-      if (work->effect->side == ANIM_SIDE_PARTY) {
+      if (work->args->side == ANIM_SIDE_PARTY) {
         if (frame <= 9) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;
@@ -188,8 +188,8 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
         // apiece: pictures 1 to 4, then 5 for six frames. Each picture is
         // 32x64 (2 KB).
         if (frame < start + 2) {
-          blit[0](canvas, work->sheet + RAGNAROK_FLASH_CELLS,
-                  RAGNAROK_COLUMN_X(work->effect->side, col) - 16, 56, 32, 64);
+          blit[0](canvas, work->sheet + RAGNAROK_FLASH_OFFSETS,
+                  RAGNAROK_COLUMN_X(work->args->side, col) - 16, 56, 32, 64);
         }
         i = 0;
         do {
@@ -201,12 +201,12 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
 
           y = Q_16_16_TO_INT(flash->y);
           x = Q_16_16_TO_INT(flash->x) +
-              RAGNAROK_COLUMN_X(work->effect->side, col);
+              RAGNAROK_COLUMN_X(work->args->side, col);
           life = flash->variant;
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
                     work->sheet + (gRagnarok_FlashCells[life / 3] << 11) +
-                        RAGNAROK_FLASH_CELLS,
+                        RAGNAROK_FLASH_OFFSETS,
                     x - 16, y + 56, 32, 64);
           }
           life = flash->variant;
@@ -258,11 +258,11 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
 
       // As the column's sparks start to fly, every target flashes and
       // recoils.
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == start + 6) {
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                          KNOCKBACK_HURL);
         }
       }
@@ -278,7 +278,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-#undef RAGNAROK_FLASH_CELLS
+#undef RAGNAROK_FLASH_OFFSETS
 #undef RAGNAROK_FRAMES
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED

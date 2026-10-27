@@ -10,7 +10,7 @@ struct BattleAnimArgs;
 struct ScreenPoint;
 struct Particle;
 
-/// The large animations BattleAnim_RunSummonEffect runs, by kind: the twelve
+/// The large animations BattleAnim_RunSummon runs, by kind: the twelve
 /// summons. A summon's row of gAbilityAnimations has effect 0x8000 plus its
 /// kind.
 enum SummonAnimId {
@@ -31,7 +31,7 @@ enum SummonAnimId {
 
 /// An animation handler: plays one animation over the battle, frame by frame,
 /// and returns when it is over.
-typedef void (*BattleAnimHandler)(struct BattleAnimArgs *effect);
+typedef void (*BattleAnimHandler)(struct BattleAnimArgs *args);
 /// Animation kinds: the kind an ability's gAbilityAnimations entry selects, by
 /// the handler that plays it; a later kind that shares a handler is named for
 /// the ability that uses it (the Djinn from 200, the monsters' abilities from
@@ -217,7 +217,7 @@ enum AnimVariant {
 };
 
 /// The handlers by kind less one (battle_anim_table.c);
-/// BattleAnim_RunTableEffect calls the one an animation's kind selects.
+/// BattleAnim_RunFromTable calls the one an animation's kind selects.
 extern BattleAnimHandler gBattleAnim_Handlers[];
 
 /// What BattleAnim_BuildCenteredIndexList (unused) reads: a value to find in
@@ -274,51 +274,51 @@ void BattleAnim_AdvanceBg2OnInterval(void);
 void BattleAnim_ArmWin0HBlankDma(void);
 
 // falling.c
-void BattleAnim_RunIce(struct BattleAnimArgs *effect);
-void BattleAnim_RunDouse(struct BattleAnimArgs *effect);
+void BattleAnim_RunIce(struct BattleAnimArgs *args);
+void BattleAnim_RunDouse(struct BattleAnimArgs *args);
 
 // streaks.c
-void BattleAnim_RunSonicWave(struct BattleAnimArgs *effect);
-void BattleAnim_RunShriek(struct BattleAnimArgs *effect);
-void BattleAnim_RunBansheeHowl(struct BattleAnimArgs *effect);
-void BattleAnim_RunWarCry(struct BattleAnimArgs *effect);
-void BattleAnim_RunWickedHowl(struct BattleAnimArgs *effect);
-void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *effect);
-void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode);
-void BattleAnim_RunSleepStar(struct BattleAnimArgs *effect);
-void BattleAnim_RunSoothingStar(struct BattleAnimArgs *effect);
-void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunSonicWave(struct BattleAnimArgs *args);
+void BattleAnim_RunShriek(struct BattleAnimArgs *args);
+void BattleAnim_RunBansheeHowl(struct BattleAnimArgs *args);
+void BattleAnim_RunWarCry(struct BattleAnimArgs *args);
+void BattleAnim_RunWickedHowl(struct BattleAnimArgs *args);
+void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *args);
+void BattleAnim_RunStreakVolley(struct BattleAnimArgs *args, s32 mode);
+void BattleAnim_RunSleepStar(struct BattleAnimArgs *args);
+void BattleAnim_RunSoothingStar(struct BattleAnimArgs *args);
+void BattleAnim_RunMoteFountain(struct BattleAnimArgs *args, s32 mode);
 
 // target_strike.c
-void BattleAnim_RunNumbingSting(struct BattleAnimArgs *effect);
-void BattleAnim_RunCannibalFang(struct BattleAnimArgs *effect);
-void BattleAnim_RunPoisonousBite(struct BattleAnimArgs *effect);
-void BattleAnim_RunRabidFang(struct BattleAnimArgs *effect);
-void BattleAnim_RunElectricBite(struct BattleAnimArgs *effect);
-void BattleAnim_RunPoisonTail(struct BattleAnimArgs *effect);
-void BattleAnim_RunVampiricFang(struct BattleAnimArgs *effect);
-void BattleAnim_RunDoubleFang(struct BattleAnimArgs *effect);
-void BattleAnim_RunMortalBlow(struct BattleAnimArgs *effect);
-void BattleAnim_RunTwinBeaks(struct BattleAnimArgs *effect);
-void BattleAnim_RunAcidBite(struct BattleAnimArgs *effect);
-void BattleAnim_RunDrainFang(struct BattleAnimArgs *effect);
-void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunNumbingSting(struct BattleAnimArgs *args);
+void BattleAnim_RunCannibalFang(struct BattleAnimArgs *args);
+void BattleAnim_RunPoisonousBite(struct BattleAnimArgs *args);
+void BattleAnim_RunRabidFang(struct BattleAnimArgs *args);
+void BattleAnim_RunElectricBite(struct BattleAnimArgs *args);
+void BattleAnim_RunPoisonTail(struct BattleAnimArgs *args);
+void BattleAnim_RunVampiricFang(struct BattleAnimArgs *args);
+void BattleAnim_RunDoubleFang(struct BattleAnimArgs *args);
+void BattleAnim_RunMortalBlow(struct BattleAnimArgs *args);
+void BattleAnim_RunTwinBeaks(struct BattleAnimArgs *args);
+void BattleAnim_RunAcidBite(struct BattleAnimArgs *args);
+void BattleAnim_RunDrainFang(struct BattleAnimArgs *args);
+void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode);
 
 // death_plunge.c
-void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect);
-void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect);
-void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect);
-void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect);
-void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect);
+void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *args);
+void BattleAnim_RunBladeRain(struct BattleAnimArgs *args);
+void BattleAnim_RunElementPillar(struct BattleAnimArgs *args);
+void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args);
+void BattleAnim_RunElementBurst(struct BattleAnimArgs *args);
 void BattleAnim_DrawStreaks(void);
 void BattleAnim_StartElementStreaks(s32 element);
 void BattleAnim_EndElementStreaks(void);
 
 // spider_web.c
-void BattleAnim_RunPoisonBeat(struct BattleAnimArgs *effect);
-void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect);
-void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode);
-void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect);
+void BattleAnim_RunPoisonBeat(struct BattleAnimArgs *args);
+void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *args);
+void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *args, s32 mode);
+void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *args);
 
 // canvas.c
 void BattleAnim_WipeCanvas(s32 direction, s32 fill);
@@ -339,251 +339,251 @@ void BattleAnim_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                       s32 color);
 
 // planet_diver.c
-void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect);
-void BattleAnim_RunHaunt(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect);
+void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *args);
+void BattleAnim_RunHaunt(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *args);
 
 // gathering_lights.c
-void BattleAnim_RunDemonNight(struct BattleAnimArgs *effect);
-void BattleAnim_RunRumble(struct BattleAnimArgs *effect);
-void BattleAnim_RunHaunting(struct BattleAnimArgs *effect);
-void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunDemonNight(struct BattleAnimArgs *args);
+void BattleAnim_RunRumble(struct BattleAnimArgs *args);
+void BattleAnim_RunHaunting(struct BattleAnimArgs *args);
+void BattleAnim_RunGatheringLights(struct BattleAnimArgs *args, s32 mode);
 
 // mirrored_wall.c
 void BattleAnim_FetchRectangleBlitters(s32 flip, BlitterPair out);
-void BattleAnim_RunBerserk(struct BattleAnimArgs *effect);
-void BattleAnim_RunSpasm(struct BattleAnimArgs *effect);
-void BattleAnim_RunRecovery(struct BattleAnimArgs *effect);
-void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunBerserk(struct BattleAnimArgs *args);
+void BattleAnim_RunSpasm(struct BattleAnimArgs *args);
+void BattleAnim_RunRecovery(struct BattleAnimArgs *args);
+void BattleAnim_RunMirroredWall(struct BattleAnimArgs *args, s32 mode);
 
 // djinn_beams.c
-void BattleAnim_RunRevive(struct BattleAnimArgs *effect);
-void BattleAnim_RunDew(struct BattleAnimArgs *effect);
-void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element);
+void BattleAnim_RunRevive(struct BattleAnimArgs *args);
+void BattleAnim_RunDew(struct BattleAnimArgs *args);
+void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *args, s32 element);
 
 // lobbed_shells.c
-void BattleAnim_RunMadSpatter(struct BattleAnimArgs *effect);
-void BattleAnim_RunDecompose(struct BattleAnimArgs *effect);
-void BattleAnim_RunBoneChiller(struct BattleAnimArgs *effect);
-void BattleAnim_RunStickyGoo(struct BattleAnimArgs *effect);
-void BattleAnim_RunPoisonInk(struct BattleAnimArgs *effect);
-void BattleAnim_RunStickyPoison(struct BattleAnimArgs *effect);
-void BattleAnim_RunRottenBlood(struct BattleAnimArgs *effect);
-void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunMadSpatter(struct BattleAnimArgs *args);
+void BattleAnim_RunDecompose(struct BattleAnimArgs *args);
+void BattleAnim_RunBoneChiller(struct BattleAnimArgs *args);
+void BattleAnim_RunStickyGoo(struct BattleAnimArgs *args);
+void BattleAnim_RunPoisonInk(struct BattleAnimArgs *args);
+void BattleAnim_RunStickyPoison(struct BattleAnimArgs *args);
+void BattleAnim_RunRottenBlood(struct BattleAnimArgs *args);
+void BattleAnim_RunLobbedShells(struct BattleAnimArgs *args, s32 mode);
 
 // condemn.c
-void BattleAnim_RunCondemn(struct BattleAnimArgs *effect);
+void BattleAnim_RunCondemn(struct BattleAnimArgs *args);
 
 // bind.c
 void BattleAnim_ConvertBackgroundToBlueRamp(void);
-void BattleAnim_RunBind(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect);
+void BattleAnim_RunBind(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args);
 
 // stars.c
-void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect);
-void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect);
+void BattleAnim_RunAstralBlast(struct BattleAnimArgs *args);
+void BattleAnim_RunShiningStar(struct BattleAnimArgs *args);
 
 // procne.c
-void BattleAnim_RunProcne(struct BattleAnimArgs *effect);
+void BattleAnim_RunProcne(struct BattleAnimArgs *args);
 
 // tiamat.c
-void BattleAnim_RunDragonDriver(struct BattleAnimArgs *effect);
-void BattleAnim_RunTiamat(struct BattleAnimArgs *effect);
-void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunDragonDriver(struct BattleAnimArgs *args);
+void BattleAnim_RunTiamat(struct BattleAnimArgs *args);
+void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode);
 
 // nereid.c
-void BattleAnim_RunNereid(struct BattleAnimArgs *effect);
+void BattleAnim_RunNereid(struct BattleAnimArgs *args);
 
 // vortices.c
-void BattleAnim_RunFroth(struct BattleAnimArgs *effect);
-void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect);
+void BattleAnim_RunFroth(struct BattleAnimArgs *args);
+void BattleAnim_RunWhirlwind(struct BattleAnimArgs *args);
 
 // prism.c
-void BattleAnim_RunPrism(struct BattleAnimArgs *effect);
+void BattleAnim_RunPrism(struct BattleAnimArgs *args);
 void BattleAnim_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                    s32 bluePhase);
 
 // plasma.c
-void BattleAnim_RunPlasma(struct BattleAnimArgs *effect);
-void BattleAnim_RunNova(struct BattleAnimArgs *effect);
-void BattleAnim_RunDynamite(struct BattleAnimArgs *effect);
-void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunPlasma(struct BattleAnimArgs *args);
+void BattleAnim_RunNova(struct BattleAnimArgs *args);
+void BattleAnim_RunDynamite(struct BattleAnimArgs *args);
+void BattleAnim_RunSparkGroups(struct BattleAnimArgs *args, s32 mode);
 
 // volcano.c
-void BattleAnim_RunVolcano(struct BattleAnimArgs *effect);
+void BattleAnim_RunVolcano(struct BattleAnimArgs *args);
 
 // target_motes.c
-void BattleAnim_RunTaint(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedPinkSmoke(struct BattleAnimArgs *effect);
-void BattleAnim_RunDelude(struct BattleAnimArgs *effect);
-void BattleAnim_RunParalyze(struct BattleAnimArgs *effect);
-void BattleAnim_RunHeartrender(struct BattleAnimArgs *effect);
-void BattleAnim_RunMysticFlame(struct BattleAnimArgs *effect);
-void BattleAnim_RunDemonFire(struct BattleAnimArgs *effect);
-void BattleAnim_RunDrown(struct BattleAnimArgs *effect);
-void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode);
-void BattleAnim_RunSleep(struct BattleAnimArgs *effect);
-void BattleAnim_RunCurse(struct BattleAnimArgs *effect);
+void BattleAnim_RunTaint(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedPinkSmoke(struct BattleAnimArgs *args);
+void BattleAnim_RunDelude(struct BattleAnimArgs *args);
+void BattleAnim_RunParalyze(struct BattleAnimArgs *args);
+void BattleAnim_RunHeartrender(struct BattleAnimArgs *args);
+void BattleAnim_RunMysticFlame(struct BattleAnimArgs *args);
+void BattleAnim_RunDemonFire(struct BattleAnimArgs *args);
+void BattleAnim_RunDrown(struct BattleAnimArgs *args);
+void BattleAnim_RunTargetMotes(struct BattleAnimArgs *args, u32 mode);
+void BattleAnim_RunSleep(struct BattleAnimArgs *args);
+void BattleAnim_RunCurse(struct BattleAnimArgs *args);
 
 // djinn_heal.c
-void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect);
+void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *args);
 void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
 void BattleAnim_CallDoNothing(s32 count);
-void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect);
-void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect);
+void BattleAnim_RunSummon(struct BattleAnimArgs *args);
+void BattleAnim_RunFromTable(struct BattleAnimArgs *args);
 void BattleAnim_BuildWindowEdgeTable(void);
-void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect);
+void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *args);
 void BattleAnim_SetupBlendedDisplay(void);
 void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
                             s32 timerSlot, s32 timerFrames);
 void BattleAnim_InitializeTilemapAndFlushQueue(void);
 
 // cybele.c
-void BattleAnim_RunCybele(struct BattleAnimArgs *effect);
+void BattleAnim_RunCybele(struct BattleAnimArgs *args);
 
 // boreas.c
-void BattleAnim_RunBoreas(struct BattleAnimArgs *effect);
+void BattleAnim_RunBoreas(struct BattleAnimArgs *args);
 
 // drain.c
-void BattleAnim_RunBreak(struct BattleAnimArgs *effect);
-void BattleAnim_RunDrain(struct BattleAnimArgs *effect);
+void BattleAnim_RunBreak(struct BattleAnimArgs *args);
+void BattleAnim_RunDrain(struct BattleAnimArgs *args);
 
 // healing.c
-void BattleAnim_RunPly(struct BattleAnimArgs *effect);
-void BattleAnim_RunWish(struct BattleAnimArgs *effect);
-void BattleAnim_RunCure(struct BattleAnimArgs *effect);
-void BattleAnim_RunCurePoison(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedRestoreMotes(struct BattleAnimArgs *effect);
-void BattleAnim_RunTonic(struct BattleAnimArgs *effect);
-void BattleAnim_RunPsyCrystal(struct BattleAnimArgs *effect);
-void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode);
+void BattleAnim_RunPly(struct BattleAnimArgs *args);
+void BattleAnim_RunWish(struct BattleAnimArgs *args);
+void BattleAnim_RunCure(struct BattleAnimArgs *args);
+void BattleAnim_RunCurePoison(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedRestoreMotes(struct BattleAnimArgs *args);
+void BattleAnim_RunTonic(struct BattleAnimArgs *args);
+void BattleAnim_RunPsyCrystal(struct BattleAnimArgs *args);
+void BattleAnim_RunHealingMotes(struct BattleAnimArgs *args, u32 mode);
 
 // stat_change.c
-void BattleAnim_RunImpact(struct BattleAnimArgs *effect);
-void BattleAnim_RunGuard(struct BattleAnimArgs *effect);
-void BattleAnim_RunWard(struct BattleAnimArgs *effect);
-void BattleAnim_RunGranite(struct BattleAnimArgs *effect);
-void BattleAnim_RunFlash(struct BattleAnimArgs *effect);
-void BattleAnim_RunZephyr(struct BattleAnimArgs *effect);
-void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode);
-void BattleAnim_RunDull(struct BattleAnimArgs *effect);
-void BattleAnim_RunImpair(struct BattleAnimArgs *effect);
-void BattleAnim_RunWeaken(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedStatReduction(struct BattleAnimArgs *effect);
-void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunImpact(struct BattleAnimArgs *args);
+void BattleAnim_RunGuard(struct BattleAnimArgs *args);
+void BattleAnim_RunWard(struct BattleAnimArgs *args);
+void BattleAnim_RunGranite(struct BattleAnimArgs *args);
+void BattleAnim_RunFlash(struct BattleAnimArgs *args);
+void BattleAnim_RunZephyr(struct BattleAnimArgs *args);
+void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode);
+void BattleAnim_RunDull(struct BattleAnimArgs *args);
+void BattleAnim_RunImpair(struct BattleAnimArgs *args);
+void BattleAnim_RunWeaken(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedStatReduction(struct BattleAnimArgs *args);
+void BattleAnim_RunStatReduction(struct BattleAnimArgs *args, s32 mode);
 
 // flare.c
-void BattleAnim_RunFlare(struct BattleAnimArgs *effect);
+void BattleAnim_RunFlare(struct BattleAnimArgs *args);
 s32 BattleAnim_BuildCenteredIndexList(BattleAnimIndexWindow *window,
                                       s16 *output);
 
 // quake.c
-void BattleAnim_RunQuake(struct BattleAnimArgs *effect);
+void BattleAnim_RunQuake(struct BattleAnimArgs *args);
 
 // fire.c
-void BattleAnim_RunFire(struct BattleAnimArgs *effect);
+void BattleAnim_RunFire(struct BattleAnimArgs *args);
 
 // frost.c
-void BattleAnim_RunFrost(struct BattleAnimArgs *effect);
+void BattleAnim_RunFrost(struct BattleAnimArgs *args);
 
 // ray.c
-void BattleAnim_RunRay(struct BattleAnimArgs *effect);
+void BattleAnim_RunRay(struct BattleAnimArgs *args);
 
 // eruption.c
-void BattleAnim_RunSmokeBomb(struct BattleAnimArgs *effect);
-void BattleAnim_RunBlast(struct BattleAnimArgs *effect);
-void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunSmokeBomb(struct BattleAnimArgs *args);
+void BattleAnim_RunBlast(struct BattleAnimArgs *args);
+void BattleAnim_RunEruption(struct BattleAnimArgs *args, s32 mode);
 void BattleAnim_SpawnObjects(s32 entryCount, s32 source, u32 priority);
 void BattleAnim_DoNothing(void);
 
 // burst_shower.c
 void BattleAnim_ArmBg2AffineHBlankDma(void);
-void BattleAnim_RunFireBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunWaterBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunDarkBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunAcidBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunStormBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunEvilBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunDeadlyGas(struct BattleAnimArgs *effect);
-void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunFireBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunWaterBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunDarkBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunAcidBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunStormBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunEvilBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunDeadlyGas(struct BattleAnimArgs *args);
+void BattleAnim_RunBurstShower(struct BattleAnimArgs *args, s32 mode);
 
 // orbiting.c
-void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *effect);
+void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *args);
 void BattleAnim_RunOrbitingSkulls(void);
-void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect);
+void BattleAnim_RunTargetBursts(struct BattleAnimArgs *args);
 
 // atalanta.c
-void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect);
+void BattleAnim_RunAtalanta(struct BattleAnimArgs *args);
 
 // growth.c
-void BattleAnim_RunGrowth(struct BattleAnimArgs *effect);
-void BattleAnim_RunPunji(struct BattleAnimArgs *effect);
-void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode);
-void BattleAnim_RunVine(struct BattleAnimArgs *effect);
-void BattleAnim_RunThorn(struct BattleAnimArgs *effect);
+void BattleAnim_RunGrowth(struct BattleAnimArgs *args);
+void BattleAnim_RunPunji(struct BattleAnimArgs *args);
+void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *args, s32 mode);
+void BattleAnim_RunVine(struct BattleAnimArgs *args);
+void BattleAnim_RunThorn(struct BattleAnimArgs *args);
 
 // bolt.c
-void BattleAnim_RunBolt(struct BattleAnimArgs *effect);
+void BattleAnim_RunBolt(struct BattleAnimArgs *args);
 
 // projectiles.c
-void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
+void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *args, s32 element,
                                   s32 side, s32 anchor, s32 *outX, s32 *outY);
-void BattleAnim_RunSlash(struct BattleAnimArgs *effect);
-void BattleAnim_RunShuriken(struct BattleAnimArgs *effect);
-void BattleAnim_RunCrazyVoice(struct BattleAnimArgs *effect);
-void BattleAnim_RunWingFlutter(struct BattleAnimArgs *effect);
-void BattleAnim_RunWingStroke(struct BattleAnimArgs *effect);
-void BattleAnim_RunWingBeat(struct BattleAnimArgs *effect);
-void BattleAnim_RunCuttingEdge(struct BattleAnimArgs *effect);
-void BattleAnim_RunHeatWave(struct BattleAnimArgs *effect);
-void BattleAnim_RunSleet(struct BattleAnimArgs *effect);
-void BattleAnim_RunIceBlessing(struct BattleAnimArgs *effect);
-void BattleAnim_RunBlizzard(struct BattleAnimArgs *effect);
-void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunSlash(struct BattleAnimArgs *args);
+void BattleAnim_RunShuriken(struct BattleAnimArgs *args);
+void BattleAnim_RunCrazyVoice(struct BattleAnimArgs *args);
+void BattleAnim_RunWingFlutter(struct BattleAnimArgs *args);
+void BattleAnim_RunWingStroke(struct BattleAnimArgs *args);
+void BattleAnim_RunWingBeat(struct BattleAnimArgs *args);
+void BattleAnim_RunCuttingEdge(struct BattleAnimArgs *args);
+void BattleAnim_RunHeatWave(struct BattleAnimArgs *args);
+void BattleAnim_RunSleet(struct BattleAnimArgs *args);
+void BattleAnim_RunIceBlessing(struct BattleAnimArgs *args);
+void BattleAnim_RunBlizzard(struct BattleAnimArgs *args);
+void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode);
 void BattleAnim_InitializeRisingObject(s32 id);
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames);
 
 // rushing_strike.c
 void BattleAnim_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
-void BattleAnim_RunBoneCharge(struct BattleAnimArgs *effect);
-void BattleAnim_RunBruteForce(struct BattleAnimArgs *effect);
-void BattleAnim_RunOnslaught(struct BattleAnimArgs *effect);
-void BattleAnim_RunHeadbutt(struct BattleAnimArgs *effect);
-void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunBoneCharge(struct BattleAnimArgs *args);
+void BattleAnim_RunBruteForce(struct BattleAnimArgs *args);
+void BattleAnim_RunOnslaught(struct BattleAnimArgs *args);
+void BattleAnim_RunHeadbutt(struct BattleAnimArgs *args);
+void BattleAnim_RunRushingStrike(struct BattleAnimArgs *args, s32 mode);
 
 // djinn_attacks.c
 void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
-void BattleAnim_RunMercury(struct BattleAnimArgs *effect);
-void BattleAnim_RunJupiter(struct BattleAnimArgs *effect);
+void BattleAnim_RunMercury(struct BattleAnimArgs *args);
+void BattleAnim_RunJupiter(struct BattleAnimArgs *args);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-void BattleAnim_RunVenus(struct BattleAnimArgs *effect);
-void BattleAnim_RunMars(struct BattleAnimArgs *effect);
+void BattleAnim_RunVenus(struct BattleAnimArgs *args);
+void BattleAnim_RunMars(struct BattleAnimArgs *args);
 
 // hail.c
-void BattleAnim_RunHail(struct BattleAnimArgs *effect);
-void BattleAnim_RunGround(struct BattleAnimArgs *effect);
+void BattleAnim_RunHail(struct BattleAnimArgs *args);
+void BattleAnim_RunGround(struct BattleAnimArgs *args);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 // thor.c
-void BattleAnim_RunThor(struct BattleAnimArgs *effect);
+void BattleAnim_RunThor(struct BattleAnimArgs *args);
 
 // spire.c
-void BattleAnim_RunSpire(struct BattleAnimArgs *effect);
+void BattleAnim_RunSpire(struct BattleAnimArgs *args);
 
 // burst_sequence.c
-void BattleAnim_RunGust(struct BattleAnimArgs *effect);
-void BattleAnim_RunBearClaw(struct BattleAnimArgs *effect);
-void BattleAnim_RunRansack(struct BattleAnimArgs *effect);
-void BattleAnim_RunBacteriaRush(struct BattleAnimArgs *effect);
-void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *effect);
-void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *effect);
-void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunGust(struct BattleAnimArgs *args);
+void BattleAnim_RunBearClaw(struct BattleAnimArgs *args);
+void BattleAnim_RunRansack(struct BattleAnimArgs *args);
+void BattleAnim_RunBacteriaRush(struct BattleAnimArgs *args);
+void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *args);
+void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *args);
+void BattleAnim_RunBurstSequence(struct BattleAnimArgs *args, s32 mode);
 
 // gaia.c
-void BattleAnim_RunGaia(struct BattleAnimArgs *effect);
+void BattleAnim_RunGaia(struct BattleAnimArgs *args);
 
 // positions.c
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
@@ -596,67 +596,67 @@ void Projection_ScaledUnit(s32 id, struct ScreenPoint *position);
 void Projection_Unit(s32 id, struct ScreenPoint *position);
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 void BattleAnim_ProbeKeysForExtendedActor(void);
-void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect);
+void BattleAnim_RunByIdRange(struct BattleAnimArgs *args);
 
 // beams.c
-void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect);
-void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect);
+void BattleAnim_RunBeamSequence(struct BattleAnimArgs *args);
+void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *args);
 
 // casting_impact.c
 void BattleAnim_StepPaletteToResource(s32 resourceId);
-void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode);
 
 // torch.c
-void BattleAnim_RunTorch(struct BattleAnimArgs *effect);
-void BattleAnim_RunKite(struct BattleAnimArgs *effect);
+void BattleAnim_RunTorch(struct BattleAnimArgs *args);
+void BattleAnim_RunKite(struct BattleAnimArgs *args);
 
 // helm_splitter.c
-void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect);
+void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *args);
 void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z);
 void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y);
 
 // particle_streams.c
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep);
 void BattleAnim_ArmPaletteHBlankDma(void);
-void BattleAnim_RunMeteor(struct BattleAnimArgs *effect);
-void BattleAnim_RunOuterSpace(struct BattleAnimArgs *effect);
-void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunMeteor(struct BattleAnimArgs *args);
+void BattleAnim_RunOuterSpace(struct BattleAnimArgs *args);
+void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode);
 
 // ramses.c
-void BattleAnim_RunRamses(struct BattleAnimArgs *effect);
+void BattleAnim_RunRamses(struct BattleAnimArgs *args);
 
 // dragon_cloud.c
-void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect);
+void BattleAnim_RunDragonCloud(struct BattleAnimArgs *args);
 
 // annihilation.c
-void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect);
+void BattleAnim_RunAnnihilation(struct BattleAnimArgs *args);
 
 // ragnarok.c
-void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect);
+void BattleAnim_RunRagnarok(struct BattleAnimArgs *args);
 
 // titan_blade.c
-void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect);
+void BattleAnim_RunTitanBlade(struct BattleAnimArgs *args);
 
 // judgment.c
-void BattleAnim_RunJudgment(struct BattleAnimArgs *effect);
+void BattleAnim_RunJudgment(struct BattleAnimArgs *args);
 
 // kirin.c
-void BattleAnim_RunKirin(struct BattleAnimArgs *effect);
+void BattleAnim_RunKirin(struct BattleAnimArgs *args);
 
 // neptune.c
 void BattleAnim_ResetBg2Pa(void);
 void BattleAnim_SetBg2AffineScaleHalf(void);
-void BattleAnim_RunNeptune(struct BattleAnimArgs *effect);
+void BattleAnim_RunNeptune(struct BattleAnimArgs *args);
 
 // thrash.c
-void BattleAnim_RunThrash(struct BattleAnimArgs *effect);
-void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *effect);
-void BattleAnim_RunQuickStrike(struct BattleAnimArgs *effect);
-void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *effect);
-void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode);
+void BattleAnim_RunThrash(struct BattleAnimArgs *args);
+void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *args);
+void BattleAnim_RunQuickStrike(struct BattleAnimArgs *args);
+void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *args);
+void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *args, s32 mode);
 
 // undead_sword.c
-void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect);
+void BattleAnim_RunUndeadSword(struct BattleAnimArgs *args);
 
 // blitter.c
 s32 BattleAnim_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,

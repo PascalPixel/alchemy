@@ -141,20 +141,20 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     result = 0;
   } else {
-    // The item's own field action, if it has one: the ability actionId names
+    // The item's own field action, if it has one: the ability abilityId names
     // plays as if cast. Items with useType bit 0 are used up.
-    s32 actionId;
+    s32 abilityId;
 
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_SetFar(FLAG_NOTHING_HAPPENS);
-    actionId = Item_GetDirectFar(itemId)->abilityId;
+    abilityId = Item_GetDirectFar(itemId)->abilityId;
     work = gFieldWork;
 
-    if (actionId != 0) {
+    if (abilityId != 0) {
       GameFlag_SetFar(FLAG_ITEM_USE);
       GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
 
-      if (actionId == ABILITY_RETREAT &&
+      if (abilityId == ABILITY_RETREAT &&
           !GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar(MsgUseItemQuestion, FIELD_MESSAGE_ZOOM |
@@ -178,12 +178,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
-      FieldPsynergy_LoadResources(actionId, 0);
+      FieldPsynergy_LoadResources(abilityId, 0);
 #else
       /* FAKEMATCH(wrapper): called through a cast to the s32 function the
        * bytes show, which loads the action id before the 0; as a call by its
        * void prototype, 2 of 253 instructions differ in tbs-en. */
-      ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(actionId, 0);
+      ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
 #endif
       work->psynergyActing = 1;
       FieldPsynergy_Run();

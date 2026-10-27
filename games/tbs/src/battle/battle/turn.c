@@ -199,8 +199,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       if (targetCount <= 0) {
         MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
         BattleMessage_ShowAndWaitFar(MsgActorDefends);
-        if (actor->guardLevel == 0)
-          actor->guardLevel = GUARD_DEFEND;
+        if (actor->defendLevel == 0)
+          actor->defendLevel = DEFEND_NORMAL;
         return TURN_REPORTED;
       }
     }
@@ -216,7 +216,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   selectedTargetId = Battle_GetTaggedSlotValue(request->target);
   BattlePlayback_Reset();
   plan->hauntDamage = 0;
-  plan->actorId = request->unitId;
+  plan->unitId = request->unitId;
   plan->targetCount = 0;
   plan->animation = 0;
   plan->failure = TURN_FAILURE_NONE;
@@ -375,8 +375,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar(MsgActorDefends);
-      if (actor->guardLevel == 0)
-        actor->guardLevel = GUARD_DEFEND;
+      if (actor->defendLevel == 0)
+        actor->defendLevel = DEFEND_NORMAL;
       return TURN_REPORTED;
     }
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)

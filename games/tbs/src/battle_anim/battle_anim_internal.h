@@ -352,7 +352,7 @@ enum CameraPhase {
   CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
 };
 
-/// Where each range of BattleAnim_DispatchByIdRange's animation kinds starts:
+/// Where each range of BattleAnim_RunByIdRange's animation kinds starts:
 /// the casting impacts (the kind less ANIM_RANGE_CASTING_IMPACT is an enum
 /// CastingImpact), the beam sequences, which also take every kind below the
 /// casting impacts, and the ring and spark animation, which plays critical

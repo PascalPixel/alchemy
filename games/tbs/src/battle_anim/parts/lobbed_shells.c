@@ -26,59 +26,59 @@ enum LobbedShellsMode {
 /// shards.
 ///
 /// Abilities: Mad Spatter (BATTLE_ANIM_MAD_SPATTER).
-void BattleAnim_RunMadSpatter(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_MAD_SPATTER);
+void BattleAnim_RunMadSpatter(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Decompose (BATTLE_ANIM_DECOMPOSE).
-void BattleAnim_RunDecompose(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_DECOMPOSE);
+void BattleAnim_RunDecompose(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
 }
 /// Blue shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Bone Chiller (BATTLE_ANIM_BONE_CHILLER).
-void BattleAnim_RunBoneChiller(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_BONE_CHILLER);
+void BattleAnim_RunBoneChiller(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
 }
 /// Shells in the spider web's colours arc from the user onto each target in
 /// turn and burst into smoke.
 ///
 /// Abilities: Sticky Goo (BATTLE_ANIM_STICKY_GOO).
-void BattleAnim_RunStickyGoo(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_GOO);
+void BattleAnim_RunStickyGoo(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
 }
 /// Shells in Mars Djinn colours arc from the user onto each target in turn
 /// and burst into smoke.
 ///
 /// Abilities: Poison Ink (BATTLE_ANIM_POISON_INK).
-void BattleAnim_RunPoisonInk(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_POISON_INK);
+void BattleAnim_RunPoisonInk(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
 }
 /// Lime shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Sticky Poison (BATTLE_ANIM_STICKY_POISON).
-void BattleAnim_RunStickyPoison(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_POISON);
+void BattleAnim_RunStickyPoison(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
 /// Abilities: Rotten Blood (BATTLE_ANIM_ROTTEN_BLOOD).
-void BattleAnim_RunRottenBlood(struct BattleAnimArgs *effect) {
-  BattleAnim_RunLobbedShells(effect, LOBBED_SHELLS_ROTTEN_BLOOD);
+void BattleAnim_RunRottenBlood(struct BattleAnimArgs *args) {
+  BattleAnim_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
 /// The bursts live after the shells in PARTICLES, from PARTICLES[256] (0x1c00
 /// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
 /// or 16 shards are used.
 #define LOBBED_SHELLS_BURSTS                                                   \
   ((struct Particle *)(Ram_MapGridCellBuffer + 0x1c00))
-#define LOBBED_SHELLS_SLOTS 16           ///< particles reserved for each target
-#define LOBBED_SHELLS_BURST_SLOTS 256    ///< burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 ///< the smoke pictures in the sheet
+#define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
+#define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
+#define LOBBED_SHELLS_SMOKE_OFFSETS 0x3e80 ///< the smoke pictures in the sheet
 
 /// Nonzero when the style's shells burst into shards instead of smoke: the
 /// first of the style's two entries in gLobbedShells_Styles; the second is
@@ -101,7 +101,7 @@ void BattleAnim_RunRottenBlood(struct BattleAnimArgs *effect) {
 /// mode: the style (enum LobbedShellsMode): its colours and its row of
 ///       gLobbedShells_Styles, which makes Rotten Blood's and Mad Spatter's
 ///       shells burst into shards.
-void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunLobbedShells(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
   void **slots;
@@ -121,11 +121,11 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   cursor = slots;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the
+  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_OFFSETS and the
   // style's palette; Decompose shares Rotten Blood's green.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -134,7 +134,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_OFFSETS);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
@@ -155,11 +155,11 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   // flight to the target and an upward throw of 4 pixels a frame; only the
   // first of each target's 16 is drawn.
   ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
   height = 0x40000;
-  ANIM_FOR_EACH_TARGET(k, work->effect) {
+  ANIM_FOR_EACH_TARGET(k, work->args) {
     struct Actor *target =
-        GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+        GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
@@ -174,7 +174,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
 
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
-  if (effect->side == ANIM_SIDE_ENEMIES) {
+  if (args->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
@@ -203,9 +203,9 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
-    total = work->effect->targetCount * 8 + 72;
+    total = work->args->targetCount * 8 + 72;
   else
-    total = work->effect->targetCount * 8 + 56;
+    total = work->args->targetCount * 8 + 56;
   Sound_PlaySongFar(SE_CURSE);
 
   for (frame = 0; frame != total; frame++) {
@@ -216,13 +216,13 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
     // target is hit on frame 8k + 17, about when its shell lands; a shell's
     // variant turns 1 when it does.
     k = 0;
-    if (work->effect->targetCount != 0) {
+    if (work->args->targetCount != 0) {
       do {
         if (frame >= k * 8) {
           struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
           if (frame == k * 8 + 17) {
-            BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+            BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 16);
             ANIM_SHOW_DAMAGE(SE_IMPACT);
           }
@@ -294,7 +294,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
           }
         }
         k++;
-      } while (k != work->effect->targetCount);
+      } while (k != work->args->targetCount);
     }
     // The bursts, for 45 frames: smoke through six 24x48 images, eight
     // frames each, drifting up; or shards that tumble through nine images,
@@ -309,7 +309,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
           draw[1](canvas,
                   work->sheet + burst->variant / 8 * (24 * 48) +
-                      LOBBED_SHELLS_SMOKE_CELLS,
+                      LOBBED_SHELLS_SMOKE_OFFSETS,
                   position.x - 12, position.y - 24, 24, 48);
         } else {
           s32 picture = burst->variant / 5;
@@ -319,7 +319,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
             picture += 9;
           // Each shard faces the way it flies. The shard pictures follow the
           // ten 768-byte shell images (0x1e00 bytes) in the sheet.
-          flip = effect->side;
+          flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
               work->sheet + gLobbedShells_ShardOffsets[picture] + 0x1e00,
@@ -347,5 +347,5 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
 #undef LOBBED_SHELLS_BURSTS
 #undef LOBBED_SHELLS_SLOTS
 #undef LOBBED_SHELLS_BURST_SLOTS
-#undef LOBBED_SHELLS_SMOKE_CELLS
+#undef LOBBED_SHELLS_SMOKE_OFFSETS
 #undef LOBBED_SHELLS_SHATTER

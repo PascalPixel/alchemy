@@ -12,13 +12,13 @@
 
 /// The option menu's work (heap block 20): the settings being edited and
 /// how many values each takes, the page, and the cursor, markers and icons.
-/// OptionMenu_InitializeWork takes and clears it and copies the settings in;
-/// OptionMenu_Release frees it, and cancelling discards the edits. The pause
+/// SettingsMenu_InitializeWork takes and clears it and copies the settings in;
+/// SettingsMenu_Release frees it, and cancelling discards the edits. The pause
 /// menu takes the same slot for its cursor, entry (page) and icons.
 struct OptionMenuWork {
   u8 unused[0x400]; ///< no code names it
   /// Seven 52-byte entries (struct OptionMenuEntry in options.c), whose
-  /// state only the unused OptionMenu_ResetEntries writes.
+  /// state only the unused SettingsMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8]; ///< no code names it
   /// The row the cursor is on: on the option menu 0 to 4, indexing option
@@ -29,7 +29,7 @@ struct OptionMenuWork {
   /// slider in use.
   u16 cursorFrame;
   /// The colour preset SELECT last chose, 0 to 5, from
-  /// gOptionMenu_HuePresets and gOptionMenu_BrightnessPresets.
+  /// gSettingsMenu_HuePresets and gSettingsMenu_BrightnessPresets.
   u16 preset;
   u8 unusedAfterPreset[0x14]; ///< no code names it
   /// The settings being edited: window hue (0 to 23), window brightness (0
@@ -46,7 +46,7 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6];
 };
 
-/// The option menu's work, HEAP_SLOT_OPTION_MENU under its own name.
+/// The option menu's work, HEAP_SLOT_SETTINGS_MENU under its own name.
 extern struct OptionMenuWork *gOptionMenuWork;
 
 #endif

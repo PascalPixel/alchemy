@@ -59,18 +59,18 @@ void BattleAnim_ArmPaletteHBlankDma(void) {
 ///
 /// Abilities: Meteor (SUMMON_ANIM_METEOR).
 ///
-/// BattleAnim_RunSummonEffect also plays it for a summon animation of 0, which
+/// BattleAnim_RunSummon also plays it for a summon animation of 0, which
 /// no row selects.
-void BattleAnim_RunMeteor(struct BattleAnimArgs *effect) {
-  BattleAnim_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
+void BattleAnim_RunMeteor(struct BattleAnimArgs *args) {
+  BattleAnim_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
 }
 
 /// The user leaps up, and two objects rise out of a dissolving starfield and
 /// burst into embers and flashes, in the lightning bolt's colours.
 ///
 /// Abilities: Outer Space (BATTLE_ANIM_OUTER_SPACE).
-void BattleAnim_RunOuterSpace(struct BattleAnimArgs *effect) {
-  BattleAnim_RunParticleStreams(effect, PARTICLE_STREAMS_OUTER_SPACE);
+void BattleAnim_RunOuterSpace(struct BattleAnimArgs *args) {
+  BattleAnim_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
 }
 
 /// The burst's embers, 512 in PARTICLES after its 128 flashes.
@@ -80,7 +80,7 @@ void BattleAnim_RunOuterSpace(struct BattleAnimArgs *effect) {
 #define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define PARTICLE_STREAMS_MOTE_CELLS 0x3200
+#define PARTICLE_STREAMS_MOTE_OFFSETS 0x3200
 
 /// The stream runs in two halves. The rise dissolves the battle map into a
 /// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
@@ -106,7 +106,7 @@ void BattleAnim_RunOuterSpace(struct BattleAnimArgs *effect) {
 /// BattleAnim_EndCanvasLayer puts it back there at the end. The burst sets
 /// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
 /// formation objects it spawned (Outer Space's on frame 48 of the burst).
-void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
   void **cache;
@@ -166,22 +166,22 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
 
   // Begin: in Outer Space the user leaps up with a sound. The stream's
   // direction is 1 when that user stands on ANIM_SIDE_PARTY, otherwise -1.
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
   /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
    * mode where CSE would put 1; as if (mode == PARTICLE_STREAMS_OUTER_SPACE),
    * 1 of 1532 instructions differ in tbs-en. */
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
-    struct Actor *animation = GetBattleObjectSlotFar(work->effect->user)->actor;
+    struct Actor *animation = GetBattleObjectSlotFar(work->args->user)->actor;
 
     // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
     // 0.57 pixels a frame lost each frame.
     animation->velocityY = 0xa0000;
     animation->gravity = 0x91eb;
-    BattleAnim_TintBattler(work->effect->user, -1, POSE_LEAP, -1, 0);
+    BattleAnim_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlaySongFar(SE_CRASH);
-    direction = work->effect->side == ANIM_SIDE_PARTY ? mode : -1;
+    direction = work->args->side == ANIM_SIDE_PARTY ? mode : -1;
   } else {
     direction = -1;
   }
@@ -254,7 +254,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   // in ragged columns, each lagging by one of 128 random offsets of 0 to 63
   // rows. The erased band grows faster every frame until it passes row 191.
   gProjection.centerY = 240;
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   // Every second frame BG2's reference point (20.8 fixed point) moves half a
   // pixel across, the way direction says, and one pixel down.
   work->bg2x = 0;
@@ -603,7 +603,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
         draw(canvas,
              work->sheet +
                  (gBattleAnim_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                 PARTICLE_STREAMS_MOTE_CELLS,
+                 PARTICLE_STREAMS_MOTE_OFFSETS,
              screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
@@ -627,7 +627,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       draw(canvas,
            work->sheet +
                (gBattleAnim_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-               PARTICLE_STREAMS_MOTE_CELLS,
+               PARTICLE_STREAMS_MOTE_OFFSETS,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)
@@ -705,4 +705,4 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
 #undef PARTICLE_STREAMS_EMBERS
 #undef PARTICLE_STREAMS_RISE_FRAMES
 #undef PARTICLE_STREAMS_BURST_FRAMES
-#undef PARTICLE_STREAMS_MOTE_CELLS
+#undef PARTICLE_STREAMS_MOTE_OFFSETS

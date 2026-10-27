@@ -14,7 +14,7 @@
   ((struct Particle *)(Ram_MapGridCellBuffer + 0x3800))
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
-#define TARGET_STRIKE_SMOKE_CELLS 0x3200
+#define TARGET_STRIKE_SMOKE_OFFSETS 0x3200
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -36,79 +36,77 @@ enum {
 /// One slash strikes the first target among glints, in lightning colours.
 ///
 /// Abilities: Numbing Sting (BATTLE_ANIM_NUMBING_STING).
-void BattleAnim_RunNumbingSting(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
+void BattleAnim_RunNumbingSting(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 /// Three ember columns strike the first target and drain it into the user.
 ///
 /// Abilities: Cannibal Fang (BATTLE_ANIM_CANNIBAL_FANG).
-void BattleAnim_RunCannibalFang(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
+void BattleAnim_RunCannibalFang(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
 }
 /// One lime column strikes the first target, with smoke.
 ///
 /// Abilities: Poisonous Bite (BATTLE_ANIM_POISONOUS_BITE); Poison Fang
 /// (BATTLE_ANIM_POISON_FANG).
-void BattleAnim_RunPoisonousBite(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
+void BattleAnim_RunPoisonousBite(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }
 /// One column strikes the first target, with smoke, in Mars Djinn colours.
 ///
 /// Abilities: Rabid Fang (BATTLE_ANIM_RABID_FANG).
-void BattleAnim_RunRabidFang(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
+void BattleAnim_RunRabidFang(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
 }
 /// Three lightning columns strike the first target among glints.
 ///
 /// Abilities: Electric Bite (BATTLE_ANIM_ELECTRIC_BITE).
-void BattleAnim_RunElectricBite(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect,
-                             TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
+void BattleAnim_RunElectricBite(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
 }
 /// One lime slash strikes the first target, with smoke.
 ///
 /// Abilities: Poison Tail (BATTLE_ANIM_POISON_TAIL).
-void BattleAnim_RunPoisonTail(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
+void BattleAnim_RunPoisonTail(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 /// Three columns strike the first target and drain it, in Mars Djinn colours.
 ///
 /// Abilities: Vampiric Fang (BATTLE_ANIM_VAMPIRIC_FANG).
-void BattleAnim_RunVampiricFang(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
+void BattleAnim_RunVampiricFang(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
 }
 /// Two blue columns strike the first target, with sparks.
 ///
 /// Abilities: Double Fang (BATTLE_ANIM_DOUBLE_FANG).
-void BattleAnim_RunDoubleFang(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
+void BattleAnim_RunDoubleFang(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
 }
 /// One heavy slash strikes the first target, with sparks, in Mars Djinn
 /// colours.
 ///
 /// Abilities: Mortal Blow (BATTLE_ANIM_MORTAL_BLOW).
-void BattleAnim_RunMortalBlow(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
+void BattleAnim_RunMortalBlow(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
 }
 /// Two slashes strike the first target, with sparks, in lightning colours.
 ///
 /// Abilities: Twin Beaks (BATTLE_ANIM_TWIN_BEAKS).
-void BattleAnim_RunTwinBeaks(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect,
-                             TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
+void BattleAnim_RunTwinBeaks(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
 /// Three pink columns strike the first target, with smoke.
 ///
 /// Abilities: Acid Bite (BATTLE_ANIM_ACID_BITE).
-void BattleAnim_RunAcidBite(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
+void BattleAnim_RunAcidBite(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
 }
 /// Three additive columns strike the first target and drain it with large
 /// motes, in Mars Djinn colours.
 ///
 /// Abilities: Drain Fang (BATTLE_ANIM_DRAIN_FANG).
-void BattleAnim_RunDrainFang(struct BattleAnimArgs *effect) {
-  BattleAnim_RunTargetStrike(effect,
+void BattleAnim_RunDrainFang(struct BattleAnimArgs *args) {
+  BattleAnim_RunTargetStrike(args,
                              TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);
 }
 /// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
@@ -123,7 +121,7 @@ void BattleAnim_RunDrainFang(struct BattleAnimArgs *effect) {
 /// lights the user while an absorb runs. Leaves the canvas layer closed.
 ///
 /// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Styles.
-void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint ground;
   struct ScreenPoint targetPosition;
   struct ScreenPoint alternate;
@@ -141,14 +139,14 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   struct Actor *source;
   s32 resource;
   s32 i;
-  s32 wispSheet = TARGET_STRIKE_SMOKE_CELLS;
+  s32 wispSheet = TARGET_STRIKE_SMOKE_OFFSETS;
   DrawRectangle *lower;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   lower = (DrawRectangle *)&ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   particleSheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleAnim_StartCanvasLayer(0);
   else
@@ -157,7 +155,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The images: glints at the start of the sheet, the slashes or the
-  // columns at 0xc80, smoke at TARGET_STRIKE_SMOKE_CELLS, and the style's
+  // columns at 0xc80, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
   // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
@@ -191,20 +189,20 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                             work->sheet + TARGET_STRIKE_SMOKE_CELLS, 1, 0);
+                             work->sheet + TARGET_STRIKE_SMOKE_OFFSETS, 1, 0);
 
   // Park every particle, idle, where it will start: smoke at the target's
   // feet, motes and sparks 20 pixels up its body, each with a random
   // velocity.
   // DEAD: runs once, for the first target only; the ROM keeps the loop.
   for (k = 0; k != 1; k++) {
-    target = GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+    target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
     // Smoke works on the canvas: x under the target, line 80, drifting up
     // to 1 pixel a frame each way.
     for (i = 0; i != 64; i++) {
       struct Particle *step = &work->particles[i];
 
-      Projection_Unit(work->effect->targets[k], &ground);
+      Projection_Unit(work->args->targets[k], &ground);
       SET_POSITION(step, (ground.x / 2) << 16, 0x500000, 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
@@ -257,8 +255,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Strike halfway between the target's middle and its feet.
-  Projection_ScaledUnit(work->effect->targets[0], &targetPosition);
-  Projection_Unit(work->effect->targets[0], &alternate);
+  Projection_ScaledUnit(work->args->targets[0], &targetPosition);
+  Projection_Unit(work->args->targets[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
   for (frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FRAMES);
@@ -282,7 +280,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // target's centre, 21 for the first picture down to -8 for the last,
         // so the sweep crosses the centre; mirrored when the targets are the
         // party, its right edge stands as far to the left.
-        if (work->effect->side == ANIM_SIDE_PARTY) {
+        if (work->args->side == ANIM_SIDE_PARTY) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);
@@ -316,12 +314,12 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
           // first half of its group of 16.
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
-            ANIM_STRIKE_TARGET(work->effect, 0, 12, KNOCKBACK_HURL);
+            ANIM_STRIKE_TARGET(work->args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 512; i++)
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else {
             work->shakeFrames = 4;
-            BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+            BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
             for (i = 0; i != 32; i++) {
               struct Particle *step =
@@ -394,7 +392,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // the positions, so the third hit throws nothing new: Acid Bite's
         // third puffs (frame 66) start again from where its second's,
         // 24 frames old, have risen to.
-        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+        BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         if (frame > (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
@@ -474,7 +472,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
     draw[1] = *lower;
     // DEAD: runs once, for the user only; the ROM keeps the loop.
     for (k = 0; k != 1; k++) {
-      source = GetBattleObjectSlotFar(work->effect->user)->actor;
+      source = GetBattleObjectSlotFar(work->args->user)->actor;
       // Smoke puffs rise and spread through six images over 24 frames,
       // pulled up by 1/64 pixel a frame each frame and slowed to 62/64.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
@@ -502,10 +500,10 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         if (mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS)
           size = 8;
         if (frame == 55)
-          BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
+          BattleAnim_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1,
                                  0);
         if (frame == 90)
-          BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
+          BattleAnim_TintBattler(work->args->user, 0, -1, -1, 0);
         for (i = 0; i != 64; i++) {
           struct Particle *step = &PARTICLES[i];
 
@@ -566,4 +564,4 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
 
 #undef TARGET_STRIKE_SPARKS
 #undef TARGET_STRIKE_VALUE
-#undef TARGET_STRIKE_SMOKE_CELLS
+#undef TARGET_STRIKE_SMOKE_OFFSETS

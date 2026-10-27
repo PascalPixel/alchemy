@@ -192,8 +192,8 @@ reads them before it returns. Within a frame its steps run in a fixed order,
 and many draw random numbers, so moving one step changes everything drawn
 after it.
 
-The three entry points are `BattleAnim_RunTableEffect`,
-`BattleAnim_DispatchByIdRange` and `BattleAnim_RunSummonEffect`.
+The three entry points are `BattleAnim_RunFromTable`,
+`BattleAnim_RunByIdRange` and `BattleAnim_RunSummon`.
 
 [Battle animations](src/battle_anim/README.md#how-a-move-picks-its-animation)
 describes how the animation is chosen, then
@@ -226,9 +226,9 @@ The staging runners in `src/battle/battle/staging.c` all follow this pattern;
 ```c
 Task_Add(BattlePlayback_Run, TASK_PASS_FRAME); /* idle task */
 if (plan->animation & ANIM_BY_ID_RANGE)
-  BattleAnim_DispatchByIdRangeFar(&work.effect); /* the animation's loop */
+  BattleAnim_RunByIdRangeFar(&work.effect); /* the animation's loop */
 else
-  BattleAnim_RunTableEffectFar(&work.effect);
+  BattleAnim_RunFromTableFar(&work.effect);
 BattlePlayback_WaitForReady(); /* until every target has played */
 ```
 

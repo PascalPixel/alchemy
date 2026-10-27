@@ -20,7 +20,7 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define NEPTUNE_FLARE_SHEET 0x4e20 ///< the flare pictures, after the spray
 /// The 48x48 light pictures (9 * 256 bytes each), after the spray sheet's
 /// 32x32 spray picture.
-#define NEPTUNE_LIGHT_CELLS 0x400
+#define NEPTUNE_LIGHT_OFFSETS 0x400
 /// The blue flame column's 34x65 head, after its 17x104 shaft.
 #define NEPTUNE_FLAME_HEAD 0x6e8
 
@@ -40,7 +40,7 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
 /// its frame 96.
 ///
-/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummon, whose sheet slot holds the
 /// mote sheet here. The first stage projects with gProjection.centerY at 240
 /// and holds BG1's scroll from the battle camera; the second gives BG1's x
 /// back, removes the scale callback and interrupt, and
@@ -56,7 +56,7 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// The window's edge step, noise and scanline table use the map grid cell
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
-void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
+void BattleAnim_RunNeptune(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
   struct ScreenPoint targetPosition;
@@ -91,7 +91,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   canvas = (void *)cache[0];
   work = (struct BattleAnimWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_ANIM);
   particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   BattleAnim_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the wipe fills the canvas with, are
@@ -109,7 +109,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, SPRITE_NEPTUNE, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
@@ -426,16 +426,16 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
       if (z > 2) {
         z = 2;
       }
-      blit[1](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_CELLS, 63, 18,
+      blit[1](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_OFFSETS, 63, 18,
               48, 48);
     }
     if (frame > 221) {
       s32 z;
       z = (frame - 222) / 2 % 4 + 3;
-      blit[0](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_CELLS, 72, 30,
+      blit[0](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_OFFSETS, 72, 30,
               48, 48);
       if (z == 5) {
-        blit[0](canvas, work->sheet + NEPTUNE_LIGHT_CELLS + 2 * (48 * 48), 66,
+        blit[0](canvas, work->sheet + NEPTUNE_LIGHT_OFFSETS + 2 * (48 * 48), 66,
                 22, 48, 48);
       }
     }
@@ -487,8 +487,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     work->particles[i].y = 0;
     work->particles[i].variant = 0;
   }
-  ANIM_FOR_EACH_TARGET(i, work->effect) {
-    Projection_ScaledUnit(work->effect->targets[i], &targetPosition);
+  ANIM_FOR_EACH_TARGET(i, work->args) {
+    Projection_ScaledUnit(work->args->targets[i], &targetPosition);
     work->particles[i].x = targetPosition.x / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
@@ -557,12 +557,11 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
       }
     }
     // Target i flashes and reels on frame 16i + 8, as its column lands.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 16 + 8) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                       KNOCKBACK_LEAP);
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != NEPTUNE_PARTICLES; i++) {
@@ -599,5 +598,5 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
 #undef NEPTUNE_OBJECTS
 #undef NEPTUNE_PARTICLES
 #undef NEPTUNE_FLARE_SHEET
-#undef NEPTUNE_LIGHT_CELLS
+#undef NEPTUNE_LIGHT_OFFSETS
 #undef NEPTUNE_FLAME_HEAD

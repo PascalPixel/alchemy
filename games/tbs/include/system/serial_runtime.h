@@ -171,7 +171,7 @@ extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH(volatile): each mask test loads the status on its own; as plain
- * u16, 155 of 920 instructions differ in tbs-en (MainMenu_Run; 14 of 23 in
+ * u16, 155 of 920 instructions differ in tbs-en (FileScreen_Run; 14 of 23 in
  * Serial_WaitForStatusMask). */
 extern volatile u16 gLinkStatus;
 

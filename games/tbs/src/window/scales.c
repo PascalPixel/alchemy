@@ -49,25 +49,25 @@ const u8 gWindowColor_WaveTable[121] = {
 /// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
 /// Each is a frame number for CommandIcon_Create, in the order of the
 /// setting's values.
-const s8 gOptionMenu_SpeedFrames[3] = {
+const s8 gSettingsMenu_SpeedFrames[3] = {
     0x22, 0x23, 0x24,
 };
 
-const s8 gOptionMenu_SpeechFrames[2] = {
+const s8 gSettingsMenu_SpeechFrames[2] = {
     0x25, 0x26,
 };
 
-const s8 gOptionMenu_SleepFrames[2] = {
+const s8 gSettingsMenu_SleepFrames[2] = {
     0x27, 0x28,
 };
 
 /// The window colour presets SELECT cycles through on the option menu: the
 /// colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each.
-const u8 gOptionMenu_HuePresets[6] = {
+const u8 gSettingsMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
 
-const u8 gOptionMenu_BrightnessPresets[6] = {
+const u8 gSettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 

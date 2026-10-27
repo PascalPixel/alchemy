@@ -17,7 +17,7 @@
 /// The animation runs 54 frames. BG2 is moved so that the canvas's centre line
 /// stands on the target. The sparks are work->particles 0 to 15, variant their
 /// age in frames.
-void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
+void BattleAnim_RunUndeadSword(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -39,7 +39,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
   s32 size;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
   ANIM_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -47,11 +47,11 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Shift BG2 so that canvas x 64 lines up with the target.
-  Projection_Unit(work->effect->targets[0], &screenPosition);
+  Projection_Unit(work->args->targets[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Scatter sparks in all directions from (64, 112), at 1/2 to 2.5 pixels a
@@ -73,8 +73,8 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
     if (frame == 10) {
       work->shakeFrames = 8;
       ANIM_SHOW_DAMAGE(SE_POWER_UP);
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_NUDGE);
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);
     }
 
@@ -115,7 +115,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
     // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
     // old. The blitters are fetched and released each frame, as the columns
     // took the slot.
-    BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+    BattleAnim_FetchRectangleBlitters(work->args->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {
         s32 px;

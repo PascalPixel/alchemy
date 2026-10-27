@@ -21,7 +21,7 @@
 /// background colours 1 to 63 and keeps their working copy in the first 128
 /// bytes of Ram_MapGridCellBuffer; adds and removes the HBlank DMA
 /// task.
-void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
+void BattleAnim_RunTorch(struct BattleAnimArgs *args) {
   void **slots;
   struct BattleAnimWork *work;
   void *canvas;
@@ -48,18 +48,18 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
 
   slots = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(slots, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_WRAP);
   // The Mars Djinni's long entrance, 84 frames, over the user.
-  BattleAnim_RunDjinniEntrance(effect, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
-                               work->effect->side, DJINNI_ANCHOR_OVER_USER,
+  BattleAnim_RunDjinniEntrance(args, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
+                               work->args->side, DJINNI_ANCHOR_OVER_USER,
                                &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   // Invisible until the fade-in; the canvas is shown 1.5 times its width.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Fill the 128x128 sheet with each pixel's distance from the middle,
@@ -169,17 +169,17 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
 /// animation.
 ///
 /// Abilities: Kite (BATTLE_ANIM_KITE).
-void BattleAnim_RunKite(struct BattleAnimArgs *effect) {
+void BattleAnim_RunKite(struct BattleAnimArgs *args) {
   struct BattleAnimWork *work;
   s32 originX;
   s32 originY;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
-  BattleAnim_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
-                               work->effect->side ^ 1,
-                               DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
+  BattleAnim_RunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
+                               work->args->side ^ 1, DJINNI_ANCHOR_OVER_TARGET,
+                               &originX, &originY);
   BattleAnim_EndCanvasLayer();
 }
 

@@ -213,8 +213,8 @@ gPartyStatusWork:
 	.global gGlyphWork
 gGlyphWork:
 	.space 0x00000004
-	.global gSelectionScreenWork
-gSelectionScreenWork:
+	.global gSelectionMenuWork
+gSelectionMenuWork:
 	.space 0x00000004
 	.global gSelectionWorkspace
 gSelectionWorkspace:

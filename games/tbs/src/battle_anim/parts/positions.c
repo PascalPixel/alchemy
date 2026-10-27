@@ -142,9 +142,9 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 /// more) and does nothing with them. Nothing calls it.
 void BattleAnim_ProbeKeysForExtendedActor(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
-  struct BattleAnimArgs *effect = work->effect;
+  struct BattleAnimArgs *args = work->args;
 
-  if (effect->targets[0] >= FIRST_ENEMY_UNIT)
+  if (args->targets[0] >= FIRST_ENEMY_UNIT)
     (void)gKeysHeld;
 }
 
@@ -160,7 +160,7 @@ void BattleAnim_ProbeKeysForExtendedActor(void) {
 /// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS for the animation, and releases them in the reverse
 /// order once it returns.
-void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect) {
+void BattleAnim_RunByIdRange(struct BattleAnimArgs *args) {
   s32 kind;
   s32 value;
 
@@ -172,17 +172,17 @@ void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect) {
   AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SHEET, value);
   AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  value = effect->kind;
+  value = args->kind;
   kind = value;
   value = kind - ANIM_RANGE_CASTING_IMPACT;
   // Unsigned, so kinds below ANIM_RANGE_CASTING_IMPACT fall through to the
   // beam sequences too.
   if ((u32)value < ANIM_RANGE_BEAM_SEQUENCE - ANIM_RANGE_CASTING_IMPACT) {
-    BattleAnim_RunCastingImpact(effect, value);
+    BattleAnim_RunCastingImpact(args, value);
   } else if (kind >= ANIM_RANGE_RING_AND_SPARK) {
-    BattleAnim_RunRingAndSparkSequence(effect);
+    BattleAnim_RunRingAndSparkSequence(args);
   } else {
-    BattleAnim_RunBeamSequence(effect);
+    BattleAnim_RunBeamSequence(args);
   }
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);

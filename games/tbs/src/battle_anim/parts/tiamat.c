@@ -17,15 +17,15 @@ enum PaletteParticlesMode {
 /// side, in the LightningBolt colours.
 ///
 /// Abilities: Dragon Driver (BATTLE_ANIM_DRAGON_DRIVER).
-void BattleAnim_RunDragonDriver(struct BattleAnimArgs *effect) {
-  BattleAnim_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
+void BattleAnim_RunDragonDriver(struct BattleAnimArgs *args) {
+  BattleAnim_RunPaletteParticles(args, PALETTE_PARTICLES_DRAGON_DRIVER);
 }
 /// Embers rise from the ground while a formation of eight objects sweeps in,
 /// and the formation explodes at the end.
 ///
 /// Abilities: Tiamat (SUMMON_ANIM_TIAMAT).
-void BattleAnim_RunTiamat(struct BattleAnimArgs *effect) {
-  BattleAnim_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
+void BattleAnim_RunTiamat(struct BattleAnimArgs *args) {
+  BattleAnim_RunPaletteParticles(args, PALETTE_PARTICLES_TIAMAT);
 }
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
@@ -66,7 +66,7 @@ void BattleAnim_RunTiamat(struct BattleAnimArgs *effect) {
 /// eight formation objects and releases them after the impact burst.
 ///
 /// mode: Tiamat's or Dragon Driver's (enum PaletteParticlesMode).
-void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint origin;
   void **cursor;
   void *canvas;
@@ -85,7 +85,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
   work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -117,17 +117,17 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   // (ANIM_SIDE_PARTY).
   if (mode == PALETTE_PARTICLES_TIAMAT)
     dir = 1;
-  else if (work->effect->side == ANIM_SIDE_PARTY)
+  else if (work->args->side == ANIM_SIDE_PARTY)
     dir = -1;
   else
     dir = 1;
   // Dragon Driver's sparks and flashes start at a fixed point on the user's
   // side: the user's projected x is overwritten.
   if (mode == PALETTE_PARTICLES_DRAGON_DRIVER) {
-    Projection_ScaledUnit(work->effect->user, &origin);
+    Projection_ScaledUnit(work->args->user, &origin);
     origin.x /= 2;
     origin.y = 66;
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       origin.x = 76;
     else
       origin.x = 44;
@@ -154,7 +154,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   }
   ANIM_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleAnim_SelectLivingTargets(work->effect);
+    BattleAnim_SelectLivingTargets(work->args);
     WaitFrames(1);
     BattleAnim_SpawnObjects(8, SPRITE_TIAMAT, 2);
   }
@@ -171,11 +171,10 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
         Sprite_StartAnimFar(work->animations[3], 10);
         Sprite_StartAnimFar(work->animations[4], 11);
       }
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+      ANIM_FOR_EACH_TARGET(i, work->args) {
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
                                POSE_DAMAGE, -1, 0);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                       KNOCKBACK_HURL);
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
       }
       frame = 160;
     }
@@ -393,11 +392,10 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
                                        focus.y);
     }
     if (frame == 138) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+      ANIM_FOR_EACH_TARGET(i, work->args) {
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
                                POSE_DAMAGE, -1, 0);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                       KNOCKBACK_HURL);
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
       }
     }
 

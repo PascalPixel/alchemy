@@ -53,8 +53,8 @@ enum BattleStaging {
 #define ANIM_ID_MASK 0xfff
 #define ANIM_VARIANT_MASK 0x3000
 #define ANIM_VARIANT_SHIFT 12
-#define ANIM_BY_ID_RANGE 0x4000 ///< BattleAnim_DispatchByIdRangeFar
-#define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonEffectFar, actor's view
+#define ANIM_BY_ID_RANGE 0x4000 ///< BattleAnim_RunByIdRangeFar
+#define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonFar, actor's view
 #define ANIM_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
 /// Plays the animation on the side opposite its targets. Unused: no entry of
 /// gAbilityAnimations in either game sets it and no code adds it, so the flip

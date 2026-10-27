@@ -200,7 +200,7 @@ until they are pressed. Backing out of the file choice or the option menu
 brings the pause menu back. In debug mode three more entries follow.
 
 The field calls `PauseMenu_Run` (`window/screens/debug.c`), which runs the
-choice: `Save_ToChosenFile`, the sleep message or `OptionMenu_Run`.
+choice: `Save_ToChosenFile`, the sleep message or `SettingsMenu_Run`.
 
 ### Saving
 
@@ -214,7 +214,7 @@ is written. Along with the game it writes a short summary for the file list
 stand. A file is 8 KB, written as two halves of 4 KB.
 
 `Save_ToChosenFile` (`window/screens/save.c`) does all of it; its file list,
-`FileMenu_SelectFile`, is the same one the title's Continue, Copy and Erase
+`FileList_SelectFile`, is the same one the title's Continue, Copy and Erase
 use.
 
 | Name | Value | Meaning |
@@ -233,7 +233,7 @@ brightness; Select steps through preset colours. A or Start keeps the
 settings, and B puts the old ones back, which is why the menu works on a copy
 of them until then.
 
-`OptionMenu_Run` (`window/window/options.c`) runs it, and `WindowColor_Apply`
+`SettingsMenu_Run` (`window/window/options.c`) runs it, and `WindowColor_Apply`
 recolours every window from a hue and a brightness.
 
 ## The name entry screen
@@ -297,7 +297,7 @@ so renaming one changes other folders too.
 - **text printer**: a `struct TextPrinter`, which types unpacked text into one
   window and runs its control codes (`TEXT_`).
 - **window sprite**: a `struct WindowSprite`, one sprite a window carries.
-- **file menu**: the list of the three save files (`FileMenu_SelectFile`).
+- **file menu**: the list of the three save files (`FileList_SelectFile`).
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
 
 ## Evidence

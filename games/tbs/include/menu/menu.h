@@ -41,7 +41,7 @@ struct PsynergyEntry;
 struct PlacementDescriptor;
 struct GlyphRect;
 struct WindowSprite;
-struct SelectionScreenWork;
+struct SelectionMenuWork;
 struct MenuCursor;
 struct Window;
 struct Work;
@@ -76,7 +76,7 @@ extern struct ActorSystemWork *gActorSystemWork;
 /// (String_FormatNumberToHalfwords) read it.
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
-extern struct SelectionScreenWork *gSelectionScreenWork;
+extern struct SelectionMenuWork *gSelectionMenuWork;
 #ifndef OWN_gTitleBattleOptionEnabled
 /// Read as a halfword: nonzero offers Battle on the main menu, when a file
 /// has any of game flags 48 to 127 set.
@@ -108,7 +108,7 @@ extern const u8 gMenu_HpString[];
 extern const u8 gMenu_LvString[];
 #endif
 /// The four Djinn sprites, one per element from Venus (90 to 93), that
-/// FileMenu_ShowDjinnSprites shows in a row.
+/// FileList_ShowDjinnSprites shows in a row.
 extern const s32 gMenu_PartySpriteResourceIds[4];
 /// `.`, the decimal point of an item's stat multiplier (`x1.2`).
 extern u8 gMenu_PointString[];
@@ -116,7 +116,7 @@ extern u8 gMenu_PointString[];
 extern const u8 gMenu_PpString[];
 /// The title menu's action by icon position, a row of 6 for each layout:
 /// 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send.
-extern s8 gFileMenu_ActionByPosition[];
+extern s8 gFileList_ActionByPosition[];
 /// Frames IconMenu_AnimateTo waits at each icon on its way, by icons still to
 /// go.
 extern u8 gMenu_SelectionStepDelays[];
@@ -134,9 +134,9 @@ extern const u8 gMenu_ShortcutRString[];
 extern const u8 gMenu_SlashString[];
 /// `x`, before an item's stat multiplier (not in Japanese).
 extern u8 gMenu_TimesString[];
-extern s8 gOptionMenu_SleepFrames[];
-extern s8 gOptionMenu_SpeechFrames[];
-extern s8 gOptionMenu_SpeedFrames[];
+extern s8 gSettingsMenu_SleepFrames[];
+extern s8 gSettingsMenu_SpeechFrames[];
+extern s8 gSettingsMenu_SpeedFrames[];
 /// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gStatusPanel_LevelString[];
 extern u8 gMenuCursor_BobX[];
@@ -153,11 +153,11 @@ extern u8 gDebugMenu_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gDebugMenu_StatusTitle[];
 /// The option menu's slider colours (slidpal).
-extern const u16 gOptionMenu_SliderPalette[];
+extern const u16 gSettingsMenu_SliderPalette[];
 /// The option menu's slider, 32 by 8 (slider.4bpp32x8).
-extern const u8 gOptionMenu_SliderTiles[];
+extern const u8 gSettingsMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
-struct AbilityDefinition *Ability_GetData(s32 actionId);
+struct AbilityDefinition *Ability_GetData(s32 abilityId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
 void Import_TitleShowCamelotLogo(s32 mode);

@@ -488,7 +488,7 @@ void GameFlag_RefreshLureCap(void) {
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
 /// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
-/// file menu (FileMenu_SelectFile, Save_BuildFileSummary) and the main
+/// file menu (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
   u8 *digits;

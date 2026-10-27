@@ -13,22 +13,22 @@
 /// with the heavy impact sound.
 ///
 /// Abilities: Demon Night (BATTLE_ANIM_DEMON_NIGHT).
-void BattleAnim_RunDemonNight(struct BattleAnimArgs *effect) {
-  BattleAnim_RunGatheringLights(effect, GATHERING_LIGHTS_DEMON_NIGHT);
+void BattleAnim_RunDemonNight(struct BattleAnimArgs *args) {
+  BattleAnim_RunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
 }
 /// Eight lights in Mars Djinn colours burst out of the user and are pulled into
 /// each target.
 ///
 /// Abilities: Rumble (BATTLE_ANIM_RUMBLE).
-void BattleAnim_RunRumble(struct BattleAnimArgs *effect) {
-  BattleAnim_RunGatheringLights(effect, GATHERING_LIGHTS_RUMBLE);
+void BattleAnim_RunRumble(struct BattleAnimArgs *args) {
+  BattleAnim_RunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
 }
 /// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 /// into each target.
 ///
 /// Abilities: Haunting (BATTLE_ANIM_HAUNTING).
-void BattleAnim_RunHaunting(struct BattleAnimArgs *effect) {
-  BattleAnim_RunGatheringLights(effect, GATHERING_LIGHTS_HAUNTING);
+void BattleAnim_RunHaunting(struct BattleAnimArgs *args) {
+  BattleAnim_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
@@ -49,7 +49,7 @@ void BattleAnim_RunHaunting(struct BattleAnimArgs *effect) {
 ///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
 ///       8 and 72, or 12 and 80, the animation running 20 frames more for each
 ///       target.
-void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunGatheringLights(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
@@ -64,7 +64,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
@@ -77,14 +77,14 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   else
     paletteId = (s32)&ResourceId_MercuryDjinnSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
 
   // The lights start at the top of the user's body and fly off in any
   // direction at up to 2 pixels a frame.
   ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
-  ANIM_FOR_EACH_TARGET(k, work->effect) {
-    struct Actor *src = GetBattleObjectSlotFar(work->effect->user)->actor;
-    s32 height = BattleUnit_GetEffectHeightFar(work->effect->user);
+  ANIM_FOR_EACH_TARGET(k, work->args) {
+    struct Actor *src = GetBattleObjectSlotFar(work->args->user)->actor;
+    s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
@@ -104,7 +104,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-                    work->effect->targetCount * 20;
+                    work->args->targetCount * 20;
        frame++) {
     s32 *row;
 
@@ -125,10 +125,10 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
-    ANIM_FOR_EACH_TARGET(k, work->effect) {
+    ANIM_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[k])->actor;
-      s32 half = BattleUnit_GetEffectHeightFar(work->effect->targets[k]) / 2;
+          GetBattleObjectSlotFar(work->args->targets[k])->actor;
+      s32 half = BattleUnit_GetEffectHeightFar(work->args->targets[k]) / 2;
 
       if (frame == k * 20 + 71) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
@@ -137,7 +137,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
           Sound_PlaySongFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
-        BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+        BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, k, 26);
       if (frame > k * 20) {
         for (i = 0; i != gGatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];

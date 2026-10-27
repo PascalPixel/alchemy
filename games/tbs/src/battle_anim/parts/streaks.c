@@ -33,41 +33,41 @@ enum StreakStyle {
 /// target flashes and recoils.
 ///
 /// Abilities: Sonic Wave (BATTLE_ANIM_SONIC_WAVE).
-void BattleAnim_RunSonicWave(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_EMBER);
+void BattleAnim_RunSonicWave(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_EMBER);
 }
 /// Three streaks of lime light fly from the user at each target in turn; each
 /// target flashes and recoils.
 ///
 /// Abilities: Shriek (BATTLE_ANIM_SHRIEK).
-void BattleAnim_RunShriek(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_LIME);
+void BattleAnim_RunShriek(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 /// Three streaks of violet light fly from the user at each target in turn; each
 /// target flashes and trembles.
 ///
 /// Abilities: Banshee Howl (BATTLE_ANIM_BANSHEE_HOWL).
-void BattleAnim_RunBansheeHowl(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_VIOLET);
+void BattleAnim_RunBansheeHowl(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_VIOLET);
 }
 /// Three flickering cyan streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and recoils.
 ///
 /// Abilities: War Cry (BATTLE_ANIM_WAR_CRY).
-void BattleAnim_RunWarCry(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_CYAN);
+void BattleAnim_RunWarCry(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_CYAN);
 }
 /// Three flickering red streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and trembles.
 ///
 /// Abilities: Wicked Howl (BATTLE_ANIM_WICKED_HOWL).
-void BattleAnim_RunWickedHowl(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_RED);
+void BattleAnim_RunWickedHowl(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_RED);
 }
 /// Unused: no entry of the animation table points here. It would have played
 /// the same lime streaks as Shriek.
-UNUSED void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *effect) {
-  BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_LIME);
+UNUSED void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *args) {
+  BattleAnim_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
 #define STREAKS_SPACING 6       ///< frames between streaks
@@ -88,7 +88,7 @@ UNUSED void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *effect) {
 ///
 /// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
 ///        cyan) and the row of gStreaks_Styles that says how a hit looks.
-void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunStreakVolley(struct BattleAnimArgs *args, s32 mode) {
   struct ScreenPoint position;
   void **slots;
   void **cursor;
@@ -108,12 +108,12 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
 
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
-  if (work->effect->side == ANIM_SIDE_ENEMIES) {
+  if (work->args->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_LIGHTEN);
     drawUpper = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
@@ -155,7 +155,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   // Halve the canvas each frame, so streaks leave a trail.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
   {
     // The length counts 6 frames for every streak although targets are 32
     // frames apart: with four targets the fourth's hit (frame 120) would fall
@@ -163,13 +163,12 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
     // 102, before the third target's second flash (104). Neither happens:
     // every ability that plays a streak volley has a range of 1 in
     // abilities.c, so it has one target.
-    s32 totalFrames =
-        streaks * work->effect->targetCount * STREAKS_SPACING + 48;
+    s32 totalFrames = streaks * work->args->targetCount * STREAKS_SPACING + 48;
 
     // Every streak starts 20 pixels above the user and moves in a straight
     // line to 20 pixels above its target over 24 frames.
-    ANIM_FOR_EACH_TARGET(k, work->effect) {
-      target = GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+    ANIM_FOR_EACH_TARGET(k, work->args) {
+      target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
         struct Particle *streak = &work->particles[k * streaks + streakIndex];
 
@@ -196,7 +195,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
       if (frame > totalFrames - 16)
         REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
       ANIM_VIEW_FROM_CAMERA(camera);
-      ANIM_FOR_EACH_TARGET(k, work->effect) {
+      ANIM_FOR_EACH_TARGET(k, work->args) {
         if (frame >= k * STREAKS_TARGET_DELAY) {
           for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
             if (frame >=
@@ -239,7 +238,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
             struct Actor *struck =
-                GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+                GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
             struck->x.fixed +=
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
@@ -248,8 +247,8 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               struck->x.fixed += 0x8000;
             else
               struck->x.fixed -= 0x8000;
-            BattleAnim_TintBattler(work->effect->targets[k], -1, POSE_DAMAGE,
-                                   -1, 0);
+            BattleAnim_TintBattler(work->args->targets[k], -1, POSE_DAMAGE, -1,
+                                   0);
           }
 
           // The hit: the first streak plays the hit sound and flashes the
@@ -260,18 +259,18 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               Sound_PlaySongFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 ANIM_SHOW_DAMAGE(-1);
-              BattleAnim_TintBattler(work->effect->targets[k],
-                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, k, 8);
             }
             if (frame == k * STREAKS_TARGET_DELAY + 40)
-              BattleAnim_TintBattler(work->effect->targets[k],
-                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, k, 8);
           }
           // The style's recoil motion, with a camera shake.
           if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
               frame == k * STREAKS_TARGET_DELAY + 24) {
             work->shakeFrames = 4;
-            BattleMotion_ApplyKnockbackFar(work->effect->targets[k],
+            BattleMotion_ApplyKnockbackFar(work->args->targets[k],
                                            STREAKS_VALUE(mode, STREAKS_MOTION));
           }
         }
@@ -297,15 +296,15 @@ enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 /// field onto the targets, and each target flinches in turn.
 ///
 /// Abilities: Sleep Star (BATTLE_ANIM_SLEEP_STAR).
-void BattleAnim_RunSleepStar(struct BattleAnimArgs *effect) {
-  BattleAnim_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
+void BattleAnim_RunSleepStar(struct BattleAnimArgs *args) {
+  BattleAnim_RunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
 }
 /// Orange healing motes burst out of the user and float up close to it, and
 /// each target glows in turn with the recovery sound.
 ///
 /// Abilities: Soothing Star (BATTLE_ANIM_SOOTHING_STAR).
-void BattleAnim_RunSoothingStar(struct BattleAnimArgs *effect) {
-  BattleAnim_RunMoteFountain(effect, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
+void BattleAnim_RunSoothingStar(struct BattleAnimArgs *args) {
+  BattleAnim_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
@@ -323,7 +322,7 @@ void BattleAnim_RunSoothingStar(struct BattleAnimArgs *effect) {
 ///       healing animation); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
 ///       palette that drift across towards the far side of the field, and
 ///       each target flinches (an attack).
-void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunMoteFountain(struct BattleAnimArgs *args, s32 mode) {
   s32 worldPoint[3];
   struct ScreenPoint position;
   struct BattleAnimWork *work;
@@ -341,7 +340,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleAnim_StartCanvasLayer(0);
   else
@@ -364,7 +363,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode
   // halves the spread across the ground. In pixels a frame: up to 4 across,
   // up to 8 in depth, and -0.25 to 1.75 up.
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;
     s32 angle;
@@ -426,20 +425,20 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
     }
     // Each target reacts in turn, and the battle shows its result.
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == i * 8 + 48) {
           ANIM_SHOW_DAMAGE(-1);
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
         }
       }
     } else {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == i * 8 + 48) {
           Sound_PlaySongFar(SE_RECOVERY);
           ANIM_SHOW_DAMAGE(-1);
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                 -1, i, 8);
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
+                                 i, 8);
         }
       }
     }

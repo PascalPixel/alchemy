@@ -180,15 +180,15 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
-/// Sends unit actorId three quarters of the way to unit targetId, arriving
+/// Sends unit unitId three quarters of the way to unit targetId, arriving
 /// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
 /// (16.16 pixels a frame), in POSE_LEAP.
 /// Called by BattleStaging_RunAttack, BattleStaging_RunPlainAttack
 /// and AutoBattle_RunApproachAttack, and through its far stub by the
 /// Bind, burst animation, Annihilation, target motes and Thrash effects.
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
+void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
-  struct BattleObject *actorSlot = BattleObject_Get(actorId);
+  struct BattleObject *actorSlot = BattleObject_Get(unitId);
   struct BattleObject *targetSlot = BattleObject_Get(targetId);
   struct Actor *actor = actorSlot->actor;
   struct Actor *target = targetSlot->actor;
@@ -307,7 +307,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
 /// ElementGlow_Play, and through its far stub by
-/// Projection_ScaledUnit and SelectionScreen_Draw.
+/// Projection_ScaledUnit and SelectionMenu_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);

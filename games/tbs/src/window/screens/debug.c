@@ -340,7 +340,7 @@ s32 PauseMenu_Run(void) {
     FieldMessage_Show(MsgSleepMode, FIELD_MESSAGE_ZOOM);
     gSleepRequested = result;
   } else if (result == PAUSE_MENU_CHANGE_SETTINGS) {
-    if (OptionMenu_Run() == -1) {
+    if (SettingsMenu_Run() == -1) {
       return PauseMenu_Run();
     }
   }

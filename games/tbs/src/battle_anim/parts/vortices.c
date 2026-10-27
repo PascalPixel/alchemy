@@ -13,7 +13,7 @@
 /// The tornado pictures follow the six glint cells (gBattleAnim_GlintCells)
 /// in the sheet: 40x32 sections, the top and bottom ones' three frames
 /// interleaved, then the middle one's.
-#define WHIRLWIND_TORNADO_CELLS 0xc56
+#define WHIRLWIND_TORNADO_OFFSETS 0xc56
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
 
 /// Motes fly out of the top of the user, hang, and from 48 frames after each
@@ -33,7 +33,7 @@
 /// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
 /// through BattleCamera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
 /// which it removes before it returns.
-void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
+void BattleAnim_RunFroth(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   struct BattleAnimWork *work;
   void *canvas;
@@ -54,7 +54,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   flags = (s8 *)Ram_MapGridCellBuffer;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -66,8 +66,8 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
                     COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE_2);
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
-  y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->effect->user);
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
   // The motes start at the top of the user, flying out up to 4 pixels a
   // frame across and up to 2 up; variant -1 means no burst yet.
   for (i = 0; i != FROTH_MOTES; i++) {
@@ -80,9 +80,9 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
     flags[i] = 0;
   }
   // Where each target stands, on the ground.
-  ANIM_FOR_EACH_TARGET(i, work->effect) {
+  ANIM_FOR_EACH_TARGET(i, work->args) {
     seat = &work->particles[FROTH_FIRST_TARGET + i];
-    actor = GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+    actor = GetBattleObjectSlotFar(work->args->targets[i])->actor;
     SET_POSITION(seat, actor->x.fixed, 0, actor->z.fixed);
   }
   work->cameraDelta = 0;
@@ -92,8 +92,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_SCATTER);
 
-  for (frame = 0;
-       frame != gVortices_Counts[work->effect->variant][FROTH_FRAMES];
+  for (frame = 0; frame != gVortices_Counts[work->args->variant][FROTH_FRAMES];
        frame++) {
     // The camera swings 0x180 of yaw a frame over frames 17 to 63.
     camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
@@ -103,10 +102,10 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
       work->cameraDelta = 0;
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
-    if (frame == gVortices_Counts[work->effect->variant][FROTH_FRAMES] - 16)
+    if (frame == gVortices_Counts[work->args->variant][FROTH_FRAMES] - 16)
       ANIM_SHOW_DAMAGE(SE_WATER);
     ANIM_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != gVortices_Counts[work->effect->variant][FROTH_MOTE_COUNT];
+    for (i = 0; i != gVortices_Counts[work->args->variant][FROTH_MOTE_COUNT];
          i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {
@@ -124,8 +123,8 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
       // to it a frame and damped to 60/64 until frame 2i + 85. Seats are on
       // the ground (y 0), so a mote strikes when it falls below it.
       if (frame > i * 2 + 48 && flags[i] == 0) {
-        target = &work->particles[FROTH_FIRST_TARGET +
-                                  i % work->effect->targetCount];
+        target =
+            &work->particles[FROTH_FIRST_TARGET + i % work->args->targetCount];
         point->velocityX += (target->x - point->x) >> 9;
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
@@ -142,11 +141,10 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
           point->x = screenPosition.x;
           point->y = screenPosition.y + (Random16() & 31) - 16;
           BattleAnim_TintBattler(
-              work->effect->targets[i % work->effect->targetCount],
-              SPRITE_COLOR_WHITE, POSE_DAMAGE, i % work->effect->targetCount,
-              4);
+              work->args->targets[i % work->args->targetCount],
+              SPRITE_COLOR_WHITE, POSE_DAMAGE, i % work->args->targetCount, 4);
           BattleMotion_ApplyKnockbackFar(
-              work->effect->targets[i % work->effect->targetCount],
+              work->args->targets[i % work->args->targetCount],
               KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_WATER);
@@ -162,8 +160,8 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
         point->variant++;
       }
     }
-    BattleCamera_Shake(work->effect->variant * 2 + 2,
-                       work->effect->variant * 2 + 2);
+    BattleCamera_Shake(work->args->variant * 2 + 2,
+                       work->args->variant * 2 + 2);
     // Tell BattleCamera_ApplyPhasedDelta a frame has ended.
     if (work->cameraPhase == CAMERA_PHASE_IDLE)
       work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
@@ -189,7 +187,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
 /// palette into the first 64 background colours, fades the canvas in and out
 /// through REG_BLDALPHA and keeps work->shakeFrames at 1 so the screen shakes
 /// every frame.
-void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
+void BattleAnim_RunWhirlwind(struct BattleAnimArgs *args) {
   BlitterPair draw;
   void **slots;
   void **cursor;
@@ -209,7 +207,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
@@ -248,7 +246,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     // The sweep sways 16 pixels each way, once every 64 frames, about a
     // point 32 pixels right of the canvas's x 40 when the targets are the
     // party, left otherwise.
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       wave += 0x200000;
     else
       wave -= 0x200000;
@@ -261,10 +259,9 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     // row's WHIRLWIND_SWAY pixels once every 32 frames, a quarter turn apart
     // and bobbing 2 pixels, with four glints; the sections change picture
     // every 2 frames.
-    for (i = 0;
-         i != gVortices_Shapes[work->effect->variant][WHIRLWIND_TORNADOES];
+    for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = ((gVortices_Shapes[work->effect->variant][WHIRLWIND_SWAY] *
+      x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
                 Trig_Sin((frame << 11) + i * 0x4000) +
             wave) >>
            16) +
@@ -273,15 +270,15 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
-                  WHIRLWIND_TORNADO_CELLS,
+                  WHIRLWIND_TORNADO_OFFSETS,
               x, y + 16, 40, 32);
       draw[0](canvas,
               work->sheet + segment * WHIRLWIND_SECTION_BYTES +
-                  (WHIRLWIND_TORNADO_CELLS + 6 * WHIRLWIND_SECTION_BYTES),
+                  (WHIRLWIND_TORNADO_OFFSETS + 6 * WHIRLWIND_SECTION_BYTES),
               x, y + 48, 40, 32);
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
-                  (WHIRLWIND_TORNADO_CELLS + WHIRLWIND_SECTION_BYTES),
+                  (WHIRLWIND_TORNADO_OFFSETS + WHIRLWIND_SECTION_BYTES),
               x, y + 80, 40, 32);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
@@ -303,20 +300,20 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
       }
     }
     // Target j reels 3j frames after each flash.
-    ANIM_FOR_EACH_TARGET(j, work->effect) {
+    ANIM_FOR_EACH_TARGET(j, work->args) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, j, 4);
-          BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
+          BattleMotion_ApplyKnockbackFar(work->args->targets[j],
                                          KNOCKBACK_BOUNCE);
         }
       }
     }
     work->shakeFrames = 1;
-    BattleCamera_Shake(
-        gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE],
-        gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE] * 2);
+    BattleCamera_Shake(gVortices_Shapes[work->args->variant][WHIRLWIND_SHAKE],
+                       gVortices_Shapes[work->args->variant][WHIRLWIND_SHAKE] *
+                           2);
     ANIM_END_FRAME(work);
   }
 
@@ -328,5 +325,5 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
 #undef FROTH_MOTE_CELL
 #undef FROTH_FIRST_TARGET
 #undef FROTH_MOTES
-#undef WHIRLWIND_TORNADO_CELLS
+#undef WHIRLWIND_TORNADO_OFFSETS
 #undef WHIRLWIND_SECTION_BYTES

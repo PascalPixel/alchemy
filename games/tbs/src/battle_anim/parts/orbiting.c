@@ -19,7 +19,7 @@
 /// though only 64 are drawn.
 ///
 /// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1).
-UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *effect) {
+UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -32,10 +32,10 @@ UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *effect) {
   s32 frame;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  BattleAnim_FetchRectangleBlitters(work->effect->side ^ 1, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
@@ -150,7 +150,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
   // party.
-  if (work->effect->side == ANIM_SIDE_ENEMIES)
+  if (work->args->side == ANIM_SIDE_ENEMIES)
     xOffset = 0;
   else
     xOffset = -112;
@@ -170,13 +170,13 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
     step->velocityX = 0;
     step->z = 4;
   }
-  for (frame = 0; frame != work->effect->targetCount * 16 + 64; frame++) {
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
+  for (frame = 0; frame != work->args->targetCount * 16 + 64; frame++) {
+    ANIM_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor;
       u32 memberFrame;
 
-      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
-      Projection_ScaledUnit(work->effect->targets[member], &screen);
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      Projection_ScaledUnit(work->args->targets[member], &screen);
       memberFrame = frame - member * 16;
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
@@ -220,7 +220,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
 }
 
 /// The burst picture in the sheet, after the smoke.
-#define TARGET_BURSTS_CELLS 0x1b00
+#define TARGET_BURSTS_OFFSETS 0x1b00
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -230,7 +230,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
 ///
 /// Nothing calls it. Copies the pink burst palette over the first 128 bytes
 /// of BG palette RAM, uses work->particles six to a target.
-UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
+UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -245,11 +245,11 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
   s32 point[3];
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
-                             work->sheet + TARGET_BURSTS_CELLS, 0, 0);
+                             work->sheet + TARGET_BURSTS_OFFSETS, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
@@ -286,13 +286,13 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
     struct BattleCamera *camera;
 
     camera = gBattleCamera;
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct Actor *effect;
+    ANIM_FOR_EACH_TARGET(member, work->args) {
+      struct Actor *args;
 
-      effect = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+      args = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       ANIM_VIEW_FROM_CAMERA(camera);
       // Centred 20 pixels above the target's feet.
-      SET_VECTOR(point, effect->x.fixed, 160 << 13, effect->z.fixed);
+      SET_VECTOR(point, args->x.fixed, 160 << 13, args->z.fixed);
       Transform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *puff;
@@ -310,7 +310,8 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
           screen.x >>= 1;
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, 0x800);
-            drawBurst(canvas, work->sheet + cell * 0x480 + TARGET_BURSTS_CELLS,
+            drawBurst(canvas,
+                      work->sheet + cell * 0x480 + TARGET_BURSTS_OFFSETS,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, 0x200);
@@ -328,5 +329,5 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
 
 #undef SWIRLING_STARS_FRAMES
 #undef SWIRLING_STARS_COUNT
-#undef TARGET_BURSTS_CELLS
+#undef TARGET_BURSTS_OFFSETS
 #undef TARGET_BURSTS_FRAMES

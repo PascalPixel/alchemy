@@ -539,7 +539,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 }
 
 // With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE,
-// because gFileMenu_ActionByPosition lists Battle before Send in every row.
+// because gFileList_ActionByPosition lists Battle before Send in every row.
 // XXX: whether that can happen, which needs a file cleared with no Djinni
 // found (flags 48-127 clear); a play that walks past Flint's ground on the
 // world map (MB_WORLD_MAP_FLINT) without meeting him would show whether he can
@@ -552,7 +552,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Game or Copy with three; with every file cleared no Continue, and only Erase
 /// with three such files. Battle and Send follow when enabled.
 /// The file menu runs it (menu/main_menu.c).
-s32 FileMenu_SelectAction(void) {
+s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;
   s32 initial;
@@ -597,7 +597,7 @@ s32 FileMenu_SelectAction(void) {
   result = IconMenu_Run(initial);
   IconMenu_Close();
   if (result >= 0) {
-    result = gFileMenu_ActionByPosition[result + (group * 6)];
+    result = gFileList_ActionByPosition[result + (group * 6)];
   }
   return result;
 }

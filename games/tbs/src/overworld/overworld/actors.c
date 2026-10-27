@@ -40,7 +40,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 /// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
-/// Called by FileMenu_ShowPartySprites through
+/// Called by FileList_ShowPartySprites through
 /// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
 /// so this never gives sprite 0x11.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {

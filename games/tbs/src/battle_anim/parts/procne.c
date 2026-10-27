@@ -6,8 +6,8 @@
 
 /// The whirlwind sheet holds three 48x64 frames, then the dust; the violet
 /// comets are decoded further on.
-#define PROCNE_DUST_CELLS (3 * (48 * 64))
-#define PROCNE_COMET_CELLS 0x3600
+#define PROCNE_DUST_OFFSETS (3 * (48 * 64))
+#define PROCNE_COMET_OFFSETS 0x3600
 
 /// A whirlwind lifts the targets, then comets from a block of objects in a
 /// violet sky strike them.
@@ -38,7 +38,7 @@
 /// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
 /// objects of the block on frame 160 and releases them before closing the
 /// canvas.
-void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
+void BattleAnim_RunProcne(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
   void *canvas;
@@ -79,7 +79,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   camera = CANVAS_SLOT(slots, HEAP_SLOT_CAMERA);
   work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  work->effect = effect;
+  work->args = args;
 
   BattleAnim_StartCanvasLayer(0);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
@@ -108,8 +108,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   // Remember each target's place, and its heading and distance from the
   // middle of the field for the whirlwind to turn. The distance is in half
   // pixels: the root of the 8.8 squares is 8.8, and >> 7 keeps one more bit.
-  ANIM_FOR_EACH_TARGET(index, work->effect) {
-    battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
+  ANIM_FOR_EACH_TARGET(index, work->args) {
+    battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
     actor = battleObject->actor;
     home[index].x = actor->x.fixed;
     home[index].y = actor->z.fixed;
@@ -169,9 +169,9 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
     // in, rising quickly once near it, until frame 160; they keep turning
     // until frame 490 (past the end), fall on frame 395 and flash on each
     // comet strike.
-    ANIM_FOR_EACH_TARGET(index, work->effect) {
+    ANIM_FOR_EACH_TARGET(index, work->args) {
       if (frame > index * 16) {
-        battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
+        battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
         // Plain words: through .fixed, the union moves a spill.
         *(s32 *)&actor->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
@@ -205,7 +205,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
         do {
           if (frame == gProcne_Frames[slot]) {
             actor->velocityY = 0;
-            BattleAnim_TintBattler(work->effect->targets[index],
+            BattleAnim_TintBattler(work->args->targets[index],
                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
           }
           slot++;
@@ -261,7 +261,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
           // Always true: a mote restarts once past 48 pixels up, and climbs
           // little more than 2 pixels a frame.
           if (point[index].y <= 0x3fffff) {
-            draw[0](canvas, work->sheet + PROCNE_DUST_CELLS, screen.x - 12,
+            draw[0](canvas, work->sheet + PROCNE_DUST_OFFSETS, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
           if (point[index].z > 24)
@@ -299,13 +299,13 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
                                (s32)&ResourceId_VioletSkyBackdrop, 0);
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   (s32)&ResourceId_VioletSkyBackdrop, 8);
-      BattleAnim_SelectLivingTargets(work->effect);
+      BattleAnim_SelectLivingTargets(work->args);
       BattleAnim_SpawnObjects(9, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
       resource += 0x80;
-      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_CELLS);
+      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_OFFSETS);
 
       index = 0;
       do {
@@ -313,8 +313,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
         index++;
       } while (index != 512);
 
-      ANIM_FOR_EACH_TARGET(index, work->effect) {
-        battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
+      ANIM_FOR_EACH_TARGET(index, work->args) {
+        battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
         actor->y.fixed = ((Random16() & 15) + 8) << 16;
       }
@@ -339,7 +339,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
       // 8 pixels out, turning 6000/65536 turn a frame, about a full turn
       // every 11 frames.
-      ANIM_FOR_EACH_TARGET(index, work->effect) {
+      ANIM_FOR_EACH_TARGET(index, work->args) {
         radius[index] = 16;
         spin[index] = 6000;
       }
@@ -580,10 +580,10 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
   // Put the targets back.
-  ANIM_FOR_EACH_TARGET(index, work->effect) {
+  ANIM_FOR_EACH_TARGET(index, work->args) {
     struct Actor *actor;
 
-    battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
+    battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
     actor = battleObject->actor;
     actor->x.fixed = home[index].x;
     actor->z.fixed = home[index].y;
@@ -603,5 +603,5 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-#undef PROCNE_DUST_CELLS
-#undef PROCNE_COMET_CELLS
+#undef PROCNE_DUST_OFFSETS
+#undef PROCNE_COMET_OFFSETS

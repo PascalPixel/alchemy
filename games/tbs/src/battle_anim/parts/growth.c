@@ -12,11 +12,11 @@
 // mirrored about its x. Both animations fade out over their last 16 frames.
 
 /// The dust pictures in the vine sheet, after the vines.
-#define GROWING_COLUMNS_VINE_DUST_CELLS 0x1e59
+#define GROWING_COLUMNS_VINE_DUST_OFFSETS 0x1e59
 /// The dust pictures in the pillar sheet, after the pillars.
-#define GROWING_COLUMNS_PILLAR_DUST_CELLS 0xaff
+#define GROWING_COLUMNS_PILLAR_DUST_OFFSETS 0xaff
 /// The small thorn in the thorn sheet, after the 48x80 big one.
-#define THORN_SMALL_CELLS (48 * 80)
+#define THORN_SMALL_OFFSETS (48 * 80)
 
 /// What the growing columns grow (BattleAnim_RunGrowingColumns).
 enum GrowingColumnsMode {
@@ -39,8 +39,8 @@ struct ParticleGrowthColumnView {
 /// Vines grow from the ground, scattering dust from each root.
 ///
 /// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_ANIM_GROWTH).
-void BattleAnim_RunGrowth(struct BattleAnimArgs *effect) {
-  BattleAnim_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
+void BattleAnim_RunGrowth(struct BattleAnimArgs *args) {
+  BattleAnim_RunGrowingColumns(args, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
@@ -49,8 +49,8 @@ void BattleAnim_RunGrowth(struct BattleAnimArgs *effect) {
 /// Punji Strike's row of gAbilityAnimations gives the stronger variant, as
 /// Punji Trap's does, so no ability plays BATTLE_ANIM_PUNJI's strongest
 /// variant.
-void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
-  BattleAnim_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
+void BattleAnim_RunPunji(struct BattleAnimArgs *args) {
+  BattleAnim_RunGrowingColumns(args, GROWING_COLUMNS_PILLARS);
 }
 /// Vines or green pillars grow one every 4 frames,
 /// alternately mirrored, each throwing up dust from its root.
@@ -72,7 +72,7 @@ void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The animation runs
 ///         4 frames a column and 56 more.
-void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *args, s32 mode) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -110,7 +110,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   s32 image;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
@@ -120,7 +120,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
@@ -135,7 +135,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   draw = rectangle;
   draw[1] = secondSlot;
 
-  duration = gGrowth_ColumnCounts[work->effect->variant] * 4 + 56;
+  duration = gGrowth_ColumnCounts[work->args->variant] * 4 + 56;
 
   // Mark the dust free (variant -1): 1024 entries, though only the first 512
   // are used.
@@ -189,7 +189,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
       // The columns, the targets' reactions and the dust they throw up.
       if (frame < fadeEnd) {
         i = 0;
-        if (gGrowth_ColumnCounts[work->effect->variant] != 0) {
+        if (gGrowth_ColumnCounts[work->args->variant] != 0) {
           do {
             column = (struct ParticleGrowthColumnView
                           *)((u8 *)work->particles +
@@ -238,18 +238,18 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
             // The targets react 4 frames after the column starts to grow,
             // with a sound for even columns only.
             n = 0;
-            if (work->effect->targetCount != 0) {
+            if (work->args->targetCount != 0) {
               reactFrame = start + 4;
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
                     Sound_PlaySongFar(SE_IMPACT);
                   }
-                  BattleAnim_TintBattler(work->effect->targets[n],
+                  BattleAnim_TintBattler(work->args->targets[n],
                                          SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
                 }
                 n++;
-              } while (n != work->effect->targetCount);
+              } while (n != work->args->targetCount);
             } else {
               reactFrame = start + 4;
             }
@@ -275,7 +275,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
               }
             }
             i++;
-          } while (i != gGrowth_ColumnCounts[work->effect->variant]);
+          } while (i != gGrowth_ColumnCounts[work->args->variant]);
         }
       }
 
@@ -287,9 +287,9 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
         puffAge = puff->variant;
         if (puffAge >= 0) {
           image = puffAge / 2;
-          puffCells = GROWING_COLUMNS_VINE_DUST_CELLS;
+          puffCells = GROWING_COLUMNS_VINE_DUST_OFFSETS;
           if (mode != GROWING_COLUMNS_VINES) {
-            puffCells = GROWING_COLUMNS_PILLAR_DUST_CELLS;
+            puffCells = GROWING_COLUMNS_PILLAR_DUST_OFFSETS;
           }
           ((DrawRectangle)rectangle[0])(
               canvas, work->sheet + (gGrowth_PuffCells[image] + puffCells),
@@ -333,7 +333,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
 /// A Djinni appears first (BattleAnim_RunDjinniEntrance). work->particles
 /// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
 /// work->shakeFrames.
-void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
+void BattleAnim_RunVine(struct BattleAnimArgs *args) {
   u32 *slots, *cursor;
   struct BattleAnimWork *work;
   void *canvas;
@@ -347,9 +347,9 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
   cursor = slots;
   work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
-  work->effect = effect;
-  BattleAnim_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
-                               effect->side, DJINNI_ANCHOR_CENTRE, &originX,
+  work->args = args;
+  BattleAnim_RunDjinniEntrance(args, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
+                               args->side, DJINNI_ANCHOR_CENTRE, &originX,
                                &originY);
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -359,8 +359,8 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
 
   // Put the point halfway between the first and last targets at canvas x
   // 64.
-  Projection_ScaledUnit(work->effect->targets[0], &first);
-  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+  Projection_ScaledUnit(work->args->targets[0], &first);
+  Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   middle = first.x;
   middle += (last.x - middle) / 2;
@@ -385,8 +385,8 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
     // No ANIM_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
       Sound_PlaySongFar(SE_CRACK);
-      ANIM_FOR_EACH_TARGET(i, work->effect)
-      BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+      ANIM_FOR_EACH_TARGET(i, work->args)
+      BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, i, 16);
     }
     i = 0;
@@ -440,7 +440,7 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
 /// REG_BLDALPHA and, on ANIM_SIDE_PARTY, REG_BG2X; sets work->shakeFrames as
 /// each thorn appears.
-void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
+void BattleAnim_RunThorn(struct BattleAnimArgs *args) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -458,13 +458,13 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   cursor = slots;
   work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
@@ -477,7 +477,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   drawFlip =
       ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
+  frameCount = gGrowth_Counts[work->args->variant] * 8 + 56;
 
   // Mark the dust free: 1024 entries, though only the first 64 are used.
   for (i = 0; i != 1024; i++) {
@@ -495,7 +495,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
       REG_BLDALPHA = BLEND_ALPHA(frameCount - frame - 1, 16);
     }
 
-    for (i = 0; i != gGrowth_Counts[work->effect->variant]; i++) {
+    for (i = 0; i != gGrowth_Counts[work->args->variant]; i++) {
       start = i * 8 + 8;
       age = frame - (i * 8 + 8);
       if (frame > start) {
@@ -531,10 +531,10 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
             lean = 8;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet + THORN_SMALL_CELLS,
+            drawFlip(canvas, work->sheet + THORN_SMALL_OFFSETS,
                      gGrowth_X[i] - lean, 108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + THORN_SMALL_CELLS, gGrowth_X[i] + lean,
+            draw(canvas, work->sheet + THORN_SMALL_OFFSETS, gGrowth_X[i] + lean,
                  108 - height, 32, height);
           }
         }
@@ -562,10 +562,10 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
           }
         }
       }
-      ANIM_FOR_EACH_TARGET(j, work->effect) {
+      ANIM_FOR_EACH_TARGET(j, work->args) {
         if (frame == start + 4) {
           Sound_PlaySongFar(SE_WATER);
-          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, j, 3);
         }
       }
@@ -595,8 +595,8 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-#undef GROWING_COLUMNS_VINE_DUST_CELLS
-#undef GROWING_COLUMNS_PILLAR_DUST_CELLS
-#undef THORN_SMALL_CELLS
+#undef GROWING_COLUMNS_VINE_DUST_OFFSETS
+#undef GROWING_COLUMNS_PILLAR_DUST_OFFSETS
+#undef THORN_SMALL_OFFSETS
 #undef VINE_COLUMNS
 #undef VINE_FRAMES

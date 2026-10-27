@@ -3,9 +3,9 @@
 	.global FarCall_BattleAnimTable
 FarCall_BattleAnimTable:
 	export BattleAnim_BuildBlitterFar, BattleAnim_BuildBlitter
-	export BattleAnim_DispatchByIdRangeFar, BattleAnim_DispatchByIdRange
-	export BattleAnim_RunSummonEffectFar, BattleAnim_RunSummonEffect
-	export BattleAnim_RunTableEffectFar, BattleAnim_RunTableEffect
+	export BattleAnim_RunByIdRangeFar, BattleAnim_RunByIdRange
+	export BattleAnim_RunSummonFar, BattleAnim_RunSummon
+	export BattleAnim_RunFromTableFar, BattleAnim_RunFromTable
 	export BattleAnim_RunElementPillarFar, BattleAnim_RunElementPillar
 	export BattleAnim_RunShatteringOpeningFar, BattleAnim_RunShatteringOpening
 	export BattleAnim_RunElementBurstFar, BattleAnim_RunElementBurst

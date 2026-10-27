@@ -56,7 +56,7 @@ void TextPrinter_RunAll(void) {
       if (flags == 0) {
         printer->window = NULL;
       } else {
-        s32 pending = current->effect;
+        s32 pending = current->animation;
         s32 step;
 
         if (pending != 0) {
@@ -315,7 +315,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
         // (Window_StepSwellEffect counts it down); typing then resumes after
         // the operand.
         printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
-        printer->window->effect = work->textBuffer[printer->textIndex];
+        printer->window->animation = work->textBuffer[printer->textIndex];
         printer->countdown = 10;
         printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
         break;

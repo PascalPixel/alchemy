@@ -161,7 +161,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 memberId);
 s32 PsynergyMenu_ReturnTrue(void);
 void PsynergyMenu_NoOp(void);
 s32 PsynergyMenu_SelectTarget(s32 targetMode);
-s32 PsynergyMenu_SetShortcut(s32 memberId, s32 actionId, s32 shortcutIndex);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex);
 s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);

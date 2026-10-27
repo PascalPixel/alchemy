@@ -9,10 +9,10 @@
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 0xc58))
 
 /// The particle sprites, after the light fan pictures.
-#define THOR_SPRITES_CELLS 0x1800
+#define THOR_SPRITES_OFFSETS 0x1800
 
 /// The violet mote in the second part's sheet.
-#define THOR_MOTE_CELLS 0x6000
+#define THOR_MOTE_OFFSETS 0x6000
 
 #define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
 #define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
@@ -77,7 +77,7 @@
 /// BattleAnim_RunImpactBurst builds and frees its own blitters and transfer
 /// and overwrites work->particles and PARTICLES 0 to 63. Closes the canvas
 /// layer.
-void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
+void BattleAnim_RunThor(struct BattleAnimArgs *args) {
   // The three lines' end points, in pairs: x and z on a plane, 96 being its
   // centre. One line runs across at z 135 and two meet at (96, 32).
   static s16 points[6][2] = {
@@ -112,14 +112,14 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_BACKGROUND];
   canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
-  work->effect = effect;
+  work->args = args;
   // Open the canvas and load the pictures. The light fan sheet is loaded
   // twice, to the same place; the second load changes nothing.
   ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
-                             work->sheet + THOR_SPRITES_CELLS, 0, 0);
+                             work->sheet + THOR_SPRITES_OFFSETS, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // Eight copies of the dot pictures, each with its colour levels capped 7
@@ -375,7 +375,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   view->busy = 0;
   Task_Remove(BattleAnim_AdvanceScrollOnInterval);
   BattleAnim_SetupBlendedDisplay();
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   // Nine objects of SPRITE_THOR, the formation (SUMMON_FORMATION_THOR),
   // released at the end.
   BattleAnim_SpawnObjects(9, SPRITE_THOR, 1);
@@ -384,7 +384,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
-                             work->sheet + THOR_MOTE_CELLS, 1, 0);
+                             work->sheet + THOR_MOTE_OFFSETS, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
@@ -455,10 +455,10 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
       }
       // The pillar strikes every target on frame 10.
       if (frame == 10) {
-        ANIM_FOR_EACH_TARGET(i, work->effect) {
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+        ANIM_FOR_EACH_TARGET(i, work->args) {
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
-          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                          KNOCKBACK_HURL);
         }
       }
@@ -492,11 +492,11 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
               THOR_LAUNCH_SPARKS(spark, j, 0x100000, 0x500000,
                                  Random16() & 0xffff, 16);
               work->shakeFrames = 8;
-              ANIM_FOR_EACH_TARGET(j, work->effect) {
-                BattleAnim_TintBattler(work->effect->targets[j],
+              ANIM_FOR_EACH_TARGET(j, work->args) {
+                BattleAnim_TintBattler(work->args->targets[j],
                                        gThor_TargetPalettes[Random16() & 3],
                                        POSE_DAMAGE, j, 4);
-                BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
+                BattleMotion_ApplyKnockbackFar(work->args->targets[j],
                                                KNOCKBACK_HURL);
               }
             }
@@ -517,27 +517,28 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
-                                            work->sheet + THOR_MOTE_CELLS,
+                                            work->sheet + THOR_MOTE_OFFSETS,
                                             moteX + 60, moteY - 24, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-        ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-            canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY - 24, 12, 24);
+        ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
+                                            work->sheet + THOR_MOTE_OFFSETS,
+                                            mirrorX, moteY - 24, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-            canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY, 12, 24);
+            canvas, work->sheet + THOR_MOTE_OFFSETS, moteX + 60, moteY, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-            canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
+            canvas, work->sheet + THOR_MOTE_OFFSETS, mirrorX, moteY, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         // Four sparks a frame from the right-hand copies, in any direction,
         // at 64 to 127 128ths of a pixel a frame (twice that up and down),
@@ -651,7 +652,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
 }
 
 #undef THOR_PARTICLES
-#undef THOR_MOTE_CELLS
+#undef THOR_MOTE_OFFSETS
 #undef THOR_PARTICLE_COUNT
 #undef THOR_DIMMED_DOTS
 #undef THOR_DIMMED_DOT_BYTES
@@ -661,4 +662,4 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
 #undef THOR_BOLT_SIZE
 #undef THOR_BOLT_BYTES
 #undef THOR_LAUNCH_SPARKS
-#undef THOR_SPRITES_CELLS
+#undef THOR_SPRITES_OFFSETS

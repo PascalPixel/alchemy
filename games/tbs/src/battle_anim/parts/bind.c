@@ -126,7 +126,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
 /// each frame through BattleAnim_UpdatePhasePalette, raises
 /// work->transferValue every 16 frames, keeps the triangle's corners in
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
-void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
+void BattleAnim_RunBind(struct BattleAnimArgs *args) {
   struct ScreenPoint anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
@@ -160,10 +160,10 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
-  if (work->effect->prelude == 1)
-    BattleAnim_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
+  if (work->args->prelude == 1)
+    BattleAnim_RunDjinniEntrance(args, ELEMENT_JUPITER, work->args->side,
                                  DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
   REG_BG2PA = Q_8_8(1);
 
@@ -182,12 +182,12 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   Decompress_TaggedLz(palette, work->sheet + 0x2000);
   // 4 off every pixel each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-  Projection_ScaledUnit(work->effect->targets[0], &anchor);
+  Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlaySongFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     // Frame loop: 20 frames a target and 72 more, though only the first
     // target is drawn.
     if (frame == 64)
@@ -198,13 +198,13 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
     // The Djinni sways 20 pixels either way, once every 32 frames, and from
     // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
     // a second time, additively, so it flashes in.
-    if (work->effect->prelude == 1) {
+    if (work->args->prelude == 1) {
       s32 x;
       s32 y;
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + originX + shift - 20;
       y = (((Trig_Cos(frame << 11) * 4)) >> 16) + originY - 24;
-      BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+      BattleAnim_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
@@ -225,7 +225,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = actor->x.fixed;
@@ -293,7 +293,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
 }
 
 /// Unused: no row of gAbilityAnimations in either game names its kind, and the
-/// handler table is reached with no other kind (BattleAnim_RunTableEffect),
+/// handler table is reached with no other kind (BattleAnim_RunFromTable),
 /// so the player never sees it. It would show the spinning triangle and rune of
 /// BattleAnim_RunBind without the Djinni, with the user stepping up to the
 /// first target on frame 46.
@@ -304,7 +304,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
 /// holds the same point as Bind's (gBind_Vertex). Changes the same state as
 /// BattleAnim_RunBind, on the narrow canvas at priority 0, and starts the
 /// user's approach through BattleMotion_ApproachTargetFar.
-void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
+void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *args) {
   struct ScreenPoint anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
@@ -336,7 +336,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(0);
 
   // Setup, as for Bind: the rune, and the flares at 0x1000.
@@ -350,20 +350,20 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   Decompress_TaggedLz(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-  Projection_ScaledUnit(work->effect->targets[0], &anchor);
+  Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlaySongFar(SE_SWIRL);
 
-  for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     // Frame loop, as in BattleAnim_RunBind.
     if (frame == 64)
       ANIM_SHOW_DAMAGE(0);
     // The user sets off three quarters of the way to the target, arriving
     // in 16 steps.
     if (frame == 46)
-      BattleMotion_ApproachTargetFar(work->effect->user,
-                                     work->effect->targets[0], 16, 0);
+      BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
+                                     16, 0);
     BattleAnim_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
@@ -376,7 +376,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (tick >= 0 && tick < 96) {
         ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = actor->x.fixed;

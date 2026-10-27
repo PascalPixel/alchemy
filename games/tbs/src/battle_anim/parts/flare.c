@@ -18,7 +18,7 @@
 /// effect: the targets. Flare Wall, the stronger variant, adds a second flame
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
 ///         32 pixels above (and longer trails).
-void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
+void BattleAnim_RunFlare(struct BattleAnimArgs *args) {
   u32 *slots;
   u32 *cursor;
   struct BattleAnimWork *work;
@@ -40,7 +40,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   cursor = slots;
   work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -55,7 +55,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   // party's side) and dipping from y 40 at its ends to 56 at its middle.
   // Against enemies (ids from FIRST_ENEMY_UNIT) it runs from the left,
   // otherwise from the right.
-  if (work->effect->targets[0] >= FIRST_ENEMY_UNIT) {
+  if (work->args->targets[0] >= FIRST_ENEMY_UNIT) {
     originX = 0;
     direction = 1;
   } else {
@@ -81,7 +81,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
 
   // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
+  if (work->args->variant == ANIM_VARIANT_STRONGEST) {
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   } else {
     work->transferValue = CANVAS_FADE_HALF;
@@ -117,7 +117,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
              flame->y + gBattleAnim_PuffArcCellBiasY[cell], width,
              gBattleAnim_PuffArcCellHeights[cell]);
 #endif
-        if (work->effect->variant != ANIM_VARIANT_BASIC) {
+        if (work->args->variant != ANIM_VARIANT_BASIC) {
 #ifdef UBFIX
           width = gBattleAnim_PuffArcCellWidths[cell];
           draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
@@ -131,7 +131,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
                gBattleAnim_PuffArcCellHeights[cell]);
 #endif
         }
-        if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
+        if (work->args->variant == ANIM_VARIANT_STRONGEST) {
 #ifdef UBFIX
           width = gBattleAnim_PuffArcCellWidths[cell];
           draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
@@ -153,9 +153,9 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
 
     // The targets flash red, 8 frames apart from frame 16.
     i = 0;
-    while (i != work->effect->targetCount) {
+    while (i != work->args->targetCount) {
       if (frame == (i * 8) + 16) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
                                POSE_DAMAGE, i, 12);
       }
       i += 1;

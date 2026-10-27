@@ -322,8 +322,8 @@ gFieldMenu_CommandByPosition:
 gFieldMenu_PositionByCommand:
 	.byte 0, 1, 2, 3, 4, 5
 	.byte 0, 1, 0, 2, 3, 0
-	.global gFileMenu_ActionByPosition
-gFileMenu_ActionByPosition:
+	.global gFileList_ActionByPosition
+gFileList_ActionByPosition:
 	.byte 0, 1, 2, 3, 4
 	.byte 5, 1, 3, 4, 5
 	.byte 1, 1, 3, 4, 5

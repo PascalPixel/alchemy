@@ -16,7 +16,7 @@
 #define HELM_SPLITTER_FRAMES 70
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star animation, after the swirl.
-#define HELM_SPLITTER_STAR_CELLS 0x3e80
+#define HELM_SPLITTER_STAR_OFFSETS 0x3e80
 #define HELM_SPLITTER_CLEARED_SLOTS 1024 ///< PARTICLES slots freed first
 #define HELM_SPLITTER_SPARKS 16          ///< sparks scattered by the strike
 #define HELM_SPLITTER_SPARK_SLOTS 128    ///< spark slots moved and drawn
@@ -26,7 +26,7 @@
 /// the ground.
 ///
 /// Abilities: Helm Splitter (BATTLE_ANIM_HELM_SPLITTER).
-void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
+void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -43,14 +43,14 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
-                             work->sheet + HELM_SPLITTER_STAR_CELLS, 1, 0);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+                             work->sheet + HELM_SPLITTER_STAR_OFFSETS, 1, 0);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Free the spark pool before moving the user: the pointer walks the
@@ -68,9 +68,9 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   // the squares fit in 32 bits, and a twentieth of it is both the
   // acceleration and the top speed.
   {
-    struct Actor *actor = GetBattleObjectSlotFar(work->effect->user)->actor;
+    struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
     struct Actor *target =
-        GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+        GetBattleObjectSlotFar(work->args->targets[0])->actor;
     s32 diffX = target->x.fixed - actor->x.fixed;
     s32 startX = actor->x.fixed;
     s32 deltaX = diffX * 80 / 100;
@@ -101,7 +101,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
     // The canvas follows the user across the screen: canvas column 80 is
     // kept under the user.
-    Projection_Unit(work->effect->user, &position);
+    Projection_Unit(work->args->user, &position);
     REG_BG2X = (80 - position.x) << 8;
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
     // at the user's height, placed from the other edge on ANIM_SIDE_PARTY.
@@ -110,7 +110,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 
       if (cell > 6)
         cell = 6;
-      if (work->effect->side == ANIM_SIDE_ENEMIES) {
+      if (work->args->side == ANIM_SIDE_ENEMIES) {
         draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                 gHelmSplitter_CellBiasX[cell] + 30,
                 gHelmSplitter_CellBiasY[cell] + position.y - 60,
@@ -131,10 +131,9 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     // vertical part doubled.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
-                                     KNOCKBACK_BOUNCE);
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
       for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
         s32 force = (Random16() & 63) + 256;
@@ -164,7 +163,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
           s32 sy = spark->y >> 16;
 
           draw[0](canvas,
-                  work->sheet + HELM_SPLITTER_STAR_CELLS +
+                  work->sheet + HELM_SPLITTER_STAR_OFFSETS +
                       (((frame + i) / 4 % 6) << 8),
                   sx - 8, sy - 8, 16, 16);
         }
@@ -234,7 +233,7 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 }
 
 /// The fragment pictures in the sheet, four of 12x24, after the flash.
-#define IMPACT_BURST_SHARD_CELLS 0x59d8
+#define IMPACT_BURST_SHARD_OFFSETS 0x59d8
 #define IMPACT_BURST_FRAGMENT_WIDTH 12  ///< each fragment picture's width
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24 ///< and height
 
@@ -292,7 +291,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,
-                             work->sheet + IMPACT_BURST_SHARD_CELLS, 0, 0);
+                             work->sheet + IMPACT_BURST_SHARD_OFFSETS, 0, 0);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly in random directions at 2 to 4 pixels a frame, the
@@ -422,7 +421,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
                  work->sheet +
                      cell * (IMPACT_BURST_FRAGMENT_WIDTH *
                              IMPACT_BURST_FRAGMENT_HEIGHT) +
-                     IMPACT_BURST_SHARD_CELLS,
+                     IMPACT_BURST_SHARD_OFFSETS,
                  px - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  py - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
                  IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
@@ -442,11 +441,11 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
 #undef HELM_SPLITTER_FRAMES
 #undef HELM_SPLITTER_STRIKE_FRAME
-#undef HELM_SPLITTER_STAR_CELLS
+#undef HELM_SPLITTER_STAR_OFFSETS
 #undef HELM_SPLITTER_CLEARED_SLOTS
 #undef HELM_SPLITTER_SPARKS
 #undef HELM_SPLITTER_SPARK_SLOTS
-#undef IMPACT_BURST_SHARD_CELLS
+#undef IMPACT_BURST_SHARD_OFFSETS
 #undef IMPACT_BURST_FRAGMENT_WIDTH
 #undef IMPACT_BURST_FRAGMENT_HEIGHT
 #undef IMPACT_BURST_FRAMES

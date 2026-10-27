@@ -21,8 +21,8 @@ void BattleAnim_CallDoNothing(s32 count) {
   }
 }
 
-// Two of the battle's three entry points, BattleAnim_RunSummonEffect and
-// BattleAnim_RunTableEffect; README.md describes all three and the heap
+// Two of the battle's three entry points, BattleAnim_RunSummon and
+// BattleAnim_RunFromTable; README.md describes all three and the heap
 // blocks they lend an animation. Both size the sheet slot for one set of the
 // ten mote cells (MOTE_SET_BYTES), where most animations decode
 // ParticleSpritesA; an animation's own pictures go in work->sheet. The shared
@@ -32,7 +32,7 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// has bit 15 set: takes the animation's sheet, work and canvas, runs the
 /// animation chosen by its kind to the end, and frees them again.
 ///
-/// Called through BattleAnim_RunSummonEffectFar by
+/// Called through BattleAnim_RunSummonFar by
 /// BattleStaging_HideField (battle/staging.c), when the turn's
 /// animation word has ANIM_SUMMON, and by
 /// AutoBattle_RunPsynergy (battle/auto_battle.c).
@@ -43,52 +43,52 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// Takes heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the animation must
 /// have removed every callback that reads them. Unlike
-/// BattleAnim_RunTableEffect it does not set work->effect: each animation does
+/// BattleAnim_RunFromTable it does not set work->effect: each animation does
 /// that itself.
-void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
+void BattleAnim_RunSummon(struct BattleAnimArgs *args) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  if (effect->kind == SUMMON_ANIM_NONE) {
-    BattleAnim_RunMeteor(effect);
+  if (args->kind == SUMMON_ANIM_NONE) {
+    BattleAnim_RunMeteor(args);
   } else {
-    switch (effect->kind) {
+    switch (args->kind) {
     case SUMMON_ANIM_RAMSES:
-      BattleAnim_RunRamses(effect);
+      BattleAnim_RunRamses(args);
       break;
     case SUMMON_ANIM_NEREID:
-      BattleAnim_RunNereid(effect);
+      BattleAnim_RunNereid(args);
       break;
     case SUMMON_ANIM_KIRIN:
-      BattleAnim_RunKirin(effect);
+      BattleAnim_RunKirin(args);
       break;
     case SUMMON_ANIM_ATALANTA:
-      BattleAnim_RunAtalanta(effect);
+      BattleAnim_RunAtalanta(args);
       break;
     case SUMMON_ANIM_CYBELE:
-      BattleAnim_RunCybele(effect);
+      BattleAnim_RunCybele(args);
       break;
     case SUMMON_ANIM_NEPTUNE:
-      BattleAnim_RunNeptune(effect);
+      BattleAnim_RunNeptune(args);
       break;
     case SUMMON_ANIM_TIAMAT:
-      BattleAnim_RunTiamat(effect);
+      BattleAnim_RunTiamat(args);
       break;
     case SUMMON_ANIM_PROCNE:
-      BattleAnim_RunProcne(effect);
+      BattleAnim_RunProcne(args);
       break;
     case SUMMON_ANIM_JUDGMENT:
-      BattleAnim_RunJudgment(effect);
+      BattleAnim_RunJudgment(args);
       break;
     case SUMMON_ANIM_BOREAS:
-      BattleAnim_RunBoreas(effect);
+      BattleAnim_RunBoreas(args);
       break;
     case SUMMON_ANIM_METEOR:
-      BattleAnim_RunMeteor(effect);
+      BattleAnim_RunMeteor(args);
       break;
     case SUMMON_ANIM_THOR:
-      BattleAnim_RunThor(effect);
+      BattleAnim_RunThor(args);
       break;
     }
   }
@@ -102,7 +102,7 @@ void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
 /// canvas, runs the entry of gBattleAnim_Handlers for its kind,
 /// and frees them again.
 ///
-/// Called through BattleAnim_RunTableEffectFar by
+/// Called through BattleAnim_RunFromTableFar by
 /// BattleStaging_RunAttack, BattleStaging_RunItem,
 /// BattleStaging_RunPsynergyCast and BattleStaging_HideField
 /// (battle/staging.c, the last when the turn sets neither ANIM_SUMMON nor
@@ -112,7 +112,7 @@ void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
 /// Sets work->effect before the handler runs, which every handler and
 /// callback reads the animation through. BATTLE_ANIM_NONE is no animation and
 /// only clears effect->variant.
-void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect) {
+void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
   s32 kind;
   struct BattleAnimWork *work;
 
@@ -121,12 +121,12 @@ void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
-  work->effect = effect;
-  kind = effect->kind;
+  work->args = args;
+  kind = args->kind;
   if (kind == BATTLE_ANIM_NONE)
-    effect->variant = ANIM_VARIANT_BASIC;
+    args->variant = ANIM_VARIANT_BASIC;
   else
-    gBattleAnim_Handlers[kind - 1](effect);
+    gBattleAnim_Handlers[kind - 1](args);
 
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
@@ -186,13 +186,13 @@ void BattleAnim_BuildWindowEdgeTable(void) {
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
 /// objects through BattleObject_SpawnObjectsForListFar.
-void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect) {
+void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *args) {
   s16 list[14];
   s32 count;
   s32 i;
 
   count = 0;
-  if (effect->targets[0] >= FIRST_ENEMY_UNIT) {
+  if (args->targets[0] >= FIRST_ENEMY_UNIT) {
     for (i = 0; i != 6; i++) {
       s32 id = i + 128;
 
@@ -241,9 +241,9 @@ void BattleAnim_SetupBlendedDisplay(void) {
   gProjection.centerY = 120;
 }
 
-/// Updates every animation group of one battler's object.
+/// Updates every animation group of one unit's battle object.
 ///
-/// actorId: the battler whose object is updated.
+/// unitId: the unit whose battle object is updated.
 /// palette: the colour mode each sprite part takes (enum SpriteColorMode), 0
 ///          for the battler's own, or -1 to leave the parts alone. A part
 ///          that changes colours also restarts its frame.
@@ -259,14 +259,14 @@ void BattleAnim_SetupBlendedDisplay(void) {
 /// Called throughout the animations, most often through
 /// ANIM_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
 /// and each part's param and frame (0xff restarts it).
-void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
+void BattleAnim_TintBattler(s32 unitId, s32 palette, s32 animation,
                             s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
   struct Sprite *group;
   struct BattleAnimWork *work;
   s32 groupIndex;
 
-  slot = GetBattleObjectSlotFar(actorId);
+  slot = GetBattleObjectSlotFar(unitId);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   groupIndex = 0;
 
@@ -293,7 +293,7 @@ void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
                 part != (struct SpriteAnim *)slot->shadowEntry &&
                 part != (struct SpriteAnim *)slot->animationEntry) {
               if (palette == 0)
-                part->colorMode = BattleObject_GetPaletteFar(actorId);
+                part->colorMode = BattleObject_GetPaletteFar(unitId);
               else
                 part->colorMode = palette;
               part->frame = 0xff;

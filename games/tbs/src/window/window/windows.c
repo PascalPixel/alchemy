@@ -398,7 +398,7 @@ void Window_Close(struct Window *window, s32 instant) {
     window->x = zero;
     window->y = zero;
     window->opened = zero;
-    window->effect = zero;
+    window->animation = zero;
     window->state = zero;
     window->flags = zero;
     window->frame = zero;

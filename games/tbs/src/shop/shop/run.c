@@ -311,7 +311,7 @@ s32 Sanctum_AskYesNo(s32 choice) {
 /// Returns the node `state->count` next links on from `state->node`. Nothing
 /// calls it.
 UNUSED struct SelectionNodeLinkView *
-NodeChain_GetNodeAtIndex(struct SelectionScreenCursorView *state) {
+NodeChain_GetNodeAtIndex(struct SelectionMenuCursorView *state) {
   struct SelectionNodeLinkView *node = state->node;
   s32 linkIndex;
 

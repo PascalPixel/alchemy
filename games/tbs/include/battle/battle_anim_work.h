@@ -127,7 +127,7 @@ struct BattleAnimWork {
   /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas
   /// transfer callback copies the canvas and clears it.
   s32 transferPending;
-  struct BattleAnimArgs *effect; ///< the command being run
+  struct BattleAnimArgs *args; ///< the command being run
 };
 
 STATIC_ASSERT(offsetof(struct BattleAnimWork, bg2xLines) == 0x6980);
@@ -150,7 +150,7 @@ STATIC_ASSERT(offsetof(struct BattleAnimWork, animations) == 0x77d8);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, actorTimers) == 0x7818);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, framesSinceTransfer) == 0x7820);
 STATIC_ASSERT(offsetof(struct BattleAnimWork, transferPending) == 0x7824);
-STATIC_ASSERT(offsetof(struct BattleAnimWork, effect) == 0x7828);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, args) == 0x7828);
 STATIC_ASSERT(sizeof(struct BattleAnimWork) == 0x782c);
 
 #endif

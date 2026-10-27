@@ -52,7 +52,7 @@ s32 Inventory_RepairFar(s32 owner, s32 slot);
 s32 Inventory_GetEquippedItemFar(struct Unit *inv, s32 type);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (Ability_GetDirect); every bank reads abilities so.
-struct AbilityDefinition *Ability_Get(s32 actionId);
+struct AbilityDefinition *Ability_Get(s32 abilityId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();

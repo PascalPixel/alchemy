@@ -46,20 +46,20 @@ void BattleAnim_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 /// The wall rises wide and shakes the screen hard.
 ///
 /// Abilities: Berserk (BATTLE_ANIM_BERSERK).
-void BattleAnim_RunBerserk(struct BattleAnimArgs *effect) {
-  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_BERSERK);
+void BattleAnim_RunBerserk(struct BattleAnimArgs *args) {
+  BattleAnim_RunMirroredWall(args, MIRRORED_WALL_BERSERK);
 }
 /// The wall rises with a long gentle shake and the recovery sound.
 ///
 /// Abilities: Spasm (BATTLE_ANIM_SPASM).
-void BattleAnim_RunSpasm(struct BattleAnimArgs *effect) {
-  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_SPASM);
+void BattleAnim_RunSpasm(struct BattleAnimArgs *args) {
+  BattleAnim_RunMirroredWall(args, MIRRORED_WALL_SPASM);
 }
 /// A wide wall of fire rises without shaking the screen.
 ///
 /// Abilities: Recovery (BATTLE_ANIM_RECOVERY).
-void BattleAnim_RunRecovery(struct BattleAnimArgs *effect) {
-  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_RECOVERY);
+void BattleAnim_RunRecovery(struct BattleAnimArgs *args) {
+  BattleAnim_RunMirroredWall(args, MIRRORED_WALL_RECOVERY);
 }
 /// Raises a symmetrical wall (the EarthWall images) at the first target's
 /// feet for 48 frames; the target glows and the battle shows the result on
@@ -72,7 +72,7 @@ void BattleAnim_RunRecovery(struct BattleAnimArgs *effect) {
 /// layer before it returns.
 ///
 /// mode: the wall's width, shake and colours (enum MirroredWallMode).
-void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunMirroredWall(struct BattleAnimArgs *args, s32 mode) {
   void **cursor;
   struct BattleAnimWork *work;
   void *canvas;
@@ -86,7 +86,7 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
 
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
 
   // Setup. The EarthWall images, coloured with the Mars Djinn palette (the
@@ -104,7 +104,7 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
 
   // Scroll BG2 so the canvas's x 64 is on the target. Berserk and Recovery
   // show the canvas 1.25 times as wide, so the target's x is scaled by 4/5.
-  Projection_Unit(work->effect->targets[0], &screenPosition);
+  Projection_Unit(work->args->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
     x = 64 - screenPosition.x;
@@ -143,10 +143,10 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
     // Recovery, red otherwise.
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
-        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
+        BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1,
                                0, 32);
       else
-        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
+        BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
                                -1, 0, 32);
     }
     if (frame == 24)

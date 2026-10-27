@@ -33,9 +33,9 @@ struct Window {
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
   /// The effect a message's TEXT_WINDOW_STATE code sets. Only
-  /// WINDOW_EFFECT_SWELL is acted on; its text printer types nothing more
+  /// WINDOW_ANIMATION_SWELL is acted on; its text printer types nothing more
   /// until the swell ends and clears it.
-  u16 effect;
+  u16 animation;
   /// 0 while a text printer is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the printer for the next text.
   u16 state;

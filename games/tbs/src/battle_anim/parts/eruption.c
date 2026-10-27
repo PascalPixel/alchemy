@@ -18,15 +18,15 @@ enum EruptionMode {
 ///
 /// It always uses Mad Blast's row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
-void BattleAnim_RunSmokeBomb(struct BattleAnimArgs *effect) {
-  BattleAnim_RunEruption(effect, ERUPTION_SMOKE_BOMB);
+void BattleAnim_RunSmokeBomb(struct BattleAnimArgs *args) {
+  BattleAnim_RunEruption(args, ERUPTION_SMOKE_BOMB);
 }
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
 /// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_ANIM_BLAST).
-void BattleAnim_RunBlast(struct BattleAnimArgs *effect) {
-  BattleAnim_RunEruption(effect, ERUPTION_BLAST);
+void BattleAnim_RunBlast(struct BattleAnimArgs *args) {
+  BattleAnim_RunEruption(args, ERUPTION_BLAST);
 }
 /// The columns of a gEruption_Counts row.
 enum {
@@ -36,7 +36,7 @@ enum {
 };
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_CELLS 0x3200
+#define ERUPTION_FIELD_MOTE_OFFSETS 0x3200
 
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
@@ -51,7 +51,7 @@ enum {
 ///       give 16 motes, 8 puffs and 72 frames (Blast), 32, 16 and 80 (Mad
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
-void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunEruption(struct BattleAnimArgs *args, s32 mode) {
   void **cursor;
   struct BattleAnimWork *work;
   void *canvas;
@@ -66,7 +66,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
 
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Smoke Bomb's palette is a ramp of greys, two levels to each step of
@@ -82,7 +82,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
                     128);
-    variant = work->effect->variant;
+    variant = work->args->variant;
   }
 
   // The puffs and the motes start 50 pixels to the side (x -50, or 50 when
@@ -92,7 +92,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   for (i = 0; i != 32; i++) {
     struct Particle *puff = &work->particles[i];
 
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -106,7 +106,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   for (i = 0; i != 1024; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -146,14 +146,14 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
 
         Projection_Point(mote, &screen);
         screen.x >>= 1;
-        screen.x += work->effect->side * 32 - 16;
+        screen.x += work->args->side * 32 - 16;
         CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
         draw[0](
             canvas,
             work->sheet +
                 (gBattleAnim_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                ERUPTION_FIELD_MOTE_CELLS,
+                ERUPTION_FIELD_MOTE_OFFSETS,
             screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(mote, 64, -0x2000);
       }
@@ -168,7 +168,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
         if (i < frame && puff->y >= 0) {
           Projection_Point(puff, &screen);
           screen.x >>= 1;
-          screen.x += work->effect->side * 32 - 16;
+          screen.x += work->args->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
             s32 cell = puff->variant / 3;
             u32 width;
@@ -195,18 +195,18 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     // The hits, one target a frame from frame 6; Blast's targets also recoil
     // (KNOCKBACK_LEAP).
     if (mode == ERUPTION_BLAST) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == i + 6) {
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+          BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                          KNOCKBACK_LEAP);
         }
       }
     } else {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == i + 6)
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 10);
       }
     }
@@ -254,4 +254,4 @@ void BattleAnim_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 /// Annihilation, a busy wait.
 void BattleAnim_DoNothing(void) {}
 
-#undef ERUPTION_FIELD_MOTE_CELLS
+#undef ERUPTION_FIELD_MOTE_OFFSETS

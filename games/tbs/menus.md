@@ -104,7 +104,7 @@ one of three files in the cartridge's backup memory, Sleep puts the console to
 sleep until L and R are pressed together, and Change settings opens the option
 menu (window colour, message speed, speech and auto-sleep).
 
-`PauseMenu_Run` runs it; `Save_ToChosenFile` saves and `OptionMenu_Run` runs
+`PauseMenu_Run` runs it; `Save_ToChosenFile` saves and `SettingsMenu_Run` runs
 the settings. [Windows](src/window/README.md#the-pause-menu) has each.
 
 ## Shops

@@ -4,13 +4,13 @@
 
 #include "../game_internal.h"
 
-/// Returns the definition of action `actionId` (its low 14 bits); an id
+/// Returns the definition of ability `abilityId` (its low 14 bits); an id
 /// past the table gives the first. Reached through GAME.S as
 /// Ability_Get, which every bank uses to read an ability.
-struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
+struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   u32 entryIndex;
 
-  entryIndex = actionId & PSYNERGY_ABILITY_MASK;
+  entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
   // BUG: the bound is one past the table's 519 rows, so id 519 reads the
   // enemy table's first bytes as an action.
 #ifdef BUGFIX
@@ -23,10 +23,10 @@ struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
   return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
-/// Returns 1 when `actionId` is in the unit's action list. Called by the
+/// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
 /// scripts that check whether a member knows a Psynergy
 /// (Event_ValidatePackedId).
-s32 Unit_KnowsPsynergy(s32 unitId, s32 actionId) {
+s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;
   s32 actionMask = PSYNERGY_ABILITY_MASK;
@@ -38,7 +38,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 actionId) {
 
     currentAction &= actionMask;
     entry++;
-    if (currentAction == actionId) {
+    if (currentAction == abilityId) {
       return 1;
     }
     index++;

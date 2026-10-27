@@ -37,7 +37,7 @@ extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowNintendoLogo.
 /// cycles.
 extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the main
-/// menu, by MainMenu_LoadBackground.
+/// menu, by FileScreen_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
 /// The still world map WorldPicture_Show shows for a
 /// FIELD_RAISED_TRIGGER_WORLD_PICTURE event; it loads this one whatever picture
@@ -289,7 +289,7 @@ extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
 /// their colours for sprite palette 15.
 extern char ResourceId_Lettering;
 /// The first of eight 256-byte cursor frames in consecutive rows; the option
-/// menu's slider marker adds the frame to it (OptionMenu_AnimateCursors).
+/// menu's slider marker adds the frame to it (SettingsMenu_AnimateCursors).
 extern char ResourceId_MenuCursorFrames;
 /// The 32x32 icons and portraits, each with 16 colours before its tiles
 /// (Icon_LoadWithPalette).
@@ -383,7 +383,7 @@ extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_ShieldSheet; ///< The stat changes.
 extern char ResourceId_DaggerSheet; ///< The stat changes.
 /// The stat reductions' picture after their shards
-/// (STAT_REDUCTION_SHARD_CELLS).
+/// (STAT_REDUCTION_SHARD_OFFSETS).
 extern char ResourceId_PaletteRampImage;
 extern char ResourceId_HeartSheet; ///< Heartrender, among the status motes.
 /// Revive and its family (djinn_beams.c).

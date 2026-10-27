@@ -21,7 +21,7 @@ struct BattleAnimArgs;
 // defined from one of these.
 
 /// The six cells of an erupting flame puff: where each begins in the sheet.
-#define FLAME_PUFF_CELLS {0, 552, 1480, 2590, 3913, 5185}
+#define FLAME_PUFF_OFFSETS {0, 552, 1480, 2590, 3913, 5185}
 #define FLAME_PUFF_CELL_WIDTHS {24, 29, 30, 27, 24, 16}  ///< widths
 #define FLAME_PUFF_CELL_HEIGHTS {23, 32, 37, 49, 53, 52} ///< heights
 /// How far below its anchor each cell's top goes.
@@ -29,17 +29,17 @@ struct BattleAnimArgs;
 /// The sides of the seven square pictures of a blast, a puff or a flash.
 #define BLAST_CELL_SIZES {16, 32, 48, 48, 48, 48, 48}
 /// Where each blast picture begins.
-#define BLAST_CELLS {0, 256, 1280, 3584, 5888, 8192, 10496}
+#define BLAST_OFFSETS {0, 256, 1280, 3584, 5888, 8192, 10496}
 #define EARTH_WALL_CELL_WIDTHS {17, 19, 20}  ///< the earth wall's three widths
 #define EARTH_WALL_CELL_HEIGHTS {49, 55, 64} ///< and heights
 /// Where each earth wall picture begins.
-#define EARTH_WALL_CELLS {2702, 3535, 4580}
+#define EARTH_WALL_OFFSETS {2702, 3535, 4580}
 #define SLASH_CELL_WIDTHS {38, 54, 71, 74, 77, 65} ///< the six slash widths
 #define SLASH_CELL_HEIGHTS {7, 9, 11, 13, 13, 11}  ///< and heights
 /// Each slash picture's reach from the target.
 #define SLASH_CELL_REACH {58, 42, 25, 13, 5, 0}
 /// The flash picture for each three frames at the end of a flash's life.
-#define FLASH_FADE_CELLS {5, 5, 4, 3, 2, 1}
+#define FLASH_FADE_OFFSETS {5, 5, 4, 3, 2, 1}
 /// The flips a glint may be drawn in: none, and mirrored each way and both.
 #define GLINT_FLIPS {0, COMPOSITE_FLIP_X, COMPOSITE_FLIP_Y, COMPOSITE_FLIP}
 
@@ -68,7 +68,7 @@ u8 gBattleAnim_PuffSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 u8 gBattleAnim_PuffArcCellWidths[] = FLAME_PUFF_CELL_WIDTHS;
 u8 gBattleAnim_PuffArcCellHeights[] = FLAME_PUFF_CELL_HEIGHTS;
 u8 gBattleAnim_PuffArcCellBiasY[] = FLAME_PUFF_CELL_BIAS_Y;
-u16 gBattleAnim_PuffArcCells[] = FLAME_PUFF_CELLS;
+u16 gBattleAnim_PuffArcCells[] = FLAME_PUFF_OFFSETS;
 // Six glint cells, each GlintCellWidths by GlintCellHeights pixels: read by
 // the target strikes and motes, Bolt, the vortices, the casting impacts and
 // Thor.
@@ -213,7 +213,7 @@ u8 gGatheringLights_Counts[][2] = {
 
 // The earth wall's three images: the mirrored wall reads them at the start of
 // its sheet, the rising wall after its rebuilt rows. Both share the sizes.
-u16 gMirroredWall_Cells[] = EARTH_WALL_CELLS;
+u16 gMirroredWall_Cells[] = EARTH_WALL_OFFSETS;
 u8 gMirroredWall_CellWidths[] = EARTH_WALL_CELL_WIDTHS;
 u8 gMirroredWall_CellHeights[] = EARTH_WALL_CELL_HEIGHTS;
 
@@ -222,7 +222,7 @@ u8 gMirroredWall_CellHeights[] = EARTH_WALL_CELL_HEIGHTS;
 /// The picture of each step of a mote's eight-step cycle.
 u8 gDjinnBeams_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 // The three cells of the glow at a target's feet.
-u16 gDjinnBeams_HeadOffsets[] = EARTH_WALL_CELLS;
+u16 gDjinnBeams_HeadOffsets[] = EARTH_WALL_OFFSETS;
 u8 gDjinnBeams_HeadWidths[] = EARTH_WALL_CELL_WIDTHS;
 u8 gDjinnBeams_HeadHeights[] = EARTH_WALL_CELL_HEIGHTS;
 
@@ -298,7 +298,7 @@ u8 gTiamat_DropSizes[] = {1, 1, 2, 3};
 u8 gTiamat_StreakWidths[] = FLAME_PUFF_CELL_WIDTHS;
 u8 gTiamat_StreakHeights[] = FLAME_PUFF_CELL_HEIGHTS;
 u8 gTiamat_StreakDrops[] = FLAME_PUFF_CELL_BIAS_Y;
-u16 gTiamat_StreakOffsets[] = FLAME_PUFF_CELLS;
+u16 gTiamat_StreakOffsets[] = FLAME_PUFF_OFFSETS;
 /// Nereid's four columns of fire (NEREID_COLUMN_X, NEREID_COLUMN_Y).
 u8 gNereid_Columns[][2] = {
     // the foot of each column of fire: x, y
@@ -380,7 +380,7 @@ u16 gPlasma_Shapes[][5] = {
     [SPARK_GROUPS_THRASH] = {32, 1, 16, 0, 0},
 };
 /// The flash picture for each three frames at the end of a flash's life.
-u8 gPlasma_FlashCells[] = FLASH_FADE_CELLS;
+u8 gPlasma_FlashCells[] = FLASH_FADE_OFFSETS;
 
 // volcano.c: Fire pillar counts, depths and start frames.
 
@@ -398,7 +398,7 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
 /// The animation handlers, indexed by animation kind minus one, which
-/// BattleAnim_RunTableEffect calls; BATTLE_ANIM_NONE is no animation, for
+/// BattleAnim_RunFromTable calls; BATTLE_ANIM_NONE is no animation, for
 /// which it only clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
@@ -752,7 +752,7 @@ u8 gFire_Counts[] = {16, 32, 64};
 u8 gFire_FlareWidths[] = FLAME_PUFF_CELL_WIDTHS;
 u8 gFire_FlareHeights[] = FLAME_PUFF_CELL_HEIGHTS;
 u8 gFire_FlareBiasY[] = FLAME_PUFF_CELL_BIAS_Y;
-u16 gFire_FlareCells[] = FLAME_PUFF_CELLS;
+u16 gFire_FlareCells[] = FLAME_PUFF_OFFSETS;
 
 // frost.c: Rising mote geometry and timing.
 
@@ -790,7 +790,7 @@ u8 gRay_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 /// Motes, puffs of smoke and frames, for each variant.
 u8 gEruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 // The seven puff pictures, square.
-u16 gEruption_PuffCells[] = BLAST_CELLS;
+u16 gEruption_PuffCells[] = BLAST_OFFSETS;
 u16 gEruption_PuffSizes[] = BLAST_CELL_SIZES;
 
 // Unreferenced cell layouts, from 6x6 through 20x20. gUnused_SheetCells6 is
@@ -1041,13 +1041,13 @@ s16 gParticleStreams_OrbitPoints[][3] = {
 s16 gParticleStreams_DropPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 // The seven growing flash cells of the blast sheet, square.
-u16 gParticleStreams_FlashCells[] = BLAST_CELLS;
+u16 gParticleStreams_FlashCells[] = BLAST_OFFSETS;
 u16 gParticleStreams_FlashSizes[] = BLAST_CELL_SIZES;
 // Where the formation's objects stand, in pixels from its corner.
 u8 gRamses_ObjectColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 u8 gRamses_ObjectRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 // The puff cells of the blast sheet, square; only the last four are used.
-u16 gRamses_PuffCells[] = BLAST_CELLS;
+u16 gRamses_PuffCells[] = BLAST_OFFSETS;
 u16 gRamses_PuffSizes[] = BLAST_CELL_SIZES;
 
 // ragnarok.c: Flame blade strike columns and flash cells.
@@ -1058,13 +1058,13 @@ u8 gRagnarok_StrikeColumns[][3] = {
     {96, 104, 128},
 };
 /// The flash picture for each three frames at the end of a flash's life.
-u8 gRagnarok_FlashCells[] = FLASH_FADE_CELLS;
+u8 gRagnarok_FlashCells[] = FLASH_FADE_OFFSETS;
 
 // judgment.c and titan_blade.c: Falling sword flashes, dust and shockwave
 // debris.
 
 /// The flash picture for each three frames at the end of a flash's life.
-u8 gTitanBlade_FlashCells[] = FLASH_FADE_CELLS;
+u8 gTitanBlade_FlashCells[] = FLASH_FADE_OFFSETS;
 /// Dust gravity, by particle index & 3, in gNereid_Gravity's steps.
 s32 gTitanBlade_DustGravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 // Judgment's burst: seven quarter pictures, each half as wide as it is
@@ -1093,5 +1093,5 @@ s32 gNeptune_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 // undead_sword.c: Rising burst spark cells.
 
 // The seven square spark pictures, from UNDEAD_SWORD_SPARK_SHEET.
-u16 gUndeadSword_SparkCells[] = BLAST_CELLS;
+u16 gUndeadSword_SparkCells[] = BLAST_OFFSETS;
 u16 gUndeadSword_SparkSizes[] = BLAST_CELL_SIZES;

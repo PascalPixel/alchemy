@@ -44,27 +44,27 @@ FarCall_WindowTable:
 	export PartyStatus_CloseFar, PartyStatus_Close
 	export TextPrinter_CloseFinishedWindowsFar, TextPrinter_CloseFinishedWindows
 	export Window_CloseAllFar, Window_CloseAll
-	overlay_veneer SelectionScreen_Create
-	overlay_veneer SelectionScreen_Clear
-	overlay_veneer SelectionScreen_AddEntry
-	overlay_veneer SelectionScreen_StartDrawing
-	overlay_veneer SelectionScreen_StopDrawing
-	overlay_veneer SelectionScreen_OpenNameWindow
-	overlay_veneer SelectionScreen_Close
+	overlay_veneer SelectionMenu_Create
+	overlay_veneer SelectionMenu_Clear
+	overlay_veneer SelectionMenu_AddEntry
+	overlay_veneer SelectionMenu_StartDrawing
+	overlay_veneer SelectionMenu_StopDrawing
+	overlay_veneer SelectionMenu_OpenNameWindow
+	overlay_veneer SelectionMenu_Close
 	overlay_veneer Menu_SetupSelectionBothSides
-	overlay_veneer SelectionScreen_Run
-	overlay_veneer SelectionScreen_RunWithSounds
+	overlay_veneer SelectionMenu_Run
+	overlay_veneer SelectionMenu_RunWithSounds
 	overlay_veneer MenuArrow_NoOpCallbackBank
 	overlay_veneer MenuArrow_NoOpCallback1
-	overlay_veneer SelectionScreen_BuildEntries
-	overlay_veneer SelectionScreen_ReservedNoOp
+	overlay_veneer SelectionMenu_BuildEntries
+	overlay_veneer SelectionMenu_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open
 	overlay_veneer MenuArrow_NoOpCallback4
 	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
-	export FileMenu_SelectActionFar, FileMenu_SelectAction
+	export FileList_SelectActionFar, FileList_SelectAction
 	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
 	export AreaNameWindow_ShowFar, AreaNameWindow_Show
 	export AreaNameWindow_HideFar, AreaNameWindow_Hide
@@ -78,7 +78,7 @@ FarCall_WindowTable:
 	overlay_veneer Item_RemoveFromInventory
 	export Icon_DrawItemFar, Icon_DrawItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
-	overlay_veneer OptionMenu_SelectionNoOp
+	overlay_veneer SettingsMenu_SelectionNoOp
 	export ScanlineWindow_FillSpansFar, ScanlineWindow_FillSpans
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
 	export WindowSprite_ClearListFar, WindowSprite_ClearList
@@ -105,13 +105,13 @@ FarCall_WindowTable:
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
 	overlay_veneer NameEntry_LoadPointingHandTiles
 	overlay_veneer NameEntry_LoadCaretTiles
-	overlay_veneer SelectionScreen_SetPosition
+	overlay_veneer SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
 	overlay_veneer Item_ReturnTrue
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export WindowColor_ApplyFar, WindowColor_Apply
-	overlay_veneer OptionMenu_Run
+	overlay_veneer SettingsMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
 	overlay_veneer BgScreen_FillRect
 	export Menu_SelectShopCommandFar, Menu_SelectShopCommand

@@ -34,7 +34,7 @@
 /// After frame 96 the rocks fall and bounce. Within a frame the order of the
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
-void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
+void BattleAnim_RunRamses(struct BattleAnimArgs *args) {
   // Every object of the animation takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
@@ -54,7 +54,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   canvas = slots[0];
   work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   BattleAnim_ConfigureEffectDisplay();
   // A wipe to black (colour 1) hides the battle; the desert battle background
@@ -64,7 +64,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   // Nine objects of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and
   // 8), then the six rocks of SPRITE_BATTLE_ROCKS, each playing one of its
   // three animations.
@@ -262,10 +262,9 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
     if (frame == RAMSES_STRIKE_FRAME) {
       // The strike: every target recoils and flashes white, and the screen
       // shakes.
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                       KNOCKBACK_HURL);
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+      ANIM_FOR_EACH_TARGET(i, work->args) {
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
                                i, 8);
       }
       work->shakeFrames = 8;

@@ -15,7 +15,7 @@
 /// the half-width canvas in 16.16; a shard's variant counts its frames and is
 /// -1 once it has gone. Loads the ice block palette into the first 64 colours
 /// of the background palette.
-void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
+void BattleAnim_RunBreak(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -34,7 +34,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -49,15 +49,15 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   // Setup: scatter the shards around the middle of each body, a narrow
   // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
   // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
-  ANIM_FOR_EACH_TARGET(member, work->effect) {
+  ANIM_FOR_EACH_TARGET(member, work->args) {
     struct Actor *actor;
     s32 offset;
     s32 height;
     struct Particle *shard;
 
     offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
-    actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
-    height = BattleUnit_GetEffectHeightFar(work->effect->targets[member]) / 2;
+    actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+    height = BattleUnit_GetEffectHeightFar(work->args->targets[member]) / 2;
     SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
     Projection_Point(point, &screen);
     screen.x >>= 1;
@@ -84,17 +84,17 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   // Target n starts on frame n * 20 with a sound and a 20-frame tint; the
   // last target's shards get 56 frames to fall. The battle shows the damage
   // on frame 32, whatever the number of targets.
-  for (frame = 0; frame != work->effect->targetCount * 20 + 56; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 20 + 56; frame++) {
     if (frame == 32)
       ANIM_SHOW_DAMAGE(0);
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
+    ANIM_FOR_EACH_TARGET(member, work->args) {
       s32 offset;
 
       offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * 20) {
         Sound_PlaySongFar(SE_CRACK);
-        BattleAnim_TintBattler(work->effect->targets[member],
-                               SPRITE_COLOR_WHITE, -1, member, 20);
+        BattleAnim_TintBattler(work->args->targets[member], SPRITE_COLOR_WHITE,
+                               -1, member, 20);
       }
       // A shard falls with one of four gravities by its index (1/8 to 1/2
       // pixel a frame per frame, gDrain_Gravities) and goes out once it
@@ -141,7 +141,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
 ///
 /// effect: the targets; Drain's basic variant takes the ice block palette,
 ///         any stronger one (Psy Drain's) the blast palette.
-void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
+void BattleAnim_RunDrain(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -160,11 +160,11 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
-  if (effect->variant == ANIM_VARIANT_BASIC)
+  if (args->variant == ANIM_VARIANT_BASIC)
     alternate = 0;
   else
     alternate = 1;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -177,13 +177,12 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   // of up to 2 pixels a frame on each axis.
   ANIM_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
-  ANIM_FOR_EACH_TARGET(member, work->effect) {
+  ANIM_FOR_EACH_TARGET(member, work->args) {
     struct Actor *actor;
     s32 halfHeight;
 
-    actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
-    halfHeight =
-        BattleUnit_GetEffectHeightFar(work->effect->targets[member]) / 2;
+    actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+    halfHeight = BattleUnit_GetEffectHeightFar(work->args->targets[member]) / 2;
     for (i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
       struct Particle *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
@@ -206,23 +205,23 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
   // starts the user's glow and frame 64 shows the damage. The last target's
   // motes get 72 frames to reach the user.
-  for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     struct Actor *user;
     s32 halfHeight;
 
-    user = GetBattleObjectSlotFar(work->effect->user)->actor;
-    halfHeight = BattleUnit_GetEffectHeightFar(work->effect->user) / 2;
+    user = GetBattleObjectSlotFar(work->args->user)->actor;
+    halfHeight = BattleUnit_GetEffectHeightFar(work->args->user) / 2;
     if (frame == 64)
       ANIM_SHOW_DAMAGE(SE_IMPACT);
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
-      BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1, 0);
-    if (frame == work->effect->targetCount * 20 + 52)
-      BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
+      BattleAnim_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1, 0);
+    if (frame == work->args->targetCount * 20 + 52)
+      BattleAnim_TintBattler(work->args->user, 0, -1, -1, 0);
+    ANIM_FOR_EACH_TARGET(member, work->args) {
       if (frame == member * 20)
-        BattleAnim_TintBattler(work->effect->targets[member],
-                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
+        BattleAnim_TintBattler(work->args->targets[member], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, member, 42);
       if (frame > member * 20) {
         for (i = 0; i != DRAIN_DRAWN; i++) {
           struct Particle *mote =

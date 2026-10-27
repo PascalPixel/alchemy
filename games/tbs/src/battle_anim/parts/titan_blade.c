@@ -18,7 +18,7 @@
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
-#define TITAN_BLADE_FLASH_CELLS (34 * 104)
+#define TITAN_BLADE_FLASH_OFFSETS (34 * 104)
 
 /// A huge sword drops onto the first target amid charging flashes, dust and
 /// sparks.
@@ -35,7 +35,7 @@
 /// (0 to 683) and the sparks after it. Opens and closes the canvas layer and
 /// steps background colours 0 to 63 towards two resources' palettes
 /// (BattleAnim_StepPaletteToResource), one level a frame.
-void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
+void BattleAnim_RunTitanBlade(struct BattleAnimArgs *args) {
   void **slots;
   void **slotCursor;
   struct BattleAnimWork *work;
@@ -52,10 +52,10 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
   ANIM_GET_SLOTS(slots, slotCursor, work, canvas);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
 
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Projection_Unit(work->effect->targets[0], &screenPosition);
+  Projection_Unit(work->args->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
@@ -69,7 +69,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + TITAN_BLADE_FLASH_CELLS, 1, 0);
+                             work->sheet + TITAN_BLADE_FLASH_OFFSETS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -172,7 +172,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
                       work->sheet + (gTitanBlade_FlashCells[life / 3] << 11) +
-                          TITAN_BLADE_FLASH_CELLS,
+                          TITAN_BLADE_FLASH_OFFSETS,
                       x - 16, y + 48, 32, 64);
         }
         life = flash->variant;
@@ -369,11 +369,10 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
 
     // Frame 68: every target flashes and recoils.
     if (frame == 68) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+      ANIM_FOR_EACH_TARGET(i, work->args) {
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
-                                       KNOCKBACK_JOLT);
+        BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_JOLT);
       }
     }
 
@@ -403,4 +402,4 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
 #undef TITAN_BLADE_FIRST_DUST
 #undef TITAN_BLADE_DRAWN_DUST
 #undef TITAN_BLADE_SPARKS
-#undef TITAN_BLADE_FLASH_CELLS
+#undef TITAN_BLADE_FLASH_OFFSETS

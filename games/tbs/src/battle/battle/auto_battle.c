@@ -91,12 +91,12 @@ DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 /// action->target.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
   struct BattleBackgroundWork *view;
-  s32 actorId;
+  s32 unitId;
   s32 yaw;
   struct Unit *actor;
 
-  actorId = action->unitId;
-  actor = Unit_GetFar(actorId);
+  unitId = action->unitId;
+  actor = Unit_GetFar(unitId);
   if (actor->hp == 0)
     return -1;
 
@@ -218,7 +218,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u16 visibleUnits[14];
   struct BattleStagingWork context;
-  s32 actorId;
+  s32 unitId;
   s32 targetId;
   u32 sideStart;
   u32 sideCount;
@@ -227,8 +227,8 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u32 index;
 
   livingCount = 0;
-  actorId = action->unitId;
-  if (BattleObject_IsValidId(actorId) < 0) {
+  unitId = action->unitId;
+  if (BattleObject_IsValidId(unitId) < 0) {
     return -1;
   }
   targetId = action->target;
@@ -246,7 +246,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   WaitFrames(10);
   // A roll nothing uses, which still advances the random sequence.
   Random16();
-  actorRecord = BattleObject_Get(actorId)->actor;
+  actorRecord = BattleObject_Get(unitId)->actor;
 
   // The caster's side, taken as the side the target is not on, and the
   // caster's POSE_CAST when its id is among that side's first sideCount ids.
@@ -259,7 +259,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
 
   for (index = 0; index != sideCount; index++) {
-    if (index + sideStart == actorId) {
+    if (index + sideStart == unitId) {
       Actor_SelectAnimationFar(actorRecord, POSE_CAST);
     }
   }
@@ -301,7 +301,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   BattleObject_SpawnObjectsForList(visibleUnits, 0);
 
   context.effect.kind = action->parameter;
-  context.effect.user = actorId;
+  context.effect.user = unitId;
   for (index = 0; index != livingCount; index++) {
     context.effect.targets[index] = visibleUnits[index];
   }
@@ -311,7 +311,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   } else {
     context.effect.side = ANIM_SIDE_ENEMIES;
   }
-  BattleAnim_RunSummonEffectFar(&context.effect);
+  BattleAnim_RunSummonFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -374,7 +374,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   work.effect.prelude = 0;
 
   WaitFrames(4);
-  BattleAnim_DispatchByIdRangeFar(&work.effect);
+  BattleAnim_RunByIdRangeFar(&work.effect);
   BattleMotion_ReturnToSpot(work.effect.targets[0]);
   BattleMotion_ReturnToSpot(work.effect.user);
   return 0;
@@ -458,7 +458,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     work.effect.kind = ELEMENT_JUPITER;
     BattleAnim_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
-    BattleAnim_RunTableEffectFar(&work.effect);
+    BattleAnim_RunFromTableFar(&work.effect);
     Actor_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)

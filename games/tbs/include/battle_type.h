@@ -36,7 +36,7 @@ enum BattleTurnFailure {
 /// One action, as BattleTurn_Build lays it out for BattleAbility_ApplyToTarget
 /// to apply target by target.
 struct BattleTurn {
-  u8 actorId;                           ///< the acting unit
+  u8 unitId;                            ///< the acting unit
   s8 targetCount;                       ///< targets in targetIds
   u8 targetIds[BATTLE_TARGET_CAPACITY]; ///< in battlefield order
   /// Each target's place relative to the aimed one: negative to one side.

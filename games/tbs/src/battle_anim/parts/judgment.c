@@ -9,7 +9,7 @@
 #define JUDGMENT_SHEET_BYTES 0x2710
 
 /// Judgment's work block, laid over struct BattleAnimWork from its start.
-/// It is the HEAP_SLOT_BATTLE_ANIM block BattleAnim_RunSummonEffect lends
+/// It is the HEAP_SLOT_BATTLE_ANIM block BattleAnim_RunSummon lends
 /// the animation and frees after it; only BattleAnim_RunJudgment reads it this
 /// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
 /// later overwrites sheet and the dimmed copies up to most of copy 5, which
@@ -62,14 +62,14 @@ struct JudgmentWork {
 /// to a beach, and to a forest swept by an explosion front, before brightening
 /// back into the battle. The folder README describes both parts.
 ///
-/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummon, whose sheet slot holds the
 /// mote sheet here. The animation projects with gProjection.centerY at 240
 /// until BattleAnim_SetupBlendedDisplay, on frame 280 of the sweep, puts it
 /// back at 120, and holds BG1's scroll from the battle camera until that frame
 /// too. It releases its formation and then its debris objects (16 each), and
 /// before it returns removes its transfer callback and closes the canvas
 /// layer.
-void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
+void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   s32 anchor[3];
   struct ScreenPoint projectedPosition;
@@ -113,7 +113,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   // dimmed copies are built in the work block.
   ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleAnim_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the first wipe fills the canvas with,
@@ -127,7 +127,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   // Setup: wipe the battle away, change the battle background behind it, wipe
   // back.
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
@@ -913,8 +913,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // DEAD: never true, as the sweep's last frame is 319; the ROM keeps the
     // test and the targets' reaction.
     if (frame > 319) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLACK,
+      ANIM_FOR_EACH_TARGET(i, work->args) {
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
                                POSE_DAMAGE, -1, 0);
       }
     }

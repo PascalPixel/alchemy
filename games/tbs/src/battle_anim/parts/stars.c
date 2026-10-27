@@ -23,7 +23,7 @@
 /// animation (2, at speed 48, three times the usual, and does not set it
 /// back), turns the camera's yaw, sends the target back with its motion
 /// fields and sets work->shakeFrames.
-void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
+void BattleAnim_RunAstralBlast(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
 #ifndef UBFIX
   struct ScreenPoint base;
@@ -55,8 +55,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  caster = GetBattleObjectSlotFar(effect->user)->actor;
-  work->effect = effect;
+  caster = GetBattleObjectSlotFar(args->user)->actor;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
@@ -71,8 +71,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
@@ -100,7 +100,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (work->effect->side == ANIM_SIDE_ENEMIES)
+      if (work->args->side == ANIM_SIDE_ENEMIES)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -189,7 +189,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
             ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
-            BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+            BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
           }
           work->shakeFrames = 4;
@@ -214,7 +214,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
 /// in 16.16, each variant the frame it starts. Rebuilds the background ramp
 /// each frame (BattleAnim_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
-void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
+void BattleAnim_RunShiningStar(struct BattleAnimArgs *args) {
   struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
@@ -239,7 +239,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
@@ -252,8 +252,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  source = GetBattleObjectSlotFar(work->effect->user)->actor;
-  target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  source = GetBattleObjectSlotFar(work->args->user)->actor;
+  target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // Each star starts 120 pixels above the user, at half its x (towards the
   // middle of the field), aims at a random spot up to 64 pixels either side
   // of the target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15
@@ -329,8 +329,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
           step->velocityZ /= 2;
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_HEAVY_IMPACT);
-          ANIM_FOR_EACH_TARGET(j, work->effect)
-          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+          ANIM_FOR_EACH_TARGET(j, work->args)
+          BattleAnim_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, j, 8);
         }
         step->x += step->velocityX;

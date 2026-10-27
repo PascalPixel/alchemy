@@ -163,7 +163,7 @@ s32 Portrait_GetForSpeakerFar(u32 value);
 s32 FieldMenu_RunFar(void);
 /// Runs the title menu built from the save files, New Game to Send, and returns
 /// the chosen FileAction, or -1 when cancelled.
-s32 FileMenu_SelectActionFar(void);
+s32 FileList_SelectActionFar(void);
 /// Lets the player choose the Send screens' transfer method or password level,
 /// and returns the choice, or -1 when cancelled.
 s32 IconMenu_ChooseSendOptionFar(s32 mode);

@@ -8,23 +8,24 @@
 // light falls from the sky onto each target.
 
 // Images in work->sheet.
-#define DJINN_BEAMS_MOTE_CELLS 0x2710 ///< the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAMS_DJINNI_CELLS 0x65c0 ///< the Djinni (40x40)
+#define DJINN_BEAMS_MOTE_OFFSETS                                               \
+  0x2710 ///< the motes (CrescentMoonSheet, 24x24)
+#define DJINN_BEAMS_DJINNI_OFFSETS 0x65c0 ///< the Djinni (40x40)
 
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
 /// Abilities: Revive, Water of Life (BATTLE_ANIM_REVIVE); Quartz
 /// (BATTLE_ANIM_QUARTZ).
-void BattleAnim_RunRevive(struct BattleAnimArgs *effect) {
-  BattleAnim_RunDjinnBeams(effect, ELEMENT_VENUS);
+void BattleAnim_RunRevive(struct BattleAnimArgs *args) {
+  BattleAnim_RunDjinnBeams(args, ELEMENT_VENUS);
 }
 /// Dew plays Revive's beams of light in the Mercury Djinni's colours, and with
 /// a prelude a Mercury Djinni appears first.
 ///
 /// Abilities: Dew (BATTLE_ANIM_DEW).
-void BattleAnim_RunDew(struct BattleAnimArgs *effect) {
-  BattleAnim_RunDjinnBeams(effect, ELEMENT_MERCURY);
+void BattleAnim_RunDew(struct BattleAnimArgs *args) {
+  BattleAnim_RunDjinnBeams(args, ELEMENT_MERCURY);
 }
 /// When effect->prelude is 1, a Djinni appears, sways and then rises out of
 /// sight. Over each target in turn, 16 frames apart, eight motes drift down,
@@ -38,7 +39,7 @@ void BattleAnim_RunDew(struct BattleAnimArgs *effect) {
 /// builds and frees its blitters every frame.
 ///
 /// element: the Djinni's, Venus or Mercury.
-void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
+void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *args, s32 element) {
   struct ScreenPoint one;
   struct ScreenPoint screenPosition;
   s32 ground[3];
@@ -57,14 +58,14 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
 
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   // Setup. The entrance (over the first target) mirrors the Djinni when the
   // targets are enemies (side ^ 1), and returns where it ends in djinnX and
   // djinnY.
-  if (work->effect->prelude == 1)
-    BattleAnim_RunDjinniEntrance(effect, element,
-                                 work->effect->side ^ work->effect->prelude,
+  if (work->args->prelude == 1)
+    BattleAnim_RunDjinniEntrance(args, element,
+                                 work->args->side ^ work->args->prelude,
                                  DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   // work->sheet: the column's strip and the glow pictures (EarthWallSheet)
   // from 0, then the motes and the Djinni.
@@ -75,14 +76,14 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_OFFSETS);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS);
 
   // The motes start 80 pixels up, up to 8 pixels off in z, each at a random
   // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.
@@ -98,11 +99,11 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   // screen x 112 for the party (ANIM_SIDE_PARTY), from x 0 for enemies. offsetX
   // is added to every screen x drawn, turning it into a canvas x.
   REG_BG2PA = Q_8_8(1);
-  if (work->effect->targetCount == 1) {
-    Projection_ScaledUnit(work->effect->targets[0], &one);
+  if (work->args->targetCount == 1) {
+    Projection_ScaledUnit(work->args->targets[0], &one);
     offsetX = 64 - one.x;
   } else {
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       offsetX = -112;
     else
       offsetX = 0;
@@ -111,7 +112,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   // Trails keep half a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != work->effect->targetCount * 16 + 116; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 16 + 116; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
     // Frame loop. The last target's column is gone by frame count * 16 +
@@ -127,19 +128,19 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // The Djinni sways 20 pixels either way and from frame 32 rises 2
     // pixels a frame; it is drawn twice over its first four frames, which
     // with additive drawing makes it brighter as it appears.
-    k = work->effect->prelude;
+    k = work->args->prelude;
     if (k == 1) {
       s32 angle = frame << 11;
       s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinnX + offsetX - 20;
       s32 y = (Trig_Cos(angle) * 4 >> 16) + djinnY - 24;
 
       // Facing as in the entrance; k is the prelude, 1.
-      BattleAnim_FetchRectangleBlitters(work->effect->side ^ k, draw);
+      BattleAnim_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
+      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS, x, y, 40, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
+        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS, x, y, 40, 40);
       ANIM_RELEASE_BLITTERS();
     }
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
@@ -151,9 +152,9 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // Motes: one every 8 frames, swaying up to 16 pixels either way (odd
     // motes mirrored) as they sink a pixel a frame; they go out 8 pixels
     // above the ground. Each is placed relative to its target.
-    ANIM_FOR_EACH_TARGET(k, work->effect) {
+    ANIM_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
-          GetBattleObjectSlotFar(work->effect->targets[k])->actor;
+          GetBattleObjectSlotFar(work->args->targets[k])->actor;
       s32 start = k * 16;
 
       ANIM_VIEW_FROM_CAMERA(camera);
@@ -177,7 +178,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 (24 * 24) +
-                            DJINN_BEAMS_MOTE_CELLS,
+                            DJINN_BEAMS_MOTE_OFFSETS,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
             mote->y -= 1 << 16;
             mote->variant++;
@@ -191,19 +192,19 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // 3 frames from 16 frames after it falls. The target glows meanwhile.
     // The glow at its feet goes 28 frames after the column falls, the
     // column itself at 32.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       s32 start = i * 16;
 
       if (frame >= start + 72) {
         struct Actor *target =
-            GetBattleObjectSlotFar(work->effect->targets[i])->actor;
+            GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         ANIM_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_GRB, -1,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_GRB, -1,
                                  -1, 0);
         if (frame == start + 88)
-          BattleAnim_TintBattler(work->effect->targets[i], 0, -1, -1, 0);
+          BattleAnim_TintBattler(work->args->targets[i], 0, -1, -1, 0);
         SET_VECTOR(ground, target->x.fixed, 0, target->z.fixed);
         Projection_Point(ground, &screenPosition);
         screenPosition.x += offsetX;
@@ -247,5 +248,5 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   BattleAnim_EndCanvasLayer();
 }
 
-#undef DJINN_BEAMS_MOTE_CELLS
-#undef DJINN_BEAMS_DJINNI_CELLS
+#undef DJINN_BEAMS_MOTE_OFFSETS
+#undef DJINN_BEAMS_DJINNI_OFFSETS

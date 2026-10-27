@@ -8,8 +8,8 @@
 /// PARTICLES (28 bytes each, 0xe00 in all).
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct Particle *)(Ram_MapGridCellBuffer + 0xe00))
-#define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block
-#define BOREAS_FALLING_BLOCK_CELLS 0x14f9 ///< the diagonal 40x80 ice block
+#define BOREAS_BIG_BLOCK_OFFSETS 0xc46      ///< the dropping 24x48 ice block
+#define BOREAS_FALLING_BLOCK_OFFSETS 0x14f9 ///< the diagonal 40x80 ice block
 
 /// gBoreas_Points has an x and a y for each rock.
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]
@@ -43,7 +43,7 @@
 /// BattleAnim_BuildWindowEdgeTable), gBgScroll[1] for the shake,
 /// gProjection.centerY and work->shakeFrames; it releases the nine objects
 /// before the second half and its callbacks and blitters at the end.
-void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
+void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
   // One to one; the frame loop copies it and then sets both factors to 1.0
   // again.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
@@ -76,7 +76,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   work = (struct BattleAnimWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
   puffSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   BattleAnim_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
@@ -94,7 +94,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
                     COMPOSITE_TRANSPARENT);
   drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   gProjection.centerY = 240;
-  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->args);
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
@@ -232,7 +232,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
       } else if (frame > 208) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_CELLS, metatileX, blockY,
+      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_OFFSETS, metatileX, blockY,
               24, 48);
     }
 
@@ -424,7 +424,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
     // From frame 65 a 40x80 block falls diagonally from the top right, 7
     // pixels left and 14 down a frame.
     if (frame > 64) {
-      draw(canvas, work->sheet + BOREAS_FALLING_BLOCK_CELLS,
+      draw(canvas, work->sheet + BOREAS_FALLING_BLOCK_OFFSETS,
            (64 - frame) * 7 + 88, frame * 14 - 992, 40, 80);
     }
     if (frame <= 71) {
@@ -491,9 +491,9 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
     }
 
     // Target i takes a blue tint and its damage pose on frame 32 + 8i.
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 8 + 32) {
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLUE_TINT,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
                                POSE_DAMAGE, -1, 0);
       }
     }
@@ -532,7 +532,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
 }
 
 #undef BOREAS_ICE_BLOCK_TRAILS
-#undef BOREAS_BIG_BLOCK_CELLS
-#undef BOREAS_FALLING_BLOCK_CELLS
+#undef BOREAS_BIG_BLOCK_OFFSETS
+#undef BOREAS_FALLING_BLOCK_OFFSETS
 #undef BOREAS_POINT_X
 #undef BOREAS_POINT_Y

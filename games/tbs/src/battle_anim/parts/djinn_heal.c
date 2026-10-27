@@ -18,7 +18,7 @@
 /// 511 the healing sparkles, 64 for each target; both are offsets from the
 /// point the transform is centred on, in 16.16. work->sheet holds the
 /// Djinni, the battle sheet slot first the motes and then the sparkle dots.
-UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
+UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -41,14 +41,14 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  BattleAnim_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
-  actor = GetBattleObjectSlotFar(work->effect->user)->actor;
-  goal = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+  BattleAnim_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
+  actor = GetBattleObjectSlotFar(work->args->user)->actor;
+  goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
   // pixels a frame.
   for (i = 0; i != 64; i++) {
@@ -87,9 +87,9 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     Transform_ApplyPosition(position);
     // The user glows white for the first 24 frames.
     if (frame == 0)
-      BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1, 0);
+      BattleAnim_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1, 0);
     if (frame == 24)
-      BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
+      BattleAnim_TintBattler(work->args->user, 0, -1, -1, 0);
     // The swirl: 32 motes, mote i from frame i + 1, each turning about its
     // own axis (by i & 3: yaw, pitch, roll, or pitch and roll), its speed
     // damped to 60/64 each frame and, from 30 frames after it appears,
@@ -154,21 +154,21 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     spark->variant = 0;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
-  for (frame = 0; frame != work->effect->targetCount * 8 + 72; frame++) {
+  for (frame = 0; frame != work->args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     // The Djinni sways 40 pixels either way in depth every 32 frames, and
     // flies up 4 pixels a frame for the last 32.
-    if (frame >= work->effect->targetCount * 8 + 40)
+    if (frame >= work->args->targetCount * 8 + 40)
       target[1] += 0x40000;
     SET_VECTOR(point, target[0], target[1],
                target[2] + Trig_Sin(frame << 11) * 40);
     Projection_Point(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
+    ANIM_FOR_EACH_TARGET(member, work->args) {
       struct Actor *object =
-          GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+          GetBattleObjectSlotFar(work->args->targets[member])->actor;
       s32 start = member * 8;
       ANIM_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);
@@ -181,10 +181,10 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
       if (frame == start + 30)
         Sound_PlaySongFar(SE_RECOVERY);
       if (frame == start + 40)
-        BattleAnim_TintBattler(work->effect->targets[member],
-                               SPRITE_COLOR_WHITE, -1, -1, 0);
+        BattleAnim_TintBattler(work->args->targets[member], SPRITE_COLOR_WHITE,
+                               -1, -1, 0);
       if (frame == start + 64)
-        BattleAnim_TintBattler(work->effect->targets[member], 0, -1, -1, 0);
+        BattleAnim_TintBattler(work->args->targets[member], 0, -1, -1, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {

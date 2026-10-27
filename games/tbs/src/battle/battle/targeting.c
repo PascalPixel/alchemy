@@ -324,7 +324,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 /// ability would affect no one.
 /// Called by BattleAI_ChooseAction for an ability aimed at allies,
 /// the user or foes. Takes Random16 rolls to choose among eligible targets.
-s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
+s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
   s32 targetPositions[6];
@@ -360,14 +360,14 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
         action->targetMode == ABILITY_TARGET_SELF)
       ownSide = 1;
 
-    if (((actorId < 0 || actorId > ALLY_MAX) && ownSide == 0) ||
-        (actorId >= 0 && actorId <= ALLY_MAX && ownSide != 0)) {
+    if (((userId < 0 || userId > ALLY_MAX) && ownSide == 0) ||
+        (userId >= 0 && userId <= ALLY_MAX && ownSide != 0)) {
       targetIndex = 0;
       while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
         slot = &turnOrder->partyUnits[targetIndex];
         unitId = *slot;
         if (unitId != BATTLE_UNIT_REMOVED) {
-          if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
+          if (action->targetMode != ABILITY_TARGET_SELF || unitId == userId) {
             unitIds[candidateCount] = unitId;
             orderPositions[candidateCount] = PLACE_PARTY;
             orderPositions[candidateCount] |= targetIndex;
@@ -381,7 +381,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
       while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
         unitId = turnOrder->enemyIds[targetIndex];
         if (unitId != BATTLE_UNIT_REMOVED) {
-          if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
+          if (action->targetMode != ABILITY_TARGET_SELF || unitId == userId) {
             unitIds[candidateCount] = unitId;
             orderPositions[candidateCount] = PLACE_ENEMY;
             orderPositions[candidateCount] |= targetIndex;
@@ -412,7 +412,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
 
   if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
       ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-           Unit_GetFar(actorId)->id))
+           Unit_GetFar(userId)->id))
               ->targetStrategy != TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
@@ -428,7 +428,7 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
         thisUnit = Unit_GetFar(unitIds[innerIndex]);
         nextUnit = Unit_GetFar(unitIds[innerIndex + 1]);
         if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-                 Unit_GetFar(actorId)->id))
+                 Unit_GetFar(userId)->id))
                 ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;

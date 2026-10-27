@@ -327,9 +327,9 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 /// with no letters given. Clears the letter's bit in
 /// BattleWork.nameLetterMasks. Called by BattleObject_RemoveFromLists.
 #ifdef UBFIX
-void BattleEnemy_ReleaseNameLetter(s32 actorId) {
+void BattleEnemy_ReleaseNameLetter(s32 unitId) {
 #else
-s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
+s32 BattleEnemy_ReleaseNameLetter(s32 unitId) {
 #endif
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit;
@@ -339,7 +339,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 suffixIndex;
   s32 classId;
 
-  unit = Unit_GetFar(actorId);
+  unit = Unit_GetFar(unitId);
   if (unit->classId != CLASS_NONE)
     return;
 

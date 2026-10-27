@@ -189,20 +189,20 @@ void Window_CloseAll(s32 unused) {
   }
 }
 
-/// Steps a text printer's window effect (WINDOW_EFFECT_SWELL): the frame is
+/// Steps a text printer's window effect (WINDOW_ANIMATION_SWELL): the frame is
 /// drawn a tile bigger on every side until the countdown ends, then back to
 /// normal. Any other effect is left set and does nothing, so the printer types
 /// no more text. TextPrinter_RunAll calls it in place of typing while the
 /// window has an effect.
 void Window_StepSwellEffect(struct TextPrinter *printer) {
   struct Window *window = printer->window;
-  s32 effect = window->effect;
+  s32 effect = window->animation;
   s32 x = window->x;
   s32 y = window->y;
   s32 width = window->width;
   s32 height = window->height;
 
-  if (effect != WINDOW_EFFECT_SWELL)
+  if (effect != WINDOW_ANIMATION_SWELL)
     return;
 
   Window_DrawFrame(x - 1, y - 1, width + 2, height + 2);
@@ -210,7 +210,7 @@ void Window_StepSwellEffect(struct TextPrinter *printer) {
   if (printer->countdown != 0)
     return;
 
-  printer->window->effect = 0;
+  printer->window->animation = 0;
   Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
   Window_DrawFrame(x, y, width, height);
 }

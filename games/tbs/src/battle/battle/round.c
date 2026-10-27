@@ -124,7 +124,7 @@ void BattleUnit_ResetGuardLevels(void) {
     struct Unit *unit;
 
     unit = Unit_GetFar(unitIds[unitIndex]);
-    unit->guardLevel = 0;
+    unit->defendLevel = 0;
     Unit_CalculateFar(unitIds[unitIndex]);
   }
 }
@@ -695,9 +695,8 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
           action->command == COMMAND_TOTAL_DEFENSE) {
         unit = Unit_GetFar(action->unitId);
         // Half the damage, or a tenth.
-        unit->guardLevel = action->command == COMMAND_DEFEND
-                               ? GUARD_DEFEND
-                               : GUARD_TOTAL_DEFENSE;
+        unit->defendLevel =
+            action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
       }
       action++;
       remainingActions--;

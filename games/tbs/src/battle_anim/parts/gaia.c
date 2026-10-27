@@ -5,9 +5,9 @@
 #include "../battle_anim_internal.h"
 
 /// The standing wall's top in the rebuilt sheet, 48x96 (stretched from 48x32).
-#define GAIA_WALL_TOP_CELLS 0x13c0
+#define GAIA_WALL_TOP_OFFSETS 0x13c0
 /// The standing wall's foot in the rebuilt sheet, 48x21.
-#define GAIA_WALL_FOOT_CELLS 0x25c0
+#define GAIA_WALL_FOOT_OFFSETS 0x25c0
 #define GAIA_WALL_FOOT_BYTES (48 * 21)
 #define GAIA_FRAMES 192
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
@@ -26,7 +26,7 @@
 /// effect: the targets; the variant widens the wall: narrowest for Gaia and
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
-void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
+void BattleAnim_RunGaia(struct BattleAnimArgs *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
   void **cursor;
@@ -49,20 +49,20 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
 
   // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
   // or 1.5 times, or twice as BattleAnim_StartCanvasLayer left it.
-  if (work->effect->variant == ANIM_VARIANT_BASIC)
+  if (work->args->variant == ANIM_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
-  else if (work->effect->variant == ANIM_VARIANT_STRONGER)
+  else if (work->args->variant == ANIM_VARIANT_STRONGER)
     REG_BG2PA = Q_8_8(1.0 / 1.5);
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     wallX = 8;
-    if (work->effect->variant == ANIM_VARIANT_BASIC)
+    if (work->args->variant == ANIM_VARIANT_BASIC)
       rockX = 40;
-    else if (work->effect->variant == ANIM_VARIANT_STRONGER)
+    else if (work->args->variant == ANIM_VARIANT_STRONGER)
       rockX = 36;
     else
       rockX = 40;
@@ -70,7 +70,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
     wallX = -16;
     rockX = -12;
   }
-  REG_BG2X = gGaia_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
+  REG_BG2X = gGaia_Bg2Shifts[work->args->side][work->args->variant] << 8;
 
   // Decode the EarthWall sheet into Ram_MapGridCellBuffer, and load the orange
   // palette with background colours 1 to 63 each 8 steps darker a channel.
@@ -102,8 +102,8 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   // Rebuild the pictures in work->sheet:
   //   the growing wall: nine one-line rows, each stretched to 32 lines (the
   //   frame loop draws only the first eight);
-  //   the top of the wall (GAIA_WALL_TOP_CELLS): 48x32 stretched to 48x96;
-  //   the foot of the wall (GAIA_WALL_FOOT_CELLS): 48x21;
+  //   the top of the wall (GAIA_WALL_TOP_OFFSETS): 48x32 stretched to 48x96;
+  //   the foot of the wall (GAIA_WALL_FOOT_OFFSETS): 48x21;
   //   the swelling ground: three frames.
   src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
@@ -244,14 +244,14 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
     if (frame >= 88 && frame <= 159) {
       s32 width = 48;
 
-      draw[0](canvas, &work->sheet[GAIA_WALL_TOP_CELLS], wallX + 16, 0, width,
+      draw[0](canvas, &work->sheet[GAIA_WALL_TOP_OFFSETS], wallX + 16, 0, width,
               96);
-      draw[1](canvas, &work->sheet[GAIA_WALL_TOP_CELLS], wallX + 64, 0, width,
+      draw[1](canvas, &work->sheet[GAIA_WALL_TOP_OFFSETS], wallX + 64, 0, width,
               96);
-      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT_CELLS], wallX + 16, 96, width,
-              21);
-      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT_CELLS], wallX + 64, 96, width,
-              21);
+      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT_OFFSETS], wallX + 16, 96,
+              width, 21);
+      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT_OFFSETS], wallX + 64, 96,
+              width, 21);
     }
 
     // Dust (from frame 88): until frame 159, dust that leaves the top
@@ -291,7 +291,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
           scale = unitScale;
           if (frame > 71) {
             scale.x = (k << 12) + 0x8000;
-            scale.x += work->effect->variant << 14;
+            scale.x += work->args->variant << 14;
           } else {
             scale.x = 0x8000;
           }
@@ -318,9 +318,9 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (work->effect->variant == ANIM_VARIANT_BASIC)
+                if (work->args->variant == ANIM_VARIANT_BASIC)
                   rock->x = Random16() % 96 + 42;
-                else if (work->effect->variant == ANIM_VARIANT_STRONGER)
+                else if (work->args->variant == ANIM_VARIANT_STRONGER)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;
@@ -338,13 +338,13 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
     // The targets (frames 86 to 158): a flash every 12 frames and a recoil
     // every 4.
     if (frame <= 158) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+            BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+            BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                            KNOCKBACK_SKID);
         }
       }
@@ -362,8 +362,8 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   BattleAnim_EndCanvasLayer();
 }
 
-#undef GAIA_WALL_TOP_CELLS
-#undef GAIA_WALL_FOOT_CELLS
+#undef GAIA_WALL_TOP_OFFSETS
+#undef GAIA_WALL_FOOT_OFFSETS
 #undef GAIA_WALL_FOOT_BYTES
 #undef GAIA_FRAMES
 #undef GAIA_ROCKS

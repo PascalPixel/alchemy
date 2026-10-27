@@ -39,9 +39,9 @@
 ///
 /// The shared machinery is in these parts:
 ///
-///   Entry points    dispatch.c: BattleAnim_RunTableEffect,
-///                   BattleAnim_RunSummonEffect; positions.c:
-///                   BattleAnim_DispatchByIdRange
+///   Entry points    dispatch.c: BattleAnim_RunFromTable,
+///                   BattleAnim_RunSummon; positions.c:
+///                   BattleAnim_RunByIdRange
 ///   Canvas          canvas.c: BattleAnim_StartCanvasLayer,
 ///                   BattleAnim_EndCanvasLayer, BattleAnim_WipeCanvas,
 ///                   BattleAnim_ProcessPendingGraphicsTransfer

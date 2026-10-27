@@ -33,7 +33,7 @@
 /// while flashes burst from the user and rise in a widening ring.
 ///
 /// Abilities: Death Plunge (BATTLE_ANIM_DEATH_PLUNGE).
-void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
+void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -56,7 +56,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   s32 percent;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -69,15 +69,15 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
   // frame, and the animation waits 20 frames for it.
-  first = GetBattleObjectSlotFar(work->effect->user);
-  second = GetBattleObjectSlotFar(work->effect->targets[0]);
+  first = GetBattleObjectSlotFar(work->args->user);
+  second = GetBattleObjectSlotFar(work->args->targets[0]);
   user = first->actor;
   target = second->actor;
   percent = 90;
   x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
-  userHeight = BattleUnit_GetEffectHeightFar(work->effect->user);
-  targetHeight = BattleUnit_GetEffectHeightFar(work->effect->targets[0]);
+  userHeight = BattleUnit_GetEffectHeightFar(work->args->user);
+  targetHeight = BattleUnit_GetEffectHeightFar(work->args->targets[0]);
   Actor_StartIdleFar(user);
   Actor_SetMoveTargetFar(user, x, 0, z);
   Actor_SelectAnimationFar(user, POSE_LEAP);
@@ -113,7 +113,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     // Frame 54: the target flashes and both bounce; the user heads back
     // towards the middle of the field.
     if (frame == 54) {
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 10);
       target->velocityY = 8 << 16;
       target->gravity = 0xab85;
@@ -188,7 +188,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
 /// Nothing reaches it: no handler table entry or call names it. Places 64
 /// swords in work->particles but draws only the first 16, and moves BG2X to
 /// centre the canvas on the target.
-UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
+UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
@@ -201,7 +201,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
   s32 i;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -219,7 +219,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   // Scroll the canvas so its middle column sits on the first target.
-  Projection_ScaledUnit(work->effect->targets[0], &screenPosition);
+  Projection_ScaledUnit(work->args->targets[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Each sword waits at a random x from 16 to 111 near the top of the
@@ -330,7 +330,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
     // pose for 2 frames and the screen shakes; every 8 frames the hit
     // sound plays.
     if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
@@ -360,7 +360,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
 ///                   Venus yellow, Mercury blue, Mars red, others Jupiter
 ///                   violet.
 /// effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
-void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
+void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
   struct ScreenPoint ground;
   struct ScreenPoint screenPosition;
   s32 point[3];
@@ -381,7 +381,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
   canvas = (void *)AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = (u8 *)AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   camera = gBattleCamera;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   // Palette_StepFadeTransfer darkens the battle background for 24 frames.
   work->fadeFrames = 24;
@@ -391,7 +391,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  switch (work->effect->kind) {
+  switch (work->args->kind) {
   case ELEMENT_VENUS:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
@@ -424,24 +424,24 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
   // The mote size, written back into the caller's argument.
-  work->effect->variant++;
-  if (work->effect->variant <= 0)
-    work->effect->variant = 1;
-  if (work->effect->variant > 4)
-    work->effect->variant = 4;
+  work->args->variant++;
+  if (work->args->variant <= 0)
+    work->args->variant = 1;
+  if (work->args->variant > 4)
+    work->args->variant = 4;
   Sound_PlaySongFar(SE_POWER_UP);
 
   for (frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
     // Frame loop. Keep the canvas centred on the unit's feet, fade out over
     // the last 6 frames, and flash the first target from frame 16 for 20
     // frames.
-    Projection_Unit(work->effect->user, &ground);
+    Projection_Unit(work->args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 16)
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
-                             0, 20);
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1, 0,
+                             20);
 
     // The pillar: its left half at x 47 and its mirrored right half at x
     // 64, keeping the brighter pixel. The pillar (17x64) cycles through four
@@ -469,9 +469,9 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     }
-    // A lookup with no side effect whose result is dropped; the ROM keeps
+    // A lookup with no side args whose result is dropped; the ROM keeps
     // the call.
-    GetBattleObjectSlotFar(work->effect->user);
+    GetBattleObjectSlotFar(work->args->user);
     ANIM_VIEW_FROM_CAMERA(camera);
 
     // The first 32 motes, each starting i frames in: each frame a mote
@@ -491,7 +491,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
         screenPosition.x /= 2;
-        size = (i & 1) + work->effect->variant;
+        size = (i & 1) + work->args->variant;
         ANIM_DRAW_FLARE(draw[0], canvas, sheet, screenPosition.x,
                         screenPosition.y, size);
       }
@@ -552,7 +552,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 /// and queues a DISPCNT without BG1.
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
-void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
+void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
   /* FAKEMATCH(dead): an unused position for the frame's 12 bytes at sp+44;
    * without it, 2 of 1051 instructions differ in tbs-en. */
   UNUSED struct ScreenPoint position;
@@ -592,7 +592,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   slots = gHeapSlots + HEAP_SLOT_BATTLE;
   battle = slots[0];
   view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
-  work->effect = effect;
+  work->args = args;
 
   // Setup. Make BG2 the 128x128 canvas, as BattleAnim_StartCanvasLayer does
   // but without its waits: twice the width, 16 lines down, inside both
@@ -681,8 +681,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100,
                   RGB(31, 31, 31) << 16 | RGB(31, 31, 31));
   Sound_PlaySongFar(SE_POWER_UP);
-  BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                         POSE_CAST, 0, 30);
+  BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, POSE_CAST,
+                         0, 30);
 
   for (frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
     // Frame loop. The cues: the shatter sound three times by frame 3, the
@@ -692,7 +692,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
     if (frame == 3)
       Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 28)
-      BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_CAST, -1, 0);
+      BattleAnim_TintBattler(work->args->targets[0], -1, POSE_CAST, -1, 0);
     if (frame == 32)
       Sound_PlaySongFar(SE_MONSTER_ROAR);
     if (frame == 5)
@@ -898,7 +898,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   // fade, then free the slots in the reverse of the order they were taken.
   ANIM_RELEASE_BLITTERS();
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
-  BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_STANDING, -1, 0);
+  BattleAnim_TintBattler(work->args->targets[0], -1, POSE_STANDING, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
@@ -938,7 +938,7 @@ struct Streak {
 ///
 /// effect->kind : the element (enum Element), which picks the palette: Venus
 ///                yellow, Mercury blue, Mars red, others Jupiter violet.
-void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
+void BattleAnim_RunElementBurst(struct BattleAnimArgs *args) {
   struct ScreenPoint ground;
   struct BattleAnimWork *work;
   void *canvas;
@@ -951,7 +951,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
   work = AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
   canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   // Setup, as for the element pillar: the battle background darkens for 24
   // frames, and the narrow canvas goes 12/16 over all of the background.
@@ -962,7 +962,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  switch (work->effect->kind) {
+  switch (work->args->kind) {
   case ELEMENT_VENUS:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
@@ -1005,14 +1005,14 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != 56; frame++) {
     // Frame loop. Follow the unit, fade out over the last 6 frames, and on
     // frame 26 flash the first target for 20 frames.
-    Projection_ScaledUnit(effect->user, &ground);
+    Projection_ScaledUnit(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, 16);
     if (frame == 26) {
       Sound_PlaySongFar(SE_POWER_UP);
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
-                             0, 20);
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1, 0,
+                             20);
     }
     // Frames 28 to 48: the burst of light (48x48), seven images, three
     // frames each.

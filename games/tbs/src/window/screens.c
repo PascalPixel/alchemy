@@ -16,13 +16,13 @@
 ///
 ///   Party status    party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw
-///   Saving          save.c: FileMenu_SelectFile, Save_ToChosenFile
+///   Saving          save.c: FileList_SelectFile, Save_ToChosenFile
 ///   Battle menus    party_commands.c: Battle_CollectPartyCommands, which
 ///                   runs command_row.c: BattleCommandRow_Run and the menus
 ///                   of djinn_menu.c, summon_menu.c, item_menu.c,
 ///                   psynergy_menu.c and targets.c
 ///   Icon menus      icon_menu.c: FieldMenu_SelectCommand,
-///                   FileMenu_SelectAction
+///                   FileList_SelectAction
 
 #include "screens_internal.h"
 

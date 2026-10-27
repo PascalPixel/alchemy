@@ -53,7 +53,7 @@ enum ItemFlags {
 #define ITEM_USE_FREE 0      ///< nothing: it is kept, as equipment is
 #define ITEM_USE_CONSUMED 1  ///< one is used up
 #define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
-/// Not used up: equipped, it teaches its actionId as Psynergy.
+/// Not used up: equipped, it teaches its abilityId as Psynergy.
 #define ITEM_USE_TEACHES 3
 #define ITEM_USE_EMPTIES 4 ///< Hermes' Water leaves an Empty Bottle
 

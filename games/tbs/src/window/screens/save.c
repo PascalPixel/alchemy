@@ -110,7 +110,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
 /// file has its send flag set and R and Left are held.
-/// FileMenu_SelectAction reads all three.
+/// FileList_SelectAction reads all three.
 s32 Save_ScanRecordFlags(void) {
   s32 error;
   s32 sentCount;
@@ -403,7 +403,7 @@ s32 Save_CopyFile(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    file = FileMenu_SelectFile(0, 2);
+    file = FileList_SelectFile(0, 2);
     if (file == -1) {
       result = file;
     } else {
@@ -454,7 +454,7 @@ s32 Save_EraseSelectedFile(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    file = FileMenu_SelectFile(0, 3);
+    file = FileList_SelectFile(0, 3);
     if (file == -1) {
       result = file;
     } else {
@@ -489,8 +489,8 @@ s32 Save_EraseSelectedFile(void) {
 /// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
 /// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
 /// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
-/// 85 frames. FileMenu_StartPulse runs it while the file menu is open.
-void FileMenu_UpdatePulse(void) {
+/// 85 frames. FileList_StartPulse runs it while the file menu is open.
+void FileList_UpdatePulse(void) {
   s32 *tick;
   volatile u16 *palette;
   s32 colour;
@@ -543,17 +543,17 @@ void FileMenu_UpdatePulse(void) {
 
 #if TBS_PATCH_1
 
-/// Starts the palette glow (FileMenu_UpdatePulse) as a task.
-void FileMenu_StartPulse(void) {
-  Task_Add(FileMenu_UpdatePulse, TASK_PASS_FRAME);
+/// Starts the palette glow (FileList_UpdatePulse) as a task.
+void FileList_StartPulse(void) {
+  Task_Add(FileList_UpdatePulse, TASK_PASS_FRAME);
 }
 
-void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }
+void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the
 /// tile entry 0xe006: tile 6 in HIGHLIGHT_PALETTE, the palette
-/// FileMenu_UpdatePulse animates. The file menu marks the file under
+/// FileList_UpdatePulse animates. The file menu marks the file under
 /// the cursor with it.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
@@ -605,14 +605,14 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 /// The file menu shows the chosen file's party as walking sprites in a
 /// row, and four Djinn sprites, one for each element, over the file's Djinn
 /// counts. Each sprite stands three tiles (24 pixels) from the one before.
-#define FILE_MENU_SPRITE_SPACING 3
+#define FILE_LIST_SPRITE_SPACING 3
 /// Task priority of the tasks that place the sprites every frame.
-#define FILE_MENU_SPRITE_PRIORITY (200 << 4)
+#define FILE_LIST_SPRITE_PRIORITY (200 << 4)
 
 /// Shows the party of save file `summary` (up to four members) as sprites in
 /// a row from tile (x, y) inside `window`, and starts placing them every
-/// frame (FileMenu_PlacePartySprites).
-void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
+/// frame (FileList_PlacePartySprites).
+void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
                                struct SaveFileSummary *summary) {
   struct ShopWork *menu = gMenuWork;
   s32 i;
@@ -630,7 +630,7 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
     menu->partyMemberIcons[i] = sprite;
     menu->partyMemberX[i] =
-        (x + window->x + i * FILE_MENU_SPRITE_SPACING) * 8 + 16;
+        (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
     menu->partyMemberY[i] = (y + window->y) * 8 + 16;
     // 1.0 in 16.16.
     menu->partyMemberScale[i] = Q16_ONE;
@@ -638,15 +638,15 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
   priority = 200;
   priority <<= 4;
-  Task_Add(FileMenu_PlacePartySprites, priority);
+  Task_Add(FileList_PlacePartySprites, priority);
 }
 
 /// Stops placing the party sprites of the file menu and releases them.
-void FileMenu_HidePartySprites(void) {
+void FileList_HidePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
   s32 i;
 
-  Task_Remove(FileMenu_PlacePartySprites);
+  Task_Remove(FileList_PlacePartySprites);
   for (i = 0; i < 4; i++) {
     if (menu->partyMemberIcons[i] != NULL) {
       Sprite_DestroyFar(menu->partyMemberIcons[i]);
@@ -657,7 +657,7 @@ void FileMenu_HidePartySprites(void) {
 
 /// A task: draws each party sprite of the file menu at its
 /// place and scale for this frame.
-void FileMenu_PlacePartySprites(void) {
+void FileList_PlacePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -685,8 +685,8 @@ void FileMenu_PlacePartySprites(void) {
 
 /// Shows the four Djinn sprites, one for each element, in a row from tile
 /// (x, y) inside `window`, and starts placing them every frame
-/// (FileMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
-void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
+/// (FileList_PlaceDjinnSprites). Does nothing when `window` is NULL.
+void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
   struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
@@ -702,20 +702,20 @@ void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
       menu->animations[i] = sprite;
       menu->positionsX[i] =
-          (window->x + x + i * FILE_MENU_SPRITE_SPACING) * 8 + 16;
+          (window->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
       menu->positionsY[i] = (window->y + y) * 8 + 16;
     }
 
-    Task_Add(FileMenu_PlaceDjinnSprites, FILE_MENU_SPRITE_PRIORITY);
+    Task_Add(FileList_PlaceDjinnSprites, FILE_LIST_SPRITE_PRIORITY);
   }
 }
 
 /// Stops placing the Djinn sprites of the file menu and releases them.
-void FileMenu_HideDjinnSprites(void) {
+void FileList_HideDjinnSprites(void) {
   struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
-  Task_Remove(FileMenu_PlaceDjinnSprites);
+  Task_Remove(FileList_PlaceDjinnSprites);
   for (i = 0; i < 4; i++) {
     if (menu->animations[i] != NULL) {
       Sprite_DestroyFar(menu->animations[i]);
@@ -726,7 +726,7 @@ void FileMenu_HideDjinnSprites(void) {
 
 /// A task: draws each Djinn sprite of the file menu at its
 /// place, at scale 1.0, for this frame.
-void FileMenu_PlaceDjinnSprites(void) {
+void FileList_PlaceDjinnSprites(void) {
   struct ItemMenuFiguresView *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -755,14 +755,14 @@ void FileMenu_PlaceDjinnSprites(void) {
 /// Draws the Djinn counts of save file `summary`, one for each element, two
 /// digits each, 24 pixels apart on row 16 of `window`, under the Djinn
 /// sprites. Does nothing when `window` is NULL.
-void FileMenu_DrawDjinnCounts(struct Window *window,
+void FileList_DrawDjinnCounts(struct Window *window,
                               struct SaveFileSummary *summary) {
   s32 i;
 
   if (window != NULL) {
     for (i = 0; i < 4; i++)
       Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, window,
-                              i * FILE_MENU_SPRITE_SPACING * 8, 16);
+                              i * FILE_LIST_SPRITE_SPACING * 8, 16);
   }
 }
 
@@ -784,7 +784,7 @@ void FileMenu_DrawDjinnCounts(struct Window *window,
 /// Draws the summary of save file `summary` into `window`: the leader's name,
 /// level and class, the play time and the coins. Does nothing when `window`
 /// is 0.
-void FileMenu_DrawSummary(struct Window *window,
+void FileList_DrawSummary(struct Window *window,
                           struct SaveFileSummary *summary) {
   u32 playTime[4]; // the play time text
   s32 y;
@@ -833,25 +833,25 @@ void FileMenu_DrawSummary(struct Window *window,
 /// (gMenuTitlePictures: Save, Continue, Copy, Erase, Battle,
 /// Link).
 enum FileMenuMode {
-  FILE_MENU_SAVE,     ///< saving: any file, empty ones too
-  FILE_MENU_CONTINUE, ///< continuing: files not yet cleared
-  FILE_MENU_COPY,     ///< copying: any file with data
-  FILE_MENU_ERASE,    ///< erasing: any file with data
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files with any of game flags 48-127 set.
-  FILE_MENU_EXTRA,
-  FILE_MENU_CLEARED ///< the title's Send: cleared files only
+  FILE_LIST_EXTRA,
+  FILE_LIST_CLEARED ///< the title's Send: cleared files only
 };
 
-/// FileMenu_SelectFile's result when no file can be chosen in its mode.
-#define FILE_MENU_NO_FILE -2
+/// FileList_SelectFile's result when no file can be chosen in its mode.
+#define FILE_LIST_NO_FILE -2
 
 // The file menu: lists the three files with each one's leader and area
 // (or why it cannot be chosen) and, for the file under the cursor, its
 // summary, its party and its Djinn, with the file's own palette glow. The
 // cursor starts on `file` and moves up and down over the files `mode` allows
 // (see FileMenuMode). Returns the file chosen with A, -1 when cancelled with
-// B, or FILE_MENU_NO_FILE when no file is allowed.
-s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
+// B, or FILE_LIST_NO_FILE when no file is allowed.
+s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
 #if TBS_PATCH_1
   struct SaveWork *save;
@@ -897,12 +897,12 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   work = *(gHeapSlots + HEAP_SLOT_WINDOW);
   buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
-  // BUG: when none is, the jump to done returns FILE_MENU_NO_FILE without
+  // BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without
   // releasing spriteWork's HEAP_SLOT_MENU block.
   if (selectedFile < 0)
     selectedFile = 0;
 #if TBS_PATCH_1
-  if (menuMode == FILE_MENU_CONTINUE) {
+  if (menuMode == FILE_LIST_CONTINUE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  (s8)save->summary[selectedFile].sendFlag != 0);
@@ -912,10 +912,10 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
-  } else if (menuMode == FILE_MENU_EXTRA) {
+  } else if (menuMode == FILE_LIST_EXTRA) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 (save->summary[selectedFile].level == 0 ||
                  (s8)save->summary[selectedFile].flagCount == 0);
@@ -925,10 +925,10 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
-  } else if (menuMode == FILE_MENU_CLEARED) {
+  } else if (menuMode == FILE_LIST_CLEARED) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  (s8)save->summary[selectedFile].sendFlag == 0);
@@ -938,10 +938,10 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
-  } else if (menuMode != FILE_MENU_SAVE) {
+  } else if (menuMode != FILE_LIST_SAVE) {
     for (i = 0; i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0);
          i++) {
       selectedFile++;
@@ -949,14 +949,14 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
   }
 
   // The file list, and the mode's sprite above it.
   Dma_Fill32(0, spriteWork, sizeof(*spriteWork));
-  FileMenu_StartPulse();
+  FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   summary = save->summary;
   y = 0;
@@ -970,10 +970,10 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, y);
-    } else if (menuMode == FILE_MENU_CLEARED && (s8)summary->sendFlag == 0) {
+    } else if (menuMode == FILE_LIST_CLEARED && (s8)summary->sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, y);
     } else {
-      Text_DrawString(summary->name, fileList, FILE_MENU_NAME_X, y);
+      Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
       Text_DrawMessage(summary->area + MsgDebugEntryName, fileList, 62, y);
       work->dirty = 1;
     }
@@ -981,7 +981,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_DrawDividerLine(fileList, 0, 2, 27, 2);
   Window_DrawDividerLine(fileList, 0, 4, 27, 4);
 #else
-  if (menuMode != FILE_MENU_SAVE) {
+  if (menuMode != FILE_LIST_SAVE) {
     for (i = 0; i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0);
          i++) {
       selectedFile++;
@@ -989,11 +989,11 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
   }
-  if (menuMode == FILE_MENU_CONTINUE) {
+  if (menuMode == FILE_LIST_CONTINUE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && ((s8)save->summary[selectedFile].sendFlag != 0);
          i++) {
@@ -1002,11 +1002,11 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
   }
-  if (menuMode == FILE_MENU_EXTRA) {
+  if (menuMode == FILE_LIST_EXTRA) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 ((s8)save->summary[selectedFile].flagCount == 0);
          i++) {
@@ -1015,11 +1015,11 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
   }
-  if (menuMode == FILE_MENU_CLEARED) {
+  if (menuMode == FILE_LIST_CLEARED) {
     for (i = 0;
          i < SAVE_FILE_COUNT && ((s8)save->summary[selectedFile].sendFlag == 0);
          i++) {
@@ -1028,7 +1028,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         selectedFile = 0;
     }
     if (i == SAVE_FILE_COUNT) {
-      result = FILE_MENU_NO_FILE;
+      result = FILE_LIST_NO_FILE;
       goto done;
     }
   }
@@ -1046,12 +1046,12 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
     } else if (save->summary[i].playTime !=
                *(u32 *)save->summary[i].secondRecordPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
-    } else if (menuMode == FILE_MENU_CLEARED &&
+    } else if (menuMode == FILE_LIST_CLEARED &&
                (s8)save->summary[i].sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, i * 16);
     } else {
       y = i * 16;
-      Text_DrawString(summary->name, fileList, FILE_MENU_NAME_X, y);
+      Text_DrawString(summary->name, fileList, FILE_LIST_NAME_X, y);
       Text_DrawMessage(save->summary[i].area + MsgDebugEntryName, fileList, 72,
                        y);
       work->dirty = 1;
@@ -1082,12 +1082,12 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
                           save->summary[selectedFile].windowBrightness);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
-        FileMenu_DrawSummary(summaryWindow, &save->summary[selectedFile]);
+        FileList_DrawSummary(summaryWindow, &save->summary[selectedFile]);
         WaitFrames(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
-        FileMenu_HidePartySprites();
-        FileMenu_ShowPartySprites(partyWindow, 0, 0,
+        FileList_HidePartySprites();
+        FileList_ShowPartySprites(partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
         WaitFrames(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
@@ -1097,18 +1097,18 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
             0) {
           if (djinnWindow == NULL)
             djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
-          FileMenu_DrawDjinnCounts(djinnWindow, &save->summary[selectedFile]);
-          FileMenu_HideDjinnSprites();
-          FileMenu_ShowDjinnSprites(djinnWindow, 0, 0);
+          FileList_DrawDjinnCounts(djinnWindow, &save->summary[selectedFile]);
+          FileList_HideDjinnSprites();
+          FileList_ShowDjinnSprites(djinnWindow, 0, 0);
         } else {
-          FileMenu_HideDjinnSprites();
+          FileList_HideDjinnSprites();
           Window_Close(djinnWindow, 2);
           djinnWindow = NULL;
         }
       } else {
         WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
-        FileMenu_HideDjinnSprites();
-        FileMenu_HidePartySprites();
+        FileList_HideDjinnSprites();
+        FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
         Window_Close(partyWindow, 2);
         Window_Close(summaryWindow, 2);
@@ -1139,28 +1139,28 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
-        if (menuMode == FILE_MENU_SAVE)
+        if (menuMode == FILE_LIST_SAVE)
           break;
       } while ((save->summary[selectedFile].level == 0 ||
-                (menuMode == FILE_MENU_CONTINUE &&
+                (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
-                (menuMode == FILE_MENU_EXTRA &&
+                (menuMode == FILE_LIST_EXTRA &&
                  (s8)save->summary[selectedFile].flagCount == 0) ||
-                (menuMode == FILE_MENU_CLEARED &&
+                (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
       Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
-        if (menuMode == FILE_MENU_SAVE)
+        if (menuMode == FILE_LIST_SAVE)
           break;
       } while ((save->summary[selectedFile].level == 0 ||
-                (menuMode == FILE_MENU_CONTINUE &&
+                (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
-                (menuMode == FILE_MENU_EXTRA &&
+                (menuMode == FILE_LIST_EXTRA &&
                  (s8)save->summary[selectedFile].flagCount == 0) ||
-                (menuMode == FILE_MENU_CLEARED &&
+                (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
       Sound_PlaySongFar(SE_MENU_CANCEL);
@@ -1173,14 +1173,14 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
   // Close the menu and return to the current game's palette glow.
-  FileMenu_HideDjinnSprites();
-  FileMenu_HidePartySprites();
+  FileList_HideDjinnSprites();
+  FileList_HidePartySprites();
   Window_Close(djinnWindow, 2);
   Window_Close(partyWindow, 2);
   Window_Close(summaryWindow, 2);
   Window_Close(fileList, 2);
 #if TBS_PATCH_1
-  FileMenu_StopPulse();
+  FileList_StopPulse();
 #else
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
@@ -1210,7 +1210,7 @@ s32 Save_ToChosenFile(void) {
   } else {
     Save_LoadFileSummaries();
     work = gSaveWork;
-    file = FileMenu_SelectFile(gSaveSlot, FILE_MENU_SAVE);
+    file = FileList_SelectFile(gSaveSlot, FILE_LIST_SAVE);
     if (file == -1) {
       result = file;
     } else {
@@ -1271,7 +1271,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
     s32 file;
 
     Save_LoadFileSummaries();
-    file = FileMenu_SelectFile(gSaveSlot, mode);
+    file = FileList_SelectFile(gSaveSlot, mode);
     if (file == -1) {
       result = file;
     } else {

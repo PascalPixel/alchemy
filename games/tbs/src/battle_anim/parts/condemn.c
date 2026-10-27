@@ -26,7 +26,7 @@
 /// the burst's pieces into Ram_MapGridCellBuffer; moves the target's object;
 /// and reloads the battle background on BG1 before it closes the layer. It
 /// never calls ANIM_SHOW_DAMAGE, and leaves the flash timers alone.
-void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
+void BattleAnim_RunCondemn(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -49,7 +49,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   /* FAKEMATCH(temporary): zero holds the transfer value in sl through the
    * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
   zero = 0;
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -77,7 +77,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   // swing is the point the panel sways about, in 16.16 pixels: the first
   // pass high up on the near side.
   drawPanel = 1;
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     swing[0] = -0x500000;
   } else {
     swing[0] = 0x700000;
@@ -104,7 +104,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
-      if (work->effect->side == ANIM_SIDE_PARTY) {
+      if (work->args->side == ANIM_SIDE_PARTY) {
         swing[0] = -0x200000;
       } else {
         swing[0] = 0x480000;
@@ -118,8 +118,8 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     }
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
-      Projection_ScaledUnit(work->effect->targets[0], position);
-      if (work->effect->side == ANIM_SIDE_PARTY) {
+      Projection_ScaledUnit(work->args->targets[0], position);
+      if (work->args->side == ANIM_SIDE_PARTY) {
         swing[0] = (position[0].x - 128) << 16;
       } else {
         swing[0] = (position[0].x - 64) << 16;
@@ -161,7 +161,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       angle += 0x800;
     }
     if (drawPanel != 0) {
-      if (work->effect->side == ANIM_SIDE_ENEMIES) {
+      if (work->args->side == ANIM_SIDE_ENEMIES) {
         panelColumn = 0;
         panelRow = 0;
       } else {
@@ -177,55 +177,55 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       // gCondemn_PanelX and _PanelY places picture n; the row and column
       // are the side's.
       if (frame <= 87) {
-        draw[work->effect->side](
-            canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
-            CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
+        draw[work->args->side](canvas, work->sheet,
+                               CONDEMN_PANEL_X(panelColumn, 0),
+                               CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
       } else {
         if (frame <= 91) {
-          draw[work->effect->side](
+          draw[work->args->side](
               canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
               CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
         }
-        draw[work->effect->side](
-            canvas, work->sheet + 0x15d2, CONDEMN_PANEL_X(panelColumn, 1),
-            CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
+        draw[work->args->side](canvas, work->sheet + 0x15d2,
+                               CONDEMN_PANEL_X(panelColumn, 1),
+                               CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if ((frame - 90) <= 1U) {
-          draw[work->effect->side](
+          draw[work->args->side](
               canvas, work->sheet + 0x3081, CONDEMN_PANEL_X(panelColumn, 2),
               CONDEMN_PANEL_Y(panelRow, 2) + screenY, 128, 91);
         }
         if ((frame - 92) <= 1U) {
-          draw[work->effect->side](
+          draw[work->args->side](
               canvas, Ram_MapGridCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
               CONDEMN_PANEL_Y(panelRow, 3) + screenY, 128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x2d80,
-                                   CONDEMN_PANEL_X(panelColumn, 4),
-                                   CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
-                                   59);
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x2d80,
+                                 CONDEMN_PANEL_X(panelColumn, 4),
+                                 CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
+                                 59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x4b00,
-                                   CONDEMN_PANEL_X(panelColumn, 5),
-                                   CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
-                                   29);
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x4b00,
+                                 CONDEMN_PANEL_X(panelColumn, 5),
+                                 CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
+                                 29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x58d2,
-                                   CONDEMN_PANEL_X(panelColumn, 6),
-                                   CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
-                                   25);
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x58d2,
+                                 CONDEMN_PANEL_X(panelColumn, 6),
+                                 CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
+                                 25);
         }
       }
     }
     // Frame 88: knock the target back, away from the middle of the field,
     // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_BREAK_FRAME) {
-      target = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
+      target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
       target->velocityY = 0x10000;
       target->acceleration = 0x20000;
       target->speedLimit = 0x20000;
@@ -233,13 +233,13 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       target->steeringFlags = 0;
       target->snapToTarget = 0;
       Actor_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
-      BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_DAMAGE, -1, 0);
+      BattleAnim_TintBattler(work->args->targets[0], -1, POSE_DAMAGE, -1, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on
     // frame 88, gets the battle units' usual gravity back (0xab85, as
     // battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->effect->targets[0])->actor->gravity = 0xAB85;
+      GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity = 0xAB85;
     }
     ANIM_PRESENT_FRAME(work);
   }

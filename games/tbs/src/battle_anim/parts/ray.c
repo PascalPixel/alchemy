@@ -6,8 +6,8 @@
 
 #define RAY_SPARK_COUNT 1024 ///< sparks in PARTICLES
 
-#define RAY_CELLS 0x60e ///< the bolt pictures in the sheet
-#define RAY_COUNT 4     ///< bolts
+#define RAY_OFFSETS 0x60e ///< the bolt pictures in the sheet
+#define RAY_COUNT 4       ///< bolts
 
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
@@ -21,7 +21,7 @@
 ///         draws every bolt with the maximum blend, the others alternate it
 ///         with additive. The variant also sets the sparks each bolt throws
 ///         a frame (gRay_Sparks).
-void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
+void BattleAnim_RunRay(struct BattleAnimArgs *args) {
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -38,13 +38,13 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   // The motes for the sparks are in the battle sheet's slot.
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on ANIM_SIDE_PARTY, moved 128
   // pixels). BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the
   // targets.
-  if (work->effect->variant == ANIM_VARIANT_STRONGEST)
+  if (work->args->variant == ANIM_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
@@ -54,15 +54,15 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
                     COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + RAY_CELLS, 1, 1);
+                             work->sheet + RAY_OFFSETS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
-    if (work->effect->side == ANIM_SIDE_PARTY)
+  if (work->args->variant == ANIM_VARIANT_STRONGEST) {
+    if (work->args->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x1000;
     else
       REG_BG2X = 0x1000;
   } else {
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x8000;
   }
 
@@ -106,16 +106,16 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
         angle = ((frame << 11) + 0x4000) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
-        if (work->effect->variant == ANIM_VARIANT_BASIC)
+        if (work->args->variant == ANIM_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      RAY_CELLS,
+                      RAY_OFFSETS,
                   x + (Random16() & 7) - 16, y, 24, 120);
         else
           draw[bolt & 1](canvas,
                          work->sheet +
                              (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                             RAY_CELLS,
+                             RAY_OFFSETS,
                          x + (Random16() & 7) - 16, y, 24, 120);
 
         // Throw sparks from the bolt's root, 112 pixels down its 120-pixel
@@ -137,7 +137,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             thrown++;
-            if (thrown == gRay_Sparks[work->effect->variant][1])
+            if (thrown == gRay_Sparks[work->args->variant][1])
               break;
           }
         }
@@ -170,9 +170,9 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
     // The targets are hit 4 frames apart. The bound of 96 is past the last
     // frame (63), so it never limits.
     if (frame >= 4 && frame < 96) {
-      ANIM_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->args) {
         if (frame == i * 4 + 4)
-          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+          BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 10);
       }
     }
@@ -184,5 +184,5 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
 }
 
 #undef RAY_SPARK_COUNT
-#undef RAY_CELLS
+#undef RAY_OFFSETS
 #undef RAY_COUNT

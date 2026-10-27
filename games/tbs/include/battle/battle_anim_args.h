@@ -41,8 +41,8 @@ STATIC_ASSERT(offsetof(struct BattleAnimArgs, targets) == 0x24);
 /// one fixed argument, its style or variant. The strike, volley, shower, mote
 /// and stat-change families each have one runner and a kind like this for each
 /// ability that uses it.
-#define DEFINE_EFFECT_KIND(name, runner, arg)                                  \
-  void name(struct BattleAnimArgs *effect) { runner(effect, arg); }
+#define DEFINE_BATTLE_ANIM_KIND(name, runner, arg)                             \
+  void name(struct BattleAnimArgs *args) { runner(args, arg); }
 
 /// Loops `i` over the animation's targets, effect->actors[0] to
 /// effect->actors[effect->count - 1]: the loops that flash, shake, strike or

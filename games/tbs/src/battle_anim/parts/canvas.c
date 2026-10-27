@@ -288,7 +288,7 @@ void BattleAnim_TickBattlerTints(void) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
-        BattleAnim_TintBattler(work->effect->targets[actorIndex], 0, -1, -1, 0);
+        BattleAnim_TintBattler(work->args->targets[actorIndex], 0, -1, -1, 0);
       }
     }
     actorIndex += 1;

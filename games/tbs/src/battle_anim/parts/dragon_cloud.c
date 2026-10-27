@@ -7,20 +7,20 @@
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
 #define DRAGON_CLOUD_TRAIL_CELL_BYTES (24 * 39) ///< bytes in each trail copy
-#define DRAGON_CLOUD_FIRST_EMBER 8      ///< the first ember in work->particles
-#define DRAGON_CLOUD_FIRST_FLASH 48     ///< the first flash in work->particles
-#define DRAGON_CLOUD_TRAIL_CELLS 0x1680 ///< the trail picture in the sheet
-#define DRAGON_CLOUD_PUFF_CELLS 0x3c00  ///< the puff pictures in the sheet
-#define DRAGON_CLOUD_PUFFS 8            ///< puffs, particles 0 to 7
-#define DRAGON_CLOUD_EMBERS 40          ///< embers, from FIRST_EMBER
-#define DRAGON_CLOUD_FLASHES 16         ///< flashes, from FIRST_FLASH
+#define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
+#define DRAGON_CLOUD_FIRST_FLASH 48 ///< the first flash in work->particles
+#define DRAGON_CLOUD_TRAIL_OFFSETS 0x1680 ///< the trail picture in the sheet
+#define DRAGON_CLOUD_PUFF_OFFSETS 0x3c00  ///< the puff pictures in the sheet
+#define DRAGON_CLOUD_PUFFS 8              ///< puffs, particles 0 to 7
+#define DRAGON_CLOUD_EMBERS 40            ///< embers, from FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16           ///< flashes, from FIRST_FLASH
 
 /// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
 /// the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
   blit(canvas,                                                                 \
-       &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleAnim_PuffArcCells[cell], x,  \
-       y, gBattleAnim_PuffArcCellWidths[cell],                                 \
+       &(sheet)[DRAGON_CLOUD_PUFF_OFFSETS] + gBattleAnim_PuffArcCells[cell],   \
+       x, y, gBattleAnim_PuffArcCellWidths[cell],                              \
        gBattleAnim_PuffArcCellHeights[cell])
 
 /// A flame leaves the user along a stored path with a fading trail of 19 copies
@@ -40,7 +40,7 @@
 ///              rise in an arc
 ///   78 to 83   the flame dives in again
 ///   83         the target is struck; embers and flashes burst from it
-void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
+void BattleAnim_RunDragonCloud(struct BattleAnimArgs *args) {
   struct Point2D trail[20];
   struct ScreenPoint position;
   DrawRectangle draw[2];
@@ -63,7 +63,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   x = 0;
   y = 0;
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
@@ -72,23 +72,23 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   // 19, each four shades darker than the last.
   for (i = 1; i != 20; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_CELL_BYTES; j++) {
-      s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_CELLS + j];
+      s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS + j];
 
       if (i > 10) {
         shade = shade - i * 4 + 40;
         if (shade < 0)
           shade = 0;
-        work->sheet[DRAGON_CLOUD_TRAIL_CELLS +
+        work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS +
                     (i - 10) * DRAGON_CLOUD_TRAIL_CELL_BYTES + j] = shade;
       }
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                             &work->sheet[DRAGON_CLOUD_PUFF_CELLS], 1, 1);
+                             &work->sheet[DRAGON_CLOUD_PUFF_OFFSETS], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  BattleAnim_FetchRectangleBlitters(work->args->side, draw);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
@@ -100,7 +100,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
-    if (work->effect->side == ANIM_SIDE_ENEMIES)
+    if (work->args->side == ANIM_SIDE_ENEMIES)
       ember->x = -0x380000;
     else
       ember->x = 0x380000;
@@ -113,7 +113,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   for (j = 0; j != DRAGON_CLOUD_FLASHES; j++) {
     struct Particle *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
-    if (work->effect->side == ANIM_SIDE_ENEMIES)
+    if (work->args->side == ANIM_SIDE_ENEMIES)
       flash->x = -0x380000;
     else
       flash->x = 0x380000;
@@ -126,7 +126,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   for (i = 0, j = -0x4000; i != DRAGON_CLOUD_PUFFS; i++, j += 0x1000) {
     struct Particle *puff = &work->particles[i];
 
-    if (work->effect->side == ANIM_SIDE_PARTY)
+    if (work->args->side == ANIM_SIDE_PARTY)
       puff->x = (Trig_Sin(j) * 24 >> 16) + 88;
     else
       puff->x = (-(Trig_Sin(j) * 24) >> 16) + 16;
@@ -145,7 +145,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_WHOOSH);
     // 1/256 of a turn a frame, then re-aim the turned camera at the field's
     // centre at 100% zoom, which also moves the battle background's plane.
-    if (work->effect->side == ANIM_SIDE_ENEMIES) {
+    if (work->args->side == ANIM_SIDE_ENEMIES) {
       if (frame <= 63)
         camera->yaw -= 0x100;
     } else {
@@ -191,11 +191,11 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
         trail[j].y = trail[j - 1].y;
         if (j > 10)
           draw[0](canvas,
-                  &work->sheet[DRAGON_CLOUD_TRAIL_CELLS +
+                  &work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS +
                                (j - 10) * DRAGON_CLOUD_TRAIL_CELL_BYTES],
                   trail[j].x, trail[j].y, 24, 39);
         else
-          draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_CELLS], trail[j].x,
+          draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS], trail[j].x,
                   trail[j].y, 24, 39);
       }
     }
@@ -207,7 +207,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
-      if (work->effect->side == ANIM_SIDE_PARTY)
+      if (work->args->side == ANIM_SIDE_PARTY)
         position.x = 64 - x / 2;
       else
         position.x = x / 2 + 64;
@@ -230,9 +230,9 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     }
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
       work->shakeFrames = 8;
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HOP);
+      BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
     }
     // After the strike the embers rise and fall back under a gravity of 1/8
     // pixel a frame per frame (0x2000), undamped, until they drop below the
@@ -278,7 +278,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     }
     if (frame == 50) {
       work->shakeFrames = 12;
-      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+      BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);
     }
     // The puffs, mirrored, two frames a cell; each starts when its variant
@@ -310,8 +310,8 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
 #undef DRAGON_CLOUD_TRAIL_CELL_BYTES
 #undef DRAGON_CLOUD_FIRST_EMBER
 #undef DRAGON_CLOUD_FIRST_FLASH
-#undef DRAGON_CLOUD_TRAIL_CELLS
-#undef DRAGON_CLOUD_PUFF_CELLS
+#undef DRAGON_CLOUD_TRAIL_OFFSETS
+#undef DRAGON_CLOUD_PUFF_OFFSETS
 #undef DRAGON_CLOUD_PUFFS
 #undef DRAGON_CLOUD_EMBERS
 #undef DRAGON_CLOUD_FLASHES

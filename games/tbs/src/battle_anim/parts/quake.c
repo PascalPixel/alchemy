@@ -23,7 +23,7 @@ struct RockWallHeights {
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
 /// The rock picture in the sheet; the sheet starts with the 40x16 strip of
 /// ground cut from the background.
-#define QUAKE_WALL_CELLS 0x1e00
+#define QUAKE_WALL_OFFSETS 0x1e00
 
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
@@ -37,7 +37,7 @@ struct RockWallHeights {
 /// targets' vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
-void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
+void BattleAnim_RunQuake(struct BattleAnimArgs *args) {
   static s32 wallHeights[4] = {
       -32,
       -32,
@@ -65,13 +65,13 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
   cursor = slots;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // The canvas at its own width, opaque: the pillars hide what is behind.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
-                             work->sheet + QUAKE_WALL_CELLS, 1, 1);
+                             work->sheet + QUAKE_WALL_OFFSETS, 1, 1);
 
   // Copy the background tiles (0x8000 bytes from VRAM 0x06008000) and cut
   // the strip at x 32 to 71, y 96 to 111 into the start of the sheet: the
@@ -91,7 +91,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
 
   // On ANIM_SIDE_PARTY the canvas moves 112 pixels right, and the targets'
   // positions with it.
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {
@@ -101,7 +101,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
                     COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   // particles[member].variant becomes 1 once that target has landed.
-  ANIM_FOR_EACH_TARGET(member, work->effect)
+  ANIM_FOR_EACH_TARGET(member, work->args)
   work->particles[member].variant = 0;
   // Each transfer clears the canvas: the pillars are redrawn every frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -114,12 +114,11 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
   Sound_PlaySongFar(SE_RUMBLE);
 
   for (frame = 0;
-       frame != gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES];
+       frame != gQuake_Timings[work->args->variant][QUAKE_TIMING_FRAMES];
        frame++) {
     ANIM_VIEW_FROM_CAMERA(camera);
     // The damage shows 16 frames before the end.
-    if (frame ==
-        gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES] - 16)
+    if (frame == gQuake_Timings[work->args->variant][QUAKE_TIMING_FRAMES] - 16)
       ANIM_SHOW_DAMAGE(SE_IMPACT);
 
     // The pillars rise from frames 16, 20 and 24.
@@ -130,7 +129,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
       if ((frame & 31) + 32 == riseFrame)
         heights.column[column] += 32;
       if (frame >= riseFrame &&
-          frame < riseFrame + gQuake_Timings[work->effect->variant]
+          frame < riseFrame + gQuake_Timings[work->args->variant]
                                             [QUAKE_TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
@@ -145,7 +144,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
         if (height < 0)
           height = -height;
         top = 112 - height;
-        draw(canvas, work->sheet + QUAKE_WALL_CELLS,
+        draw(canvas, work->sheet + QUAKE_WALL_OFFSETS,
              column * QUAKE_PILLAR_WIDTH + 8, top, QUAKE_PILLAR_WIDTH, height);
         draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
              QUAKE_PILLAR_WIDTH, 16);
@@ -154,10 +153,10 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
         // point, 16 pixels above the feet, lies in its 41 columns (both edges
         // count) and at or below its top. A target below the ground takes its
         // damage pose.
-        ANIM_FOR_EACH_TARGET(member, work->effect) {
+        ANIM_FOR_EACH_TARGET(member, work->args) {
           struct Actor *actor;
 
-          actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+          actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
           SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
@@ -171,29 +170,28 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
             actor->gravity = 0xab85;
           }
           if (actor->y.fixed < 0)
-            BattleAnim_TintBattler(work->effect->targets[member], 0,
-                                   POSE_DAMAGE, -1, 0);
+            BattleAnim_TintBattler(work->args->targets[member], 0, POSE_DAMAGE,
+                                   -1, 0);
         }
       }
     }
 
     // A target that lands flashes white for 5 frames.
-    ANIM_FOR_EACH_TARGET(member, work->effect) {
+    ANIM_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor;
       struct Particle *state;
 
-      actor = GetBattleObjectSlotFar(work->effect->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       state = &work->particles[member];
       if (state->variant == 0 && actor->y.fixed <= 0 && actor->velocityY < 0) {
         state->variant = 1;
-        BattleAnim_TintBattler(work->effect->targets[member],
-                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
+        BattleAnim_TintBattler(work->args->targets[member], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, member, 5);
       }
     }
     // Shake ranges of 2, 4 or 8 pixels, by variant, centred on the view.
-    BattleCamera_Shake(
-        gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE],
-        gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE]);
+    BattleCamera_Shake(gQuake_Timings[work->args->variant][QUAKE_TIMING_SHAKE],
+                       gQuake_Timings[work->args->variant][QUAKE_TIMING_SHAKE]);
     ANIM_END_FRAME(work);
   }
 
@@ -201,4 +199,4 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
 }
 
 #undef QUAKE_PILLAR_WIDTH
-#undef QUAKE_WALL_CELLS
+#undef QUAKE_WALL_OFFSETS

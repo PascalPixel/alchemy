@@ -66,8 +66,8 @@ s32 RareItemStock_Adjust(s32 index, s32 delta);
 s32 Item_AdjustCounter(s32 itemId, s32 delta);
 s32 Inventory_CountItem(s32 unitId, s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);
-struct AbilityDefinition *Ability_GetDirect(s32 actionId);
-s32 Unit_KnowsPsynergy(s32 unitId, s32 actionId);
+struct AbilityDefinition *Ability_GetDirect(s32 abilityId);
+s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId);
 s32 Unit_RefreshPsynergy(s32 unitId);
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,

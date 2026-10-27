@@ -600,8 +600,8 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// memberId << 10 | the Psynergy's id. Returns 1.
-s32 PsynergyMenu_SetShortcut(s32 memberId, s32 actionId, s32 shortcutIndex) {
-  s32 id = actionId & PSYNERGY_ABILITY_MASK;
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex) {
+  s32 id = abilityId & PSYNERGY_ABILITY_MASK;
   s32 code = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | id;
 
   if (shortcutIndex == 0) {

@@ -153,7 +153,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject);
 void BattleMotion_HopBack(s32 unitId);
 void BattleMotion_LeapBack(s32 unitId);
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant);
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
+void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY);
 void BattleMotion_RestartLeap(s32 unitId);
 void BattleMotion_MidpointNoOp();
@@ -193,10 +193,10 @@ void Battle_RoundStartNoOp(void);
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 #ifdef UBFIX
 void BattleStaging_BuildTargetList(struct BattleTurn *plan,
-                                   struct BattleAnimArgs *effect);
+                                   struct BattleAnimArgs *args);
 #else
 s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
-                                  struct BattleAnimArgs *effect);
+                                  struct BattleAnimArgs *args);
 #endif
 s32 BattleStaging_RunFlee(struct BattleTurn *plan);
 s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode);
@@ -220,7 +220,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
 void BattleObject_RemoveFromLists(s32 unitId);
 void BattleMotion_ShowDowned(s32 unitId);
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit);
-s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action);
+s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action);
 #ifdef UBFIX
 void BattleObject_ResetRuntimeFields(s32 unitId);
 #else
@@ -327,7 +327,7 @@ void BattleBackground_SetBlendControl(void);
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries);
 s32 BattleBackground_DivideBy16(s32 value);
 s32 Battle_AdjustDebugValue(s32 selectedValue);
-void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode);
+void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode);
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId);
 void BattleHighlight_ClearAllSpriteModes(void);
 void BattleBackground_StepHighlightBlend(void);
@@ -364,9 +364,9 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #endif
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
 #ifdef UBFIX
-void BattleEnemy_ReleaseNameLetter(s32 actorId);
+void BattleEnemy_ReleaseNameLetter(s32 unitId);
 #else
-s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
+s32 BattleEnemy_ReleaseNameLetter(s32 unitId);
 #endif
 #ifdef UBFIX
 void BattleEnemy_LetterFirstOfKind(s32 classId);

@@ -84,8 +84,8 @@ plays it may also use two drawing routines of its own, the blitters, and the
 field's map buffer, which a battle doesn't need, as a large pool of
 particles.
 
-The doors are `BattleAnim_RunSummonEffect`, `BattleAnim_DispatchByIdRange`
-and `BattleAnim_RunTableEffect` ([`dispatch.c`](parts/dispatch.c) and
+The doors are `BattleAnim_RunSummon`, `BattleAnim_RunByIdRange`
+and `BattleAnim_RunFromTable` ([`dispatch.c`](parts/dispatch.c) and
 [`positions.c`](parts/positions.c)); the work block is
 `struct BattleAnimWork`.
 
@@ -427,7 +427,7 @@ draw over earlier ones and many draw random numbers. `BattleAnim_RunBolt`
 every handler has:
 
 ```c
-void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
+void BattleAnim_RunBolt(struct BattleAnimArgs *args) {
   ...
   ANIM_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
   work->effect = effect;
@@ -435,7 +435,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + BOLT_CELLS, 1, 1);
+                             work->sheet + BOLT_OFFSETS, 1, 1);
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
@@ -561,7 +561,7 @@ the largest range any animation reserves is 1,024 particles, 28 KB
 (`gathering_lights.c`, `helm_splitter.c`, `lobbed_shells.c`, `neptune.c`,
 `nereid.c`, `plasma.c`, `projectiles.c` and `target_strike.c`).
 
-`BattleAnim_DispatchByIdRange` sizes its sheet slot `0x60e` bytes. The largest
+`BattleAnim_RunByIdRange` sizes its sheet slot `0x60e` bytes. The largest
 picture its three runners unpack there is `ParticleSpritesD`'s ten flare
 cells, 2 by 2 to 20 by 20 pixels, 1,540 bytes (`2 * MOTE_SET_BYTES`); the
 slot's last 10 bytes are never written.

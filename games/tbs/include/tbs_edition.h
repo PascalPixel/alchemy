@@ -323,9 +323,9 @@
 // Where the save screen's file list puts the leader's name.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define FILE_MENU_NAME_X 6
+#define FILE_LIST_NAME_X 6
 #else
-#define FILE_MENU_NAME_X 12
+#define FILE_LIST_NAME_X 12
 #endif
 
 #endif

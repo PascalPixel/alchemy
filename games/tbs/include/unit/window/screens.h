@@ -57,21 +57,21 @@ s32 Save_ProcessSelectedFile(void);
 s32 Save_ConfirmAndProcessSelectedFile(void);
 s32 Save_CopyFile(void);
 s32 Save_EraseSelectedFile(void);
-void FileMenu_UpdatePulse(void);
-void FileMenu_StartPulse(void);
-void FileMenu_StopPulse(void);
+void FileList_UpdatePulse(void);
+void FileList_StartPulse(void);
+void FileList_StopPulse(void);
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height);
-void FileMenu_ShowPartySprites(struct Window *origin, s32 x, s32 y,
+void FileList_ShowPartySprites(struct Window *origin, s32 x, s32 y,
                                struct SaveFileSummary *descriptor);
-void FileMenu_HidePartySprites(void);
-void FileMenu_PlacePartySprites(void);
-void FileMenu_ShowDjinnSprites(struct Window *origin, s32 x, s32 y);
-void FileMenu_HideDjinnSprites(void);
-void FileMenu_PlaceDjinnSprites(void);
-void FileMenu_DrawDjinnCounts(struct Window *win, struct SaveFileSummary *row);
-void FileMenu_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
-s32 FileMenu_SelectFile(s32 file, s32 mode);
+void FileList_HidePartySprites(void);
+void FileList_PlacePartySprites(void);
+void FileList_ShowDjinnSprites(struct Window *origin, s32 x, s32 y);
+void FileList_HideDjinnSprites(void);
+void FileList_PlaceDjinnSprites(void);
+void FileList_DrawDjinnCounts(struct Window *win, struct SaveFileSummary *row);
+void FileList_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
+s32 FileList_SelectFile(s32 file, s32 mode);
 s32 Save_ToChosenFile(void);
 s32 Save_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
@@ -184,8 +184,8 @@ enum FieldMenuCommand {
   FIELD_MENU_STATUS = 4
 };
 
-/// The title menu's choices, as FileMenu_SelectAction returns them
-/// (gFileMenu_ActionByPosition).
+/// The title menu's choices, as FileList_SelectAction returns them
+/// (gFileList_ActionByPosition).
 enum FileAction {
   SAVE_ACTION_NEW_GAME = 0,
   SAVE_ACTION_CONTINUE = 1,
@@ -216,7 +216,7 @@ enum YesNo { YES = 0, NO = 1 };
 
 s32 FieldMenu_SelectCommand(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command);
-s32 FileMenu_SelectAction(void);
+s32 FileList_SelectAction(void);
 void Menu_DrawModeLabel(void);
 void Menu_DrawModeIndicator(void);
 s32 IconMenu_ChooseSendOption(s32 mode);

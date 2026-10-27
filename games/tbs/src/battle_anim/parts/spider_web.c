@@ -20,14 +20,14 @@ enum SwirlSwipeMode {
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
 /// Abilities: Poison Beat (BATTLE_ANIM_POISON_BEAT).
-void BattleAnim_RunPoisonBeat(struct BattleAnimArgs *effect) {
-  BattleAnim_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
+void BattleAnim_RunPoisonBeat(struct BattleAnimArgs *args) {
+  BattleAnim_RunSwirlSwipe(args, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
 /// Abilities: Spinning Beat (BATTLE_ANIM_SPINNING_BEAT).
-void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
-  BattleAnim_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
+void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *args) {
+  BattleAnim_RunSwirlSwipe(args, SWIRL_SWIPE_SPINNING_BEAT);
 }
 /// A swirl sweeps across the first target from the user's side in six images of
 /// four frames each: the first four from the swirl sheet, the last two from the
@@ -42,7 +42,7 @@ void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
 /// the damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).
-void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
+void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *args, s32 mode) {
   struct BattleAnimWork *work;
   void *canvas;
   struct Actor *actor;
@@ -58,9 +58,9 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   void **cursor;
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
-  work->effect = effect;
+  work->args = args;
   ANIM_START_NARROW_CANVAS(0);
-  if (work->effect->side == ANIM_SIDE_PARTY) {
+  if (work->args->side == ANIM_SIDE_PARTY) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
@@ -79,11 +79,11 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Trails keep 3/4 a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  actor = GetBattleObjectSlotFar(work->effect->targets[0])->actor;
-  Projection_ScaledUnit(work->effect->targets[0], &position);
+  actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  Projection_ScaledUnit(work->args->targets[0], &position);
   // Line the canvas up so the swipe crosses the target: the target's x
   // lands at canvas x 16 against the enemies and 112 against the party.
-  if (work->effect->side == ANIM_SIDE_ENEMIES)
+  if (work->args->side == ANIM_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -97,22 +97,22 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
     if (cell <= 5) {
       if (cell <= 3)
         draw[0](canvas, work->sheet + gSpiderWeb_Cells[cell],
-                gSpiderWeb_CellX[cell + work->effect->side * 6],
+                gSpiderWeb_CellX[cell + work->args->side * 6],
                 gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
                 gSpiderWeb_CellHeights[cell]);
       else
         draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Cells[cell],
-                gSpiderWeb_CellX[cell + work->effect->side * 6],
+                gSpiderWeb_CellX[cell + work->args->side * 6],
                 gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
                 gSpiderWeb_CellHeights[cell]);
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
         ANIM_SHOW_DAMAGE(SE_IMPACT);
-        BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HOP);
+        BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
       } else {
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
-        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+        BattleAnim_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
       }
       work->shakeFrames = 8;
@@ -150,7 +150,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
 ///
 /// Builds and frees its blitter four times a frame, one for each quarter's
 /// flip.
-void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
+void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *args) {
   struct ScreenPoint first;
   struct ScreenPoint last;
   void *canvas;
@@ -171,14 +171,14 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
   size = (s32)&Ram_HeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = *(void **)size;
   work = *(struct BattleAnimWork **)(size - 4);
-  work->effect = effect;
+  work->args = args;
   BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(2));
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent =
       BLEND_ALPHA(0, 16); // REG_BLDALPHA: invisible to start with
-  Projection_ScaledUnit(work->effect->targets[0], &first);
-  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+  Projection_ScaledUnit(work->args->targets[0], &first);
+  Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   // Centre the canvas between the first and last target.
   first.x += (last.x - first.x) / 2;
@@ -219,9 +219,9 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
     FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       ANIM_SHOW_DAMAGE(SE_CRACK);
-    ANIM_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->args) {
       if (frame == 10)
-        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+        BattleAnim_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
                                i, 8);
     }
     BattleAnim_TickBattlerTints();

@@ -50,74 +50,74 @@
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
-// (MainMenu_EncodePassword) in every edition, which the Japanese buffer holds
+// (FileScreen_EncodePassword) in every edition, which the Japanese buffer holds
 // exactly. XXX (no evidence): why the other editions reserve 320; nothing in
 // this game writes or reads past 260, so the bytes show only the space.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define MAIN_MENU_PASSWORD_BUFFER_SIZE 320
+#define FILE_SCREEN_PASSWORD_BUFFER_SIZE 320
 #else
-#define MAIN_MENU_PASSWORD_BUFFER_SIZE 260
+#define FILE_SCREEN_PASSWORD_BUFFER_SIZE 260
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define MAIN_MENU_LINK_WINDOW_X 4
-#define MAIN_MENU_LINK_WINDOW_WIDTH 22
+#define FILE_SCREEN_LINK_WINDOW_X 4
+#define FILE_SCREEN_LINK_WINDOW_WIDTH 22
 #else
-#define MAIN_MENU_LINK_WINDOW_X 6
-#define MAIN_MENU_LINK_WINDOW_WIDTH 18
+#define FILE_SCREEN_LINK_WINDOW_X 6
+#define FILE_SCREEN_LINK_WINDOW_WIDTH 18
 #endif
 
 // The first letter of the greeting a cable transfer waits for, before V, T
-// and S (MainMenu_Run).
+// and S (FileScreen_Run).
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'E'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'E'
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'F'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'F'
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'S'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'S'
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'I'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'I'
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'C'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'C'
 #else
-#define MAIN_MENU_LINK_LANGUAGE_TAG 'U'
+#define FILE_SCREEN_LINK_LANGUAGE_TAG 'U'
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define MAIN_MENU_LINK_ERROR_WINDOW_X 4
-#define MAIN_MENU_LINK_ERROR_WINDOW_WIDTH 22
+#define FILE_SCREEN_LINK_ERROR_WINDOW_X 4
+#define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 22
 #else
-#define MAIN_MENU_LINK_ERROR_WINDOW_X 5
-#define MAIN_MENU_LINK_ERROR_WINDOW_WIDTH 20
+#define FILE_SCREEN_LINK_ERROR_WINDOW_X 5
+#define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 20
 #endif
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define MAIN_MENU_HELP_WINDOW_X 8
-#define MAIN_MENU_HELP_WINDOW_WIDTH 13
+#define FILE_SCREEN_HELP_WINDOW_X 8
+#define FILE_SCREEN_HELP_WINDOW_WIDTH 13
 #else
-#define MAIN_MENU_HELP_WINDOW_X 10
-#define MAIN_MENU_HELP_WINDOW_WIDTH 10
+#define FILE_SCREEN_HELP_WINDOW_X 10
+#define FILE_SCREEN_HELP_WINDOW_WIDTH 10
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define MAIN_MENU_PAGE_LABEL_X 80
+#define FILE_SCREEN_PAGE_LABEL_X 80
 #else
-#define MAIN_MENU_PAGE_LABEL_X 0
+#define FILE_SCREEN_PAGE_LABEL_X 0
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define MAIN_MENU_MESSAGE_WINDOW_X 0
-#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 30
+#define FILE_SCREEN_MESSAGE_WINDOW_X 0
+#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 30
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
-#define MAIN_MENU_MESSAGE_WINDOW_X 3
-#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 24
+#define FILE_SCREEN_MESSAGE_WINDOW_X 3
+#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 24
 #else
-#define MAIN_MENU_MESSAGE_WINDOW_X 1
-#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 28
+#define FILE_SCREEN_MESSAGE_WINDOW_X 1
+#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 28
 #endif
 
 #define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
@@ -126,31 +126,33 @@
 /// Whether a key of the extra code is still held. UB: the flag is a word the
 /// code reads and writes as its low halfword; UBFIX uses the word.
 #ifdef UBFIX
-#define MAIN_MENU_EXTRA_CODE_HELD gMainMenu_ExtraCodeHeld
+#define FILE_SCREEN_EXTRA_CODE_HELD gFileScreen_ExtraCodeHeld
 #else
-#define MAIN_MENU_EXTRA_CODE_HELD (*(s16 *)&gMainMenu_ExtraCodeHeld)
+#define FILE_SCREEN_EXTRA_CODE_HELD (*(s16 *)&gFileScreen_ExtraCodeHeld)
 #endif
 
-static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out);
-static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
-static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
+static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out);
+static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
+static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The main menu overlay's map tables, for the map loader: one
 /// entrance, the exit, and no actor templates or triggers.
-u8 *MainMenu_GetEntrances(void) { return (u8 *)gMainMenu_Entrances; }
+u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the main menu has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *MainMenu_GetExits(void) { return (u8 *)gMainMenu_Exits; }
+u8 *FileScreen_GetExits(void) { return (u8 *)gFileScreen_Exits; }
 
-u8 *MainMenu_GetActorTemplates(void) { return (u8 *)gMainMenu_ActorTemplates; }
+u8 *FileScreen_GetActorTemplates(void) {
+  return (u8 *)gFileScreen_ActorTemplates;
+}
 
-u8 *MainMenu_GetTriggers(void) { return (u8 *)gMainMenu_Triggers; }
+u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
-/// and stops the leader's motion. MainMenu_Run calls it first.
-static void MainMenu_LoadBackground(void) {
+/// and stops the leader's motion. FileScreen_Run calls it first.
+static void FileScreen_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
   u16 *tilemap;
@@ -200,14 +202,14 @@ static void MainMenu_LoadBackground(void) {
 
 /// The task that fades BG0 and the sprites in over the logo:
 /// their weight rises by a sixteenth every two frames, and the callback
-/// removes itself at full weight, 32 frames on. MainMenu_Run schedules it
+/// removes itself at full weight, 32 frames on. FileScreen_Run schedules it
 /// once, when there is no save file to choose.
-static void MainMenu_UpdateBlend(void) {
+static void FileScreen_UpdateBlend(void) {
   s32 frame;
   s32 level;
 
-  frame = *(u16 *)&gMainMenu_BlendFrame + 1;
-  *(u16 *)&gMainMenu_BlendFrame = frame;
+  frame = *(u16 *)&gFileScreen_BlendFrame + 1;
+  *(u16 *)&gFileScreen_BlendFrame = frame;
   level = (u16)frame >> 1;
   // Blend BG0 and the sprites over the other layers, level sixteenths of
   // the way in.
@@ -219,20 +221,20 @@ static void MainMenu_UpdateBlend(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       BLEND_ALPHA((u16)level, 16 - (u16)level), IO_WRITE_16);
   if ((u16)level > 15)
-    Task_Remove(MainMenu_UpdateBlend);
+    Task_Remove(FileScreen_UpdateBlend);
 }
 
 // clang-format off
 /// The first hidden code, entered on the main menu and ended by 0:
 /// Select three times. With it a new game names Garet, Ivan and Mia as well
-/// as Isaac (MainMenu_Run).
-const u16 gMainMenu_CodeSequence[] = {
+/// as Isaac (FileScreen_Run).
+const u16 gFileScreen_CodeSequence[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
 /// The second, longer code: with it a new game also names Felix, Jenna and
 /// Sheba.
-const u16 gMainMenu_ExtraCodeSequence[] = {
+const u16 gFileScreen_ExtraCodeSequence[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
@@ -242,9 +244,9 @@ const u16 gMainMenu_ExtraCodeSequence[] = {
 // view makes the second key an out-of-bounds access. Direct array reads also
 // reorder both native held-key stores (same 0xf8-byte function extent).
 #ifdef UBFIX
-#define MAIN_MENU_SEQUENCE_KEYS(sequence) (sequence)
+#define FILE_SCREEN_SEQUENCE_KEYS(sequence) (sequence)
 #else
-#define MAIN_MENU_SEQUENCE_KEYS(sequence)                                      \
+#define FILE_SCREEN_SEQUENCE_KEYS(sequence)                                    \
   (((struct { u16 key[1]; } *)(sequence))->key)
 #endif
 
@@ -252,50 +254,51 @@ const u16 gMainMenu_ExtraCodeSequence[] = {
 /// the main menu runs. Each key must be held alone and then every
 /// key released; any other key starts that code over. A finished code sets
 /// its unlocked flag, which stays set, and plays SE_CHIME.
-static void MainMenu_CheckButtonCodes(void) {
-  if (gMainMenu_CodeUnlocked == 0) {
-    if (gMainMenu_CodeHeld != 0) {
+static void FileScreen_CheckButtonCodes(void) {
+  if (gFileScreen_CodeUnlocked == 0) {
+    if (gFileScreen_CodeHeld != 0) {
       if (gKeysHeld == 0)
-        gMainMenu_CodeHeld = 0;
+        gFileScreen_CodeHeld = 0;
     } else if (gKeysHeld != 0) {
-      if (gKeysHeld == MAIN_MENU_SEQUENCE_KEYS(
-                           gMainMenu_CodeSequence)[gMainMenu_CodeProgress]) {
-        gMainMenu_CodeProgress++;
-        gMainMenu_CodeHeld = 1;
-        if (MAIN_MENU_SEQUENCE_KEYS(
-                gMainMenu_CodeSequence)[gMainMenu_CodeProgress] == 0) {
-          gMainMenu_CodeUnlocked = 1;
+      if (gKeysHeld ==
+          FILE_SCREEN_SEQUENCE_KEYS(
+              gFileScreen_CodeSequence)[gFileScreen_CodeProgress]) {
+        gFileScreen_CodeProgress++;
+        gFileScreen_CodeHeld = 1;
+        if (FILE_SCREEN_SEQUENCE_KEYS(
+                gFileScreen_CodeSequence)[gFileScreen_CodeProgress] == 0) {
+          gFileScreen_CodeUnlocked = 1;
           Sound_PlaySong(SE_CHIME);
         }
       } else {
-        gMainMenu_CodeProgress = 0;
+        gFileScreen_CodeProgress = 0;
       }
     }
   }
-  if (gMainMenu_ExtraCodeUnlocked == 0) {
-    if (MAIN_MENU_EXTRA_CODE_HELD != 0) {
+  if (gFileScreen_ExtraCodeUnlocked == 0) {
+    if (FILE_SCREEN_EXTRA_CODE_HELD != 0) {
       if (gKeysHeld == 0)
-        MAIN_MENU_EXTRA_CODE_HELD = 0;
+        FILE_SCREEN_EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
-          MAIN_MENU_SEQUENCE_KEYS(
-              gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress]) {
-        gMainMenu_ExtraCodeProgress++;
-        MAIN_MENU_EXTRA_CODE_HELD = 1;
-        if (MAIN_MENU_SEQUENCE_KEYS(
-                gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress] ==
+          FILE_SCREEN_SEQUENCE_KEYS(
+              gFileScreen_ExtraCodeSequence)[gFileScreen_ExtraCodeProgress]) {
+        gFileScreen_ExtraCodeProgress++;
+        FILE_SCREEN_EXTRA_CODE_HELD = 1;
+        if (FILE_SCREEN_SEQUENCE_KEYS(
+                gFileScreen_ExtraCodeSequence)[gFileScreen_ExtraCodeProgress] ==
             0) {
-          gMainMenu_ExtraCodeUnlocked = 1;
+          gFileScreen_ExtraCodeUnlocked = 1;
           Sound_PlaySong(SE_CHIME);
         }
       } else {
-        gMainMenu_ExtraCodeProgress = 0;
+        gFileScreen_ExtraCodeProgress = 0;
       }
     }
   }
 }
 
-#undef MAIN_MENU_SEQUENCE_KEYS
+#undef FILE_SCREEN_SEQUENCE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 /// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
@@ -304,7 +307,7 @@ static void MainMenu_CheckButtonCodes(void) {
 /// hiragana, the last 18 with the voiced mark. The six left out are the three
 /// pairs that look alike (I, l and 1; O, o and 0), so a password copied by hand
 /// reads back one way.
-static void MainMenu_NameEntryCharacter(s32 cell, u8 *text) {
+static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -365,7 +368,7 @@ static void MainMenu_NameEntryCharacter(s32 cell, u8 *text) {
 /// otherwise. It may not when it was saved where a map script blocked
 /// Retreat (FLAG_RETREAT_BLOCKED), except in towns (SCENE_TYPE_TOWN), which
 /// block it by themselves, and on the world map.
-static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
+static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
@@ -392,13 +395,13 @@ struct SaveMenuMapLocalState {
 /// A console's link payload as the cable transfer reads it from
 /// gLinkPeerSignatures.
 struct SaveLinkGreeting {
-  /// The greeting MainMenu_Run waits for: MAIN_MENU_LINK_LANGUAGE_TAG, then V,
-  /// T and S. MainMenu_Run sets every console's to "0000" before it waits.
+  /// The greeting FileScreen_Run waits for: FILE_SCREEN_LINK_LANGUAGE_TAG, then
+  /// V, T and S. FileScreen_Run sets every console's to "0000" before it waits.
   u16 code[4];
   u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
 
-/// The compiler library's signed division, which MainMenu_Run calls by name
+/// The compiler library's signed division, which FileScreen_Run calls by name
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
@@ -408,7 +411,7 @@ s32 __divsi3(s32, s32);
 /// new game, continues a file or enters the Battle Arena; copying, erasing
 /// and sending a cleared file's data, by cable or as a password, come back to
 /// the menu. Returns 0 once a destination is set.
-s32 MainMenu_Run(void) {
+s32 FileScreen_Run(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
@@ -436,12 +439,12 @@ s32 MainMenu_Run(void) {
   struct Window *helpWindow;
   struct Window *headingWindow;
   u8 saveData[200];
-  u8 password[MAIN_MENU_PASSWORD_BUFFER_SIZE];
+  u8 password[FILE_SCREEN_PASSWORD_BUFFER_SIZE];
   u8 glyph[4];
 
   blendStarted = 0;
-  MainMenu_LoadBackground();
-  Task_AddFrame(MainMenu_CheckButtonCodes, TASK_PASS_FRAME);
+  FileScreen_LoadBackground();
+  Task_AddFrame(FileScreen_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = blendStarted;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -491,16 +494,16 @@ menu_top:;
   if (v6 == 0) {
     if (blendStarted == 0) {
       WaitFrames(30);
-      Task_AddFrame(MainMenu_UpdateBlend, TASK_PASS_FRAME);
+      Task_AddFrame(FileScreen_UpdateBlend, TASK_PASS_FRAME);
       WaitFrames(1);
       blendStarted = 1;
     }
   }
-  // The start menu's choices (gFileMenu_ActionByPosition): 0 New Game,
+  // The start menu's choices (gFileList_ActionByPosition): 0 New Game,
   // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
   // menu again.
   if (v6 > 0) {
-    v6 = FileMenu_SelectAction();
+    v6 = FileList_SelectAction();
   } else {
     v6 = 0;
   }
@@ -522,10 +525,10 @@ menu_top:;
         v7--;
         continue;
       }
-      if (gMainMenu_CodeUnlocked != 0) {
+      if (gFileScreen_CodeUnlocked != 0) {
         v5 = 4;
       }
-      if (gMainMenu_ExtraCodeUnlocked != 0) {
+      if (gFileScreen_ExtraCodeUnlocked != 0) {
         v5 = 7;
       }
       if (++v7 >= v5) {
@@ -557,7 +560,7 @@ menu_top:;
       state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
-      if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
+      if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
         FieldMessage_Show(MsgSaveRecoveryFailed,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
@@ -578,7 +581,7 @@ menu_top:;
         goto menu_top;
       }
       TextPrinter_CloseFinishedWindows();
-      if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
+      if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by
         // name 108 of 921 instructions differ in tbs-en.
@@ -649,8 +652,8 @@ menu_top:;
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (v6 == TRANSFER_METHOD_CABLE) {
-      v6 = (s32)Window_Create(MAIN_MENU_LINK_WINDOW_X, 5,
-                              MAIN_MENU_LINK_WINDOW_WIDTH, 8,
+      v6 = (s32)Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
+                              FILE_SCREEN_LINK_WINDOW_WIDTH, 8,
                               WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
@@ -689,7 +692,7 @@ menu_top:;
           u16 *received =
               ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
-          if (received[0] == MAIN_MENU_LINK_LANGUAGE_TAG) {
+          if (received[0] == FILE_SCREEN_LINK_LANGUAGE_TAG) {
             if (received[1] == 'V') {
               if (received[2] == 'T') {
                 if (received[3] == 'S') {
@@ -706,8 +709,8 @@ menu_top:;
       if (v7 == 0) {
         goto link_select;
       }
-      v6 = (s32)Window_Create(MAIN_MENU_LINK_ERROR_WINDOW_X, 10,
-                              MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4,
+      v6 = (s32)Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
+                              FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
                               WINDOW_FLAG_INSTANT);
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
@@ -768,20 +771,20 @@ menu_top:;
         u8 *data = saveData;
         s16 sum;
 
-        encodedSize = MainMenu_PackPasswordData(0, v6, data);
-        sum = MainMenu_CalculatePasswordCrc16(encodedSize, data);
+        encodedSize = FileScreen_PackPasswordData(0, v6, data);
+        sum = FileScreen_CalculatePasswordCrc16(encodedSize, data);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
-        encodedSize = MainMenu_EncodePassword(data, encodedSize, password);
+        encodedSize = FileScreen_EncodePassword(data, encodedSize, password);
       }
       v6 = 2;
       Window_LoadGraphics();
       pageWindow = Window_Create(5, 4, 20, 12, v6);
       pageIndex = 0;
       pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle = (s32)Window_Create(MAIN_MENU_HELP_WINDOW_X, 0,
-                                        MAIN_MENU_HELP_WINDOW_WIDTH, 4, v6);
+      windowHandle = (s32)Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
+                                        FILE_SCREEN_HELP_WINDOW_WIDTH, 4, v6);
       passwordHeadingMessage = MsgClearPasswordLabel;
       headingWindow = (struct Window *)windowHandle;
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
@@ -792,11 +795,11 @@ menu_top:;
         windowHandle = (s32)Window_Create(5, 16, 20, 3, v6);
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
-                                MAIN_MENU_PAGE_LABEL_X, 0);
+                                FILE_SCREEN_PAGE_LABEL_X, 0);
       } else {
         windowHandle =
-            (s32)Window_Create(MAIN_MENU_MESSAGE_WINDOW_X, 16,
-                               MAIN_MENU_MESSAGE_WINDOW_WIDTH, 3, v6);
+            (s32)Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
+                               FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3, v6);
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
@@ -899,8 +902,8 @@ menu_top:;
              * glyph's address as the ROM does; without it, 98 of 921
              * instructions differ in tbs-en. */
             do {
-              MainMenu_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
-                                          glyph);
+              FileScreen_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
+                                            glyph);
             } while (0);
             passwordColumn = (v7 % 10);
             if (passwordColumn > 4) {
@@ -942,7 +945,7 @@ leave:;
 
 /// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
 /// shadow.
-UNUSED static void FileMenu_FillTileGrid(struct Window *window,
+UNUSED static void FileList_FillTileGrid(struct Window *window,
                                          const void *compressedTiles) {
   u16 *shadow;
   u16 *vram;
@@ -972,7 +975,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
 
 /// UNUSED: fills a 16-by-eight region with WINDOW_PALETTE tiles beginning at
 /// tile 32.
-UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
+UNUSED static void FileList_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
   s16 *buffer = AllocEwram(0x300);
   s16 *vram;
@@ -1023,7 +1026,7 @@ struct PasswordStats {
 
 /// A party member as the password reads them: their level, base stats,
 /// inventory and Djinn. A view of struct Unit at its offsets;
-/// MainMenu_PackPasswordData's opening note says why it is kept.
+/// FileScreen_PackPasswordData's opening note says why it is kept.
 struct PasswordMember {
   u8 name[0x0f]; ///< Unit's; not read here
   u8 level;      ///< clamped to 1 to 99; 7 bits
@@ -1041,15 +1044,15 @@ struct PasswordMember {
 /// each member's base stats and level in place first, and returns the byte
 /// count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
 /// each from the lowest bit; the low half of 3 and bytes 4 to 6 the Djinn
-/// held, 7 bits an element; byte 7 the story flags of gMainMenu_PasswordFlags.
-/// Silver and Bronze keep in byte 8 which Psynergy items the party carries.
-/// Gold and Silver add the base stats, 60 bits a member, high bits first,
-/// from byte 8 (Gold) or 9 (Silver). Gold alone adds the 60 inventory slots'
-/// items, 9 bits each from byte 39, with a spare bit after every seventh;
-/// from the low half of byte 107, the 5-bit quantity fields of the 23
-/// gMainMenu_PasswordStackItems for each member; and the coins in bytes 165 to
-/// 167.
-static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
+/// held, 7 bits an element; byte 7 the story flags of
+/// gFileScreen_PasswordFlags. Silver and Bronze keep in byte 8 which Psynergy
+/// items the party carries. Gold and Silver add the base stats, 60 bits a
+/// member, high bits first, from byte 8 (Gold) or 9 (Silver). Gold alone adds
+/// the 60 inventory slots' items, 9 bits each from byte 39, with a spare bit
+/// after every seventh; from the low half of byte 107, the 5-bit quantity
+/// fields of the 23 gFileScreen_PasswordStackItems for each member; and the
+/// coins in bytes 165 to 167.
+static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // A direct Unit member plus the real member table shrinks the native
   // function from 0x400 to 0x3f4. The private view remains pending member
   // reconciliation; its fields below follow Unit's actual base stats.
@@ -1092,14 +1095,14 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
-    if (GameFlag_Get(((const u16 *)gMainMenu_PasswordFlags)[i])) {
+    if (GameFlag_Get(((const u16 *)gFileScreen_PasswordFlags)[i])) {
       flagBits |= 1 << i;
     }
   }
 
   for (i = 0; i != 4; i++) {
     struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-        ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
+        ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &member->stats;
 
     if (stats->baseHp > UNIT_CHARACTER_HP_MAX) {
@@ -1142,13 +1145,13 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     for (j = 0; j != 4; j++) {
       djinnBits += member->djinnHeld[j] << (j * 7);
     }
-    // Which of the eight Psynergy items (gMainMenu_PasswordKeyItems) any member
-    // carries.
+    // Which of the eight Psynergy items (gFileScreen_PasswordKeyItems) any
+    // member carries.
     for (j = 0; j != 15; j++) {
       u16 item = member->inventory[j] & 0x1ff;
 
       for (k = 0; k != 8; k++) {
-        if (item == ((const u16 *)gMainMenu_PasswordKeyItems)[k]) {
+        if (item == ((const u16 *)gFileScreen_PasswordKeyItems)[k]) {
           keyItemBits |= 1 << k;
         }
       }
@@ -1161,7 +1164,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
       struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
+          ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
         u16 item;
@@ -1184,7 +1187,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
       struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
+          ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
       s32 m;
 
       for (m = 0; m != 23; m++) {
@@ -1193,7 +1196,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         j = 0;
         for (n = 0; n != 15; n++) {
           if ((member->inventory[n] & 0x1ff) ==
-              ((const u16 *)gMainMenu_PasswordStackItems)[m]) {
+              ((const u16 *)gFileScreen_PasswordStackItems)[m]) {
             j = (member->inventory[n] & 0xf800) >> 11;
           }
         }
@@ -1266,7 +1269,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 /// cuts the bits into six-bit symbols, high bits first, adds a check symbol
 /// after every nine (their sum, mod 64; a shorter last group gets none), and
 /// then adds each symbol's position, mod 64.
-static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out) {
+static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
   s32 i;
@@ -1320,7 +1323,7 @@ static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out) {
 /// its complemented low 16 bits. 0xFFFFEFDF is -0x1021, CRC-16-CCITT's
 /// polynomial, subtracted where that CRC XORs it; bits above 15 never reach
 /// the result, since carries and borrows only move up.
-static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
+static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
   u32 bitIndex;
@@ -1346,47 +1349,47 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct SceneEntrance gMainMenu_Entrances[] = {
+struct SceneEntrance gFileScreen_Entrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gMainMenu_Exits[] = {
+u32 gFileScreen_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gMainMenu_ActorTemplates[] = {
+struct ActorTemplate gFileScreen_ActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gMainMenu_Triggers[] = {
+struct Trigger gFileScreen_Triggers[] = {
     {TRIGGERS_END},
 };
 
-/// Frames since MainMenu_UpdateBlend began; the blend level is half of it.
-s16 gMainMenu_BlendFrame = 0;
+/// Frames since FileScreen_UpdateBlend began; the blend level is half of it.
+s16 gFileScreen_BlendFrame = 0;
 
-/// Set once gMainMenu_CodeSequence has been entered; nothing here clears it.
-s16 gMainMenu_CodeUnlocked = 0;
+/// Set once gFileScreen_CodeSequence has been entered; nothing here clears it.
+s16 gFileScreen_CodeUnlocked = 0;
 
-/// Set once gMainMenu_ExtraCodeSequence has been entered.
-s16 gMainMenu_ExtraCodeUnlocked = 0;
+/// Set once gFileScreen_ExtraCodeSequence has been entered.
+s16 gFileScreen_ExtraCodeUnlocked = 0;
 
-/// The index in gMainMenu_CodeSequence of the key to press next.
-s16 gMainMenu_CodeProgress = 0;
+/// The index in gFileScreen_CodeSequence of the key to press next.
+s16 gFileScreen_CodeProgress = 0;
 
-/// The index in gMainMenu_ExtraCodeSequence of the key to press next.
-s16 gMainMenu_ExtraCodeProgress = 0;
+/// The index in gFileScreen_ExtraCodeSequence of the key to press next.
+s16 gFileScreen_ExtraCodeProgress = 0;
 
 /// Set while the first code's last correct key is still held.
-s16 gMainMenu_CodeHeld = 0;
+s16 gFileScreen_CodeHeld = 0;
 
-/// The same for the second code, read through MAIN_MENU_EXTRA_CODE_HELD.
-s32 gMainMenu_ExtraCodeHeld = 0;
+/// The same for the second code, read through FILE_SCREEN_EXTRA_CODE_HELD.
+s32 gFileScreen_ExtraCodeHeld = 0;
 
 // clang-format off
 /// The members the password packs: Isaac, Garet, Ivan and Mia.
-u32 gMainMenu_PasswordMembers[] = {
+u32 gFileScreen_PasswordMembers[] = {
     0, 1, 2, 3,
 };
 
@@ -1394,13 +1397,13 @@ u32 gMainMenu_PasswordMembers[] = {
 /// 0 to 5: FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
 /// FLAG_VISITED_SICK_DORA and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
-u32 gMainMenu_PasswordFlags[] = {
+u32 gFileScreen_PasswordFlags[] = {
     0x9510941, 0x8d108b3, 0x868081e,
 };
 
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
 /// halfwords in pairs), which Silver and Bronze record in byte 8.
-u32 gMainMenu_PasswordKeyItems[] = {
+u32 gFileScreen_PasswordKeyItems[] = {
     0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };
 
@@ -1409,7 +1412,7 @@ u32 gMainMenu_PasswordKeyItems[] = {
 /// Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke Bomb, Sleep
 /// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,
 /// Bramble Seed and Crystal Powder.
-u16 gMainMenu_PasswordStackItems[] = {
+u16 gFileScreen_PasswordStackItems[] = {
     180, 181, 182, 183, 186, 187, 188, 189,
     191, 192, 193, 194, 195, 196, 226, 227,
     228, 229, 236, 238, 239, 240, 241,

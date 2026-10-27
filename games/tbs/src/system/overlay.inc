@@ -345,7 +345,7 @@
 	import Scene_QueueMusic, Scene_QueueMusicFar
 	import Scene_PlayQueuedMusic, Scene_PlayQueuedMusicFar
 @ Menu bank (far_call/MENU.S)
-	import MemberChooser_Open, MemberChooser_OpenFar
+	import PartyMemberChooser_Open, PartyMemberChooser_OpenFar
 	import DjinnMenu_Run, DjinnMenu_RunFar
 	import ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
 @ Shop bank (far_call/SHOP.S)

@@ -130,7 +130,7 @@ enum ItemUseResult {
 /// StatusScreenWork.page: which screen the party member row belongs to.
 enum StatusScreenPage {
   STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
-  /// The party member chooser (MemberChooser_Open).
+  /// The party member chooser (PartyMemberChooser_Open).
   STATUS_SCREEN_PAGE_CHOOSER = 3
 };
 

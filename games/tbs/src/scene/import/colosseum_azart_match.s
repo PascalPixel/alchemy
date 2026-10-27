@@ -93,7 +93,7 @@
 	.set import.Scene_PlayMusic, 1
 	.set import.Event_ClearInvalidPackedValues, 1
 	.set import.Actor_LinkAndSetScript, 1
-	.set import.MemberChooser_Open, 1
+	.set import.PartyMemberChooser_Open, 1
 	.set import.Sound_PlaySong, 1
 	.set import.Sound_GetBgmRestoreDelay, 1
 	.include "games/tbs/src/system/overlay.inc"

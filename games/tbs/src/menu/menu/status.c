@@ -8,7 +8,7 @@
 // The international editions reset eight party figure rows rather than four,
 // and their longer words need more window.
 //
-// How many party figure rows MemberChooser_Open resets.
+// How many party figure rows PartyMemberChooser_Open resets.
 #if TBS_PATCH_1
 #define MEMBER_CHOOSER_MEMBER_COUNT 8
 #else
@@ -95,7 +95,7 @@
 /// use it, through MENU.S, and so does the debug test). Returns the chosen
 /// party member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
-s32 MemberChooser_Open(void) {
+s32 PartyMemberChooser_Open(void) {
   struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
@@ -112,7 +112,7 @@ s32 MemberChooser_Open(void) {
     menu->memberY[index] = 30;
   menu->page = STATUS_SCREEN_PAGE_CHOOSER;
 
-  result = MemberChooser_Run();
+  result = PartyMemberChooser_Run();
 
   WindowSprite_ClearListFar(menu->statusWindow);
   ItemMenu_Close();
@@ -124,7 +124,7 @@ s32 MemberChooser_Open(void) {
 
 /// The party member chooser's loop. Returns the chosen party member's id, or
 /// -1.
-s32 MemberChooser_Run(void) {
+s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
@@ -326,7 +326,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     result = PsynergyMenu_ChooseMember();
   else
-    result = MemberChooser_RunRearrange();
+    result = PartyMemberChooser_RunRearrange();
   cursor = menu->memberCursors[slot];
   Icon_PrepareActor(cursor);
   WaitFrames(1);
@@ -427,8 +427,8 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
 /// chooses the party member and B backs out. Returns 1 or -1, or 0 when Start
 /// ends it, with the party member in the work's memberIndex[0] and
 /// selectedIds[0]. Moving a party member changes the party order for good
-/// (MemberChooser_MoveEntry).
-s32 MemberChooser_RunRearrange(void) {
+/// (PartyMemberChooser_MoveEntry).
+s32 PartyMemberChooser_RunRearrange(void) {
   struct StatusScreenWork *menu;
   s32 memberIndex;
   s32 memberCount;
@@ -492,7 +492,7 @@ s32 MemberChooser_RunRearrange(void) {
     }
     // L and R move the party member along the party order.
     if (gKeysRepeat & KEY_R) {
-      if (MemberChooser_MoveEntry(memberIndex, 1)) {
+      if (PartyMemberChooser_MoveEntry(memberIndex, 1)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         memberIndex++;
         Menu_ReleaseEntryActors();
@@ -503,7 +503,7 @@ s32 MemberChooser_RunRearrange(void) {
       }
       WaitFrames(1);
     } else if (gKeysRepeat & KEY_L) {
-      if (MemberChooser_MoveEntry(memberIndex, 0)) {
+      if (PartyMemberChooser_MoveEntry(memberIndex, 0)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         memberIndex--;
         Menu_ReleaseEntryActors();
@@ -613,7 +613,7 @@ s32 PsynergyMenu_ChooseMember(void) {
 
 /// Moves the party member at selectedIndex one place later (direction 1) or
 /// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
-s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
+s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   struct StatusScreenWork *menu = gMenuWork;
   u32 reordered[14];
   s32 index;

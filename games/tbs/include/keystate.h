@@ -21,7 +21,7 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysPressed;
 /// Pressed keys, repeating while held: after 19 frames, then every 6.
 /* FAKEMATCH(volatile): as plain u32, 54 functions differ in tbs-en, most
- * MemberChooser_RunRearrange (288), PsynergyMenu_SelectAction (236). */
+ * PartyMemberChooser_RunRearrange (288), PsynergyMenu_SelectAction (236). */
 extern volatile u32 gKeysRepeat;
 /// gKeysRepeat with at most one D-pad direction.
 /* FAKEMATCH(volatile): as plain u32, 70 of 121 instructions differ in tbs-en

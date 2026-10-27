@@ -175,15 +175,15 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
 s32 PsynergyMenu_RunList(s32 sideIndex);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
-s32 MemberChooser_Open(void);
-s32 MemberChooser_Run(void);
+s32 PartyMemberChooser_Open(void);
+s32 PartyMemberChooser_Run(void);
 s32 StatusScreen_Run(void);
 s32 StatusScreen_RunPages(void);
 s32 StatusScreen_SelectMember(s32 slot);
 s32 DjinnMenu_ShowCurrentList(void);
-s32 MemberChooser_RunRearrange(void);
+s32 PartyMemberChooser_RunRearrange(void);
 s32 PsynergyMenu_ChooseMember(void);
-s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
+s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
 void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
                                              s32 unused2, s32 unused3);
 void StatusScreen_ShowMemberStatus(s32 member, s32 frame);

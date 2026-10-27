@@ -432,7 +432,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
           Party_AddMember((s8)members[i]);
         }
       }
-      friendId = MemberChooser_Open();
+      friendId = PartyMemberChooser_Open();
       for (i = 0; i < memberCount; i++) {
         Party_RemoveMember((s8)members[i]);
       }

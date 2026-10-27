@@ -126,9 +126,9 @@ each [element](../../glossary.md#the-four-elements), stand on the status page
 and step out of sight for the other two.
 
 `StatusScreen_Run` ([`menu/status.c`](menu/status.c)) runs it, with
-`MemberChooser_RunRearrange` as the party member row and `DjinnFigures_`
+`PartyMemberChooser_RunRearrange` as the party member row and `DjinnFigures_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)) placing the figures.
-`MemberChooser_Open`, the same row on its own over the field, is how the
+`PartyMemberChooser_Open`, the same row on its own over the field, is how the
 Colosso scenes ask for a party member.
 
 ## The status panel

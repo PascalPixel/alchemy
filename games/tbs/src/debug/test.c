@@ -840,7 +840,7 @@ static s32 MenuTest_OpenIconBrowser(void) { return DebugBrowser_Icons(); }
 #if !TBS_PATCH_1
 /// Returns the Japanese character selector's status. Talking to ACTOR_FELIX
 /// in Japanese: the party member chooser, whose choice nothing uses.
-static s32 MenuTest_SelectCharacter(void) { return MemberChooser_Open(); }
+static s32 MenuTest_SelectCharacter(void) { return PartyMemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3

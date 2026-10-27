@@ -402,7 +402,7 @@ enum TilemapEntryMode {
   TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
   /// In palette 1, which the Status screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
-  /// (StatusScreen_Run, MemberChooser_RunRearrange).
+  /// (StatusScreen_Run, PartyMemberChooser_RunRearrange).
   TILEMAP_ENTRY_ICON
 };
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,

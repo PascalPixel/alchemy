@@ -75,7 +75,7 @@
 	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
-	.set import.MemberChooser_Open, 1
+	.set import.PartyMemberChooser_Open, 1
 	.endif
 	.set import.ItemMenu_DrawItemDetails, 1
 	.set import.Shop_OpenDebugShop, 1

@@ -83,7 +83,7 @@ struct Unit *Unit_Get(u32 unitId) {
     /* FAKEMATCH(barrier): an empty asm reading the return address in a low
      * register, as the ROM's mov r3, lr at entry; as no asm, 1 of 28
      * instructions differ in tbs-en. */
-    asm("" : : "l"(caller));
+    __asm__("" : : "l"(caller));
   }
   states = gSaveBlock.units;
   if (unitId <= PIERS) {

@@ -739,13 +739,13 @@ prompt:
 #else
   /* FAKEMATCH(barrier): message kept in r10 and the coin label in r9; as a
    * plain local, the two swap and 8 of 290 instructions differ in tbs-ja. */
-  asm("" : "+r"(message));
+  __asm__("" : "+r"(message));
   for (;;) {
     text = MsgTolbiCoins;
     /* FAKEMATCH(barrier): the coin label kept in r9 and the marker in the pool;
      * as a plain local, the marker takes fp, state r9, and 10 of 290
      * instructions differ in tbs-ja. */
-    asm("" : "+r"(text));
+    __asm__("" : "+r"(text));
     state = &gSaveBlock;
     coins = state->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -885,7 +885,7 @@ prompt:
       {
         /* FAKEMATCH(pin): the slot in r1, where the native keeps it; as a
          * plain s32, 5 of 280 instructions differ in tbs-en. */
-        register s32 slot asm("r1") = prizeIndex + 284;
+        register s32 slot __asm__("r1") = prizeIndex + 284;
         s8 *prizeWeight = (s8 *)state + 1;
 
         if (prizeWeight[slot] > 1) {

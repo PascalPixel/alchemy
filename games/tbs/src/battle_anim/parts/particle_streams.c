@@ -326,10 +326,10 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       s32 angle = frame << 8;
       /* FAKEMATCH(pin): count in r2, so the division's +3 works on its copy in
        * r3; as a plain local, 5 of 1532 instructions differ in tbs-en. */
-      register s32 count asm("r2") = work->frame;
+      register s32 count __asm__("r2") = work->frame;
       /* FAKEMATCH(pin): work's copy in r0, leaving r1 to the 0x778c offset; as
        * a plain local, 4 of 1532 instructions differ in tbs-en. */
-      register u8 *base asm("r0") = (u8 *)work;
+      register u8 *base __asm__("r0") = (u8 *)work;
       s32 heat = count / 4;
       u16 *line;
       s32 size;
@@ -339,7 +339,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       /* FAKEMATCH(barrier): count and base through an empty asm, which loads
        * count into r2 and copies it to r3; without it, 1 of 1532
        * instructions differ in tbs-en. */
-      asm("" : "=r"(base) : "0"(base), "r"(count));
+      __asm__("" : "=r"(base) : "0"(base), "r"(count));
       line = (u16 *)(base + 0x1f80);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
@@ -354,16 +354,16 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
         /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
          * call, so heat takes r4 and its sp+8 save; without hold, 168 of 1532
          * instructions differ in tbs-en. */
-        asm("" : "=r"(hold));
+        __asm__("" : "=r"(hold));
         /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
          * without it, 175 of 1532 instructions differ in tbs-en. */
-        asm("" : : : "r6");
+        __asm__("" : : : "r6");
         if (frame == 0)
           Sound_PlaySongFar(SE_RUMBLE);
         /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
          * across the call; without it, 168 of 1532 instructions differ in
          * tbs-en. */
-        asm("" : : "r"(hold));
+        __asm__("" : : "r"(hold));
       }
       // The heat lines, the 160 backdrop colours that
       // BattleAnim_ArmPaletteHBlankDma streams in one per scanline: black on
@@ -381,7 +381,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
         s32 blue = green;
         /* FAKEMATCH(pin): level in r2; as a plain local, 21 of 1532
          * instructions differ in tbs-en. */
-        register s32 level asm("r2");
+        register s32 level __asm__("r2");
 
         if (green < 0)
           blue += 3;

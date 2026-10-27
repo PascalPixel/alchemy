@@ -351,7 +351,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
         /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop's preheader, and
          * i's life lengthened so dotCount takes r9; without the asm, 330 of
          * 1640 instructions differ in tbs-en. */
-        asm("" : "+r"(fullWidth));
+        __asm__("" : "+r"(fullWidth));
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }

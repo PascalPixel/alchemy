@@ -568,7 +568,7 @@ static void LamakanDesert_BatheInOasis(void) {
   // the native needs offset between the other two (8 or 9 refs).
   /* FAKEMATCH(pin): offset fixed in r6, which leaves r7 to count; as a plain
    * s32 offset, 11 of 228 instructions differ in tbs-en. */
-  register s32 offset asm("r6");
+  register s32 offset __asm__("r6");
   const s32 *point;
   s32 nearest;
   s32 distance;

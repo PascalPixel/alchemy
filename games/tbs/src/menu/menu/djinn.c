@@ -1592,7 +1592,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     /* FAKEMATCH(barrier): an empty asm keeps entry live past the member's
      * extraction, so the member mask keeps its register; without it, 48 of
      * 2058 instructions differ in tbs-en. */
-    asm("" : "+r"(result) : "r"(entry));
+    __asm__("" : "+r"(result) : "r"(entry));
   }
   // The cursor, packed as column + row * 10.
   menu->selection[mode] = memberColumn + djinnRow * 10;

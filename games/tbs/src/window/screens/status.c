@@ -381,7 +381,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       /* FAKEMATCH(barrier): an empty asm, so the move into sl comes between
        * the two stores and the face tile loads before 0xFC00, as native;
        * without it, 13 of 1458 instructions differ in tbs-es. */
-      asm("");
+      __asm__("");
 #endif
       portraitSprite.oam.f.tile = face->oam.f.tile;
       portraitSprite.oam.f.x = 0xAC;
@@ -394,7 +394,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts gFrameCount's
      * literal in the next pool, as native; without it, 13 of 1392
      * instructions differ in tbs-en. */
-    asm("");
+    __asm__("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     cursorSprite.oam.f.x =

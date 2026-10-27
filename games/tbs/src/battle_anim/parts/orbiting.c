@@ -184,7 +184,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
         /* FAKEMATCH(pin): rec fixed to r0, so loop.c cannot hoist the point's
          * address into fp; as an ordinary pointer, 51 of 265 instructions
          * differ in tbs-en. */
-        register s32 *rec asm("r0");
+        register s32 *rec __asm__("r0");
 
         // The actor's projection is computed, but nothing reads it.
         ANIM_VIEW_FROM_CAMERA(camera);

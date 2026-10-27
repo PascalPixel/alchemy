@@ -64,7 +64,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
    * an ordinary local it is spilled, the frame shrinks to 320 bytes and 969
    * of 1585 instructions differ in tbs-en. */
-  register struct Window *conditionWindow asm("r9");
+  register struct Window *conditionWindow __asm__("r9");
 #endif
   s32 targetIndex;
   s32 targetCount;

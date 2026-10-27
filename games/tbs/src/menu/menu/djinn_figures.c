@@ -123,7 +123,7 @@ void DjinnFigures_UpdateBottomRow(void) {
       /* FAKEMATCH(pin): rowY fixed in r2, where the row's second read goes;
        * as a plain s32, which takes r3 and costs limit its register, 39 of
        * 120 instructions differ in tbs-en. */
-      register s32 rowY asm("r2");
+      register s32 rowY __asm__("r2");
 
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale

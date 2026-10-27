@@ -858,7 +858,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
         /* FAKEMATCH(pin): the zero in r0, live across the first loop as the
          * native has it; as a plain store of 0, 6 of 184 instructions differ
          * in tbs-en. */
-        register s32 z asm("r0") = 0;
+        register s32 z __asm__("r0") = 0;
         state->records[1].kind = z;
       }
       while (node->next != NULL) {

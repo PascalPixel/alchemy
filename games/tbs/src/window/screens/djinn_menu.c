@@ -515,7 +515,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       /* FAKEMATCH(barrier): an empty asm reading the row in a low register
        * reloads it before the subtract; without it, 2 of 1201 instructions
        * differ in tbs-en. */
-      asm("" : : "l"(selectedRow));
+      __asm__("" : : "l"(selectedRow));
       cursorPos.x = cx - 2;
     }
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;

@@ -52,7 +52,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(u8 *message, s32 window, s32 x, s32 y);
 void MenuIcon_SetActive(s32 active);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 GameFlag_Test(s32 flag);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
@@ -91,12 +91,12 @@ void Func_080fe638(void) {
     menu->rowY[i] = 56;
     menu->ownerY[i] = 26;
   }
-  WaitFrames(1);
+  WaitTicks(1);
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
       window = menu->listWindow;
       RenderOutput_RedrawSavedRectFar(window);
-      WaitFrames(1);
+      WaitTicks(1);
       UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
       Menu_DrawPageIndicator(window, pages, 1, page, 28);
       for (element = 0; element < 4; element++) {
@@ -114,7 +114,7 @@ void Func_080fe638(void) {
       redraw = 0;
     }
     Link_DrawShiftedTilePairFar((void *)0x06002500);
-    WaitFrames(1);
+    WaitTicks(1);
     if (gInput.pressed & 7)
       break;
     if (gInput.repeat & 0x30) {

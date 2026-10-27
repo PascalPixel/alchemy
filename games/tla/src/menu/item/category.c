@@ -34,7 +34,7 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
   items = (u8 *)menu->items;
   ItemMenu_DrawEquippedItemNames(window, items);
   if (mode == 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     ItemMenu_DrawIcons((u16 *)items, 1);
     ItemMenu_ArrangeCategoryItemIcons((u16 *)items);
   }

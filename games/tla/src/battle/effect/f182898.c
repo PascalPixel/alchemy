@@ -45,7 +45,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -142,7 +142,7 @@ void Func_08182898(struct BattleEffectArgument *effect) {
 
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);

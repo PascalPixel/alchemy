@@ -8,7 +8,7 @@ void Func_02002adc(s32 message);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Func_02002bb4(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_02002af4(s32 speaker, s32 flags);
 
 void Func_020004b4(s32 actor) {
@@ -16,10 +16,10 @@ void Func_020004b4(s32 actor) {
     Func_02002adc((s32)MsgChampa30);
     UiText_OpenMessageAtObject(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002bb4(), 0) == 0) {
-      FieldEvent_WaitFrames(10);
+      FieldEvent_WaitTicks(10);
       Func_02002adc((s32)MsgChampa30 + 1);
     } else {
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Func_02002adc((s32)MsgChampa30 + 2);
     }
     Func_02002af4(actor, 0);
@@ -27,10 +27,10 @@ void Func_020004b4(s32 actor) {
     Func_02002adc((s32)MsgChampa05);
     UiText_OpenMessageAtObject(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002bb4(), 0) == 0) {
-      FieldEvent_WaitFrames(10);
+      FieldEvent_WaitTicks(10);
       Func_02002adc((s32)MsgChampa05 + 1);
     } else {
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Func_02002adc((s32)MsgChampa05 + 2);
     }
     Func_02002af4(actor, 0);

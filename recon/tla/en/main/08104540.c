@@ -72,7 +72,7 @@ void Input_ResetKeyRepeat(void);
 void Audio_PlayCue(s32 cue);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 s32 Func_08104540(void) {
   s32 selectedPages[2];
@@ -109,7 +109,7 @@ s32 Func_08104540(void) {
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
   RenderOutput_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  WaitTicks(1);
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Runtime_BumpAllocateAlternatePool(96);
@@ -204,12 +204,12 @@ s32 Func_08104540(void) {
       Input_ResetKeyRepeat();
       redraw = 1;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   UiWindow_CloseIfOpen(helpWindowSlot, 1);
-  WaitFrames(1);
+  WaitTicks(1);
   UiWindow_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
   UiWindow_CloseIfOpen(leftWindowSlot, 1);
   UiWindow_CloseIfOpen(rightWindowSlot, 1);
@@ -217,6 +217,6 @@ s32 Func_08104540(void) {
   RenderOutput_RedrawSavedRectFar(menu->unknownWindow02c);
   RenderOutput_RedrawSavedRectFar((s32)menu->statusWindow);
   ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

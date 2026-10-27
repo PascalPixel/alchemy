@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitFrames
+	.global WaitTicks
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+WaitTicks:
+	overlay_veneer WaitTicksFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:

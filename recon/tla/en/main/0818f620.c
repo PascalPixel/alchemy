@@ -50,7 +50,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -339,7 +339,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -364,9 +364,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
-    WaitFrames(1);
+    WaitTicks(1);
     BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

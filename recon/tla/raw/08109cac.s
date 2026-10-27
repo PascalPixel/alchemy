@@ -203,7 +203,7 @@ Func_08109cac:
 	movs r5, #4
 .L_08109e42:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r6]
 	ands r3, r5
 	cmp r3, #0
@@ -226,7 +226,7 @@ Func_08109cac:
 	ldr r0, [r3]
 	bl RenderOutput_PrepareForRedrawFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	mov r9, r2
 	b .L_08109d18
@@ -331,14 +331,14 @@ Func_08109cac:
 	mov r9, r2
 .L_08109f40:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_08109d18
 .L_08109f48:
 	ldr r0, [sp, #20]
 	movs r1, #2
 	bl UiWork_FinalizeFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bne .L_08109fd8
 	movs r3, #129

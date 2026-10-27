@@ -55,7 +55,7 @@ Func_0810b1b4:
 	movs r1, #0
 	bl Animation_ApplyChildValueFar
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_0810b36c
@@ -109,7 +109,7 @@ Func_0810b1b4:
 	str r3, [r5, #44]
 	str r3, [r5, #40]
 	movs r0, #3
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #5
 	bne .L_0810b2aa
 	movs r3, #161
@@ -141,7 +141,7 @@ Func_0810b1b4:
 	cmp r7, #0
 	bge .L_0810b2c2
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #126
 	bl Audio_PlayCue
 	movs r2, #161
@@ -156,7 +156,7 @@ Func_0810b1b4:
 	movs r1, #0
 	bl Animation_ApplyChildValuesToRecordFar
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #160
 	movs r5, #160
 	lsls r6, r6, #3
@@ -189,7 +189,7 @@ Func_0810b1b4:
 	bl Animation_ApplyChildValueFar
 	bl Shop_InitializeEffect
 	movs r0, #30
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #128
 	lsls r3, r3, #3
 	adds r3, #220

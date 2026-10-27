@@ -165,13 +165,13 @@ void FieldEffect_RunFrost(void) {
       particle->targetZ = p->z;
     }
 
-    WaitFrames(3);
+    WaitTicks(3);
     cnt--;
   } while (cnt >= 0);
 
-  WaitFrames(10);
+  WaitTicks(10);
   Audio_PlayCue(115);
-  WaitFrames(50);
+  WaitTicks(50);
 
   if (target != NULL && scene->enabled == 0) {
     Audio_PlayCue(212);
@@ -179,9 +179,9 @@ void FieldEffect_RunFrost(void) {
     cnt = 7;
     do {
       Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
-      WaitFrames(1);
+      WaitTicks(1);
       Animation_ApplyChildValuesFar((struct DispatchObject *)target, 0);
-      WaitFrames(4);
+      WaitTicks(4);
       cnt--;
     } while (cnt >= 0);
 
@@ -195,7 +195,7 @@ void FieldEffect_RunFrost(void) {
     if (ev != NULL)
       EventRuntime_RunPendingEvent(ev, scene->firstObjectId,
                                    scene->secondObjectId);
-    WaitFrames(20);
+    WaitTicks(20);
   }
 
   BattleEffect_PrepareBufferInterpolation();

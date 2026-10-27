@@ -110,7 +110,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08158ce0(s32 randomMask, s32 shakeRange);
 // Counts down the actors' flash timers.
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -219,7 +219,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
     Func_08158ce0(2, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Teardown.

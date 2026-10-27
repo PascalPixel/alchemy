@@ -304,11 +304,11 @@ static void ColosseumAzartMatch_StartBrokenBridge(void) {
 static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
-  WaitFrames(10);
+  WaitTicks(10);
   i = 0;
   if (gColosseumAzartMatch_Countdown != 22) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
       i++;
       if (i > 119) {
         break;
@@ -393,7 +393,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   actor->speedLimit = PIXELS(4) / 5;
   FieldActor_SetMoveTarget(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
   Actor_WaitForMove(actor);
-  Event_WaitFrames(45);
+  Event_WaitTicks(45);
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   Event_End();
 }
@@ -506,13 +506,13 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
 /// Runs the five frames that show water entering the Pipeworks channel.
 static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
   MapGrid_CopyCells(96, 29, 1, 3, 34, 38);
-  Event_WaitFrames(3);
+  Event_WaitTicks(3);
   MapGrid_CopyCells(97, 29, 1, 3, 34, 38);
-  Event_WaitFrames(3);
+  Event_WaitTicks(3);
   MapGrid_CopyCells(98, 29, 1, 3, 34, 38);
-  Event_WaitFrames(3);
+  Event_WaitTicks(3);
   MapGrid_CopyCells(99, 29, 1, 3, 34, 38);
-  Event_WaitFrames(3);
+  Event_WaitTicks(3);
   MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
@@ -531,14 +531,14 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   Event_Start();
   Import_ActorSetAnimation(leaderId, ANIM_PUSH);
-  Event_WaitFrames(6);
+  Event_WaitTicks(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
   Event_PlaySong(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, 2);
   FieldActor_SetMoveTarget(actor, actor->x.fixed - PIXELS(48), 0,
                            actor->z.fixed);
-  Event_WaitFrames(6);
+  Event_WaitTicks(6);
   Import_ActorSetAnimation(leaderId, ANIM_WALK);
   Actor_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
@@ -553,7 +553,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Actor_SelectAnimation(actor, 1);
   Event_PlaySong(SE_STOP_ACTION_SE);
   Event_PlaySong(SE_HEAVY_STOP);
-  Event_WaitFrames(15);
+  Event_WaitTicks(15);
   Event_End();
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
   MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
@@ -564,7 +564,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
     FieldCamera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
     FieldCamera_WaitForArrival();
     ColosseumAzartMatch_AnimatePipeworksWater();
-    Event_WaitFrames(15);
+    Event_WaitTicks(15);
     Event_End();
     return;
   }
@@ -586,7 +586,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   actor->speedLimit = PIXELS(4) / 5;
   FieldActor_SetMoveTarget(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
   Actor_WaitForMove(actor);
-  Event_WaitFrames(15);
+  Event_WaitTicks(15);
   Event_End();
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
@@ -625,17 +625,17 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 1312, 192);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
@@ -690,7 +690,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
     Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
-  WaitFrames(1);
+  WaitTicks(1);
   FieldCamera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
   ColosseumAzartMatch_ShowMatchResult(result);
   Event_End();
@@ -875,7 +875,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(guide, ACTOR_IVAN, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetAnimationAndWait(guide, ANIM_NOD);
   Event_ShowMessage(guide, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -888,16 +888,16 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
     do {
       Event_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
       Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-      Event_WaitFrames(2);
+      Event_WaitTicks(2);
       Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-      Event_WaitFrames(2);
+      Event_WaitTicks(2);
       Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-      Event_WaitFrames(1);
+      Event_WaitTicks(1);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(guide, ANIM_NOD);
       Event_ShowMessage(guide, 0);
       Actor_FaceDirection(guide, FACING_NORTHWEST, 0);
-      Event_WaitFrames(20);
+      Event_WaitTicks(20);
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(104), 1);
@@ -942,13 +942,13 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_ShowMessage(ACTOR_MIA, 0);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(1);
+  Event_WaitTicks(1);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Event_WaitFrames(2);
+  Event_WaitTicks(2);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitFrames(1);
+  Event_WaitTicks(1);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitFrames(6);
+  Event_WaitTicks(6);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -996,11 +996,11 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Event_ShowMessageAndWait(actorId, 0);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                       60);
@@ -1065,40 +1065,40 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(592), -1, PIXELS(120), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitFrames(60);
+      Event_WaitTicks(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveWithinMapBounds(PIXELS(608), -1, PIXELS(216), 1);
       FieldCamera_WaitForArrival();
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
-      Event_WaitFrames(60);
+      Event_WaitTicks(60);
       Colosso_MovePointer(160, 96, 10);
-      Event_WaitFrames(70);
+      Event_WaitTicks(70);
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_HidePointer();
-      WaitFrames(2);
+      WaitTicks(2);
       first = Actor_GetById(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(8));
       second = Actor_GetById(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, PIXELS(32));
       Actor_WaitForMove(second);
-      Event_WaitFrames(45);
+      Event_WaitTicks(45);
       first = Actor_GetById(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);
-      Event_WaitFrames(15);
+      Event_WaitTicks(15);
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       Colosso_MovePointer(160, 96, 10);
-      Event_WaitFrames(40);
+      Event_WaitTicks(40);
       Colosso_MovePointer(56, 64, 10);
-      Event_WaitFrames(70);
+      Event_WaitTicks(70);
       Event_ShowMessageAndWait(attendant, 0);
       Colosso_HidePointer();
-      WaitFrames(2);
+      WaitTicks(2);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1129,7 +1129,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       FieldCamera_WaitForArrival();
       Event_ShowMessage(actorId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
-      Event_WaitFrames(60);
+      Event_WaitTicks(60);
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
@@ -1139,7 +1139,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       ColosseumAzartMatch_WaitForBridgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
@@ -1175,7 +1175,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_ShowPointer(120, 72, 0);
     Event_ShowMessage(actorId, 0);
     Colosso_HidePointer();
-    Event_WaitFrames(15);
+    Event_WaitTicks(15);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(actorId, 0);
@@ -1185,17 +1185,17 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 192);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
-    Event_WaitFrames(15);
+    Event_WaitTicks(15);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r0 last; as a direct call, 1 of 167 instructions differ
      * in tbs-en. */
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Event_ShowMessage(actorId, 0);
@@ -1271,11 +1271,11 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Sound_PlaySong(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
-    Event_WaitFrames(120);
+    Event_WaitTicks(120);
     Event_End();
   } else {
     Sound_PlaySong(SE_COLOSSO_LETTERING);
@@ -1283,26 +1283,26 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     gColosseumAzartMatch_LetteringTitle[15] = round * 60;
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Sound_PlaySong(round + 90);
     Colosso_LoadLettering(round);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
-    Event_WaitFrames(120);
+    Event_WaitTicks(120);
     while (Sound_GetBgmRestoreDelay() != 0) {
-      WaitFrames(1);
+      WaitTicks(1);
     }
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
     Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 1);
     Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
     Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
     Sound_PlaySong(SE_COLOSSO_GO);
@@ -1325,31 +1325,31 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
   STORE_CONST(gColosseumAzartMatch_LetteringLose[13]) =
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 1);
-    Event_WaitFrames(-result * 60 + 60);
+    Event_WaitTicks(-result * 60 + 60);
     loser = ACTOR_PARTY_LEADER;
   } else {
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Sound_PlaySong(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 0);
-    Event_WaitFrames(result * 60 + 60);
+    Event_WaitTicks(result * 60 + 60);
     loser = ACTOR_OPPONENT;
   }
   FieldEffect_SpawnAttached(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (Sound_GetBgmRestoreDelay() != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Sound_PlaySong(MUS_SILENCE);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1389,7 +1389,7 @@ static void ColosseumAzartMatch_WaitForStageReady(void) {
   s16 *ready = (s16 *)gSceneLocalState;
 
   while (*ready != 9) {
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }
 
@@ -1484,7 +1484,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   Actor_StartScript(actor, gColosseumAzartMatch_ApproachScript);
 
   while (*pendingItemActorId != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   if (flag == 0) {
@@ -1574,7 +1574,7 @@ static void ColosseumAzartMatch_PushActorAhead(void) {
   }
 
   Actor_SelectAnimation(subject, 8);
-  WaitFrames(15);
+  WaitTicks(15);
 
   target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;

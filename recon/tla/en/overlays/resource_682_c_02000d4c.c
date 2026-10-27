@@ -25,7 +25,7 @@ s32 BattleEffect_GetResourceId(s32 object);
 void UiText_OpenMessageWindow(s16 message, s32 x, s32 y, s32 resource);
 void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
 s32 UiWork_IsComplete(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 void Func_02000d4c(
     s32 firstId, s32 firstX, s32 firstY, s32 firstA,
@@ -47,12 +47,12 @@ void Func_02000d4c(
   __asm__("" : : "m"(frames));
   if (frames != 0) {
     while (!UiWork_IsComplete())
-      WaitFrames(frames);
+      WaitTicks(frames);
   }
   UiText_OpenMessageWindow(work->message++, secondX, secondY,
                            BattleEffect_GetResourceId(second) << 16);
   Func_02002a2c(second, 0, secondA, secondB);
   while (!UiWork_IsComplete())
-    WaitFrames(1);
-  WaitFrames(1);
+    WaitTicks(1);
+  WaitTicks(1);
 }

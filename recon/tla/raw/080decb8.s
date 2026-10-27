@@ -43,14 +43,14 @@ Func_080decb8:
 	strb r2, [r7, #25]
 	movs r0, #2
 	strb r6, [r7, #26]
-	bl WaitFrames
+	bl WaitTicks
 	mov r3, r8
 	mov r2, r11
 	strb r3, [r7, #25]
 	strb r2, [r7, #26]
 	movs r0, #2
 	adds r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #9
 	bls .L_080decfa
 	ldr r5, .L_080ded7c

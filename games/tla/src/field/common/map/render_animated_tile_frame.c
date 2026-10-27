@@ -35,7 +35,7 @@ void Animation_WaitForTrackEnd(struct AnimObject *object) {
     i = 0;
     if (track->script[track->index] != 241) {
       do {
-        WaitFrames(1);
+        WaitTicks(1);
         i++;
         if (i > 89)
           break;
@@ -95,7 +95,7 @@ void Map_RenderAnimatedTileFramesForObject(u8 *object) {
     Map_RenderAnimatedTileFrame(object, pos + 2);
     Map_RenderAnimatedTileFrame(object, pos + 3);
     pos += 4;
-    WaitFrames(1);
+    WaitTicks(1);
   } while (pos <= 0x7f);
 }
 
@@ -127,7 +127,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
         Map_RenderAnimatedTileFrame(*p++, pos3);
       } while (n != 0);
     }
-    WaitFrames(1U);
+    WaitTicks(1U);
     pos += 4;
   } while (pos <= 0x7FU);
 }

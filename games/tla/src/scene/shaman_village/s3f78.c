@@ -15,12 +15,12 @@ void Func_02003f78(void) {
   Object_GetById(16)->facing = 0x8000;
   Object_GetById(17)->facing = 0x8000;
   Camera_MoveWithinMapBounds(0xe00000, -1, 0x1180000, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_0200482c();
-  WaitFrames(1);
+  WaitTicks(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_020049a4(0x200f, 0);
   Func_0200289c();
   GameFlag_ClearBit(0x12f);

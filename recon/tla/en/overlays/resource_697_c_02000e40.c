@@ -12,7 +12,7 @@ void Func_020059e8(s32 value);
 void Func_020057f8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02005800(struct ObjectRuntime *object);
 s32 Func_02000df8(s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_02000d70(void);
@@ -56,7 +56,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Func_02005880();
   Func_020059e8(0);
   Object_SetModeById(gPartyState.currentOwner, 8);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_WaitTicks(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
   Func_02005a68(239);
@@ -65,12 +65,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Func_020057c8(object, mode);
   targetZ = (toZ << 20) + 0x80000;
   Func_020057f8(object, (toX << 20) + 0x80000, 0, targetZ);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_WaitTicks(6);
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x4ccc, 0x3333);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, dx << 3,
                                             dz << 3);
-  FieldEvent_WaitFrames(24);
+  FieldEvent_WaitTicks(24);
   Object_SetModeById(gPartyState.currentOwner, 1);
   Func_02005800(object);
   if (toX <= 17) {
@@ -80,7 +80,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   } else {
     Func_020057c8(object, 3);
     Func_020057f8(object, 312 << 16, 0, targetZ);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_WaitTicks(30);
     Func_020057c8(object, 8);
     Func_02005800(object);
     object->priorityFlags = 2;
@@ -88,7 +88,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Func_02005a68(240);
     GameFlag_SetBit(id + 579);
   }
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
   Func_02005888();
   Func_02000d70();
 }

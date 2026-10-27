@@ -330,7 +330,7 @@ BattleEffect_RunSabreDance:
 	add r2, r10
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r9, r3
 	mov r1, r9

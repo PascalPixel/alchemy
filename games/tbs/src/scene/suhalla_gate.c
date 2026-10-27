@@ -256,9 +256,9 @@ static void SuhallaGate_EnterHouse(void) {
   cellSize = 2;
   Event_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
-  WaitFrames(4);
+  WaitTicks(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
-  WaitFrames(4);
+  WaitTicks(4);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Import_EventSetExitRequest(exitTrigger);
 }
@@ -319,7 +319,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   if (leader != 0) {
     Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
   }
-  WaitFrames(1);
+  WaitTicks(1);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_IODEM, 108, 431);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 10);
@@ -349,7 +349,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 144, 420);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_SetAttachedEffect(ACTOR_EAST_GUARD,
@@ -365,7 +365,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
     Actor_SetAttachedEffect(ACTOR_IODEM,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   } else {
     gFieldWork->message += 1;
@@ -382,18 +382,18 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
   FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
@@ -469,24 +469,24 @@ static void SuhallaGate_SoldierVanishes(void) {
   do {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
-    WaitFrames(4);
+    WaitTicks(4);
 
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
     beat++;
-    WaitFrames(4);
+    WaitTicks(4);
   } while (beat <= 5);
 
   beat = 0;
   do {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
-    WaitFrames(2);
+    WaitTicks(2);
 
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
     beat++;
-    WaitFrames(2);
+    WaitTicks(2);
   } while (beat <= 11);
 
   Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);

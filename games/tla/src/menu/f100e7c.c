@@ -42,7 +42,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void MemFree(void *block);
 s32 GameFlag_Test(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void UiWindow_InitializeWork(s32 mode);
 void Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Scheduler_DisableOverlayCallbacksWithFlags(void);
@@ -83,7 +83,7 @@ s32 Func_08100e7c(void) {
   gPartyState.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  WaitFrames(1);
+  WaitTicks(1);
   UiWindow_InitializeWork(0);
   backdrop = Runtime_BumpAllocateAlternatePool(0x2130);
   menu->backdrop = backdrop;
@@ -121,7 +121,7 @@ s32 Func_08100e7c(void) {
   Func_0810106c();
   MenuIcon_ReleaseObjects();
   Menu_ResetTwoResourceEntries();
-  WaitFrames(1);
+  WaitTicks(1);
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   Ram_HeapSlots->objectSystem->suspended = 0;
@@ -129,7 +129,7 @@ s32 Func_08100e7c(void) {
   UiWork_SetAltFlagAndClearTableFar(0);
   CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
   CopyWords_((void *)0x05000080, backdrop->palette, 128);
-  WaitFrames(1);
+  WaitTicks(1);
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   MemFree(menu->backdrop);

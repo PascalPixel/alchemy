@@ -3,8 +3,8 @@
 #include "party_state.h"
 #include "event_work.h"
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_020000f4(void);
 void Func_02000158(void);
 void Func_02000178(void);
@@ -21,11 +21,11 @@ void Func_020004ac(void) {
 
   Func_02000178();
   Func_0200132c();
-  WaitFrames(40);
+  WaitTicks(40);
   Func_02000158();
   Func_020012ec(0x10000, 1);
   Func_020012fc(16);
-  WaitFrames(16);
+  WaitTicks(16);
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
    * party state address before it builds the field offset (2 differ without
    * it). */
@@ -45,7 +45,7 @@ void Func_02000508(void) {
   do {
   } while (0);
   gPartyState.unk2c2 = 1;
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Func_0200129c(gPartyState.currentOwner, 232 << 16, 136 << 16);
   Func_020004ac();
 }
@@ -59,7 +59,7 @@ void Func_02000544(void) {
   do {
   } while (0);
   gPartyState.unk2c2 = 1;
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Func_0200129c(gPartyState.currentOwner, 240 << 16, 480 << 16);
   Func_020004ac();
 }

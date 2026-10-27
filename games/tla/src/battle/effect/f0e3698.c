@@ -9,7 +9,7 @@ void EventRuntime_Start(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 void EventRuntime_StartScreen(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void EventRuntime_Wait(s32 frames);
@@ -53,7 +53,7 @@ void Func_080e3698(s32 actor) {
     ring->x = object->x;
     ring->y = object->y - 0x60000;
     ring->z = object->z;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Object_SetPositionAndResetMotionFar(object, x, y, z);
   Audio_PlayCue(136);
@@ -63,6 +63,6 @@ void Func_080e3698(s32 actor) {
   object->update = NULL;
   object->angle = angle;
   object->motionFlags = motionFlags;
-  WaitFrames(1);
+  WaitTicks(1);
   Camera_FollowActor(actor, 1);
 }

@@ -33,7 +33,7 @@ void UpdateRisingParticleBurst(void *object) {
     src->angle += 0x2000; // 1/8 turn
     src->scaleX += shrink;
     src->scaleY += shrink;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   for (i = 7; i >= 0; i--) {
     child = Object_Spawn(673, src->x, src->y, src->z);

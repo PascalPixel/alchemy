@@ -815,7 +815,7 @@ BattleEffect_RunTargetMotes:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #64]
 	ldr r2, [sp, #60]
 	adds r1, #1

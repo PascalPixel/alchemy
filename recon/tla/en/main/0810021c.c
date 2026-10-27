@@ -66,7 +66,7 @@ void InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
 s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
@@ -114,7 +114,7 @@ s32 Func_0810021c(void) {
         RenderOutput_RedrawSavedRectFar(menu->equipWindow);
         ItemMenu_DrawCategory(menu->equipWindow, menu->paneOwner, 1);
         listNeedsRedraw = 1;
-        WaitFrames(1);
+        WaitTicks(1);
       }
       if (listNeedsRedraw) {
         listNeedsRedraw = 0;
@@ -126,7 +126,7 @@ s32 Func_0810021c(void) {
       UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
       refresh = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     navigation = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
     Func_080f8a44(96, state.row * 16 + 52);
     if (navigation == 1) {

@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitFrames
+	.global WaitTicks
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+WaitTicks:
+	overlay_veneer WaitTicksFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -72,10 +72,10 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 Func_02001860:
 	overlay_veneer Func_08038210
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_02001870
 	.thumb_func
 Func_02001870:

@@ -22,7 +22,7 @@ void Func_02000574(s32 unused, s32 id) {
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     layer[3] += 0x10000;
-    WaitFrames(4);
+    WaitTicks(4);
   }
   Func_02003d84();
   GameFlag_SetBit(0x231);

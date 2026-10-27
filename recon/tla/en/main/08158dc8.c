@@ -72,7 +72,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -388,7 +388,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(188);
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // The lightning part.
@@ -623,7 +623,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
 
     Runtime_ReleaseHeapBlock(104);

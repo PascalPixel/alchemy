@@ -18,7 +18,7 @@ Menu_StepLeft:
 	movs r3, #33
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #229
 	lsls r1, r1, #2
 	adds r3, r7, r1
@@ -103,7 +103,7 @@ Menu_StepLeft:
 	b .L_0803ee5c
 .L_0803ee56:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0803ee5c:
 	movs r3, #16
 	ldrsh r2, [r5, r3]
@@ -216,7 +216,7 @@ Menu_StepLeft:
 	adds r0, r7, #0
 	bl Menu_LoadSelectionNodeResource
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #210
 	lsls r2, r2, #2
 	adds r3, r7, r2
@@ -225,6 +225,6 @@ Menu_StepLeft:
 	ldrh r0, [r3, #10]
 	bl Menu_OpenSelectionWindow
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

@@ -2,10 +2,10 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	.global WaitFrames
+	.global WaitTicks
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+WaitTicks:
+	overlay_veneer WaitTicksFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -18,10 +18,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_020014b8
 	.thumb_func
 Func_020014b8:

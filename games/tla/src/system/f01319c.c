@@ -18,7 +18,7 @@ void VramCache_Reset(void);
 void Func_0801399c(void);
 void Audio_InitializeRuntimeDefaultsFar(void);
 void Game_RunFar(s32);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Iwram_Halt(void);
 
 void Func_0801319c(void) {
@@ -52,6 +52,6 @@ void Func_0801319c(void) {
   gOamUsage.limit = 0x100;
   gOamUsage.used = 0;
   gSleepDisabled = 0;
-  WaitFrames(10);
+  WaitTicks(10);
   Game_RunFar(0);
 }

@@ -50,14 +50,14 @@ void Func_02001d40(void) {
   Func_020051c0();
   Func_02005370(0);
   ObjectMotion_EnableActionAndResetMotion(9);
-  WaitFrames(1);
+  WaitTicks(1);
   ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
   Func_02005280((s32)&MsgKandoreanTemple02);
   Func_020052a0(9, 0);
   Object_GetById(9)->angle = 0x3000;
-  WaitFrames(1);
+  WaitTicks(1);
   ObjectMotion_EnableActionAndSetCallback(9, gData_02005514);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_020051c8();
   GameFlag_SetBit(0x845);
 }
@@ -69,7 +69,7 @@ void Func_02001db4(void) {
   Func_02005280((s32)&MsgKandoreanTemple03);
   Func_02005298(10, 0);
   Object_GetById(10)->angle = 0x5000;
-  WaitFrames(1);
+  WaitTicks(1);
   Func_020051c8();
   GameFlag_SetBit(0x846);
 }

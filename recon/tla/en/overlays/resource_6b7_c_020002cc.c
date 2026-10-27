@@ -33,7 +33,7 @@ void UiText_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x,
                                s32 y);
 void UiText_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
 void UiWork_Finalize(void *window, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
@@ -71,7 +71,7 @@ void Func_020002cc(void) {
           (volatile u32 *)0x040000d4);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
           (volatile u32 *)0x040000d4);
-  WaitFrames(1);
+  WaitTicks(1);
   while (1) {
     if (redraw) {
       redraw = 0;
@@ -158,10 +158,10 @@ void Func_020002cc(void) {
         goto ahead;
     }
     step = 0;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   RenderOutput_RedrawSavedRect(window);
-  WaitFrames(1);
+  WaitTicks(1);
   UiWork_Finalize(window, 1);
   UiWork_Finalize(details, 1);
 }

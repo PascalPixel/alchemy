@@ -381,7 +381,7 @@ static void VaultCave_PushPillarAhead(void) {
     return;
   }
   Actor_SelectAnimation(leader, ANIM_PUSH);
-  WaitFrames(15);
+  WaitTicks(15);
   Sound_PlaySong(SE_PUSH_STEP);
   pillar->speedLimit = 0x3333;
   pillar->acceleration = 0x3333;
@@ -713,7 +713,7 @@ static void VaultCave_RunRumble(void) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
-    Event_WaitFrames(1);
+    Event_WaitTicks(1);
   }
   // Keep the packed native value written to BLDALPHA.
   fadeLevel = 6;
@@ -723,7 +723,7 @@ static void VaultCave_RunRumble(void) {
   do {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA,
                          upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
-    Event_WaitFrames(1);
+    Event_WaitTicks(1);
     if (frame % 20 == 0) {
       lowFadeLevel--;
       fadeLevel--;
@@ -755,15 +755,15 @@ static void VaultCave_FlipSwitch(void) {
     destinationColumn = 92;
     Event_PlaySong(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
-    Event_WaitFrames(39);
+    Event_WaitTicks(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     destinationColumn = 25;
     Event_PlaySong(SE_SWITCH_MECHANISM);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     VaultCave_RunRumble();
   }
 }
@@ -999,13 +999,13 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(22, 29, 1, 1, 21, 29);
       } else {
         MapGrid_CopyCells(108, 27, 1, 1, 92, 27);
-        WaitFrames(1);
+        WaitTicks(1);
         MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-        WaitFrames(1);
+        WaitTicks(1);
         MapGrid_CopyCells(2, 24, 1, 2, 25, 27);
       }
       MapGrid_CenterOnFollowedPoint();
-      WaitFrames(1);
+      WaitTicks(1);
       break;
     case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
       GameFlag_Clear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);

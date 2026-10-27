@@ -50,7 +50,7 @@ s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
 void EffectRuntime_StopCurrentObject(void);
 void UpdateRisingParticleBurst(void *object);
 void ObjectGroup_ApplyRandomChildValues(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 extern const s32 gData_080f0e60[];
 extern const u8 Data_080f0ee4[];
@@ -108,7 +108,7 @@ void Func_080dd054(void) {
   target->actionFlags = moved;
   *layer = 2;
   while (1) {
-    WaitFrames(1);
+    WaitTicks(1);
     if ((s8)scene->mode == 0 && (gInput.pressed & 0x303))
       break;
 
@@ -189,7 +189,7 @@ void Func_080dd054(void) {
     x = position.x;
     z = position.z;
     Object_SetMode(pusher, Data_080f0ee4[(u16)(angle - direction) >> 14]);
-    WaitFrames(15);
+    WaitTicks(15);
     target->movementState = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;

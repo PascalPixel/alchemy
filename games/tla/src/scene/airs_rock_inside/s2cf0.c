@@ -41,8 +41,8 @@ void Func_02005d6c(struct ObjectRuntime *object, const u8 *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 void Func_02005f0c(s32 a, s32 b);
 s32 Func_02005f04(s32 a, s32 b);
 s32 Func_02005f14(s32 frames);
@@ -136,7 +136,7 @@ row:
       Object_SetPartAttribute(spark, 2);
       spark->update = Func_02002c40;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Call2((void (*)())Func_02005f0c, 0x10000, 0);
   Call2((void (*)())Func_02005f04, 0x10003, 0);
@@ -152,12 +152,12 @@ row:
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = 0xff98;
   gBgScroll[0].y = 42;
-  WaitFrames(30);
+  WaitTicks(30);
   Func_02005f94(138);
   Call2((void (*)())Func_02005f0c, 0x10003, 0);
   Call2((void (*)())Func_02005f04, 0x7fff, 0);
   Func_02005f14(1);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_02005f0c(0x7fff, 0);
   Func_02005f04(0x10003, 0);
   Func_02005f14(8);
@@ -168,14 +168,14 @@ row:
   i = 0;
 fade:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-  WaitFrames(1);
+  WaitTicks(1);
   i++;
   if (i != 32)
     goto fade;
   Func_02005f0c(0x10003, 0);
   Func_02005f04(0x10000, 0);
   Func_02005f14(60);
-  WaitFrames(30);
+  WaitTicks(30);
   Func_02005f94(148);
   Func_02002aa8(0x1380000, 0x2d00000);
   Call6((void (*)())Func_02005d9c, 0x40, 78, 18, 105, 3, 5);
@@ -187,11 +187,11 @@ fade:
   Func_02002b58(Object_GetById(10)->x, Object_GetById(10)->z);
   Func_02005e94(10, 0);
   Object_SetPartAttribute(Object_GetById(10), 7);
-  WaitFrames(3);
+  WaitTicks(3);
   Object_SetPartAttribute(Object_GetById(8), 0);
   Object_SetPartAttribute(Object_GetById(9), 0);
   Object_SetPartAttribute(Object_GetById(10), 0);
-  WaitFrames(40);
+  WaitTicks(40);
   Func_02001084(Object_GetById(10), 8, 0);
   Func_02005d34();
   Func_02005d2c();

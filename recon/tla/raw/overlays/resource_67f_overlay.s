@@ -262,7 +262,7 @@ Func_0200048c:
 	movs r0, #0
 	bl Func_02000974
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_02001428
@@ -276,7 +276,7 @@ Func_0200048c:
 	movs r0, #1
 	bl Func_02000974
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -286,19 +286,19 @@ Func_0200048c:
 	negs r0, r0
 	bl Func_02001470
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	adds r0, r7, #0
 	bl Object_SetPositionAndResetMotion
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02001538
 	bl Func_02000aa8
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r5, #0
 	bl GameFlag_SetBit
 	mov r0, r8
@@ -349,7 +349,7 @@ Func_02000584:
 	movs r0, #10
 	bl Func_020014a8
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Func_0200056c
 	movs r0, #9
@@ -360,7 +360,7 @@ Func_02000584:
 	movs r0, #9
 	bl Object_SetModeById
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -374,7 +374,7 @@ Func_02000584:
 	movs r1, #0
 	bl Func_020014a0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_020086be
 .L_0200860a:
 	mov r3, r11
@@ -468,7 +468,7 @@ Func_02000584:
 	cmp r3, r2
 	bne .L_0200860a
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -546,7 +546,7 @@ Func_02000708:
 	adds r0, r7, #0
 	bl Func_020006ec
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #125
 	bl Func_02001538
 	movs r0, #8
@@ -554,7 +554,7 @@ Func_02000708:
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	movs r1, #0
 	bl Func_02001428
@@ -566,13 +566,13 @@ Func_02000708:
 	movs r1, #0
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
@@ -583,7 +583,7 @@ Func_02000708:
 	adds r1, r7, #0
 	bl Func_020006ec
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r6, #0
 	bl GameFlag_SetBit
 	b .L_020088ce
@@ -603,7 +603,7 @@ Func_02000708:
 	bl Func_020006ec
 	adds r5, #85
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	strb r6, [r5]
 	movs r0, #185
 	bl Func_02001538
@@ -620,7 +620,7 @@ Func_02000708:
 	movs r0, #8
 	movs r6, #2
 	mov r5, r10
-	bl WaitFrames
+	bl WaitTicks
 	negs r6, r6
 	adds r0, r7, #0
 	movs r1, #2
@@ -632,12 +632,12 @@ Func_02000708:
 	movs r0, #1
 	bl Func_02000974
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	ldrb r1, [r5]
 	adds r0, r6, #0
 	bl Func_02000c4c
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -647,24 +647,24 @@ Func_02000708:
 	negs r0, r0
 	bl Func_02001470
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #3
 	mov r2, r8
 	strb r3, [r2]
 	movs r0, #5
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	adds r0, r7, #0
 	bl Object_SetPositionAndResetMotion
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02001538
 	bl Func_02000aa8
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r9
 	bl GameFlag_SetBit
 .L_020088ce:

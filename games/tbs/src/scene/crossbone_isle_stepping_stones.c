@@ -196,7 +196,7 @@ CrossboneIsleSteppingStones_SettleActorOnGround(struct Actor *actor) {
     if (remainingFrames == 0) {
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if ((u32)actor->y.fixed == (u32)actor->groundHeight) {
       break;
     }
@@ -219,7 +219,7 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
     if (remainingFrames == 0) {
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (actor->y.fixed <= actor->groundHeight) {
       break;
     }
@@ -495,7 +495,7 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
   for (;;) {
     if (elapsedFrames > 31)
       return;
-    WaitFrames(1);
+    WaitTicks(1);
     actor->scaleY += -Q16_ONE / 10;
     actor->y.fixed += -PIXELS(4) / 5;
     elapsedFrames++;
@@ -597,7 +597,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
         FieldActor_CheckMovementCollision(leader, position) == 0) {
       Event_Start();
       Actor_SelectAnimation(leader, 6);
-      WaitFrames(6);
+      WaitTicks(6);
       Sound_PlaySong(SE_JUMP);
       Actor_SelectAnimation(leader, 7);
       leader->speedLimit = PIXELS(3);
@@ -803,12 +803,12 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   sShakeChance = 0;
   Task_AddFrame(CrossboneIsleSteppingStones_PrepareWaterScroll,
                 TASK_PASS_FRAME);
-  WaitFrames(1);
+  WaitTicks(1);
   Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
-    WaitFrames(1);
+    WaitTicks(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove the scroll task and HBlank handler.
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -819,12 +819,12 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     MapGrid_CopyCellsTo(0, 64, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 64, 64, 0, 32, 32);
   }
-  WaitFrames(1);
+  WaitTicks(1);
   Irq_SetHandler(1, 0, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   Task_Remove(CrossboneIsleSteppingStones_PrepareWaterScroll);
   MapGrid_CenterOnFollowedPoint();
-  WaitFrames(30);
+  WaitTicks(30);
 }
 
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
@@ -845,7 +845,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   if (waterRaised == 0) {
     Event_PlaySong(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Event_PlaySong(SE_LOG_FALL);
     Actor_SetSpritePriority(ACTOR_WATER, 1);
     Actor_GetById(ACTOR_WATER)->motionFlags = waterRaised;
@@ -865,7 +865,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   } else {
     Event_PlaySong(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Event_PlaySong(SE_WATER_DRAIN);
     Actor_GetById(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
@@ -1423,13 +1423,13 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(312), -1, PIXELS(184), 1);
     FieldCamera_WaitForArrival();
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     // The third puddle freezes while the previously frozen second puddle thaws.
     Task_AddFrame(CrossboneIsleSteppingStones_SpawnFrostParticle,
                   TASK_PASS_FRAME);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                       1) != 0) {
 #ifdef UBFIX
@@ -1448,12 +1448,12 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
       Actor_ConfigureSpriteColor(ACTOR_SECOND_PUDDLE, SPRITE_COLOR_NORMAL);
       Actor_SetMovementTypeById(ACTOR_SECOND_PUDDLE, MOVEMENT_TYPE_STAND);
     } else {
-      Event_WaitFrames(60);
+      Event_WaitTicks(60);
     }
     Task_Remove(CrossboneIsleSteppingStones_SpawnFrostParticle);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     MapGrid_CopyCellsTo(72, 10, 60, 10, 1, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Event_End();
   }
 }
@@ -1488,7 +1488,7 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
-      Event_WaitFrames(10);
+      Event_WaitTicks(10);
       Sound_PlaySong(SE_DOOR_CLOSE);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
@@ -1674,7 +1674,7 @@ s32 Scene_Initialize(void) {
       }
     }
     CrossboneIsleSteppingStones_MovePillar();
-    Event_WaitFrames(1);
+    Event_WaitTicks(1);
     Task_AddFrame(CrossboneIsleSteppingStones_UpdateLeaderPriority,
                   TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {

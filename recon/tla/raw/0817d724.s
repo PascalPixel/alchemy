@@ -1171,7 +1171,7 @@ BattleEffect_RunRisingDragonEnemy:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r4, #1
 	add r11, r4
 	mov r7, r11

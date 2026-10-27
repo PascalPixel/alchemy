@@ -221,7 +221,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
 
   work = gFieldWork;
   Event_Start();
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   if (work->stepTrigger == 4) {
     Event_PlaySong(SE_THUMP);
   } else {
@@ -229,7 +229,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
   }
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == 4) {
@@ -237,7 +237,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
-  Event_WaitFrames(16);
+  Event_WaitTicks(16);
   Import_EventSetExitRequest(work->stepTrigger);
   // Restore the layer entries before returning control to the field engine.
   TilesetAnim_Pause(1);
@@ -304,7 +304,7 @@ static void HammetPalace_SetUpEntrance(void) {
         MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
       }
       MapGrid_CenterOnFollowedPoint();
-      WaitFrames(1);
+      WaitTicks(1);
     }
     break;
 
@@ -334,13 +334,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   PaletteFade_ApplySource(PALETTE_TINT_SEPIA, PALETTES_ALL);
   // The report opens in sepia, with the party placed under the closed screen;
   // the colours come back after the silent exchange of nods that opens it.
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
-  WaitFrames(1);
+  WaitTicks(1);
   work = gFieldWork;
   work->transitionFrames = 24;
   work->transition =
@@ -354,16 +354,16 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetPosition(ACTOR_SECOND_SOLDIER, PIXELS(888), PIXELS(518));
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
   MapGrid_CenterOnFollowedPoint();
-  WaitFrames(1);
+  WaitTicks(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
@@ -374,24 +374,24 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   HammetPalace_FacePartyNorth(20);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_LAYANA, 2);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_StartRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTHEAST + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_WEST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -400,7 +400,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
-  WaitFrames(60);
+  WaitTicks(60);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_SetMessageId(MsgKalayWhenHeardWereBackIvan);
   // The following replies advance through this conversation's message block.
@@ -434,13 +434,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -449,13 +449,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST + FACING_STEP, 40);
   Actor_SetSpeed(ACTOR_LAYANA, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_LAYANA, 892, 440);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_NORTH + FACING_STEP, 20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   HammetPalace_FacePartyOutward(60);
   HammetPalace_FacePartyNorth(40);
   Actor_WalkToAndWait(ACTOR_LAYANA, 856, 440);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_WEST + FACING_STEP, 20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTHEAST + FACING_STEP, 0);
@@ -478,7 +478,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTHEAST + FACING_STEP, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 10);
@@ -491,14 +491,14 @@ static void HammetPalace_IvanReportsToLayana(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 20);
   HammetPalace_FacePartyNorth(20);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Import_ActorSetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -517,7 +517,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH + FACING_STEP, 20);
@@ -536,12 +536,12 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
     FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
     gFieldWork->message++;
   } else {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
@@ -557,7 +557,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_IVAN, 868, 472);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
@@ -583,7 +583,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   Event_OpenMessage(ACTOR_LAYANA, 0);
@@ -594,20 +594,20 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAttachedEffect(ACTOR_LAYANA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
     gFieldWork->message += 2;
   } else {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_SetAttachedEffect(ACTOR_LAYANA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   }
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -625,7 +625,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -645,7 +645,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
@@ -702,12 +702,12 @@ static void HammetPalace_IvanReportsToLayana(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Import_ActorSetAnimation(ACTOR_LAYANA, ANIM_NOD);
@@ -746,16 +746,16 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     HammetPalace_FacePartyNorth(10);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     gFieldWork->message += 2;
   } else {
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
@@ -763,21 +763,21 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH + FACING_STEP, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -793,7 +793,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
@@ -817,7 +817,7 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   if (waitFrames != 0) {
-    Event_WaitFrames(waitFrames);
+    Event_WaitTicks(waitFrames);
   }
 }
 
@@ -828,7 +828,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   if (waitFrames != 0) {
-    Event_WaitFrames(waitFrames);
+    Event_WaitTicks(waitFrames);
   }
 }
 
@@ -846,11 +846,11 @@ static void HammetPalace_HammetsHomecoming(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(536), 0);
   // Pan from the entrance while the party walks into its speaking positions.
   MapGrid_CenterOnFollowedPoint();
-  WaitFrames(1);
+  WaitTicks(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(864), PIXELS(630));
   gFieldWork->transition = v5 = 0x100;
   gFieldWork->transitionFrames = 40;
@@ -881,7 +881,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   HammetPalace_FacePartyNorth(10);
   Actor_ShowEmote(ACTOR_HAMMET, v5, 20);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 20);
@@ -900,7 +900,7 @@ static void HammetPalace_HammetsHomecoming(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHWEST + FACING_STEP, 10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
@@ -913,10 +913,10 @@ static void HammetPalace_HammetsHomecoming(void) {
   Event_OpenMessage(ACTOR_LAYANA, 0);
   v5 = 1;
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Import_ActorSetAnimation(ACTOR_LAYANA, ANIM_NOD);
   } else {
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     HammetPalace_AdvanceMessage(1);
     Import_ActorSetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
     v5 = 0;
@@ -928,7 +928,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_StartRepeatedMotion(ACTOR_HAMMET, 2);
   Actor_SetAttachedEffect(ACTOR_HAMMET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(80);
+  Event_WaitTicks(80);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
@@ -956,17 +956,17 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitFrames(80);
+  Event_WaitTicks(80);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     HammetPalace_AdvanceMessage(1);
   } else {
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -991,13 +991,13 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   partyScript = gHammetPalace_PartyActions;
   Actor_SetScript(ACTOR_GARET, partyScript);
   Actor_SetScript(ACTOR_IVAN, partyScript);

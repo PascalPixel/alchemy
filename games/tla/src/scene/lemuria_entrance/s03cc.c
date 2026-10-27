@@ -6,7 +6,7 @@
 extern u8 MsgFieldAddressCompanion;
 extern const u8 gData_020005e4[];
 
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Object_RefreshSelectorById(u32 id);
@@ -36,7 +36,7 @@ void Func_020003cc(void) {
   Func_020005cc(0);
   ObjectMotion_SetSpeedParameters_(8, 0x451e, 0x228f);
   ObjectMotion_EnableActionAndSetCallback(8, gData_020005e4);
-  FieldEvent_WaitFrames(80);
+  FieldEvent_WaitTicks(80);
   Func_0200059c((s32)&MsgFieldAddressCompanion);
   Func_02000310(6, 90);
   Func_02000310(7, 90);
@@ -60,7 +60,7 @@ void Func_020003cc(void) {
   Func_02000310(4, 90);
   Func_02000310(7, 250);
   Object_RefreshSelectorById(8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   work = Ram_HeapSlots->eventWork;
   work->delay = 30;
   work->screenEffect = 0x204;

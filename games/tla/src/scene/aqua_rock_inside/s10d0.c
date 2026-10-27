@@ -4,7 +4,7 @@ void Func_020010d0(struct ObjectRuntime *object) {
   s32 frames = 60;
 
   while (frames != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     frames--;
     if (object->velocityY == 0)
       break;
@@ -17,7 +17,7 @@ void Func_020010ec(void) {
   UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy, 1);
   Func_02003ef4(126);
   Func_02003eb4(999, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   GameFlag_ClearBit(0x142);
   UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy + 1, 1);
   Func_02003d84();

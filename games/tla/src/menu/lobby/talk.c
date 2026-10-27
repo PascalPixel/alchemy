@@ -68,7 +68,7 @@ s32 Func_02001130(s32 actor) {
   Func_02001a74(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
     Func_02001a7c(5, 263, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
   }
   Func_02001a1c();
 }
@@ -119,13 +119,13 @@ s32 Func_0200122c(s32 actor) {
   }
   Func_02001a64(message);
   UiText_OpenMessageAtObject(actor, 0);
-  FieldEvent_WaitFrames(1);
+  FieldEvent_WaitTicks(1);
   if (message == (s32)MsgYouLookA) {
     ObjectMotion_SetVariantCallback(14, 1);
     Object_SetModeById(14, 4);
-    FieldEvent_WaitFrames(15);
+    FieldEvent_WaitTicks(15);
     ObjectMotion_SetAngleToward(14, gPartyState.currentOwner, 0);
-    FieldEvent_WaitFrames(5);
+    FieldEvent_WaitTicks(5);
     UiText_OpenMessageAtObject(14, 0);
   }
   Func_02001a1c();

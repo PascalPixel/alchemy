@@ -17,7 +17,7 @@
 extern u8 gData_0200349c[];
 extern u8 gData_02003418[];
 extern u8 gData_020033c8[];
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
 void Field_DispatchTypeHandler();

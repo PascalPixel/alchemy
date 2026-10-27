@@ -283,7 +283,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 120;
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

@@ -50,11 +50,11 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   Func_0813ba50();
   BattleEffect_ClearActorTimers();
   display->secondMode = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
-  WaitFrames(1);
+  WaitTicks(1);
 
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
   work->fadeFrames = 0;
@@ -62,12 +62,12 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BG2CNT = bgControl | 0x784;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
   display->secondMode = 0;
-  WaitFrames(1);
+  WaitTicks(1);
 
   Func_0814355c();
   REG_WININ = 0x3537;
@@ -91,5 +91,5 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   work->unk78e8 = 0;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
-  WaitFrames(1);
+  WaitTicks(1);
 }

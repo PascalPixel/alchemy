@@ -320,7 +320,7 @@ s32 Title_ShowIntro(s32 prompt) {
   work = AllocHeapSlot(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
   VramCache_Reset();
-  WaitFrames(1);
+  WaitTicks(1);
   Task_ResetAll();
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
@@ -412,7 +412,7 @@ s32 Title_ShowIntro(s32 prompt) {
       ScreenFade_ToWhite(1);
       Task_Remove(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
-      WaitFrames(1);
+      WaitTicks(1);
       REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
@@ -428,7 +428,7 @@ s32 Title_ShowIntro(s32 prompt) {
       i = 0;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   // Blank the two off-screen columns so the 30-tile picture occupies a
   // complete 32-tile hardware map row.
@@ -506,13 +506,13 @@ s32 Title_ShowIntro(s32 prompt) {
       result = 1;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   gCpuLoadDisplayEnabled = savedCpuLoadDisplay;
   FreeHeapSlot(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }
 
@@ -540,7 +540,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   result = 0;
@@ -577,7 +577,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
         result = -1;
         break;
       }
-      WaitFrames(1);
+      WaitTicks(1);
     }
     return result;
   }
@@ -588,7 +588,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
       result = -1;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   if (result != 0)
     ScreenFade_FromBlack(8);
@@ -601,7 +601,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
         result = -1;
         break;
       }
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
   if (result != 0)
@@ -627,7 +627,7 @@ s32 Title_ShowCamelotLogo(void) {
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
@@ -665,7 +665,7 @@ s32 Title_ShowCamelotLogo(void) {
             BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
       break;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   return result;
 }

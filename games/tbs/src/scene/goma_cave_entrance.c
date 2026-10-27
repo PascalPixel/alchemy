@@ -116,7 +116,7 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
   Event_ShowMessageAndWait(actorId, 0);
-  Event_WaitFrames(frames);
+  Event_WaitTicks(frames);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -162,7 +162,7 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   pillar = Actor_GetById(ACTOR_EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_PILLAR), 0);
@@ -181,7 +181,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   work = gFieldWork;
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Event_PlaySong(SE_PUSH);
@@ -191,7 +191,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WaitForMoveById(ACTOR_WEST_PILLAR);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   GomaCaveEntrance_MoveWestPillar();
   Scene_PlayQueuedMusic();
@@ -222,7 +222,7 @@ s32 Scene_Initialize(void) {
   struct Actor *movedActor;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Import_ActorSetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   Actor_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -280,7 +280,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Scene_PlayQueuedMusic();
 #endif
   Event_Start();
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Event_SetMessageId(MsgGomaNoUsePsynergy);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -291,12 +291,12 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -316,11 +316,11 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 208);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -331,90 +331,90 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
     Actor_WalkToAndWait(ACTOR_IVAN, 232, 184);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
 #if TBS_PATCH_1
     Scene_PlayQueuedMusic();
 #endif
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_Jump(ACTOR_GARET, 2, 0);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_WalkToAndWait(ACTOR_IVAN, 264, 184);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    Event_WaitFrames(80);
+    Event_WaitTicks(80);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -422,52 +422,52 @@ static void GomaCaveEntrance_IvanRejoins(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    Event_WaitFrames(80);
+    Event_WaitTicks(80);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 40);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     Event_PrepareActorAndApplyValue(IVAN, 1);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     GomaCaveEntrance_GiveShamansRod();
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 184);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    Event_WaitFrames(120);
+    Event_WaitTicks(120);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkTo(ACTOR_GARET, 248, 168);
@@ -544,7 +544,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump = Actor_GetById(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
-    WaitFrames(1);
+    WaitTicks(1);
     // The corresponding signed halfword view retains the negative literal.
     *(s16 *)&stump->sprite->rotation += -256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;

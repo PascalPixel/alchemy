@@ -486,7 +486,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   } else {
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   }
-  Event_WaitFrames(16);
+  Event_WaitTicks(16);
   Import_EventSetExitRequest(exitIndex + BILIBIN_TO_INN);
   Event_End();
 }
@@ -505,7 +505,7 @@ static void Bilibin_PullJillFromRiver(void) {
     Event_Start();
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_SetSpeed(ACTOR_JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -519,7 +519,7 @@ static void Bilibin_PullJillFromRiver(void) {
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -527,7 +527,7 @@ static void Bilibin_PullJillFromRiver(void) {
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -540,11 +540,11 @@ static void Bilibin_PullJillFromRiver(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 2);
     FieldPsynergy_StartMindReadWave(0, ACTOR_JILL_TREE);
-    WaitFrames(10);
+    WaitTicks(10);
     Event_SetMessageId(MsgBilibinThankSavedMeFromBeing);
     Event_ShowMessage(ACTOR_JILL_TREE, 0);
     FieldPsynergy_FinishWaveAndReleaseHeapBlock();
-    WaitFrames(10);
+    WaitTicks(10);
     GameFlag_Set(FLAG_BILIBIN_JILL_RESCUED);
     Event_End();
   }
@@ -609,7 +609,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_JILL,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
@@ -618,14 +618,14 @@ static void Bilibin_JillGivesHardNut(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Event_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 266, 172);
-  Event_WaitFrames(1);
+  Event_WaitTicks(1);
   Actor_GetById(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
@@ -639,14 +639,14 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
   Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 262, 156);
-  Event_WaitFrames(1);
+  Event_WaitTicks(1);
   {
     struct Actor *jill = Actor_Get(ACTOR_JILL);
     u8 steeringFlags = jill->steeringFlags | ACTOR_FACES_MOTION;
 
     jill->steeringFlags = steeringFlags;
   }
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
   Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
@@ -888,7 +888,7 @@ static void Bilibin_SetUpTreasury(void) {
                                       leader->z.fixed, 0);
       MapGrid_CenterOnFollowedPoint();
       Event_End();
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
 }
@@ -919,7 +919,7 @@ static void Bilibin_PushStatueOrCrates(void) {
     if (FieldActor_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
       Actor_SelectAnimation(leader, ANIM_PUSH);
-      WaitFrames(15);
+      WaitTicks(15);
       Sound_PlaySong(SE_PUSH);
       pushed->speedLimit = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;

@@ -173,13 +173,13 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   BattleEffect_InitializeSlots();
   effectSlots = gEffectWork;
   Shop_RestoreSceneTilesFar(0x201204);
-  WaitFrames(30);
+  WaitTicks(30);
   djinni->visible = 0;
   Audio_PlayCue(152);
   ObjectMotion_Launch(arg, 4, 15);
   Audio_PlayCue(152);
   ObjectMotion_Launch(arg, 4, 15);
-  WaitFrames(30);
+  WaitTicks(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
   Audio_PlayCue(153);
   ObjectMotion_Launch(arg, 8, 22);
@@ -187,11 +187,11 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
   Object_SetMode((struct ObjectRuntime *)djinni, 3);
-  WaitFrames(90);
+  WaitTicks(90);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
-  WaitFrames(20);
+  WaitTicks(20);
   Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
-  WaitFrames(30);
+  WaitTicks(30);
   Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position[0] = djinni->x;
@@ -209,11 +209,11 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     ((struct EffectSlot *)slot)->scaleX = 0x8000;
     ((struct EffectSlot *)slot)->scaleY = Random16() + 0x18000;
     remaining--;
-    WaitFrames(1);
+    WaitTicks(1);
     slot += 72;
   } while (remaining >= 0);
 
-  WaitFrames(140);
+  WaitTicks(140);
   {
     s32 nextState;
 
@@ -229,9 +229,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     } while (remaining >= 0);
   }
 
-  WaitFrames(20);
+  WaitTicks(20);
   Map_SetScreenShakeFar(1, 1, 1);
-  WaitFrames(30);
+  WaitTicks(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {
     position[0] = leader->x;
@@ -252,9 +252,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     }
   }
 
-  WaitFrames(100);
+  WaitTicks(100);
   Audio_PlayCue(298);
-  WaitFrames(1);
+  WaitTicks(1);
   Audio_PlayCue(151);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
@@ -277,7 +277,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
                                  gBattleEffect_CommonParticleScript);
   }
 
-  WaitFrames(15);
+  WaitTicks(15);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

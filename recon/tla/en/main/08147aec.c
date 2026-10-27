@@ -185,7 +185,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       PARTICLES[i].variant = -1;
     if (mode == 0) {
       BattleEffect_SelectLivingTargets(work->effect);
-      WaitFrames(1);
+      WaitTicks(1);
       BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
     }
 
@@ -455,7 +455,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(8, 8);
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
 
     // Tear down: the formation bursts where it stands and is released.

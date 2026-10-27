@@ -26,7 +26,7 @@ void Func_08041054(void);
 struct UiWindow *Func_08041068(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct UiWindow *window, s32 release);
 
@@ -41,7 +41,7 @@ s32 DebugWarp_Run(s32 index) {
 
   Func_0804101c();
   work = Ram_HeapSlots->unkd0[0];
-  WaitFrames(1);
+  WaitTicks(1);
   // -1 places the cursor at once; 1 slides it to a new row.
   moved = -1;
   window = Func_08041068();
@@ -59,7 +59,7 @@ s32 DebugWarp_Run(s32 index) {
         Func_08108040(work->panel, x, y, 3);
       moved = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (gInput.pressed & KEY_B) {
       Audio_PlayCue(113);
       index = -1;
@@ -86,7 +86,7 @@ s32 DebugWarp_Run(s32 index) {
 done:
   UiWork_Finalize(window, 2);
   Func_08041054();
-  WaitFrames(1);
+  WaitTicks(1);
   /* FAKEMATCH(signature): the handlers are typed as returning s32, which
    * puts the handler in r0 for the call; as void (*)(void), 4 of 115
    * instructions differ in tla-en. */

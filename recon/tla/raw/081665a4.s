@@ -657,7 +657,7 @@ BattleEffect_RunRagnarok:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r9, r3
 	mov r5, r9

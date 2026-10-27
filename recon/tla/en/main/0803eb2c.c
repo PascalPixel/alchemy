@@ -75,7 +75,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   }
   Menu_ReloadNodeResource(screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
-  WaitFrames(1);
+  WaitTicks(1);
   cursor = screen->cursor;
   if (cursor == 1 && screen->top != 0) {
     do {
@@ -93,7 +93,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   screen->status = NODE_STATUS_SHOWN;
   __asm__ volatile("");
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
-  WaitFrames(1);
+  WaitTicks(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);
-  WaitFrames(1);
+  WaitTicks(1);
 }

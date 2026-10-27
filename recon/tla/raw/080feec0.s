@@ -194,7 +194,7 @@ Func_080feec0:
 	mov r0, r11
 	bl RenderOutput_ClearListFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r4, r8
 	cmp r4, #0
 	bne .L_080ff05c
@@ -233,7 +233,7 @@ Func_080feec0:
 	bl Func_080f8a44
 .L_080ff094:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r5, .L_080ff190
 	movs r3, #240
 	ldr r2, [r5, #12]

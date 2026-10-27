@@ -22,7 +22,7 @@ void Scheduler_RemoveCallbackFar();
 void Func_02001fac();
 void Func_02002044();
 void Func_02002054();
-void WaitFrames();
+void WaitTicks();
 void GameFlag_ClearBit();
 s32 Func_02001fb4();
 
@@ -35,7 +35,7 @@ s32 Func_02000da0(s32 a0) {
   Call1((void (*)())Func_02002054, 0x22c);
   FIELD_AT((s32)gData_020022cc, s32, 0) = 1;
 L_02008dcc:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   r4 = 160;
   r4 = r4 << 19;
   r4 = r4 + 98;

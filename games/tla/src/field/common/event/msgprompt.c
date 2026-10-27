@@ -5,7 +5,7 @@
 #include "input.h"
 
 void *UiText_OpenMessageAtObject(s32 object, s32 message);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 ObjectTable_ReadActiveValue(s32 key);
 void *Scene_FindActorPlacement(s32 id);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 id);
@@ -27,7 +27,7 @@ void Func_080d3fb0(s32 object, s32 message) {
   u32 frames;
 
   frames = 0;
-  WaitFrames(1);
+  WaitTicks(1);
   id = ObjectTable_ReadActiveValue(object);
   if (object <= 7) {
     masked = object & 0x0fff;
@@ -38,7 +38,7 @@ void Func_080d3fb0(s32 object, s32 message) {
 
   if (work->waitMode == 0) {
     while (UiWork_IsIdleFar((s32)window) == 0) {
-      WaitFrames(1);
+      WaitTicks(1);
       frames++;
       if (frames > 600 ||
           ((HELD & 4) && (HELD & 0x100) && (HELD & 0x200) && (HELD & 1)))
@@ -47,7 +47,7 @@ void Func_080d3fb0(s32 object, s32 message) {
   }
 
   Func_080d4330(0x80000000);
-  WaitFrames(1);
+  WaitTicks(1);
 }
 
 void EventRuntime_Wait(s32 frames);
@@ -118,7 +118,7 @@ void Func_080d40dc(s32 speaker) {
     window = UiText_OpenMessageWindowFar((s16)work->messageId, px, py, 1);
     work->objectStatus = window;
     while (UiWork_IsIdleFar(window) == 0)
-      WaitFrames(1);
+      WaitTicks(1);
   }
   work->messageId++;
 }

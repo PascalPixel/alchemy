@@ -75,7 +75,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -361,7 +361,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

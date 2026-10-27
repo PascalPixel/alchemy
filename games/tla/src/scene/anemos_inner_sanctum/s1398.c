@@ -15,7 +15,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Engine_ObjectCreate(s32 type, s32 x, s32 y, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -82,19 +82,19 @@ next:
   if (all) {
     Func_02003398();
     Func_02003488(0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_02003420(0xcccc, 0x1999);
     id = 9;
     if (gPartyState.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
     Func_02003438(id, 1);
     Func_02003430();
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_020034b8(0x246);
     Object_SetModeById(id, 2);
     GameFlag_SetBit(0x207);
     Object_GetById(id)->motionFlags = 4;
-    FieldEvent_WaitFrames(80);
+    FieldEvent_WaitTicks(80);
     Func_020033a0();
   }
 }

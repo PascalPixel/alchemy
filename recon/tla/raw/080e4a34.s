@@ -137,7 +137,7 @@ Func_080e4a34:
 	movs r3, #0
 	movs r0, #2
 	strb r3, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #0
 	mov r10, r0
 .L_080e4b58:
@@ -170,7 +170,7 @@ Func_080e4a34:
 	mov r2, r8
 	strh r3, [r2, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r10, r3
 	mov r5, r10
@@ -181,7 +181,7 @@ Func_080e4a34:
 	mov r6, r8
 	strh r3, [r6, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r6, #80]
 	movs r5, #128
 	lsls r5, r5, #3
@@ -316,7 +316,7 @@ Func_080e4a34:
 	movs r5, #1
 	movs r0, #1
 	add r10, r5
-	bl WaitFrames
+	bl WaitTicks
 	mov r6, r10
 	movs r3, #3
 	add r11, r3

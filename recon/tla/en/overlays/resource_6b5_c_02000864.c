@@ -100,7 +100,7 @@ s32 Func_02000864(void) {
     if (!Func_0200006c(2))
       window = UiText_OpenMessageWindow(MsgAwaitingYourOpponent, 5, 4, 1);
     while (!Func_0200006c(2)) {
-      WaitFrames(1);
+      WaitTicks(1);
       stop = 0;
       if (!Flag_IsSet(0x201))
         stop = 1;
@@ -125,19 +125,19 @@ s32 Func_02000864(void) {
     }
     if (window)
       UiWork_Finalize(window, 1);
-    WaitFrames(5);
+    WaitTicks(5);
   }
   if (!failed) {
     buf = Runtime_AllocateBlock(216, 0x7c8);
     Scheduler_RemoveCallbackFar(Func_02000134);
     Func_0200198c(5);
-    WaitFrames(8);
+    WaitTicks(8);
     Func_02001994(5);
     if (Flag_IsSet(0x173)) {
       ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
       Func_02001a64((s32)MsgGoodLuck2);
       UiText_OpenMessageAtObject(8, 0);
-      WaitFrames(45);
+      WaitTicks(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
       ObjectMotion_ResetAndSetPositionInMode2(4, 216, 184);
       ObjectMotion_CommitCurrentPositionAndActivate(4);
@@ -153,7 +153,7 @@ s32 Func_02000864(void) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
         ObjectMotion_ResetAndSetPositionInMode2(4, 216, 200);
         Func_0200198c(5);
-        WaitFrames(8);
+        WaitTicks(8);
         Func_02001994(5);
         ObjectMotion_CommitCurrentPositionAndActivate(4);
         Runtime_ReleaseHeapBlock(216);

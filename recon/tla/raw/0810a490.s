@@ -103,7 +103,7 @@ Func_0810a490:
 	lsls r0, r0, #2
 	bl Func_080f8058
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0810a560:
 	movs r4, #128
 	lsls r4, r4, #3
@@ -193,7 +193,7 @@ Func_0810a490:
 	bl Func_08108690
 	adds r7, r0, #0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_0810a508
 .L_0810a630:
 	movs r4, #128

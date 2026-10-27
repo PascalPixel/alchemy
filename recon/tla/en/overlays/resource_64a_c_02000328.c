@@ -48,8 +48,8 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void UiWork_FinalizePendingCore(void);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
@@ -104,10 +104,10 @@ s32 Func_02000328(void) {
       Party_AddActiveOwner(2);
       Party_AddActiveOwner(3);
     } while (Func_020022d0() == -1);
-    FieldEvent_WaitFrames(60);
+    FieldEvent_WaitTicks(60);
     Event_FinishScreenTransition();
     Func_02002408(78);
-    FieldEvent_WaitFrames(300);
+    FieldEvent_WaitTicks(300);
     Func_020023b8(0, 1);
     return 0;
   }
@@ -120,9 +120,9 @@ top:
     Func_020022b8(11, 1, 8);
   }
   if (result == 0 && !started) {
-    WaitFrames(30);
+    WaitTicks(30);
     Scheduler_AddOrUpdateCallback(Func_0200015c, 0x480);
-    WaitFrames(1);
+    WaitTicks(1);
     started = 1;
   }
   if (result > 0)
@@ -135,7 +135,7 @@ top:
     i = 4;
     limit = 5;
   open:
-    WaitFrames(6);
+    WaitTicks(6);
     if (Func_020022f8(i) == -1) {
       if (i == 4)
         goto top;
@@ -179,7 +179,7 @@ top:
     i = 0;
     limit = 1;
   close:
-    WaitFrames(6);
+    WaitTicks(6);
     if (Func_020022f8(i) == -1) {
       if (i == 0)
         goto ask;
@@ -318,7 +318,7 @@ again:
     i = 0;
     limit = 1;
   shut:
-    WaitFrames(6);
+    WaitTicks(6);
     if (Func_020022f8(i) == -1) {
       if (i == 0)
         goto link;
@@ -333,10 +333,10 @@ again:
   GameFlag_SetBit(0x109);
 finish:
   *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x158) = 999;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02002408(78);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   return 0;
 }

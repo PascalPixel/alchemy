@@ -17,7 +17,7 @@ void Object_SetModeById(s32 a, s32 b);
 s32 Object_GetById(s32 a);
 void ObjectMotion_ResetAndSetPosition(s32 a, s32 b, s32 c);
 void Func_0200290c(s32 a, s32 b, s32 c);
-void FieldEvent_WaitFrames(s32 a);
+void FieldEvent_WaitTicks(s32 a);
 void ObjectMotion_CommitPositionAndActivate(s32 a, s32 b, s32 c);
 void Func_020028bc(void);
 extern u8 MsgNotThatWayThe[];
@@ -39,7 +39,7 @@ void Func_02001bb0(void) {
   }
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
   Call3(Func_0200290c, 8, 0, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call3(ObjectMotion_CommitPositionAndActivate, 5, -16, 0);
   Func_020028bc();
 }

@@ -32,7 +32,7 @@ struct ShopRuntime {
   s8 shopType;
 };
 
-void WaitFrames(s32);
+void WaitTicks(s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePendingCoreFar(void);
 

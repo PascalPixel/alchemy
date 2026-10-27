@@ -167,7 +167,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 // The body of 21 strike and column effects.
 
@@ -664,7 +664,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(2, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

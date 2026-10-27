@@ -116,7 +116,7 @@ void FieldPsynergy_Halt(void) {
     scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
     if (step >= steps)
       break;
@@ -124,14 +124,14 @@ void FieldPsynergy_Halt(void) {
 
   // Three low tones and a high one, 10 frames apart, as the orb changes to
   // its second animation.
-  WaitFrames(5);
+  WaitTicks(5);
   Actor_SelectAnimationFar(orb, 1);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
-  WaitFrames(10);
+  WaitTicks(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
-  WaitFrames(10);
+  WaitTicks(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
-  WaitFrames(10);
+  WaitTicks(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_HIGH);
 
   // Particles 4 pixels round it fly out, then come back to the Psynergy's
@@ -152,10 +152,10 @@ void FieldPsynergy_Halt(void) {
   pos.x = orb->x.fixed;
   pos.y = orb->y.fixed + (8 << 16);
   pos.z = orb->z.fixed;
-  WaitFrames(8);
+  WaitTicks(8);
   Actor_ReleaseFar(orb);
-  WaitFrames(4);
-  WaitFrames(30);
+  WaitTicks(4);
+  WaitTicks(30);
   FieldPsynergy_FadeFromCastColor();
 }
 

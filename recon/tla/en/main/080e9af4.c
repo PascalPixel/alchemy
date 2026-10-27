@@ -58,7 +58,7 @@ struct GlowEvent {
 
 extern char ResourceId_RingOrb;
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
@@ -99,7 +99,7 @@ void Func_080e9af4(void) {
   BattleEffect_SetObjectTickMode(player, 0);
   Object_SetMode(player, 5);
   Audio_PlayCue(130);
-  WaitFrames(1);
+  WaitTicks(1);
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
@@ -126,20 +126,20 @@ void Func_080e9af4(void) {
   }
 
   if (found) {
-    WaitFrames(5);
+    WaitTicks(5);
     Audio_PlayCue(246);
     for (i = 0; i < 32; i++) {
       work->scale = i << 11;
-      WaitFrames(1);
+      WaitTicks(1);
     }
-    WaitFrames(10);
+    WaitTicks(10);
     if (pending != NULL)
       EventRuntime_RunPendingEvent(pending, scene->unk18, scene->unk1a);
     for (i = 31; i != 0; i--) {
       work->scale = i << 11;
-      WaitFrames(1);
+      WaitTicks(1);
     }
-    WaitFrames(5);
+    WaitTicks(5);
     Scheduler_RemoveCallback(Func_080e9940);
     Resource_ResetEntry(work->resource);
     Runtime_ReleaseHeapBlock(92);
@@ -157,7 +157,7 @@ void Func_080e9af4(void) {
         Audio_PlayCue(246);
       player->y += 0x10000;
       work->scale = i << 11;
-      WaitFrames(1);
+      WaitTicks(1);
     }
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;

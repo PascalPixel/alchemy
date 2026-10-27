@@ -26,7 +26,7 @@ s32 EventRuntime_GetControlledOwner(void);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Resource_ResetEntry(u32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_080e9940(void);
@@ -45,25 +45,25 @@ void Func_080e9db4(void) {
     i = 0;
     goto test;
     do {
-      WaitFrames(1);
+      WaitTicks(1);
       if (++i > 59)
         break;
     test:;
     } while (object->y > object->terrainHeight);
     Audio_PlayCue(132);
-    WaitFrames(1);
+    WaitTicks(1);
     for (i = 0; i < 20; i++) {
       if (object->y <= object->terrainHeight)
         break;
-      WaitFrames(1);
+      WaitTicks(1);
     }
-    WaitFrames(1);
+    WaitTicks(1);
     for (i = 0; i < 20; i++) {
       if (object->y <= object->terrainHeight)
         break;
-      WaitFrames(1);
+      WaitTicks(1);
     }
-    WaitFrames(1);
+    WaitTicks(1);
     object->bounce = 0;
     object->velocityY = 0;
     object->y = object->terrainHeight;

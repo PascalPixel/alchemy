@@ -56,7 +56,7 @@ BattleEffect_RunCoatlicue:
 	str r3, [r4]
 	movs r0, #1
 	str r7, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #1
 	add r11, r0
 	mov r1, r11
@@ -2739,7 +2739,7 @@ BattleEffect_RunCoatlicue:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #20]
 	ldr r2, [sp, #16]
 	movs r1, #128
@@ -2835,14 +2835,14 @@ BattleEffect_RunCoatlicue:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_08184274
 	bl Scheduler_RemoveCallback
 	ldr r2, .L_08184278
 	movs r3, #120
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_0818427c
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -3225,7 +3225,7 @@ BattleEffect_RunCoatlicue:
 	movs r0, #1
 	str r3, [r2]
 	add r11, r7
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r11
 	cmp r0, #60
 	beq .L_081843c4

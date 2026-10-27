@@ -15,7 +15,7 @@ Func_081a76f8:
 	bl Fade_ToBlack
 	bl Func_08014b70
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_081a7758
 	movs r2, #128
 	lsls r2, r2, #19
@@ -146,7 +146,7 @@ Func_081a76f8:
 .L_081a7820:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #119
 	bhi .L_081a7858
 	ldr r3, .L_081a7860

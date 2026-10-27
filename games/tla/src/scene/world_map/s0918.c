@@ -10,7 +10,7 @@ struct EventDestination {
   s16 scene;
 };
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);

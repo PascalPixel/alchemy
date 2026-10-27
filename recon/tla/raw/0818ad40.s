@@ -1385,7 +1385,7 @@ Func_0818ad40:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #8]
 	ldr r0, [sp, #16]
 	movs r6, #1

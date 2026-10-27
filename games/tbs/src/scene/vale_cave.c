@@ -248,7 +248,7 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
   s32 framesRemaining = 60;
 
   while (framesRemaining != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     framesRemaining--;
     if (actor->y.fixed <= actor->groundHeight)
       break;
@@ -357,7 +357,7 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
     Actor_GetById(actorId)->y.fixed -= PIXELS(1) / 2;
-    Event_WaitFrames(1);
+    Event_WaitTicks(1);
   }
 }
 
@@ -402,7 +402,7 @@ static void ValeCave_MoveWestCratesIntoHole(void) {
     Import_ActorSetAnimation(ACTOR_WEST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
   }
   Event_End();
 }
@@ -448,7 +448,7 @@ static void ValeCave_MoveEastCratesIntoHole(void) {
     Import_ActorSetAnimation(ACTOR_EAST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
   }
   Event_End();
 }
@@ -494,7 +494,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
           leader, (struct FieldPosition *)landingPosition) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, 6);
-    WaitFrames(6);
+    WaitTicks(6);
     Sound_PlaySong(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = PIXELS(3);
@@ -529,21 +529,21 @@ static void ValeCave_KiteRunsOff(void) {
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     FieldCamera_FollowActor(ACTOR_KITE, 1);
     FieldCamera_WaitForArrival();
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_KITE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_KITE, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Sound_PlaySong(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Event_End();
   }
 }
@@ -567,12 +567,12 @@ static void ValeCave_KiteRunsBehindLedge(void) {
       Actor_SetAttachedEffect(ACTOR_KITE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_RunRepeatedMotion(ACTOR_KITE, 2);
-      Event_WaitFrames(20);
+      Event_WaitTicks(20);
       Actor_SetSpeed(ACTOR_KITE, PIXELS(2), PIXELS(1));
       Actor_WalkToAndWait(ACTOR_KITE, 760, 280);
       Actor_WalkToAndWait(ACTOR_KITE, 760, 312);
       Actor_WalkToAndWait(ACTOR_KITE, 792, 312);
-      Event_WaitFrames(10);
+      Event_WaitTicks(10);
       Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
       djinni = Actor_Get(ACTOR_KITE);
       djinni->update = VALE_CAVE_FACE_LEADER_CALLBACK;
@@ -694,12 +694,12 @@ static void ValeCave_PushLogOffLedge(void) {
   s32 stationaryMotion;
 
   Event_Start();
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-  Event_WaitFrames(15);
+  Event_WaitTicks(15);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
-  Event_WaitFrames(4);
+  Event_WaitTicks(4);
   Event_PlaySong(SE_STOP_ACTION_SE);
   Event_PlaySong(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
@@ -745,7 +745,7 @@ static void ValeCave_PushLogNorth(void) {
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Actor_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
-    Event_WaitFrames(45);
+    Event_WaitTicks(45);
     Sound_PlaySong(SE_LOG_FALL);
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 8);
     {
@@ -800,7 +800,7 @@ s32 ValeCave_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    WaitFrames(1);
+    WaitTicks(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -849,7 +849,7 @@ static void ValeCave_RideLogEast(void) {
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
   GameFlag_Set(FLAG_VALE_CAVE_RIDING_LOG_EAST);
-  WaitFrames(2);
+  WaitTicks(2);
   ValeCave_UpdateRidingLogPassage();
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 }
@@ -865,7 +865,7 @@ static void ValeCave_RideLogWest(void) {
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);
   GameFlag_Clear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
-  WaitFrames(2);
+  WaitTicks(2);
   ValeCave_UpdateRidingLogPassage();
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 }
@@ -922,7 +922,7 @@ static void ValeCave_ApplyEntryState(void) {
       if (gSaveBlock.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       }
-      WaitFrames(1);
+      WaitTicks(1);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
         break;
       }

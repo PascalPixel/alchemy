@@ -31,13 +31,13 @@ void BattleMotion_FlashHit(s32 id) {
     selected[0] = id;
     BattleLayout_HighlightPartyPanelsFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object, 7);
-    WaitFrames(2);
+    WaitTicks(2);
 
     selected[0] = id;
     BattleLayout_HighlightPartyPanelsFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(id)->object,
                                       BattleMotion_GetSlotPalette(id));
-    WaitFrames(2);
+    WaitTicks(2);
     remaining--;
   } while (remaining >= 0);
 

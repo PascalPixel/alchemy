@@ -140,7 +140,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     }
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
     frame += 1;
   } while (frame != 60);
   Runtime_ReleaseHeapBlock(104);

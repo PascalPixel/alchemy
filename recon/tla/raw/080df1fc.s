@@ -74,7 +74,7 @@ Func_080df1fc:
 	b .L_080df6de
 .L_080df28c:
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [r7, #8]
 	mov r2, r10
 	str r1, [r2]
@@ -160,7 +160,7 @@ Func_080df1fc:
 	ldr r3, [r7, #12]
 	adds r3, r3, r1
 	str r3, [r7, #12]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [r7, #20]
 	ldr r3, [r7, #12]
 	ldr r1, [sp, #0]
@@ -330,7 +330,7 @@ Func_080df1fc:
 	movs r1, #4
 	bl Object_SetMode
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #204
 	adds r3, r7, #0
 	lsls r1, r1, #6
@@ -382,7 +382,7 @@ Func_080df1fc:
 	str r1, [r7, #36]
 	str r1, [r7, #44]
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	b .L_080df568
 	.2byte 0x0000
 .L_080df534:
@@ -401,7 +401,7 @@ Func_080df1fc:
 	.4byte gFrameCount
 .L_080df550:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r3, r11
 	ldr r2, [r3, #4]
 	movs r3, #129
@@ -423,11 +423,11 @@ Func_080df1fc:
 	movs r0, #135
 	bl Audio_PlayCue
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #135
 	bl Audio_PlayCue
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #8]
 	mov r0, r10
 	str r3, [r0]
@@ -543,7 +543,7 @@ Func_080df1fc:
 	blt .L_080df6a2
 .L_080df68c:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -554,7 +554,7 @@ Func_080df1fc:
 	bge .L_080df68c
 .L_080df6a2:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #40]
 	movs r0, #0
 	mov r8, r0
@@ -562,7 +562,7 @@ Func_080df1fc:
 	bge .L_080df6c8
 .L_080df6b2:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #1
 	add r8, r1
 	mov r2, r8
@@ -576,7 +576,7 @@ Func_080df1fc:
 	bl BattleEffect_SpawnRadialParticleRing
 	bl BattleEffect_PrepareBufferInterpolation
 	movs r0, #30
-	bl WaitFrames
+	bl WaitTicks
 	b .L_080df6de
 .L_080df6da:
 	bl BattleEffect_PrepareBufferInterpolation

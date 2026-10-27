@@ -251,7 +251,7 @@ BattleEffect_RunVine:
 	str r3, [r2]
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #70
 	bne .L_08154e6c
 	ldr r0, .L_08154f80

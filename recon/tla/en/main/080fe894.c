@@ -61,7 +61,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 void PsynergyMenu_CallIconRoutineWithValue(struct CharacterMenuState *menu,
                                            s32 ownerId);
 void Func_08104ef8(s32 first);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
@@ -114,13 +114,13 @@ s32 Func_080fe894(void) {
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
       if (redraw == 2) {
         Func_08104ef8(ownerIndex / 4 * 4);
-        WaitFrames(1);
+        WaitTicks(1);
       }
       Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       redraw = 0;
     }
     Func_080f8a44((ownerIndex % 4) * 24 - 10, 16);
-    WaitFrames(1);
+    WaitTicks(1);
     if (KEYS_PRESSED & 1) {
       Audio_PlayCue(112);
       result = 1;
@@ -140,7 +140,7 @@ s32 Func_080fe894(void) {
       } else {
         Audio_PlayCue(114);
       }
-      WaitFrames(1);
+      WaitTicks(1);
     } else if (gInput.repeat & 0x200) {
       if (Func_080fecfc(ownerIndex, 0)) {
         Audio_PlayCue(112);
@@ -150,7 +150,7 @@ s32 Func_080fe894(void) {
       } else {
         Audio_PlayCue(114);
       }
-      WaitFrames(1);
+      WaitTicks(1);
     } else if ((KEYS_PRESSED & 4) && GameFlag_Test(55)) {
       Func_080fe638();
       redraw = 1;

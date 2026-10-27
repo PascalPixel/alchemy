@@ -404,7 +404,7 @@ Func_02000e40:
 	movs r1, #8
 	bl Object_SetModeById
 	movs r0, #6
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #128
 	lsls r3, r3, #8
 	str r3, [r7, #48]
@@ -440,7 +440,7 @@ Func_02000e40:
 	movs r2, #0
 	bl Func_020057f8
 	movs r0, #6
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r5, .L_02009068
 	movs r2, #133
 	lsls r2, r2, #2
@@ -463,7 +463,7 @@ Func_02000e40:
 	ldr r0, [r5]
 	bl ObjectMotion_OffsetPositionAndResetMotion
 	movs r0, #24
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, [r5]
 	movs r1, #1
 	bl Object_SetModeById
@@ -492,7 +492,7 @@ Func_02000e40:
 	adds r0, r7, #0
 	bl Func_020057f8
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #8
 	adds r0, r7, #0
 	bl Func_020057c8
@@ -515,7 +515,7 @@ Func_02000e40:
 	bl GameFlag_SetBit
 .L_0200904c:
 	movs r0, #15
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	bl Func_02005888
 	bl Func_02000d70
 .L_0200905a:
@@ -2398,7 +2398,7 @@ Func_02002dec:
 	movs r0, #7
 	bl Object_SetModeById
 	movs r0, #15
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	mov r1, r9
 	mov r2, r8
 	movs r0, #4
@@ -2496,7 +2496,7 @@ Func_02002dec:
 	movs r0, #1
 	bl Task_Wait
 	movs r0, #6
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

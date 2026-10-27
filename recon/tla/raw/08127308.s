@@ -21,7 +21,7 @@ Func_08127308:
 	str r3, [sp, #4]
 	mov r11, r1
 	adds r5, r2, #0
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #4]
 	movs r1, #206
 	lsls r1, r1, #3
@@ -57,7 +57,7 @@ Func_08127308:
 	adds r0, #80
 	bl QueueIoWriteDelay2
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #240
 	movs r3, #128
 	lsls r3, r3, #19
@@ -176,7 +176,7 @@ Func_08127308:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #128
 	lsls r1, r1, #3
 	adds r1, #68
@@ -245,7 +245,7 @@ Func_08127308:
 	strh r1, [r5]
 	movs r0, #1
 	subs r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #0
 	bge .L_081274a6
 	bl Func_08138040

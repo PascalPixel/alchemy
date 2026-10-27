@@ -12,7 +12,7 @@ struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02005654(void);
 void Func_02005624(struct ObjectRuntime *object, s32 mode);
 void Func_02004938(struct ObjectRuntime *object, s32 frame, s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void GameFlag_SetBit(s32 flag);
 
 static __inline__ void Racer(s32 id, s32 start, s32 lane) {
@@ -46,12 +46,12 @@ s32 Func_02004d48(s32 first, s32 judge) {
           done = 0;
         Func_02004938(racer, frame, id);
       }
-      WaitFrames(1);
+      WaitTicks(1);
     }
     if (done)
       break;
   }
-  WaitFrames(20);
+  WaitTicks(20);
   if (judge == 0)
     return 3;
   a = 0;

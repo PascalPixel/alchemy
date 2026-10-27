@@ -369,21 +369,21 @@ static void GomaCavePillar_PushStumpOver(void) {
     blendActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
     Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
     Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     Task_AddFrame(fragmentCallback, TASK_PASS_FRAME);
     Sound_PlaySong(SE_RUMBLE);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     bounceActor = Actor_GetById(ACTOR_STUMP);
     bounceActor->bounce = zero;
     gravityActor = Actor_GetById(ACTOR_STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
-    Event_WaitFrames(3);
+    Event_WaitTicks(3);
     // It tips over the edge.
     Actor_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Sound_PlaySong(SE_STOP_ACTION_SE);
@@ -391,7 +391,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     movedActor = Actor_GetById(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
     Task_Remove(fragmentCallback);
-    Event_WaitFrames(12);
+    Event_WaitTicks(12);
     Sound_PlaySong(SE_STONE_GRIND);
     xSource = Actor_GetById(ACTOR_STUMP);
     randomX = Import_RandomNext();
@@ -413,7 +413,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     // It lands below; the shake dies down before the map grid cells change.
     Sound_PlaySong(SE_CAST);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -507,7 +507,7 @@ static void GomaCavePillar_JumpGapWest(void) {
   if (FieldActor_CheckMovementCollision(leader, destination) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
-    WaitFrames(6);
+    WaitTicks(6);
     Sound_PlaySong(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = PIXELS(3);
@@ -571,7 +571,7 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Event_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpeed(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
@@ -621,10 +621,10 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Actor_SetPosition(ACTOR_STUMP, PIXELS(384), PIXELS(192));
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Actor_GetById(ACTOR_STUMP)->layer = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     GomaCavePillar_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.

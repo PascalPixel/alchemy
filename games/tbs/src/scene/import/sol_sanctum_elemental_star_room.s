@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__udivsi3, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.Task_Add, 1
 	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
@@ -39,7 +39,7 @@
 	.set import.Inventory_Count, 1
 	.set import.Inventory_Discard, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Party_RemoveMemberRestored, 1

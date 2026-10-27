@@ -205,7 +205,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Clear the canvas and its characters and hand the layer over.

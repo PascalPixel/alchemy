@@ -19,7 +19,7 @@
 extern const u8 gData_02001404[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_ResetTargetsAndVelocity(s32 actor);
 void ObjectMotion_Launch(s32 actor, s32 height, s32 frames);
@@ -89,12 +89,12 @@ void Func_020001a0(s32 unused, s32 id) {
         Iwram_CopyWords(&saved, other, 128);
         ObjectMotion_ResetTargetsAndVelocity(9);
         ObjectMotion_Launch(9, 4, 0);
-        FieldEvent_WaitFrames(30);
+        FieldEvent_WaitTicks(30);
         Value3((s32 (*)())Func_0200111c, 9, 257, 0);
         ObjectMotion_SetAngleToward(9, 15, 0);
-        FieldEvent_WaitFrames(60);
+        FieldEvent_WaitTicks(60);
         Motion_SetModeAndWaitAnimation(9, 4);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         Iwram_CopyWords(other, &saved, 128);
         Call6((void (*)())Func_0200106c, 53, 35, 1, 1, 53, 36);
         Flag_Set(0x224);

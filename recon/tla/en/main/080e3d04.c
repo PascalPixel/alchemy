@@ -96,7 +96,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void Object_Destroy(struct ObjectRuntime *object);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void BattleEffect_SetObjectTickMode(struct ObjectRuntime *object, s32 mode);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -209,9 +209,9 @@ void Func_080e3d04(void) {
     object->scaleY = 0x14000;
     Object_SetMode(object, 2);
     Audio_PlayCue(186);
-    WaitFrames(50);
+    WaitTicks(50);
     Object_Destroy(object);
-    WaitFrames(10);
+    WaitTicks(10);
     goto end;
   }
   if (work->mode == 0) {
@@ -224,9 +224,9 @@ void Func_080e3d04(void) {
     ((u8 *)object)[85] = work->mode;
     Object_SetMode(object, 2);
     Audio_PlayCue(186);
-    WaitFrames(45);
+    WaitTicks(45);
     Object_Destroy(object);
-    WaitFrames(10);
+    WaitTicks(10);
     goto end;
   }
 
@@ -282,11 +282,11 @@ void Func_080e3d04(void) {
     sprite++;
     particle++;
   }
-  WaitFrames(1);
+  WaitTicks(1);
   work->emitting = 1;
   Scheduler_AddOrUpdateCallback(Func_080e38c8, 0x480);
   for (i = 0; i < 80; i++) {
-    WaitFrames(1);
+    WaitTicks(1);
     if (work->hit != 0) {
       pending = Func_080ce458(0x60000005, scene->fieldKind,
                               (s16)(work->hitObject | 0x100));
@@ -310,7 +310,7 @@ void Func_080e3d04(void) {
       particle++;
     if (j == 16)
       break;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Scheduler_RemoveCallback(Func_080e38c8);
   Resource_ResetEntry(dropSlot);

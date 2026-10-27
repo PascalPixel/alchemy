@@ -29,7 +29,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
 void Object_SetModeById(u32 id, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 id);
 void Func_02004774(void);
@@ -61,12 +61,12 @@ void Func_020044c4(struct PushTarget target, s32 id, void (*callback)(void)) {
   Map_FillCellRectByte2(0, cell.x, cell.z, width, height, 0);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x1999);
   Object_SetModeById(gPartyState.currentOwner, 8);
-  WaitFrames(15);
+  WaitTicks(15);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner,
                                             (target.x - start.x) >> 17,
                                             (target.z - start.z) >> 17);
   Object_GetById(gPartyState.currentOwner)->update = Func_02004774;
-  WaitFrames(4);
+  WaitTicks(4);
   Func_02004a0c(object, 2);
   Func_02004c9c(239);
   ObjectMotion_SetSpeedParameters(id, 0x8000, 0x1999);

@@ -13,7 +13,7 @@ s32 Camera_FollowActor();
 s32 Camera_MoveWithinMapBounds();
 s32 Engine_ObjectCreate();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_0200088c();
 s32 Func_020009b8();
 s32 Func_02000a78();
@@ -42,7 +42,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 Object_SetModeById();
 s32 Random16Far();
-s32 WaitFrames();
+s32 WaitTicks();
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern u8 gData_020036fc[];
@@ -198,7 +198,7 @@ L_02008d1c:
     goto L_02008d44;
 L_02008d20:
   *(u16 *)0x4000052 = (v_r7 | 0x1000);
-  Call1((void (*)())WaitFrames, 8);
+  Call1((void (*)())WaitTicks, 8);
   t40 = *(u16 *)v_r9;
   v_r7 = (v_r7 + 1);
   if (v_r7 != t40)
@@ -207,7 +207,7 @@ L_02008d20:
 L_02008d44:
   Func_02003330();
   Call1((void (*)())Func_020034b8, 246);
-  Call1((void (*)())FieldEvent_WaitFrames, 48);
+  Call1((void (*)())FieldEvent_WaitTicks, 48);
   v_r7 = 0;
   v_r5 = ((u32)((v_r11 + 255) << 24) >> 24);
   if (v_r11 == v_r7)
@@ -250,14 +250,14 @@ L_02008d8c:
     goto L_02008e0c;
   Call1((void (*)())Func_020034b8, 195);
 L_02008e0c:
-  Call1((void (*)())FieldEvent_WaitFrames, 8);
+  Call1((void (*)())FieldEvent_WaitTicks, 8);
   v_r7 = (v_r7 + 1);
   if (v_r7 != v_r11)
     goto L_02008d8c;
 L_02008e18:
   if (v_r11 == 18)
     goto L_02008eea;
-  Call1((void (*)())FieldEvent_WaitFrames, 96);
+  Call1((void (*)())FieldEvent_WaitTicks, 96);
   Call2((void (*)())Func_020032e8, v_r10, (s32)gData_02003620);
   Func_02003338();
   t66 = *(u16 *)0x4000052;
@@ -270,7 +270,7 @@ L_02008e18:
     goto L_02008e72;
 L_02008e58:
   *(u16 *)0x4000052 = (v_r7 | 0x1000);
-  Call1((void (*)())WaitFrames, 8);
+  Call1((void (*)())WaitTicks, 8);
   v_r7 = (v_r7 - 1);
   if (v_r7 != 0)
     goto L_02008e58;
@@ -306,7 +306,7 @@ L_02008eea:
   t82 = FIELD_AT(p5, s16, 340);
   Call1((void (*)())GameFlag_SetBit, (t82 + 0xa55));
   Call2((void (*)())Func_020032e8, v_r10, (s32)gData_02003620);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_WaitTicks, 60);
   Call2((void (*)())Func_02003420, 0x40000, 0x8000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2180000, -1, 0x780000, 1);
   Func_02003430();
@@ -317,17 +317,17 @@ L_02008eea:
   v_r6 = (t91 << 16);
   v_r5 = (t90 << 16);
   Call4((void (*)())Func_020009b8, v_r5, v_r6, t92, 0x800);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   t95 = FIELD_AT(sp_, s32, 8);
   Call4((void (*)())Func_020009b8, v_r5, v_r6, t95, 0x900);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   t98 = FIELD_AT(sp_, s32, 8);
   Call4((void (*)())Func_020009b8, v_r5, v_r6, t98, 0xa00);
-  Call1((void (*)())FieldEvent_WaitFrames, 12);
-  Call1((void (*)())WaitFrames, 16);
+  Call1((void (*)())FieldEvent_WaitTicks, 12);
+  Call1((void (*)())WaitTicks, 16);
   Call2((void (*)())Func_02003458, 0x7fff, 0);
   Call1((void (*)())Func_02003468, 1);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   Call2((void (*)())Func_02003458, 0x10000, 0);
   Call1((void (*)())Func_02003468, 32);
   Call1((void (*)())Func_020034b8, 0x23e);
@@ -335,7 +335,7 @@ L_02008eea:
   t109 = FIELD_AT(sp_, s32, 12);
   t110 = FIELD_AT(sp_, s32, 8);
   Call3((void (*)())Func_02000a78, t108, t109, t110);
-  Call1((void (*)())FieldEvent_WaitFrames, 80);
+  Call1((void (*)())FieldEvent_WaitTicks, 80);
   t113 = Value1((s32 (*)())GameFlag_Test, 0xa87);
   if (t113 == 0)
     goto L_0200904c;
@@ -351,17 +351,17 @@ L_02008eea:
   Call1((void (*)())GameFlag_SetBit, 0xa8b);
   Call1((void (*)())Func_020034b8, 188);
   Call6((void (*)())Func_02003328, 52, 7, 33, 7, 1, 2);
-  Call1((void (*)())WaitFrames, 5);
+  Call1((void (*)())WaitTicks, 5);
   Call6((void (*)())Func_02003328, 54, 7, 33, 7, 1, 2);
   Call4((void (*)())Func_02003380, 0x2180000, 0x880000, 0, 0);
-  Call1((void (*)())WaitFrames, 60);
+  Call1((void (*)())WaitTicks, 60);
 L_0200904c:
   Call1((void (*)())Func_020032f8, v_r10);
   Call1((void (*)())GameFlag_SetBit, 0x200);
   t126 = FIELD_AT((s32)gPartyState, s32, 532);
   Call2((void (*)())Camera_FollowActor, t126, 1);
   Func_02003430();
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_WaitTicks, 60);
   Func_020033a0();
 L_02009078:
   return;

@@ -21,7 +21,7 @@ s32 Func_020012dc(void) {
       Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
       Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);
       Func_02001448();
-      WaitFrames(1);
+      WaitTicks(1);
       if (GameFlag_Test(0x109)) {
         object = Object_GetById(gPartyState.currentOwner);
         height = Map_GetTerrainHeight(object->terrainId, object->x,

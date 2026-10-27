@@ -13,7 +13,7 @@
 #include "map.h"
 #include "object_runtime.h"
 
-void WaitFrames(s32);
+void WaitTicks(s32);
 
 void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
                                 s32 useSetter) {
@@ -69,7 +69,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     object->x = positionX;
     object->y = positionY;
     object->z = positionZ;
-    WaitFrames(1);
+    WaitTicks(1);
     if (runtimeBlock->controlMode != 3) {
       Map_CenterOnFollowedPointFar();
     }

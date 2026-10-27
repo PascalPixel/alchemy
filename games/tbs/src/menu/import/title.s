@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.Task_Add, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
@@ -13,7 +13,7 @@
 	.set import.ScreenFade_Wait, 1
 	.set import.Save_ScanRecordFlags, 1
 	.set import.Party_EndChildhood, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Actor_GetById, 1
 	.set import.Event_SetDestination, 1
 	.set import.Event_StartScreenTransition, 1

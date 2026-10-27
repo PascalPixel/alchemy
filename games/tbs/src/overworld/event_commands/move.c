@@ -120,7 +120,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target->steeringFlags = moved;
   target->layer = 2;
   for (;;) {
-    WaitFrames(1);
+    WaitTicks(1);
     keys = gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS);
     if (keys != 0)
       break;
@@ -208,7 +208,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     z = position.z;
     Actor_SelectAnimationFar(
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
-    WaitFrames(15);
+    WaitTicks(15);
     target->paused = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
@@ -319,7 +319,7 @@ void FieldPsynergy_Move(void) {
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
     Actor_SelectAnimationFar(object, 4);
-    WaitFrames(30);
+    WaitTicks(30);
   }
   FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(object);
@@ -417,7 +417,7 @@ void UpdateRisingParticleBurst(void *object) {
     src->facing += 0x2000; // 1/8 turn
     src->scaleX += -0x800;
     src->scaleY += -0x800;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   for (i = 7; i >= 0; i--) {
     child =

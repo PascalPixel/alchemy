@@ -103,7 +103,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *args) {
     }
     sparks = PARTICLES;
     BattleAnim_SelectLivingTargets(work->args);
-    WaitFrames(1);
+    WaitTicks(1);
     BattleAnim_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {

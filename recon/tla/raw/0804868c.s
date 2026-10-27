@@ -1322,7 +1322,7 @@ Func_0804868c:
 	.2byte 0xf800
 .L_080490b8:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl .L_08048808
 .L_080490c2:
 	movs r3, #192
@@ -1363,7 +1363,7 @@ Func_0804868c:
 	ldr r0, [sp, #56]
 	bl MemFree
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r6, #0
 	add sp, #224
 	pop {r3, r5, r6, r7}

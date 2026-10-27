@@ -61,7 +61,7 @@ Func_020000d0:
 	adds r3, r3, r2
 	str r3, [r6, #12]
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_0200813a
 	movs r5, #128
@@ -112,7 +112,7 @@ Func_020000d0:
 	str r3, [r7, #12]
 	ldr r3, [r6, #16]
 	str r3, [r7, #16]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r6, #12]
 	movs r2, #128
 	lsls r2, r2, #14
@@ -131,7 +131,7 @@ Func_020000d0:
 	strh r3, [r6, #6]
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_020081c8
 	adds r0, r7, #0
@@ -268,7 +268,7 @@ Func_02000230:
 	str r3, [r6, #12]
 	ldr r3, [r7, #16]
 	str r3, [r6, #16]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #12]
 	ldr r2, .L_020083ec
 	cmp r3, r2
@@ -291,7 +291,7 @@ Func_02000230:
 	ldr r3, [r6, #12]
 	adds r3, r3, r2
 	str r3, [r6, #12]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #12]
 	ldr r2, .L_020083f0
 	cmp r3, r2
@@ -317,7 +317,7 @@ Func_02000230:
 	str r3, [r6, #28]
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_0200833a
 	movs r3, #192
@@ -348,7 +348,7 @@ Func_02000230:
 	str r3, [r7, #28]
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_02008378
 	adds r0, r6, #0
@@ -634,7 +634,7 @@ Func_02000b7c:
 	movs r0, #1
 	eors r3, r2
 	strb r3, [r1]
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, r8
 	ldrb r3, [r2]
 	cmp r3, #0
@@ -737,7 +737,7 @@ Func_02000b7c:
 .L_02008ce0:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #59
 	bgt .L_02008cfa
 	ldr r3, [r6, #20]
@@ -757,7 +757,7 @@ Func_02000b7c:
 .L_02008d08:
 	movs r0, #1
 	adds r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #59
 	bgt .L_02008d1a
 	ldr r3, [r6, #40]
@@ -1900,7 +1900,7 @@ Func_02001c8c:
 	str r5, [sp, #4]
 	bl Func_02002204
 	movs r0, #12
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #128
 	ldr r2, .L_02009d34
 	lsls r3, r3, #7
@@ -1944,7 +1944,7 @@ Func_02001c8c:
 	movs r1, #28
 	bl Object_SetModeById
 	movs r0, #16
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 .L_02009d54:
 	cmp r7, #5
 	bne .L_02009d5e
@@ -1965,7 +1965,7 @@ Func_02001c8c:
 	adds r3, r3, r1
 	str r3, [r6, #12]
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #39
 	ble .L_02009d54
 	ldr r3, .L_02009dc8
@@ -2033,7 +2033,7 @@ Func_02001e24:
 	bl Camera_MoveWithinMapBounds
 	bl Func_020021e4
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #130
 	lsls r3, r3, #16
 	str r3, [r7, #12]
@@ -2061,7 +2061,7 @@ Func_02001e24:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	add r2, sp, #28
 	movs r3, #7
 	str r3, [r2, #4]
@@ -2168,7 +2168,7 @@ Func_02001e24:
 	lsls r3, r3, #7
 	str r3, [r7, #68]
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, [r5]
 	movs r1, #1
 	bl Object_SetModeById

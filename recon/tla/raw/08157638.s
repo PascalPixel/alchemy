@@ -413,7 +413,7 @@ BattleEffect_RunMercury:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #24]
 	adds r3, #1
 	str r3, [sp, #24]

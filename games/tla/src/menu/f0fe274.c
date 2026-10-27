@@ -25,7 +25,7 @@ struct OwnerMenuState {
 
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 a, s32 b, s32 c, s32 d);
@@ -72,7 +72,7 @@ s32 Func_080fe274(void) {
   transition = heap->displayTransition;
   heap->objectSystem->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  WaitFrames(1);
+  WaitTicks(1);
   saved = *(u16 *)&transition->active;
   transition->active = 17;
   Scheduler_EnableOverlayCallbacksWithFlags();
@@ -105,7 +105,7 @@ s32 Func_080fe274(void) {
   MenuIcon_ReleaseObjects();
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_08038290();
   UiWork_SetAltFlagAndClearTableFar(0);
   CopyWords_((void *)0x05000000, palette, 64);
@@ -118,7 +118,7 @@ s32 Func_080fe274(void) {
   Runtime_ReleaseHeapBlock(220);
   heap->objectSystem->suspended = 0;
   transition->active = saved;
-  WaitFrames(1);
+  WaitTicks(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   ((struct UiRenderWork *)heap->windowTiles)->menuBusy = 0;
   return result;

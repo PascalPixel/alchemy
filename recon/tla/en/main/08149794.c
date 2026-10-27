@@ -230,7 +230,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 16);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

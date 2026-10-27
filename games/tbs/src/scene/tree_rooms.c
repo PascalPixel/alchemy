@@ -326,19 +326,19 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Actor_SetSpriteFlags(Actor_GetById(leaderActorId), 0);
   Actor_SetAttachedEffect(leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
   actor->groundHeight = -PIXELS(160);
   actor->gravity = PIXELS(1) / 2;
   Event_PlaySong(SE_DUST_PUFF);
-  Event_WaitFrames(3);
+  Event_WaitTicks(3);
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
     actor->facing += 2 * FACING_STEP;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON)
     GameFlag_Set(FLAG_ARRIVE_FALLING);
@@ -509,15 +509,15 @@ static void TreeRooms_FightTret(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
   Actor_SetScript(ACTOR_GARET, gTreeRooms_GaretGathersActions);
   Actor_RunScriptAndWait(ACTOR_IVAN, gTreeRooms_IvanGathersActions);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -543,7 +543,7 @@ static void TreeRooms_FightTret(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEffect_SetAttached(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
@@ -599,28 +599,28 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     partyActor->facing = FACING_NORTH;
   }
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  WaitFrames(10);
+  WaitTicks(10);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 48;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldCamera_SetSpeed(0x13333, 0x2666);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
   Event_PlaySong(SE_MAP_EXIT);
   MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
   MapGrid_CopyCells(26, 38, 1, 1, openingColumn, 43);
-  WaitFrames(4);
+  WaitTicks(4);
   MapGrid_CopyCells(26, 37, 1, 2, openingColumn, 42);
-  WaitFrames(4);
+  WaitTicks(4);
   MapGrid_CopyCells(26, 36, 1, 3, openingColumn, 41);
-  WaitFrames(4);
+  WaitTicks(4);
   MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
-  WaitFrames(80);
+  WaitTicks(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   Event_SetMessageId(MsgTretMmmmm);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
@@ -628,12 +628,12 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Event_PlaySong(MUS_FOREST);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
@@ -642,16 +642,16 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -661,7 +661,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   // Garet and Ivan will not let Tret die while they still need his help.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
@@ -672,7 +672,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -696,26 +696,26 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
     Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
   }
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   Event_SetMessageId(MsgTretTurnedPeopleKolima);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
-  WaitFrames(40);
+  WaitTicks(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   sSparkFrame = 0;
   {
     struct FieldPosition *origin = &sSparkOrigin;
@@ -725,13 +725,13 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     origin->z = PIXELS(52);
   }
   Task_AddFrame(sparkTask, TASK_PASS_FRAME);
-  Event_WaitFrames(220);
+  Event_WaitTicks(220);
   Task_Remove(sparkTask);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
-  WaitFrames(40);
+  WaitTicks(40);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
@@ -739,7 +739,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
@@ -765,7 +765,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Actor_SetScript(ACTOR_MIA, actions);
   }
   Actor_RunScriptAndWait(ACTOR_IVAN, actions);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(FLAG_TRET_DEFEATED);
   Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
@@ -780,7 +780,7 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
 
-  WaitFrames(1);
+  WaitTicks(1);
   if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
     s32 openingColumn = 10;
     MapGrid_CopyCells(121, 34, 3, 1, 93, openingColumn);
@@ -848,7 +848,7 @@ s32 TreeRooms_EnterRoom(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN);
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN);
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
-  WaitFrames(1);
+  WaitTicks(1);
   TreeRooms_ApplyPostBattleState(0);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
@@ -873,13 +873,13 @@ s32 TreeRooms_EnterRoom(void) {
     actor->gravity = PIXELS(1) / 2;
     Event_PlaySong(SE_DUST_PUFF);
     Event_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     actor->layer = 2;
     Actor_SetSpritePriority(leaderActorId, 3);
-    Event_WaitFrames(2);
+    Event_WaitTicks(2);
     FieldEffect_SetAttached(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    Event_WaitFrames(8);
+    Event_WaitTicks(8);
   } else if (entrance == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       TreeRooms_RunLandingDustEvent();
@@ -971,7 +971,7 @@ static void TreeRooms_PlayGesture(s32 gesture) {
   switch (gesture) {
   case TRET_GESTURE_CLOSE_EYES:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
     break;
   case TRET_GESTURE_OPEN_EYES:
@@ -979,33 +979,33 @@ static void TreeRooms_PlayGesture(s32 gesture) {
     break;
   case TRET_GESTURE_LOOK_LEFT:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
     break;
   case TRET_GESTURE_LOOK_RIGHT:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
     break;
   case TRET_GESTURE_BLINK:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_HALF_CLOSE_EYES:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_OPEN_EYES:
@@ -1013,30 +1013,30 @@ static void TreeRooms_PlayGesture(s32 gesture) {
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
   case TRET_GESTURE_WRATHFUL_BLINK:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
-    WaitFrames(6);
+    WaitTicks(6);
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_STARE:
     Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }
-  WaitFrames(12);
+  WaitTicks(12);
 }
 
 /// Moves a fading spark outward from its saved origin, then releases it.
@@ -1160,7 +1160,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
-  WaitFrames(1);
+  WaitTicks(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
   Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
@@ -1170,7 +1170,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_PlaySong(SE_DUST_PUFF);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Event_WaitFrames(24);
+  Event_WaitTicks(24);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;

@@ -33,7 +33,7 @@ void Shop_DrawMsg(s32 win, s32 message) {
     UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
     RenderOutput_ClearListFar(win);
-    WaitFrames(1);
+    WaitTicks(1);
     UiText_DrawResourceFar(message, win, 0, 0);
 #endif
   }

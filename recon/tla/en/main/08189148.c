@@ -90,7 +90,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08118088(s32 actor, s32 motion);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -466,7 +466,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

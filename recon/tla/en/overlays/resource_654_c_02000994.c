@@ -45,12 +45,12 @@ void Func_02000994(void) {
   Call2((void (*)())ObjectMotion_SetActionVariant, 9, 1);
   Call2((void (*)())ObjectMotion_SetActionVariant, 10, 1);
   Func_020039a0();
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Io_Write16(0x80c, &REG_BLDALPHA);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   layer0->y += -0x440000;
   layer1->y += -0x140000;
   layer2->y += 0xc0000;
@@ -60,7 +60,7 @@ void Func_02000994(void) {
   b->z += -0xc0000;
   c->z += -0xc0000;
   Func_02003988();
-  Call1((void (*)())WaitFrames, 4);
+  Call1((void (*)())WaitTicks, 4);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x209;
   Event_StartScreenTransition();
@@ -101,19 +101,19 @@ void Func_02000994(void) {
   Call2((void (*)())Func_0200094c, 65, 51);
   Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   Call1((void (*)())Func_02003b48, 390);
   Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   Io_Write16(0x1002, &REG_BLDALPHA);
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   Io_Write16(0x1001, &REG_BLDALPHA);
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   Io_Write16(0x1000, &REG_BLDALPHA);
   ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   Func_020039c0();
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;

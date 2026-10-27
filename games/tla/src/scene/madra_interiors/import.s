@@ -30,10 +30,10 @@ Func_02001d38:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_02001d50
 	.thumb_func
 Func_02001d50:

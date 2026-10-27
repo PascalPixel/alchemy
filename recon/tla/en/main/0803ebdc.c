@@ -21,7 +21,7 @@
 
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void MenuSelection_SetupEntry(u32 kind, u32 base, struct SelectionNode *node,
                               s32 mode);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 direction);
@@ -35,7 +35,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
 
   Menu_ReloadNodeResource(state, state->cursorIndex);
   state->status = 33;
-  WaitFrames(1);
+  WaitTicks(1);
   state->cursorIndex++;
   if (state->count > 5) {
     end = state->top + state->cursorIndex;
@@ -52,7 +52,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
       node->targetY = state->baseY;
       node->dx = -12;
       while (node->targetX != node->x)
-        WaitFrames(1);
+        WaitTicks(1);
       node = state->head;
       if (node != NULL) {
         ids = state->kinds;
@@ -91,7 +91,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
   state->status = 1;
   __asm__ volatile("");
   Menu_LoadSelectionNodeResource(state, state->cursorIndex);
-  WaitFrames(1);
+  WaitTicks(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
-  WaitFrames(1);
+  WaitTicks(1);
 }

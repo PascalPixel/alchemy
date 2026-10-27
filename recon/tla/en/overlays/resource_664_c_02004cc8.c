@@ -26,8 +26,8 @@ void Func_02005d8c(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Func_02005dec(struct ObjectRuntime *object);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void OverlayObject_WaitUntilIdle(struct ObjectRuntime *object);
@@ -62,16 +62,16 @@ void Func_02004cc8(void) {
   while (!Func_02005dec(leader)) {
     leader->angle = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Func_02005f94(288);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
   Func_02005d5c(leader, 6);
-  WaitFrames(6);
+  WaitTicks(6);
   Func_02005f94(152);
   Func_02005d5c(leader, 7);
   leader->speedLimit = 0x20000;
@@ -84,14 +84,14 @@ void Func_02004cc8(void) {
   Func_02005d94(leader);
   Object_SetModeById(gPartyState.currentOwner, 1);
   Func_02005d5c(lift, 5);
-  WaitFrames(12);
+  WaitTicks(12);
   Func_02005d7c(lift);
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
   ObjectDispatch_SetSingleChildFlags(leader, 1);
   leader->priorityFlags = priorityFlags;
   Func_02005d7c(prepared);
-  WaitFrames(1);
+  WaitTicks(1);
   Event_WaitTransitionFrames();
   Func_02005e1c();
 }

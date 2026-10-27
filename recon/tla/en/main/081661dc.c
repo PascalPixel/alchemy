@@ -133,7 +133,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
 
   // The shards start inside the target; each group of four lives two frames
@@ -249,7 +249,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     Func_08158ce0(16, 16);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

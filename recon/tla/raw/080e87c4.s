@@ -48,7 +48,7 @@ Func_080e87c4:
 	ldr r0, .L_080e8978
 	bl Scheduler_RemoveCallback
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #167
 	bl Audio_PlayCue
 	ldr r3, .L_080e897c
@@ -72,7 +72,7 @@ Func_080e87c4:
 	movs r3, #1
 	strb r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_080e8990
 	bl Resource_GetTableEntry
 	mov r1, r10
@@ -165,7 +165,7 @@ Func_080e87c4:
 	cmp r3, #63
 	ble .L_080e8886
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r7, #0
 .L_080e8928:
 	movs r6, #208
@@ -236,7 +236,7 @@ Func_080e87c4:
 	bge .L_080e8938
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #39
 	ble .L_080e8928
 	ldr r0, [sp, #4]

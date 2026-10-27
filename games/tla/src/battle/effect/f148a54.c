@@ -178,7 +178,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
       work->cameraPhase = 1;
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

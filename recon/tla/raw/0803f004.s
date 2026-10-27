@@ -100,7 +100,7 @@ Menu_ScrollSelectionList:
 	ldr r5, [r3]
 .L_0803f0c0:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #34
 	ldrsh r6, [r5, r1]
 	cmp r6, #0
@@ -211,7 +211,7 @@ Menu_ScrollSelectionList:
 	lsls r6, r6, #1
 .L_0803f19e:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #34
 	ldrsh r3, [r5, r2]
 	cmp r3, r6

@@ -10,10 +10,10 @@ __divsi3:
 	.thumb_func
 __umodsi3:
 	overlay_veneer IwramUnsignedRemainder
-	.global WaitFrames
+	.global WaitTicks
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+WaitTicks:
+	overlay_veneer WaitTicksFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
@@ -198,10 +198,10 @@ Func_020048ac:
 	.thumb_func
 Func_020048b4:
 	overlay_veneer Func_080ad2d8
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_020048c4
 	.thumb_func
 Func_020048c4:

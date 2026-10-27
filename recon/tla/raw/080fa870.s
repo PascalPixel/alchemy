@@ -112,7 +112,7 @@ Func_080fa870:
 	lsls r0, r0, #2
 	bl Func_08104ef8
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_080fa952:
 	ldr r1, [sp, #12]
 	ldr r0, [r6, #16]
@@ -302,7 +302,7 @@ Func_080fa870:
 	subs r0, #10
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_080fabdc
 	movs r2, #1
 	ldr r3, [r1, #4]
@@ -364,7 +364,7 @@ Func_080fa870:
 	strb r7, [r5, #5]
 	bl Func_080fac58
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #12]
 	movs r2, #129
 	strb r3, [r6, #29]

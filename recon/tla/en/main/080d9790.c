@@ -19,7 +19,7 @@
 
 s32 ArcTan2(s32 y, s32 x);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 struct ChainNode {
   struct ChainNode *next;
@@ -78,7 +78,7 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
   }
   Object_SetMode(work->from, 3);
   Object_SetMode(work->to, 3);
-  WaitFrames(4);
+  WaitTicks(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;
     radius = 0x40000;
@@ -111,7 +111,7 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
         node->visible = 2;
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   MemFree(nodes);
   return 0;

@@ -27,12 +27,12 @@ void Func_020008c8(void) {
   Func_020049c4(125);
   Camera_MoveWithinMapBounds(776 << 16, -1, 208 << 16, 1);
   Func_020048f4();
-  FieldEvent_WaitFrames(6);
+  FieldEvent_WaitTicks(6);
   Func_0200474c_(49, 103, 4, 3, 49, 76);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_WaitTicks(6);
   Func_020049c4(133);
   Func_0200474c_(49, 100, 4, 3, 49, 76);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();

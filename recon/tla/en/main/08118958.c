@@ -25,7 +25,7 @@ void Runtime_InitializeHeap(void);
 void VramCache_Reset(void);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_08118954(void);
 s32 DebugParty_LoadPreset(s32 preset);
 void Unit_CalculateFar(s32 unitId);
@@ -53,7 +53,7 @@ restart:
     GameFlag_ClearBit(362);
     for (;;) {
       GameFlag_ClearBit(32);
-      WaitFrames(1);
+      WaitTicks(1);
       for (;;) {
         if (gInput.repeat & 0x10)
           encounter++;
@@ -73,7 +73,7 @@ restart:
           Func_08118954();
         if ((gInput.repeat & 2) || startModeSet)
           startModeSet = 1;
-        WaitFrames(1);
+        WaitTicks(1);
       }
       if (preset != loadedPreset) {
         Func_080ad090();

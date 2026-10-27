@@ -66,7 +66,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
 void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
                                                s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 struct ObjectRuntime *Object_GetById(u32 actor);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
@@ -124,17 +124,17 @@ void Func_080e4a34(void) {
   BattleEffect_SetObjectTickMode(effect->mainObject, 0);
   Object_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
   *motionFlags = 0;
-  WaitFrames(2);
+  WaitTicks(2);
   for (frame = 0; frame < 40; frame++) {
     if (frame > 0)
       owner->y += 0x3999;
     if (frame & 31)
       Audio_PlayCue(566);
     owner->angle += 0x2000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   owner->angle = 0x4000;
-  WaitFrames(1);
+  WaitTicks(1);
   Func_080e43a4(*(void **)((u8 *)owner->animation + 40), work, 0x400);
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
@@ -171,7 +171,7 @@ void Func_080e4a34(void) {
     }
     if (frame == 61)
       Animation_ApplyChildValueToFirstFar(owner->animation, 0);
-    WaitFrames(1);
+    WaitTicks(1);
     ripple += 3;
   }
   if (event->mode == 3)

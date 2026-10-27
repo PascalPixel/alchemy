@@ -12,7 +12,7 @@ void Func_08041254(void);
 struct RenderInput *Func_0804128c(void);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 s32 Party_FindOwnerWithActionFar(s32 action);
@@ -48,7 +48,7 @@ s32 Func_08041350(void) {
    * (differ 33). */
   Func_0804121c();
   work = Ram_HeapSlots->unkd0[0];
-  WaitFrames(1);
+  WaitTicks(1);
   result = -1;
   column = 0;
   window = Func_0804128c();
@@ -68,7 +68,7 @@ s32 Func_08041350(void) {
         Func_08108040(work + 0x5a4, x, y, 3);
       result = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (KEYS_PRESSED & 2) {
       Audio_PlayCue(113);
       result = -1;
@@ -113,7 +113,7 @@ s32 Func_08041350(void) {
 done:
   UiWork_Finalize(window, 2);
   Func_08041254();
-  WaitFrames(1);
+  WaitTicks(1);
   if (result != -1) {
     events = Ram_HeapSlots->eventWork;
     ability = gData_080aa170[column][row];

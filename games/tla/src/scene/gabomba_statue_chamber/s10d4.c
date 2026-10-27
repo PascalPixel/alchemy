@@ -17,7 +17,7 @@ void Func_02001da0(void);
 void Func_02001ee8();
 void Camera_MoveWithinMapBounds();
 void Object_SetPositionAndResetMotion();
-void WaitFrames();
+void WaitTicks();
 void Func_02001e18();
 s32 Runtime_AllocateHeapBlockFar();
 void Func_02001d90();
@@ -26,7 +26,7 @@ void Runtime_ReleaseHeapBlock();
 void Func_02001010(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void ObjectMotion_Launch();
 void Func_02001e48();
 void Func_02001e60();
@@ -71,7 +71,7 @@ void Func_020010d4(void) {
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call4(Object_SetPositionAndResetMotion, Value1(Object_GetById, 13), 0x1880000,
         0, 0x10c0000);
-  Call1(WaitFrames, 1);
+  Call1(WaitTicks, 1);
   /* FAKEMATCH(temporary): the leader read before the first turn is built; as
    * gPartyState.currentOwner in the call, 34 of 640 instructions differ in
    * tla-en. */
@@ -98,7 +98,7 @@ void Func_020010d4(void) {
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_WaitTicks, 40);
   Call3(ObjectMotion_Launch, 7, 4, 10);
   Call1(Func_02001e48, MsgTheBlackOrb);
   Call2(Func_02001e60, 7, 0);
@@ -112,7 +112,7 @@ void Func_020010d4(void) {
   Call1(Func_02001f10, 78);
   Value2(Func_02001eb8, 0x10002, 0);
   Value1(Func_02001ec8, 40);
-  Call1(WaitFrames, 40);
+  Call1(WaitTicks, 40);
   Call2(Object_SetModeById, 9, 2);
   Call2(Object_SetModeById, 10, 2);
   Call2(Object_LinkObjectAndSetCallback, gPartyState.currentOwner, 13);
@@ -120,7 +120,7 @@ void Func_020010d4(void) {
   Call2(Object_LinkObjectAndSetCallback, 6, 13);
   Call2(Object_LinkObjectAndSetCallback, 7, 13);
   Call2(Object_LinkObjectAndSetCallback, 11, 13);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call2(Func_02001e98, 0xcccc, 0x1999);
   Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xf60000, 1);
   Call3(ObjectMotion_SetSpeedParameters, 13, 0xcccc, 0x6666);
@@ -131,7 +131,7 @@ void Func_020010d4(void) {
   statue->gravity = 0x8000;
   Call3(ObjectMotion_SetSpeedParameters, 13, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetPositionAndCommit, 13, 392, 234);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xa80000, 1);
   Call3(ObjectMotion_SetSpeedParameters, 13, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndCommit, 13, 392, 0xa0);
@@ -140,12 +140,12 @@ void Func_020010d4(void) {
   Call1(ObjectMotion_EnableActionAndResetMotion, 6);
   Call1(ObjectMotion_EnableActionAndResetMotion, 7);
   Call1(ObjectMotion_EnableActionAndResetMotion, 11);
-  Call1(WaitFrames, 1);
+  Call1(WaitTicks, 1);
   Call3(Func_02001e10, 13, 0, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Value2(Func_02001eb8, 0x10000, 0);
   Value1(Func_02001ec8, 40);
-  Call1(WaitFrames, 40);
+  Call1(WaitTicks, 40);
   Func_02001ef0();
   Value3(Func_02001e88, 11, 0x100, 40);
   Call2(Func_02001e60, 0x400b, 0);
@@ -157,7 +157,7 @@ void Func_020010d4(void) {
   Call3(ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndReset, 6, 0x190, 172);
   Call2(Object_SetModeById, 6, 9);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Func_02001e60, 0x4006, 0);
   Call2(Object_SetModeById, 7, 4);
   Call2(Func_02001e60, 7, 0);
@@ -174,10 +174,10 @@ void Func_020010d4(void) {
     s32 turn = 0xd000;
     Call4(Func_02001e18, 12, 0x1900000, 0x1400000, turn);
   }
-  Call1(WaitFrames, 1);
+  Call1(WaitTicks, 1);
   Call2(Func_02001e60, 12, 0);
   Call2(Object_SetModeById, 6, 1);
-  Call1(WaitFrames, 1);
+  Call1(WaitTicks, 1);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
@@ -192,7 +192,7 @@ void Func_020010d4(void) {
   if (Value2(Event_AskYesNoWithActorAnimation, gPartyState.currentOwner, 0) ==
       0) {
     Call2(Func_02001e90, 12, 258);
-    Call1(FieldEvent_WaitFrames, 20);
+    Call1(FieldEvent_WaitTicks, 20);
     Call2(Func_02001e60, 12, 0);
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
   } else {
@@ -207,7 +207,7 @@ void Func_020010d4(void) {
   Value3(Func_02001e88, 6, 263, 20);
   Call2(Func_02001e60, 6, 0);
   Call2(Func_02001e90, 12, 258);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Func_02001e60, 12, 0);
   Call2(Object_SetModeById, gPartyState.currentOwner, 3);
   Call2(Object_SetModeById, 5, 3);
@@ -220,15 +220,15 @@ void Func_020010d4(void) {
   Call3(ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetPositionAndReset, 5, 420, 228);
   Call2(Func_02001e70, 5, 0xa000);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetPositionAndReset, 5, 412, 222);
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x10000, 0x8000);
   Call3(ObjectMotion_SetSpeedParameters, 12, 0x10000, 0x8000);
   Call2(ObjectMotion_EnableActionAndSetCallback, 5, gData_02001f18);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call2(ObjectMotion_EnableActionAndSetCallback, 12, gData_02001f18);
-  Call1(FieldEvent_WaitFrames, 60);
+  Call1(FieldEvent_WaitTicks, 60);
   *(s32 *)(EVENT_WORK + 0x1ac) = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

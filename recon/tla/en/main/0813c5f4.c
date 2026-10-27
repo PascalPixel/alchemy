@@ -88,7 +88,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
@@ -281,7 +281,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(8, 8);
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
 

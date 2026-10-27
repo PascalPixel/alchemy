@@ -49,13 +49,13 @@ void Func_02004524(void) {
   Func_02003640(1, 1);
   if (gData_02007950 != 0) {
     gData_02007950->y += 0x200000;
-    WaitFrames(1);
+    WaitTicks(1);
     gData_02007950->motionFlags = 4;
   }
-  WaitFrames(1);
+  WaitTicks(1);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
 }

@@ -130,9 +130,9 @@ void FieldEffect_RunDouse(void) {
     scale = Lerp10(0x4000, 0x10000, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
   }
-  WaitFrames(10);
+  WaitTicks(10);
 
   if ((s8)work->alternate == 0) {
     count = 10;
@@ -144,7 +144,7 @@ void FieldEffect_RunDouse(void) {
       pos.z = orb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       if (n == count - 1) {
-        WaitFrames(20);
+        WaitTicks(20);
         pos.x = orb->x;
         pos.y = orb->y;
         pos.z = orb->z;
@@ -164,7 +164,7 @@ void FieldEffect_RunDouse(void) {
         mote->priorityFlags = 5;
       }
       Audio_PlayCue(132);
-      WaitFrames(6);
+      WaitTicks(6);
       if (n == 12) {
         ev = Func_080ce458(0x50000005, 5, Func_080ce31c(5));
         if (ev != 0)
@@ -172,7 +172,7 @@ void FieldEffect_RunDouse(void) {
                                        work->secondObjectId);
       }
     }
-    WaitFrames(10);
+    WaitTicks(10);
   } else {
     if ((s8)work->highArc != 0)
       count = 10;
@@ -191,9 +191,9 @@ void FieldEffect_RunDouse(void) {
         Object_SetMode(mote, 8);
         Animation_ApplyChildValuesFar((struct DispatchObject *)mote, 7);
       }
-      WaitFrames(6);
+      WaitTicks(6);
     }
-    WaitFrames(70);
+    WaitTicks(70);
   }
 
   i = 0;
@@ -221,7 +221,7 @@ void FieldEffect_RunDouse(void) {
     scale = Lerp10(0x10000, 0x4000, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     i++;
   } while (i < steps);
   Object_Destroy((struct DispatchObject *)orb);

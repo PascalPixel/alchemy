@@ -11,7 +11,7 @@
 s32 Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_020002ec();
 s32 Func_020003b4();
 s32 Func_02000444();
@@ -161,11 +161,11 @@ L_02008fc4:
   Call3((void (*)())Func_02005598, 17, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_WaitTicks, 30);
   Call3((void (*)())Func_02005598, 18, 0, 0);
   Call3((void (*)())Func_02005598, 17, 0x1080000, 0x2080000);
   Call1((void (*)())Func_020056c0, 136);
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_WaitTicks, 60);
   Call1((void (*)())GameFlag_SetBit, 0x109);
   t45 = Value1((s32 (*)())Func_020055f0, 3);
   v_r0 = t45;

@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.Task_Add, 1
 	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
@@ -23,7 +23,7 @@
 	.set import.Party_GetAverageLevel, 1
 	.set import.PartyInventory_CountItem, 1
 	.set import.PartyInventory_CountFreeSlots, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1

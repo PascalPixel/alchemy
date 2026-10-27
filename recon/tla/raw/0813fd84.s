@@ -140,7 +140,7 @@ BattleEffect_RunCruelRuin:
 	add r3, r11
 	str r0, [r3]
 	mov r10, r0
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #116]
 	movs r1, #6
 	adds r2, #1
@@ -1304,7 +1304,7 @@ BattleEffect_RunCruelRuin:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #116]
 	adds r3, #1
 	str r3, [sp, #116]
@@ -1416,7 +1416,7 @@ BattleEffect_RunCruelRuin:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #128
 	ldr r0, [sp, #128]
 	lsls r1, r1, #7
@@ -1601,7 +1601,7 @@ BattleEffect_RunCruelRuin:
 	cmp r7, #2
 	bne .L_0814095c
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, sp
 	mov r3, sp
 	mov r4, sp
@@ -2466,7 +2466,7 @@ BattleEffect_RunCruelRuin:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #24]
 	ldr r2, [sp, #116]
 	adds r1, #2
@@ -2506,7 +2506,7 @@ BattleEffect_RunCruelRuin:
 	movs r2, #24
 	bl BattleBackground_LoadFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, .L_081411e4
 	movs r3, #120
 	movs r0, #195
@@ -2967,7 +2967,7 @@ BattleEffect_RunCruelRuin:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #32]
 	ldr r5, [sp, #28]
 	ldr r2, [sp, #116]

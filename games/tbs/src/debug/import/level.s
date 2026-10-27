@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
 	.set import.__modsi3, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
 	.set import.Text_DrawMessage, 1

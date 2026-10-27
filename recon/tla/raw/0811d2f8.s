@@ -31,7 +31,7 @@ Func_0811d2f8:
 	bhi .L_0811d3f8
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	blt .L_0811d3f8
 	ldr r3, .L_0811d410
@@ -96,7 +96,7 @@ Func_0811d2f8:
 	bhi .L_0811d3f8
 	movs r0, #1
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	blt .L_0811d3f8
 	ldr r3, .L_0811d410

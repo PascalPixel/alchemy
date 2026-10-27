@@ -26,8 +26,8 @@ void Func_020040b4(void);
 void Func_020049c4(s32 sound);
 void Func_0200473c(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
                    s32 dstZ);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, u32 flags);
 void Object_SetModeById(u32 id, s32 mode);
 void Event_FinishScreenTransition(void);
@@ -42,7 +42,7 @@ void Func_020041ac(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_020040b4();
   Func_020049c4(229);
   Func_0200473c(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_WaitTicks(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
@@ -52,7 +52,7 @@ void Func_020041ac(struct CellTarget *table, struct CellTargetEntry *entry) {
   x = 0;
   table->shown = 1;
   Object_SetModeById(gPartyState.currentOwner, 28);
-  FieldEvent_WaitFrames(16);
+  FieldEvent_WaitTicks(16);
   do {
     if (x == 5)
       Func_020049c4(204);
@@ -60,7 +60,7 @@ void Func_020041ac(struct CellTarget *table, struct CellTargetEntry *entry) {
     leader->scaleY += -0x300;
     leader->y += -0x9999;
     x++;
-    WaitFrames(1);
+    WaitTicks(1);
   } while (x <= 39);
   Object_GetById(gPartyState.currentOwner)->animationKind = 0;
   table->shown = 0;

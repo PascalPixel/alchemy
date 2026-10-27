@@ -6,12 +6,12 @@ void Func_02000098(s32 id) {
 
   object->motionFlags = 3;
   while (frames != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     if (object->velocityY == 0)
       break;
     frames--;
   }
-  WaitFrames(10);
+  WaitTicks(10);
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
 }

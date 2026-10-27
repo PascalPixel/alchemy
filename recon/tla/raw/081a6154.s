@@ -585,7 +585,7 @@ Func_081a6154:
 	adds r3, #8
 	strh r3, [r6, #10]
 	adds r7, #1
-	bl Title_WaitFramesOrPress
+	bl Title_WaitTicksOrPress
 	cmp r0, #0
 	bne .L_081a6562
 	ldrh r3, [r6, #6]
@@ -598,7 +598,7 @@ Func_081a6154:
 	adds r3, #8
 	strh r3, [r6, #10]
 	adds r7, #1
-	bl Title_WaitFramesOrPress
+	bl Title_WaitTicksOrPress
 	cmp r0, #0
 	bne .L_081a6562
 	adds r5, #1
@@ -612,7 +612,7 @@ Func_081a6154:
 	movs r0, #1
 	bl PaletteFade_Start
 	movs r0, #2
-	bl Title_WaitFramesOrPress
+	bl Title_WaitTicksOrPress
 	cmp r0, #0
 	beq .L_081a6624
 	bl Fade_Wait

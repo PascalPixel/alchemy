@@ -131,14 +131,14 @@ void Inn_PlaySleep(s32 roomPrice) {
   work = gFieldWork;
   work->transition = 0x209;
   work->transitionFrames = 60;
-  WaitFrames(20);
+  WaitTicks(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   Sound_PlaySongFar(MUS_INN);
   Sound_WaitForFanfare();
-  WaitFrames(10);
+  WaitTicks(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  WaitFrames(30);
+  WaitTicks(30);
   gFieldWork->transitionFrames = 16;
 }

@@ -30,7 +30,7 @@ void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
 s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
-void WaitFrames(s32);
+void WaitTicks(s32);
 s32 Audio_Check(void);
 void UiWork_Finalize(struct UiWindow *, s32);
 
@@ -89,12 +89,12 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     do {
       Runtime_PushSlotEntry(entry1, 250);
       Runtime_PushSlotEntry(entry2, 250);
-      WaitFrames(1);
+      WaitTicks(1);
     } while (Audio_Check() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     UiWork_Finalize(window, 2);
-    WaitFrames(1);
+    WaitTicks(1);
     Resource_ResetEntry(handle1);
     Resource_ResetEntry(handle2);
   }

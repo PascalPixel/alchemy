@@ -17,7 +17,7 @@
    } *)(base))                                                                 \
        ->v)
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Scheduler_RemoveCallbackFar(void *callback);
 void Func_02003434(s32 x, s32 y, s32 z);
 s32 Resource_ResetEntry(u32 entry);
@@ -56,7 +56,7 @@ void Func_02003078(void) {
         state = 999;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     time++;
   } while (state != 999);
   Scheduler_RemoveCallbackFar(Func_02002de4);

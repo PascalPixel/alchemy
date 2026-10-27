@@ -1262,7 +1262,7 @@ BattleEffect_RunGeode:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r11, r2
 	mov r3, r11

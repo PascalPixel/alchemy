@@ -9,7 +9,7 @@ struct EventWork154 {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -41,7 +41,7 @@ void Func_02001b7c(void) {
     Object_SetModeById(id, 25);
   else
     Object_SetModeById(id, 26);
-  WaitFrames(4);
+  WaitTicks(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200458c(entrance);

@@ -208,7 +208,7 @@ s32 Trig_Sin(s32);
 void Runtime_ReleaseHeapBlock(s32);
 void MemFree(void *);
 void *Resource_GetTableEntry(s32);
-void WaitFrames(s32);
+void WaitTicks(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
@@ -659,7 +659,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                         40);
     }
     work->unk78e8 = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   if (kind == 41) {
@@ -2277,7 +2277,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->unk78e8 = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||

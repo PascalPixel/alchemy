@@ -30,7 +30,7 @@ Func_08040798:
 	ldr r3, [r3]
 	movs r0, #1
 	mov r10, r3
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_08040628
 	movs r3, #16
 	str r0, [sp, #16]
@@ -145,7 +145,7 @@ Func_08040798:
 	ldr r0, [sp, #8]
 	bl Func_08045018
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_08040988
 	movs r3, #1
 	ldr r2, [r1, #4]
@@ -228,7 +228,7 @@ Func_08040798:
 	bl UiWork_Finalize
 	bl Func_08040614
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	blt .L_0804096e
 	ldr r1, [sp, #4]

@@ -749,7 +749,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     if (mode != 6)
       ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

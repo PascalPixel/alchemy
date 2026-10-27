@@ -8,7 +8,7 @@
    } *)(base))                                                                 \
        ->v)
 s32 Event_AskYesNoWithActorAnimation();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Func_02005868();
 void Func_02005880();
 void Func_02005960();
@@ -53,11 +53,11 @@ s32 Func_02000330(void) {
     goto L_02008400;
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x4000,
         0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 22);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call3((void (*)())Func_02005960, gPartyState.currentOwner, 0x109, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_WaitTicks, 30);
   Func_02005868();
   Call1((void (*)())Func_02005990, 9);
   return 1;

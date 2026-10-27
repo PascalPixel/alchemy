@@ -87,11 +87,11 @@ s32 Title_Run(void) {
     Actor_GetById(gSaveBlock.leaderActorId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
-    WaitFrames(120);
+    WaitTicks(120);
     waitFrames = 0;
     if (gKeysPressed == 0) {
       do {
-        WaitFrames(1);
+        WaitTicks(1);
         if (++waitFrames > 3599)
           break;
       } while (gKeysPressed == 0);
@@ -107,7 +107,7 @@ s32 Title_Run(void) {
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
-    Event_WaitFrames(240);
+    Event_WaitTicks(240);
     Sound_PlaySong(MUS_SILENCE);
     Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_TITLE);
     return 0;
@@ -135,7 +135,7 @@ s32 Title_Run(void) {
           waitFrames = 0;
           if (gKeysHeld == 0) {
             do {
-              WaitFrames(1);
+              WaitTicks(1);
               if (++waitFrames > 119)
                 break;
             } while (gKeysHeld == 0);
@@ -157,7 +157,7 @@ s32 Title_Run(void) {
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Sound_PlaySong(MUS_SILENCE);
   return 0;
 }
@@ -297,7 +297,7 @@ static void Title_RevealScreen(s32 unused) {
 
   // Load while dark, then let the sprite task reveal the lettering.
   Title_LoadBackground();
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   Task_AddFrame(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
@@ -316,11 +316,11 @@ static void Title_RevealScreen(s32 unused) {
                       IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
-  Event_WaitFrames(120);
+  Event_WaitTicks(120);
   // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_16);
-    WaitFrames(3);
+    WaitTicks(3);
   }
   // Open the screen in one frame, then set 60-frame transitions for what
   // follows.

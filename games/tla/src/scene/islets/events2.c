@@ -15,10 +15,10 @@ void GameFlag_Test();
 void ObjectMotion_EnableActionAndResetMotion();
 void ObjectMotion_SetAngleToward();
 void Object_LinkObjectAndSetCallback();
-void WaitFrames();
+void WaitTicks();
 struct ObjectRuntime *Object_GetById();
 void Func_02003ff4();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Func_02003f3c();
 void Func_02003f5c();
 void GameFlag_SetBit();
@@ -58,7 +58,7 @@ L_02008256:
   goto L_02008294;
 L_02008260:
   Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 9);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner,
         0);
   Call1((void (*)())Func_02003f24, (s32)MsgPenPen3);
@@ -197,7 +197,7 @@ void Func_02000440(void) {
   Call3((void (*)())ObjectMotion_Launch, 9, 4, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Call2((void (*)())Func_02003f5c, 9, 0x102);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call1((void (*)())GameFlag_SetBit, 0x214);
 L_020084b6:
   Call3((void (*)())ObjectMotion_SetAngleToward, 8, gPartyState.currentOwner,
@@ -264,10 +264,10 @@ void Func_02000568(void) {
     Call2((void (*)())Object_SetModeById, 10, 4);
     Call4((void (*)())Object_SetPositionAndResetMotion, (s32)object,
           (leader->x + object->x) / 2, leader->y, (leader->z + object->z) / 2);
-    Call1((void (*)())WaitFrames, 20);
+    Call1((void (*)())WaitTicks, 20);
     Object_SetPositionAndResetMotion(object, 0x780000, 0x800000, 0x1380000);
     Call2((void (*)())Object_SetModeById, 10, 5);
-    Call1((void (*)())WaitFrames, 10);
+    Call1((void (*)())WaitTicks, 10);
     Call2((void (*)())Func_02003f3c, gPartyState.currentOwner, 0x4000);
     spawned = (struct ObjectRuntime *)Value4((s32 (*)())Func_02003df4, 0x1e9,
                                              leader->x, 0x980000, leader->z);
@@ -277,7 +277,7 @@ void Func_02000568(void) {
       ObjectDispatch_SetSingleChildFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
-    Call1((void (*)())FieldEvent_WaitFrames, 10);
+    Call1((void (*)())FieldEvent_WaitTicks, 10);
     ((void (*)())Func_02003fc4)();
     Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgOhMyThat + 1,
           1);

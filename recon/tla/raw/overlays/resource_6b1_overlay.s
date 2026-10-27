@@ -61,7 +61,7 @@ Func_02000588:
 	bl ObjectMotion_ArmCallback
 .L_ja_020085f4:
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #0
 .L_ja_020085fc:
 	ldr r3, .L_ja_020086e4
@@ -99,11 +99,11 @@ Func_02000588:
 	lsrs r0, r0, #16
 	adds r0, #3
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #6
 	ble .L_ja_020085fc
 	movs r0, #40
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #198
 	bl Func_02000d64
 	movs r6, #9
@@ -123,7 +123,7 @@ Func_02000588:
 	bl Object_GetById
 	bl Func_02000c7c
 	movs r0, #40
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #9
 .L_ja_0200868e:
 	adds r0, r6, #0
@@ -146,11 +146,11 @@ Func_02000588:
 	cmp r6, #14
 	ble .L_ja_0200868e
 	movs r0, #3
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02000d64
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #154
 	lsls r0, r0, #4
 	adds r0, #255
@@ -240,7 +240,7 @@ Func_02000588:
 	bl ObjectMotion_ArmCallback
 .L_0200860e:
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #0
 .L_02008616:
 	ldr r3, .L_02008704
@@ -278,11 +278,11 @@ Func_02000588:
 	lsrs r0, r0, #16
 	adds r0, #3
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #6
 	ble .L_02008616
 	movs r0, #40
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #198
 	bl Func_02000d64
 	movs r6, #9
@@ -302,7 +302,7 @@ Func_02000588:
 	bl Object_GetById
 	bl Func_02000c7c
 	movs r0, #40
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #9
 .L_020086a8:
 	adds r0, r6, #0
@@ -325,11 +325,11 @@ Func_02000588:
 	cmp r6, #14
 	ble .L_020086a8
 	movs r0, #3
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02000d64
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #154
 	lsls r0, r0, #4
 	adds r0, #255

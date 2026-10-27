@@ -35,7 +35,7 @@ struct TitleFadeTimers {
   s16 back;
 };
 
-s32 Title_WaitFramesOrPress(u32 frames);
+s32 Title_WaitTicksOrPress(u32 frames);
 
 s32 Func_081a68b4(struct TitleScroll *s) {
   struct TitleFadeTimers *timers = Ram_HeapSlots->unk84[10];
@@ -45,7 +45,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
 
   if (s->step > 0) {
     for (i = s->pos; i < s->limit; i += s->step) {
-      if (Title_WaitFramesOrPress(s->frames))
+      if (Title_WaitTicksOrPress(s->frames))
         return 1;
       if (s->scroll > 0) {
         Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
@@ -91,7 +91,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
         }
         s->scroll -= 8;
       }
-      if (Title_WaitFramesOrPress(s->frames))
+      if (Title_WaitTicksOrPress(s->frames))
         return 1;
       step = s->step;
     }

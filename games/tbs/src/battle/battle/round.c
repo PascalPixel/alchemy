@@ -420,7 +420,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
-      WaitFrames(1);
+      WaitTicks(1);
       if (--timeout < 0)
         return -1;
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
@@ -435,7 +435,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       if (status == -1)
         return status;
       while (Serial_GetActiveTransfers()) {
-        WaitFrames(1);
+        WaitTicks(1);
         if (--timeout < 0)
           return -1;
         if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
@@ -465,7 +465,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     while (Serial_GetActiveTransfers()) {
       if (gSerialReceivedSize > LINK_PACKET_BYTES)
         return -1;
-      WaitFrames(1);
+      WaitTicks(1);
       if (--timeout < 0)
         return -1;
       if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
@@ -485,7 +485,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       while (Serial_GetActiveTransfers()) {
         if (gSerialReceivedSize > LINK_ACTIONS_BYTES(result))
           return -1;
-        WaitFrames(1);
+        WaitTicks(1);
         if (--timeout < 0)
           return -1;
         if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {

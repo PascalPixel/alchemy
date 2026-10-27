@@ -25,7 +25,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   v->update = 0;
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(exit);
@@ -48,7 +48,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -8);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
-  Event_WaitFrames(8);
+  Event_WaitTicks(8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, ((column << 19) + PIXELS(8)), 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
 }

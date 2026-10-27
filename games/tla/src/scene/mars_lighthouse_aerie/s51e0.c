@@ -10,7 +10,7 @@ struct MarsLighthouseAerieEventWork {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02005010(void);
@@ -40,11 +40,11 @@ void Func_020051e0(void) {
   Event_WaitTransitionFrames();
   Func_02005030();
   Func_020057c4();
-  WaitFrames(40);
+  WaitTicks(40);
   Func_02005010();
   Func_0200575c_(0x10000, 1);
   Func_0200576c(16);
-  WaitFrames(16);
+  WaitTicks(16);
   {
     struct PartyState *party = &gPartyState;
 

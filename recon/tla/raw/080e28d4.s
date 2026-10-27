@@ -52,7 +52,7 @@ Func_080e28d4:
 	.4byte 0x00001000
 .L_080e2938:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [r7, #24]
 	movs r3, #182
 	lsls r3, r3, #2
@@ -174,7 +174,7 @@ Func_080e28d4:
 	adds r5, r5, r0
 	str r5, [r7, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r8, r3
 	cmp r8, r11

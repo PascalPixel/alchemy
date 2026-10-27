@@ -4,7 +4,7 @@ void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Object_SetModeById(u32 id, s32 mode);
 void Object_SetActionById(u32 id, s32 action);
 void Motion_SetVarCbAndRefresh(u32 id, s32 variant);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_020030c8(s32 id, s32 emote);
 void Func_02003030(s32 x, s32 z, s32 a, s32 b);
 void Func_020030e8(s32 a);
@@ -20,12 +20,12 @@ void Func_02000b3c(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      0);
   leader->angle = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Object_SetModeById(gPartyState.currentOwner, 22);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_020030c8(gPartyState.currentOwner, 0x102);
   Motion_SetVarCbAndRefresh(gPartyState.currentOwner, 2);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   {
     s32 mode = 5;
 
@@ -37,7 +37,7 @@ void Func_02000b3c(void) {
     Object_SetModeById(gPartyState.currentOwner, mode);
   }
   Object_SetActionById(gPartyState.currentOwner, 24);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Func_02003030(0x1300000, 0x3900000, 0, -12);
   Object_GetById(gPartyState.currentOwner)->bounce = 0;
   Func_020030e8(11);

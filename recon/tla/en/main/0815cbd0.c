@@ -73,7 +73,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 extern char ResourceId_SpiderWebSheet;
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // The middle between the first and the last target.
@@ -159,7 +159,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     }
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
     frame++;
   } while (frame != 63);
 

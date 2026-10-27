@@ -71,7 +71,7 @@ void Func_02000af4(void) {
       effect->scaleX = x + 0x666;
     }
     effect->scaleY += 0x666;
-    WaitFrames(1);
+    WaitTicks(1);
     i++;
     if (i < 28)
       goto grow;
@@ -88,7 +88,7 @@ void Func_02000af4(void) {
      * plain, the scheduler builds the step first (differ 2). */
     *(volatile s32 *)&effect->scaleY += 0xfffff99a;
     *(volatile s32 *)&effect->y += 0x8000;
-    WaitFrames(1);
+    WaitTicks(1);
     i++;
     if (i < 28)
       goto shrink;

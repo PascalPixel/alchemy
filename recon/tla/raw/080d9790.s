@@ -74,7 +74,7 @@ Func_080d9790:
 	movs r1, #3
 	bl Object_SetMode
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #20]
 	movs r3, #0
 	str r3, [sp, #16]
@@ -219,7 +219,7 @@ Func_080d9790:
 	ble .L_080d9846
 .L_080d9942:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #16]
 	ldr r2, [sp, #20]
 	adds r3, #1

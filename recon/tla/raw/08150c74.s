@@ -459,7 +459,7 @@ BattleEffect_RunQuake:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r5, [sp, #60]
 	mov r0, r8
 	adds r5, #1

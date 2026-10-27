@@ -51,7 +51,7 @@ struct CaptureResource {
 struct CaptureObject *Object_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
@@ -96,20 +96,20 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x204084);
-  WaitFrames(30);
+  WaitTicks(30);
   djinni->visible = 0;
   Audio_PlayCue(173);
   Motion_SetVarCbAndRefresh(arg, 1);
   Audio_PlayCue(175);
   Motion_SetVarCbAndRefresh(arg, 1);
-  WaitFrames(20);
+  WaitTicks(20);
   Audio_PlayCue(152);
   ObjectMotion_Launch(arg, 3, 14);
   Audio_PlayCue(152);
   ObjectMotion_Launch(arg, 5, 16);
   Audio_PlayCue(152);
   ObjectMotion_Launch(arg, 7, 18);
-  WaitFrames(20);
+  WaitTicks(20);
 
   kind = *djinni->sprite->resource;
   resource = NULL;
@@ -140,7 +140,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   djinni->mode = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y += 0x80000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Func_080090d0(djinni);
   list = copies;
@@ -148,11 +148,11 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     Func_080090d0(*list++);
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
-  WaitFrames(10);
+  WaitTicks(10);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
-  WaitFrames(20);
+  WaitTicks(20);
   Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
-  WaitFrames(20);
+  WaitTicks(20);
 
   position.x = djinni->x;
   position.y = djinni->y;
@@ -167,11 +167,11 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     EffectSlot_SetObjectMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
     remaining--;
-    WaitFrames(1);
+    WaitTicks(1);
     slot += 72;
   } while (remaining >= 0);
 
-  WaitFrames(120);
+  WaitTicks(120);
   {
     s32 nextState;
 
@@ -187,7 +187,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     } while (remaining >= 0);
   }
 
-  WaitFrames(50);
+  WaitTicks(50);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

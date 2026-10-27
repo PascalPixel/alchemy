@@ -545,7 +545,7 @@ BattleEffect_RunHeartbreak:
 	add r2, r8
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r9, r3
 	mov r0, r9

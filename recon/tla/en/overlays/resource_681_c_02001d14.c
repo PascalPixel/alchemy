@@ -14,8 +14,8 @@ void Func_02004fcc(s32 mode);
 void Func_02004e24(s32 x, s32 y, s32 z);
 void Func_02005014(s32 cue);
 void Func_02004ddc(void);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
 void Func_02004ebc(s32 id, s32 x, s32 z);
@@ -44,12 +44,12 @@ void Func_02001d14(void) {
   fadeOut:
     REG_BLDALPHA = level | 0x1000;
     level--;
-    WaitFrames(1);
+    WaitTicks(1);
     if (level != 0)
       goto fadeOut;
   }
   REG_DISPCNT &= ~0x200;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   boulder = OverlayObject_PrepareObject(232 << 17, -0x200000, 174 << 17, 0x143);
   Func_02004ebc(12, 232 << 17, 174 << 17);
   Func_02001c9c();
@@ -59,17 +59,17 @@ sink:
     Func_02001c9c();
   person->z -= 0x10000;
   i++;
-  FieldEvent_WaitFrames(2);
+  FieldEvent_WaitTicks(2);
   if (i <= 19)
     goto sink;
   GameFlag_SetBit(0x9ee);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
   boulder->x = 0;
   boulder->z = 0;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_WaitTicks(1);
   Func_02004dbc(boulder);
   Func_02005014(0x186);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   REG_DISPCNT |= 0xf00;
   REG_BLDALPHA = level | 0x1000;
   REG_BLDCNT = 0x3f42;
@@ -77,7 +77,7 @@ sink:
   fadeIn:
     REG_BLDALPHA = level | 0x1000;
     level++;
-    WaitFrames(1);
+    WaitTicks(1);
     if (level != 8)
       goto fadeIn;
   }

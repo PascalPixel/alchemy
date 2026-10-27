@@ -68,7 +68,7 @@ struct BgScroll {
 };
 
 /// BG0 to BG3's scroll offsets, which the VBlank handler copies to
-/// REG_BG0HOFS to REG_BG3VOFS in the VBlank after WaitFrames sets
+/// REG_BG0HOFS to REG_BG3VOFS in the VBlank after WaitTicks sets
 /// gFrameRenderPending.
 extern struct BgScroll gBgScroll[];
 

@@ -150,7 +150,7 @@ Func_080e4730:
 	bl Animation_ApplyChildValueToFirstFar
 	mov r5, r8
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [r5, #80]
 	movs r1, #0
 	bl Animation_ApplyChildValueToFirstFar
@@ -177,7 +177,7 @@ Func_080e4730:
 	add r0, r10
 	bl Func_080e4510
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #128
 	lsls r3, r3, #3
 	movs r2, #0
@@ -318,7 +318,7 @@ Func_080e4730:
 	cmp r7, #29
 	ble .L_080e49c0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #8]
 	movs r1, #1
 	add r9, r1

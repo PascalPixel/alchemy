@@ -118,7 +118,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BLDALPHA = 0x1000;
-  WaitFrames(1);
+  WaitTicks(1);
   Audio_PlayCue(141);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
@@ -192,7 +192,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
                   gData_081979ae[effect->variant * 3 + 2] * 2);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

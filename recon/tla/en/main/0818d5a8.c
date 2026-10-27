@@ -81,7 +81,7 @@ void EffectPosition_ProjectBattler(s32 id,
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Object_ResetMotion(struct MotionObject *object);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -414,7 +414,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     Func_08158ce0(12, 12);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

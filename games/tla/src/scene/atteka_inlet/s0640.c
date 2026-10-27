@@ -16,7 +16,7 @@ void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02001010(void);
 void Func_02001018(void);
 void Func_02001060(s32 id, s32 x, s32 z);
@@ -40,7 +40,7 @@ void Func_02000640(void) {
     Func_02001108(0);
   } while (0);
   Func_02001070(18, gPartyState.currentOwner);
-  WaitFrames(1);
+  WaitTicks(1);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xa000, 0);
   Call3(ObjectMotion_SetSpeedParameters, 18, 0xcccc, 0x6666);
   ObjectMotion_SetPositionAndReset(18, 532, 248);

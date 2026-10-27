@@ -81,7 +81,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 // A growing column, laid over struct EffectStep in work->particles.
 struct DualColumn {
@@ -321,7 +321,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
       Func_08158ce0(4, 4);
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
       frame++;
     } while (frame != duration);
   }

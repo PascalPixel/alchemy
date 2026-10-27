@@ -51,7 +51,7 @@ void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert);
 void RenderOutput_ClearListFar(s32 window);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, u8 *entries);
 void Func_080ff2e8(s32 window, s32 selected, s32 hasDjinn);
 void Func_080f8a44(s32 x, s32 y);
@@ -127,7 +127,7 @@ s32 Func_080feec0(void) {
         }
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
         RenderOutput_ClearListFar(helpWindow);
-        WaitFrames(1);
+        WaitTicks(1);
         if (pane == 0)
           CharacterMenu_DrawSelectionLabels(helpWindow, selected, entries);
         else
@@ -139,7 +139,7 @@ s32 Func_080feec0(void) {
         Func_080f8a44(24, selected * 8 + 48);
       else
         Func_080f8a44(48, selected * 8 + 80);
-      WaitFrames(1);
+      WaitTicks(1);
       if (gInput.repeat & 0xf0)
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
       if (KEYS_PRESSED & 1) {

@@ -369,7 +369,7 @@ BattleEffect_RunVenus:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, .L_08158068
 	ldr r1, [sp, #16]
 	ldr r3, [sp, #36]

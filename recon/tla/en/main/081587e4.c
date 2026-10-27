@@ -84,7 +84,7 @@ extern const u8 Data_08198528[];
 extern const u8 Data_08198531[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
@@ -293,7 +293,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
       Func_08158ce0(16, 16);
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
 

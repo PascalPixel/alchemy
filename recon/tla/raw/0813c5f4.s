@@ -628,7 +628,7 @@ Func_0813c5f4:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #40]
 	movs r4, #1
 	add r10, r4

@@ -29,7 +29,7 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
     savedNo = &saved;
     *savedNo = group->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
-      WaitFrames(1);
+      WaitTicks(1);
       if (*savedNo != group->lastNo)
         break;
       if (group->entries[0] != NULL && group->entries[0]->script != NULL &&

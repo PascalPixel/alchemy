@@ -720,7 +720,7 @@ Func_0816e65c:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #32]
 	ldr r1, [sp, #24]
 	adds r3, #1

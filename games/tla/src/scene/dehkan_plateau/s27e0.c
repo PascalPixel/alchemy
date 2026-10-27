@@ -4,7 +4,7 @@
 #include "call.h"
 
 void Camera_MoveWithinMapBounds();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Func_020021b4();
 void Func_02002698();
 void Func_02003be0();
@@ -61,7 +61,7 @@ void Func_020027e0(void) {
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2b8, 0x118);
   Call2(ObjectDispatch_SetSingleChildFlags,
         Value1((s32 (*)())Object_GetById, 25), 1);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_SetSpeedParameters, 25, 0x19999, 0xcccc);
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2c8, 0x118);
   Call2(Func_02003ce0, 0x26666, 0x4ccc);
@@ -89,15 +89,15 @@ void Func_020027e0(void) {
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2e8, 136);
   Call2(ObjectDispatch_SetSingleChildFlags,
         Value1((s32 (*)())Object_GetById, 25), 1);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_SetPositionAndReset, 25, 0x2e8, 72);
   Call6(Func_02003be0, 66, 51, 110, 4, 1, 1);
   Call1(Func_02003df8, 229);
   Func_020021b4();
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_Launch, 25, 6, 16);
   Call3(Func_02003c68, 25, 0, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call1(GameFlag_SetBit, 0x870);
   Func_02003c30();
 }

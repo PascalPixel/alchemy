@@ -10,7 +10,7 @@
 struct ContigoObject;
 
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
@@ -41,7 +41,7 @@ void Func_02004074(void);
 void Func_02004204(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_WaitForAnimationChange(s32 actor);
 void Func_0200419c(void);
 void Func_02003e54(struct ContigoObject *object, const void *effect);
@@ -74,7 +74,7 @@ static inline void Contigo_ObjFollow(s32 actor, s32 target) {
 
 static inline void Contigo_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitFrames(frames);
+  FieldEvent_WaitTicks(frames);
 }
 
 static inline void Contigo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {

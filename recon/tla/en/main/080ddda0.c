@@ -72,7 +72,7 @@ void FieldEffect_RunLiftOnTarget(void) {
   anchors[1] = BattleEffect_SpawnItemBreakMode3(position[0] - 0x200000, position[1],
                                             position[2], 0);
 
-  WaitFrames(15);
+  WaitTicks(15);
   for (index = 0; index < 2; index++) {
     void *anchor = anchors[index];
     if (anchor != 0)
@@ -91,7 +91,7 @@ void FieldEffect_RunLiftOnTarget(void) {
       *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
       *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
       ((struct EffectChild *)child)->y += 0x4000;
-      WaitFrames(1);
+      WaitTicks(1);
     } while (((struct EffectChild *)child)->y <= startY + 0x200000);
   }
 

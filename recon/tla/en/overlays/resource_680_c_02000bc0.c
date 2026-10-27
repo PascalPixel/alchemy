@@ -25,8 +25,8 @@ void Func_02000f24(s32 cue);
 void Func_02000e54(s32 x, s32 y, s32 z);
 void Func_02000ebc(s32 id, s32 animation);
 void Func_02000e24(struct ObjectRuntime *object, s32 mode);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 void Func_02000ecc(void);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -77,7 +77,7 @@ dust:
   Func_02000e54(0x20000, 0x20000, 0xe666);
   Func_02000ebc(gPartyState.currentOwner, 0x101);
   Func_02000e24(leader, 40);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Func_02000f24(204);
   leader->motionFlags = 3;
   leader->gravity = 0x547a;
@@ -87,7 +87,7 @@ next:
   i++;
 fall:
   if (i <= 179) {
-    WaitFrames(1);
+    WaitTicks(1);
     if (leader->y > leader->terrainHeight)
       goto next;
   }
@@ -96,16 +96,16 @@ fall:
   Func_02000ebc(gPartyState.currentOwner, 0);
   Func_02000e24(leader, 38);
   Func_02000e54(0x10000, 0x40000, 0x10000);
-  WaitFrames(10);
+  WaitTicks(10);
   Func_02000e54(-1, -1, 0xe666);
-  WaitFrames(20);
+  WaitTicks(20);
   Camera_MoveWithinMapBounds(leader->x, leader->y, leader->z, 1);
   Func_02000ecc();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   ObjectDispatch_SetSingleChildFlags(leader, 1);
   Func_02000e24(leader, 1);
   leader->velocityY = 0x40000;
-  WaitFrames(20);
+  WaitTicks(20);
   gPartyState.renderMode = 0;
   Func_02000e7c();
   GameFlag_SetBit(flag);

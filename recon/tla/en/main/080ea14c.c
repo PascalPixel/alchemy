@@ -60,7 +60,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void EventRuntime_Wait(s32 frames);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
@@ -147,7 +147,7 @@ void Func_080ea14c(s32 targetId) {
     sprite++;
     mote++;
   }
-  WaitFrames(1);
+  WaitTicks(1);
   Audio_PlayCue(139);
   Object_SetMode(target, 2);
   EventRuntime_Wait(60);
@@ -299,7 +299,7 @@ void Func_080ea14c(s32 targetId) {
       nextSpark = (nextSpark + 1) & 31;
     }
     sparks = 0;
-    WaitFrames(1);
+    WaitTicks(1);
     timer++;
   } while (state != 999);
   Object_ResetMotion(owner);

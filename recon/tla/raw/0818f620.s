@@ -956,7 +956,7 @@ Func_0818f620:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #44]
 	ldr r5, [sp, #24]
 	adds r4, #1
@@ -1088,7 +1088,7 @@ Func_0818f620:
 	adds r2, #80
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #206
 	lsls r0, r0, #3
 	adds r3, r7, r0
@@ -1127,7 +1127,7 @@ Func_0818f620:
 .L_0818fee6:
 	strh r1, [r5]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0818feee:
 	add sp, #88
 	pop {r3, r5, r6, r7}

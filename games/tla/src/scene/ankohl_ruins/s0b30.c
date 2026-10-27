@@ -2,7 +2,7 @@
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02002eec(s32 cue);
 
 /// Runs the cue, if any, and sets the object's motion flags to 3 while it
@@ -31,13 +31,13 @@ void Func_02000b30(s32 id, s32 cue) {
    * tla-en. */
   held = flags;
   while (frames != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     frames--;
     if (object->velocityY == 0)
       break;
   }
   if (cue != 0)
     Func_02002eec(cue);
-  WaitFrames(10);
+  WaitTicks(10);
   *held = 0;
 }

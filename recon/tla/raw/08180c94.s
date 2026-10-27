@@ -615,7 +615,7 @@ BattleEffect_RunDaedalusAlt:
 	add r2, r10
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #8]
 	movs r4, #1
 	add r11, r4

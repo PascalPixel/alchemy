@@ -86,7 +86,7 @@ s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 void Camera_WorldToScreen(s32 *position);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Func_080db9a8(struct ObjectRuntime *object, s32 facing);
@@ -196,7 +196,7 @@ loaded:
     particle++;
   }
   Audio_PlayCue(130);
-  WaitFrames(1);
+  WaitTicks(1);
   scale = &work->discScaleX;
   next = 0;
   spawn = 0;
@@ -378,7 +378,7 @@ loaded:
         break;
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
     timer++;
     frame++;
   } while (phase != 999);

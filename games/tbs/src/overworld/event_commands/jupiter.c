@@ -32,12 +32,12 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlaySongFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
-  WaitFrames(20);
+  WaitTicks(20);
 
   // Spin, then leap high.
   Sound_PlaySongFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceSpinAngle;
-  WaitFrames(40);
+  WaitTicks(40);
   Sound_PlaySongFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
@@ -60,18 +60,18 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     effect->scaleY = scale;
     effect->scaleX = scale;
     remainingParticles--;
-    WaitFrames(1);
+    WaitTicks(1);
     effect++;
   } while (remainingParticles >= 0);
 
-  WaitFrames(60);
+  WaitTicks(60);
   Actor_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
-  WaitFrames(20);
+  WaitTicks(20);
   Actor_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
-  WaitFrames(40);
+  WaitTicks(40);
   Sound_PlaySongFar(SE_SCATTER);
-  WaitFrames(100);
+  WaitTicks(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }

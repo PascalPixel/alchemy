@@ -42,7 +42,7 @@ loop:
     goto loop;
 done:
   if (GameFlag_Test(0x109)) {
-    WaitFrames(1);
+    WaitTicks(1);
     leader->y = leader->terrainHeight =
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;

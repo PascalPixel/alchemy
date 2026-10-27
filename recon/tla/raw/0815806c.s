@@ -423,7 +423,7 @@ BattleEffect_RunMars:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #1
 	add r8, r1
 	movs r0, #8

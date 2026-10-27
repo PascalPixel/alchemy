@@ -11,7 +11,7 @@ extern s32 gData_0200567c;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02000038(const void *data);
 void Func_02001804(void);
@@ -53,7 +53,7 @@ void Func_0200390c(void) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
         Actor_SetPosition(gData_02004420, 248 << 16, 0, 176 << 15);
-        WaitFrames(1);
+        WaitTicks(1);
       }
     }
   }

@@ -4,7 +4,7 @@
 void Func_0200128c();
 struct FieldActor *Object_GetById(s32 id);
 void Func_02002924(s32 cue);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 
 struct SpriteFrames {
   u8 unk00[5];
@@ -27,17 +27,17 @@ void Func_020012dc(s32 id) {
   Func_0200128c(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
                 15);
   Func_02002924(151);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
   Func_0200128c(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
                 15);
   Func_02002924(151);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
   Func_0200128c(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
                 15);
   Func_02002924(151);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
   Func_0200128c(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
                 15);
   Func_02002924(151);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
 }

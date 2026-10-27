@@ -47,7 +47,7 @@ Func_08104540:
 	ldr r0, [r3, #52]
 	bl RenderOutput_ClearListFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, sp
 	adds r0, #72
 	movs r7, #1
@@ -406,7 +406,7 @@ Func_08104540:
 	str r0, [sp, #60]
 .L_08104880:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_08104690
 .L_08104888:
 	movs r1, #144
@@ -422,7 +422,7 @@ Func_08104540:
 	movs r1, #1
 	bl UiWindow_CloseIfOpen
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #5
 	str r3, [sp, #0]
 	movs r3, #2
@@ -451,7 +451,7 @@ Func_08104540:
 	movs r6, #0
 	strb r6, [r3, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	add sp, #88
 	pop {r3, r5, r6, r7}

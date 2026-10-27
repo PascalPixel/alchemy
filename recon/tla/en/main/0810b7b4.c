@@ -46,7 +46,7 @@ void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_080f8060(void *window, s32 a, s32 b);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
@@ -90,13 +90,13 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
-        WaitFrames(1);
+        WaitTicks(1);
       }
       Func_0810928c(listWindow, memberIndex, 0);
       Shop_DrawItemCount(shop->itemWindow, unitId);
       redraw = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (gInput.pressed & 1) {
       if (Inventory_CountFar(unitId) == 0) {
         Audio_PlayCue(113);
@@ -129,7 +129,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   UiWork_FinalizeFar(iconWindow, 2);
   UiWork_FinalizeFar(listWindow, 2);
   UiWork_FinalizeFar(shop->itemWindow, 2);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_0810824c();
   return result;
 }

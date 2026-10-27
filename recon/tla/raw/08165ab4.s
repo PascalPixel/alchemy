@@ -124,7 +124,7 @@ BattleEffect_RunRamses:
 	adds r2, #6
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #0
 	ldr r1, .L_08165be4
 	movs r0, #1
@@ -853,7 +853,7 @@ BattleEffect_RunRamses:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #52]
 	movs r3, #160
 	adds r2, #1

@@ -81,10 +81,10 @@ void Func_02000390(s32 actor) {
       Engine_EventSetMessage(msg);
       UiText_OpenMessageAtObject(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-        FieldEvent_WaitFrames(10);
+        FieldEvent_WaitTicks(10);
         Engine_EventSetMessage(msg + 1);
       } else {
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         Engine_EventSetMessage(msg + 2);
       }
       Engine_EventShowMessage(actor, 0);
@@ -100,10 +100,10 @@ void Func_02000390(s32 actor) {
     Engine_EventSetMessage(msg);
     UiText_OpenMessageAtObject(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-      FieldEvent_WaitFrames(10);
+      FieldEvent_WaitTicks(10);
       Engine_EventSetMessage(msg + 1);
     } else {
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Engine_EventSetMessage(msg + 2);
     }
     Engine_EventShowMessage(actor, 0);
@@ -189,10 +189,10 @@ void Func_02000614(void) {
   Engine_EventSetMessage(msg);
   UiText_OpenMessageAtObject(12, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Engine_EventSetMessage(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Engine_EventSetMessage(msg + 2);
   }
   Engine_EventShowMessage(12, 0);
@@ -208,10 +208,10 @@ void Func_0200066c(void) {
   Engine_EventSetMessage(msg);
   UiText_OpenMessageAtObject(14, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000dd4(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Engine_EventSetMessage(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Engine_EventSetMessage(msg + 2);
   }
   Engine_EventShowMessage(14, 0);
@@ -223,9 +223,9 @@ void Func_020006c4(void) {
   Engine_EventResolvePendingActions(0);
   Engine_EventSetMessage((s32)MsgDailaInteriorsWatchingPractice);
   Engine_EventShowMessage(26, 0);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Object_SetModeById(26, 3);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Engine_EventShowMessage(26, 0);
   Engine_EventEnd();
 }

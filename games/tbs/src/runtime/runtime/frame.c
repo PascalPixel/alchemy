@@ -82,25 +82,26 @@ enum {
 /// Frames the debug CPU-load display holds a peak.
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
-/// The game's frame loop: runs `frames` frames and returns. Each frame runs the
+/// The game's tick loop: runs `ticks` ticks and returns. Each tick runs the
 /// TASK_PASS_FRAME tasks, builds the OAM list, measures CPU load for the
 /// debug display, counts idle time for sleep, steps the debug pause, waits for
-/// VBlank and then reads the keys. Holding L and R for three seconds, or three
-/// idle minutes with idle sleep on, puts the system into Stop until L and R are
-/// pressed again. A soft reset requested by the keypad interrupt happens here.
-/// Called everywhere the game waits: every scene, menu and battle that lets
-/// time pass goes through it. Events wait with Event_WaitFrames instead, which
-/// debug fast-forward can skip.
+/// the next frame's VBlank and then reads the keys; a tick whose work overruns
+/// a frame lasts two frames or more, the game's slowdown. Holding L and R for
+/// three seconds, or three idle minutes with idle sleep on, puts the system
+/// into Stop until L and R are pressed again. A soft reset requested by the
+/// keypad interrupt happens here. Called everywhere the game waits: every
+/// scene, menu and battle that lets time pass goes through it. Events wait with
+/// Event_WaitTicks instead, which debug fast-forward can skip.
 ///
-/// Code may call WaitFrames deep inside its own call chains, so a caller
+/// Code may call WaitTicks deep inside its own call chains, so a caller
 /// whose stack has grown below the frame-wait stack top has its stack copied
 /// aside into gSavedStack first, and the loop runs at that top; the copy is
-/// put back on return. Each frame it allocates and releases the frame scratch
+/// put back on return. Each tick it allocates and releases the frame scratch
 /// heap slot, sets gFrameRenderPending, and counts up gFrameCount and
 /// gPlayTimeFrames.
-void WaitFrames(s32 frames) {
+void WaitTicks(s32 ticks) {
   u8 *sp;
-  u32 frameIndex;
+  u32 tickIndex;
   u8 *base;
   u32 line;
   s32 delayFrame;
@@ -120,7 +121,7 @@ void WaitFrames(s32 frames) {
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
   }
-  for (frameIndex = 0; frameIndex < frames; frameIndex++) {
+  for (tickIndex = 0; tickIndex < ticks; tickIndex++) {
     // Run the main-loop tasks and build this frame's sprites
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_FRAME);
@@ -130,7 +131,7 @@ void WaitFrames(s32 frames) {
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the
       // last VBlank, plus 256 for each frame it overran; the peak is held
-      // for 30 frames
+      // for 30 ticks
       line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
@@ -146,7 +147,7 @@ void WaitFrames(s32 frames) {
         gCpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
       }
     }
-    // Count idle frames and the L+R hold that request sleep
+    // Count idle ticks and the L+R hold that request sleep
     if (gSleepDisabled == 0) {
       if (gIdleSleepEnabled) {
         if (gKeysHeld)
@@ -291,7 +292,7 @@ void WaitFrames(s32 frames) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, called by WaitFrames. When the repeat timer
+/// Runs once a frame after VBlank, called by WaitTicks. When the repeat timer
 /// has run out, the held keys repeat into gKeysRepeat. gKeysRepeatDirected is
 /// the same keys with at most one D-pad direction: of several held directions
 /// it keeps the one added last (gKeysDirection remembers it), and with all

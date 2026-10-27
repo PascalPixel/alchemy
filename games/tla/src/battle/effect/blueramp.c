@@ -71,7 +71,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
       row++;
     }
     CopyWords_((void *)0x06008000, PIXEL_BUFFER, 0x7800);
-    WaitFrames(1);
+    WaitTicks(1);
     if (end > 248)
       break;
     i++;
@@ -99,5 +99,5 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
     } while (i != 0x7800);
   }
   CopyWords_((void *)0x06008000, PIXEL_BUFFER, 0x7800);
-  WaitFrames(1);
+  WaitTicks(1);
 }

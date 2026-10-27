@@ -23,7 +23,7 @@ void Func_020011c0(void) {
   /* FAKEMATCH: called as value-returning, the call sets its constants before
    * the owner as the native does (differ 2 as the void call). */
   ((s32 (*)(s32, s32, s32))Func_02002e94)(gPartyState.currentOwner, 256, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Func_02002eec(204);
   Func_02000b30(gPartyState.currentOwner, 188);

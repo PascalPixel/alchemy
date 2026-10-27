@@ -6,8 +6,8 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test();
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002bd4(void);
@@ -30,7 +30,7 @@ void Func_02000a74(void) {
     return;
   Camera_MoveWithinMapBounds(148 << 18, -1, 248 << 16, 1);
   Func_02002bd4();
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   if (Value1(GameFlag_Test, 2576))
     Func_020009f8(18, 35, 15, -16, 0);
   if (Value1(GameFlag_Test, 2577))
@@ -50,12 +50,12 @@ void Func_02000a74(void) {
   GameFlag_ClearBit(2580);
   GameFlag_ClearBit(2581);
   Func_020002f0();
-  WaitFrames(2);
+  WaitTicks(2);
   object = Object_GetById(18);
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
       i++;
       if (i > 29)
         break;
@@ -66,14 +66,14 @@ void Func_02000a74(void) {
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
       i++;
       if (i > 29)
         break;
     } while (object->y > object->terrainHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02002bd4();
 }

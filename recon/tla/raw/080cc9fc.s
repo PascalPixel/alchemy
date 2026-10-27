@@ -113,7 +113,7 @@ Func_080cc9fc:
 	cmp r2, #15
 	bls .L_080cca98
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_080ccc3c
 	movs r4, #31
 .L_080ccad6:
@@ -346,7 +346,7 @@ Func_080cc9fc:
 	movs r0, #1
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #4]
 	movs r3, #8
 	ldr r2, [r1]
@@ -364,7 +364,7 @@ Func_080cc9fc:
 	movs r0, #1
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #4]
 	ldr r4, [sp, #0]
 	b .L_080ccad6

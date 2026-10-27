@@ -18,8 +18,8 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 id);
 void Func_02001e70(u32 id, s32 angle);
 void Func_02001f10(s32 cue);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(u32 id);
 void GameFlag_SetBit(s32 flag);
 
@@ -49,15 +49,15 @@ climb:
   }
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;
-  WaitFrames(1);
+  WaitTicks(1);
   i++;
   if (i <= 351)
     goto climb;
   ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
   Func_02001f10(298);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_02001f10(125);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Object_GetById(gPartyState.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);

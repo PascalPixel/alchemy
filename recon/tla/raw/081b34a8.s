@@ -1147,7 +1147,7 @@ ReelGame_Run:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #20]
 	movs r1, #1
 	ldr r3, [r2]
@@ -1178,7 +1178,7 @@ ReelGame_Run:
 	adds r3, r6, #0
 	bl Graphics_ScaleRgb555
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #1
 	add r8, r0
 	mov r1, r8

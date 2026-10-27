@@ -103,7 +103,7 @@ void UiWindow_DrawThreeTileColumn(struct PsynergyMenuWindow *window, s32 x,
 void Runtime_PushSlotEntry(void *sprite, s32 depth);
 void Audio_PlayCue(s32 cue);
 void Input_ResetKeyRepeat(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void UiWork_Finalize(void *window, s32 mode);
 void Resource_ResetEntry(s32 slot);
 
@@ -331,15 +331,15 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         }
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   UiWork_Finalize(messageWindow, 1);
   UiWork_Finalize(window, 1);
-  WaitFrames(1);
+  WaitTicks(1);
   for (i = 0; i < 5; i++)
     Resource_ResetEntry(iconSlots[i]);
   Resource_ResetEntry(cursorHandle);
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

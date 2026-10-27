@@ -14,5 +14,5 @@ void EffectRuntime_StopCurrentObject(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
   BattleEffect_SetObjectTickMode(work->mainObject, 0);
-  WaitFrames(1);
+  WaitTicks(1);
 }

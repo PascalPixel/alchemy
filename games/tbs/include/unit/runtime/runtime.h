@@ -32,7 +32,7 @@ void Overlay_Load(u32 index, void *destination);
 void Irq_Ignore(void);
 void System_InstallIwramAndIrqs(void);
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Input_ResetKeyRepeat(void);
 void Input_UpdateKeyRepeatAndDirection(void);
 void System_VBlankHandler(void);

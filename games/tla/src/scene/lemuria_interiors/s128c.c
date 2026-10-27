@@ -15,7 +15,7 @@ void Func_020027f4(struct FieldActor *object, s32 mode);
 void Func_020027fc(struct FieldActor *object, const void *script);
 struct FieldActor *Object_GetById(s32 id);
 void Func_02002924(s32 cue);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 
 struct SpriteFrames {
   u8 unk00[5];

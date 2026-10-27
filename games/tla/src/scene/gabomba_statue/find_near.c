@@ -35,7 +35,7 @@ struct Orbiter *Object_GetById(s32 id);
 s32 Func_02005834(s32 value);
 void Func_020020f0(s32 value);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
@@ -60,7 +60,7 @@ void Func_02000550(void) {
     i = 0;
   loop:
     actor->phase += gData_02006b38[i] * direction;
-    WaitFrames(1);
+    WaitTicks(1);
     if (++i <= 24)
       goto loop;
   }

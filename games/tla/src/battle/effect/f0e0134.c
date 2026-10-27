@@ -62,20 +62,20 @@ void Func_080e0134(void) {
     scale = BattleEffect_Interpolate(0x10000, 0x4000, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
     if (step >= steps)
       break;
   }
 
-  WaitFrames(5);
+  WaitTicks(5);
   Object_SetMode(obj, 1);
   Audio_PlayCue(108);
-  WaitFrames(10);
+  WaitTicks(10);
   Audio_PlayCue(108);
-  WaitFrames(10);
+  WaitTicks(10);
   Audio_PlayCue(108);
-  WaitFrames(10);
+  WaitTicks(10);
   Audio_PlayCue(109);
 
   slot = &((struct FallbackScene *)scene)->slots[0];
@@ -94,9 +94,9 @@ void Func_080e0134(void) {
   pos.x = obj->x;
   pos.y = obj->y + (8 << 16);
   pos.z = obj->z;
-  WaitFrames(8);
+  WaitTicks(8);
   Object_Destroy(obj);
-  WaitFrames(4);
-  WaitFrames(30);
+  WaitTicks(4);
+  WaitTicks(30);
   BattleEffect_PrepareBufferInterpolation();
 }

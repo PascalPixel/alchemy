@@ -10,7 +10,7 @@
        ->v)
 
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetAngleToward(s32 id, s32 other, s32 flags);
 void Func_02004464(void);
@@ -31,7 +31,7 @@ void Func_02001770(void) {
       asm volatile("" : "+l"(y));
       Func_020044d4(20, 0x1980000, 0x910000, y << 7);
     }
-    WaitFrames(1);
+    WaitTicks(1);
     ObjectMotion_Launch(20, 4, 20);
     ObjectMotion_SetAngleToward(20, gPartyState.currentOwner, 0);
     FIELD_AT(work, u16, 362) = 200;

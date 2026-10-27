@@ -8,7 +8,7 @@ void BattleEffect_WaitThenSetField18To4(void *arg0) {
   unsigned int offset;
   BattleMotion_ApproachTargetFar(
       *((s32 *)(arg0 + 8)), *((s16 *)(((u8 *)arg0) + 0x24)), 0x18, 0xC3333);
-  WaitFrames(0x1D);
+  WaitTicks(0x1D);
   offset = 0x18;
   *((s32 *)(((u8 *)arg0) + offset)) = 4;
   BattleEffect_RunSparkGroups(arg0, 2);

@@ -130,7 +130,7 @@ s32 Func_020002d8(void) {
   Func_02001ab4(0);
   Func_02001a64((s32)MsgIfYouWantToParticipate);
   UiText_OpenMessageAtObject(8, 0);
-  WaitFrames(5);
+  WaitTicks(5);
   GameFlag_SetBit(0x200);
   Func_02001a1c();
 }

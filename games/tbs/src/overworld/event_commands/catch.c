@@ -74,17 +74,17 @@ void FieldPsynergy_Catch(void) {
     scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
   } while (step < steps);
-  WaitFrames(10);
+  WaitTicks(10);
   Actor_SelectAnimationFar(object, 6);
-  WaitFrames(15);
+  WaitTicks(15);
 
   // Press down 2 pixels a frame for 10 frames.
   for (i = 0; i < 10; i++) {
     object->y.fixed -= 2 << 16;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Actor_SelectAnimationFar(object, 5);
   Sound_PlaySongFar(SE_WATER);
@@ -95,14 +95,14 @@ void FieldPsynergy_Catch(void) {
   if (child != 0)
     Actor_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
                                        -(9 << 16));
-  WaitFrames(20);
+  WaitTicks(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
     object->y.fixed += 0x18000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
-  WaitFrames(10);
+  WaitTicks(10);
   Sound_PlaySongFar(SE_MENU_ERROR);
 
   // Shrink back to the caster.
@@ -116,7 +116,7 @@ void FieldPsynergy_Catch(void) {
     scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
   } while (step < steps);
   Actor_ReleaseFar(object);

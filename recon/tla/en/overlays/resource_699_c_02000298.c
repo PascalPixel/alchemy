@@ -25,8 +25,8 @@ struct CellTarget {
 };
 
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,

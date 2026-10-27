@@ -6,7 +6,7 @@ void Func_0200063c(struct ObjectRuntime *object) {
 
   count = 60;
   while (count != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     busy = object->velocityY;
     count--;
     if (busy == 0) {

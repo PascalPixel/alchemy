@@ -89,9 +89,9 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   messageId = Shop_MessageByMode(messageId);
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 0x10) | 0x22);
   while (TextPrinter_AllFinishedFar() == 0) {
-    WaitFrames(1U);
+    WaitTicks(1U);
   }
-  WaitFrames(1U);
+  WaitTicks(1U);
 }
 
 /// As Sanctum_ShowKeeperMessage, hiding the hand cursor while the line
@@ -112,8 +112,8 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   TextPrinter_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (TextPrinter_AllFinishedFar() == 0)
-    WaitFrames(1);
-  WaitFrames(1);
+    WaitTicks(1);
+  WaitTicks(1);
   shop->cursor.anchor->motion = savedCursorMode;
 }
 
@@ -259,7 +259,7 @@ s32 Sanctum_RunPartyService(void) {
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
-      WaitFrames(1);
+      WaitTicks(1);
       donation = Sanctum_ServicePrice(unitId, serviceKind);
       if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
         Sound_PlaySongFar(SE_MENU_CANCEL);
@@ -310,14 +310,14 @@ s32 Sanctum_RunPartyService(void) {
       redraw = 1;
       memberIndex += 1;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     continue;
   }
 
   Menu_ReleaseEntryActorsFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);
-  WaitFrames(1);
+  WaitTicks(1);
   return 0;
 }
 
@@ -490,7 +490,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Sound_PlaySongFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 0);
-  WaitFrames(20);
+  WaitTicks(20);
   callbackPriority = TASK_PASS_FRAME;
   Task_Add(Shop_ResetEffects, callbackPriority);
 
@@ -508,7 +508,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     Sprite_SetAnimColorModesFar(effect->actor, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
-    WaitFrames(3);
+    WaitTicks(3);
     if (effectIndex == 5) {
       shop->burstMember = member;
     }
@@ -529,11 +529,11 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     }
   }
 
-  WaitFrames(20);
+  WaitTicks(20);
   Sound_PlaySongFar(SE_RECOVERY);
   shop->burstMember = -1;
   Sprite_SetAnimColorModesFar(shop->partyMemberIcons[member], 0);
-  WaitFrames(20);
+  WaitTicks(20);
 
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
@@ -554,6 +554,6 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Remove(Shop_ResetEffects);
   Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
-  WaitFrames(30);
+  WaitTicks(30);
   shop->cursor.anchor->motion = savedCursorMode;
 }

@@ -218,7 +218,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                   Data_081982f7[effect->variant][TIMING_SHAKE]);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

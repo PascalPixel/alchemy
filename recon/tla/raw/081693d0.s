@@ -167,7 +167,7 @@ BattleEffect_RunNeptune:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_081695bc
 	movs r0, #1
 	movs r2, #0
@@ -1335,7 +1335,7 @@ BattleEffect_RunNeptune:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r8
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #244
 	beq .L_08169e2e
 	cmp r6, #16
@@ -1820,7 +1820,7 @@ BattleEffect_RunNeptune:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r8
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #144
 	beq .L_0816a1c6
 	b .L_08169f54

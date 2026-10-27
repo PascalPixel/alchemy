@@ -15,7 +15,7 @@ extern s32 gIwramHi_Data1;
 
 void Sound_LoadPresetParameters(s32 preset);
 void AudioCommand_Play(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 struct AudioTestCues {
   s32 cue[3];
@@ -94,6 +94,6 @@ void Func_081c1014(void) {
     if (gInput.repeat & KEY_SELECT)
       AudioCommand_Play(390);
 
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

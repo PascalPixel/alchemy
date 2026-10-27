@@ -245,7 +245,7 @@ void SoundTest_Run(void) {
     if (gKeysRepeat & KEY_SELECT)
       Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }
 
@@ -364,7 +364,7 @@ void Sound_WaitForSong(void) {
   do {
     if (gBgmRestoreDelay == 0)
       break;
-    WaitFrames(1);
+    WaitTicks(1);
     framesWaited++;
   } while (framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
 }

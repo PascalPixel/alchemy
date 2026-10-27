@@ -199,7 +199,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     Func_08158ce0(effect->variant * 2 + 4, effect->variant * 4 + 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

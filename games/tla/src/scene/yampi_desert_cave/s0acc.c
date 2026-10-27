@@ -10,7 +10,7 @@ struct YampiDesertCaveEventWork {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020008fc(void);
@@ -41,11 +41,11 @@ void Func_02000acc(void) {
   Event_WaitTransitionFrames();
   Func_0200091c();
   Func_02001950();
-  WaitFrames(40);
+  WaitTicks(40);
   Func_020008fc();
   Func_020018f0_(0x10000, 1);
   Func_02001900(16);
-  WaitFrames(16);
+  WaitTicks(16);
   {
     struct PartyState *party = &gPartyState;
 

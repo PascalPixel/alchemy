@@ -16,14 +16,14 @@ void Func_020026cc(void) {
   Func_02005370(0);
   Camera_MoveWithinMapBounds(0x1480000, -1, 0xae0000, 1);
   Func_020052e8();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x19999, 0xcccc);
   ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
   Func_020053d8(146);
   Object_SetModeById(11, 2);
   Object_GetById(11)->velocityY = 0x40000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Func_020053d8(146);
   Object_SetModeById(12, 2);
   Object_SetModeById(13, 2);
@@ -31,7 +31,7 @@ void Func_020026cc(void) {
   Object_GetById(13)->velocityY = 0x60000;
   ObjectMotion_ResetAndSetPosition(12, 300, 164);
   ObjectMotion_SetPositionAndCommit(13, 356, 164);
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   /* FAKEMATCH: the loop note ends the scheduling block before the battle rule
    * is set: without it the native order of the last position call's arguments
    * (r1 shifted before r2 is loaded) is one reordered pair. */

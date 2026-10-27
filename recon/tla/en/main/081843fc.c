@@ -77,7 +77,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -1011,7 +1011,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       Func_0818caa8(gMapCellBuffer, 62, y, r);
     }
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
     spinA += 12192;
     spinB += 1096;
     frame++;
@@ -1321,7 +1321,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = work->savedBg1Y;
       }
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
       phase += 3;
       frame++;
     } while (frame != 160 && !(gInput.repeat & 3));
@@ -1330,7 +1330,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   slideStep = 0;
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   work->transferPending = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   gBgScroll[1].x = savedScroll;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   Func_08164b2c(-16, -16, -4);
@@ -1586,7 +1586,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     ObjectGroup_TickMemberTimers();
     frame++;
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   } while (frame != 104);
   transition[4] = 0;
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

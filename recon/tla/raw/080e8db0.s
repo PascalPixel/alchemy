@@ -128,7 +128,7 @@ Func_080e8db0:
 	bl Func_080e89e4
 	bl ViewMove_SaveNearbySprites
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	negs r2, r2
 	str r2, [sp, #32]
@@ -319,7 +319,7 @@ Func_080e8db0:
 	str r2, [sp, #32]
 .L_080e901a:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #20]
 	movs r2, #186
 	lsls r2, r2, #2

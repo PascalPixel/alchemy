@@ -38,10 +38,10 @@ Func_020007dc:
 	.thumb_func
 Func_020007e4:
 	overlay_veneer Func_08038210
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_020007f4
 	.thumb_func
 Func_020007f4:

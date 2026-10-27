@@ -153,7 +153,7 @@ extern u8 gData_08197498[];
 extern const u8 Data_0819861b[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -275,11 +275,11 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   if (variant == 12) {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8,
                                    0x60000);
-    WaitFrames(7);
+    WaitTicks(7);
   } else {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
   }
-  WaitFrames(1);
+  WaitTicks(1);
 
   EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
@@ -478,7 +478,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Teardown.

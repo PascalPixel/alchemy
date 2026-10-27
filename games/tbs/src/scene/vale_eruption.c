@@ -155,7 +155,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // A lightning flash, then the screen opens on the villagers below.
   Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
   Weather_LastLightning();
-  WaitFrames(60);
+  WaitTicks(60);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
@@ -167,11 +167,11 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // The camera pans up to the villagers as the ground shakes.
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Weather_LastLightning();
   Event_PlaySong(SE_CRASH);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Weather_LastLightning();
   Event_PlaySong(SE_CRASH);
   FieldCamera_WaitForArrival();
@@ -180,19 +180,19 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_PlaySong(SE_CRASH);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
 
   // "I thought Mt. Aleph was inactive..." The villagers worry about Isaac and
   // Garet, last seen going to Kraden's house.
   Event_SetMessageId(MsgValeMtAlephWasInactive);
   Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   // The mayor: "Oooh, my grandson!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
@@ -200,7 +200,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       0);
   Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
@@ -208,22 +208,22 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_RunRepeatedMotion(ACTOR_GUARD, 1);
   Event_ShowMessage(ACTOR_GUARD, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GUARD, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_DORA, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_DORA, 0);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
   Event_PlaySong(SE_CRASH);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_LinkPair(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
   Actor_LinkPair(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
@@ -243,7 +243,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(258));
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 120, 320);
@@ -251,38 +251,38 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessage(ACTOR_GARET, 0);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
 
   // "What should we do, Isaac? Should we go back up?" Either way, the two stay.
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_MoveToAndWait(ACTOR_GARET, 103, 320);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   } else {
-    Event_WaitFrames(60);
+    Event_WaitTicks(60);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 340);
@@ -295,7 +295,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST, 0);
@@ -305,17 +305,17 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessage(ACTOR_DORA, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   // The mayor: "Come over here, both of you!"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
@@ -323,11 +323,11 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RefreshSelectorById(ACTOR_GARET);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_RefreshSelectorById(ACTOR_GARET);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -335,7 +335,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_SetScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -347,131 +347,131 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
   Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
 
   // "Where have you been?" "What happened?"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   // Dora notices who is missing.
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_WaitFrames(10);
+  Event_WaitTicks(10);
 
   // "Weren't Jenna and Kraden with you?" Yes: "They were taken away? By
   // whom?"; no: "What do you mean, they were taken away?"
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     // The mayor answers either reply; the other reply is skipped.
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_SkipMessages(1);
   } else {
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
-    Event_WaitFrames(50);
+    Event_WaitTicks(50);
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Event_SkipMessages(1);
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   }
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   // Garet starts to tell, and both shake their heads again.
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceActor(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_SetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   // The mayor agrees with a nod; the Great Healer sends them inside.
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST + FACING_STEP,
                       0);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
-  Event_WaitFrames(50);
+  Event_WaitTicks(50);
   Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
 
   // The sanctum's door opens and everyone files inside.
   Actor_WalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
   Event_PlaySong(SE_THUMP);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_GARETS_GRANDFATHER, 255, 390);
   Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_WalkTo(ACTOR_DORA, 255, 390);
   actionScript = gValeEruption_EnterSanctum;
   Actor_SetScript(ACTOR_PARTY_LEADER, actionScript);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   Actor_SetScript(ACTOR_GARET, actionScript);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_WaitFrames(40);
+  Event_WaitTicks(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
   Event_PlaySong(SE_CRASH);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
   work = gFieldWork;
   work->transition = 0;
   work->transitionFrames = 64;

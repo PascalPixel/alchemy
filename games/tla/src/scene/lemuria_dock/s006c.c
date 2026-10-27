@@ -45,12 +45,12 @@ void Func_02000158(void) {
   Func_020004dc((s32)MsgAreWeSetting);
   UiText_OpenMessageAtObject(8, 0);
   if (Event_AskYesNoWithActorAnimation(Func_0200053c(), 0) == 0) {
-    FieldEvent_WaitFrames(15);
+    FieldEvent_WaitTicks(15);
     Func_020004ec(8, 0);
-    FieldEvent_WaitFrames(5);
+    FieldEvent_WaitTicks(5);
     ObjectMotion_Launch(8, 4, 0);
     Func_020004f4(8, 0);
-    FieldEvent_WaitFrames(5);
+    FieldEvent_WaitTicks(5);
     party = &gPartyState;
     z = Object_GetById(party->currentOwner)->z;
     /* FAKEMATCH: ⚓️ loads the leader's z before it builds the limit */
@@ -65,7 +65,7 @@ void Func_02000158(void) {
     /* FAKEMATCH: ⚓️ builds the id before the zero */
     asm volatile("" : "+l"(id));
     Func_020004f4(id, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     {
       struct PartyState *state = &gPartyState;
 
@@ -77,7 +77,7 @@ void Func_02000158(void) {
     }
     Func_0200050c(1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     SCENE_WORK->unk1c4++;
     Func_020004ec(8, 0);
   }
@@ -98,7 +98,7 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else
     ObjectMotion_OffsetPositionAndResetMotion_(id, 0, -8);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Func_0200050c(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -55,11 +55,11 @@ extern char SceneId_Ov6ACRoom4;
 extern char SceneId_Ov6ACRoom5;
 extern char SceneId_Ov6ACRoom6;
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);

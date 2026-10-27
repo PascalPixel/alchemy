@@ -53,6 +53,6 @@ next2:
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -4);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_WaitTicks(4);
   Func_02002d70(work->exit);
 }

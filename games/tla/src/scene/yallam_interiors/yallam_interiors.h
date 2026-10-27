@@ -61,11 +61,11 @@ struct YallamInteriorsEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 struct YallamInteriorsObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct YallamInteriorsObject *object,
                                       s32 x, s32 y, s32 z);
@@ -149,12 +149,12 @@ static inline void YallamInteriors_ObjWalk(s32 actor, s32 x, s32 z) {
 
 static inline void YallamInteriors_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_WaitFrames(frames);
+  FieldEvent_WaitTicks(frames);
 }
 
-static inline void YallamInteriors_WaitFrames(s32 frames) {
+static inline void YallamInteriors_WaitTicks(s32 ticks) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitFrames(frames);
+  WaitTicks(ticks);
 }
 
 #define YALLAM_INTERIORS_TASK_ADD(callback, priority)                          \

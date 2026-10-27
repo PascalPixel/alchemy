@@ -13,7 +13,7 @@
 s32 Func_02000538(u16 *memberIds);
 s32 Func_0200192c(void *data, s32 size);
 s32 Func_0200193c(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 s32 Func_02000578(void) {
   s32 result;
@@ -56,7 +56,7 @@ clear:
     }
     goto testMember;
   waitMember:
-    WaitFrames(1);
+    WaitTicks(1);
     if (--timeout < 0 || (gLinkStatus & 3) != 3) {
       if (++tries > 24) {
         result = -1;
@@ -66,14 +66,14 @@ clear:
   testMember:
     if (Func_0200193c() != 0)
       goto waitMember;
-    WaitFrames(2);
+    WaitTicks(2);
     i++;
     if (i < memberCount)
       goto send;
   }
   goto next;
 wait:
-  WaitFrames(1);
+  WaitTicks(1);
   if (--timeout < 0 || (gLinkStatus & 3) != 3) {
     if (++tries > 24) {
       result = -1;
@@ -83,7 +83,7 @@ wait:
 test:
   if (Func_0200193c() != 0)
     goto wait;
-  WaitFrames(2);
+  WaitTicks(2);
   i++;
 next:
   if (i <= 2) {
@@ -119,7 +119,7 @@ next:
     }
     goto testOffers;
   waitOffers:
-    WaitFrames(1);
+    WaitTicks(1);
     if (--timeout < 0 || (gLinkStatus & 3) != 3) {
       if (++tries > 24) {
         result = -1;
@@ -129,8 +129,8 @@ next:
   testOffers:
     if (Func_0200193c() != 0)
       goto waitOffers;
-    WaitFrames(1);
-    WaitFrames(2);
+    WaitTicks(1);
+    WaitTicks(2);
   }
 done:
   MemFree(heap);

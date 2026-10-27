@@ -21,7 +21,7 @@ void Func_02000e2c(void) {
         leader = Object_GetById(gPartyState.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         Func_02002de0(183);
         LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, column, row);
@@ -31,11 +31,11 @@ void Func_02000e2c(void) {
           ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
-          WaitFrames(1);
+          WaitTicks(1);
         }
         Object_SetModeById(8, 3);
         LemurianShip_ObjPlace(10, 0x2380000, 0x980000);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
           ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
@@ -55,7 +55,7 @@ void Func_02000e2c(void) {
         leader = Object_GetById(gPartyState.currentOwner);
         Func_02002c68();
         Func_02002da8(0);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         Func_02002de0(183);
         LemurianShip_MapCopy(29, 68, 29, 69, 1, 1);
         LemurianShip_BlendStart(35, 0, 1, 1, column, row);
@@ -65,11 +65,11 @@ void Func_02000e2c(void) {
           ObjectMotion_SetActionVariant(gPartyState.currentOwner, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
-          WaitFrames(1);
+          WaitTicks(1);
         }
         Object_SetModeById(9, 3);
         LemurianShip_ObjPlace(11, 0x1d80000, 0x980000);
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {
           ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
@@ -84,7 +84,7 @@ void Func_02000e2c(void) {
     Func_02002da8(0);
     Func_02002de0(188);
     LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     GameFlag_SetBit(0x982);
     Func_02002c70();
   }

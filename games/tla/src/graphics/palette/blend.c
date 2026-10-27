@@ -16,7 +16,7 @@ void DisplayTransition_InitializeState(s32 value) {
   state->mode = value;
   state->value = 0;
   Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0x480);
-  WaitFrames(0x78);
+  WaitTicks(0x78);
 }
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,

@@ -10,8 +10,8 @@ extern const u8 gData_02002f94[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_020029a8(s32 value);
 void Func_02002940(s32 id, s32 angle);
 void Func_02002a40(s32 sound);
@@ -81,16 +81,16 @@ void Func_020002b8(void) {
    * register spans the quickening loop and the pulse's address and zero take
    * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
   pulseState = 3;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   leader->update = Func_02000120;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02002a40(220);
   ObjectDispatch_SetAnimationSpeed(leader, 64);
-  FieldEvent_WaitFrames(50);
+  FieldEvent_WaitTicks(50);
   Func_02002a40(178);
   leader->action = 0;
   leader->update = Func_020000c8;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   from[0] = leader->x;
   from[1] = leader->y + 0x140000;
   from[2] = leader->z;
@@ -104,19 +104,19 @@ void Func_020002b8(void) {
   i = 0;
 quicken:
   gData_02003274 = 0;
-  WaitFrames((20 - i) / 2);
+  WaitTicks((20 - i) / 2);
   gData_02003274 = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   if (++i <= 19)
     goto quicken;
   Func_02002a40(390);
   Call3((void (*)())Func_02002870, 0x10000, 0x10000, 0x10000);
   gData_02003274 = 1;
-  FieldEvent_WaitFrames(90);
+  FieldEvent_WaitTicks(90);
   Call3((void (*)())Func_02002870, 0x30000, 0x30000, 0x10000);
   gData_02003274 = pulseState;
   gData_02003278 = 0;
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Bring(23);
   Bring(24);
   Scheduler_AddOrUpdateCallback(Func_020001a4, 0x480);
@@ -125,20 +125,20 @@ quicken:
   Call2((void (*)())Func_02002980, 0x10000, 0);
   Call2((void (*)())Func_02002978, 0x4063ff, 0);
   Func_02002988(60);
-  WaitFrames(60);
+  WaitTicks(60);
   Func_02002a40(144);
-  WaitFrames(30);
+  WaitTicks(30);
   Func_02002a40(144);
-  WaitFrames(30);
+  WaitTicks(30);
   Func_02002a40(144);
-  WaitFrames(30);
+  WaitTicks(30);
   Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
   Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);
   Func_02000d80(2);
   Func_02002a40(144);
-  WaitFrames(30);
+  WaitTicks(30);
   leader->action = 3;
-  WaitFrames(1);
+  WaitTicks(1);
   leader->update = 0;
   ObjectDispatch_SetAnimationSpeed(leader, 16);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
@@ -146,9 +146,9 @@ quicken:
   ObjectMotion_EnableActionAndSetCallback(23, gData_02002f94);
   ObjectMotion_EnableActionAndSetCallback(24, gData_02002f94);
   gData_02003274 = 2;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   gData_02003274 = 1;
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   gData_02003274 = 0;
   Object_RefreshSelectorById(23);
   Object_RefreshSelectorById(24);
@@ -157,11 +157,11 @@ quicken:
   Call2((void (*)())Func_02002978, 0x10000, 0);
   Func_02002988(30);
   Call3((void (*)())Func_02002870, 0x20000, 0x20000, 0x10000);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Call3((void (*)())Func_02002870, 0, 0, 0x10000);
   Scheduler_RemoveCallbackFar(Func_02000294);
   Func_0200185c();
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   a->motionFlags = 0;
   b->motionFlags = 0;
   c->motionFlags = 0;
@@ -172,7 +172,7 @@ rise:
   b->y += 0x20000;
   c->y += 0x20000;
   d->y += 0x20000;
-  WaitFrames(1);
+  WaitTicks(1);
   if (--i >= 0)
     goto rise;
   Func_02000e04(13);

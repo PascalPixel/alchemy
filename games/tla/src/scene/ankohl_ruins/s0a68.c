@@ -10,7 +10,7 @@ void Func_02000a68(s32 unused, s32 objectId) {
     Func_02002e34(object, 3);
     Func_02002eec(204);
     while (frames != 0) {
-      WaitFrames(1);
+      WaitTicks(1);
       if (object->velocityY == 0)
         break;
       frames--;

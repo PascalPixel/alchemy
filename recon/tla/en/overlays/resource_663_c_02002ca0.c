@@ -49,7 +49,7 @@ void Func_02002b88(void);
 void Func_020024b0(void);
 void Func_02000620(void);
 void Func_02003b50(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02003c80(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Camera_FollowActor(s32 id, s32 a);
@@ -239,7 +239,7 @@ s32 Func_02002ca0(void) {
       beam[4] = 0x4000;
       beam[5] = 0x4000;
       Func_02003b50();
-      WaitFrames(1);
+      WaitTicks(1);
       break;
     case 6:
       if (!GameFlag_Test(265))
@@ -322,7 +322,7 @@ s32 Func_02002ca0(void) {
       }
       ObjectMotion_SetActionVariant(14, 1);
       Func_02003b50();
-      WaitFrames(1);
+      WaitTicks(1);
       if (GameFlag_Test(265)) {
         leader = LEADER();
         leader->terrainId = 0;

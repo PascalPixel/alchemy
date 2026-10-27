@@ -126,7 +126,7 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 roll);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 // Rings and crystals gather on the user, for the scenes.
 
@@ -356,7 +356,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

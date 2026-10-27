@@ -11,7 +11,7 @@
 s32 Func_02001254();
 s32 Func_02001324();
 s32 ObjectMotion_SetVariantCallback();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_020012f4();
 s32 Func_020012ec();
 s32 Func_020012fc();
@@ -30,21 +30,21 @@ void Func_020010ac(void) {
   Func_02001254();
   Call1(Func_02001324, 0);
   Call2(ObjectMotion_SetVariantCallback, 8, 2);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Func_020012f4, 0x10000, 0);
   Call2(Func_020012ec, 0x10003, 1);
   Call1(Func_020012fc, 0x3c);
-  Call1(FieldEvent_WaitFrames, 0x3c);
+  Call1(FieldEvent_WaitTicks, 0x3c);
   Call3(Func_02001244, (s32)MsgSummonGuardianOfWind, 0, 2);
   Call2(Func_020012ec, 0x10000, 0);
   Call1(Func_020012fc, 0x3c);
-  Call1(FieldEvent_WaitFrames, 0x3c);
+  Call1(FieldEvent_WaitTicks, 0x3c);
   t12 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
   if (t12 != 0) {
     Call3(ObjectMotion_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov675Room3, 2);
   FIELD_AT(gPartyState, u8, 587) = 2;
   cue = 0x67;

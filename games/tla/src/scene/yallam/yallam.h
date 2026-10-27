@@ -50,7 +50,7 @@ void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void ObjectMotion_CenterOnColumn(s32 actor, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Func_02000088(struct ObjectRuntime *object, struct ObjectRuntime *target,

@@ -5,7 +5,7 @@
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_02003cd8(s32 cue);
 void Func_02003b28(struct ObjectRuntime *object, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Func_02003b58(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
@@ -23,20 +23,20 @@ void Func_02000700(void) {
 
   Func_02003cd8(390);
   Func_02003b28(leader, 6);
-  WaitFrames(10);
+  WaitTicks(10);
   Func_02003b28(leader, 1);
   ObjectDispatch_SetSingleChildFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
   Func_02003b58(leader, leader->x, leader->y, z + 0xc0000);
-  WaitFrames(6);
+  WaitTicks(6);
   Func_02003cd8(217);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x5000, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     leader->y += -0x20000;
     leader->targetY = leader->y;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   leader->motionFlags = 3;
   leader->velocityY = 0x30000;

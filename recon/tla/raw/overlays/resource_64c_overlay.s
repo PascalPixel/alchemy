@@ -217,7 +217,7 @@ Func_0200020c:
 	mov r2, r8
 	strh r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_ClearBit
@@ -288,7 +288,7 @@ Func_0200020c:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_02008400
 	movs r4, #133
 	lsls r4, r4, #2
@@ -356,7 +356,7 @@ Func_0200020c:
 	strh r3, [r1]
 .L_02008360:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r11
 	ldrb r3, [r5, r0]
 	adds r7, #1
@@ -421,7 +421,7 @@ Func_0200020c:
 .L_020083e2:
 	strh r4, [r1]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_0200855a
 .L_020083ec:
 	.4byte gBgScroll
@@ -493,7 +493,7 @@ Func_0200020c:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #0
 .L_0200847a:
 	movs r5, #0
@@ -612,7 +612,7 @@ Func_0200020c:
 .L_02008552:
 	strh r4, [r0]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0200855a:
 	bl Func_02002024
 	movs r0, #0
@@ -1300,7 +1300,7 @@ Func_0200020c:
 .L_02008a7e:
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #172
 	beq .L_02008a8c
 	b .L_02008576
@@ -1359,7 +1359,7 @@ Func_0200020c:
 .L_02008afc:
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #124
 	bne .L_02008ad0
 	bl Event_WaitTransitionFrames
@@ -1758,7 +1758,7 @@ Func_02001400:
 	push {r7}
 	mov r10, r0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #192
 	movs r0, #10
 	adds r0, #255
@@ -1928,7 +1928,7 @@ Func_02001400:
 .L_02009578:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020095b4
 	mov r1, r8
 	strh r3, [r1]
@@ -1964,7 +1964,7 @@ Func_02001400:
 .L_020095c0:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020095fc
 	mov r1, r8
 	strh r3, [r1]
@@ -2000,7 +2000,7 @@ Func_02001400:
 .L_02009608:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #176
 	lsls r1, r1, #4
 	mov r2, r8
@@ -2029,7 +2029,7 @@ Func_02001400:
 .L_02009642:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #160
 	lsls r1, r1, #4
 	mov r11, r1
@@ -2060,7 +2060,7 @@ Func_02001400:
 .L_02009680:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #144
 	lsls r1, r1, #4
 	mov r9, r1
@@ -2091,7 +2091,7 @@ Func_02001400:
 .L_020096be:
 	strh r1, [r5]
 	movs r0, #2
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020096f8
 	mov r1, r8
 	strh r3, [r1]
@@ -2126,7 +2126,7 @@ Func_02001400:
 .L_02009704:
 	strh r1, [r5]
 	movs r0, #140
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]
@@ -2151,7 +2151,7 @@ Func_02001400:
 .L_02009736:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]
@@ -2176,7 +2176,7 @@ Func_02001400:
 .L_02009768:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldrh r3, [r5]
 	adds r1, r3, #0
 	strh r5, [r5]
@@ -2201,7 +2201,7 @@ Func_02001400:
 .L_0200979a:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	mov r1, r9
 	mov r2, r8
 	strh r1, [r2]
@@ -2229,7 +2229,7 @@ Func_02001400:
 .L_020097d2:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	mov r1, r11
 	mov r2, r8
 	strh r1, [r2]
@@ -2257,7 +2257,7 @@ Func_02001400:
 .L_0200980a:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #176
 	lsls r1, r1, #4
 	mov r2, r8
@@ -2286,7 +2286,7 @@ Func_02001400:
 .L_02009844:
 	strh r1, [r5]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_02009880
 	mov r1, r8
 	strh r3, [r1]
@@ -2337,22 +2337,22 @@ Func_02001400:
 	mov r2, r8
 	strh r3, [r2]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020098e8
 	mov r0, r8
 	strh r3, [r0]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020098ec
 	mov r1, r8
 	strh r3, [r1]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_020098f0
 	mov r2, r8
 	strh r3, [r2]
 	movs r0, #45
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, .L_020098f4
 	bl Scheduler_RemoveCallbackFar
 	b .L_020098f8
@@ -2386,22 +2386,22 @@ Func_02001400:
 	mov r0, r8
 	strh r3, [r0]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_02009954
 	mov r1, r8
 	strh r3, [r1]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_02009958
 	mov r2, r8
 	strh r3, [r2]
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, .L_0200995c
 	mov r0, r8
 	strh r3, [r0]
 	movs r0, #45
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, .L_02009960
 	bl Scheduler_RemoveCallbackFar
 	b .L_02009964

@@ -5,7 +5,7 @@
 @ original build could say how the runtime was linked.
 	.global FarCall_RuntimeTable
 FarCall_RuntimeTable:
-	export WaitFramesFar, WaitFrames
+	export WaitTicksFar, WaitTicks
 	overlay_veneer Task_ResetAll
 	export Task_AddFar, Task_Add
 	export Task_RemoveFar, Task_Remove

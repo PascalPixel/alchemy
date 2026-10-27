@@ -31,7 +31,7 @@ Func_0815e3ac:
 	bl Unit_Get
 	str r0, [sp, #24]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_0813ba50
 	bl Func_08143d80
 	ldr r3, .L_0815e424
@@ -40,7 +40,7 @@ Func_0815e3ac:
 	adds r2, #10
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, [sp, #28]
 	subs r6, #5
 	str r6, [sp, #20]
@@ -98,7 +98,7 @@ Func_0815e3ac:
 	str r1, [sp, #12]
 	movs r0, #1
 	str r3, [r1, #4]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #28]
 	cmp r2, #4
 	bne .L_0815e490
@@ -179,7 +179,7 @@ Func_0815e3ac:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_0815e5a8
 	ldr r1, [sp, #36]
 	movs r2, #0
@@ -281,7 +281,7 @@ Func_0815e3ac:
 	strh r3, [r2, #6]
 	strh r6, [r2, #4]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #52]
 	movs r7, #255
 	movs r1, #36
@@ -756,7 +756,7 @@ Func_0815e3ac:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r9
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #32
 	beq .L_0815e9a6
 	b .L_0815e67e

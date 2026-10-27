@@ -144,7 +144,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
 void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
     } while (gBlendDuration != 0);
   }
 }

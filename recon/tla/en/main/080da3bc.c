@@ -14,7 +14,7 @@
 #include "mem.h"
 
 s32 ArcTan2(s32 y, s32 x);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct WorkA0 *work = WORK_A0;
@@ -77,7 +77,7 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         node->used = 1;
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   slot = &work->slots[index];
   // XXX: the field worka0.h calls tail is tested as a flag by Func_080d9d40;

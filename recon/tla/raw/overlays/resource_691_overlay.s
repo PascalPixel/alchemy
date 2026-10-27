@@ -375,7 +375,7 @@ Func_020003b4:
 	bl Func_02003a54
 	lsls r5, r5, #6
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	adds r5, #51
 	movs r0, #185
 	bl Func_02003c54
@@ -1550,14 +1550,14 @@ Func_020011e4:
 	bl Func_0200015c
 .L_02009378:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #1
 	add r9, r1
 	mov r2, r9
 	cmp r2, #16
 	bne .L_0200931a
 	movs r0, #24
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_02009440
 	movs r0, #133
 	lsls r0, r0, #2
@@ -1567,7 +1567,7 @@ Func_020011e4:
 	bl Camera_FollowActor
 	bl Func_02003b6c
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_02003af4
 	b .L_02009424
 .L_020093ae:
@@ -1616,7 +1616,7 @@ Func_020011e4:
 	bl Camera_FollowActor
 	bl Func_02003b6c
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_02003af4
 .L_02009424:
 	add sp, #68
@@ -2338,7 +2338,7 @@ Func_02001c00:
 	str r5, [sp, #4]
 	bl Func_0200015c
 	movs r0, #5
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r10, r2
 	mov r3, r10
@@ -2367,7 +2367,7 @@ Func_02001c00:
 	str r3, [r7, #72]
 	str r5, [r7, #68]
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #192
 	lsls r3, r3, #8
 	strh r3, [r7, #6]
@@ -2412,7 +2412,7 @@ Func_02001c00:
 	bl Func_0200015c
 .L_02009d50:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #40]
 	cmp r3, #0
 	beq .L_02009d68
@@ -2808,7 +2808,7 @@ Func_020022ac:
 	bl Camera_MoveWithinMapBounds
 	bl Func_02003a7c
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [r7, #12]
 	movs r4, #130
 	lsls r4, r4, #16
@@ -2837,7 +2837,7 @@ Func_020022ac:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	add r3, sp, #28
 	mov r8, r3
 	mov r4, r8
@@ -4121,7 +4121,7 @@ Func_02002e30:
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	mov r0, r8
 	bl Func_02003a54
@@ -4130,13 +4130,13 @@ Func_02002e30:
 	movs r1, #0
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	bl Object_GetById
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	bl Object_GetById
 	movs r1, #0
@@ -4169,7 +4169,7 @@ Func_02002e30:
 	movs r5, #2
 	movs r0, #8
 	mov r7, r8
-	bl WaitFrames
+	bl WaitTicks
 	negs r5, r5
 	mov r0, r8
 	movs r1, #2
@@ -4181,12 +4181,12 @@ Func_02002e30:
 	movs r0, #1
 	bl Func_020034ac
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	ldrb r1, [r7]
 	adds r0, r5, #0
 	bl Func_02003784
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -4196,23 +4196,23 @@ Func_02002e30:
 	negs r0, r0
 	bl Func_02003ac4
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #3
 	strb r3, [r6]
 	movs r0, #5
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	mov r0, r8
 	bl Object_SetPositionAndResetMotion
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02003c54
 	bl Func_020035e0
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r10
 	bl GameFlag_SetBit
 .L_0200afa2:
@@ -4279,7 +4279,7 @@ Func_02002fc4:
 	movs r0, #0
 	bl Func_020034ac
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	movs r1, #2
 	bl Func_02003a54
@@ -4293,7 +4293,7 @@ Func_02002fc4:
 	movs r0, #1
 	bl Func_020034ac
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -4303,19 +4303,19 @@ Func_02002fc4:
 	negs r0, r0
 	bl Func_02003ac4
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	adds r0, r7, #0
 	bl Object_SetPositionAndResetMotion
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02003c54
 	bl Func_020035e0
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r5, #0
 	bl GameFlag_SetBit
 	mov r0, r8
@@ -4366,7 +4366,7 @@ Func_020030bc:
 	movs r0, #10
 	bl Func_02003b14
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Func_020030a4
 	movs r0, #9
@@ -4377,7 +4377,7 @@ Func_020030bc:
 	movs r0, #9
 	bl Object_SetModeById
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -4391,7 +4391,7 @@ Func_020030bc:
 	movs r1, #0
 	bl Func_02003b0c
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_0200b1f6
 .L_0200b142:
 	mov r3, r11
@@ -4485,7 +4485,7 @@ Func_020030bc:
 	cmp r3, r2
 	bne .L_0200b142
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	add sp, #16
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -4564,7 +4564,7 @@ Func_02003240:
 	adds r0, r7, #0
 	bl Func_02003224
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #125
 	bl Func_02003c54
 	movs r0, #8
@@ -4572,7 +4572,7 @@ Func_02003240:
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r7, #0
 	movs r1, #0
 	bl Func_02003a54
@@ -4584,13 +4584,13 @@ Func_02003240:
 	movs r1, #0
 	bl Object_SetPartAttribute
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #7
 	bl Object_SetPartAttribute
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #8
 	bl Object_GetById
 	movs r1, #0
@@ -4601,7 +4601,7 @@ Func_02003240:
 	adds r1, r7, #0
 	bl Func_02003224
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r6, #0
 	bl GameFlag_SetBit
 	b .L_0200b406
@@ -4621,7 +4621,7 @@ Func_02003240:
 	bl Func_02003224
 	adds r5, #85
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	strb r6, [r5]
 	movs r0, #185
 	bl Func_02003c54
@@ -4638,7 +4638,7 @@ Func_02003240:
 	movs r0, #8
 	movs r6, #2
 	mov r5, r10
-	bl WaitFrames
+	bl WaitTicks
 	negs r6, r6
 	adds r0, r7, #0
 	movs r1, #2
@@ -4650,12 +4650,12 @@ Func_02003240:
 	movs r0, #1
 	bl Func_020034ac
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	ldrb r1, [r5]
 	adds r0, r6, #0
 	bl Func_02003784
 	movs r0, #4
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -4665,24 +4665,24 @@ Func_02003240:
 	negs r0, r0
 	bl Func_02003ac4
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #3
 	mov r2, r8
 	strb r3, [r2]
 	movs r0, #5
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r3, #0
 	adds r0, r7, #0
 	bl Object_SetPositionAndResetMotion
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	bl Func_02003c54
 	bl Func_020035e0
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r9
 	bl GameFlag_SetBit
 .L_0200b406:

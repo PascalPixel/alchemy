@@ -2418,7 +2418,7 @@ Func_081848ec:
 	movs r6, #1
 	str r6, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #188
 	ldr r7, [sp, #32]
 	ldr r1, [sp, #28]
@@ -3627,7 +3627,7 @@ Func_08185b9c:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #20]
 	movs r1, #1
 	add r11, r1
@@ -3662,7 +3662,7 @@ Func_08185b9c:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	add r7, sp, #152
 	ldr r3, .L_08186618
 	ldrh r7, [r7]
@@ -4685,7 +4685,7 @@ Func_08185b9c:
 	str r3, [r2]
 	movs r0, #1
 	mov r6, r11
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #104
 	beq .L_08186d94
 	b .L_081865f6

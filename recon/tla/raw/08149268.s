@@ -527,7 +527,7 @@ BattleEffect_RunPrism:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #20]
 	ldr r1, .L_081496c0
 	adds r0, #1

@@ -37,7 +37,7 @@ void Func_02001d50(void) {
   Contigo_ObjMoveTo(7, gPartyState.currentOwner);
   Contigo_ObjMoveTo(6, gPartyState.currentOwner);
   Contigo_ObjMoveTo(9, gPartyState.currentOwner);
-  WaitFrames(1);
+  WaitTicks(1);
   Contigo_ObjSpeed(5, 0xcccc, 0x6666);
   Contigo_ObjSpeed(7, 0xcccc, 0x6666);
   Contigo_ObjSpeed(9, 0xcccc, 0x6666);
@@ -238,7 +238,7 @@ void Func_02001d50(void) {
   Object_SetPartAttribute(Object_GetById(8), 15);
   angle = 0xb000;
   Func_020040dc(8, 0xa00000, 0x1d20000, angle);
-  WaitFrames(1);
+  WaitTicks(1);
   Contigo_MessagePut(8, 0);
   Contigo_ObjFollow(gPartyState.currentOwner, 8);
   Contigo_ObjFollow(5, 8);

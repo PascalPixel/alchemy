@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -200,7 +200,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   work->transferMode = 2;
@@ -209,7 +209,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitFrames(1);
+  WaitTicks(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
   REG_BG2X = skip;
   REG_BG2PA = 0x80;
@@ -498,7 +498,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     ObjectGroup_TickMemberTimers();
     if (!(frame & 1) || !skip) {
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

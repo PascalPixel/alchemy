@@ -133,7 +133,7 @@ Func_0200038c:
 	bl Func_02001b2c
 	lsls r5, r5, #6
 	movs r0, #15
-	bl WaitFrames
+	bl WaitTicks
 	adds r5, #51
 	movs r0, #185
 	bl Engine_AudioPlayCue

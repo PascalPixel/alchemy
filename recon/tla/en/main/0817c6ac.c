@@ -83,7 +83,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -318,7 +318,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     ObjectGroup_TickMemberTimers();
     Func_08158ce0(effect->variant * 2 + 2, effect->variant * 2 + 2);
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Runtime_ReleaseHeapBlock(104);
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

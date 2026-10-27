@@ -55,7 +55,7 @@ u8 *RenderOutput_Create(s32 entry, s32 address, struct UiWindow *window,
 s32 Resource_FindFreeEntry(void);
 void Party_RemoveActiveOwner(s32 id);
 void Party_AddActiveOwner(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02000a70(s32 code, u16 *glyph);
 void Func_02000db4(struct UiWindow *window, s32 column, s32 row, s32 mode,
                    s32 a, s32 b);
@@ -284,7 +284,7 @@ s32 Func_02000e44(void) {
                                          0, 0);
             Func_02002408(112);
             do
-              WaitFrames(1);
+              WaitTicks(1);
             while (!(gInput[1] & 1));
             Func_02002408(112);
             Func_02002350();
@@ -304,7 +304,7 @@ s32 Func_02000e44(void) {
             Func_02002310(gPartyState.paletteGlow[0],
                           gPartyState.paletteGlow[1]);
             Func_02002408(74);
-            WaitFrames(6);
+            WaitTicks(6);
             Func_020022f8(0);
             Func_020023e8();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
@@ -314,7 +314,7 @@ s32 Func_02000e44(void) {
           UiText_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
                                        0);
           do
-            WaitFrames(1);
+            WaitTicks(1);
           while (!(gInput[1] & 1) && !(gInput[1] & 2));
           UiWork_Finalize(box, 2);
           RenderOutput_RedrawSavedRect(window);
@@ -382,6 +382,6 @@ s32 Func_02000e44(void) {
         Iwram_ClearWordsEntry(work->cells[i], 128);
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

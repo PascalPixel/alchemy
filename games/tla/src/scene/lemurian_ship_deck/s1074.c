@@ -6,7 +6,7 @@ extern const u8 MsgWellThereS[];
 
 #include "flag_call.h"
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02001f5c(void);
 void Func_02001f64(void);
 void Func_020020ac(s32 a);
@@ -47,7 +47,7 @@ void Func_02001074(void) {
     Func_02001f5c();
     Func_020020ac(0);
     Func_02001fd4(9, gPartyState.currentOwner);
-    WaitFrames(1);
+    WaitTicks(1);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
     SetSpeed(9, 0xcccc, 0x6666);
     SetPosition(9, 416, 428);

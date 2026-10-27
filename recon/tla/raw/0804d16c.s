@@ -65,7 +65,7 @@ Menu_RunResourceSelectionLoop:
 	mov r9, r3
 .L_0804d1e2:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [r6, #4]
 	movs r3, #1
 	ands r2, r3

@@ -68,7 +68,7 @@ s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BowVector *pos);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e1678(void);
 
@@ -158,7 +158,7 @@ void Func_080e1f2c(void) {
     *palette++ = ((i + 16) << 5 | blue) | (i + 16);
 
   Audio_PlayCue(130);
-  WaitFrames(1);
+  WaitTicks(1);
   work->unk42c = 0;
   work->unk42d = 0;
   work->done = 0;
@@ -167,7 +167,7 @@ void Func_080e1f2c(void) {
   work->unk426 = 0;
   Scheduler_AddOrUpdateCallback(Func_080e1678, 0x480);
   while (work->counter != 999)
-    WaitFrames(1);
+    WaitTicks(1);
   Scheduler_RemoveCallback(Func_080e1678);
   if (work->done != 0 && work->result != -1)
     event[0xd30] = work->result;

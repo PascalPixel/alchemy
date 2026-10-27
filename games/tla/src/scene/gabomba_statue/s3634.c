@@ -31,7 +31,7 @@ s32 Object_GetById();
 void Object_SetModeById();
 void Object_SetPartAttribute();
 void Scheduler_AddOrUpdateCallback();
-void WaitFrames();
+void WaitTicks();
 void Func_02001ac0();
 void Func_02002074();
 extern u8 gData_02005d8c[];
@@ -90,7 +90,7 @@ L_0200b6f2:
   Call4((void (*)())Camera_MoveWithinMapBounds, FIELD_AT(v_r5, s32, 8), -1,
         FIELD_AT(v_r5, s32, 16), 0);
   Func_0200564c();
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   Func_020056bc();
 L_0200b762:
   t42 = Value1((s32 (*)())GameFlag_Test, 0x8f6);

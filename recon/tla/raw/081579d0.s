@@ -356,7 +356,7 @@ BattleEffect_RunJupiter:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r7, .L_08157cf0
 	ldr r3, [sp, #16]
 	ldr r0, [sp, #28]

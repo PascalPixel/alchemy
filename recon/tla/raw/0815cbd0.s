@@ -221,7 +221,7 @@ BattleEffect_RunSpiderWeb:
 	str r3, [r2]
 	movs r0, #1
 	adds r7, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r7, #63
 	beq .L_0815cd9c
 	b .L_0815cc66

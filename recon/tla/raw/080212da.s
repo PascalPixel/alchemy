@@ -242,7 +242,7 @@ Data_0802146c:
 	.4byte 0xea00000d
 1:
 	.4byte 0
-	.reloc 1b, R_ARM_ABS32_NOI, WaitFramesFar
+	.reloc 1b, R_ARM_ABS32_NOI, WaitTicksFar
 	.4byte Data_03001244
 	.4byte Data_030011ec
 	.4byte gFrameCount

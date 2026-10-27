@@ -82,7 +82,7 @@ extern u8 MsgPsynergyChooseTarget[];
 extern u8 MsgItemUseResult[];
 
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void *Unit_Get(s32 member);
 void Unit_CalculateFar(s32 member);
@@ -155,7 +155,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     // Choose one of their Psynergy; in the shortcut modes, set it as the L or
     // R shortcut and start again.
     case PSYNERGY_STEP_LIST:
-      WaitFrames(1);
+      WaitTicks(1);
       Unit_Get(menu->memberIds[0]);
       step = PSYNERGY_STEP_MEMBER;
       if (menu->psynergyCount != 0) {

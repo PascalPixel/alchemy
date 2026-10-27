@@ -319,7 +319,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
     Func_08158ce0(16, 16);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

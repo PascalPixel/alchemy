@@ -337,11 +337,11 @@ Func_080e3d04:
 	bl Audio_PlayCue
 	movs r0, #45
 .L_080e3f96:
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r5, #0
 	bl Object_Destroy
 	movs r0, #10
-	bl WaitFrames
+	bl WaitTicks
 	b .L_080e4222
 .L_080e3fa8:
 	movs r0, #207
@@ -520,7 +520,7 @@ Func_080e3d04:
 	cmp r7, #0
 	bge .L_080e40ce
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #192
 	lsls r2, r2, #5
 	adds r2, #151
@@ -535,7 +535,7 @@ Func_080e3d04:
 	mov r9, r3
 .L_080e4132:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #192
 	lsls r3, r3, #5
 	adds r3, #150
@@ -639,7 +639,7 @@ Func_080e3d04:
 	cmp r7, #16
 	beq .L_080e4210
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r9, r2
 	mov r3, r9

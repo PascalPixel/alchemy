@@ -28,7 +28,7 @@ void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 flag);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 /// Draws the selected item-list row's name and highlights only that row; the
 /// twin of The Broken Seal's ItemMenu_DrawItemDetailPage.
@@ -53,7 +53,7 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
 #else
   RenderOutput_RedrawSavedRectFar(window);
 #endif
-  WaitFrames(1);
+  WaitTicks(1);
 
   combined = state->selectedIndex;
   if (menu->items[combined] != 0) {
@@ -76,6 +76,6 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
     row++;
   } while (row <= 4);
 
-  WaitFrames(1);
+  WaitTicks(1);
   return 1;
 }

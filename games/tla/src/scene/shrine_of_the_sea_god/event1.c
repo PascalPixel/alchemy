@@ -32,14 +32,14 @@ void Func_02000ce8(void) {
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-  WaitFrames(1);
+  WaitTicks(1);
   ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
   leader->motionFlags = 0;
   leader->y = -50 << 16;
   leader->height = -50 << 16;
   layer->y += -50 << 16;
   Func_02003988();
-  WaitFrames(1);
+  WaitTicks(1);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 515;
   Event_StartScreenTransition();
@@ -51,15 +51,15 @@ loop:
   leader->y += 0x8000;
   frames = 2;
   leader->height += 0x8000;
-  /* FAKEMATCH(barrier): WaitFrames' argument is set before the count; as
-   * WaitFrames(2), 4 of 142 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): WaitTicks' argument is set before the count; as
+   * WaitTicks(2), 4 of 142 instructions differ in tla-en. */
   asm volatile("" : "+l"(frames));
   i++;
   /* FAKEMATCH(barrier): the layer is read after the count; without it, 4 of
    * 142 instructions differ in tla-en. */
   asm("" : "+l"(layer) : "l"(i));
   layer->y += 0x8000;
-  WaitFrames(frames);
+  WaitTicks(frames);
   if (i <= 99)
     goto loop;
   Func_02003b48(288);
@@ -69,7 +69,7 @@ loop:
       ->screenEffect = 521;
   Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_020039e0();
 }
 
@@ -108,7 +108,7 @@ loop:
   object->y -= 0x8000;
   object->height -= 0x8000;
   layer->y -= 0x8000;
-  WaitFrames(2);
+  WaitTicks(2);
   if (i == 90) {
     ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = 0x203;
@@ -164,10 +164,10 @@ void Func_02000fec(void) {
 void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
   object->motionFlags = 3;
   do {
-    WaitFrames(1);
+    WaitTicks(1);
   } while (object->speed != 0);
   Func_02003b48(188);
-  WaitFrames(10);
+  WaitTicks(10);
   object->motionFlags = 0;
 }
 

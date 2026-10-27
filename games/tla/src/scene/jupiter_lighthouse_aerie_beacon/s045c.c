@@ -15,7 +15,7 @@ s32 Func_020058c4();
 s32 Func_020058fc();
 s32 Func_020058dc();
 s32 Object_SetModeById();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_0200581c();
 extern u8 MsgYouReLate[];
 
@@ -39,7 +39,7 @@ void Func_0200045c(void) {
        * set first (differ 2). */
       do {
       } while (0);
-      Call1(FieldEvent_WaitFrames, 0x14);
+      Call1(FieldEvent_WaitTicks, 0x14);
       Call2(Func_020058dc, 0x1b, 0);
       Func_0200581c();
     }

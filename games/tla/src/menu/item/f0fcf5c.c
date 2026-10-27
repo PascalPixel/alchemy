@@ -67,6 +67,6 @@ s32 Func_080fcf5c(s32 partySlot) {
   cursorOffset2 = partySlot * 4 + 20;
   icon = *(void **)(menu + cursorOffset2);
   UiIcon_PrepareObject(icon);
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

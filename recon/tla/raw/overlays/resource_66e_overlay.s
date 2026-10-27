@@ -14,7 +14,7 @@ Func_02000390:
 	movs r1, #0
 	bl Func_02001148
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 .L_ja_020083a8:
 	ldr r3, .L_ja_02008728
 	movs r1, #133
@@ -66,7 +66,7 @@ Func_02000390:
 	movs r0, #18
 	bl Func_02001108
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, [sp, #0]
 	movs r1, #2
 	lsls r3, r3, #1
@@ -128,14 +128,14 @@ Func_02000390:
 	lsls r0, r0, #9
 	bl Func_02001170
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #1
 	ldr r0, .L_ja_02008738
 	bl Func_02001168
 	movs r0, #30
 	bl Func_02001178
 	movs r0, #120
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #11
 	bl Func_020011a8
 	movs r1, #5
@@ -160,7 +160,7 @@ Func_02000390:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Object_GetById
 	adds r0, #90
@@ -196,7 +196,7 @@ Func_02000390:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Object_GetById
 	adds r0, #90
@@ -270,7 +270,7 @@ Func_02000390:
 	movs r0, #20
 	bl Func_02001108
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #168
 	movs r2, #208
 	lsls r2, r2, #15
@@ -283,20 +283,20 @@ Func_02000390:
 	movs r0, #19
 	bl ObjectMotion_WaitForAnimationChange
 	movs r0, #15
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r0, #19
 	bl Func_02001108
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r2, #0
 	ldr r0, [r7, #0]
 	bl Func_02001160
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Func_020011a8
 	movs r1, #128
@@ -417,7 +417,7 @@ Func_02000390:
 	movs r1, #0
 	bl Func_02001148
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 .L_020083a8:
 	ldr r3, .L_0200872c
 	movs r1, #133
@@ -469,7 +469,7 @@ Func_02000390:
 	movs r0, #18
 	bl Func_02001108
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r3, [sp, #0]
 	movs r1, #2
 	lsls r3, r3, #1
@@ -531,14 +531,14 @@ Func_02000390:
 	lsls r0, r0, #9
 	bl Func_02001170
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #1
 	ldr r0, .L_0200873c
 	bl Func_02001168
 	movs r0, #30
 	bl Func_02001178
 	movs r0, #120
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #11
 	bl Func_020011a8
 	movs r1, #5
@@ -563,7 +563,7 @@ Func_02000390:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Object_GetById
 	adds r0, #90
@@ -599,7 +599,7 @@ Func_02000390:
 	movs r0, #10
 	bl Object_SetModeById
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Object_GetById
 	adds r0, #90
@@ -673,7 +673,7 @@ Func_02000390:
 	movs r0, #20
 	bl Func_02001108
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #168
 	movs r2, #208
 	lsls r2, r2, #15
@@ -686,20 +686,20 @@ Func_02000390:
 	movs r0, #19
 	bl ObjectMotion_WaitForAnimationChange
 	movs r0, #15
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r0, #19
 	bl Func_02001108
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r2, #0
 	ldr r0, [r7]
 	bl Func_02001160
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	bl Func_020011a8
 	movs r1, #128

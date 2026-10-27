@@ -88,7 +88,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_PageResult(struct MenuResult *state, s32 pane);
 void Func_080f8a44(s32 x, s32 y);
 void UiIcon_PrepareObject(struct ListIcon *icon);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_080fc608(void *window, s32 mode, struct MenuResult *state);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Func_080fc558(void *window, s32 *work, struct MenuResult *state);
@@ -148,7 +148,7 @@ s32 Func_080fc6bc(s32 pane) {
           UiIcon_PrepareObject(icon);
         }
         if (redraw != 0) {
-          WaitFrames(1);
+          WaitTicks(1);
           Func_080fc608(window, 0, &state);
           if (pane == 0)
             UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window,
@@ -179,7 +179,7 @@ s32 Func_080fc6bc(s32 pane) {
         }
       }
 
-      WaitFrames(1);
+      WaitTicks(1);
       previous = state.selectedIndex;
       moved = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
       if (moved == 1) {
@@ -206,7 +206,7 @@ s32 Func_080fc6bc(s32 pane) {
       if ((gInput.repeat & 0x100) != 0 || (gInput.repeat & 0x200) != 0) {
         if (pane == 1) {
           Audio_PlayCue(114);
-          WaitFrames(1);
+          WaitTicks(1);
         } else {
           Audio_PlayCue(111);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
@@ -229,7 +229,7 @@ s32 Func_080fc6bc(s32 pane) {
           Menu_HighlightPageEntry(menu->pageWindow, member, count);
           menu->ownerIcons[0]->state = 13;
           menu->ownerIcons[1]->state = 13;
-          WaitFrames(1);
+          WaitTicks(1);
           break;
         }
       }
@@ -243,6 +243,6 @@ s32 Func_080fc6bc(s32 pane) {
   menu->selectedItems[pane] = result;
   if (GameFlag_Test(0x150) != 0)
     result = -1;
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

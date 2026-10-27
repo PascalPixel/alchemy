@@ -45,7 +45,7 @@ void UiWork_DrainPending(void) {
     index = 0;
     if (done)
       break;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   while (index != UI_WINDOW_COUNT) {
     if (direct->flags != 0)

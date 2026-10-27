@@ -19,12 +19,12 @@ void Func_02004ec4(s32 id, s32 target);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02004f0c(s32 message);
 void Func_02004f14(s32 id, s32 flags);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action);
 void Func_02004e24(s32 x, s32 y, s32 z);
 void Func_02004e2c(void);
 void Func_02004ddc(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_020015d0(s32 a, s32 b);
 void Func_02004dd4(void);
 void Func_02004ebc(s32 id, s32 x, s32 z);
@@ -61,19 +61,19 @@ s32 Func_020019cc(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 11, 0, 0);
   Func_02004f0c(message + 1);
   Call2((void (*)())Func_02004f14, 11, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000,
         0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, gPartyState.currentOwner,
         3);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000,
         0);
   Call3((void (*)())ObjectMotion_ArmCallback, 11, 0xc000, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
+  Call1((void (*)())FieldEvent_WaitTicks, 10);
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
         gPartyState.currentOwner, 0x1d2, 0x156);
   ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
@@ -87,7 +87,7 @@ s32 Func_020019cc(void) {
   fadeOut:
     REG_BLDALPHA = level | 0x1000;
     level--;
-    WaitFrames(1);
+    WaitTicks(1);
     if (level != 0)
       goto fadeOut;
   }
@@ -100,7 +100,7 @@ s32 Func_020019cc(void) {
   fadeIn:
     REG_BLDALPHA = level | 0x1000;
     level++;
-    WaitFrames(1);
+    WaitTicks(1);
     if (level != 8)
       goto fadeIn;
   }
@@ -116,6 +116,6 @@ s32 Func_020019cc(void) {
           ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 11);
   Call3((void (*)())Func_02004ebc, 11, 0, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   return Func_02004e64();
 }

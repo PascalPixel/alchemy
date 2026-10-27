@@ -85,7 +85,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
-    WaitFrames(1);
+    WaitTicks(1);
     // DEAD: never true, as the edge reaches only line 186 by the 27th frame;
     // the ROM keeps the test. Every column (120 lines, at most 63 late) is
     // done once the edge passes line 182.
@@ -109,7 +109,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   } while (i != BATTLE_BACKGROUND_BYTES);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                   BATTLE_BACKGROUND_BYTES);
-  WaitFrames(1);
+  WaitTicks(1);
 }
 
 /// A triangle of light spins and shrinks onto the first target for 64 frames,

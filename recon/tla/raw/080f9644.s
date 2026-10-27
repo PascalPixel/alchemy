@@ -591,7 +591,7 @@ Func_080f9644:
 	ldr r3, [r1, #20]
 	movs r0, #1
 	strb r2, [r3, #5]
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, r9
 	ldr r0, [r2, #48]
 	bl RenderOutput_ClearListFar
@@ -848,7 +848,7 @@ Func_080f9644:
 	movs r3, #13
 	strb r3, [r2, #5]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r1, r10
 	cmp r1, #1
 	bne .L_080f9d6e
@@ -1135,7 +1135,7 @@ Func_080f9644:
 	mov r10, r3
 .L_080f9f98:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r1, r10
 	cmp r1, #1
 	bne .L_080f9fcc
@@ -1315,7 +1315,7 @@ Func_080f9644:
 	adds r0, r5, #0
 	bl ItemMenu_DrawIcons
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldrb r3, [r7]
 	mov r2, r10
 	ldrh r1, [r2]
@@ -1400,7 +1400,7 @@ Func_080f9644:
 	bl ItemMenu_DrawIcons
 	lsls r5, r5, #2
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	add r5, r9
 	movs r3, #1
 	strb r3, [r5]

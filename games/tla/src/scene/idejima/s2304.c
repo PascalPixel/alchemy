@@ -23,7 +23,7 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Event_AskYesNoWithActorAnimation();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
 void Object_LinkPair();
@@ -91,7 +91,7 @@ void Func_02002304(void) {
   Call1((void (*)())Task_Wait, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call1((void (*)())Engine_EventSetMessage,
         MsgIdejimaThoughtTheyWereInsideLighthouse);
   Call2((void (*)())Engine_EventShowMessage, 8, 0);
@@ -110,14 +110,14 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
   Call3((void (*)())Func_02003298, 5, 0, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call2((void (*)())Engine_EventShowMessage, 6, 0);
   Call2((void (*)())Engine_EventShowMessage, 8, 0);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
   Value3((s32 (*)())Engine_ActorShowEmote, 6, 0x101, 40);
   Call2((void (*)())Engine_EventShowMessage, 6, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 18);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call2((void (*)())Engine_EventShowMessage, 6, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 8, 3);
   Call3((void (*)())Func_02003298, 8, 0, 40);
@@ -127,21 +127,21 @@ void Func_02002304(void) {
   Call3((void (*)())ObjectMotion_Launch, 6, 4, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
   Object_GetById(6)->actionFlags |= 1;
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
   Call1((void (*)())Object_RefreshSelectorById, 6);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call2((void (*)())Object_LinkObjectAndSetCallback, 8, 6);
   Call2((void (*)())Object_LinkObjectAndSetCallback, 5, 6);
   Call2((void (*)())Object_LinkObjectAndSetCallback, 10, 6);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 6, 358, 222);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 80);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 40);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 0);
@@ -185,7 +185,7 @@ void Func_02002304(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
   Call1((void (*)())Object_RefreshSelectorById, 6);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
   Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x2000, 0);
@@ -195,7 +195,7 @@ void Func_02002304(void) {
   Call2((void (*)())Engine_ActorSetAnimation, 6, 4);
   Call3((void (*)())Func_02003298, 6, 0, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, gPartyState.currentOwner, 2);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, a4000, 0);
   Call3((void (*)())Func_02003298, 0x1005, 0, 20);
   Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x105, 0);
@@ -213,7 +213,7 @@ void Func_02002304(void) {
   Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 20);
   Call2((void (*)())Engine_EventShowMessage, 10, 0);
   Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 42);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x5000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
@@ -228,7 +228,7 @@ void Func_02002304(void) {
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      1);
   leader->scaleX = 0x10000;
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
   Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;

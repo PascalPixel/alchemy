@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.Task_Add, 1
 	.set import.AllocHeapSlotEwram, 1
 	.set import.FreeHeapSlot, 1
@@ -17,7 +17,7 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1

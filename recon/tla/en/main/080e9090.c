@@ -52,7 +52,7 @@ struct ObjectSprite {
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_SetObjectTickMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 
 // Sways the view from side to side, with a sound every 16 frames: the swing
@@ -77,7 +77,7 @@ void Func_080e9090(void) {
   BattleEffect_SetObjectTickMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
-  WaitFrames(10);
+  WaitTicks(10);
 
   phase = 0;
   ticks = 0;
@@ -137,7 +137,7 @@ void Func_080e9090(void) {
         state = SWAY_DONE;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     ticks++;
     frames++;
   } while (state != SWAY_DONE);

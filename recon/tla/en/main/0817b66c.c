@@ -95,7 +95,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -224,7 +224,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer);

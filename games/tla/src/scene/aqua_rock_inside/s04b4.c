@@ -35,7 +35,7 @@ void Func_020004bc(s32 unused, s32 id) {
       Func_0200349c(column, height);
     }
     layer[3] += 0x10000;
-    WaitFrames(4);
+    WaitTicks(4);
   }
   if (GameFlag_Test(0x250))
     Func_02003d1c_(41, 42, 1, 1, 43, 44);

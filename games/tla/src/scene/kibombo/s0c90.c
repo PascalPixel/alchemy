@@ -9,7 +9,7 @@ void Func_02000c90(void) {
   Func_02005ba4(0x26666, 0x4ccc);
   Kibombo_CamMove(0x1180000, -1, 0x580000, 1);
   Func_02005bb4();
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005b4c((s32)MsgYouVeCome);
   Func_02005b64(0x8007, 0);
   Kibombo_ObjTurn(7, 0x8000);

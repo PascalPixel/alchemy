@@ -525,7 +525,7 @@ BattleEffect_RunFire:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r5, [sp, #28]
 	mov r0, r10
 	adds r5, #1

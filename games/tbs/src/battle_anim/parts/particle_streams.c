@@ -225,7 +225,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
           REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
@@ -501,7 +501,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
       frame++;
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
-    WaitFrames(1);
+    WaitTicks(1);
     view->busy = 0;
     Task_Remove(BattleAnim_AdvanceBg2OnInterval);
     Task_Remove(BattleAnim_ArmPaletteHBlankDma);

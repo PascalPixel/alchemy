@@ -57,7 +57,7 @@ void Func_08045018(struct RenderOutput *pair);
 void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 void UiWindow_ClearInteriorTiles(struct RenderInput *window, s32 x0, s32 y0,
@@ -94,7 +94,7 @@ s32 Func_080400e8(void) {
   helpWindow = UiWindow_Create(1, 2, 28, 3, 2);
   settingsWindow = Func_0803fd28();
   pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
-  WaitFrames(1);
+  WaitTicks(1);
   hue = &work->option[0];
   brightness = &work->option[1];
 
@@ -172,7 +172,7 @@ s32 Func_080400e8(void) {
       UiText_DrawResource(selectedOption + (s32)MsgOptionD, helpWindow, 0, 0);
     }
     Func_08045018(pair);
-    WaitFrames(1);
+    WaitTicks(1);
 
     if (PRESSED & 4) {
       Audio_PlayCue(112);
@@ -233,6 +233,6 @@ s32 Func_080400e8(void) {
     Func_0803f9c0(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
   }
   Func_0803fd14();
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

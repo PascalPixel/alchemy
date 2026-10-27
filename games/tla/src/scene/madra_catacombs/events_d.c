@@ -28,9 +28,9 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
@@ -101,7 +101,7 @@ static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
 
 static __inline__ void Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  WaitFrames(frames);
+  WaitTicks(frames);
 }
 
 static __inline__ void Cue(s32 cue) {
@@ -133,7 +133,7 @@ void Func_020007a0(void) {
     Func_020011ac(1);
     Cue(161);
     Map_CopyCells(72, 63, 36, 38, 1, 2);
-    FieldEvent_WaitFrames(40);
+    FieldEvent_WaitTicks(40);
     Cue(188);
     Map_CopyCells(71, 66, 97, 39, 2, 2);
     Wait(2);

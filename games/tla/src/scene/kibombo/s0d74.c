@@ -20,7 +20,7 @@ void Func_02000d74(void) {
   Func_02005ba4(0x4cccc, 0x9999);
   Kibombo_CamMove(0x1080000, -1, 0x1840000, 1);
   Func_02005bb4();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Kibombo_ObjArm(17, 0x3000, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
   Func_02005b64(0x4011, 0);
@@ -33,7 +33,7 @@ void Func_02000d74(void) {
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 0x108, 0x176);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Scheduler_RemoveCallbackFar(Func_02002ccc);
   Func_020032e0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
@@ -41,20 +41,20 @@ void Func_02000d74(void) {
   Func_02005b64(17, 0);
   Func_02005c9c(11);
   Func_02003610();
-  FieldEvent_WaitFrames(160);
+  FieldEvent_WaitTicks(160);
   Func_02005b5c(17, 0, 80);
   Func_02005c9c(0x240);
   Func_02003640(1, 1);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005b5c(17, 0, 80);
   Func_02005c9c(161);
   Func_02003640(0, 1);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Kibombo_ObjEmoteWait(17, 0x102);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005b5c(17, 0, 20);
   Scheduler_RemoveCallbackFar(Func_02002eb0);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_02005b0c(27, 0, 0);
   Kibombo_ObjArm(17, 0xd000, 0);
   if (gData_02007950 != 0) {
@@ -62,7 +62,7 @@ void Func_02000d74(void) {
     wait:
       Kibombo_ObjArm(17, 0xd000, 0);
       gData_02007950->y += 0xffffc000;
-      Kibombo_WaitFrames(1);
+      Kibombo_WaitTicks(1);
       if (gData_02007950->y > 0x240000)
         goto wait;
     }
@@ -73,15 +73,15 @@ void Func_02000d74(void) {
   Kibombo_CamMove(0x1080000, 0x100000, 0x1a40000, 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
   Kibombo_ObjWalk(17, 0x108, 0x188);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005b64(0x8011, 0);
   Func_02005c9c(148);
   Func_02005c9c(11);
   Func_020032b0();
-  FieldEvent_WaitFrames(80);
+  FieldEvent_WaitTicks(80);
   Kibombo_CamMove(0x580000, 0x200000, 0x1880000, 1);
   Func_02005bb4();
-  FieldEvent_WaitFrames(40);
+  FieldEvent_WaitTicks(40);
   Func_02005b64(7, 0);
   Kibombo_ObjEmoteWait(7, 0x102);
   Func_02005b64(7, 0);
@@ -105,7 +105,7 @@ void Func_02000d74(void) {
   Kibombo_ObjArm(gPartyState.currentOwner, 0xe000, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   ObjectMotion_ResetAndSetPositionInMode2(26, 104, 0x170);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005ba4(0xcccc, 0x1999);
   Kibombo_CamMove(0x6f0000, -1, 0x1640000, 1);
   ObjectMotion_CommitCurrentPositionAndActivate(26);

@@ -471,7 +471,7 @@ BattleEffect_RunPlumeEdge:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #28]
 	adds r2, #1
 	str r2, [sp, #28]

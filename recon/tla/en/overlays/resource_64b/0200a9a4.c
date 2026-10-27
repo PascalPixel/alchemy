@@ -18,8 +18,8 @@ struct EventTransition {
 extern const u8 gData_02004eb8[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Camera_FollowActor(s32 actor, s32 target);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -59,14 +59,14 @@ static __inline__ void Func_02004df8_(s32 value, s32 mode) {
 void Func_020029a4(void) {
   struct ObjectRuntime *object = Object_GetById(8);
 
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_02004c20();
   Func_02004db8(0);
   Func_02004df8_(0x9999, 1);
   object->scaleX = 0x13333;
   object->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
-  WaitFrames(1);
+  WaitTicks(1);
   Object_SetPartAttribute(Object_GetById(gPartyState.currentOwner), 15);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      0);
@@ -79,9 +79,9 @@ void Func_020029a4(void) {
   Func_02004d78_(0x10003, 1);
   ((struct EventTransition *)Ram_HeapSlots->eventWork)->frames = 32;
   Event_StartScreenTransition();
-  FieldEvent_WaitFrames(120);
+  FieldEvent_WaitTicks(120);
   Func_02004df8_(0x16666, 300);
-  FieldEvent_WaitFrames(270);
+  FieldEvent_WaitTicks(270);
   ((struct EventTransition *)Ram_HeapSlots->eventWork)->frames = 16;
   *(u16 *)0x05000000 = 0x7fff;
   Event_FinishScreenTransition();

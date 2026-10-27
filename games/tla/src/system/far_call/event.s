@@ -5,9 +5,9 @@
 	.thumb_func
 Game_RunFar:
 	overlay_veneer Game_Run
-	.global FieldEvent_WaitFramesFar
+	.global FieldEvent_WaitTicksFar
 	.thumb_func
-FieldEvent_WaitFramesFar:
+FieldEvent_WaitTicksFar:
 	overlay_veneer EventRuntime_Wait
 	.global EventRuntime_StartFar
 	.thumb_func

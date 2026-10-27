@@ -22,7 +22,7 @@
 
 void Func_02001138(const u8 *message);
 void Func_02001148(s32 speaker, s32 flags);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 s32 Func_020011a0(s32 *unit, s32 *slot);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
@@ -68,7 +68,7 @@ void Func_02000390(void) {
 
   Func_02001138(MsgVeryWellShow);
   Func_02001148(10, 0);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
 ask:
   Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
@@ -83,7 +83,7 @@ ask:
   Func_020010b8(ITEM(unitData, slot));
   Func_020010a0(Object_GetById(18), ITEM(unitData, slot));
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_020010b0(ITEM(unitData, slot), 2);
   UiText_ShowPositionedMessageAndWait(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
@@ -107,19 +107,19 @@ read:
   Func_02001138(message + 4);
   Func_02001148(10, 0);
   Call2((void (*)())Func_02001170, 0x10000, 0);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02001168(0x40250d, 1);
   Func_02001178(30);
-  FieldEvent_WaitFrames(120);
+  FieldEvent_WaitTicks(120);
   Func_020011a8(11);
   Object_SetModeById(10, 5);
   ObjectMotion_WaitForAnimationChange(10);
   DANCE_TO(664);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   DANCE_TO(680);
   ObjectMotion_Launch(10, 4, 90);
   DANCE_TO(664);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   DANCE_TO(680);
   ObjectMotion_Launch(10, 4, 90);
   DANCE_TO(0x2a0);
@@ -135,15 +135,15 @@ read:
   Object_SetModeById(20, 2);
   ObjectMotion_WaitForAnimationChange(20);
   Func_02001108(20, 0, 0);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_WaitTicks(4);
   Call3((void (*)())Func_02001108, 19, 0x2a00000, 0x680000);
   Object_SetModeById(19, 4);
   ObjectMotion_WaitForAnimationChange(19);
-  FieldEvent_WaitFrames(15);
+  FieldEvent_WaitTicks(15);
   Func_02001108(19, 0, 0);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02001160(gPartyState.currentOwner, 258, 0);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_020011a8(10);
   Func_02001160(10, 0x100, 60);
   Func_02001148(10, 0);

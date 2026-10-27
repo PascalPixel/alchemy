@@ -12,15 +12,15 @@ void Func_02003c84(void) {
     Kibombo_FadeTo(0x7fff, 0);
     Func_02005be4(1);
   } while (0);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_FadeTo(0x10000, 0);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002d64, 0x480);
-  WaitFrames(60);
+  WaitTicks(60);
   Scheduler_RemoveCallbackFar(Func_02002d64);
-  WaitFrames(1);
+  WaitTicks(1);
 
   Func_02005c9c(212);
   do {
@@ -28,17 +28,17 @@ void Func_02003c84(void) {
     Kibombo_FadeTo(0x7fff, 0);
     Func_02005be4(1);
   } while (0);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_CamMove(146 << 18, -1, 248 << 16, 0);
   Func_02005a4c();
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_FadeTo(0x10000, 0);
   Func_02005be4(1);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
-  WaitFrames(60);
+  WaitTicks(60);
   Scheduler_RemoveCallbackFar(Func_02002d64);
-  WaitFrames(1);
+  WaitTicks(1);
 
   Func_02005c9c(212);
   do {
@@ -46,17 +46,17 @@ void Func_02003c84(void) {
     Kibombo_FadeTo(0x7fff, 0);
     Func_02005be4(1);
   } while (0);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_CamMove(248 << 16, -1, 134 << 18, 0);
   Func_02005a4c();
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_FadeTo(0x10000, 0);
   Func_02005be4(1);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
-  WaitFrames(180);
+  WaitTicks(180);
   Scheduler_RemoveCallbackFar(Func_02002d64);
-  WaitFrames(1);
+  WaitTicks(1);
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
   Event_FinishScreenTransition();

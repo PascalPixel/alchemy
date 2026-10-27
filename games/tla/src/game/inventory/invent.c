@@ -12,7 +12,7 @@ void Object_WaitUntilChildValueDiffers(s32 objectId, s32 value) {
     u8 *anim = (u8 *)obj->animation;
 
     while (cnt <= 89) {
-      WaitFrames(1);
+      WaitTicks(1);
       if (value != anim[0x18]) {
         break;
       }

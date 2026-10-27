@@ -11,7 +11,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Func_020018bc(s32 value);
 void Func_02001ba4(s32 value);
 void Func_020000b4(s32 value);
@@ -44,6 +44,6 @@ void Func_020001b0(void) {
 }
 
 void Func_020001d0(void) {
-  WaitFrames(10);
+  WaitTicks(10);
   Func_02000154();
 }

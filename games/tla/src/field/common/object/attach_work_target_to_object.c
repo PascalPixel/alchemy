@@ -14,7 +14,7 @@
 #include "object_runtime.h"
 #include "macros.h"
 
-void WaitFrames(s32);
+void WaitTicks(s32);
 
 void Camera_FollowActor(s32 id, s32 flag) {
   struct ObjectRuntime *obj;
@@ -31,7 +31,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
     ObjectDispatch_StartCameraFar(target, obj);
     if (flag == 0) {
       SET_POSITION(target, obj->x, obj->y, obj->z);
-      WaitFrames(1);
+      WaitTicks(1);
       if (work->controlMode != 3)
         Map_CenterOnFollowedPointFar();
     }

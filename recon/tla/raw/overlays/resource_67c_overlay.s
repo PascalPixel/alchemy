@@ -272,7 +272,7 @@ Func_020007d4:
 	movs r0, #78
 	bl Func_02003ef4
 	movs r0, #60
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #162
 	bl Func_02003ef4
 	movs r0, #128
@@ -283,7 +283,7 @@ Func_020007d4:
 	lsls r0, r0, #9
 	bl Func_02003d44
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #128
 	movs r1, #128
 	movs r2, #128
@@ -292,7 +292,7 @@ Func_020007d4:
 	lsls r0, r0, #9
 	bl Func_02003d44
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #128
 	movs r1, #192
 	movs r2, #128
@@ -301,7 +301,7 @@ Func_020007d4:
 	lsls r0, r0, #9
 	bl Func_02003d44
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_02008950
@@ -376,7 +376,7 @@ Func_020007d4:
 	bl Func_02003d24
 	adds r5, #1
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #6
 	ble .L_020088cc
 	adds r6, #1
@@ -395,7 +395,7 @@ Func_020007d4:
 	lsls r0, r0, #1
 	bl Func_02003ef4
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #80
 	bl Func_02003ef4
 	bl AudioCommand_WaitForCompletion
@@ -533,7 +533,7 @@ Func_02000cc8:
 	adds r3, r3, r2
 	strh r3, [r5, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_02008da8:
 	ldr r3, [r5, #8]
 	mov r1, sp
@@ -673,7 +673,7 @@ Func_02001620:
 	movs r0, #78
 	bl Func_02003ef4
 	movs r0, #30
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #128
 	movs r1, #128
 	lsls r0, r0, #8
@@ -725,7 +725,7 @@ Func_02001620:
 	movs r0, #194
 	bl Func_02003ef4
 	movs r0, #45
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #128
 	mov r0, r9
 	lsls r1, r1, #1
@@ -810,17 +810,17 @@ Func_02001620:
 	adds r6, #82
 	strh r3, [r6]
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #2
 	strh r5, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_020097b4
 	movs r0, #2
 	strh r3, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	strh r5, [r6]
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r8, r2
 	mov r3, r8
@@ -839,7 +839,7 @@ Func_02001620:
 	ldr r3, .L_020097fc
 	movs r0, #30
 	strh r3, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #0
 	mov r8, r0
 .L_020097ce:
@@ -947,7 +947,7 @@ Func_02001620:
 	bl ObjectMotion_EnableActionAndSetCallback
 .L_020098b0:
 	movs r0, #8
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r8, r3
 	mov r0, r8
@@ -958,7 +958,7 @@ Func_02001620:
 	movs r0, #220
 	bl Func_02003ef4
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #2
 	mov r8, r2
 .L_020098d2:
@@ -1039,7 +1039,7 @@ Func_02001620:
 	movs r0, #220
 	bl Func_02003ef4
 	movs r0, #50
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #254
 	lsls r0, r0, #7
 	movs r1, #0
@@ -1048,7 +1048,7 @@ Func_02001620:
 	movs r0, #8
 	bl Func_02003e84
 	movs r0, #16
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #0
 	movs r0, #0
 	movs r1, #0
@@ -1079,7 +1079,7 @@ Func_02001620:
 	mov r0, r10
 	str r3, [r0, #108]
 	movs r0, #120
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, r10
 	movs r0, #195
 	str r6, [r2, #108]
@@ -1087,7 +1087,7 @@ Func_02001620:
 	bl Func_02003ef4
 	bl Func_02003ebc
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	add sp, #12
 	pop {r3, r5, r6, r7}
 	mov r8, r3
@@ -2208,7 +2208,7 @@ Func_02002ca4:
 	bl Func_02003cec
 .L_0200ad46:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [r5, #12]
 	ldr r3, [r5, #20]
 	cmp r2, r3
@@ -2219,7 +2219,7 @@ Func_02002ca4:
 	movs r1, #49
 	bl Func_02003cc4
 	movs r0, #3
-	bl WaitFrames
+	bl WaitTicks
 	b .L_0200ade4
 .L_0200ad6a:
 	ldr r3, [r5, #8]

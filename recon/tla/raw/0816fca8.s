@@ -811,7 +811,7 @@ Func_0816fca8:
 	add r2, r11
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #48]
 	adds r3, #1
 	str r3, [sp, #48]

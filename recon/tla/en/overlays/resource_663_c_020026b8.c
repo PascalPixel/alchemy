@@ -53,8 +53,8 @@ void Func_02003b38(struct ObjectRuntime *object, const u8 *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 s32 Camera_FollowActor(s32 id, s32 a);
 void Func_02003c30(void);
 void Func_02003c20(s32 a, s32 b);
@@ -142,7 +142,7 @@ row:
       Object_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02003c30();
@@ -155,7 +155,7 @@ row:
   Call2((void (*)())Func_02003c58, 0x10000, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  WaitFrames(1);
+  WaitTicks(1);
   Call2((void (*)())Func_02003c58, 0x7fff, 0);
   Call2((void (*)())Func_02003c50, 0x10000, 0);
   Func_02003c60(8);
@@ -169,7 +169,7 @@ sweep:
   beam[6] = x;
   beam[7] = z;
   ((u8 *)Object_GetById(12))[98] = Random16Far() & 7;
-  WaitFrames(1);
+  WaitTicks(1);
   x += 0x400;
   z += 0xfffffc00;
   if (x != 0x48000)
@@ -182,12 +182,12 @@ sweep:
 flicker:
   REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
   ((u8 *)Object_GetById(12))[98] = Random16Far() & 7;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_WaitTicks(1);
   i++;
   if (i != 257)
     goto flicker;
   REG_DISPCNT &= ~0x200;
-  WaitFrames(30);
+  WaitTicks(30);
   Call1((void (*)())Func_02003cd8, 390);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
@@ -197,16 +197,16 @@ flicker:
 fade:
   REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
   i++;
-  FieldEvent_WaitFrames(1);
+  FieldEvent_WaitTicks(1);
   if (i != 129)
     goto fade;
   Scheduler_RemoveCallbackFar(Func_02000ef4);
   ((u8 *)Object_GetById(12))[99] = 0;
-  WaitFrames(30);
+  WaitTicks(30);
   Object_GetById(12)->update = 0;
   Object_SetPartAttribute(Object_GetById(12), 6);
   Func_02003ba0();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   REG_BLDCNT = 0;
   Func_02003b00();
   Func_02003af8();

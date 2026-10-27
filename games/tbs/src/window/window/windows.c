@@ -352,7 +352,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
       found->duration = WINDOW_OPEN_FRAMES;
       found->frame = WINDOW_OPEN_FRAMES - 1;
       Window_WaitZoom(found);
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
   return found;
@@ -362,7 +362,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
 void Window_WaitZoom(struct Window *window) {
   if (!(WINDOW_FLAG_INSTANT & window->flags) && window->duration != 0) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
     } while (window->duration != 0);
   }
 }

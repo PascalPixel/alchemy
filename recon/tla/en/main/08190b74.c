@@ -90,7 +90,7 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                             s32 value);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -464,7 +464,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     Camera_ApplyVerticalShake(8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // The battle's own scene again.

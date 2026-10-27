@@ -147,7 +147,7 @@ void Resource_LoadAndDecompress(s32, void *, s32, s32);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
-void WaitFrames(s32);
+void WaitTicks(s32);
 void Runtime_ReleaseHeapBlock(s32);
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
@@ -375,7 +375,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     bgX += 4;
     *(s32 *)0x04000028 = bgX << 8;
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Runtime_ReleaseHeapBlock(104);
@@ -952,7 +952,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
       work->shake--;
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(Func_0813baec);
@@ -1078,7 +1078,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   for (i = 0; i != 16; i++)
     ResourceObject_ReleaseFar(work->sprites[i]);

@@ -26,7 +26,7 @@ void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 extern const s32 gData_080f0e78[];
 
@@ -48,7 +48,7 @@ void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
     object->y = start[1] + (y - start[1]) * i / 10;
     object->z = start[2] + (z - start[2]) * i / 10;
     object->scaleY = object->scaleX = scale / 10 + 0x4000;
-    WaitFrames(1);
+    WaitTicks(1);
     i++;
     scale += 0xc000;
   } while (i <= 10);

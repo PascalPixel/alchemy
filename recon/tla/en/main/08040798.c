@@ -36,7 +36,7 @@ void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 
@@ -67,7 +67,7 @@ s32 Func_08040798(s32 selected) {
   first = 0;
   Func_080405dc();
   work = Ram_HeapSlots->unkd0[0];
-  WaitFrames(1);
+  WaitTicks(1);
   window = Func_08040628();
   pair = RenderResource_CreatePair(7, window, 40, -16);
   if (settingsOnly != 0) {
@@ -109,7 +109,7 @@ s32 Func_08040798(s32 selected) {
       redraw = 0;
     }
     Func_08045018(pair);
-    WaitFrames(1);
+    WaitTicks(1);
     if (PRESSED & 1) {
       result = selected;
       Audio_PlayCue(112);
@@ -147,7 +147,7 @@ s32 Func_08040798(s32 selected) {
   }
   UiWork_Finalize(window, 2);
   Func_08040614();
-  WaitFrames(1);
+  WaitTicks(1);
   if (result >= 0)
     result += first;
   return result;

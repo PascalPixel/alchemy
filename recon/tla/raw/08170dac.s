@@ -816,7 +816,7 @@ BattleEffect_RunVoidBeam:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #12]
 	ldr r5, [sp, #64]
 	adds r4, #8

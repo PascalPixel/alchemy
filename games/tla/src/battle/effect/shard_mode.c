@@ -28,7 +28,7 @@ void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
 void UiWindow_CreateWithLayoutBounds(s32 flags);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Func_08020310(s32 x, s32 z, s32 layer);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);

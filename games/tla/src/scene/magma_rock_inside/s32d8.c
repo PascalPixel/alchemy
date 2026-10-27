@@ -20,7 +20,7 @@ void Func_020032d8(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_020030cc();
   }
 }
@@ -35,7 +35,7 @@ void Func_02003348(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_020030cc();
   }
 }
@@ -50,7 +50,7 @@ void Func_020033b0(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_020030cc();
   }
 }

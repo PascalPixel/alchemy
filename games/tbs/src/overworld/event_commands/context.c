@@ -78,12 +78,12 @@ s32 Field_StartEncounterTransition(s32 unused) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
-    WaitFrames(16);
+    WaitTicks(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
       Io_Write16(RGB(level, level, level), (u16 *)&BG_PLTT_COLOR(15, 3));
-      WaitFrames(1);
+      WaitTicks(1);
     }
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
@@ -91,11 +91,11 @@ s32 Field_StartEncounterTransition(s32 unused) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);
     work->transitionActive = 0;
-    WaitFrames(16);
+    WaitTicks(16);
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
       Io_Write16(RGB(level, level, level), &PLTT_BACKDROP);
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
 }
@@ -130,7 +130,7 @@ void Exit_PrepareAnimation(s32 animation) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   Actor_SelectAnimationFar(actor, animation);
-  WaitFrames(18);
+  WaitTicks(18);
 }
 
 /// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
@@ -172,7 +172,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + 0x80000;
   *(s32 *)&leader->z &= mask;
   Actor_SelectAnimationFar(leader, animation);
-  WaitFrames(30);
+  WaitTicks(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
   spriteAnimation->count = 1;
@@ -224,12 +224,12 @@ s32 Entrance_PlayArrival(void) {
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         // Until the next frame's fall would reach the ground.
         while (leader->y.fixed + leader->velocityY > leader->groundHeight) {
-          WaitFrames(1);
+          WaitTicks(1);
         }
         Sound_PlaySongFar(SE_DOOR_CLOSE);
         leader->y.fixed = leader->groundHeight;
         Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
-        Event_WaitFrames(15);
+        Event_WaitTicks(15);
         FieldCamera_FollowActor(leaderId, 1);
         result = 3;
       }

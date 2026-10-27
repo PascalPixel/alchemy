@@ -24,7 +24,7 @@ struct SavedBattleObj {
   u8 reactivate;
 };
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 s32 Func_0811a4e0(s32 unitId);
 void ResourceSlot_LoadFar(s32 slot, s32 a, s32 b, s32 c);
@@ -52,7 +52,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
       fade = 0;
     if (fade <= 15)
       *(volatile u16 *)0x04000052 = (fade << 8) | (16 - fade);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   ReleaseBattleObjectRecords(unitId);
   Iwram_CopyWords(BattleObject_Get(saved->unitId), saved, 44);
@@ -87,7 +87,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   for (frame = 0; frame <= 15; frame++) {
     object->y = 0;
     *(volatile u16 *)0x04000052 = ((16 - frame) << 8) | frame;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   if (saved->single) {
     BattlePres_SetActorRecordMode(unitId, 0);

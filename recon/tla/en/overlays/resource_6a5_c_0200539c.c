@@ -10,8 +10,8 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
@@ -47,7 +47,7 @@ void Func_0200539c(void) {
   Func_02005984(0);
   Camera_SetBounds(-1, -1, -1, 0);
   Func_0200577c();
-  WaitFrames(1);
+  WaitTicks(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -57,7 +57,7 @@ void Func_0200539c(void) {
   Event_WaitTransitionFrames();
   Func_020059f4(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_WaitTicks(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -83,7 +83,7 @@ void Func_0200539c(void) {
   Func_02005904(gPartyState.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Object_SetModeById(gPartyState.currentOwner, 1);
   Func_0200581c();
 }

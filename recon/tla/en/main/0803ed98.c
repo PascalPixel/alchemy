@@ -46,7 +46,7 @@ struct StepMenu {
   u16 status;
 };
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Menu_ReloadNodeResource(struct StepMenu *state, u32 index);
 void Menu_LoadSelectionNodeResource(struct StepMenu *state, u32 index);
 void Menu_ScrollSelectionList(struct StepMenu *state, u32 mode);
@@ -60,7 +60,7 @@ void Menu_StepLeft(struct StepMenu *state) {
 
   Menu_ReloadNodeResource(state, state->cursor);
   state->status = 33;
-  WaitFrames(1);
+  WaitTicks(1);
   if (state->count > 5) {
     if ((state->cursor | state->top) != 0) {
       if (state->cursor == 1 && state->top != 0) {
@@ -85,7 +85,7 @@ void Menu_StepLeft(struct StepMenu *state) {
       }
       node = state->nodes;
       while (node->y != node->targetY)
-        WaitFrames(1);
+        WaitTicks(1);
       i = 0;
       while (i != state->count - 5)
         i++;
@@ -115,7 +115,7 @@ void Menu_StepLeft(struct StepMenu *state) {
   }
   state->status = 1;
   Menu_LoadSelectionNodeResource(state, state->cursor);
-  WaitFrames(1);
+  WaitTicks(1);
   Menu_OpenSelectionWindow(state->nodes->id, 0);
-  WaitFrames(1);
+  WaitTicks(1);
 }

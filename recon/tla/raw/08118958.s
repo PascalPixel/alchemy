@@ -45,7 +45,7 @@ Func_08118958:
 	movs r0, #32
 	bl GameFlag_ClearBit
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_081189e4
 .L_081189bc:
 	ldr r3, [r5, #12]
@@ -68,7 +68,7 @@ Func_08118958:
 	mov r9, r2
 .L_081189de:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_081189e4:
 	ldr r3, [r5, #12]
 	movs r2, #16

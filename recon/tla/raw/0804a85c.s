@@ -1864,14 +1864,14 @@ Func_0804a85c:
 	b .L_0804b650
 .L_0804b640:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, [sp, #56]
 	cmp r6, #0
 	beq .L_0804b650
 	bl .L_0804ab98
 .L_0804b650:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r7, r9
 	ldr r0, [sp, #52]
 	bl Resource_ResetEntry
@@ -1894,7 +1894,7 @@ Func_0804a85c:
 	movs r3, #0
 	str r3, [r2, #40]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #68]
 	add sp, #324
 	pop {r3, r5, r6, r7}

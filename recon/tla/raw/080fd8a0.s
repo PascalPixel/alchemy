@@ -28,7 +28,7 @@ Func_080fd8a0:
 	ldr r0, [r7, #48]
 	bl RenderOutput_RedrawSavedRectFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, r8
 	ldr r3, [r2, #24]
 	movs r1, #226
@@ -90,7 +90,7 @@ Func_080fd8a0:
 	cmp r6, #4
 	ble .L_080fd918
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #1
 	add sp, #8
 	pop {r3, r5}

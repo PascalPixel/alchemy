@@ -20,7 +20,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -66,7 +66,7 @@ void Func_02000574(void) {
   } while (0);
   Func_02004e30(78);
   Func_02004b18(leader, 6);
-  WaitFrames(6);
+  WaitTicks(6);
   Func_02004e30(152);
   ObjectDispatch_SetSingleChildFlags(leader, 0);
   Func_02004b18(leader, 7);
@@ -78,7 +78,7 @@ void Func_02000574(void) {
   Func_02004b50(leader, ship->x, 0, ship->z);
   Func_02004b58(leader);
   Func_02004b18(leader, 6);
-  WaitFrames(6);
+  WaitTicks(6);
   leader->terrainHeight = 0;
   Func_02004c88(gPartyState.currentOwner, 0, 0);
   Func_02004dc8();

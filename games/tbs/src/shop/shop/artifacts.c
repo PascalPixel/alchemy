@@ -105,7 +105,7 @@ void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
       memberIndex++;
       redraw = 1;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   shop->selectedItem = savedSelectedItem;
 }

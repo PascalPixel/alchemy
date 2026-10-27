@@ -94,7 +94,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -156,7 +156,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, TRANSFER_CALLBACK_ORDER);
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
-  WaitFrames(8);
+  WaitTicks(8);
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
   // spark sheet and the blue flame's colours.
@@ -270,7 +270,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);

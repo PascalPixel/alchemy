@@ -89,7 +89,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     gBgScroll[1].x = 8;
     gBgScroll[0].y = 32;
     gBgScroll[1].y = 32;
-    WaitFrames(1);
+    WaitTicks(1);
     REG_WIN0H = 0xf0;
     REG_WIN0V = 0x88;
     REG_WIN1H = 0xf0;
@@ -103,13 +103,13 @@ void Func_08125d74(s32 arg, s32 kind) {
     Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0xc80);
     Runtime_SetIrqHandler(2, 32, Func_08125d68);
     gBgScroll[0].y = 32;
-    WaitFrames(1);
+    WaitTicks(1);
     UiWindow_CreateWithLayoutBoundsFar(Ram_HeapSlots->battleWork->partyStatus);
-    WaitFrames(20);
+    WaitTicks(20);
     QueueIoWriteDelay10(0x04000008, 2);
     QueueIoWriteDelay6(0x04000008, 0);
     if ((u32)(kind - 74) <= 2 || kind == 638)
-      WaitFrames(60);
+      WaitTicks(60);
     else
       Func_08118bcc(arg);
     Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
@@ -133,7 +133,7 @@ void Func_08125d74(s32 arg, s32 kind) {
         battleObject->scale = 0xb333;
     }
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
-    WaitFrames(1);
+    WaitTicks(1);
     *(u16 *)((u8 *)battle + 0x670) = 100;
     work.count = BattleParty_ListActorIds(2, (u16 *)work.actors);
     work.actors[work.count] = 255;
@@ -142,8 +142,8 @@ void Func_08125d74(s32 arg, s32 kind) {
     BattlePres_SetupTransitionScene(0, 0, 0, 100);
     *timer = 0;
     Runtime_SetIrqHandler(2, 32, Func_08125d68);
-    WaitFrames(1);
-    WaitFrames(20);
+    WaitTicks(1);
+    WaitTicks(20);
     UiWindow_CreateWithLayoutBoundsFar(Ram_HeapSlots->battleWork->partyStatus);
     QueueIoWriteDelay10(0x04000008, 2);
     QueueIoWriteDelay6(0x04000008, 0);
@@ -156,18 +156,18 @@ void Func_08125d74(s32 arg, s32 kind) {
       BattlePres_SetActorRecordMode(shown[i], 1);
     for (i = 0; i != 16; i++) {
       REG_BLDALPHA = i | 0x1000;
-      WaitFrames(1);
+      WaitTicks(1);
     }
     for (i = 0; i != count; i++)
       BattlePres_SetActorRecordMode(shown[i], 0);
     Func_08118bcc(arg);
     gBgScroll[0].y = 0;
-    WaitFrames(1);
+    WaitTicks(1);
     Runtime_SetIrqHandler(2, 0, 0);
   }
   Runtime_SetIrqHandler(2, 0, 0);
   REG_BG1CNT = 0x1f83;
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BG1CNT = 0x1f83;
   REG_BG0CNT &= 0xfffd;
   gBgScroll[1].x = 8;

@@ -171,7 +171,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   drawAlt = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
-  WaitFrames(1);
+  WaitTicks(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
   REG_DISPCNT = 0x7741;
@@ -413,7 +413,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // The second half: ice rains on the targets, boulders pile up and burst.
@@ -541,7 +541,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     else
       Func_08158ce0(2, 2);
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Tear down.

@@ -172,7 +172,7 @@ BattleEffect_RunZagan:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r9, r2
 	mov r3, r9
@@ -215,7 +215,7 @@ BattleEffect_RunZagan:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #128
 	lsls r1, r1, #2
 	adds r1, #146
@@ -1285,7 +1285,7 @@ BattleEffect_RunZagan:
 	add r3, r10
 	str r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0814c8a6:
 	movs r6, #1
 	add r9, r6

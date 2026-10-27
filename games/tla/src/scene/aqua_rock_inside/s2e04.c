@@ -41,7 +41,7 @@ void Func_02002e34(s32 entrance) {
     leader->angle = angle + 0x1000;
     if ((i & 7) == 0)
       Func_02002bd4(Object_GetById(15));
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Func_02003d84();
   Func_02003e5c(entrance);

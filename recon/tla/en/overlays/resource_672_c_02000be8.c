@@ -14,12 +14,12 @@ void Func_02001da8(void);
 void Func_02001ee8(s32 skip);
 void Func_02001d60(void);
 void Func_02001d40(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(u32 id, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_02001f10(s32 cue);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void GameFlag_SetBit(s32 flag);
@@ -48,12 +48,12 @@ rise:
   if (i < 352)
     goto rise;
   Func_02001d40();
-  WaitFrames(1);
+  WaitTicks(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0xcccc, 0x6666);
   ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 328, 184);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02001f10(308);
   ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
   if (i != 0) {
@@ -67,15 +67,15 @@ rise:
     *(s32 *)(lower + 12) += -0x10000;
     *(s32 *)(upper + 12) += -0x10000;
     i--;
-    WaitFrames(1);
+    WaitTicks(1);
     if (i != 0)
       goto sink;
   }
   ObjectMotion_SetActionVariant(gPartyState.currentOwner, 1);
   Func_02001f10(298);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_02001f10(125);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   GameFlag_SetBit(0x206);
   Func_02001da8();
 }

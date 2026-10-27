@@ -17,7 +17,7 @@ struct Record0811e7dc {
 // Far call to Func_080219cc.
 void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370
-s32 WaitFrames(s32 frames);
+s32 WaitTicks(s32 ticks);
 void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
@@ -26,7 +26,7 @@ void Func_0811e7dc(struct Work0811e7dc *work) {
 
   if (work->buffer != NULL) {
     Func_080219ccFar(GetMotionRecord(object, 0));
-    WaitFrames(1);
+    WaitTicks(1);
     MemFree(work->buffer);
     work->buffer = NULL;
     {

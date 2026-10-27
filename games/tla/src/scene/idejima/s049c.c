@@ -20,7 +20,7 @@ s32 Engine_ActorShowEmote();
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_PrepareObjectAndApplyValue();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
 void Object_LinkPair();
@@ -67,7 +67,7 @@ void Func_0200049c(void) {
   ObjectMotion_Launch(6, 4, 0);
   Engine_ActorSetAnimation(6, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Object_LinkPair(6, gPartyState.currentOwner, 0);
   Engine_EventShowMessage(6, 0);
   Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
@@ -79,7 +79,7 @@ void Func_0200049c(void) {
   Engine_ActorShowEmote(6, 0x100, 20);
   Engine_EventShowMessage(6, 0);
   ObjectMotion_SetAngleToward(6, gPartyState.currentOwner, 0);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Engine_ActorSetAnimation(6, 3);
   Engine_EventShowMessage(6, 0);
   Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
@@ -258,7 +258,7 @@ void Func_020006a8(void) {
     Call3(ObjectMotion_Launch, 6, 4, 0);
     Call2(Engine_ActorSetAnimation, 6, 1);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
-    Call1(FieldEvent_WaitFrames, 20);
+    Call1(FieldEvent_WaitTicks, 20);
     Call3(ObjectMotion_SetSpeedParameters, 6, 0x19999, 0xcccc);
     Call3(ObjectMotion_SetPositionAndReset, 6, 212, 680);
     Call3(ObjectMotion_SetPositionAndReset, 6, 192, 712);

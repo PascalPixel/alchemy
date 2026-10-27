@@ -184,7 +184,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
     if (frame <= 35)
       Func_0816442c(formation, orgX, y);
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

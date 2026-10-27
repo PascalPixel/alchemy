@@ -15,7 +15,7 @@ void Func_080409a4(void);
 void Func_080409dc(void);
 struct RenderInput *Func_080409f0(void);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 s32 Sound_LoadPresetParameters(s32 preset);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
@@ -46,7 +46,7 @@ s32 Func_08040a48(void) {
   Func_080409a4();
   work = Ram_HeapSlots->unkd0[0];
   window = Func_080409f0();
-  WaitFrames(1);
+  WaitTicks(1);
   do {
     if (redraw != 0) {
       redraw = 0;
@@ -64,7 +64,7 @@ s32 Func_08040a48(void) {
       Func_08108040(work + 0x5a4, ((s16)window->x << 3) - 4,
                     ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (gInput.pressed & 2)
       break;
     if (gInput.pressed & 1) {
@@ -104,6 +104,6 @@ s32 Func_08040a48(void) {
   } while (1);
   UiWork_Finalize(window, 2);
   Func_080409dc();
-  WaitFrames(1);
+  WaitTicks(1);
   return 0;
 }

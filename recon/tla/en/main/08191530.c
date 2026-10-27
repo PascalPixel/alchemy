@@ -45,7 +45,7 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
@@ -95,7 +95,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   draw(canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);
 
@@ -113,7 +113,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   draw(gMapCellBuffer, canvas, 0, 0, 128, 128);
   draw(gMapCellBuffer, canvas, 128, 0, 128, 128);
   work->transferPending = 1;
-  WaitFrames(1);
+  WaitTicks(1);
 
   for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {
     if (gInput.repeat & 2)
@@ -147,7 +147,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
                          Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
                             8,
                         0x30000);
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   gBgScroll[1].x = savedScrollX;

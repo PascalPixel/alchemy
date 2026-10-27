@@ -23,7 +23,7 @@ void Func_02002820(void) {
     LemurianShip_ObjPlace(11, 0, 0);
     LemurianShip_ObjPlace(12, 0, 0);
     LemurianShip_ObjPlace(13, 0, 0);
-    LemurianShip_WaitFrames(1);
+    LemurianShip_WaitTicks(1);
   }
   if (LemurianShip_FlagCheck(0x9e4)) {
     struct LemurianShipObject *marker = Object_GetById(64);
@@ -34,7 +34,7 @@ void Func_02002820(void) {
     LemurianShip_CamSet(0x80000, 0x100000, 0xf80000, 0x1000000);
     Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02002c10();
-    LemurianShip_WaitFrames(1);
+    LemurianShip_WaitTicks(1);
   }
   if (LemurianShip_FlagCheck(0x22f)) {
     Func_02001a9c();

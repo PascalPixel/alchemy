@@ -76,7 +76,7 @@ void Func_0200009c(void) {
   }
   if (index != 4) {
     ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -8);
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
   }
   Func_020006b8(*choice);
   Event_FinishScreenTransition();

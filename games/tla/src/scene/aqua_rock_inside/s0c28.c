@@ -15,7 +15,7 @@ void Func_02000c28(s32 unused, s32 id) {
   Func_02003ef4(0x22d);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
-    WaitFrames(4);
+    WaitTicks(4);
   }
   Func_02003d84();
   Func_02000b5c();

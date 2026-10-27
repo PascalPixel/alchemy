@@ -269,7 +269,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
     Runtime_ReleaseHeapBlock(HEAP_BLITTER);
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

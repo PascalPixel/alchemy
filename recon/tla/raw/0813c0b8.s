@@ -613,7 +613,7 @@ BattleEffect_RunDouse:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #24]
 	mov r7, r10
 	adds r4, #1

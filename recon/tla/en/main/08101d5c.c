@@ -52,7 +52,7 @@ s32 Resource_ResetEntry(u32 entry);
 void UiWork_FinalizeFar(void *window, s32 mode);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 extern char MsgDjinnInfoPrompt[], MsgDjinnInfoTopic[], MsgDjinnInfoText[];
 
 s32 Func_08101d5c(void) {
@@ -79,7 +79,7 @@ s32 Func_08101d5c(void) {
   result = 0;
   previous = 0;
   RenderOutput_ClearListFar(menu->listWindow);
-  WaitFrames(1);
+  WaitTicks(1);
   RenderOutput_PrepareForRedrawFar(menu->helpWindow);
   message = (s32)MsgDjinnInfoPrompt;
   UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
@@ -109,7 +109,7 @@ s32 Func_08101d5c(void) {
     previous = selection;
     for (;;) {
       Func_080f8a44(-12, (list->y + selection) * 8 + 8);
-      WaitFrames(1);
+      WaitTicks(1);
       if (input->repeat & 0x90) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
@@ -157,7 +157,7 @@ s32 Func_08101d5c(void) {
   ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   RenderOutput_ClearListFar(statusWindow);
   RenderOutput_ClearListFar(helpWindow);
-  WaitFrames(1);
+  WaitTicks(1);
   UiWork_FinalizeFar(statusWindow, 1);
   UiWork_FinalizeFar(list, 1);
   UiWork_FinalizeFar(helpWindow, 1);

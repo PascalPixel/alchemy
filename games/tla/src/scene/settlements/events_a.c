@@ -22,10 +22,10 @@ void Func_0200043c(s32 actor) {
   Func_020020e0(msg);
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020021a8(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_020020e0(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Func_020020e0(msg + 2);
   }
   Func_020020f0(actor, 0);
@@ -52,7 +52,7 @@ void Func_0200052c(void) {
   s32 next = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Object_GetById(4)->actionFlags &= 0xfe;
   CopyCells(96, 14, 72, 14, 2, 1);
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
@@ -62,7 +62,7 @@ void Func_0200052c(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   Object_SetModeById(4, 10);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Func_020021b0(123);
   Func_02002110(next);
   Func_02002070();

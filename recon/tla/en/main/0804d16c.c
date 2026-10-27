@@ -40,7 +40,7 @@ redraw:
     resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
   UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
   for (;;) {
-    WaitFrames(1);
+    WaitTicks(1);
     if (INPUT->pressed & KEY_A) {
       Audio_PlayCue(112);
       return work->selection;

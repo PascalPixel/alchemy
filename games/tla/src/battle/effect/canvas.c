@@ -56,27 +56,27 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 
   BattleEffect_ClearActorTimers();
   display->secondMode = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
-  WaitFrames(1);
+  WaitTicks(1);
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BG2CNT = bgControl | 0x784;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
   display->secondMode = 0;
-  WaitFrames(1);
+  WaitTicks(1);
 
   Func_0814355c();
   REG_WININ = 0x3537;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
 
   // The canvas map: 16 rows of 8 character pairs.
   offset = 0;
@@ -95,7 +95,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
   work->unk78e8 = 0;
-  WaitFrames(1);
+  WaitTicks(1);
 }
 
 void BattleEffect_StartTiledCanvas(s32 bg_control) {
@@ -162,17 +162,17 @@ void BattleEffect_EndCanvasLayer(void) {
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
   REG_BLDCNT = 0;
-  WaitFrames(1);
+  WaitTicks(1);
 
   BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 7);
-  WaitFrames(1);
+  WaitTicks(1);
   for (i = 0; i != 8; i++) {
     BattlePresentation_SetPaletteLevelFar(*(u16 *)battle->unk670, 21 - i * 3);
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
 }
 
 /// Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
@@ -186,8 +186,8 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   battle = Ram_HeapSlots->battleWork;
   *flag = 1;
   QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
-  WaitFrames(1);
+  WaitTicks(1);
   BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f83, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
 }

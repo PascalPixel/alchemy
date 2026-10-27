@@ -63,17 +63,17 @@ void UiMessage_Show(s32 message) {
   }
 }
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 UiWork_IsComplete(void);
 s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 
 void UiMessage_ShowAndWait(s32 message) {
   while (UiWork_IsComplete() == 0)
-    WaitFrames(1);
+    WaitTicks(1);
   UiMessage_Show(message);
   while (UiWork_IsComplete() == 0)
-    WaitFrames(1);
+    WaitTicks(1);
 }
 
 /// Builds the render entries of a message and queues them in the window;

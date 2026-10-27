@@ -3486,7 +3486,7 @@ Func_08046b08:
 	bl Audio_PlayCue
 .L_080485f8:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl .L_08046ca8
 .L_08048602:
 	add r5, sp, #420
@@ -3510,7 +3510,7 @@ Func_08046b08:
 	ldr r0, [sp, #120]
 	bl Resource_ResetEntry
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_08041b68
 	movs r1, #1
 	ldr r0, [sp, #136]
@@ -3532,7 +3532,7 @@ Func_08046b08:
 	bl ReleaseBattleObjectRecordsFar
 	bl BattleActor_CommitPlacementFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #84]
 	bl MemFree
 	movs r3, #185

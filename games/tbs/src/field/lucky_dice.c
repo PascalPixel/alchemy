@@ -960,7 +960,7 @@ void LuckyDice_Run(void) {
 
     Dma_Set(sprites->oam, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
             REG_DMA3);
-    WaitFrames(1);
+    WaitTicks(1);
     frame++;
   }
 
@@ -969,7 +969,7 @@ void LuckyDice_Run(void) {
     scale = Q16_ONE - (index << 12);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   FreeHeapSlot(HEAP_SLOT_CAMERA);
   FreeHeapSlot(HEAP_SLOT_LUCKY_DICE_SPRITES);

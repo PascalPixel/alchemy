@@ -90,7 +90,7 @@ void ObjectSystem_InitializeFar(s32 mode);
 void UiWork_InitializeFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void BattleParty_AssignMemberSlots(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
@@ -166,7 +166,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   s32 i;
   s32 result;
   s32 window;
-  s32 linkWaitFrames;
+  s32 linkWaitTicks;
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
@@ -214,12 +214,12 @@ s32 Func_081197f0(s32 enemyGroup) {
   }
   if (battle->twoSided != 0) {
     gBattleRandomSeed = 0;
-    for (linkWaitFrames = 0;;) {
+    for (linkWaitTicks = 0;;) {
       if ((gLinkStatus & 3) == 3)
         break;
-      linkWaitFrames++;
-      WaitFrames(1);
-      if (linkWaitFrames > 24) {
+      linkWaitTicks++;
+      WaitTicks(1);
+      if (linkWaitTicks > 24) {
         battle->linkPaused = 1;
         break;
       }
@@ -380,7 +380,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       if (BattlePres_SyncTurn() < 0)
         goto aborted_scripted;
     } else {
-      WaitFrames(20);
+      WaitTicks(20);
     }
     if (GameFlag_Test(0x16e) == 0)
       continue;
@@ -388,14 +388,14 @@ s32 Func_081197f0(s32 enemyGroup) {
     window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
                                          0, 4, 1);
     while (UiWork_IsCompleteFar() == 0)
-      WaitFrames(1);
+      WaitTicks(1);
     UiWork_FinalizeFar(window, 1);
-    WaitFrames(1);
+    WaitTicks(1);
     window = UiText_OpenMessageWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
                                          10, 4, 1);
     Func_08120060(44, 24);
     UiWork_FinalizeFar(window, 1);
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
 won:

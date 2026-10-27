@@ -15,7 +15,7 @@
 #include "palbuf.h"
 
 void PaletteFade_SetCurrent(s32 index, s32 transform);
-s32 Title_WaitFramesOrPress(u32 frames);
+s32 Title_WaitTicksOrPress(u32 frames);
 
 s32 Func_081a6638(void) {
   u16 *map;
@@ -48,11 +48,11 @@ s32 Func_081a6638(void) {
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x800;
   PaletteFade_Start(40);
-  if (Title_WaitFramesOrPress(150))
+  if (Title_WaitTicksOrPress(150))
     return 0;
   PaletteFade_SetTarget(2, 0);
   PaletteFade_Start(40);
-  if (Title_WaitFramesOrPress(60))
+  if (Title_WaitTicksOrPress(60))
     return 0;
   return 1;
 }

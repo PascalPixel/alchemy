@@ -23,7 +23,7 @@ s32 UiText_BuildRenderEntriesMode1(s32 message);
 s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entries, s32 x,
                               s32 y, s32 flags);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Audio_Check(void);
 void Func_0803cf6c(s32 message);
 s32 Resource_ResetEntry(u32 slot);
@@ -54,10 +54,10 @@ void Func_08044dc8(s32 summon) {
   UiText_QueueRenderEntries(window, entries, 0, 2, 0);
   Audio_PlayCue(81);
   do
-    WaitFrames(1);
+    WaitTicks(1);
   while (Audio_Check() != 0 && (gInput.pressed & 0x303) == 0);
   UiWork_Finalize(window, 2);
-  WaitFrames(1);
+  WaitTicks(1);
 
   window = UiWindow_Create(3, 1, 24, 7, 0);
   if (window == NULL)
@@ -84,9 +84,9 @@ void Func_08044dc8(s32 summon) {
   Func_0803cf6c((s32)Msg_0034 + 4);
   UiText_QueueRenderEntries(window, entries, 4, 2, 0);
   do
-    WaitFrames(1);
+    WaitTicks(1);
   while ((gInput.pressed & 0x303) == 0);
   UiWork_Finalize(window, 2);
-  WaitFrames(1);
+  WaitTicks(1);
   Resource_ResetEntry(resource);
 }

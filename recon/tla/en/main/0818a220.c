@@ -139,7 +139,7 @@ void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -514,7 +514,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     Func_08158ce0(4, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

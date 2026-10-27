@@ -70,7 +70,7 @@ u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 // Light gathering on the user and bursting, for the scenes.
 
@@ -205,7 +205,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     }
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);

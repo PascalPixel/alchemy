@@ -12,7 +12,7 @@ void Func_0200071c(void) {
   Func_02003e44_(0x28000, 0x4000);
   Camera_MoveWithinMapBounds_(0x3080000, -1, 0x2880000, 1);
   Func_02003e54();
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02003d84();
   GameFlag_SetBit(0x240);
   Func_02003d1c_(59, 16, 5, 32, 46, 16);

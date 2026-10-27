@@ -18,7 +18,7 @@ extern const u8 gData_02005168[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, const u8 *script);
 void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -67,13 +67,13 @@ void Func_02000d18(void) {
                                             gData_020051b8);
   }
   ObjectMotion_EnableActionAndSetCallback(15, gData_02005118);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   ObjectMotion_EnableActionAndSetCallback(15, gData_02005168);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   Func_02004e04(117, 20, 7, 8, 104, 20);
   Func_02004e04(111, 12, 1, 6, 111, 20);
   Func_02004dfc(49, 84, 8, 8, 40, 84);
-  FieldEvent_WaitFrames(30);
+  FieldEvent_WaitTicks(30);
   OverlayObject_PrepareObject(175 << 18, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
   OverlayObject_PrepareObject(181 << 18, 0, 0x1d40000, 286);
@@ -81,7 +81,7 @@ void Func_02000d18(void) {
   Func_02005014(204);
   guard->motionFlags = 3;
   ((struct BoulderSprite *)guard->animation)->layer = 3;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Func_02004ebc(15, 0, 0);
   Func_02004fdc();
   GameFlag_SetBit(0x9c4);

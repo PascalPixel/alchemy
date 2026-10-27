@@ -39,7 +39,7 @@ struct SpinVector {
 void EventRuntime_Start(void);
 void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Audio_PlayCue(s32 cue);
 void Object_SetMode(struct SpinObject *object, s32 mode);
@@ -67,20 +67,20 @@ void FieldEffect_RunRetreat(void) {
   EventRuntime_Start();
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_InitializeSharedScene();
-  WaitFrames(10);
+  WaitTicks(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
-  WaitFrames(30);
+  WaitTicks(30);
   obj->update = ObjectGroup_ApplyRandomChildValues;
   Audio_PlayCue(131);
   Object_SetMode(obj, 28);
-  WaitFrames(40);
+  WaitTicks(40);
 
   Audio_PlayCue(220);
   Animation_ApplyChildValuesFar(obj, 0);
   Object_SetMode(obj, 3);
   obj->update = BattleEffect_AdvanceAngleWithRamp;
   obj->timer = 0;
-  WaitFrames(70);
+  WaitTicks(70);
 
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
@@ -103,11 +103,11 @@ void FieldEffect_RunRetreat(void) {
     scale = (Random16() >> 1) + 0x13333;
     slot->scaleY = scale;
     slot->scaleX = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     i++;
     slot++;
   } while (i < SLOT_MAX);
-  WaitFrames(70);
+  WaitTicks(70);
 
   i = 0;
   last = 2;
@@ -118,9 +118,9 @@ void FieldEffect_RunRetreat(void) {
     i++;
     slot++;
   } while (i < SLOT_MAX);
-  WaitFrames(40);
+  WaitTicks(40);
   BattleEffect_PrepareBufferInterpolation();
   obj->fall = 0;
   obj->y = obj->floor;
-  WaitFrames(10);
+  WaitTicks(10);
 }

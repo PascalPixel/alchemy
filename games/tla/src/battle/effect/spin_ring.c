@@ -9,7 +9,7 @@ void EventRuntime_Start(void);
 void EventRuntime_ResolvePendingActions(s32 skip);
 void EventRuntime_StartScreen(void);
 void EventRuntime_WaitDelay(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void EventRuntime_Wait(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
 void BattleEffect_SpinObject(void);
@@ -44,7 +44,7 @@ void Func_080e37e0(s32 actor) {
     do {
       ring->scaleY += 0x200;
     } while (0);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   ring->scaleX = 0x18000;
   ring->scaleY = 0x10000;
@@ -53,7 +53,7 @@ void Func_080e37e0(s32 actor) {
   object->scaleY = object->scaleX = 0x8000;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   ObjectDispatch_SetSingleChildFlagsFar(Object_GetById(actor), 1);
   EventRuntime_Wait(10);

@@ -97,7 +97,7 @@ BattleEffect_RunWhirlwind:
 	adds r2, #82
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #141
 	bl Audio_PlayCue
 	movs r1, #0
@@ -455,7 +455,7 @@ BattleEffect_RunWhirlwind:
 	movs r1, #1
 	str r1, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r11, r2
 	mov r3, r11

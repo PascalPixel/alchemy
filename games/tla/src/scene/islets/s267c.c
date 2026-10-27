@@ -34,7 +34,7 @@ void Func_0200267c(void) {
   Call3((void (*)())Func_02003e1c, gData_020046bc[index].value,
         gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
   ObjectMotion_EnableActionAndSetCallback(party->currentOwner, gData_02004028);
-  WaitFrames(12);
+  WaitTicks(12);
   Func_02003ffc(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

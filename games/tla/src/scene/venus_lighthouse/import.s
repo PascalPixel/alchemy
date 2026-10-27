@@ -6,10 +6,10 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global WaitTicks
 	.thumb_func
-WaitFrames:
-	overlay_veneer WaitFramesFar
+WaitTicks:
+	overlay_veneer WaitTicksFar
 	.global Random16Far
 	.thumb_func
 Random16Far:
@@ -77,7 +77,7 @@ Party_RemoveActiveOwner:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer FieldEvent_WaitFramesFar
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Engine_EventStart
 	.thumb_func
 Engine_EventStart:

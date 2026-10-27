@@ -127,7 +127,7 @@ Func_0810021c:
 	movs r1, #1
 	movs r0, #1
 	str r1, [sp, #12]
-	bl WaitFrames
+	bl WaitTicks
 	b .L_08100334
 .L_08100330:
 	add r2, sp, #52
@@ -164,7 +164,7 @@ Func_0810021c:
 	mov r10, r1
 .L_08100374:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r2, r8
 	add r3, sp, #60
 	ldr r1, [r2, #20]

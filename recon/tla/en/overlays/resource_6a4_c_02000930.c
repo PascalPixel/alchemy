@@ -17,7 +17,7 @@ void Func_02002a88(void);
 void Func_02002b18(s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct ObjectRuntime *Func_02002af8(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -54,7 +54,7 @@ void Func_02000930(void) {
       i += 0x1999;
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    WaitFrames(1);
+    WaitTicks(1);
     if (*((u8 *)linked + 0x63) != 0)
       goto rise;
   }
@@ -78,7 +78,7 @@ void Func_02000930(void) {
   if (actor->y > actor->terrainHeight + 0x100000) {
   fall:
     i++;
-    WaitFrames(1);
+    WaitTicks(1);
     if (i <= 59 && actor->y > actor->terrainHeight + 0x100000)
       goto fall;
   }
@@ -87,7 +87,7 @@ void Func_02000930(void) {
   if (actor->velocityY != 0) {
   settle:
     i++;
-    WaitFrames(1);
+    WaitTicks(1);
     if (i <= 59 && actor->velocityY != 0)
       goto settle;
   }

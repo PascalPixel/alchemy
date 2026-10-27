@@ -45,7 +45,7 @@ void MapGrid_WaitForShakeToSettle(void) {
   while (waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
          (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
           grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE)) {
-    WaitFrames(1);
+    WaitTicks(1);
     waitedFrames++;
   }
   // A zero decay makes the next view update's shake its last.

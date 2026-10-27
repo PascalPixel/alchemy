@@ -2,7 +2,7 @@
 // one set to another over the given number of frames, one step a frame.
 #include "types.h"
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 void Func_02000734(const u16 *from, const u16 *to, s32 frames) {
   s32 step;
@@ -26,6 +26,6 @@ void Func_02000734(const u16 *from, const u16 *to, s32 frames) {
       *(u16 *)(0x050001e4 + offset) = blue << 10 | green << 5 | red;
       offset += 2;
     } while (--left >= 0);
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

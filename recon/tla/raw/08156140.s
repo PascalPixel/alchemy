@@ -2538,7 +2538,7 @@ BattleEffect_RunProjectileVolley:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r5, [sp, #128]
 	ldr r6, [sp, #104]
 	adds r5, #1

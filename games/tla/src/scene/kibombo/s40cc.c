@@ -30,7 +30,7 @@ void Func_020040cc(void) {
   Kibombo_CamMove(132 << 17, -1, 170 << 17, 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
-  WaitFrames(1);
+  WaitTicks(1);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   Kibombo_Wait(20);
   Scheduler_RemoveCallbackFar(Func_02002ccc);
@@ -46,7 +46,7 @@ void Func_020040cc(void) {
   Kibombo_Wait(20);
   Func_02005b5c(17, 0, 40);
   Scheduler_RemoveCallbackFar(Func_02002ccc);
-  WaitFrames(1);
+  WaitTicks(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -67,10 +67,10 @@ void Func_02004294(void) {
   Object_GetById(27)->motionFlags = 0;
   Kibombo_ObjSetPos(Object_GetById(27), 0x1090000, 0x180000, 172 << 17);
   Func_02003640(1, 1);
-  WaitFrames(1);
+  WaitTicks(1);
   if (gData_02007950 != 0) {
     gData_02007950->y += 0x200000;
-    WaitFrames(1);
+    WaitTicks(1);
     gData_02007950->motionFlags = 4;
   }
   Event_StartScreenTransition();
@@ -98,7 +98,7 @@ void Func_02004294(void) {
        * tla-en. */
       slot = &gData_02007950;
       (*slot)->y += 0xffffc000;
-      WaitFrames(1);
+      WaitTicks(1);
       object = *slot;
     test:
       y = object->y;

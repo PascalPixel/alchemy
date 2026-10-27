@@ -36,14 +36,14 @@ static __inline__ void Bios_Stop(void) {
   __asm__ volatile("swi 3");
 }
 
-void WaitFrames(s32 frames) {
+void WaitTicks(s32 ticks) {
   u32 i;
   u32 line;
   s32 j;
   s16 display;
   s16 backdrop;
 
-  for (i = 0; i < (u32)frames; i++) {
+  for (i = 0; i < (u32)ticks; i++) {
     gSchedulerStatus = 1;
     Scheduler_RunCallbacksByKey(0x480);
     gSchedulerStatus = 0;

@@ -158,7 +158,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     // A window that already existed still shows the last party member: clear
     // its top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
-      WaitFrames(1);
+      WaitTicks(1);
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
@@ -193,7 +193,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
 
   // Clear the lower part and redraw the party member's portrait.
   if (!created) {
-    WaitFrames(1);
+    WaitTicks(1);
     Window_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
   }
   WindowSprite_ClearListFar(window);
@@ -723,7 +723,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
         (fineY >> 4) + ((menu->auxiliaryWindow)->y << 3) - 56;
     steps--;
     if (steps != 0)
-      WaitFrames(1);
+      WaitTicks(1);
   } while (steps != 0);
 }
 
@@ -846,9 +846,9 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   Text_DrawMessageFar(message, window, 0, 0);
 #endif
   if (x != -1) {
-    WaitFrames(1);
+    WaitTicks(1);
     do {
-      WaitFrames(1);
+      WaitTicks(1);
     } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
              !(gKeysPressed & KEY_START));
 #if TBS_PATCH_1

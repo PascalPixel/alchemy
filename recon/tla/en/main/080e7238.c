@@ -34,7 +34,7 @@ struct WhirlWork {
 
 extern char ResourceId_ColouredOrbs;
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -76,7 +76,7 @@ void Func_080e7238(void) {
     spark->age = -1;
   }
   Audio_PlayCue(200);
-  WaitFrames(20);
+  WaitTicks(20);
   object->scaleX = 0;
   object->scaleY = 0;
   ObjectDispatch_SetSingleChildFlagsFar(object, 0);
@@ -155,7 +155,7 @@ void Func_080e7238(void) {
         state = 999;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     frame++;
   } while (state != 999);
   Resource_ResetEntry(entry);

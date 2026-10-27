@@ -3,7 +3,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001c74(s32 message);
@@ -41,10 +41,10 @@ void Func_020001a4(s32 actor) {
   Func_02001c74(msg);
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_02001c74(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Func_02001c74(msg + 2);
   }
   Func_02001c8c(actor, 0);
@@ -56,10 +56,10 @@ void Func_020001f0(s32 actor) {
   Func_02001c74(msg);
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_02001c74(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Func_02001c74(msg + 2);
   }
   Func_02001c8c(actor, 0);

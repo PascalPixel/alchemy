@@ -17,7 +17,7 @@ s32 Map_GetTerrainHeight();
 s32 ObjectDispatch_SetAnimationSpeed();
 s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
-s32 WaitFrames();
+s32 WaitTicks();
 extern u8 Func_02004080[];
 extern u8 gPartyState[];
 
@@ -164,10 +164,10 @@ L_0200c8de:
   t53 = FIELD_AT(sp_, s32, 4);
   Func_020054b8(v_r5, t52, t51, t53);
   Func_020054c0(v_r5);
-  WaitFrames(2);
+  WaitTicks(2);
   goto L_0200c73e;
 L_0200c904:
-  WaitFrames(10);
+  WaitTicks(10);
 L_0200c90a:
   FIELD_AT(v_r5, s32, 108) = 0;
   t58 = *(u8 *)(v_r5 + 90);

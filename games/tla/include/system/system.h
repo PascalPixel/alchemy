@@ -5,7 +5,7 @@
 #include "mem.h"
 #include "edition.h"
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void System_WaitForFrameInterrupt(void);
 void Render_ResetFrame(void);
 void Bios_SoundBiasOff(void);

@@ -15,7 +15,7 @@ void BattleEffect_RunSparkApproachVariant3(struct BattleEffectArgument *effect) 
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
-  WaitFrames(12);
+  WaitTicks(12);
   effect->variant = 3;
   BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
 }

@@ -131,7 +131,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     BattleEffect_PrepareBufferInterpolation();
     return;
   }
-  WaitFrames(15);
+  WaitTicks(15);
   p->x = target->x;
   p->y = target->y + 0x100000;
   p->z = target->z;
@@ -153,7 +153,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       object->y += 0x6000;
       right->y += 0x6000;
       target->y += 0x6000;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
   anchors[0]->speed = 0x40000;
@@ -165,7 +165,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   target->unk5a = 0;
   target->mode = 2;
   for (;;) {
-    WaitFrames(1);
+    WaitTicks(1);
     if ((gInput.pressed & 0x303) != 0)
       break;
     angle = (u16)BattleEffect_GetCycledTableWord(gInput.held);
@@ -218,7 +218,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       z = p->z;
       Object_SetMode(anchors[0], 4);
       Object_SetMode(anchors[1], 4);
-      WaitFrames(15);
+      WaitTicks(15);
       target->unk5b = i;
       target->speed = 0x3333;
       target->lift = 0x3333;
@@ -235,7 +235,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       target->z = z;
       target->velocityX = i;
       target->velocityZ = i;
-      WaitFrames(10);
+      WaitTicks(10);
       break;
     }
   }
@@ -243,9 +243,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Object_SetMode(anchors[1], 4);
   Scheduler_RemoveCallback((u32)BattleEffect_SpawnFallingParticles);
   Audio_PlayCue(135);
-  WaitFrames(15);
+  WaitTicks(15);
   Audio_PlayCue(135);
-  WaitFrames(15);
+  WaitTicks(15);
   p->x = target->x;
   p->y = target->y + 0x100000;
   p->z = target->z;
@@ -288,13 +288,13 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Animation_ApplyChildValuesFar((struct DispatchObject *)source, 0);
   if ((s8)work->falls != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
-      WaitFrames(1);
-    WaitFrames(1);
+      WaitTicks(1);
+    WaitTicks(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
-      WaitFrames(1);
+      WaitTicks(1);
     BattleEffect_SpawnRadialParticleRing(target);
     BattleEffect_PrepareBufferInterpolation();
-    WaitFrames(30);
+    WaitTicks(30);
   } else {
     BattleEffect_PrepareBufferInterpolation();
   }

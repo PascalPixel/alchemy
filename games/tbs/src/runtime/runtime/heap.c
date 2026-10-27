@@ -42,7 +42,7 @@ s32 Heap_GetRemainingEwram(void) {
 /// block advances that pool's next address and is stored in the slot, so
 /// later calls with the same `kind` return it until FreeHeapSlot
 /// frees it. Returns NULL when neither pool has room. Called throughout the
-/// game for long-lived work blocks, and by WaitFrames for each frame's OAM
+/// game for long-lived work blocks, and by WaitTicks for each frame's OAM
 /// list.
 ///
 /// A slot that already has a block returns it whatever `size` asks for, so a

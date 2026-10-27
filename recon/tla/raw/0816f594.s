@@ -397,7 +397,7 @@ BattleEffect_RunRadiantFire:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #20]
 	adds r1, #1
 	str r1, [sp, #20]

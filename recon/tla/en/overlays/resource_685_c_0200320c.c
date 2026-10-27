@@ -30,7 +30,7 @@ struct ChampaCliffCavesWork {
 
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02002d34(void);
 void Func_02002de4(void);
 
@@ -64,6 +64,6 @@ void Func_0200320c(void) {
       }
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   } while (state != 999);
 }

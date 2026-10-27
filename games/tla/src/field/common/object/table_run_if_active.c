@@ -14,7 +14,7 @@ void Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 s32 UiWork_IsCompleteFar(void);
 s32 UiWork_IsIdleFar(s32 window);
 void UiWork_FinalizePendingCoreFar(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 /// If the actor has graphics, ends the window of the speaker its graphics ID
 /// names.
@@ -50,7 +50,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!UiWork_IsCompleteFar())
-      WaitFrames(delay);
+      WaitTicks(delay);
   }
 
   secondWindow =
@@ -59,22 +59,22 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (!UiWork_IsCompleteFar())
-    WaitFrames(1);
+    WaitTicks(1);
 
-  WaitFrames(1);
+  WaitTicks(1);
   while (!(gInput.pressed & 0x303))
-    WaitFrames(1);
+    WaitTicks(1);
 
-  WaitFrames(1);
+  WaitTicks(1);
   UiWork_FinalizeEntityMatchingLocalizedIdFar(firstSprite);
   UiWork_FinalizeEntityMatchingLocalizedIdFar(secondSprite);
   UiWork_FinalizePendingCoreFar();
-  WaitFrames(1);
+  WaitTicks(1);
 
   while (!UiWork_IsIdleFar(firstWindow))
-    WaitFrames(1);
+    WaitTicks(1);
   while (!UiWork_IsIdleFar(secondWindow))
-    WaitFrames(1);
+    WaitTicks(1);
 
-  WaitFrames(1);
+  WaitTicks(1);
 }

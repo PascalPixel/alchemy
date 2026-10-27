@@ -130,7 +130,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *args) {
   BattleAnim_SelectLivingTargets(work->args);
   BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
   gProjection.centerY = 240;
-  WaitFrames(1);
+  WaitTicks(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The animation owns BG1's scroll until frame 280 of the sweep.

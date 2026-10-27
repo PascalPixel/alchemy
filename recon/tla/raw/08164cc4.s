@@ -187,7 +187,7 @@ BattleEffect_RunParticleStreams:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_08164e68
 	movs r2, #128
 	lsls r2, r2, #19
@@ -458,7 +458,7 @@ BattleEffect_RunParticleStreams:
 	movs r7, #1
 	str r7, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #191
 	ble .L_08164fd6
 	ldr r3, .L_08165098
@@ -1083,7 +1083,7 @@ BattleEffect_RunParticleStreams:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #16]
 	movs r2, #128
 	lsls r2, r2, #1
@@ -1106,7 +1106,7 @@ BattleEffect_RunParticleStreams:
 	b .L_08165134
 .L_0816553e:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #48]
 	movs r5, #0
 	str r5, [r2, #16]
@@ -1746,7 +1746,7 @@ BattleEffect_RunParticleStreams:
 	movs r1, #1
 	str r1, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #20]
 	movs r3, #128
 	movs r4, #1

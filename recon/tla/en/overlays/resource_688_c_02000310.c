@@ -26,9 +26,9 @@ extern const u8 gData_020005e4[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Object_RefreshSelectorById(u32 id);
@@ -105,8 +105,8 @@ void Func_02000310(s32 kind, s32 frames) {
                            (resource << 16) | 2);
   x = Func_0200053c(id, 0, x, 5);
   while (UiWork_IsComplete() == 0)
-    WaitFrames(1);
-  FieldEvent_WaitFrames(frames);
+    WaitTicks(1);
+  FieldEvent_WaitTicks(frames);
   UiWork_Finalize(x, 2);
   UiWork_FinalizePendingCore();
 }

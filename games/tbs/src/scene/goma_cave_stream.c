@@ -170,7 +170,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump = Actor_GetById(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i < 18; i++) {
-    WaitFrames(1);
+    WaitTicks(1);
     stump->sprite->rotation -= 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = ACTOR_NO_TARGET;

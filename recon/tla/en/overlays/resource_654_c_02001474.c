@@ -53,13 +53,13 @@ void Func_02001474(void) {
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
   GameFlag_SetBit(0x230);
-  WaitFrames(1);
+  WaitTicks(1);
   leader->motionFlags = 3;
   ObjectMotion_SetActionVariant(14, 3);
   stone->priorityFlags |= 2;
   Scheduler_AddOrUpdateCallback(Func_02001464, 0x480);
   do
-    WaitFrames(1);
+    WaitTicks(1);
   while (*(s32 *)((u8 *)leader + 40) != 0);
   Func_02003b48(227);
   Call3((void (*)())Func_020039b8, 0x10000, 0x20000, 0x10000);
@@ -82,7 +82,7 @@ void Func_02001474(void) {
                   velocity[1], velocity[2], 0x01090001, &options);
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
-  WaitFrames(2);
+  WaitTicks(2);
   Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
   Scheduler_RemoveCallbackFar(Func_02001464);
   spin = 0x200;
@@ -90,12 +90,12 @@ void Func_02001474(void) {
     sprite->rotation += spin;
     stone->z += 0x10000;
     i++;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Func_020039c0();
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      1);
   leader->layer = 0;
-  WaitFrames(10);
+  WaitTicks(10);
   Func_020039e0();
 }

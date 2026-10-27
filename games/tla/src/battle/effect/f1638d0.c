@@ -185,7 +185,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     }
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);

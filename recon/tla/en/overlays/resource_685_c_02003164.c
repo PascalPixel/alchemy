@@ -36,7 +36,7 @@ struct Vec3 {
 
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02002c88(void);
 void Func_02002de4(void);
 
@@ -67,6 +67,6 @@ void Func_02003164(const struct Vec3 *origin) {
         state = 999;
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   } while (state != 999);
 }

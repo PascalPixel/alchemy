@@ -530,7 +530,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       Sound_PlaySongFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
-      WaitFrames(60);
+      WaitTicks(60);
       return TURN_REPORTED;
     }
     // Unleash the set Djinni; it goes on standby.

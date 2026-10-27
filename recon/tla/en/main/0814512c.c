@@ -298,7 +298,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     Func_08158ce0(4, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);

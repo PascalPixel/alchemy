@@ -54,6 +54,6 @@ restart:
       Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
       goto restart;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

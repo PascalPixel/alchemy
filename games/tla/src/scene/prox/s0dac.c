@@ -13,11 +13,11 @@ s32 Func_0200451c();
 s32 Func_02004534();
 s32 ObjectMotion_ArmCallback();
 s32 Func_020044dc();
-s32 WaitFrames();
+s32 WaitTicks();
 s32 ObjectMotion_EnableActionAndSetCallback();
 s32 Object_SetActionCallbackAndRefreshById();
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Motion_SetVarCbAndRefresh();
 s32 Event_AskYesNoWithActorAnimation();
@@ -53,7 +53,7 @@ void Func_02000dac(void) {
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
   Call2(Func_020044dc, 0x12, gPartyState.currentOwner);
   Call2(Func_020044dc, 0, gPartyState.currentOwner);
-  Call1(WaitFrames, 1);
+  Call1(WaitTicks, 1);
   Call3(ObjectMotion_ArmCallback, 0xe, 0xb000, 0);
   Call3(ObjectMotion_SetSpeedParameters, 0x12, 0xcccc, 0x6666);
   Call3(ObjectMotion_SetSpeedParameters, 0, 0xcccc, 0x6666);
@@ -82,7 +82,7 @@ void Func_02000dac(void) {
   Call3(ObjectMotion_SetSpeedParameters, 0, 0x26666, 0x13333);
   Object_GetById(0)->actionFlags &= 0xfe;
   Call3(ObjectMotion_SetPositionAndReset, 0, 0xa0, 0x8c);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   Object_GetById(0)->actionFlags |= 1;
   Call2(Motion_SetModeAndWaitAnimation, 0, 0x15);
   Call3(ObjectMotion_ArmCallback, 0xc, 0xb000, 0);
@@ -95,9 +95,9 @@ void Func_02000dac(void) {
   Call2(Func_0200454c, 0x12, 0xb000);
   Call2(Func_02004534, 0x8012, 0);
   Call2(Object_SetModeById, 0, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Object_SetModeById, 0, 1);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_0200454c, 0, 0x2000);
   Call2(Object_SetModeById, 0x12, 3);
   Call2(Func_02004534, 0x8012, 0);
@@ -124,7 +124,7 @@ next_wait:
   i++;
 test_wait:
   if (i < 80) {
-    Call1(WaitFrames, 1);
+    Call1(WaitTicks, 1);
     if (gInput.held == 0)
       goto next_wait;
   }

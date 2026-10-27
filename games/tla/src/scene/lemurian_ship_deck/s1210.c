@@ -41,8 +41,8 @@ struct ObjectRuntime *Func_02001210(void) {
 extern u8 MsgAtLastI[];
 extern const u8 gData_02002120[];
 
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
@@ -82,7 +82,7 @@ void Func_0200128c(void) {
   Func_02001f5c();
   Call1((void (*)())Func_020020ac, 0);
   Call2((void (*)())Func_02001fd4, 7, gPartyState.currentOwner);
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x19999, 0xcccc);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 7, 412, 424);
@@ -106,28 +106,28 @@ void Func_0200128c(void) {
   Call2((void (*)())Func_02002044, 7, 0xc000);
   Call1((void (*)())Func_020020d4, 182);
   handle = Func_02001210();
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call1((void (*)())Func_020020d4, 220);
   callback = Func_02001188;
   Scheduler_AddOrUpdateCallback(callback, 0x480);
   Call2((void (*)())Func_02002084, 0x10003, 1);
   Call1((void (*)())Func_0200208c, 20);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002084, 0x10006, 1);
   Call1((void (*)())Func_0200208c, 20);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002084, 0x7fff, 0);
   Call1((void (*)())Func_0200208c, 20);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call6((void (*)())Func_02001f2c, 51, 38, 70, 22, 1, 2);
   Flag_Set(0x201);
   Call1((void (*)())Scheduler_RemoveCallbackFar, (s32)callback);
   if (handle != 0)
     Call1((void (*)())Func_02001f14, handle);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002084, 0x10000, 0);
   Call1((void (*)())Func_0200208c, 20);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002044, 7, 0x4000);
   Call2((void (*)())Func_02002034, 7, 0);
   Call2((void (*)())Object_SetModeById, 7, 3);
@@ -178,10 +178,10 @@ void Func_020014c0(void) {
   Call4((void (*)())Func_020020b4, 9, 32, 0, 0x4000);
   Call4((void (*)())Func_020020b4, 6, 48, -8, 0x4000);
   Call4((void (*)())Func_020020b4, 5, -16, -8, 0x4000);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0x26666, 0x13333);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 7, 280, 224);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Value3((s32 (*)())Func_0200204c, 7, 264, 0);
   Call3((void (*)())ObjectMotion_Launch, 7, 4, 10);
   Call3((void (*)())ObjectMotion_Launch, 7, 4, 20);
@@ -212,7 +212,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 5, 0);
   Call2((void (*)())Func_02002044, 7, 0xa000);
   Call2((void (*)())Func_02002054, 7, 258);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002034, 0x2007, 0);
   Call2((void (*)())Object_SetModeById, 5, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
@@ -259,7 +259,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002044, 7, 0xe000);
   Value3((s32 (*)())Func_0200204c, 7, 257, 20);
   Call2((void (*)())Func_02002054, 9, 258);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002034, 9, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 7, 0xe000, 0);
   Value3((s32 (*)())Func_0200204c, 7, 264, 20);
@@ -283,7 +283,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 3);
   Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
   Call2((void (*)())Func_02002054, 5, 258);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call2((void (*)())Func_02002034, 5, 0);
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Call2((void (*)())ObjectMotion_SetVariantCallback, 9, 2);
@@ -330,7 +330,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Object_SetModeById, 5, 3);
   Call2((void (*)())Func_02002034, 5, 0);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 7, -16, 0);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 7, -16, 0);
   Value3((s32 (*)())Func_0200204c, 7, 261, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x4000, 0);
@@ -381,7 +381,7 @@ void Func_020014c0(void) {
   ObjectMotion_EnableActionAndSetCallback(9, gData_020020e4);
   ObjectMotion_EnableActionAndSetCallback(6, gData_020020e4);
   Object_SetActionCallbackAndRefreshById(7, gData_020020e4);
-  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())FieldEvent_WaitTicks, 20);
   Call1((void (*)())GameFlag_SetBit, 0x981);
   Func_02001f64();
 }

@@ -54,7 +54,7 @@ void Camera_WorldToScreen(s32 *position);
 void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
                                s32 flags);
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Trig_Sin(s32 angle);
 
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels

@@ -44,7 +44,7 @@ s32 Func_02002b1c();
 s32 ObjectMotion_SetPositionAndReset();
 s32 Camera_MoveWithinMapBounds();
 s32 Func_02002b3c();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_02002b74();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 Motion_SetModeAndWaitAnimation();
@@ -109,10 +109,10 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_SetPositionAndReset, 4, 0x138, 0x268);
   Call4(Camera_MoveWithinMapBounds, 0x1380000, -1, 0x2580000, 1);
   Func_02002b3c();
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call1(Func_02002bc4, 0x27);
   Call3(ObjectMotion_SetPositionAndReset, 0x19, 0x130, 0x240);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call4(Func_02002b74, 7, -16, 0, 0xc000);
   Call4(Func_02002b74, 5, 0, 0x10, 0xc000);
   Call4(Func_02002b74, 6, -16, 0x10, 0xc000);
@@ -123,11 +123,11 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(6, 0x100, 0x1e)
   Call2(Func_02002af4, 6, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Func_02002b04, 7, 0);
   Call2(Func_02002af4, 7, 0);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x1c, 0);
   Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
   Call2(Func_02002b04, 7, 0xc000);
@@ -141,19 +141,19 @@ void Func_02000e30(void) {
   Champa_MessageOpen(0x2019, 0);
   t42 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t42 == 0) {
-    Call1(FieldEvent_WaitFrames, 0xf);
+    Call1(FieldEvent_WaitTicks, 0xf);
     Call2(Func_02002af4, 0x2019, 0);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
   } else {
-    Call1(FieldEvent_WaitFrames, 0x23);
+    Call1(FieldEvent_WaitTicks, 0x23);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     Call2(Func_02002af4, 0x2019, 0);
   }
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 4, 0x8000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(7, 0x101, 0)
@@ -170,33 +170,33 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
   Call2(Func_02002b04, 4, 0xc000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002b04, 0x19, 0x3000);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x109, 0x1e)
   Call2(Func_02002af4, 0x2019, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   UiText_OpenMessageAtObject(0x2019, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);
   t67 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t67 == 0) {
-    Call1(FieldEvent_WaitFrames, 0x14);
+    Call1(FieldEvent_WaitTicks, 0x14);
     Call2(Motion_SetModeAndWaitAnimation, 6, 3);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_WaitTicks, 0xa);
     Call2(Func_02002b04, 6, 0xc000);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_WaitTicks, 0xa);
     Call2(Func_02002af4, 6, 0);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
   } else {
-    Call1(FieldEvent_WaitFrames, 0x28);
+    Call1(FieldEvent_WaitTicks, 0x28);
     Call2(Motion_SetModeAndWaitAnimation, 6, 3);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_WaitTicks, 0xa);
     Call2(Func_02002b04, 6, 0xc000);
-    Call1(FieldEvent_WaitFrames, 0xa);
+    Call1(FieldEvent_WaitTicks, 0xa);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     Call2(Func_02002af4, 6, 0);
@@ -224,7 +224,7 @@ void Func_02000e30(void) {
   Call2(Func_02002b24, 6, 0x102);
   Call2(ObjectMotion_SetVariantCallback, 0x1c, 3);
   Call2(Func_02002b24, 0x1c, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0, 0);
@@ -232,7 +232,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);
   Call3(ObjectMotion_SetPositionAndReset, 0x1a, 0x158, 0x268);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(4, 0x102, 0)
@@ -269,7 +269,7 @@ void Func_02000e30(void) {
   Call2(Func_02002b24, 6, 0x102);
   Call2(ObjectMotion_SetVariantCallback, 0x1c, 3);
   Call2(Func_02002b24, 0x1c, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
@@ -277,7 +277,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
   Call2(Func_02002b04, 0x1c, 0x8000);
   Call3(ObjectMotion_SetPositionAndReset, 0x1b, 0xe8, 0x268);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(4, 0x101, 0)
@@ -306,11 +306,11 @@ void Func_02000e30(void) {
   Call2(Func_02002b04, 0x1b, 0xd000);
   Call2(Func_02002af4, 0x1b, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xf);
+  Call1(FieldEvent_WaitTicks, 0xf);
   Call2(Func_02002af4, 0x2019, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call2(Func_02002b04, 6, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x103, 0)
@@ -325,9 +325,9 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
   Call2(Func_02002b04, 0x1c, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002b04, 0x19, 0x5000);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
@@ -337,7 +337,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(7, 0x100, 0x1e)
   Call2(Func_02002af4, 7, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -350,7 +350,7 @@ void Func_02000e30(void) {
   Call2(Func_02002b04, 0x1c, 0xd000);
   Call2(Func_02002af4, 0x1c, 0);
   Call2(Func_02002b04, 0x19, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -367,17 +367,17 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(6, 0x101, 0x1e)
   Call2(Func_02002af4, 6, 0);
   Call2(Func_02002b04, 0x19, 0x5000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Motion_SetVarCbAndRefresh, 7, 2);
   Call2(Func_02002af4, 7, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x10000, 0x8000);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 8, -8);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x108, 0x1e)
@@ -386,16 +386,16 @@ void Func_02000e30(void) {
   t216 = Value1(Object_GetById, 0x19);
   FIELD_AT((t216 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t216 + 0x5a), u8, 0));
   Call3(ObjectMotion_CommitPositionAndActivate, 0x19, -7, 7);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t219 = Value1(Object_GetById, 0x19);
   FIELD_AT((t219 + 0x5a), u8, 0) = (FIELD_AT((t219 + 0x5a), u8, 0) | 1);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002b04, 0x19, 0x5000);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x28)
   Call2(Func_02002af4, 0x2019, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x105, 0x32)
@@ -405,7 +405,7 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x2005, 0);
   Call2(ObjectMotion_SetVariantCallback, 0x19, 3);
   Call2(Func_02002b24, 0x19, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call2(Motion_SetVarCbAndRefresh, 0x1a, 2);
   Call2(Func_02002b04, 0x1a, 0xb000);
   Call2(Func_02002af4, 0x1a, 0);
@@ -413,9 +413,9 @@ void Func_02000e30(void) {
   Call2(Func_02002b04, 0x19, 0);
   Call3(ObjectMotion_OffsetPositionAndReset, 0x19, 8, 0);
   Call2(Func_02002b04, 0x19, 0x3000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -434,20 +434,20 @@ void Func_02000e30(void) {
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1b, 0x102, 0x1e)
   Call2(Func_02002b04, 0x1b, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call2(Func_02002af4, 0x1b, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0, 0);
   Call2(Func_02002b04, 7, 0);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_WaitTicks, 0x1e);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x9999, 0x4ccc);
   Call2(Func_02002b04, 0x1c, 0x5000);
-  Call1(FieldEvent_WaitFrames, 2);
+  Call1(FieldEvent_WaitTicks, 2);
   t263 = Value1(Object_GetById, 0x1c);
   FIELD_AT((t263 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t263 + 0x5a), u8, 0));
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, -8, 8);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t266 = Value1(Object_GetById, 0x1c);
   FIELD_AT((t266 + 0x5a), u8, 0) = (1 | FIELD_AT((t266 + 0x5a), u8, 0));
   Call2(Func_02002b04, 0x1c, 0x5000);
@@ -464,7 +464,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002b04, 0x1a, 0x8000);
   Call2(Func_02002af4, 0x1a, 0);
   Call3(ObjectMotion_Launch, 0x1b, 6, 0xf);
@@ -472,7 +472,7 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x1b, 0);
   Call3(ObjectMotion_SetSpeedParameters, 0x1a, 0x1cccc, 0xe666);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1a, -12, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call2(Func_02002af4, 0x1a, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -491,7 +491,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(0x1c, 0x102, 0x2d)
   Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x1cccc, 0xe666);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1b, 0xc, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1b, 0x108, 0x1e)
@@ -512,7 +512,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
   Call2(Func_02002b04, 0x1c, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -539,7 +539,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
   Call2(Func_02002b04, 0x1c, 0x5000);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Motion_SetVarCbAndRefresh, 0x1a, 2);
@@ -551,7 +551,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x109, 0x1e)
@@ -564,14 +564,14 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
   Call3(ObjectMotion_ArmCallback, 0x19, 0x5000, 0);
   Call2(Func_02002b04, 0x1c, 0x5000);
-  Call1(FieldEvent_WaitFrames, 0xf);
+  Call1(FieldEvent_WaitTicks, 0xf);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0x19);
+  Call1(FieldEvent_WaitTicks, 0x19);
   Call2(Motion_SetVarCbAndRefresh, 0x1a, 2);
   Call2(Func_02002af4, 0x1a, 0);
   Call2(Func_02002b04, 0x19, 0x3000);
   Call2(Func_02002af4, 0x2019, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetVarCbAndRefresh, 0x1b, 2);
   Call2(Func_02002af4, 0x1b, 0);
   Call2(Func_02002b04, 0x19, 0x5000);
@@ -582,7 +582,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call2(Func_02002b04, 0x1c, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x101, 0x1e)
@@ -602,7 +602,7 @@ void Func_02000e30(void) {
   Call2(Motion_SetVarCbAndRefresh, 7, 2);
   Call2(Func_02002af4, 7, 0);
   Call2(Func_02002b04, 0x19, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0xf);
+  Call1(FieldEvent_WaitTicks, 0xf);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
@@ -610,9 +610,9 @@ void Func_02000e30(void) {
   Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
   Call2(Func_02002af4, 0x1a, 0);
   Call2(Func_02002b04, 0x19, 0x3000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Motion_SetVarCbAndRefresh, 0x1b, 2);
   Call2(Func_02002af4, 0x1b, 0);
   Call2(Func_02002b04, 0x1b, 0);
@@ -622,7 +622,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
   Call2(Func_02002b04, 0x1c, 0x8000);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Object_LinkObjectAndSetCallback, 4, 0x1b);
   Call2(Object_LinkObjectAndSetCallback, 7, 0x1b);
   Call2(Object_LinkObjectAndSetCallback, 5, 0x1b);
@@ -641,7 +641,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 5, 0, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0, 0);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Object_LinkObjectAndSetCallback, 4, 0x1a);
   Call2(Object_LinkObjectAndSetCallback, 7, 0x1a);
   Call2(Object_LinkObjectAndSetCallback, 5, 0x1a);
@@ -656,11 +656,11 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
   Call2(Func_02002b04, 0x1c, 0xd000);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call3(Func_02002a9c, 0x1a, 0, 0);
   Call3(Func_02002a9c, 0x1b, 0, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Object_LinkObjectAndSetCallback, 4, 0x19);
   Call2(Object_LinkObjectAndSetCallback, 7, 0x19);
@@ -679,14 +679,14 @@ void Func_02000e30(void) {
   Call2(Func_02002b04, 0x19, 0xb000);
   Call4(Camera_MoveWithinMapBounds, 0x1300000, -1, 0x2880000, 1);
   Func_02002b3c();
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Motion_SetVarCbAndRefresh, 0x1c, 2);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x10000, 0x8000);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, 0x20);
   Call2(Func_02002b04, 0x1c, 0x3000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
   Call2(Func_02002af4, 0x1c, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -705,27 +705,27 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x2019, 0);
   Call2(ObjectMotion_SetVariantCallback, 0x1c, 3);
   Call2(Func_02002b24, 0x1c, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0, 0);
   Call2(Func_02002b04, 7, 0);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
   Call2(Func_02002b04, 7, 0x4000);
-  Call1(FieldEvent_WaitFrames, 0x19);
+  Call1(FieldEvent_WaitTicks, 0x19);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x6666, 0x3333);
   t494 = Value1(Object_GetById, 0x1c);
   FIELD_AT((t494 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t494 + 0x5a), u8, 0));
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -24);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t497 = Value1(Object_GetById, 0x1c);
   FIELD_AT((t497 + 0x5a), u8, 0) = (1 | FIELD_AT((t497 + 0x5a), u8, 0));
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Object_SetModeById, 0x1c, 8);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_WaitTicks, 0x1e);
   Call2(Func_02002af4, 0x1c, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
@@ -735,7 +735,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(6, 0x107, 0x1e)
   Call2(Func_02002af4, 6, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0x19);
+  Call1(FieldEvent_WaitTicks, 0x19);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
   Call2(Func_02002af4, 0x2005, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -746,10 +746,10 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x2019, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call2(Func_02002b04, 7, 0);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
   Call2(Func_02002b04, 7, 0x4000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(4, 0x101, 0)
@@ -758,7 +758,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(7, 0x101, 0x1e)
   Call2(Func_02002af4, 7, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
   Call2(Func_02002af4, 0x2019, 0);
@@ -769,15 +769,15 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
   Call2(Func_02002af4, 0x2019, 0);
   Call2(Func_02002b04, 0x19, 0x5000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2019, 0);
   Call1(Func_02002bc4, 0x4e);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x19, 0, 0x50);
   Call3(Func_02002a9c, 0x19, 0, 0);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_WaitTicks, 0x1e);
   Call4(Camera_MoveWithinMapBounds, 0x1300000, -1, 0x2700000, 1);
   Func_02002b3c();
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call1(Func_02002bc4, 3);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -792,7 +792,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(7, 0x109, 0x1e)
   Call2(Func_02002af4, 7, 0);
   Call2(Func_02002b04, 6, 0xc000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x101, 0x1e)
@@ -804,25 +804,25 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(5, 0x100, 0x1e)
   Call3(ObjectMotion_ArmCallback, 4, 0x6000, 0);
   Call2(Func_02002b04, 5, 0xa000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2005, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x100, 0x1e)
   Call2(Func_02002af4, 6, 0);
   Call2(Object_SetModeById, 0x1c, 1);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0xcccc, 0x6666);
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, 0x10);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call2(Motion_SetModeAndWaitAnimation, 0x1c, 4);
   Call2(Func_02002af4, 0x1c, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
   Call2(Func_02002b04, 7, 0x8000);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
   Call2(Func_02002af4, 0x1c, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -833,7 +833,7 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x1c, 0);
   Call2(ObjectMotion_SetVariantCallback, 7, 3);
   Call2(Func_02002b24, 7, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x2d);
+  Call1(FieldEvent_WaitTicks, 0x2d);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x101, 0x1e)
@@ -844,7 +844,7 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x2006, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call2(Func_02002b04, 6, 1);
-  Call1(FieldEvent_WaitFrames, 0x19);
+  Call1(FieldEvent_WaitTicks, 0x19);
   Call2(Func_02000c90, 5, 6);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -854,7 +854,7 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(6, 0x101, 0x28)
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call2(Func_02002b04, 6, 0x8000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Object_SetModeById, 5, 4);
   Call2(Motion_SetModeAndWaitAnimation, 6, 4);
   Call11(Func_02002b0c, 5, 5, 5, 0x12, 8, 6, 6, 0xe, 8, 9, 0);
@@ -862,10 +862,10 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x1c, 0);
   Call2(ObjectMotion_SetVariantCallback, 4, 3);
   Call2(Func_02002b24, 4, 0x102);
-  Call1(FieldEvent_WaitFrames, 0x28);
+  Call1(FieldEvent_WaitTicks, 0x28);
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
   Call2(Func_02002b04, 6, 0xe000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x107, 0)
@@ -877,7 +877,7 @@ void Func_02000e30(void) {
   t613 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t613 == 0) {
     Call2(Func_02000e04, 5, 6);
-    Call1(FieldEvent_WaitFrames, 0xf);
+    Call1(FieldEvent_WaitTicks, 0xf);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * CHAMPA_EMOTE. */
     CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
@@ -886,7 +886,7 @@ void Func_02000e30(void) {
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
   } else {
     Call2(Func_02000e04, 5, 6);
-    Call1(FieldEvent_WaitFrames, 0x23);
+    Call1(FieldEvent_WaitTicks, 0x23);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * CHAMPA_EMOTE. */
     CHAMPA_EMOTE(0x1c, 0x105, 0x1e)
@@ -897,7 +897,7 @@ void Func_02000e30(void) {
   Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call2(Func_02002b04, 6, 0x8000);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x107, 0)
@@ -916,13 +916,13 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x2006, 0);
   Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
   Call2(Func_02002af4, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x101, 0x28)
   Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -8);
   Call2(Func_02002b04, 0x1c, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call2(Func_02002af4, 0x1c, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -933,28 +933,28 @@ void Func_02000e30(void) {
   CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
   Call2(Func_02002af4, 0x1c, 0);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2007, 0);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x101, 0x2d)
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
-  Call1(FieldEvent_WaitFrames, 0xa);
+  Call1(FieldEvent_WaitTicks, 0xa);
   Call2(Func_02002af4, 0x2007, 0);
   Call2(Motion_SetVarCbAndRefresh, 0x1c, 2);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
   Call2(Func_02002b04, 7, 0);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call2(Motion_SetModeAndWaitAnimation, 4, 3);
-  Call1(FieldEvent_WaitFrames, 0xf);
+  Call1(FieldEvent_WaitTicks, 0xf);
   Call2(Object_SetModeById, 5, 3);
   Call2(Object_SetModeById, 6, 3);
   Call2(Object_SetModeById, 7, 3);
   Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call3(ObjectMotion_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2(Object_SetModeById, 5, 2);
   t673 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));

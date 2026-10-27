@@ -201,7 +201,7 @@ Func_0804bc08:
 	b .L_0804bdb6
 .L_0804bd8e:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0804bd94:
 	ldrb r2, [r7]
 	movs r3, #1
@@ -411,7 +411,7 @@ Func_0804bc08:
 	adds r5, r5, r0
 .L_0804bf2e:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldrh r2, [r7]
 	adds r0, r7, #0
 	adds r1, r5, #0
@@ -603,13 +603,13 @@ Func_0804bc08:
 	ldr r0, [sp, #32]
 	bl BattleLayout_HighlightPartyPanels
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #0
 	movs r0, #1
 	bl Func_080457d0
 	adds r6, r0, #0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #2
 	negs r2, r2
 	cmp r6, r2
@@ -632,7 +632,7 @@ Func_0804bc08:
 	adds r3, #38
 	strb r0, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r1, r6, #0
 	ldr r2, [sp, #64]
 	adds r0, r5, #0
@@ -1155,7 +1155,7 @@ Func_0804bc08:
 	str r0, [sp, #60]
 	movs r0, #1
 	str r6, [sp, #56]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #36]
 	adds r0, r6, #0
 	ldr r3, [r1]
@@ -1540,7 +1540,7 @@ Func_0804bc08:
 	ldr r1, [sp, #76]
 	movs r0, #1
 	strh r6, [r1, #12]
-	bl WaitFrames
+	bl WaitTicks
 	b .L_0804c864
 .L_0804c85c:
 	.4byte 0x00000040
@@ -1572,7 +1572,7 @@ Func_0804bc08:
 	b .L_0804c8a2
 .L_0804c89c:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0804c8a2:
 	bl UiWork_IsComplete
 	cmp r0, #0
@@ -1653,7 +1653,7 @@ Func_0804bc08:
 	movs r3, #1
 	strh r3, [r4, #12]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #112
 	bl Audio_PlayCue
 	movs r1, #4
@@ -2164,7 +2164,7 @@ Func_0804bc08:
 	movs r6, #1
 .L_0804cd46:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldrb r2, [r5]
 	movs r3, #1
 	eors r3, r2

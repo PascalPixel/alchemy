@@ -19,7 +19,7 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Func_02000314(void) {
@@ -51,16 +51,16 @@ s32 Func_02000314(void) {
     Call3((void (*)())Func_0200567c, 1, 0x21a0000, 0x1400000);
     Call3((void (*)())Func_0200567c, gPartyState.currentOwner, 0x1fa0000,
           0x1180000);
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())WaitTicks, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     ((struct ObjectRuntime *)Value0((s32 (*)())Func_0200573c))->motionFlags = 0;
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000,
           0x1380000, 1);
     Func_0200558c();
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())WaitTicks, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Call1((void (*)())FieldEvent_WaitFrames, 40);
+    Call1((void (*)())FieldEvent_WaitTicks, 40);
     Func_02003658();
     Func_02005614();
   } else if (gPartyState.entrance == 3) {

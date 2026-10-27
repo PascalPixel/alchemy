@@ -608,7 +608,7 @@ BattleEffect_RunIce:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #20]
 	mov r7, r10
 	adds r3, #1

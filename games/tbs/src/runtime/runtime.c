@@ -12,7 +12,7 @@
 /// to start:
 ///
 ///   Power-up        system.c: System_Initialize
-///   Frames          frame.c: WaitFrames, System_VBlankHandler,
+///   Frames          frame.c: WaitTicks, System_VBlankHandler,
 ///                   Irq_SetHandler; task.c:
 ///                   Task_Add
 ///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;

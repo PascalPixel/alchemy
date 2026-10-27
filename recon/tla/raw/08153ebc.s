@@ -186,7 +186,7 @@ BattleEffect_RunAtalanta:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_08154100
 	movs r0, #1
 	movs r2, #0
@@ -873,7 +873,7 @@ BattleEffect_RunAtalanta:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #44]
 	adds r0, #1
 	str r0, [sp, #44]
@@ -1236,7 +1236,7 @@ BattleEffect_RunAtalanta:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, [sp, #44]
 	adds r3, #1
 	str r3, [sp, #44]

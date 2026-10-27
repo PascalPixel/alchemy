@@ -26,17 +26,17 @@ shake:
     s32 row = 8;
 
     Func_02003d24(70, 8, 7, 6, column, row);
-    WaitFrames(1);
+    WaitTicks(1);
     Func_02003d24(50, 8, 7, 6, column, row);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   i--;
   if (i >= 0)
     goto shake;
-  WaitFrames(10);
+  WaitTicks(10);
   for (i = 127; i >= 0; i--) {
     layer[3] += 0x4000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Func_02003d44_(-1, -1, 0xe666);
   Func_02003d84();

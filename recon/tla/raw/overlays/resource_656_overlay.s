@@ -113,7 +113,7 @@ Func_0200021c:
 	bl ObjectMotion_CenterOnColumn
 .L_020082fc:
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #170
 	lsls r3, r3, #1
 	add r3, r9
@@ -194,7 +194,7 @@ Func_02000870:
 	movs r0, #0
 	bl Func_02002c48
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
@@ -211,7 +211,7 @@ Func_02000870:
 	mov r2, r10
 	strb r3, [r2]
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, [r7]
 	movs r1, #4
 	movs r2, #0
@@ -228,7 +228,7 @@ Func_02000870:
 	ldr r0, [r7]
 	bl ObjectMotion_SetPositionAndCommit
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #232
 	bl Func_02002de0
 	movs r2, #50
@@ -239,7 +239,7 @@ Func_02000870:
 	str r5, [sp, #4]
 	bl Func_02002c30
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #1
 	mov r2, r10
 	strb r3, [r2]
@@ -268,7 +268,7 @@ Func_02000870:
 	movs r0, #9
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #1
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #9
 	bl Object_GetById
 	adds r0, #90
@@ -289,7 +289,7 @@ Func_02000870:
 	movs r0, #0
 	bl Func_02002c48
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #0
 	movs r1, #0
 	movs r2, #0
@@ -308,7 +308,7 @@ Func_02000870:
 	mov r3, r10
 	strb r2, [r3]
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #192
 	ldr r0, [r7]
 	lsls r1, r1, #7
@@ -365,7 +365,7 @@ Func_02000870:
 	ldr r0, [r7]
 	bl Func_02002d48
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #232
 	bl Func_02002de0
 	movs r1, #68
@@ -376,7 +376,7 @@ Func_02000870:
 	str r5, [sp, #4]
 	bl Func_02002c30
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	ldr r0, [r7]
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r3, #1
@@ -385,7 +385,7 @@ Func_02000870:
 	mov r3, r9
 	movs r0, #1
 	strb r3, [r6]
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #129
 	lsls r0, r0, #1
 	adds r0, #255

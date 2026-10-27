@@ -226,7 +226,7 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *args) {
     }
     BattleAnim_TickBattlerTints();
     work->transferPending = transparent;
-    WaitFrames(1);
+    WaitTicks(1);
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.

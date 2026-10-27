@@ -9,7 +9,7 @@ void Func_02003e34(struct FieldSprite *sprite, u32 frames, s32 step) {
 
   for (i = 0; i < count; i++) {
     sprite->rotation += step;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
 }
 
@@ -21,6 +21,6 @@ void Func_02003e60(struct ObjectRuntime *object, u32 frames, s32 step) {
 
   for (i = 0; i < count; i++) {
     object->x += step;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
 }

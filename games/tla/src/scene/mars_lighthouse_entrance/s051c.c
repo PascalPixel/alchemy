@@ -41,7 +41,7 @@ step:
   Func_02004c30_(x, 125, 3, 3, 39, 85);
   Func_02000414(10);
   count--;
-  WaitFrames(10);
+  WaitTicks(10);
   x += 3;
   if (count >= 0)
     goto step;

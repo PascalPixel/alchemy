@@ -644,7 +644,7 @@ BattleEffect_RunOceanFist:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #8]
 	movs r1, #1
 	add r11, r1

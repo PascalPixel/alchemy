@@ -323,7 +323,7 @@ Field_RunScene:
 .L_080cbbc8:
 	bl Func_080cb05c
 	movs r0, #2
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_080cbddc
 	ldr r0, [r3, #4]
 	mov lr, r0
@@ -361,7 +361,7 @@ Field_RunScene:
 	movs r0, #92
 	bl Runtime_AllocateHeapBlock
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 .L_080cbc2a:
@@ -383,7 +383,7 @@ Field_RunScene:
 	movs r0, #92
 	bl Runtime_AllocateHeapBlock
 	movs r0, #20
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock
 .L_080cbc5c:
@@ -399,7 +399,7 @@ Field_RunScene:
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_080cbc7a:
 	ldr r7, .L_080cbde0
 	movs r3, #128
@@ -1251,7 +1251,7 @@ Field_RunScene:
 	bne .L_080cc33a
 	bl Func_080cb82c
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_080cc33a:
 	movs r1, #0
 	ldrsh r0, [r5, r1]
@@ -1377,7 +1377,7 @@ Field_RunScene:
 	ldr r3, .L_080cc450
 	movs r0, #1
 	strh r3, [r5, #4]
-	bl WaitFrames
+	bl WaitTicks
 .L_080cc444:
 	movs r0, #0
 	bl Func_08038358
@@ -1424,7 +1424,7 @@ Field_RunScene:
 	ldr r5, .L_080cc544
 .L_080cc49e:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_080cb8e8
 	ldr r3, .L_080cc548
 	mov r9, r0
@@ -1486,10 +1486,10 @@ Field_RunScene:
 	movs r3, #0
 	strh r3, [r7]
 	ldr r0, [r5]
-	bl WaitFrames
+	bl WaitTicks
 .L_080cc524:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #108
 	bl Runtime_ReleaseHeapBlock
 	adds r0, r6, #0

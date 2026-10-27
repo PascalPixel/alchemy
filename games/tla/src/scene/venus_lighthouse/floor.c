@@ -50,7 +50,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                            s32 height);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetPartAttribute(struct VenusActor *object, s32 value);

@@ -32,7 +32,7 @@ void Func_020042f8(void) {
   Func_02004da0(0);
   Camera_SetBounds(-1, -1, -1, 0);
   Func_02004bf0();
-  WaitFrames(1);
+  WaitTicks(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -42,7 +42,7 @@ void Func_020042f8(void) {
   Event_WaitTransitionFrames();
   Func_02004de0(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_WaitTicks(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -72,7 +72,7 @@ next:
   Func_02004d08(gPartyState.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Object_SetModeById(gPartyState.currentOwner, 1);
   Func_02004cb0();
 }

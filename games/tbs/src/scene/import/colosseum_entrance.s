@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
@@ -11,7 +11,7 @@
 	.set import.Party_AddMember, 1
 	.set import.Party_RemoveMember, 1
 	.set import.InventorySnapshot_Save, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1

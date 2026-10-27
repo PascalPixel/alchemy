@@ -10,7 +10,7 @@ s32 SceneManager_RunFar(s32 entrance);
 /// GAME_START_TITLE, and Game_RestartQuest starts it again.
 void SequenceManager_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
-void Event_WaitFramesFar(s32 frames);
+void Event_WaitTicksFar(s32 ticks);
 /// Opens an event: closes any area name window, stops the leader and resets the
 /// message and timing state.
 void Event_StartFar(void);

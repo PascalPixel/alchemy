@@ -101,7 +101,7 @@ BattleEffect_RunBoreas:
 	ldr r0, [r3]
 	bl BattleEffect_SelectLivingTargets
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_0814dc40
 	movs r0, #1
 	movs r2, #0
@@ -966,7 +966,7 @@ BattleEffect_RunBoreas:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #40]
 	movs r5, #144
 	adds r4, #1
@@ -1556,7 +1556,7 @@ BattleEffect_RunBoreas:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, [sp, #40]
 	movs r5, #14
 	adds r6, #1

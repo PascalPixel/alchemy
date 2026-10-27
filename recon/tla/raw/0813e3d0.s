@@ -478,7 +478,7 @@ Func_0813e3d0:
 	add r2, r9
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #1
 	add r10, r3
 	mov r4, r10

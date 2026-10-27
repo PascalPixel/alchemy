@@ -4,7 +4,7 @@
 
 void Func_020005c8();
 struct ObjectRuntime *Object_GetById();
-void WaitFrames();
+void WaitTicks();
 
 void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
   struct ObjectRuntime *object;
@@ -15,6 +15,6 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
     object->y = 0x200000;
     object->motionFlags = 3;
     object->gravity = 0x170a;
-    Call1((void (*)())WaitFrames, 50);
+    Call1((void (*)())WaitTicks, 50);
   }
 }

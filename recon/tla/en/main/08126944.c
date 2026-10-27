@@ -20,6 +20,6 @@ void Func_08126944(void) {
   __asm__("" : : : "memory");
   for (step = 1; step <= 16; step += 2) {
     REG_BLDALPHA = 0x1010 - step;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

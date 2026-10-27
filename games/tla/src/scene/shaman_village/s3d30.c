@@ -14,9 +14,9 @@ void Func_02003d30(void) {
   Func_02004934(17, 0, 0);
   Object_GetById(15)->facing = 0xc000;
   ShamanVillage_CamMove(0xe00000, -1, 0xb60000, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   Func_0200482c();
-  WaitFrames(1);
+  WaitTicks(1);
   angle = 0x4000;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -32,7 +32,7 @@ void Func_02003d30(void) {
   ShamanVillage_ObjWalk2(16, 208, 264);
   ShamanVillage_ObjWalk(17, 240, 264);
   Object_SetModeById(16, 1);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   ShamanVillage_ObjArm(16, angle, 0);
   ShamanVillage_ObjArm(17, angle, 0);
   ShamanVillage_ObjTurn(15, 0x8000);

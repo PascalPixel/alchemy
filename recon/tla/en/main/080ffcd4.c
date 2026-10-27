@@ -62,7 +62,7 @@ s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
 void ItemMenu_HideAllIcons(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, struct MenuResult *state);
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state);
@@ -104,7 +104,7 @@ s32 Func_080ffcd4(void) {
         ItemMenu_HideAllIcons();
         PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
         listNeedsRedraw = 1;
-        WaitFrames(1);
+        WaitTicks(1);
       }
       if (listNeedsRedraw) {
         listNeedsRedraw = 0;
@@ -113,7 +113,7 @@ s32 Func_080ffcd4(void) {
       PsynergyMenu_DrawRangePage(window, 0, &state);
       refresh = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     navigation = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
     Func_080f8a44(55, state.row * 16 + 60);
     if (navigation == 1) {

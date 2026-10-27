@@ -646,7 +646,7 @@ BattleEffect_RunStarMine:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r7, [sp, #40]
 	adds r7, #1
 	str r7, [sp, #40]

@@ -121,7 +121,7 @@ Func_080fc2e0:
 	bl Audio_PlayCue
 .L_080fc3da:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_080fc3e0:
 	movs r0, #168
 	lsls r0, r0, #1

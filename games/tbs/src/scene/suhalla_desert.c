@@ -418,7 +418,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     } else {
       nextFrame = frame + 1;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     frame = nextFrame;
   } while (frame <= 15);
   GameFlag_Set((FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN -
@@ -446,7 +446,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, (leaderX + 8),
                               (leaderZ - 40));
-    Event_WaitFrames(1);
+    Event_WaitTicks(1);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -458,7 +458,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_ShowMessageAndWait(ACTOR_IODEM, 0);
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_ShowMessageAndWait(ACTOR_IODEM, 0);
@@ -547,12 +547,12 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Event_AskYesNo(ACTOR_IODEM, 0);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -724,7 +724,7 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   for (frame = 0; frame < 60; frame++) {
     selectedActor->velocityY += PIXELS(1) / 5;
     storm->velocityY += PIXELS(1) / 5;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

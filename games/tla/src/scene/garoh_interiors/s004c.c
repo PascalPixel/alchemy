@@ -71,10 +71,10 @@ void Func_0200018c(s32 actor) {
       Func_02000844(message);
       UiText_OpenMessageAtObject(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Func_0200088c(), 0) == 0) {
-        FieldEvent_WaitFrames(10);
+        FieldEvent_WaitTicks(10);
         Func_02000844(message + 1);
       } else {
-        FieldEvent_WaitFrames(20);
+        FieldEvent_WaitTicks(20);
         Func_02000844(message + 2);
       }
       Func_0200085c(actor, 0);

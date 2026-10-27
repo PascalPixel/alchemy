@@ -62,7 +62,7 @@ Func_0811e830:
 .L_0811e8a0:
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #16
 	bne .L_0811e874
 	ldr r0, [sp, #8]
@@ -191,7 +191,7 @@ Func_0811e830:
 	orrs r3, r6
 	strh r3, [r7]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_0811ea08
 	adds r6, #1
 	adds r5, r5, r3

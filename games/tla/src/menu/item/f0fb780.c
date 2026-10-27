@@ -64,7 +64,7 @@ s32 Func_080fb780(s32 value) {
     cursor->motion = 13;
   }
   Palette_CopyObjectBankToBackground14();
-  WaitFrames(1);
+  WaitTicks(1);
 
   for (;;) {
     if (GameFlag_Test(336) != 0)
@@ -91,11 +91,11 @@ s32 Func_080fb780(s32 value) {
       counter += 1;
       changed = 1;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   RenderOutput_RedrawSavedRectFar(window);
-  WaitFrames(1);
+  WaitTicks(1);
   UiWork_FinalizeFar(window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
   UiWindow_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);

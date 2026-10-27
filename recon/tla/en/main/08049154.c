@@ -121,7 +121,7 @@ void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
 void Runtime_PushSlotEntry(void *sprite, s32 depth);
 void Audio_PlayCue(s32 cue);
 void Input_ResetKeyRepeat(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Resource_ResetEntry(s32 slot);
 void UiWork_Finalize(void *window, s32 mode);
 
@@ -451,16 +451,16 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
-  WaitFrames(1);
+  WaitTicks(1);
   for (index = 0; index < 4; index++)
     Resource_ResetEntry(iconSlots[index]);
   Resource_ResetEntry((u16)cursorHandle);
   UiWork_Finalize(counts, 1);
   UiWork_Finalize(description, 1);
   UiWork_Finalize(window, 1);
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

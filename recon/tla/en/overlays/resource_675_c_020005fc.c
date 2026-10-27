@@ -32,7 +32,7 @@ void Func_0200122c(s32 value, s32 x, s32 z);
 void Func_020012cc(s32 a);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 s32 ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -65,7 +65,7 @@ loop:
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion,
         gPartyState.currentOwner, 0, -4);
-  FieldEvent_WaitFrames(6);
+  FieldEvent_WaitTicks(6);
   Func_020012cc(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -829,7 +829,7 @@ BattleEffect_RunSparkGroups:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r5, [sp, #36]
 	mov r1, r10
 	adds r5, #1

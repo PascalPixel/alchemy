@@ -36,7 +36,7 @@ Func_080f94a4:
 	movs r0, #0
 	bl UiWindow_DrawFrameFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #0
 	bl UiWindow_InitializeWork
 	movs r1, #129
@@ -163,10 +163,10 @@ Func_080f94a4:
 	adds r0, r6, #0
 	bl MemFree
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	bl Scheduler_DisableOverlayCallbacksWithFlags
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #0
 	movs r2, #30
 	movs r1, #0

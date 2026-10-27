@@ -18,7 +18,7 @@ void Func_02002c88(void);
 void Func_02002d34(void);
 s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order);
 void Func_02003434(s32 x, s32 y, s32 z);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02002de4(void);
 
 void Func_02002f58(const s32 *position) {
@@ -65,7 +65,7 @@ void Func_02002f58(const s32 *position) {
       }
       break;
     }
-    Call1((void (*)())WaitFrames, 1);
+    Call1((void (*)())WaitTicks, 1);
     time++;
   } while (state != 999);
 }

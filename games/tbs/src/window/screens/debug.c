@@ -64,7 +64,7 @@ s16 DebugMapSelect_Run(void) {
 
   // Wait for the keys that opened it to be let go.
   while (gKeysHeld != 0)
-    WaitFrames(1);
+    WaitTicks(1);
 
   for (;;) {
     result = DebugMapSelect_HandleRowInput(window, sceneId, &entrance,
@@ -92,7 +92,7 @@ s16 DebugMapSelect_Run(void) {
     MenuArrow_SetPosition(&cursor, MENU_TEXT_X,
                           selectedField * 14 + MENU_TEXT_Y);
     sceneId = result;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }
 
@@ -185,7 +185,7 @@ s32 DebugFlagEditor_Run(void) {
   DebugFlagEditor_DrawTable(window, page);
   MenuArrow_Create(&cursorSprite, &cursorSlot);
   for (;;) {
-    WaitFrames(1);
+    WaitTicks(1);
     change = DebugFlagEditor_HandleInput(window, &page, cursor);
     // B closes the table; a change of flag or page redraws it.
     if (change == -1)
@@ -372,7 +372,7 @@ s32 DebugBrowser_Icons(void) {
   mode = 0;
   redraw = 1;
   gActorSystemWork->suspended = redraw;
-  WaitFrames(1);
+  WaitTicks(1);
 
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {
@@ -431,7 +431,7 @@ s32 DebugBrowser_Icons(void) {
         }
       }
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Window_Close(window, 2);
   gActorSystemWork->suspended = 0;
@@ -526,10 +526,10 @@ s32 DebugBrowser_Portraits(void) {
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Window_Close(window, 2);
   Window_Close(portrait, 2);
-  WaitFrames(1);
+  WaitTicks(1);
   return 0;
 }

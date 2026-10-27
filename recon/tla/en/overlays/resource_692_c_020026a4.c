@@ -20,7 +20,7 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004e90(s32 value);
 void Func_02004f30(s32 sound);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_02004cd8(s32 a, s32 b, s32 x, s32 z, s32 width, s32 height);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
 void Func_02004cb0(struct ObjectRuntime *object);
@@ -44,13 +44,13 @@ void Func_020026a4(s32 x, s32 z) {
   i = 0;
 fadeIn:
   REG_BLDALPHA = (i << 9) | 16;
-  WaitFrames(1);
+  WaitTicks(1);
   if (++i != 8)
     goto fadeIn;
   i = 0;
 fadeOut:
   REG_BLDALPHA = (16 - i) | 0x1000;
-  WaitFrames(1);
+  WaitTicks(1);
   if (++i != 16)
     goto fadeOut;
   x >>= 4;

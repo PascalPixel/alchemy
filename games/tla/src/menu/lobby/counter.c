@@ -31,7 +31,7 @@ s32 Func_02000bb0(void) {
   Func_02001ab4(0);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   if (Func_0200006c(0) == 0)
-    WaitFrames(1);
+    WaitTicks(1);
   if (Func_0200006c(0) == 0) {
     LinkLobby_WriteSlotValue(5);
     Func_02000044();

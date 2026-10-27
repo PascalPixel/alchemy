@@ -51,9 +51,9 @@ engine sets the waiting code's memory aside while the frames pass; the tasks
 always start with the same room to work in. The one rule that follows is that
 a task must never wait itself, and none does.
 
-Waiting is `WaitFrames(n)`; a task is added with `Task_Add` and stopped with
+Waiting is `WaitTicks(n)`; a task is added with `Task_Add` and stopped with
 `Task_Remove`. [Runtime](src/runtime/README.md#the-frame-loop) has the
-frame's order, [the stack switch](src/runtime/README.md#the-stack-switch-in-waitframes)
+frame's order, [the stack switch](src/runtime/README.md#the-stack-switch-in-waitticks)
 and [the task runner](src/runtime/README.md#the-task-runner).
 
 ## Banks and far calls

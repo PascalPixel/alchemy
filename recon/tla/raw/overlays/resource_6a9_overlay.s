@@ -85,7 +85,7 @@ Func_02000454:
 	cmp r0, #0
 	beq .L_02008532
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r3, r7, #0
 	adds r3, #34
 	ldrb r0, [r3]
@@ -520,7 +520,7 @@ Func_0200087c:
 	str r4, [r7, #68]
 	movs r0, #1
 	mov r8, r4
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [r7, #8]
 	ldr r2, [r7, #16]
 	movs r0, #2
@@ -573,7 +573,7 @@ Func_0200087c:
 	adds r0, r5, #0
 	bl Func_0200108c
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r3, r8
 	strh r3, [r6]
 	b .L_02008a1e

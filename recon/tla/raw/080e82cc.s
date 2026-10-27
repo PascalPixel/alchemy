@@ -121,7 +121,7 @@ Func_080e82cc:
 .L_080e83bc:
 	.4byte 0x06002000
 .L_080e83c0:
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #128
 	lsls r3, r3, #19
 	movs r1, #192
@@ -238,7 +238,7 @@ Func_080e82cc:
 	ldr r0, .L_080e84dc
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	strb r6, [r5]
 	movs r2, #0
 	mov r11, r2
@@ -442,7 +442,7 @@ Func_080e82cc:
 	mov r11, r0
 .L_080e8646:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #186
 	lsls r2, r2, #2
 	movs r1, #1

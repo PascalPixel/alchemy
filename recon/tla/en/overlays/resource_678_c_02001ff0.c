@@ -27,7 +27,7 @@ struct MapFocus {
 extern u8 gMapCellBuffer[];
 extern u8 gMapShapeGrid[];
 void Func_02002810(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 void Func_02001ff0(s32 x, s32 z) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -52,5 +52,5 @@ void Func_02001ff0(s32 x, s32 z) {
   focus->scrolledZ =
       Iwram_MulQ16(*(s32 *)(map + 0xe8), focus->scaleZ) + focus->z;
   Func_02002810();
-  WaitFrames(1);
+  WaitTicks(1);
 }

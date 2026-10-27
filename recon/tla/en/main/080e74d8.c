@@ -38,7 +38,7 @@ struct SparkWork {
 
 extern char ResourceId_ColouredOrbs;
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -68,7 +68,7 @@ void Func_080e74d8(void) {
   s32 next;
   s32 frame;
 
-  WaitFrames(20);
+  WaitTicks(20);
   BattleEffect_InitializeSharedScene();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                         work);
@@ -84,18 +84,18 @@ void Func_080e74d8(void) {
     sprite->depth = 240;
     particle->age = -1;
   }
-  WaitFrames(10);
+  WaitTicks(10);
   ObjectMotion_ArmCallback(owner, 0x4000, 0);
-  WaitFrames(20);
+  WaitTicks(20);
   Object_SetMode(object, 28);
   object->update = ObjectGroup_ApplyRandomChildValues;
   Audio_PlayCue(131);
-  WaitFrames(30);
+  WaitTicks(30);
   Audio_PlayCue(220);
   Object_SetMode(object, 3);
   for (frame = 49, spin = 0; frame >= 0; frame--, spin += 60) {
     object->angle += spin + 0x1000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   count = 2;
@@ -175,7 +175,7 @@ void Func_080e74d8(void) {
         state = 999;
       break;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     frame++;
   } while (state != 999);
   Resource_ResetEntry(entry);

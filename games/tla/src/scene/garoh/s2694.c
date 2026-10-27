@@ -8,7 +8,7 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 Func_02001344();
 s32 Func_02001418();
 s32 Func_02001454();
@@ -89,21 +89,21 @@ void Func_02002694(void) {
   Call3(ObjectMotion_ArmCallback, 8, 0x4000, 0);
   Call3(ObjectMotion_SetPositionAndReset, 4, 0x140, 224);
   Call3(ObjectMotion_ArmCallback, 4, 0xc000, 0);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 0x8009, 0, 0);
   Call4(Func_02005334, 9, -16, -8, 0xc000);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 9);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call2(Func_020052a4, 0x10000, 0x2000);
   Call4(Camera_MoveWithinMapBounds, 0x1480000, -1, 0x980000, 1);
   Call3(ObjectMotion_ArmCallback, 9, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xc000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0xa000, 0);
   {
@@ -128,14 +128,14 @@ void Func_02002694(void) {
   t1 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t1 != 0)
     goto L_0200a818;
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Func_0200528c(9, 0x109, 30);
   Call3(Func_0200525c, 9, 0, 0);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200a846;
 L_0200a818:;
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Func_0200528c(9, 0x109, 30);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
@@ -143,10 +143,10 @@ L_0200a818:;
 L_0200a846:;
   Call3(Func_0200525c, 8, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 4, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_ArmCallback, 4, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xc000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call4(Func_02005334, 5, 16, 0, 0xc000);
   Call4(Func_02005334, 6, 32, 0, 0xc000);
   t2 = Value1(GameFlag_Test, 7);
@@ -155,7 +155,7 @@ L_0200a846:;
   Call4(Func_02005334, 7, 48, -8, 0xa000);
 L_0200a8b2:;
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a1 = 0x100;
     s32 a2 = 30;
@@ -166,13 +166,13 @@ L_0200a8b2:;
   }
   Call3(Func_0200525c, 5, 0, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 6, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 6, 0, 0);
   {
     s32 a1 = 0x101;
@@ -183,22 +183,22 @@ L_0200a8b2:;
     Func_0200528c(9, a1, a2);
   }
   Call3(ObjectMotion_ArmCallback, 9, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0, 0);
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_WaitTicks, 40);
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 25);
+  Call1(FieldEvent_WaitTicks, 25);
   Call2(Object_SetModeById, 6, 3);
   {
     s32 a0 = 5;
@@ -207,8 +207,8 @@ L_0200a8b2:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
@@ -217,37 +217,37 @@ L_0200a8b2:;
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
   Call4(Camera_MoveWithinMapBounds, 0x1480000, -1, 0x900000, 1);
   Func_020052b4();
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200520c, 11, 0x1480000, 0x880000);
   t3 = Value1(Object_GetById, 11);
   Call2(ObjectDispatch_SetSingleChildFlags, t3, 0);
   Call1(Func_02001418, 11);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 5, 0, 0);
   Call3(ObjectMotion_SetSpeedParameters, 8, 0xb333, 0x5999);
   Call3(ObjectMotion_SetSpeedParameters, 10, 0xb333, 0x5999);
   Call3(Func_0200520c, 10, 0x1480000, 0x800000);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_CommitPositionAndActivate, 10, 0, 16);
   Call3(Func_0200520c, 8, 0x1480000, 0x800000);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_OffsetPositionAndReset, 8, 0, 16);
   Call3(ObjectMotion_CommitPositionAndActivate, 10, 0, 16);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call1(Func_02001454, 11);
   Call3(Func_0200520c, 11, 0, 0);
   Call2(Camera_FollowActor, 10, 1);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_OffsetPositionAndReset, 8, 0, 24);
   Call3(ObjectMotion_CommitPositionAndActivate, 10, 0, 24);
   Call3(ObjectMotion_CommitPositionAndActivate, 8, 16, 8);
   Call3(ObjectMotion_ArmCallback, 8, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call4(Camera_MoveWithinMapBounds, 0x1480000, -1, 0xd00000, 1);
   Func_020052b4();
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Motion_SetVarCbAndRefresh, 8, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 8, 0, 0);
   Call2(ObjectMotion_SetVariantCallback, 9, 2);
   Call2(ObjectMotion_SetVariantCallback, 6, 2);
@@ -258,7 +258,7 @@ L_0200a8b2:;
   Call2(ObjectMotion_SetVariantCallback, 7, 2);
 L_0200ab98:;
   Call2(Motion_SetVarCbAndRefresh, 4, 2);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -266,16 +266,16 @@ L_0200ab98:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   Func_0200528c(6, 0x100, 30);
   Call3(Func_0200525c, 6, 0, 0);
   Call2(ObjectMotion_SetVariantCallback, 8, 3);
   Call2(Func_02005294, 8, 0x102);
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_WaitTicks, 40);
   Call3(Func_0200525c, 8, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 9, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(ObjectMotion_Launch, 8, 6, 15);
   Call3(ObjectMotion_Launch, 8, 6, 23);
@@ -287,7 +287,7 @@ L_0200ab98:;
     asm volatile("" : "+l"(a1), "+l"(a2));
     ObjectMotion_ArmCallback(8, a1, a2);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -295,7 +295,7 @@ L_0200ab98:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x101;
@@ -321,12 +321,12 @@ L_0200ab98:;
 L_0200ac86:;
   Func_0200528c(9, 0x101, 60);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   UiText_OpenMessageAtObject(10, 0);
   t6 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t6 == 0)
     goto L_0200ace6;
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_WaitTicks, 40);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -334,7 +334,7 @@ L_0200ac86:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -346,18 +346,18 @@ L_0200ac86:;
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200ad16;
 L_0200ace6:;
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   Call3(Func_0200525c, 10, 0, 0);
 L_0200ad16:;
   Call2(Motion_SetVarCbAndRefresh, 8, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 8, 0, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -365,7 +365,7 @@ L_0200ad16:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x101;
@@ -377,14 +377,14 @@ L_0200ad16:;
   }
   Call3(Func_0200525c, 5, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_ArmCallback, 8, 0x4000, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   Func_0200528c(6, 0x106, 30);
   Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 6, 0, 0);
   {
     s32 a0 = 10;
@@ -393,7 +393,7 @@ L_0200ad16:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x101;
@@ -438,7 +438,7 @@ L_0200ae32:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(UiText_OpenMessageAtObject, 10, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
@@ -448,19 +448,19 @@ L_0200ae32:;
     goto L_0200ae8e;
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
 L_0200ae8e:;
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   t9 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t9 == 0)
     goto L_0200aed2;
-  Call1(FieldEvent_WaitFrames, 40);
+  Call1(FieldEvent_WaitTicks, 40);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 5, 0, 0);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200af08;
 L_0200aed2:;
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   {
     s32 a0 = 5;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -468,15 +468,15 @@ L_0200aed2:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   Call3(Func_0200525c, 5, 0, 0);
 L_0200af08:;
   Call3(ObjectMotion_ArmCallback, 10, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x6000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call3(Func_0200525c, 8, 0, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
@@ -486,12 +486,12 @@ L_0200af08:;
     goto L_0200af6a;
   Call3(ObjectMotion_ArmCallback, 7, 0xa000, 0);
 L_0200af6a:;
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call2(Motion_SetVarCbAndRefresh, 6, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 6, 0, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a0 = 9;
@@ -500,7 +500,7 @@ L_0200af6a:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a1 = 0x100;
@@ -520,10 +520,10 @@ L_0200af6a:;
   Call2(Object_SetModeById, 7, 3);
 L_0200affc:;
   Call2(Object_SetModeById, 9, 3);
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a1 = 0xe000;
@@ -533,7 +533,7 @@ L_0200affc:;
     asm volatile("" : "+l"(a1), "+l"(a2));
     ObjectMotion_ArmCallback(9, a1, a2);
   }
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -541,7 +541,7 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x102;
@@ -553,12 +553,12 @@ L_0200affc:;
   }
   Call3(Func_0200525c, 8, 0, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 5, 0, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0x3000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x109;
@@ -570,12 +570,12 @@ L_0200affc:;
   }
   Call3(Func_0200525c, 6, 0, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Motion_SetVarCbAndRefresh, 8, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 8, 0, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a1 = 0xe000;
@@ -585,7 +585,7 @@ L_0200affc:;
     asm volatile("" : "+l"(a1), "+l"(a2));
     ObjectMotion_ArmCallback(9, a1, a2);
   }
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -593,7 +593,7 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x102;
@@ -605,7 +605,7 @@ L_0200affc:;
   }
   Call3(Func_0200525c, 5, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a0 = 9;
@@ -614,12 +614,12 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_CommitPositionAndActivate, 8, 0, 16);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_Launch, 8, 6, 15);
   Call3(ObjectMotion_Launch, 8, 6, 23);
   {
@@ -634,7 +634,7 @@ L_0200affc:;
   Call3(ObjectMotion_SetSpeedParameters, 10, 0x28000, 0x14000);
   Call3(ObjectMotion_SetSpeedParameters, 8, 0x28000, 0x14000);
   Call3(ObjectMotion_ArmCallback, 10, 0, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_CommitPositionAndActivate, 10, 8, 0);
   Call3(ObjectMotion_Launch, 8, 4, 0);
   t12 = Value1(Object_GetById, 10);
@@ -645,7 +645,7 @@ L_0200affc:;
   v5 = (v5 & *(u8 *)((t13 + 90)));
   *(u8 *)((t13 + 90)) = v5;
   Call3(ObjectMotion_CommitPositionAndActivate, 8, 16, 0);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t14 = Value1(Object_GetById, 8);
   /* FAKEMATCH: the value is ORed into the register that holds the constant, as
    * the native does; as one |= the constant is built second. */
@@ -653,7 +653,7 @@ L_0200affc:;
   b1 |= *(u8 *)((t14 + 90));
   *(u8 *)((t14 + 90)) = b1;
   Call2(Object_SetModeById, 8, 5);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_SetSpeedParameters, 8, 0x14ccc, 0xa666);
   Call3(ObjectMotion_SetSpeedParameters, 10, 0xb333, 0x5999);
   {
@@ -663,8 +663,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 33);
+  Call1(FieldEvent_WaitTicks, 10);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument after the second is
@@ -675,7 +675,7 @@ L_0200affc:;
   Call2(Object_SetModeById, 8, 1);
   Call3(ObjectMotion_Launch, 8, 6, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x8000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call2(Func_02005294, 8, 0x102);
   {
     s32 a0 = 8;
@@ -684,8 +684,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 15);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 15);
   Call2(Func_02005294, 8, 0x102);
   {
     s32 a0 = 8;
@@ -694,8 +694,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -703,8 +703,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a1 = 0x101;
@@ -722,12 +722,12 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(ObjectMotion_ArmCallback, 8, 0x5000, 0);
-  Call1(FieldEvent_WaitFrames, 45);
+  Call1(FieldEvent_WaitTicks, 45);
   Call3(ObjectMotion_ArmCallback, 8, 0x8000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 8, 0, 0);
   {
     s32 a0 = 10;
@@ -736,12 +736,12 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(ObjectMotion_ArmCallback, 10, 0x5000, 0);
-  Call1(FieldEvent_WaitFrames, 45);
+  Call1(FieldEvent_WaitTicks, 45);
   Call3(ObjectMotion_ArmCallback, 10, 0, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   {
     s32 a0 = 8;
@@ -750,8 +750,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a1 = 0x4000;
     s32 a2 = 0;
@@ -760,7 +760,7 @@ L_0200affc:;
     asm volatile("" : "+l"(a1), "+l"(a2));
     ObjectMotion_ArmCallback(8, a1, a2);
   }
-  Call1(FieldEvent_WaitFrames, 35);
+  Call1(FieldEvent_WaitTicks, 35);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -768,8 +768,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 8, 0, 0);
   Call2(Object_SetModeById, 4, 3);
   Call2(Object_SetModeById, 5, 3);
@@ -781,8 +781,8 @@ L_0200affc:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Object_LinkObjectAndSetCallback, 4, 8);
   Call2(Object_LinkObjectAndSetCallback, 9, 8);
   Call2(Object_LinkObjectAndSetCallback, 5, 8);
@@ -798,7 +798,7 @@ L_0200b46e:;
   Call3(ObjectMotion_CommitPositionAndActivate, 8, -16, 24);
   Call3(ObjectMotion_CommitPositionAndActivate, 8, -32, 16);
   Call3(ObjectMotion_CommitPositionAndActivate, 8, 0, 48);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call1(ObjectMotion_EnableActionAndResetMotion, 4);
   Call1(ObjectMotion_EnableActionAndResetMotion, 9);
   Call1(ObjectMotion_EnableActionAndResetMotion, 5);
@@ -811,7 +811,7 @@ L_0200b46e:;
 L_0200b4da:;
   Call3(Func_0200520c, 8, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
@@ -822,7 +822,7 @@ L_0200b4da:;
     goto L_0200b542;
   Call3(ObjectMotion_ArmCallback, 7, 0xa000, 0);
 L_0200b542:;
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -830,7 +830,7 @@ L_0200b542:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 10, 0, 0);
   Func_0200528c(9, 0x102, 30);
   Call3(Func_0200525c, 9, 0, 0);
@@ -856,12 +856,12 @@ L_0200b542:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 10);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_ArmCallback, 5, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call3(Func_0200525c, 5, 0, 0);
   {
     s32 a0 = 10;
@@ -870,13 +870,13 @@ L_0200b542:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 4);
   }
-  Call1(FieldEvent_WaitFrames, 33);
+  Call1(FieldEvent_WaitTicks, 33);
   Call3(Func_0200525c, 10, 0, 0);
   Func_0200528c(5, 0x101, 50);
   Call3(ObjectMotion_ArmCallback, 5, 0xb000, 0);
-  Call1(FieldEvent_WaitFrames, 30);
+  Call1(FieldEvent_WaitTicks, 30);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a0 = 10;
@@ -885,11 +885,11 @@ L_0200b542:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0xe000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Object_SetModeById, 4, 3);
   Call2(Object_SetModeById, 5, 3);
   Call2(Object_SetModeById, 6, 3);
@@ -900,8 +900,8 @@ L_0200b542:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 9, 0x2000, 0);
   Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
@@ -910,7 +910,7 @@ L_0200b542:;
     goto L_0200b6f4;
   Call3(ObjectMotion_ArmCallback, 7, 0x8000, 0);
 L_0200b6f4:;
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call2(Object_SetModeById, 5, 3);
   Call2(Object_SetModeById, 6, 3);
   t19 = Value1(GameFlag_Test, 7);
@@ -919,8 +919,8 @@ L_0200b6f4:;
   Call2(Object_SetModeById, 7, 3);
 L_0200b71c:;
   Call2(Object_SetModeById, 9, 3);
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   {
     s32 a0 = 4;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -928,8 +928,8 @@ L_0200b71c:;
     asm volatile("" : "+l"(a0));
     Object_SetModeById(a0, 3);
   }
-  Call1(FieldEvent_WaitFrames, 20);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 20);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(ObjectMotion_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Object_SetModeById, 9, 2);
   p1 = (s32)gPartyState;

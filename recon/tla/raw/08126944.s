@@ -24,7 +24,7 @@ Func_08126944:
 	strh r3, [r7]
 	movs r0, #1
 	adds r5, #2
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #16
 	ble .L_08126964
 	pop {r5, r6, r7, pc}

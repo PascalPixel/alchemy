@@ -175,7 +175,7 @@ void Window_CloseAll(s32 unused) {
     i = 0;
     if (done)
       break;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   // Then the windows opened directly.
@@ -342,7 +342,7 @@ void TextPrinter_CloseFinishedWindows(void) {
     i++;
     printer++;
   } while (i != 3);
-  WaitFrames(10);
+  WaitTicks(10);
 }
 
 /// Shows a message centred across the screen and in its top 15 rows (yOffset
@@ -382,11 +382,11 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
       Window_Close(messageWindow, 1);
     else {
       while (TextPrinter_AllFinished() == 0)
-        WaitFrames(1);
+        WaitTicks(1);
       if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(messageWindow, 0);
         while (Window_IsClosed(messageWindow) == 0)
-          WaitFrames(1);
+          WaitTicks(1);
       } else
         Window_Close(messageWindow, 1);
       work->voiceSound = 0;

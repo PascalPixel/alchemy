@@ -3,7 +3,7 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Func_020017f4(void);
 void Func_02001c44(s32 a);
 void Func_0200400c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -48,7 +48,7 @@ void Func_02003880(void) {
       Func_020040d4(17, 0, 0);
     } else {
       Object_GetById(10)->angle = 0xd000;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   } else {
     Func_020017f4();

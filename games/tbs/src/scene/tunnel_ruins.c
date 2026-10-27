@@ -271,7 +271,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
       FieldActor_CheckMovementCollision(actor, target) == 0) {
     Event_Start();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
-    WaitFrames(6);
+    WaitTicks(6);
     Sound_PlaySong(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
 
@@ -286,7 +286,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
                                TunnelRuins_GetLandingPixel(target->z));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
-    WaitFrames(6);
+    WaitTicks(6);
 
     actor->motionFlags = savedMotionFlags;
     Event_End();
@@ -439,7 +439,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
     if (remainingFrames != 0) {
       s32 height;
 
-      WaitFrames(1);
+      WaitTicks(1);
       height = actor->y.fixed;
       groundHeight = actor->groundHeight;
       remainingFrames--;
@@ -477,7 +477,7 @@ static void TunnelRuins_HopDownStep(void) {
   leader->velocityY = PIXELS(4);
   FieldActor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                            leader->z.fixed + PIXELS(12));
-  WaitFrames(6);
+  WaitTicks(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
@@ -485,7 +485,7 @@ static void TunnelRuins_HopDownStep(void) {
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
     leader->targetY = leader->y.fixed;
-    WaitFrames(1);
+    WaitTicks(1);
     if (i & 1) {
       s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
@@ -743,7 +743,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   Event_Start();
   actor = Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 46) {
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
     options = &optionsStorage;
@@ -753,7 +753,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
     Sound_PlaySong(SE_PUSH);
     for (i = 0; i < 16; i++) {
-      WaitFrames(3);
+      WaitTicks(3);
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
@@ -765,7 +765,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
           0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
@@ -773,10 +773,10 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
     Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_PUDDLE, PIXELS(744), PIXELS(136));
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     MapGrid_WaitForShakeToSettle();
-    Event_WaitFrames(10);
+    Event_WaitTicks(10);
     GameFlag_Set(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
   }
   Event_End();
@@ -828,7 +828,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   actor = Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       overlay = Actor_Prepare(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
@@ -837,7 +837,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
       Sound_PlaySong(SE_PUSH);
       for (i = 0; i < 16; i++) {
-        WaitFrames(3);
+        WaitTicks(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
         randomX = Import_RandomNext();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
@@ -848,7 +848,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
       }
       MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
@@ -857,10 +857,10 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_PUDDLE, PIXELS(776),
                         PIXELS(232));
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
-      Event_WaitFrames(20);
+      Event_WaitTicks(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       MapGrid_WaitForShakeToSettle();
-      Event_WaitFrames(10);
+      Event_WaitTicks(10);
       GameFlag_Set(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
     }
   }
@@ -1055,7 +1055,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
           Actor_GetById(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
     }
   }
-  Event_WaitFrames(wait);
+  Event_WaitTicks(wait);
 }
 
 /// A carried stone drops onto the highest platform or carved stone in its cell
@@ -1097,7 +1097,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   Actor_WaitForMoveById(actorId);
   Sound_PlaySong(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(actorId);
-  Event_WaitFrames(30);
+  Event_WaitTicks(30);
 }
 
 /// Setting down a carved stone with Carry: one dropped into a pit is gone; one
@@ -1345,28 +1345,28 @@ static void TunnelRuins_MoveLadyStatue(void) {
       Event_End();
       return;
     }
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     FieldCamera_WaitForArrival();
-    Event_WaitFrames(30);
+    Event_WaitTicks(30);
     GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gTunnelRuins_DoorOpenSteps, 32, 46);
     MapGrid_CopyCellAttributes(24, 60, 1, 1, 32, 47);
-    Event_WaitFrames(40);
+    Event_WaitTicks(40);
   } else {
     if (Event_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      Event_WaitFrames(20);
+      Event_WaitTicks(20);
       FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
       FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       FieldCamera_WaitForArrival();
-      Event_WaitFrames(30);
+      Event_WaitTicks(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
       Sound_PlaySong(SE_DOOR_CLOSE);
       MapGrid_AnimateCells(gTunnelRuins_DoorCloseSteps, 32, 46);
       MapGrid_CopyCellAttributes(31, 47, 1, 1, 32, 47);
-      Event_WaitFrames(40);
+      Event_WaitTicks(40);
     }
   }
   Event_End();
@@ -1726,7 +1726,7 @@ s32 TunnelRuins_Initialize(void) {
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Event_WaitFrames(2);
+        Event_WaitTicks(2);
         GameFlag_Set(FLAG_SCENE_TEMP_00);
         GameFlag_Set(FLAG_SCENE_TEMP_01);
         GameFlag_Set(FLAG_SCENE_TEMP_02);
@@ -1750,7 +1750,7 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
-      Event_WaitFrames(1);
+      Event_WaitTicks(1);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
         Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, PIXELS(408),

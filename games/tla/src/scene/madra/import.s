@@ -42,10 +42,10 @@ Func_02002b10:
 	.thumb_func
 Func_02002b18:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global FieldEvent_WaitFrames
+	.global FieldEvent_WaitTicks
 	.thumb_func
-FieldEvent_WaitFrames:
-	overlay_veneer FieldEvent_WaitFramesFar
+FieldEvent_WaitTicks:
+	overlay_veneer FieldEvent_WaitTicksFar
 	.global Func_02002b28
 	.thumb_func
 Func_02002b28:

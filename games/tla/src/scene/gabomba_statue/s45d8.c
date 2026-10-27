@@ -31,7 +31,7 @@ void Func_020056bc(void);
 void Func_0200580c(s32 value);
 void Func_020044b4(s32 mode);
 void Func_020044d0(s32 value);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -72,7 +72,7 @@ void Func_02004620(void) {
          * tla-en. */
         __asm__("" : "+l"(value) : : "r1");
         *offset = value + 0x333;
-        WaitFrames(1);
+        WaitTicks(1);
         i--;
       } while (i >= 0);
       Func_020044d0(1);

@@ -225,7 +225,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
 
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 
   Runtime_ReleaseHeapBlock(104);

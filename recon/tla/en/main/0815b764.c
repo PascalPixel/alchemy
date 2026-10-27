@@ -72,7 +72,7 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -188,11 +188,11 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
       *c = b << 10 | g << 5 | r;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   BattleEffect_StartCanvasLayer(0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1141, 0x20000);
-  WaitFrames(1);
+  WaitTicks(1);
   Iwram_FillWords((void *)0x0600f800, 256, -1);
   Iwram_FillWords((void *)0x0600f900, 128, 0x03ff03ff);
   {
@@ -215,7 +215,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
   REG_BG1CNT = 0x1f83;
-  WaitFrames(1);
+  WaitTicks(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blits);
   work->transferMode = 1;
   work->transferValue = 0;
@@ -229,7 +229,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
   blits[0](canvas, cells, 24, 8, 80, 112);
   work->transferPending = 1;
-  WaitFrames(1);
+  WaitTicks(1);
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(0x178, work->sheet, 1, 0);
   Resource_LoadAndDecompress(0xb3, cells, 1, 1);
@@ -240,7 +240,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   shipZ = 0x540000;
   Iwram_ClearWords(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
-  WaitFrames(1);
+  WaitTicks(1);
   zoomA = -184;
   zoomB = -92;
   for (frame = 0; frame != 326; frame++, zoomA += 2, zoomB++) {
@@ -630,17 +630,17 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     if (draw) {
       ObjectGroup_TickMemberTimers();
       work->transferPending = 1;
-      WaitFrames(1);
+      WaitTicks(1);
     }
   }
 
   Func_081180e8(134);
   REG_BG1CNT = 0x1f83;
-  WaitFrames(1);
+  WaitTicks(1);
   Iwram_FillWords(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
   Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
   Iwram_FillWords((void *)0x06008000, 0x7800, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
@@ -655,7 +655,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
   Iwram_ClearWords((void *)(BG_PLTT + 0xc0), 256);
-  WaitFrames(1);
+  WaitTicks(1);
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
@@ -663,7 +663,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
   REG_BLDCNT = 0;
-  WaitFrames(1);
+  WaitTicks(1);
   for (frame = 0; frame != 40; frame++) {
     u16 *src = (u16 *)(battle + 0x56c);
     volatile u16 *dst = (volatile u16 *)(BG_PLTT + 0xc0);
@@ -694,7 +694,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
       *dst++ = nb << 10 | ng << 5 | nr;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   if (dmaArmed == 1) {

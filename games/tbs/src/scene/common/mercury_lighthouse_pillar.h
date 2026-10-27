@@ -229,7 +229,7 @@ void MercuryLighthouse_ChargeLights(void) {
   }
   for (step = state->levels; step <= 2; step++) {
     MercuryLighthouse_SpawnSparkPair();
-    WaitFrames(30);
+    WaitTicks(30);
     pillar->spriteStorageKind = 1;
     Actor_SelectAnimation(pillar, 5 - step);
   }
@@ -356,7 +356,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     }
   }
   Actor_SelectAnimation(actor, 6);
-  WaitFrames(3);
+  WaitTicks(3);
   Sound_PlaySong(SE_JUMP);
   Actor_SelectAnimation(actor, 7);
   actor->speedLimit = 0x30000;
@@ -367,12 +367,12 @@ void MercuryLighthouse_HopAcrossPool(void) {
   Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pos[0].part.pixel,
                              pos[2].part.pixel);
   Actor_SelectAnimation(actor, 6);
-  WaitFrames(2);
+  WaitTicks(2);
   if (to->behavior != state->poolBehavior)
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   else
     Sound_PlaySong(SE_SPLASH_SMALL);
-  WaitFrames(1);
+  WaitTicks(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
     Actor_SelectAnimation(actor, 18);
@@ -382,10 +382,10 @@ void MercuryLighthouse_HopAcrossPool(void) {
         MercuryLighthouse_SpawnRipple(actor);
       if (i > 31 && gKeysPressed != 0)
         break;
-      WaitFrames(1);
+      WaitTicks(1);
     }
     Sound_PlaySong(SE_STOP_ACTION_SE);
-    WaitFrames(1);
+    WaitTicks(1);
     actor->x.fixed = state->targetX;
     actor->z.fixed = state->targetZ;
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);

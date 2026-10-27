@@ -125,7 +125,7 @@ void FieldEffect_RunWhirlwind(void) {
     scale = step * 0x10ccc / 10 + 0x4000; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   orb->scaleX = 0x1b333; // 1.7 wide
   orb->scaleY = 0x14ccc; // 1.3 high
@@ -135,7 +135,7 @@ void FieldEffect_RunWhirlwind(void) {
   case ORB_ORBITING:
     // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
-    WaitFrames(20);
+    WaitTicks(20);
     if (target != 0)
       target->update = (void (*)(void))BattleEffect_ShrinkObjectScaleUntilHalf;
     for (step = 0; step <= 15; step++) {
@@ -155,14 +155,14 @@ void FieldEffect_RunWhirlwind(void) {
         mote->pause = 0;
         mote->angle = Random16();
       }
-      WaitFrames(6);
+      WaitTicks(6);
     }
-    WaitFrames(20);
-    WaitFrames(120);
+    WaitTicks(20);
+    WaitTicks(120);
     // fall through
   case ORB_PLAIN:
     Object_SetMode(orb, 1);
-    WaitFrames(30);
+    WaitTicks(30);
     Audio_PlayCue(SE_ORB_FADES);
     Func_08020340(orb);
     Object_Destroy(orb);
@@ -170,7 +170,7 @@ void FieldEffect_RunWhirlwind(void) {
 
   case ORB_WANDER:
   case ORB_HANDOFF:
-    WaitFrames(5);
+    WaitTicks(5);
     Object_SetMode(orb, 1);
     if (kind == ORB_WANDER) {
       // Sixteen motes that wander about the orb, the first pausing longest.

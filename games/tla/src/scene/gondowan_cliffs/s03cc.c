@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 struct TileSprite {
   u8 unk00[18];
@@ -18,7 +18,7 @@ void Func_020003dc(struct ObjectRuntime *object, s32 height) {
   s32 count = 60;
 
   while (count != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     count--;
     if (object->y <= height)
       break;

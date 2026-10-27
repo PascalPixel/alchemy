@@ -72,7 +72,7 @@ void Func_020047e4(void) {
   Func_02004524();
   Func_02005c9c(161);
   Func_02003640(0, 1);
-  FieldEvent_WaitFrames(20);
+  FieldEvent_WaitTicks(20);
   Func_02005b4c((s32)MsgYouAreStillNot);
   Func_02005b64(17, 0);
   object = gData_02007950;
@@ -95,7 +95,7 @@ void Func_020047e4(void) {
           slot = &gData_02007950;
           object = *slot;
           object->y += 0xffffc000;
-          WaitFrames(1);
+          WaitTicks(1);
         } while ((*slot)->y > 0x240000);
       }
     }

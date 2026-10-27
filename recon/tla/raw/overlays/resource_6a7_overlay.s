@@ -45,7 +45,7 @@ Func_020001d8:
 	movs r0, #8
 	bl Func_02000ad8
 	movs r0, #5
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #11
 	bl Object_GetById
 	str r5, [r0, #24]
@@ -137,7 +137,7 @@ Func_020001d8:
 	adds r0, r7, #0
 	bl Func_02000a30
 	movs r0, #5
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	b .L_020085c6
 .L_02008328:
 	.4byte MsgShipSafeFiringDistance
@@ -175,7 +175,7 @@ Func_020001d8:
 	movs r0, #144
 	bl Func_02000b58
 	movs r0, #4
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r3, #192
 	lsls r3, r3, #9
 	mov r2, r8
@@ -227,7 +227,7 @@ Func_020001d8:
 	adds r3, r3, r2
 	str r3, [r6, #28]
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_020083da
 	movs r0, #236
@@ -268,7 +268,7 @@ Func_020001d8:
 	ldr r2, .L_02008604
 	bl Func_020006b0
 	movs r0, #20
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #10
 	movs r1, #0
 	movs r2, #0
@@ -414,14 +414,14 @@ Func_020001d8:
 	str r3, [r7, #28]
 	str r3, [r7, #24]
 	subs r5, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r5, #0
 	bge .L_02008594
 	movs r3, #0
 	str r3, [r7, #28]
 	str r3, [r7, #24]
 	movs r0, #10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r0, #144
 	lsls r0, r0, #4
 	adds r0, #14
@@ -853,7 +853,7 @@ Func_020006b0:
 	ble .L_020088ae
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #149
 	bgt .L_02008972
 	b .L_02008810
@@ -863,7 +863,7 @@ Func_020006b0:
 	mov r0, r10
 	bl MemFree
 	movs r0, #40
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	movs r1, #0
 	movs r2, #0
 	movs r0, #0

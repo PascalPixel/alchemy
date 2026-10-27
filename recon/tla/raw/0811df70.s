@@ -200,7 +200,7 @@ Func_0811df70:
 	strh r3, [r1]
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #16
 	bne .L_0811e0e0
 	mov r2, r10
@@ -497,7 +497,7 @@ Func_0811df70:
 	strh r3, [r1]
 	movs r0, #1
 	adds r6, #1
-	bl WaitFrames
+	bl WaitTicks
 	cmp r6, #16
 	bne .L_0811e316
 	movs r6, #0
@@ -522,7 +522,7 @@ Func_0811df70:
 	movs r0, #0
 	bl BattlePres_SetupTransitionScene
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #0
 	add sp, #136
 	pop {r3, r5, r6, r7}

@@ -15,7 +15,7 @@ Func_08040d70:
 	ldr r3, [r3]
 	movs r0, #1
 	mov r10, r3
-	bl WaitFrames
+	bl WaitTicks
 	bl Func_08040cc4
 	movs r7, #1
 	negs r7, r7
@@ -62,7 +62,7 @@ Func_08040d70:
 	movs r7, #0
 .L_08040de8:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, .L_08040e60
 	movs r2, #2
 	ldr r3, [r6, #4]
@@ -110,7 +110,7 @@ Func_08040d70:
 	bl UiWork_Finalize
 	bl Func_08040cb0
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	adds r0, r5, #0
 	pop {r3, r5}
 	mov r8, r3

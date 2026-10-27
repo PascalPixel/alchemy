@@ -54,7 +54,7 @@ void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
       BattleEffect_ClearOwnedSlot(slot);
   }
   Runtime_ReleaseHeapBlock(BATTLE_EFFECT_SLOT);
-  WaitFrames(1);
+  WaitTicks(1);
 }
 
 void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {

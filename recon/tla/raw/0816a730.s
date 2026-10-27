@@ -329,7 +329,7 @@ BattleEffect_RunUndeadSword:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #8]
 	movs r2, #1
 	add r9, r2

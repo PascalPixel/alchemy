@@ -19,10 +19,10 @@ void Func_02000244(void) {
   Func_02000a18(msg);
   UiText_OpenMessageAtObject(9, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_02000a18(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Func_02000a18(msg + 2);
   }
   Func_02000a28(9, 0);
@@ -130,10 +130,10 @@ void Func_02000480(void) {
   Func_02000a18(msg);
   UiText_OpenMessageAtObject(14, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
-    FieldEvent_WaitFrames(10);
+    FieldEvent_WaitTicks(10);
     Func_02000a18(msg + 1);
   } else {
-    FieldEvent_WaitFrames(20);
+    FieldEvent_WaitTicks(20);
     Func_02000a18(msg + 2);
   }
   Func_02000a28(14, 0);

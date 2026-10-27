@@ -245,13 +245,13 @@ Func_02000310:
 	b .L_020083a6
 .L_020083a0:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_020083a6:
 	bl UiWork_IsComplete
 	cmp r0, #0
 	beq .L_020083a0
 	mov r0, r10
-	bl FieldEvent_WaitFrames
+	bl FieldEvent_WaitTicks
 	adds r0, r5, #0
 	movs r1, #2
 	bl UiWork_Finalize

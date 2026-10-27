@@ -10,7 +10,7 @@ extern char SceneId_Ov6B0Room4;
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Func_02003328(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003378(s32 a, s32 x, s32 z, s32 b);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
@@ -82,12 +82,12 @@ void Func_02001160(void) {
       Func_02003328(50, 22, 33, 22, 1, 1);
       Func_020033e0(14, 0, 0);
       Func_020034b8(0x248);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_WaitTicks(30);
       Func_020034b8(188);
       Func_02003328(50, 20, 31, 20, 1, 2);
-      FieldEvent_WaitFrames(5);
+      FieldEvent_WaitTicks(5);
       Func_02003328(51, 20, 31, 20, 1, 2);
-      FieldEvent_WaitFrames(5);
+      FieldEvent_WaitTicks(5);
       Func_02003380(0x1f00000, 0x1500000, 0, 0);
       GameFlag_SetBit(0xa83);
     }

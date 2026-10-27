@@ -2048,7 +2048,7 @@ Func_0813d098:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #68]
 	ldr r2, [sp, #28]
 	ldr r5, [sp, #80]

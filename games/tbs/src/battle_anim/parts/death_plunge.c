@@ -85,7 +85,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *args) {
   user->steeringFlags = 1;
   user->acceleration = 2 << 16;
   user->speedLimit = 8 << 16;
-  WaitFrames(20);
+  WaitTicks(20);
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -902,7 +902,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
-  WaitFrames(1);
+  WaitTicks(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |

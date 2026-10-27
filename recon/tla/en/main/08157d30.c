@@ -74,7 +74,7 @@ extern char ResourceId_BlueFlameSheet;
 extern const u16 gData_08197410[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -215,7 +215,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     Func_08158ce0(4, 4);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
     angle -= 0x800;
     frame++;
   } while (frame != 96);

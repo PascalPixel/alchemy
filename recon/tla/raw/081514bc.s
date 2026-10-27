@@ -804,7 +804,7 @@ BattleEffect_RunFrost:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, [sp, #36]
 	ldr r0, [sp, #48]
 	adds r6, #1

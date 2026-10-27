@@ -13,7 +13,7 @@
 #include "scene_ids.h"
 #include "edition.h"
 
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 void Func_02001080();
 void Func_020010f0();
 void Func_02001138();
@@ -72,18 +72,18 @@ void Func_02000430(void) {
   Call3(Func_02001148, 19, 0, 1);
   Call3(ObjectMotion_SetPositionAndReset, 4, 200, 221);
   Call2(Motion_SetVarCbAndRefresh, 4, 2);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call3(ObjectMotion_OffsetPositionAndReset, 4, -16, 8);
   Call4(Func_020011f0, 0, 0, 0, 0xc000);
   Call4(Func_020011f0, 18, 8, 16, 0xc000);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 18);
   Call3(ObjectMotion_ArmCallback, 0, 0x4000, 0);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call3(ObjectMotion_ArmCallback, 0, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 4, 0xc000, 0);
   Call3(ObjectMotion_ArmCallback, 18, 0xc000, 0);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 256, 0)
@@ -98,10 +98,10 @@ void Func_02000430(void) {
   angle = 0x4000;
   Call4(Func_020010f0, 19, 0xc70000, 0x820000, angle);
   Call3(ObjectMotion_ResetAndSetPositionInMode2, 19, 231, 199);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call4(Func_020010f0, 20, 0xc70000, 0x820000, angle);
   Call3(ObjectMotion_ResetAndSetPositionInMode2, 20, 220, 191);
-  Call1(FieldEvent_WaitFrames, 20);
+  Call1(FieldEvent_WaitTicks, 20);
   Call4(Func_020010f0, 21, 0xc70000, 0x820000, angle);
   Call3(ObjectMotion_ResetAndSetPositionInMode2, 21, 204, 191);
   Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0xe10000, 1);
@@ -123,7 +123,7 @@ void Func_02000430(void) {
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 264, 30)
   Call3(Func_02001148, 19, 0, 5);
   Call2(Motion_SetVarCbAndRefresh, 20, 2);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call3(Func_02001148, 20, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
@@ -131,13 +131,13 @@ void Func_02000430(void) {
   Call3(Func_02001148, 21, 0, 5);
   Call2(Func_02001158, 0, 0xe000);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call3(Func_02001148, 0, 0, 5);
   Call2(Motion_SetVarCbAndRefresh, 19, 2);
-  Call1(FieldEvent_WaitFrames, 5);
+  Call1(FieldEvent_WaitTicks, 5);
   Call3(Func_02001148, 19, 0, 5);
   Call3(Object_LinkPair, 18, 4, 0);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 257, 30)
@@ -150,7 +150,7 @@ void Func_02000430(void) {
   Call2(Func_02001158, 18, 0xe000);
   Call2(Object_SetModeById, 18, 3);
   Call2(Motion_SetModeAndWaitAnimation, 4, 3);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call2(Motion_SetModeAndWaitAnimation, 21, 4);
   Call3(Func_02001148, 21, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -172,7 +172,7 @@ void Func_02000430(void) {
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 258, 30)
   Call3(Func_02001148, 0, 0, 5);
   Call3(Object_LinkPair, 20, 21, 0);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 263, 30)
@@ -180,7 +180,7 @@ void Func_02000430(void) {
   Call3(ObjectMotion_ArmCallback, 20, 0x5000, 0);
   Call3(ObjectMotion_ArmCallback, 21, 0x5000, 0);
   Call2(Func_02001158, 18, 0xe000);
-  Call1(FieldEvent_WaitFrames, 10);
+  Call1(FieldEvent_WaitTicks, 10);
   Call2(Motion_SetModeAndWaitAnimation, 18, 4);
   Call3(Func_02001148, 18, 0, 5);
   Call2(Motion_SetModeAndWaitAnimation, 21, 4);

@@ -24,8 +24,8 @@ void Func_0200479c(void *resource, void *destination);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
 void Engine_AudioPlayCue(s32 cue);
 struct ObjectRuntime *Object_GetById(s32 id);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 u32 Random16Far(void);
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Object_SetPartAttribute(void *object, s32 value);
@@ -114,7 +114,7 @@ void Func_0200057c(void) {
       Object_SetPartAttribute(effect, 2);
       effect->update = Effect_CircleAndBlink;
     }
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_020049f4();
@@ -130,9 +130,9 @@ void Func_0200057c(void) {
   for (k = 0; k != 64; k++) {
     REG_BLDALPHA = ((15 - (k >> 2)) << 8) | (k >> 2);
     OBJ14_BYTE(0x62) = Random16Far() & 7;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_02004864(0x30000, 0x30000, 0x10000);
   REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f42;
@@ -143,7 +143,7 @@ void Func_0200057c(void) {
   for (k = 0; k != 68; k++) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));
     OBJ14_BYTE(0x62) = Random16Far() & 7;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Func_02004844(45, 90, 4, 19, 13, 11);
   *(volatile u16 *)0x0400000c = 0x602;
@@ -165,7 +165,7 @@ void Func_0200057c(void) {
       }
       REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
       OBJ14_BYTE(0x62) = Random16Far() & 7;
-      WaitFrames(1);
+      WaitTicks(1);
     }
     Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
     REG_BLDALPHA = 16;
@@ -178,7 +178,7 @@ void Func_0200057c(void) {
   for (k = 0; k != 68; k++) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));
     OBJ14_BYTE(0x62) = Random16Far() & 7;
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Scheduler_RemoveCallbackFar(Func_02000420);
   *(volatile u16 *)0x0400000a &= ~3;
@@ -191,15 +191,15 @@ void Func_0200057c(void) {
   OBJ14_BYTE(0x62) = 6;
   for (k = 0; k != 65; k++) {
     REG_BLDALPHA = ((k >> 2) << 8) | (16 - (k >> 2));
-    FieldEvent_WaitFrames(1);
+    FieldEvent_WaitTicks(1);
   }
   Scheduler_RemoveCallbackFar(Func_02000378);
   OBJ14_BYTE(0x63) = 0;
-  WaitFrames(30);
+  WaitTicks(30);
   Object_GetById(14)->update = 0;
   Object_SetPartAttribute(Object_GetById(14), 6);
   Func_0200486c();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   REG_BLDCNT = 0;
   Func_020047d4();
   Func_020047bc();
@@ -209,7 +209,7 @@ void Func_0200057c(void) {
   Object_GetById(14)->priorityFlags |= 1;
   REG_DISPCNT |= 0x400;
   Func_0200482c();
-  WaitFrames(1);
+  WaitTicks(1);
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_020049f4();
   Func_0200484c(1, 5, 9, 1, 6, 29);

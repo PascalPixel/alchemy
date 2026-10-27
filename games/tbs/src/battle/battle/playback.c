@@ -472,7 +472,7 @@ s32 BattlePlayback_WaitForReady(void) {
   }
   if (state != BATTLE_PLAYBACK_PHASE_READY) {
     do {
-      WaitFrames(1U);
+      WaitTicks(1U);
     } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
   }
   Task_Remove(BattlePlayback_Run);

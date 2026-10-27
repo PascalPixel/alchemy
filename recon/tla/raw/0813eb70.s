@@ -1183,7 +1183,7 @@ Func_0813eb70:
 	movs r3, #1
 	movs r0, #1
 	str r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, [sp, #40]
 	adds r0, #1
 	str r0, [sp, #40]
@@ -1225,7 +1225,7 @@ Func_0813eb70:
 	movs r0, #2
 	bl BattlePresentation_ConfigurePaletteFadeFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, .L_0813f510
 	ldr r0, .L_0813f514
 	ldrh r3, [r0]

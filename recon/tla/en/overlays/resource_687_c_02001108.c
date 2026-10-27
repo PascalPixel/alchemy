@@ -29,8 +29,8 @@ void Func_02001ffc();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Func_02002054();
 void Func_02001f74();
-void WaitFrames();
-void FieldEvent_WaitFrames();
+void WaitTicks();
+void FieldEvent_WaitTicks();
 s32 Random16Far();
 void Func_0200015c();
 s32 Engine_ObjectCreate();
@@ -63,7 +63,7 @@ s32 Func_02001108(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call6((void (*)())Func_02001f74, 49, 70, 19, 73, 6, 6);
   goto L_020091c0;
 L_020091c0:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   r4 = 160;
   r4 = r4 << 19;
   r4 = r4 + 98;
@@ -131,7 +131,7 @@ L_0200921c:
     goto L_020092b8;
   goto L_020091c0;
 L_020092b8:
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
+  Call1((void (*)())FieldEvent_WaitTicks, 30);
   r4 = 0;
   r8 = r4;
 L_020092c2:
@@ -170,7 +170,7 @@ L_020092fe:
   r4 = r4 << 16;
   Func_0200015c(r5, 0, ((v3 & r6) << 16) + r4, 0, 0, 0, 0x10000,
                 (s32)((u8 *)stack + 56));
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
 L_02009344:
   r8 = r8 + 1;
   r2 = 0x168;
@@ -195,16 +195,16 @@ L_02009354:
   r5 = r5 + r4;
   Func_0200015c(r5, 0, ((v5 & r6) << 16) + 11534336, 0, 0x10000, 0, 0xb0000,
                 (s32)((u8 *)stack + 16));
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   r8 = r8 + 1;
   if (r8 != 16)
     goto L_02009354;
   v6 = Engine_ObjectCreate(159, 0x15c0000, 0, 0xb80000);
   r5 = v6;
   FIELD_AT(r5, s32, 108) = (s32)Func_020010a8;
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_WaitTicks, 60);
   Call2((void (*)())Func_02001f4c, r5, 1);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   r4 = 166;
   r4 = r4 << 1;
   r4 = r4 + 255;

@@ -83,7 +83,7 @@ BattleEffect_RunUlysses:
 	cmp r1, #128
 	bne .L_0815b7b4
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #88]
 	adds r2, #1
 	str r2, [sp, #88]
@@ -120,7 +120,7 @@ BattleEffect_RunUlysses:
 	strh r4, [r0]
 	movs r0, #1
 	ldr r6, .L_0815b8f4
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #128
 	movs r2, #1
 	ldr r5, .L_0815b8f8
@@ -184,7 +184,7 @@ BattleEffect_RunUlysses:
 	ldr r3, .L_0815b8e8
 	subs r2, #70
 	strh r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	mov r4, sp
 	adds r4, #128
 	adds r1, r4, #0
@@ -278,7 +278,7 @@ BattleEffect_RunUlysses:
 	movs r6, #1
 	str r6, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_0815ba0c
 	bl Scheduler_RemoveCallback
 	movs r1, #224
@@ -319,7 +319,7 @@ BattleEffect_RunUlysses:
 	lsls r2, r2, #19
 	movs r0, #1
 	strh r3, [r2]
-	bl WaitFrames
+	bl WaitTicks
 	movs r0, #184
 	movs r1, #92
 	movs r7, #0
@@ -1955,7 +1955,7 @@ BattleEffect_RunUlysses:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_0815c69a:
 	ldr r0, [sp, #16]
 	ldr r1, [sp, #12]
@@ -1980,7 +1980,7 @@ BattleEffect_RunUlysses:
 	adds r2, #10
 	strh r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r6, #192
 	lsls r6, r6, #18
 	ldr r0, [r6, #96]
@@ -2023,7 +2023,7 @@ BattleEffect_RunUlysses:
 .L_0815c71c:
 	.4byte 0x06008000
 .L_0815c720:
-	bl WaitFrames
+	bl WaitTicks
 	ldr r3, .L_0815c760
 	movs r2, #128
 	lsls r2, r2, #19
@@ -2093,7 +2093,7 @@ BattleEffect_RunUlysses:
 	mov lr, r6
 	.2byte 0xf800
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #206
 	lsls r3, r3, #3
 	add r3, r10
@@ -2164,7 +2164,7 @@ BattleEffect_RunUlysses:
 	mov r2, r9
 	strh r7, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r3, #0
 	ldr r4, .L_0815c864
 	str r3, [sp, #88]
@@ -2243,7 +2243,7 @@ BattleEffect_RunUlysses:
 	cmp r0, #128
 	bne .L_0815c868
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r1, [sp, #88]
 	adds r1, #1
 	str r1, [sp, #88]

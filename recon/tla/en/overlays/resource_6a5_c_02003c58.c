@@ -11,7 +11,7 @@ s32 Camera_MoveWithinMapBounds();
 s32 Func_0200577c();
 s32 Func_020059f4();
 s32 Object_GetById();
-s32 WaitFrames();
+s32 WaitTicks();
 extern u8 Data_02006a1c[];
 extern u8 gData_02005a20[];
 
@@ -101,7 +101,7 @@ L_0200bd36:
     goto L_0200bd54;
   Camera_MoveWithinMapBounds(0x1200000, 0x680000, 0x1700000, 1);
 L_0200bd54:
-  WaitFrames(1);
+  WaitTicks(1);
   v_r8 = (v_r8 + 1);
   if ((u32)v_r8 > (u32)119)
     goto L_0200bd74;
@@ -116,6 +116,6 @@ L_0200bd74:
   t23 = *(s32 *)(s32)Data_02006a1c;
   FIELD_AT(v_r10, s32, 12) = t23;
   Func_0200577c();
-  WaitFrames(2);
+  WaitTicks(2);
   return;
 }

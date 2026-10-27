@@ -47,7 +47,7 @@ Func_02000d4c:
 	b .L_02008dae
 .L_02008da8:
 	ldr r0, [sp, #52]
-	bl WaitFrames
+	bl WaitTicks
 .L_02008dae:
 	bl UiWork_IsComplete
 	cmp r0, #0
@@ -76,13 +76,13 @@ Func_02000d4c:
 	b .L_02008dec
 .L_02008de6:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 .L_02008dec:
 	bl UiWork_IsComplete
 	cmp r0, #0
 	beq .L_02008de6
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5

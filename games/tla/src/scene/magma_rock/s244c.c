@@ -4,7 +4,7 @@
 #include "flag_call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 WaitFrames(s32 frames);
+s32 WaitTicks(s32 ticks);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 s32 Camera_FollowActor(s32 id, s32 a);
@@ -23,6 +23,6 @@ void Func_0200244c(s32 height) {
     object->actionFlags = 1;
     Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02003a7c();
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

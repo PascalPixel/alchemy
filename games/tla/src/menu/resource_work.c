@@ -40,5 +40,5 @@ void Menu_EndResourceSelection(void) {
     i += 1;
   }
   Runtime_ReleaseHeapBlock(232);
-  WaitFrames(1U);
+  WaitTicks(1U);
 }

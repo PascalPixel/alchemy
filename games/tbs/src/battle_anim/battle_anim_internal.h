@@ -188,7 +188,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Ends a frame of a canvas animation: marks the canvas ready for the transfer
 /// task, then waits for the next frame. Nearly every animation loop ends
 /// so.
-#define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
+#define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitTicks(1))
 
 /// The usual end of an animation frame: counts down the targets' flash timers
 /// (BattleAnim_TickBattlerTints), then presents the canvas.

@@ -13,7 +13,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
 void Func_0200029c(void);
@@ -63,6 +63,6 @@ void Func_020000d8(s32 id) {
 
   Func_0200029c();
   Func_020001e0(object->x, object->y, object->z, 20);
-  WaitFrames(20);
+  WaitTicks(20);
   Func_02000358();
 }

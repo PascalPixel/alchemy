@@ -12,8 +12,8 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void Func_02002ab8(s32 id, s32 a, s32 b);
 void Func_02002b68(s32 sound);
@@ -36,11 +36,11 @@ void Func_0200032c(s32 unused, s32 id) {
     if (object->x >> 20 == 6 && *(volatile s32 *)&object->z >> 20 == 12) {
       GameFlag_SetBit(2570);
       object->motionFlags = 3;
-      WaitFrames(2);
+      WaitTicks(2);
       i = 0;
       if (object->y > object->terrainHeight || object->velocityY != 0) {
         do {
-          WaitFrames(1);
+          WaitTicks(1);
           i++;
           if (i > 29)
             break;
@@ -53,10 +53,10 @@ void Func_0200032c(s32 unused, s32 id) {
       Func_02002a50(66, 39, 1, 1, 70, 10);
       Func_02002a50(5, 75, 1, 1, 6, 75);
       Func_02002a48(5, 12, 1, 1, 6, 12);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_WaitTicks(30);
       Func_02002b68(167);
       Func_02002a50(70, 39, 1, 1, 71, 10);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Func_020001b4();
     } else {
       Func_02002a78(object->x, object->z, 0, 6);
@@ -69,11 +69,11 @@ void Func_0200032c(s32 unused, s32 id) {
     if (object->x >> 20 == 57 && *(volatile s32 *)&object->z >> 20 == 12) {
       GameFlag_SetBit(2571);
       object->motionFlags = 3;
-      WaitFrames(2);
+      WaitTicks(2);
       i = 0;
       if (object->y > object->terrainHeight || object->velocityY != 0) {
         do {
-          WaitFrames(1);
+          WaitTicks(1);
           i++;
           if (i > 29)
             break;
@@ -86,10 +86,10 @@ void Func_0200032c(s32 unused, s32 id) {
       Func_02002a50(68, 39, 1, 1, 121, 10);
       Func_02002a50(58, 75, 1, 1, 57, 75);
       Func_02002a48(58, 12, 1, 1, 57, 12);
-      FieldEvent_WaitFrames(30);
+      FieldEvent_WaitTicks(30);
       Func_02002b68(167);
       Func_02002a50(72, 39, 1, 1, 120, 10);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Func_02000264();
     } else {
       Func_02002a78(object->x, object->z, 0, 6);

@@ -112,7 +112,7 @@ BattleEffect_RunMeteorBlow:
 	movs r3, #240
 	str r3, [r2, #16]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, .L_0818e0d4
 	movs r1, #128
 	mov r10, r6
@@ -1095,7 +1095,7 @@ BattleEffect_RunMeteorBlow:
 	movs r5, #1
 	str r5, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #1
 	add r11, r1
 	mov r2, r11
@@ -1114,7 +1114,7 @@ BattleEffect_RunMeteorBlow:
 	b .L_0818e2dc
 .L_0818e7fe:
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r4, [sp, #68]
 	movs r3, #0
 	str r3, [r4, #16]
@@ -1767,7 +1767,7 @@ BattleEffect_RunMeteorBlow:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r2, #1
 	add r11, r2
 	mov r3, r11

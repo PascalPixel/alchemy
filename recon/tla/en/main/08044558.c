@@ -53,7 +53,7 @@ void Func_08108030(struct NameCursor *cursor);
 void Func_08108038(struct NameCursor *cursor);
 s32 UiText_SetRenderString(const u8 *str);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void UiWindow_SetTilemapFlagRect(struct UiWindow *window, s32 x, s32 y,
                                  s32 width, s32 height, s32 palette);
 void Audio_PlayCue(s32 cue);
@@ -139,7 +139,7 @@ s32 Func_08044558(s32 member) {
     }
     UiWindow_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 14);
-    WaitFrames(1);
+    WaitTicks(1);
     UiWindow_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
                                 15);
     if (cursorDirty) {
@@ -236,7 +236,7 @@ s32 Func_08044558(s32 member) {
           nameCaret.output->active = 13;
           RenderOutput_PrepareForRedraw(nameWindow);
           UiText_DrawPaddedLabel(nameWindow, originalName);
-          WaitFrames(10);
+          WaitTicks(10);
         } else {
           u8 *dst = originalName;
           u8 *src = editedName;
@@ -273,8 +273,8 @@ s32 Func_08044558(s32 member) {
   UiWork_Finalize(keyboardWindow, 2);
   UiWork_Finalize(nameWindow, 2);
   Func_0803d450(member);
-  WaitFrames(1);
+  WaitTicks(1);
   while (gInput.held != 0)
-    WaitFrames(1);
+    WaitTicks(1);
   return result;
 }

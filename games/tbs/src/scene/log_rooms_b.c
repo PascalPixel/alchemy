@@ -216,7 +216,7 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
   FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 30);
@@ -264,15 +264,15 @@ static void LogRoomsB_OfferBones(void) {
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_RunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
       Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
-      Event_WaitFrames(20);
+      Event_WaitTicks(20);
       Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
@@ -284,9 +284,9 @@ static void LogRoomsB_OfferBones(void) {
     // Declining selects the following line and the actor's response
     // pose.
     gFieldWork->message++;
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
-    Event_WaitFrames(20);
+    Event_WaitTicks(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);

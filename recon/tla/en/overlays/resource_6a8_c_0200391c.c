@@ -19,7 +19,7 @@ s32 Map_GetTerrainHeight();
 s32 ObjectDispatch_SetAnimationSpeed();
 s32 ObjectTable_Get();
 s32 Vector_AddPolarOffsetFar();
-s32 WaitFrames();
+s32 WaitTicks();
 extern u8 Func_0200385c[];
 extern u8 IwramMulQ16[];
 extern u8 gData_02004780[];
@@ -201,10 +201,10 @@ L_0200bb6c:
   t75 = FIELD_AT(sp_, s32, 16);
   Call4((void (*)())Func_020043f4, v_r7, t74, t73, t75);
   Call1((void (*)())Func_020043fc, v_r7);
-  Call1((void (*)())WaitFrames, 2);
+  Call1((void (*)())WaitTicks, 2);
   goto L_0200b93c;
 L_0200bb92:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
 L_0200bb98:
   FIELD_AT(v_r7, s32, 108) = 0;
   t80 = FIELD_AT(v_r7, u8, 90);

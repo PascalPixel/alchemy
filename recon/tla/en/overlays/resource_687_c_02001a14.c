@@ -26,10 +26,10 @@ void Func_02001f74();
 s32 Engine_ObjectCreate();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
-void WaitFrames();
+void WaitTicks();
 s32 Scheduler_AddOrUpdateCallback();
 void Event_WaitTransitionFrames();
-void FieldEvent_WaitFrames();
+void FieldEvent_WaitTicks();
 s32 Func_02001928();
 void Func_02001f94();
 void Func_02001ffc();
@@ -56,10 +56,10 @@ s32 Func_02001a14(s32 a0, s32 a1, s32 a2, s32 a3) {
   FIELD_AT(v0, s32, 108) = (s32)Func_020010a8;
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1600000, -1, 0xc40000, 0);
   Event_StartScreenTransition();
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001650, 0xc80);
   Event_WaitTransitionFrames();
-  Call1((void (*)())FieldEvent_WaitFrames, 60);
+  Call1((void (*)())FieldEvent_WaitTicks, 60);
   Call3((void (*)())Func_02001928, 21, 23, 9);
   Call3((void (*)())Func_02001928, 37, 17, 10);
   Call3((void (*)())Func_02001928, 47, 27, 12);
@@ -70,7 +70,7 @@ s32 Func_02001a14(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call1((void (*)())GameFlag_SetBit, 0x200);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 362) = 200;
   Call1((void (*)())Func_02002054, 0x212);
-  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call1((void (*)())FieldEvent_WaitTicks, 40);
   r7 = 0;
 L_02009af0:
   r3 = 31 & r7;
@@ -104,7 +104,7 @@ L_02009b24:
   r5 = r5 + 22020096;
   Func_0200015c(r5, 0, ((v4 & r6) << 16) + 11534336, 0, 0, 0, 0xb0000,
                 (s32)((u8 *)stack + 56));
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
 L_02009b78:
   r7 = r7 + 1;
   r1 = 0x168;
@@ -126,13 +126,13 @@ L_02009b84:
   Func_0200015c(r5, 0, ((v6 & r6) << 16) + 11534336, 0, 0x10000, 0, 0xb0000,
                 (s32)((u8 *)stack + 16));
   r7 = r7 + 1;
-  Call1((void (*)())WaitFrames, 1);
+  Call1((void (*)())WaitTicks, 1);
   if (r7 != 16)
     goto L_02009b84;
   Func_02001f64(r8);
   Call1((void (*)())Func_02002054, 0x22d);
 L_02009bf0:
-  Call1((void (*)())WaitFrames, 10);
+  Call1((void (*)())WaitTicks, 10);
   r6 = 160;
   r6 = r6 << 19;
   r5 = 0;

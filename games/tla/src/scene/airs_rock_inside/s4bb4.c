@@ -21,7 +21,7 @@ void Func_02004bb4(void) {
   UiText_ShowPositionedMessageAndWait(message, 1);
   Func_02005f94(126);
   Func_02005f34(999, 0);
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   GameFlag_ClearBit(322);
   UiText_ShowPositionedMessageAndWait(message + 1, 1);
   Func_02005e1c();

@@ -725,7 +725,7 @@ BattleEffect_RunRagingHeat:
 	movs r3, #1
 	str r3, [r2]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r6, [sp, #56]
 	adds r6, #1
 	str r6, [sp, #56]

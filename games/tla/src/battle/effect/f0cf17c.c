@@ -27,7 +27,7 @@ extern const u8 Data_080f01b8[];
 s32 EventRuntime_GetControlledOwner(void);
 void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 void Object_Destroy(struct ObjectRuntime *object);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const u8 *script);
@@ -77,7 +77,7 @@ struct ObjectRuntime *BattleEffect_StartRandomParticleEmitter(s32 actor,
       object++;
     } while (i >= 0);
   }
-  WaitFrames(3);
+  WaitTicks(3);
   picture =
       Func_080200c0(489, position[0], position[1] + 0x100000, position[2]);
   if (picture == NULL)

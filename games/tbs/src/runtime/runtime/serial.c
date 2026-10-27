@@ -80,7 +80,7 @@ void Serial_Initialize(void) {
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialWork.transferEnabled. Nothing in ☀️ calls it; WaitFrames does the
+/// gSerialWork.transferEnabled. Nothing in ☀️ calls it; WaitTicks does the
 /// same inline.
 void Serial_EnableTransferTimer(void) {
   struct SerialWork *state = &gSerialWork;
@@ -166,7 +166,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   return result;
 }
 
-/// As Serial_PollAndTransfer, without exchanging data: WaitFrames calls
+/// As Serial_PollAndTransfer, without exchanging data: WaitTicks calls
 /// it once a frame while gSerialExchangeActive is set, and the VBlank handler
 /// does the exchange.
 s32 Serial_PollStatus(void) {
@@ -457,7 +457,7 @@ void Serial_RemoveIrqHandlers(void) {
 u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
-      WaitFrames(1);
+      WaitTicks(1);
     } while ((mask & gLinkStatus) != mask);
   }
   return (REG_SIOCNT << 0x1A) >> 0x1E;
@@ -519,7 +519,7 @@ s32 Serial_StartReceive(void *destination) {
                                                                                \
     if (pending != 0) {                                                        \
       do {                                                                     \
-        WaitFrames(1);                                                         \
+        WaitTicks(1);                                                          \
         count++;                                                               \
       } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && pending != 0);        \
     }                                                                          \
@@ -535,7 +535,7 @@ void Serial_WaitForTransfers(void) {
 
   count = 0;
   while (gSerialSendSource != 0 || gSerialReceiveDestination != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     count++;
     if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
       return;
@@ -740,7 +740,7 @@ restart:
               REG_DMA3);
       goto restart;
     }
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }
 

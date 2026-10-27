@@ -28,7 +28,7 @@ void Func_0200065c(void) {
   Func_020029b0(310);
   object->velocityY = 0x40000;
   ObjectMotion_CommitPositionAndActivate(8, 0, 8);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   GameFlag_SetBit(0x310);
   Func_020028a0();
 }
@@ -39,12 +39,12 @@ void Func_02000710(s32 id) {
 
   object->motionFlags = 3;
   while (n != 0) {
-    WaitFrames(1);
+    WaitTicks(1);
     if (object->velocityY == 0)
       break;
     n--;
   }
-  WaitFrames(10);
+  WaitTicks(10);
   object->motionFlags = 0;
 }
 
@@ -94,9 +94,9 @@ void Func_02000810(s32 id) {
       object->z >> 20 == leader->z >> 20) {
     Func_02002910_(gPartyState.currentOwner, 0x102);
     ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
-    FieldEvent_WaitFrames_(2);
+    FieldEvent_WaitTicks_(2);
     ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames_(10);
+    FieldEvent_WaitTicks_(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
 }
@@ -149,9 +149,9 @@ void Func_020009c0(s32 id) {
       object->z >> 20 == leader->z >> 20) {
     Func_02002910_(gPartyState.currentOwner, 0x102);
     ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
-    FieldEvent_WaitFrames_(2);
+    FieldEvent_WaitTicks_(2);
     ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
-    FieldEvent_WaitFrames_(10);
+    FieldEvent_WaitTicks_(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);
 }

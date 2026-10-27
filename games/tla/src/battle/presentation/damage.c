@@ -91,7 +91,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     entry = animation->entry;
     entry->param = 6;
     entry->frame = 0xff;
-    WaitFrames(4);
+    WaitTicks(4);
     Map_RenderAnimatedTileFramesForObjectFar(animation);
     BattleObject_MarkForRelease(unitId);
   }

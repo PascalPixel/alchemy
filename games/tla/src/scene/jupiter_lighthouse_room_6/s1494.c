@@ -3,8 +3,8 @@
 #include "party_state.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void WaitFrames(s32 frames);
-void FieldEvent_WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 struct ObjectRuntime *Func_02001b9c(void);
@@ -23,10 +23,10 @@ void Func_02001494(void) {
   z >>= 20;
   ObjectMotion_SetPositionAndCommit(gPartyState.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
-  WaitFrames(1);
+  WaitTicks(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  FieldEvent_WaitFrames(4);
+  FieldEvent_WaitTicks(4);
   Func_02001b9c()->y -= 0x80000;
 }
 
@@ -70,5 +70,5 @@ void Func_0200151c(struct CellTarget *table, struct CellTargetEntry *entry) {
   Func_02001494();
   Func_02001bec(161);
   Func_02001afc(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
+  FieldEvent_WaitTicks(12);
 }

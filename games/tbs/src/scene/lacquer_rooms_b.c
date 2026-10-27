@@ -269,9 +269,9 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_SetMessageId(MsgXianWarriorWelcome);
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_HSU, 0);
-  Event_WaitFrames(60);
+  Event_WaitTicks(60);
   Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
-  Event_WaitFrames(20);
+  Event_WaitTicks(20);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0);
   Event_End();
 }

@@ -27,7 +27,7 @@ void Func_020009ec(void) {
   if (!Flag_IsSet(0x351)) {
     Func_020055d0(0x20000, 0x4000);
     Camera_SetBounds(0x2680000, -1, 0x180000, 1);
-    FieldEvent_WaitFrames(60);
+    FieldEvent_WaitTicks(60);
     Func_02005660();
     Func_020055f0(9);
   }
@@ -48,11 +48,11 @@ void Func_02000ad8(void) {
   work->unk166 = 0;
   Flag_Clear(0x106);
   Flag_Clear(0x104);
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_020055d0(0x30000, 0x6000);
   Camera_SetBounds(0xb80000, -1, 0x2e80000, 1);
   Func_020055e0();
-  FieldEvent_WaitFrames(60);
+  FieldEvent_WaitTicks(60);
   Func_02005568();
 }
 

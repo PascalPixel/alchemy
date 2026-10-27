@@ -61,6 +61,6 @@ static void Actor_SwapPositionsByDepth(s32 first, s32 second) {
     t = a->z.fixed;
     a->z.fixed = b->z.fixed;
     b->z.fixed = t;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }

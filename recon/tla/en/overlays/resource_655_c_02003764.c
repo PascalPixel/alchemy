@@ -17,7 +17,7 @@ extern u8 gMapShapeGrid[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -69,7 +69,7 @@ struct EffectView {
 #include "field_effect.h"
 void Func_02003d78(s32 skip);
 void Func_02003cd0(s32 id, s32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -94,7 +94,7 @@ void Func_02003764(void) {
   Func_02003d78(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02003bc8();
-  WaitFrames(1);
+  WaitTicks(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -104,7 +104,7 @@ void Func_02003764(void) {
   Event_WaitTransitionFrames();
   Func_02003df8(204);
   leader->motionFlags = 3;
-  FieldEvent_WaitFrames(24);
+  FieldEvent_WaitTicks(24);
   options.palette = 7;
   i = 0;
   options.update = Effect_AdvanceMotion;
@@ -132,7 +132,7 @@ void Func_02003764(void) {
   Func_02003cd0(gPartyState.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_WaitFrames(10);
+  FieldEvent_WaitTicks(10);
   Object_SetModeById(gPartyState.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02003c30();

@@ -22,7 +22,7 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Object_GetById();
 s32 ObjectMotion_SetActionVariant();
 s32 ObjectMotion_SetPositionAndReset();
-s32 FieldEvent_WaitFrames();
+s32 FieldEvent_WaitTicks();
 s32 ObjectMotion_ArmCallback();
 s32 Func_0200463c();
 s32 Func_02004584();
@@ -60,7 +60,7 @@ void Func_020015d0(void) {
   asm volatile("");
   Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gPartyState, s32, 532),
         0x198, 0x146);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t9 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
   FIELD_AT((t9 + 0x5a), u8, 0) = (FIELD_AT((t9 + 0x5a), u8, 0) | 1);
   /* FAKEMATCH: the barrier keeps the flag store ahead of the next call's
@@ -73,18 +73,18 @@ void Func_020015d0(void) {
   t13 = Value1(Object_GetById, 0x14);
   FIELD_AT((t13 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t13 + 0x5a), u8, 0));
   Call3(ObjectMotion_SetPositionAndReset, 0x14, 0x198, 0xc8);
-  Call1(FieldEvent_WaitFrames, 1);
+  Call1(FieldEvent_WaitTicks, 1);
   t16 = Value1(Object_GetById, 0x14);
   FIELD_AT((t16 + 0x5a), u8, 0) = (FIELD_AT((t16 + 0x5a), u8, 0) | 1);
   Call3(Func_020044cc, 0x14, 0, 0);
   Call1(Func_0200463c, 0xb0);
   Call3(Func_02004444, 0x10000, 0x20000, 0x10000);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_WaitTicks, 0x1e);
   Call3(Func_02004444, -1, -1, 0xe666);
   Call1(Func_0200463c, 0x7f);
-  Call1(FieldEvent_WaitFrames, 0x1e);
+  Call1(FieldEvent_WaitTicks, 0x1e);
   Call1(Func_0200463c, 0x92);
-  Call1(FieldEvent_WaitFrames, 0x14);
+  Call1(FieldEvent_WaitTicks, 0x14);
   Call3(Func_0200455c, FIELD_AT(gPartyState, s32, 532), 0x105, 0x28);
   Call2(ObjectMotion_SetActionVariant, 0x14, 2);
   t28 = Value1(Object_GetById, 0x14);

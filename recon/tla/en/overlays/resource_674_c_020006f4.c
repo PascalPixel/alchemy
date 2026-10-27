@@ -45,7 +45,7 @@ struct ObjectRuntime *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
 void Func_02003e3c(struct ObjectRuntime *object, s32 item);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         u32 value);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Func_02003f54(s32 actor, s32 emote, s32 frames);
@@ -57,7 +57,7 @@ void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
 #define STEP(actor, x, z)                                                      \
   (Object_GetById(actor)->actionFlags &= ~1,                                   \
    Call3(ObjectMotion_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_WaitFrames(1), Object_GetById(actor)->actionFlags |= 1)
+   FieldEvent_WaitTicks(1), Object_GetById(actor)->actionFlags |= 1)
 
 /// Object 10 walks round and hands item 454 back over the leader's head.
 #define HAND_BACK()                                                            \
@@ -65,7 +65,7 @@ void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
     Call3(ObjectMotion_SetSpeedParameters, 10, 0xcccc, 0x6666);                \
     Call3(ObjectMotion_SetPositionAndReset, 10, 0x80, 164);                    \
     Func_02003f3c(10, 0x8000);                                                 \
-    FieldEvent_WaitFrames(20);                                                 \
+    FieldEvent_WaitTicks(20);                                                 \
     Call3(ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);               \
     STEP(10, 108, 168);                                                        \
     trader = Object_GetById(10);                                               \
@@ -75,7 +75,7 @@ void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 a);
       Object_SetModeById(gPartyState.currentOwner, 28);                        \
       item->motionFlags = 0;                                                   \
       Func_02003e3c(item, 454);                                                \
-      FieldEvent_WaitFrames(20);                                               \
+      FieldEvent_WaitTicks(20);                                               \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
     Func_02003fc4();                                                           \
@@ -115,7 +115,7 @@ void Func_020006f4(void) {
           item->motionFlags = 0;
           item->unk5c[0] = 1;
         }
-        FieldEvent_WaitFrames(10);
+        FieldEvent_WaitTicks(10);
         Func_02003fbc();
         ObjectMotion_EnableActionAndResetMotion(10);
         ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
@@ -158,12 +158,12 @@ void Func_020006f4(void) {
       STEP(gPartyState.currentOwner, 132, 190);
       Object_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
       STEP(gPartyState.currentOwner, 120, 190);
-      FieldEvent_WaitFrames(20);
+      FieldEvent_WaitTicks(20);
       Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 98,
             168);
       ObjectMotion_Launch(gPartyState.currentOwner, 4, 10);
       Object_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
-      FieldEvent_WaitFrames(10);
+      FieldEvent_WaitTicks(10);
       Func_02003fc4();
       Func_02003f3c(gPartyState.currentOwner, 0x4000);
       UiText_ShowPositionedMessageAndWait(MsgOhThatRed + 2, 1);

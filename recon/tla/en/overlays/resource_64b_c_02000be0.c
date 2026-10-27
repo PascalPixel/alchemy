@@ -13,7 +13,7 @@ extern char MsgThereAreSome[];
 extern char MsgTheBoatS[];
 
 u32 Random16Far(void);
-void FieldEvent_WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
 struct ObjectRuntime *Object_GetById(s32 id);
 u8 *Unit_Get(s32 owner);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
@@ -66,7 +66,7 @@ void Func_02000be0(void) {
   } else if (roll == 1) {
     Func_02004b78(0x30000, 0x50000, 0x10000);
     Func_02004b78(-1, -1, 0xe666);
-    FieldEvent_WaitFrames(30);
+    FieldEvent_WaitTicks(30);
     UiText_ShowPositionedMessageAndWait((s32)MsgTheBoatS, 1);
   } else {
     UiText_ShowPositionedMessageAndWait((s32)MsgTheBoatS + (roll >> 1), 1);

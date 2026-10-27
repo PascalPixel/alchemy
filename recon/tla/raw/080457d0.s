@@ -1086,7 +1086,7 @@ Func_080457d0:
 	movs r3, #0
 	strb r3, [r5, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	b .L_08045a92
 .L_08045ff8:
 	ldr r6, [sp, #52]
@@ -1192,7 +1192,7 @@ Func_080457d0:
 	ldr r5, [sp, #48]
 	movs r3, #1
 	strb r3, [r5, #3]
-	bl WaitFrames
+	bl WaitTicks
 	ldr r0, .L_08046128
 	bl Scheduler_RemoveCallback
 	movs r0, #2
@@ -1232,7 +1232,7 @@ Func_080457d0:
 	movs r3, #0
 	strb r3, [r6, #6]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	mov r0, r10
 	add sp, #60
 	pop {r3, r5, r6, r7}

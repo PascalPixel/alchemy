@@ -88,7 +88,7 @@ extern u8 MsgDjinnOwnerLabel[];
 extern u8 MsgDjinnNowRecovering[];
 extern u8 gDjinnMenu_TextLevel[];
 
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 s32 Func_08104928(s8 *table, s32 self);
 void Func_080f8a44(s32 x, s32 y);
@@ -139,7 +139,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
         Menu_GetDjinnGiveMessage() + (offset), 9, 9, 1);                       \
     gPartyState.eventMode = 1;                                                 \
     while (UiWork_IsCompleteFar() == 0)                                        \
-      WaitFrames(1);                                                           \
+      WaitTicks(1);                                                           \
   } while (0)
 
 s32 Func_08102008(s32 mode) {
@@ -330,7 +330,7 @@ s32 Func_08102008(s32 mode) {
           UiText_DrawCharacterAtOffsetFar(message, helpWindow, 0, 16);
         }
       }
-      WaitFrames(1);
+      WaitTicks(1);
       if (mode == 1) {
         UiText_DrawQuantity(menu->shownMember[0], 1);
         UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
@@ -345,7 +345,7 @@ s32 Func_08102008(s32 mode) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
                                         0, 8);
       }
-      WaitFrames(1);
+      WaitTicks(1);
       RenderOutput_ClearListFar(listWindow);
       if (selectedRow != -1) {
         UiWindow_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
@@ -355,7 +355,7 @@ s32 Func_08102008(s32 mode) {
       ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
       redraw = 0;
     }
-    WaitFrames(1);
+    WaitTicks(1);
     if (!(gInput.held & 0x100) || (gInput.pendingPressed & 0x100)) {
       if (groupMode)
         redraw = 1;
@@ -372,7 +372,7 @@ s32 Func_08102008(s32 mode) {
       case 28:
         while (!(gInput.pressed & 1)) {
           Func_080f8a44(150, 26);
-          WaitFrames(1);
+          WaitTicks(1);
         }
         pressed = 2;
         repeat = 2;
@@ -382,7 +382,7 @@ s32 Func_08102008(s32 mode) {
           DJINN_TUTORIAL_MESSAGE(messageWindow, 12);
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
-          WaitFrames(1);
+          WaitTicks(1);
           DJINN_TUTORIAL_MESSAGE(messageWindow, 13);
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
@@ -459,36 +459,36 @@ s32 Func_08102008(s32 mode) {
               Menu_GetDjinnGiveMessage() + 4, 9, 9, 1);
           Func_080f8ab4(2, 146);
           while (UiWork_IsCompleteFar() == 0)
-            WaitFrames(1);
+            WaitTicks(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
-            WaitFrames(1);
+            WaitTicks(1);
           }
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
-          WaitFrames(1);
+          WaitTicks(1);
           messageWindow = UiText_OpenMessageWindowFar(
               Menu_GetDjinnGiveMessage() + 5, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
-            WaitFrames(1);
+            WaitTicks(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
-            WaitFrames(1);
+            WaitTicks(1);
           }
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
-          WaitFrames(1);
+          WaitTicks(1);
           messageWindow = UiText_OpenMessageWindowFar(
               Menu_GetDjinnGiveMessage() + 6, 9, 9, 1);
           while (UiWork_IsCompleteFar() == 0)
-            WaitFrames(1);
+            WaitTicks(1);
           while (!(gInput.pressed & 1)) {
             Func_080f8a44(2, 146);
-            WaitFrames(1);
+            WaitTicks(1);
           }
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawFirstPage(backdrop);
-          WaitFrames(1);
+          WaitTicks(1);
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 16;
         }

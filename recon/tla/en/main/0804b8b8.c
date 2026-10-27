@@ -30,7 +30,7 @@ void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
 void BattlePres_SetActorModesFar(u16 *, s32);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
-void WaitFrames(s32);
+void WaitTicks(s32);
 
 #define INPUT ((volatile struct InputState *)&gInput)
 
@@ -107,7 +107,7 @@ s32 Func_0804b8b8(s32 slot) {
       BattlePres_SetActorModesFar(selected, 2);
       BattleLayout_HighlightPartyPanels(selected);
     }
-    WaitFrames(1);
+    WaitTicks(1);
   test:
     newId = battle->partyUnits[slot] = owners[sel];
     if (INPUT->pressed & 2)
@@ -122,6 +122,6 @@ done:
   BattleLayout_HighlightPartyPanels(selected);
   PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
   BattleActor_CommitPlacementFar();
-  WaitFrames(1);
+  WaitTicks(1);
   return result;
 }

@@ -1,5 +1,5 @@
 	.set overlay_imports, 1
-	.set import.WaitFrames, 1
+	.set import.WaitTicks, 1
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
@@ -18,7 +18,7 @@
 	.set import.Party_AddMember, 1
 	.set import.Party_ListMembers, 1
 	.set import.InventorySnapshot_Restore, 1
-	.set import.Event_WaitFrames, 1
+	.set import.Event_WaitTicks, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
 	.set import.PartyInventory_GiveItem, 1

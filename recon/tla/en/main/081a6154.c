@@ -20,7 +20,7 @@ struct TitleScrollStep {
 };
 
 void PaletteFade_SetCurrent(s32 index, s32 transform);
-s32 Title_WaitFramesOrPress(u32 frames);
+s32 Title_WaitTicksOrPress(u32 frames);
 s32 Title_RunScrollStep(struct TitleScrollStep *step);
 void Fade_Wait(void);
 
@@ -143,17 +143,17 @@ s32 Func_081a6154(s32 mode) {
       gBgScroll[1].y += speed + 16;
       gBgScroll[2].y += speed + 8;
       speed++;
-      if (Title_WaitFramesOrPress(1))
+      if (Title_WaitTicksOrPress(1))
         return 0;
       gBgScroll[1].y += speed + 16;
       gBgScroll[2].y += speed + 8;
       speed++;
-      if (Title_WaitFramesOrPress(1))
+      if (Title_WaitTicksOrPress(1))
         return 0;
     }
     PaletteFade_SetTarget(0x7fff, 0);
     PaletteFade_Start(1);
-    if (Title_WaitFramesOrPress(2)) {
+    if (Title_WaitTicksOrPress(2)) {
       Fade_Wait();
       return 0;
     }

@@ -24,7 +24,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, s32 value);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void Object_Destroy(struct ObjectRuntime *object);
@@ -82,27 +82,27 @@ void Func_080e03cc(void) {
     scale = Interpolate(0x4000, 0x10000, step);
     object->scaleX = scale;
     object->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
   } while (step < steps);
-  WaitFrames(10);
+  WaitTicks(10);
   Object_SetMode(object, 6);
-  WaitFrames(15);
+  WaitTicks(15);
   for (index = 0; index < 10; index++) {
     object->y -= 0x20000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   Object_SetMode(object, 5);
   Audio_PlayCue(132);
   if (secondary != 0)
     Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
                                         -0x90000);
-  WaitFrames(20);
+  WaitTicks(20);
   for (index = 0; index < 13; index++) {
     object->y += 0x18000;
-    WaitFrames(1);
+    WaitTicks(1);
   }
-  WaitFrames(10);
+  WaitTicks(10);
   Audio_PlayCue(114);
   step = 0;
   do {
@@ -114,7 +114,7 @@ void Func_080e03cc(void) {
     scale = Interpolate(0x10000, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
-    WaitFrames(1);
+    WaitTicks(1);
     step++;
   } while (step < steps);
   Object_Destroy(object);

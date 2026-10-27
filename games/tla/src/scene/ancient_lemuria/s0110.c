@@ -10,8 +10,8 @@ void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
-void FieldEvent_WaitFrames(s32 frames);
-void WaitFrames(s32 frames);
+void FieldEvent_WaitTicks(s32 ticks);
+void WaitTicks(s32 ticks);
 void Func_02000048(void);
 void Func_0200195c(s32 id, s32 x, s32 z);
 void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -35,7 +35,7 @@ static inline void PlaceActor(s32 id, s32 x, s32 z) {
 static inline void Hop(s32 dx, s32 dz) {
   ObjectMotion_Launch(12, 5, 0);
   ObjectMotion_CommitPositionAndActivate(12, dx, dz);
-  FieldEvent_WaitFrames(3);
+  FieldEvent_WaitTicks(3);
 }
 
 /// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
@@ -74,19 +74,19 @@ void Func_02000110(void) {
      * scale at the join; without it, 9 of 273 instructions differ in tla-en. */
     asm("" ::: "memory");
     object->scaleY = object->scaleX;
-    WaitFrames(1);
+    WaitTicks(1);
   }
   object->angle = 0x3000;
   object->scaleY = 0x10000;
   object->scaleX = 0x10000;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 1);
   ObjectMotion_SetActionVariant(12, 1);
-  FieldEvent_WaitFrames(8);
+  FieldEvent_WaitTicks(8);
   ObjectMotion_Launch(12, 9, 0);
   ObjectMotion_SetPositionAndReset(12, 120, 200);
   Object_GetById(12)->priorityFlags |= 1;
   ObjectMotion_SetPositionAndReset(12, 136, 200);
-  FieldEvent_WaitFrames(3);
+  FieldEvent_WaitTicks(3);
   Object_SetModeById(gPartyState.currentOwner, 1);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xe000, 0);
   Hop(0, -16);

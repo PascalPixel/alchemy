@@ -19,7 +19,7 @@ s32 Func_020059f4();
 s32 Map_GetTerrainHeight();
 s32 ObjectDispatch_SetSingleChildFlags();
 s32 Object_GetById();
-s32 WaitFrames();
+s32 WaitTicks();
 extern u8 gFrameCount[];
 extern u8 gPartyState[];
 
@@ -64,7 +64,7 @@ L_0200c16a:
   FIELD_AT(v_r6, u16, 6) = (t12 << 12);
   t13 = *(u8 *)(v_r6 + 35);
   *(u8 *)(v_r6 + 35) = ((2 << (t11 & 1)) ^ t13);
-  WaitFrames(1);
+  WaitTicks(1);
   t15 = *(u8 *)v_r8;
   if (t15 != 0)
     goto L_0200c14e;
@@ -106,7 +106,7 @@ L_0200c20c:
     goto L_0200c272;
   goto L_0200c258;
 L_0200c258:
-  WaitFrames(1);
+  WaitTicks(1);
   v_r5 = (v_r5 + 1);
   if (v_r5 > 59)
     goto L_0200c272;
@@ -121,7 +121,7 @@ L_0200c272:
   if (t34 == v_r5)
     goto L_0200c292;
 L_0200c280:
-  WaitFrames(1);
+  WaitTicks(1);
   v_r5 = (v_r5 + 1);
   if (v_r5 > 59)
     goto L_0200c292;

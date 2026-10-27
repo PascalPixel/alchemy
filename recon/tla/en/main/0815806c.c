@@ -73,7 +73,7 @@ extern u8 gData_08197473[];
 extern u16 gData_0819747a[];
 
 u32 Random16(void);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 void Audio_PlayCue(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
@@ -241,7 +241,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
-    WaitFrames(1);
+    WaitTicks(1);
     diveY += 8;
     frame++;
   } while (frame != 112);

@@ -31,7 +31,7 @@
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03007800, gCartridgeResetMarker)
 
-/// The stack top WaitFrames runs its frames from: the 512 bytes below it are
+/// The stack top WaitTicks runs its frames from: the 512 bytes below it are
 /// what the frame loop, its tasks and the VBlank work always have.
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)

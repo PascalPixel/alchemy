@@ -47,7 +47,7 @@ next:
   position.y = 0x40000;
   position.z = z;
   Func_020002f4(position.x, 0, position.z, 0, position.y, 0, 0x1a0000, &spawn);
-  FieldEvent_WaitFrames(5);
+  FieldEvent_WaitTicks(5);
   i++;
   if (i != 12)
     goto next;

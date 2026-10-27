@@ -25,7 +25,7 @@ Func_08101d5c:
 	ldr r0, [r3, #52]
 	bl RenderOutput_ClearListFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [sp, #24]
 	adds r2, #240
 	str r2, [sp, #8]
@@ -203,7 +203,7 @@ Func_08101d5c:
 	negs r0, r0
 	bl Func_080f8a44
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, [r7, #12]
 	movs r3, #144
 	ands r2, r3
@@ -263,7 +263,7 @@ Func_08101d5c:
 	ldr r0, [sp, #32]
 	bl RenderOutput_ClearListFar
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	movs r1, #1
 	ldr r0, [sp, #28]
 	bl UiWork_FinalizeFar

@@ -61,7 +61,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
     }
     if (turning == 0)
       break;
-    WaitFrames(1);
+    WaitTicks(1);
   }
 }
 

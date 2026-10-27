@@ -503,7 +503,7 @@ Func_08151ff0:
 	movs r2, #1
 	str r2, [r3]
 	movs r0, #1
-	bl WaitFrames
+	bl WaitTicks
 	ldr r2, .L_081523fc
 	ldr r4, [sp, #20]
 	movs r1, #1

@@ -6,5 +6,5 @@ void Func_02000618(void) {
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
   layer->y += -0x10000;
-  WaitFrames(4);
+  WaitTicks(4);
 }

@@ -5,7 +5,7 @@ void Func_02002fb8(struct ObjectRuntime *object);
 void Func_02003178(void);
 void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-void WaitFrames(s32 frames);
+void WaitTicks(s32 ticks);
 
 /// The event's object keeps stepping a cell at a time in the direction it was
 /// pushed (its cell against the one Func_02000bfc stored in its action) while
@@ -39,7 +39,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
                   (dz << 20) + object->z);
     Camera_FollowActor(actor, 1);
     Func_02002fb8(object);
-    WaitFrames(1);
+    WaitTicks(1);
   }
   object->x = ((object->x >> 19) | 1) << 19;
   object->z = ((object->z >> 19) | 1) << 19;
